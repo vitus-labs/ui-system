@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://vitus-labs.github.io/elements/">
-    <img src="https://raw.githubusercontent.com/vitus-labs/elements/master/logo.png" alt="Elements" height="150">
+    <img src="https://raw.githubusercontent.com/vitus-labs/vitus-labs/master/packages/elements/logo.png" alt="Elements" height="150">
   </a>
 </div>
 
