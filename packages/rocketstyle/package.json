@@ -1,0 +1,103 @@
+{
+  "name": "@vitus-labs/rocketstyle",
+  "version": "0.3.0-experimental.1",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "homepage": "https://vitus-labs.github.io/rocketstyle/",
+  "description": "Rocketstyle is ultra powerful and extensible styling system for building React components blazingly fast, easily and make them easily extensible and reusable.",
+  "keywords": [
+    "rocketstyle",
+    "style",
+    "styled-components",
+    "css",
+    "flexible",
+    "extensible",
+    "powerful",
+    "styling",
+    "styled",
+    "system",
+    "react",
+    "reusability",
+    "extensible"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/rocketstyle"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/rocketstyle/issues"
+  },
+  "main": "dist/vitus-labs-rocketstyle.js",
+  "umd:main": "dist/vitus-labs-rocketstyle.umd.js",
+  "module": "dist/vitus-labs-rocketstyle.module.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf lib && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "storybook": "start-storybook -p 6006 -c tools/storybook",
+    "storybook:build": "build-storybook -c tools/storybook -o docs/storybook",
+    "lint": "yarn lint:js",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "rollup": "rollup -c",
+    "pkgs": "rm -rf node_modules/ package-lock.json yarn.lock && yarn",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.1.0"
+  },
+  "peerDependencies": {
+    "@vitus-labs/core": ">= 0.1 <1",
+    "react": ">= 16.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-react": "^7.6.3",
+    "@storybook/addon-notes": "^5.0.3",
+    "@storybook/addon-storysource": "^5.0.3",
+    "@storybook/addon-viewport": "^5.0.3",
+    "@storybook/addons": "^5.0.3",
+    "@storybook/react": "^5.0.3",
+    "@vitus-labs/core": "^0.0.5",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.0-beta.6",
+    "coveralls": "^3.0.2",
+    "cpr": "^3.0.1",
+    "docz": "^1.0.0",
+    "docz-theme-default": "^1.0.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-to-json": "^3.3.4",
+    "eslint": "^6.5.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "jest": "^24.5.0",
+    "prettier": "^1.15.2",
+    "react": "^16.10.1",
+    "react-docgen-typescript-webpack-plugin": "^1.1.0",
+    "react-dom": "^16.10.1",
+    "rollup": "^1.22.0",
+    "rollup-plugin-filesize": "^6.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-visualizer": "^2.6.0",
+    "styled-components": "^4.0.3"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "name": "@vitus-labs/core",
+  "version": "0.3.0-experimental.14",
+  "homepage": "https://github.com/vitus-labs/core#readme",
+  "description": "Core and utility functions for vitus-labs packages",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "license": "MIT",
+  "main": "dist/vitus-labs-core.js",
+  "umd:main": "dist/vitus-labs-core.umd.js",
+  "module": "dist/vitus-labs-core.module.js",
+  "browser": {
+    "./dist/vitus-labs-core.js": "./dist/vitus-labs-core.js",
+    "./dist/vitus-labs-core.module.js": "./dist/vitus-labs-core.module.js"
+  },
+  "unpkg": "dist/vitus-labs-core.umd.min.js",
+  "jsnext:main": "dist/vitus-labs-core.module.js",
+  "react-native": "dist/vitus-labs-core.module.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "storybook": "start-storybook -p 6006 -c tools/storybook",
+    "storybook:build": "build-storybook -c tools/storybook -o docs/",
+    "docs:dev": "docz dev",
+    "docs:build": "docz build",
+    "lint": "yarn lint:css && yarn lint:js",
+    "lint:css": "stylelint './src/**/*.js*'",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "rollup": "rollup -c",
+    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/core.git"
+  },
+  "peerDependencies": {
+    "react": ">= 16.7",
+    "styled-components": ">= 4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "@vitus-labs/tools-rollup": "*",
+    "babel-loader": "^8.0.6",
+    "cpr": "^3.0.1",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1"
+  }
+}

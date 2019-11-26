@@ -1,0 +1,195 @@
+---
+name: Customize theme
+route: /customization/customize-theme
+---
+
+# Customize theme
+
+## Default theme
+
+Below is how default grid theme looks like. It is _important_
+to implement it into your provider under `grid` key.
+
+```jsx
+{
+  rootSize: 16, // is being used to convert viewport px to em units
+  columns: 12, // default bootstrap column grid example
+  breakpoints: {
+    // default bootstrap configuration example
+    xs: 0,
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
+  },
+  grid: {
+    container: {
+      xs: '100%',
+      sm: 540,
+      md: 720,
+      lg: 960,
+      xl: 1140
+    }
+  }
+  /* ...your theme */
+}
+```
+
+## Create your own theme
+
+You can change count of `columns`, or define your own `breakpoints`.
+
+### Customized breakpoints
+
+For the smallest screen, you must set viewport to `0`. For the other viewport
+properties you can set `viewport` and `container` size in pixels (without unit).
+If you set `rootSize`, your defined sizes od viewports will be recalculated
+to `em` units. If you do not specify rootSize, it will fallback to pixels.
+
+Below, you can see how to change count of columns:
+
+```jsx
+{
+  columns: 7,
+  // ...rest
+}
+```
+
+Below, you can see customized breakpoints.
+
+```jsx
+{
+  breakpoints: {
+    phone: 320,
+    tablet: 768,
+    notebook: 1366
+  },
+  grid: {
+    container: {
+      phone: 300,
+      tablet: 740,
+      notebook: 1200
+    },
+  }
+  // ...rest
+}
+
+```
+
+You can also use units in `viewport` or `container` key. When value
+is a number it fallbacks to `px`, or when rootSize is set it will
+be calculated to `em`s, for example:
+
+```jsx
+{
+  breakpoints: {
+    phone: '320px',
+    tablet: '768px',
+    notebook: '1366px'
+  },
+  grid: {
+    container: {
+      phone: '100%',
+      tablet: 740,
+      notebook: '1200px'
+    },
+  }
+  // ...rest
+}
+```
+
+### Override settings in Container
+
+You can even override cofiguration for only one Container.
+
+```jsx
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from 'coolgrid'
+
+const breakpoints = {
+  phone: 320,
+  tablet: 768,
+  notebook: 1366
+}
+
+const width = {
+  phone: 300,
+  tablet: 740,
+  notebook: 1200
+}
+
+<ThemeProvider theme={{ grid: theme }}>
+  <Container columns={7} breakpoints={breakpoints} width={width}>
+    <Row>...</Row>
+    <Row>...</Row>
+  </Container>
+</ThemeProvider>
+```
+
+### Override settings in Row
+
+You can even override cofiguration for each Row separately.
+
+```jsx
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from 'coolgrid'
+
+const breakpoints = {
+  phone: {
+    viewport: 320,
+    container: 300
+  },
+  tablet: {
+    viewport: 768,
+    container: 740
+  },
+  notebook: {
+    viewport: 1366,
+    container: 1200
+  }
+}
+
+<ThemeProvider theme={{ grid: theme }}>
+  <Container>
+    <Row columns={7} breakpoints={breakpoints}>...</Row>
+    <Row columns={5} breakpoints={breakpoints}>...</Row>
+  </Container>
+</ThemeProvider>
+```
+
+or pass it via `<ThemeProvider>`:
+
+```jsx
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from 'coolgrid'
+
+const breakpoints = {
+  phone: {
+    viewport: 320,
+    container: 300
+  },
+  tablet: {
+    viewport: 768,
+    container: 740
+  },
+  notebook: {
+    viewport: 1366,
+    container: 1200
+  }
+}
+
+<ThemeProvider theme={{ grid: theme }}>
+  <Container>
+    <ThemeProvider
+      theme={grid: {
+        breakpoints,
+        columns: 7,
+        rootSize: 16
+      }}
+    >
+      <Row columns={7} breakpoints={breakpoints}>...</Row>
+    </ThemeProvider>
+    <Row columns={5} breakpoints={breakpoints}>...</Row>
+  </Container>
+</ThemeProvider>
+```

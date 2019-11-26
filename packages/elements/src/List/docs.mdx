@@ -1,0 +1,33 @@
+---
+name: List
+menu: Components
+route: /components/list
+---
+
+# List
+
+## Examples
+
+```jsx
+import { List, Element } from '@vitus-labs/elements'
+
+<List
+  component={Element}
+  data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
+  injectProps
+  primary
+  passProps={['primary']}
+/>
+```
+
+## Properties
+
+Below are default propertes.
+
+| Property Name | Type     | Default Value | Description |
+| ------------- | -------- | ------------- | ----------- |
+| passProps     | boolean  |               |             |
+| itemProps     | `object` |               |             |
+| children      | any      |               |             |
+
+and `Iterator` props which will be passed directly to Iterator.

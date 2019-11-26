@@ -1,0 +1,34 @@
+---
+name: Overlay
+menu: Components
+route: /components/overlay
+---
+
+# Overlay
+
+A component to be used for creating Dropdowns, Tooltips, Popovers, Modals
+or any other element where you need to show an overlay element(s).
+
+It uses internally `Portal` and `Util` components. So it will append children
+to the end of DOM right before the end of `</body>` element in your app.
+
+## Examples
+
+TODO
+
+## Properties
+
+Below are default propertes.
+
+| Property Name | Type                                   | Default Value | Description                                           |
+| ------------- | -------------------------------------- | ------------- | ----------------------------------------------------- |
+| openOn        | `click`,`hover`                        | `click`       | event when should be overlay opened                   |
+| closeOn       | `click`,`triggerClick`,`hover`         | `click`       | event when should be overlay closed                   |
+| type          | `dropdown`,`tooltip`,`popover`,`modal` | `dropdown`    | type of overlay, based on this it calculates position |
+| align         | `top`,`left`,`bottom`,`right`          | `bottom`      |                                                       |
+| position      | `absolute`,`fixed`,`relative`,`static` | `absolute`    |
+| alignX        | `left`,`center`,`right`                | `left`        |                                                       |
+| alignY        | `top`,`center`,`bottom`                | `bottom`      |                                                       |
+| offsetX       | `number`                               | `0`           |                                                       |
+| offsetY       | `number`                               | `0`           |                                                       |
+| throttleDelay | `number`                               | `200`         | optimization value for window listeners               |

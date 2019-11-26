@@ -1,0 +1,181 @@
+---
+name: Getting started
+route: /
+---
+
+# Rocketstyle
+
+Rocketstyle is ultra powerful and extensible styling system for building
+React components blazingly fast, easily and make them easily extensible
+and reusable.
+
+## Motivation
+
+There are several solutions and helpers but none of them have fit my
+needs so far. They were not enough extensible. With Rocketstyle
+you can do basically whatever you want while writing less code
+and have less hassle in styles in your application.
+
+### Advantages
+
+One of the advantages is that you do not need to import `React` or
+`styled-components` in each file where you want to style your
+components. You can just import a simple `rocketstyle` component
+and extend it as you need in your other components. The composability
+is in many cases quite unlimited and you code will be much cleaner.
+**Less code, less hassle, huge impact on reuasability and consistency.**
+
+Sounds cool, right? So, let's go through the basics and see how powerful
+it can be.
+
+## Installation
+
+You can install ii with your preferred tool (`yarn` or `npm`).
+
+```powershell
+# with yarn
+yarn add rocketstyle
+
+# or with npm
+npm install rocketstyle --save
+```
+
+### Dependencies
+
+Rocketstyle depends on the following packages which need to be installed as well.
+
+|                   |         |
+| ----------------- | ------- |
+| react             | >= 16.3 |
+| styled-components | >= 4.0  |
+
+## Getting started
+
+Rocketstyle uses styled-components in the background and basically works
+as a wrapper which will generate a `theme` object which will be passed
+to a valid styled component.
+
+When you pass any css styles it automatically wraps your component by `styled`
+from styled-components and passes all the styles there so it becomes
+a regular styled component with its own local `theme` passed as a prop.
+
+### Implement ThemeProvider from styled-components
+
+If you want to use theming, don't forget to add `theme` into your
+`ThemeProvider`. There is nothing special to do. Just follow
+the styled-components [documentation](https://www.styled-components.com/docs/advanced#theming).
+
+```
+import { ThemeProvider } from 'styled-components'
+
+<ThemeProvider theme={{/* ...your theme */}}>
+  {/* ...your components */}
+</ThemeProvider>
+```
+
+## Create your first component
+
+```jsx
+import rocketstyle from 'rocketstyle'
+import Element from './someReactComponent'
+
+export default rocketstyle({
+  name: 'Element.Name',
+  component: Element
+})
+  .theme(t => ({
+    fontFamily: t.fontFamily.base,
+    lineHeight: t.lineHeight,
+    color: t.color.gray900
+  }))
+  .styles(
+    css => css`
+      ${({ theme: t }) => css`
+        line-height: ${t.lineHeight};
+        font-family: ${t.fontFamily};
+        color: ${t.color};
+      `};
+    `
+  )
+```
+
+## Reusability
+
+Imagine you would like to extend the component above. Let's say,
+we want to change `line-height` and `color`. We can easily do it
+like several ways:
+
+### 1. Passing style properties in theme
+
+We can pass `lineHeight` and `color` in theme object so the styles from
+the previous example will be able to access those values.
+
+```jsx
+import element from './previous-example-component'
+
+export const NewElement = element
+  .config({
+    name: 'ReuseElement.name',
+  })
+  .theme(t => ({
+    lineHeight: 3,
+    color: t.white
+  }))
+)
+```
+
+### 2. Extending css
+
+We can just pass new css properties to our component.
+
+```jsx
+import element from './previous-example-component'
+
+export const NewElement = element
+  .config({
+    name: 'ReuseElement.name',
+  })
+  .styles(
+    css => css`
+      ${({ theme: t }) => css`
+        line-height: 2;
+        color: black;
+      `};
+    `
+  )
+)
+```
+
+## Extend component
+
+Rocketstyle uses function chaining so we can just import any rocketstyle
+component and simply extend its `states`, `sizes`, `variants`, `theme`,
+`styles` and so on. Below is a brief example of extending a component with
+additional css properties:
+
+```jsx
+import element from './previous-example-component'
+
+export const NewElementA = element
+  .config({
+    name: 'ExtendElement.newName',
+  })
+  .styles(
+    css => css`
+      background-color: black;
+    `
+  )
+)
+
+// extend again NewElementA and create NewElement B
+const NewElementB = NewElementA.styles(css => css`text-align: right;`)
+```
+
+The `NewElementA` above will look like the previous component but with
+black `background-color`.
+
+`NewElementB` will have black background color and text aligned to
+the right.
+
+For more composition patterns examples please go through
+the documentation so you will see the power of Rocketstyle.

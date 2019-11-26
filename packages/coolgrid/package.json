@@ -1,0 +1,88 @@
+{
+  "name": "@vitus-labs/coolgrid",
+  "version": "v0.1.0-experimental.2",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "homepage": "https://vitus-labs.github.io/coolgrid/",
+  "description": "Ultra flexible and extensible grid system inspired by Bootstrap grid, based on styled-components",
+  "keywords": [
+    "grid",
+    "react",
+    "styled-components",
+    "bootstrap",
+    "flexible",
+    "extensible",
+    "coolgrid"
+  ],
+  "main": "dist/vitus-labs-coolgrid.js",
+  "umd:main": "dist/vitus-labs-coolgrid.umd.js",
+  "module": "dist/vitus-labs-coolgrid.module.js",
+  "browser": {
+    "./dist/vitus-labs-coolgrid.js": "./dist/vitus-labs-coolgrid.js",
+    "./dist/vitus-labs-coolgrid.module.js": "./dist/vitus-labs-coolgrid.module.js"
+  },
+  "unpkg": "dist/vitus-labs-coolgrid.umd.min.js",
+  "jsnext:main": "dist/vitus-labs-coolgrid.module.js",
+  "react-native": "dist/vitus-labs-coolgrid.module.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/coolgrid"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/coolgrid/issues"
+  },
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "yarn clean && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "storybook": "start-storybook -p 6006 -c",
+    "storybook:build": "build-storybook -c tools/storybook -o docs/",
+    "docs:dev": "docz dev",
+    "docs:build": "docz build",
+    "clean": "rm -rf lib dist",
+    "lint": "yarn lint:css && yarn lint:js",
+    "lint:css": "stylelint './src/**/*.js*'",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "rollup": "rollup -c",
+    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+  },
+  "peerDependencies": {
+    "@vitus-labs/core": ">= 0.1 <1",
+    "react": ">= 16.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "@storybook/addon-notes": "^5.2.0-beta.20",
+    "@storybook/addon-storysource": "^5.2.0-beta.20",
+    "@storybook/addon-viewport": "^5.2.0-beta.20",
+    "@storybook/addons": "^5.2.0-beta.20",
+    "@storybook/react": "^5.2.0-beta.20",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "@vitus-labs/core": "^0.2.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
+    "cpr": "^3.0.1",
+    "docz": "^2.0.0-rc.55",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "styled-components": "^5.0.0-beta.9",
+    "typescript": "^3.6.3"
+  }
+}

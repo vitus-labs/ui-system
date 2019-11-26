@@ -1,0 +1,230 @@
+---
+name: Custom count of columns
+menu: Examples
+route: /examples/custom-count-columns
+---
+
+import { Playground } from 'docz'
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from '../../src'
+
+# Custom count of columns
+
+By default, we have defined columns to be 12. You can easily change
+it in your theme provider or pass it as `columns` prop to `Container`
+or `Row`.
+
+## 12 columns grid
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## 7 columns grid via Container
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      columns={7}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## 7 columns grid via Row
+
+The first row has 12 columns and the second one has 7 columns.
+So even in one Container, you can have different numbers
+of columns.
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+      </Row>
+      <Row columns={7}>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+        <Col size={1}>7 cols</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## 7 columns grid via Container
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      columns={7}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## 5 columns grid via Container
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      columns={5}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+        <Col size={1} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## 5 columns grid via Row
+
+The first row has 12 columns and the second one has 5 columns.
+So even in one Container, you can have different numbers
+of columns.
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+        <Col size={2}>12 cols</Col>
+      </Row>
+      <Row columns={5}>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+        <Col size={1}>5 cols</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>

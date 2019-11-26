@@ -1,0 +1,67 @@
+---
+name: Col
+menu: Components
+route: /components/col
+---
+
+# Col
+
+## Usage example
+
+`Col`s must be inside Row. These are not standalone components.
+There is no requirement to use also `Container`. You can
+see examples below.
+
+```jsx
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from 'coolgrid'
+
+<ThemeProvider theme={theme}>
+  <Container>
+    <Row columns={7}>
+      <Col>{/* ...your components */}</Col>
+      <Col>{/* ...your components */}</Col>
+      <Col>{/* ...your components */}</Col>
+    </Row>
+  </Container>
+</ThemeProvider>
+
+// example without using Container
+<ThemeProvider theme={theme}>
+  <Row columns={7}>
+    <Col>{/* ...your components */}</Col>
+    <Col>{/* ...your components */}</Col>
+    <Col>{/* ...your components */}</Col>
+  </Row>
+</ThemeProvider>
+
+```
+
+## Properties
+
+| property name | type                     | default value | description                                            |
+| ------------- | ------------------------ | ------------- | ------------------------------------------------------ |
+| size          | number / object          |               | size of `Col`s inside `Row`                            |
+| gap           | number / object          | -             | gap of all `Col`s inside `Row`                         |
+| padding       | number / object          | -             | padding of all `Col`s inside `Row`                     |
+| css           | string / func            | -             | css extension for `Row`                                |
+| component     | string / react component |               | HTML valid tag / component, generates `div` by default |
+
+You can also use `breakpoint key names` as a properties. The example would be following:
+
+```jsx
+  const xs = {
+    padding: 10,
+    size: 4
+  }
+
+  const lg = {
+    padding: 10,
+    size: 4
+  }
+
+  <Col xs={xs} lg={lg} />
+```
+
+From the example above, data are passed via context to Row and Col components.
+Component `Col` gets values of `size`, `gap` and `padding`.

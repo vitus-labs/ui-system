@@ -1,0 +1,233 @@
+---
+name: Spacing
+menu: Examples
+route: /examples/spacing
+---
+
+import { Playground } from 'docz'
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from '../../src'
+
+# Gaps between columns and rows
+
+## Example
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row gap={0}>
+        <Col size={4}>gap-0</Col>
+        <Col size={4}>gap-0</Col>
+        <Col size={4}>gap-0</Col>
+        <Col size={4}>gap-0</Col>
+        <Col size={4}>gap-0</Col>
+        <Col size={4}>gap-0</Col>
+      </Row>
+      <Row gap={10}>
+        <Col size={4}>gap-10</Col>
+        <Col size={4}>gap-10</Col>
+        <Col size={4}>gap-10</Col>
+        <Col size={4}>gap-10</Col>
+        <Col size={4}>gap-10</Col>
+        <Col size={4}>gap-10</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Define gap on Container
+
+You can define `gap` on `Container` component for all Rows and columns
+inside Container. But if you need, you can easily override it within
+each Row component.
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      gap={10}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+      </Row>
+      <Row gap={0}>
+        <Col size={6}>gap-0</Col>
+        <Col size={6}>gap-0</Col>
+        <Col size={6}>gap-0</Col>
+        <Col size={6}>gap-0</Col>
+      </Row>
+      <Row>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Different gaps on rows
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row gap={10}>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+      </Row>
+      <Row gap={20}>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+      </Row>
+      <Row gap={30}>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+      </Row>
+      <Row gap={40}>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Reset horizontal margin
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row gap={10} gutter={0}>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+      </Row>
+      <Row gap={20} gutter={0}>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+      </Row>
+      <Row gap={30} gutter={0}>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+      </Row>
+      <Row gap={40} gutter={0}>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Columns with padding
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+      `}
+    >
+      <Row gap={10} gutter={0} padding={40}>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+        <Col size={6}>gap-10</Col>
+      </Row>
+      <Row gap={20} gutter={0} padding={30}>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+        <Col size={6}>gap-20</Col>
+      </Row>
+      <Row gap={30} gutter={0} padding={20}>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+        <Col size={6}>gap-30</Col>
+      </Row>
+      <Row gap={40} gutter={0} padding={10}>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+        <Col size={6}>gap-40</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Responsive padding
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      xs={12}
+      md={4}
+      lg={6}
+      padding={{ xs: 30, md: 10, lg: 60 }}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+      `}
+    >
+      <Row gap={0}>
+        <Col>xs:12, md:4, lg:6</Col>
+        <Col>xs:12, md:4, lg:6</Col>
+        <Col>xs:12, md:4, lg:6</Col>
+        <Col>xs:12, md:4, lg:6</Col>
+        <Col>xs:12, md:4, lg:6</Col>
+        <Col>xs:12, md:4, lg:6</Col>
+      </Row>
+      <Row gap={10} size={6}>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+        <Col>col 6</Col>
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>

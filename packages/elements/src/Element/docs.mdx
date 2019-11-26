@@ -1,0 +1,258 @@
+---
+name: Element
+menu: Components
+route: /components/element
+---
+
+import { Fragment } from 'react'
+import { Playground } from 'docz'
+// import { Wrapper, Inner } from './__stories__/components'
+import Button from './__stories__/Button.js'
+import TextField from './__stories__/Textfield.js'
+import { ThemeProvider } from 'styled-components'
+import Element from '.'
+
+# Element
+
+Element is the smallest possible unit to be used for creating components.
+By default it renders `div`. You can render any valid HTML `tag` by passsing
+it as a prop.
+
+Element is by default _inline-flex_. You can set _flex_ by using boolean `block`
+value which will also stretch the element to width of _100%_.
+
+Element also checks by default if `tag` passed in is type of `inline` HTML tag
+like `button` or `span`. If so, other helper sub-elements rendered
+inside (`beforeContent` and `afterContent` wrappers) are by default converted
+to `span` element so it is HTML valid.
+
+## Examples
+
+<Playground>
+  {() => {
+    const theme = {
+      rootSize: 16,
+      breakpoints: {
+        xs: 0,
+        sm: 576,
+        md: 768,
+        lg: 992,
+        xl: 1200
+      }
+    }
+    return (
+      <ThemeProvider theme={theme}>
+        <Fragment>
+          <h4>Simple Element example</h4>
+          <Button />
+          <h4>TextField example</h4>
+          <TextField
+            label="This is a Text Field"
+            placeholder="Type something..."
+          />
+        </Fragment>
+      </ThemeProvider>
+    )
+  }}
+</Playground>
+
+## Children
+
+To render children inside component you can pass content as `children` prop
+or `label` prop which might be nicer or more comfortable for inline elements.
+If you pass both of them _children_ **will have priority** to be rendered
+and _label_ will be ignored.
+
+## Before & After content
+
+You can also pass `beforeContent` or `afterContent`. This is kind of alternative
+to using `:before` or `:after` pseudo elements. This is useful especially in cases
+like buttons with loading icon or input wrppers with icons or anything similar.
+
+## Vertical vs. horizontal alignment
+
+Element can be aligned horizontally or vertically. So you can have `beforeContent`
+on the left side of `children` or above. The same applies for `afterContent`
+(below children or on the right side). Check out the examples below to see more.
+
+For vertical aligning you can use prop `vertical` set to `true`.
+
+## Aligning sub-elements inside
+
+Each sub-element has its own options to align itself. Each element has options to set
+_direction_, _horizontal_ and _vertical_ alignment by using props `contentDirection`,
+`contentAlignX` or `contentAlignY`. For pseudo elements `beforeContent` and `afterContent`
+you can use the same props but changed prefix according to its name
+(`beforeContentDirection` etc.) See the examples below.
+
+You don't need to write flex css styles and thing aboyt proper styling when changing
+direction anymore.
+
+<!-- // <Playground>
+// <Fragment>
+// <Wrapper beforeContent={Inner} afterContent={Inner}>
+// <Inner />
+// </Wrapper>
+// <Wrapper block beforeContent={Inner} afterContent={Inner}>
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignY="top"
+// contentAlignY="top"
+// afterContentAlignY="top"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignY="bottom"
+// contentAlignY="bottom"
+// afterContentAlignY="bottom"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignY="top"
+// contentAlignY="center"
+// afterContentAlignY="bottom"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignY="bottom"
+// contentAlignY="center"
+// afterContentAlignY="top"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignX="left"
+// contentAlignX="left"
+// afterContentAlignX="left"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignX="center"
+// contentAlignX="center"
+// afterContentAlignX="center"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignX="right"
+// contentAlignX="right"
+// afterContentAlignX="right"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignX="left"
+// contentAlignX="center"
+// afterContentAlignX="right"
+// >
+// <Inner />
+// </Wrapper>
+// <Wrapper
+// block
+// beforeContent={Inner}
+// afterContent={Inner}
+// beforeContentAlignX="right"
+// contentAlignX="center"
+// afterContentAlignX="left"
+// >
+// <Inner />
+// </Wrapper>
+// </Fragment>
+// </Playground> -->
+
+## Extending styles
+
+It is also possible to extend default styles of `content`, `beforeContent`
+and `afterContent` elements just by passing props `contentCss`, `beforeContentCss`
+and `afterContentCss`. To style root Wrapper, you can use `css` prop.
+
+You can pass simple string:
+
+```jsx
+<Element contentCss=`text-align: center;` />
+```
+
+or styles defined inside `css` function from styled-components
+
+```jsx
+<Element
+  contentCss={css`
+    text-align: center;
+  `}
+/>
+```
+
+or just pass function, because each prop returns `css` as a parameter,
+so you don't need to import it by yourself (and safe one line of code):
+
+```jsx
+<Element
+  contentCss={css =>
+    css`
+      text-align: center;
+    `
+  }
+/>
+```
+
+The same rules applies to all `css` properties.
+
+## Properties
+
+Below are default propertes.
+
+| Property Name              | Type                                                 | Default Value | Description                                                                |
+| -------------------------- | ---------------------------------------------------- | ------------- | -------------------------------------------------------------------------- |
+| tag                        | any                                                  |               | HTML valid tag                                                             |
+| block                      | boolean                                              | false         | Makes element behave like block element                                    |
+| passProps                  | string[]                                             | []            | Keys of props to be passed to its children, beforeContent and afterContent |
+| label                      | any                                                  | -             |                                                                            |
+| children                   | any                                                  | -             |                                                                            |
+| beforeContent              | any                                                  | -             |                                                                            |
+| afterContent               | any                                                  | -             |                                                                            |
+| equalCols                  | boolean                                              | false         |                                                                            |
+| vertical                   | boolean                                              | false         |                                                                            |
+| alignX                     | `left`,`center`,`right`,`spaceBetween`,`spaceAround` |               |                                                                            |
+| alignY                     | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` |               |                                                                            |
+| css                        | `string`, `func`                                     |               |                                                                            |
+| contentCss                 | `string`, `func`                                     |               |                                                                            |
+| beforeContentCss           | `string`, `func`                                     |               |                                                                            |
+| afterContentCss            | `string`, `func`                                     |               |                                                                            |
+| contentDirection           | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
+| contentAlignX              | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `left`        |                                                                            |
+| contentAlignY              | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |
+| beforeContentDirection     | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
+| beforeContentAlignX        | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `left`        |                                                                            |
+| beforeContentAlignY        | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |
+| afterafterContentDirection | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
+| afterContentAlignX         | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `right`       |                                                                            |
+| afterContentAlignY         | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |

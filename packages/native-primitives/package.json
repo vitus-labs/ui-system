@@ -1,0 +1,70 @@
+{
+  "name": "@vitus-labs/native-primitives",
+  "version": "0.0.3",
+  "homepage": "https://github.com/vitus-labs/native-primitives#readme",
+  "description": "React native primitives",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "license": "MIT",
+  "main": "dist/vitus-labs-native-primitives.js",
+  "umd:main": "dist/vitus-labs-native-primitives.umd.js",
+  "module": "dist/vitus-labs-native-primitives.module.js",
+  "browser": {
+    "./dist/vitus-labs-native-primitives.js": "./dist/vitus-labs-native-primitives.js",
+    "./dist/vitus-labs-native-primitives.module.js": "./dist/vitus-labs-native-primitives.module.js"
+  },
+  "unpkg": "dist/vitus-labs-native-primitives.umd.min.js",
+  "jsnext:main": "dist/vitus-labs-native-primitives.module.js",
+  "react-native": "dist/vitus-labs-native-primitives.module.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "storybook": "start-storybook -p 6006 -c tools/storybook",
+    "storybook:build": "build-storybook -c tools/storybook -o docs/",
+    "docs:dev": "docz dev",
+    "docs:build": "docz build",
+    "lint": "yarn lint:css && yarn lint:js",
+    "lint:css": "stylelint './src/**/*.js*'",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "rollup": "rollup -c",
+    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/native-primitives/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/native-primitives.git"
+  },
+  "peerDependencies": {
+    "react": ">= 16.7",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "lodash.pick": "^4.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "cpr": "^3.0.1",
+    "prettier": "^1.18.2",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "react-native": "^0.61.4"
+  }
+}

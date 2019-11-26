@@ -1,0 +1,61 @@
+---
+name: Nested columns
+menu: Examples
+route: /examples/nested-columns
+---
+
+import { Playground } from 'docz'
+import { ThemeProvider } from 'styled-components'
+import { Container, Row, Col, theme } from '../../src'
+
+# Nested columns
+
+Columns and Rows can be also nested.
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+        padding: 20px;
+      `}
+    >
+      <Row>
+        <Col size={8}>
+          <Row>
+            <Col size={6}>col-6</Col>
+            <Col size={6}>col-6</Col>
+          </Row>
+        </Col>
+        <Col size={4} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>
+
+## Nested columns using `padding` prop
+
+Columns and rows can be also nested.
+
+<Playground>
+  <ThemeProvider theme={theme}>
+    <Container
+      padding={20}
+      colCss={`
+        background-color: #e0e0eb;
+        border: 1px solid #b3b3cc;
+      `}
+    >
+      <Row>
+        <Col size={8}>
+          <Row>
+            <Col size={6}>col-6</Col>
+            <Col size={6}>col-6</Col>
+          </Row>
+        </Col>
+        <Col size={4} />
+      </Row>
+    </Container>
+  </ThemeProvider>
+</Playground>

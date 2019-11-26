@@ -1,0 +1,171 @@
+---
+name: Iterator
+menu: Components
+route: /components/iterator
+---
+
+import { Fragment } from 'react'
+import { Playground } from 'docz'
+import Iterator, { withActiveState } from '.'
+
+# Iterator
+
+Iterator is a component for rendering lists. It renders only an array of items
+without any root element (returns `<Fragment>`). So, in case you want
+to use it for rendering HTML valid list, you must wrap it with `<ul>`
+or `<ol>` HTML element or simply use `<List>` element from this package.
+
+## Example
+
+The example below takes as an argument an array of objects and renders
+a list of paragraphs.
+
+<Playground>
+  {() => {
+    const Item = ({ name }) => <p>{name}</p>
+    const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+    return <Iterator data={data} component={Item} />
+  }}
+</Playground>
+
+## Children vs. Data + Component prop
+
+There are two approaches on how to render items. `Iterator` accepts property
+`children` which will take precedence over properties `component` and `data`.
+If you like defining lists just by writing one line code, the second approach
+is recommended.
+See the following example.
+
+```jsx
+<Iterator data={data} component={Item} />
+```
+
+When passing data to Iterator and items are **not** type of `object`,
+you **MUST** set also property `itemKeyName`. Iterator needs to know how
+to name your items when passing them to their children.
+
+```jsx
+const Item = ({ someRandomPropertyName }) => <li>{someRandomPropertyName}</li>
+const data = [
+  '45156d8e-664c-4957-905c-56cbaff06421',
+  'e7a5833f-e838-4cda-92eb-aa9b63b87726',
+  '096f65eb-5f83-40db-9bd4-98a8e3355bd3'
+]
+
+<Iterator component={Item} data={data} itemKeyName="someRandomPropertyName" />
+```
+
+### Bonus tip
+
+You can pass property `data` as an array of objects. Iterator will go
+through each item object and will check if the object has a `component`
+key. `component` key is not required in those item data objects. If
+an item object contains a component key, it will try to render that
+component for each item in `data` array and fallbacks to default `component`
+prop. You can just set simply default components like in the previous example.
+
+```jsx
+import ItemComponentA from './ItemComponentA'
+import ItemComponentB from './ItemComponentB'
+import SomeDefaultComponent from './SomeDefaultComponent'
+
+const data = [
+  {
+    id: 1,
+    component: ItemComponentA,
+    name: 'James Bond'
+  },
+  {
+    id: 2,
+    component: ItemComponentB,
+    somePropName: 'This is a property',
+  },
+  {
+    id: 3, // will render SomeDefaultComponent component defined as a component property
+    yetAnotherProp: 'Hello',
+  }
+]
+
+<Iterator data={data} component={SomeDefaultComponent} />
+```
+
+## List Item unique keys
+
+Handling item keys is pretty easy. For each element, it checks whether
+each object in the data prop has `item.key`, `item.id`, `item.itemId`.
+If nothing of this is found, it fallbacks to `index` from javascript `map`
+function. This is helpful when you want to create just a simple list.
+By using `Iterator` you can save some lines of code. You can specify unique
+`key` by yourself by using `itemKey` function property with parameters
+`item` and `index`
+
+```jsx
+<Iterator data={data} component={Item} itemKey={(item, i) => item.itemKey} />
+```
+
+When item data are of different type (`string`, `number` etc.) it will use index as
+a unique key.
+
+## Properties
+
+Below are default propertes.
+
+| Property Name | Type     | Default Value | Description                                                                                |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------------------ |
+| children      | any      |               |                                                                                            |
+| itemKey       | `func`   |               | defines item `key` if none of the default key names fits your needs                        |
+| injectProps   | boolean  |               | if `true` it will inject `first`, `last`, `odd`, `even` and `position` props to each child |
+| component     | any      |               | default component to be rendered as a child                                                |
+| data          | `array`  |               | data to be rendered as a list                                                              |
+| itemProps     | `object` |               | additional props to be passed to each child                                                |
+| itemKeyName   | `string` |               | when data type of array, this will be key name of value passed into child as a prop        |
+
+## HOC withActiveState
+
+A high-order component to be used when you need to use the `active` state in your list.
+It can be used for _Accordeon_ elements or some other interactive lists.
+
+### Examples
+
+```jsx
+const NewIterator = withActiveState(Iterator)
+const data = ['a', 'b', 'c', 'd']
+const Item = ({ name, active, toggleItemActive, ...props }) => (
+  <div>
+    <h1 onClick={toggleItemActive}>This is heading {name}</h1>
+    {active && <div>Here is some text</div>}
+  </div>
+)
+
+return <NewIterator data={data} component={Item} itemKeyName="name" />
+```
+
+```jsx
+const data = ['a', 'b', 'c', 'd']
+const Wrapper = withActiveState(({ unsetAllItemsActive, ...props }) => (
+  <div>
+    <button onClick={unsetAllItemsActive}>collapse all</button>
+    <Iterator {...props} />
+  </div>
+))
+return <Wrapper type="multi" data={data} component={Item} itemKeyName="name" />
+```
+
+### Properties
+
+Below are default propertes.
+
+| Property Name | Type                                    | Default Value | Description              |
+| ------------- | --------------------------------------- | ------------- | ------------------------ |
+| type          | `simple`,`single`,`multi`               |               |                          |
+| activeItems   | `string`,`number`,`string[]`,`number[]` |               | itemId, array of itemIds |
+
+### Passes props down to Iteartor child
+
+| Property Name       | Type | Default Value | Description                  |
+| ------------------- | ---- | ------------- | ---------------------------- |
+| setItemActive       | func |               | passed in `itemProps` object |
+| unsetItemActive     | func |               | passed in `itemProps` object |
+| toggleItemActive    | func |               | passed in `itemProps` object |
+| active              | bool |               | passed in `itemProps` object |
+| unsetAllItemsActive | func |               | if type is `multi`           |
