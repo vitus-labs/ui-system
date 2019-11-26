@@ -1,10 +1,10 @@
-import rollup from "@vitus-labs/tools-rollup";
+import rollup from '@internal/rollup'
 
 export default rollup({
-  name: "vitus-labs-coolgrid",
-  external: ["react", "@vitus-labs/core"],
+  name: 'vitus-labs-coolgrid',
+  external: ['react', '@vitus-labs/core'],
   globals: {
-    react: "React",
-    "@vitus-labs/core": "@vitus-labs/core"
+    react: 'React',
+    '@vitus-labs/core': '@vitus-labs/core'
   }
-});
+})

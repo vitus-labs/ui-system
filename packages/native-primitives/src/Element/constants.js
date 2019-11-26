@@ -17,7 +17,7 @@ const TEXT_PROPS_KEYS = [
   'textDecorationColor',
   'textDecorationStyle',
   'textTransform',
-  'writingDirection',
+  'writingDirection'
 ]
 
 export default TEXT_PROPS_KEYS

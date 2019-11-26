@@ -35,7 +35,7 @@ const Element = ({ onPress, children, style, ...props }) => {
   const finalProps = {
     ...props,
     style,
-    onPress,
+    onPress
   }
 
   if (onPress) {

@@ -58,9 +58,7 @@
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
-    "@vitus-labs/tools-rollup": "*",
+    "@internal/rollup": "*",
     "babel-loader": "^8.0.6",
     "cpr": "^3.0.1",
     "react": "^16.10.1",
