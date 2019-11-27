@@ -61,6 +61,7 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
+    "@internal/docz": "*",
     "@internal/rollup": "*",
     "@vitus-labs/core": "*"
   }

@@ -1,11 +1,10 @@
-export default {
-  typescript: true,
+const docz = require('@internal/docz')
+
+export default docz.config({
   base: '/elements/',
   title: 'Elements',
   description: 'React elements',
-  files: '**/*.{md,markdown,mdx}',
-  ignore: ['README.md'],
-  dest: '/docs',
+  dest: '/elements',
   menu: [
     'Getting Started',
     {
@@ -13,4 +12,4 @@ export default {
       menu: ['Element', 'Iterator', 'List', 'Text', 'Overlay', 'Portal', 'Util']
     }
   ]
-}
+})
