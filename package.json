@@ -7,7 +7,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   ],
   "devDependencies": {
     "coveralls": "^3.0.4",
+    "cpr": "^3.0.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-to-json": "^3.3.5",
@@ -40,12 +42,15 @@
     "jest-styled-components": "^6.3.3",
     "lerna": "^3.19.0",
     "prettier": "^1.19.1",
-    "styled-components": "^5.0.0-beta.9",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "styled-components": "^4.4.1",
     "stylelint": "^11.0.0",
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.8.0",
     "ts-jest": "^24.0.0",
-    "tslint": "^5.12.1"
+    "tslint": "^5.12.1",
+    "typescript": "^3.7.2"
   }
 }

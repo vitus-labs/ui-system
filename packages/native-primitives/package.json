@@ -56,15 +56,7 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "cpr": "^3.0.1",
-    "prettier": "^1.18.2",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
+    "@internal/rollup": "*",
     "react-native": "^0.61.4"
   }
 }

@@ -35,9 +35,7 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c",
-    "pkgs": "rm -rf node_modules/ package-lock.json yarn.lock && yarn",
-    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+    "rollup": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -51,8 +49,6 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.5",
-    "@babel/core": "^7.1.2",
     "@internal/rollup": "*",
     "@storybook/addon-notes": "^5.2.0-beta.33",
     "@storybook/addon-storysource": "^5.2.0-beta.33",
@@ -61,25 +57,8 @@
     "@storybook/react": "^5.2.0-beta.33",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
-    "awesome-typescript-loader": "^5.2.1",
-    "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.5",
-    "babel-plugin-module-resolver": "^3.2.0",
-    "coveralls": "^3.0.2",
-    "cpr": "^3.0.1",
     "docz": "^2.0.0-rc.52",
-    "enzyme": "^3.8.0",
-    "enzyme-adapter-react-16": "^1.6.0",
-    "enzyme-to-json": "^3.4.2",
-    "jest": "^24.9.0",
-    "jest-styled-components": "^7.0.0-beta.1",
-    "jsdom": "^15.1.1",
-    "prettier": "^1.16.4",
-    "react": "^16.10.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
-    "react-dom": "^16.10.1",
-    "react-icons-kit": "^1.2.0",
-    "styled-components": "^5.0.0-beta.9",
-    "typescript": "^3.6.3"
+    "react-icons-kit": "^1.2.0"
   }
 }

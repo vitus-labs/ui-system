@@ -37,9 +37,7 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c",
-    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
-    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+    "rollup": "rollup -c"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/core/issues"
@@ -56,12 +54,6 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@internal/rollup": "*",
-    "babel-loader": "^8.0.6",
-    "cpr": "^3.0.1",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1"
+    "@internal/rollup": "*"
   }
 }

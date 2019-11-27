@@ -1,33 +1,31 @@
 module.exports = api => {
-  api.cache(true);
+  api.cache(true)
 
   return {
     presets: [
       [
-        "@babel/env",
+        '@babel/env',
         {
-          useBuiltIns: "entry",
           targets: {
-            node: "current",
-            browsers: "Last 2 Chrome versions, Firefox ESR"
+            node: 'current'
           }
         }
       ],
-      "@babel/react"
+      '@babel/react'
     ],
     env: {
       build: {
         ignore: [
-          "**/*.test.tsx",
-          "**/*.test.ts",
-          "**/*.story.tsx",
-          "__snapshots__",
-          "__tests__",
-          "__stories__"
+          '**/*.test.tsx',
+          '**/*.test.ts',
+          '**/*.story.tsx',
+          '__snapshots__',
+          '__tests__',
+          '__stories__'
         ]
       }
     },
-    ignore: ["node_modules"],
+    ignore: ['node_modules'],
     plugins: [
       // [
       //   "module-resolver",
@@ -39,7 +37,7 @@ module.exports = api => {
       //     }
       //   }
       // ],
-      "@babel/plugin-proposal-class-properties"
+      '@babel/plugin-proposal-class-properties'
     ]
-  };
-};
+  }
+}

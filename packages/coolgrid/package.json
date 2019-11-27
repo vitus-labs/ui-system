@@ -54,19 +54,13 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c",
-    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
-    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+    "rollup": "rollup -c"
   },
   "peerDependencies": {
     "@vitus-labs/core": ">= 0.1 <1",
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
     "@internal/rollup": "*",
     "@storybook/addon-notes": "^5.2.0-beta.20",
     "@storybook/addon-storysource": "^5.2.0-beta.20",
@@ -74,14 +68,6 @@
     "@storybook/addons": "^5.2.0-beta.20",
     "@storybook/react": "^5.2.0-beta.20",
     "@vitus-labs/core": "*",
-    "awesome-typescript-loader": "^5.2.1",
-    "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.6",
-    "cpr": "^3.0.1",
-    "docz": "^2.0.0-rc.55",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
-    "styled-components": "^5.0.0-beta.9",
-    "typescript": "^3.6.3"
+    "docz": "^2.0.0-rc.55"
   }
 }
