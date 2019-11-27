@@ -2,6 +2,6 @@
   "npmClient": "yarn",
   "hoist": true,
   "useWorkspaces": true,
-  "packages": ["packages/*", "tools/*"],
+  "packages": ["packages/*"],
   "version": "0.0.0"
 }
