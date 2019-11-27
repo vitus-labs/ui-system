@@ -50,14 +50,8 @@
   },
   "devDependencies": {
     "@internal/rollup": "*",
-    "@storybook/addon-notes": "^5.2.0-beta.33",
-    "@storybook/addon-storysource": "^5.2.0-beta.33",
-    "@storybook/addon-viewport": "^5.2.0-beta.33",
-    "@storybook/addons": "^5.2.0-beta.33",
-    "@storybook/react": "^5.2.0-beta.33",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
-    "docz": "^2.0.0-rc.52",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-icons-kit": "^1.2.0"
   }

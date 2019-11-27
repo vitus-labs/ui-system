@@ -64,13 +64,6 @@
   },
   "devDependencies": {
     "@internal/rollup": "*",
-    "@storybook/addon-notes": "^5.0.3",
-    "@storybook/addon-storysource": "^5.0.3",
-    "@storybook/addon-viewport": "^5.0.3",
-    "@storybook/addons": "^5.0.3",
-    "@storybook/react": "^5.0.3",
-    "@vitus-labs/core": "^0.0.5",
-    "docz": "^1.0.0",
-    "docz-theme-default": "^1.0.0"
+    "@vitus-labs/core": "^0.0.5"
   }
 }

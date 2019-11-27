@@ -56,7 +56,6 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@internal/rollup": "*",
-    "react-native": "^0.61.4"
+    "@internal/rollup": "*"
   }
 }

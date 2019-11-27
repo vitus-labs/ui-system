@@ -25,8 +25,14 @@
     "tools/*"
   ],
   "devDependencies": {
+    "@storybook/addon-notes": "^5.2.0-beta.33",
+    "@storybook/addon-storysource": "^5.2.0-beta.33",
+    "@storybook/addon-viewport": "^5.2.0-beta.33",
+    "@storybook/addons": "^5.2.0-beta.33",
+    "@storybook/react": "^5.2.0-beta.33",
     "coveralls": "^3.0.4",
     "cpr": "^3.0.1",
+    "docz": "^2.0.0-rc.55",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-to-json": "^3.3.5",
@@ -44,6 +50,7 @@
     "prettier": "^1.19.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-native": "^0.61.4",
     "styled-components": "^4.4.1",
     "stylelint": "^11.0.0",
     "stylelint-config-recommended": "^3.0.0",
