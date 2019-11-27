@@ -1,5 +1,11 @@
 import React, { useContext } from 'react'
-import { extendedCss, sortBreakpoints, optimizeTheme, pickThemeProps, omit } from '@vitus-labs/core'
+import {
+  extendedCss,
+  sortBreakpoints,
+  optimizeTheme,
+  pickThemeProps,
+  omit
+} from '@vitus-labs/core'
 import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
 import RowContext from '../Row/context'
 import Styled from './styled'
@@ -21,7 +27,6 @@ const Element = ({ children, component, css, ...rest }) => {
 
   return (
     <Styled
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...omit(props, RESERVED_KEYS)}
       as={component || colComponent}
       coolgrid={{

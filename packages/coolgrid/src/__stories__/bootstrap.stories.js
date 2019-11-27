@@ -107,10 +107,11 @@ storiesOf('Bootstrap Grid Examples', module)
     <Container colCss={colCss}>
       <Row>
         <Col>
-          Lorem ipsum dolor sit amet, cibo sensibus interesset no sit. Et dolor possim volutpat qui.
-          No malis tollit iriure eam, et vel tale zril blandit, rebum vidisse nostrum qui eu. No
-          nostrud dolorem legendos mea, ea eum mucius oporteat platonem.Eam an case scribentur, ei
-          clita causae cum, alia debet eu vel.
+          Lorem ipsum dolor sit amet, cibo sensibus interesset no sit. Et dolor
+          possim volutpat qui. No malis tollit iriure eam, et vel tale zril blandit,
+          rebum vidisse nostrum qui eu. No nostrud dolorem legendos mea, ea eum
+          mucius oporteat platonem.Eam an case scribentur, ei clita causae cum, alia
+          debet eu vel.
         </Col>
         <Col />
         <Col />

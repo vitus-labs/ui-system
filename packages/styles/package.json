@@ -1,0 +1,59 @@
+{
+  "name": "@vitus-labs/styles",
+  "version": "0.0.0",
+  "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
+  "description": "Styles",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "license": "MIT",
+  "main": "dist/vitus-labs-styles.js",
+  "umd:main": "dist/vitus-labs-styles.umd.js",
+  "module": "dist/vitus-labs-styles.module.js",
+  "browser": {
+    "./dist/vitus-labs-styles.js": "./dist/vitus-labs-styles.js",
+    "./dist/vitus-labs-styles.module.js": "./dist/vitus-labs-styles.module.js"
+  },
+  "unpkg": "dist/vitus-labs-styles.umd.min.js",
+  "jsnext:main": "dist/vitus-labs-styles.module.js",
+  "react-native": "dist/vitus-labs-styles.module.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "storybook": "start-storybook -p 6006 -c tools/storybook",
+    "storybook:build": "build-storybook -c tools/storybook -o docs/",
+    "docs:dev": "docz dev",
+    "docs:build": "docz build",
+    "lint": "yarn lint:css && yarn lint:js",
+    "lint:css": "stylelint './src/**/*.js*'",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "rollup": "rollup -c"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/core.git"
+  },
+  "peerDependencies": {
+    "react": ">= 16.7",
+    "styled-components": ">= 4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@internal/rollup": "*"
+  }
+}

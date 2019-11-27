@@ -1,18 +1,20 @@
-const sortBreakpoints = breakpoints =>
-  Object.keys(breakpoints).sort((a, b) => breakpoints[a] - breakpoints[b])
+const sortBreakpoints = breakpoints => Object.keys(breakpoints).sort(
+  (a, b) => breakpoints[a] - breakpoints[b]
+)
 
-const createMediaQueries = ({ breakpoints, rootSize, css }) =>
-  Object.keys(breakpoints).reduce((accumulator, label) => {
-    // use em in breakpoints to work properly cross-browser and support users
-    // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
-    const emSize = breakpoints[label] / rootSize
-    accumulator[label] = (...args) => css`
+const createMediaQueries = ({
+  breakpoints, rootSize, css
+}) => Object.keys(breakpoints).reduce((accumulator, label) => {
+  // use em in breakpoints to work properly cross-browser and support users
+  // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
+  const emSize = breakpoints[label] / rootSize
+  accumulator[label] = (...args) => css`
       @media (min-width: ${emSize}em) {
         ${css(...args)};
       }
     `
-    return accumulator
-  }, {})
+  return accumulator
+}, {})
 
 const transformTheme = ({ theme, breakpoints }) => {
   const newTheme = {}
@@ -39,10 +41,7 @@ const transformTheme = ({ theme, breakpoints }) => {
   return newTheme
 }
 
-const makeItResponsive = ({ theme: customTheme, key, css, styles }) => ({
-  theme,
-  ...props
-}) => {
+const makeItResponsive = ({ theme: customTheme, key, css, styles }) => ({ theme, ...props }) => {
   const internalTheme = customTheme || props[key]
   const { rootSize, breakpoints } = theme
   const media = createMediaQueries({ breakpoints, rootSize, css })

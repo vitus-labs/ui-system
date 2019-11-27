@@ -14,11 +14,7 @@ export const stripUnit = (value, unitReturn) => {
   return value
 }
 
-export const value = ({
-  param,
-  rootSize = 16,
-  outputUnit = CONFIG().isWeb ? 'rem' : 'px'
-}) => {
+export const value = ({ param, rootSize = 16, outputUnit = CONFIG().isWeb ? 'rem' : 'px' }) => {
   if (!param && param !== 0) return null
 
   const [value, unit] = stripUnit(param, true)
@@ -40,15 +36,15 @@ const getValue = (...values) =>
   values.find(value => typeof value !== 'undefined' && value !== null)
 
 export default ({ theme: t, css, rootSize }) => css`
-  ${t.hideEmpty &&
-    css`
-      &:empty {
-        display: none;
-      }
-    `};
 
-  ${t.fullScreen &&
-    css`
+  ${t.hideEmpty && css`
+    &:empty {
+      display: none;
+    }
+  `};
+
+  ${t.fullScreen
+    && css`
       position: fixed;
       top: 0;
       left: 0;
@@ -78,10 +74,7 @@ export default ({ theme: t, css, rootSize }) => css`
   margin-right: ${value({ param: getValue(t.marginRight, t.marginX), rootSize })};
 
   padding-top: ${value({ param: getValue(t.paddingTop, t.paddingY), rootSize })};
-  padding-bottom: ${value({
-    param: getValue(t.paddingBottom, t.paddingY),
-    rootSize
-  })};
+  padding-bottom: ${value({ param: getValue(t.paddingBottom, t.paddingY), rootSize })};
   padding-left: ${value({ param: getValue(t.paddingLeft, t.paddingX), rootSize })};
   padding-right: ${value({ param: getValue(t.paddingRight, t.paddingX), rootSize })};
 
@@ -97,8 +90,8 @@ export default ({ theme: t, css, rootSize }) => css`
   color: ${t.color};
   background-size: ${t.bgSize};
   background-color: ${t.bgColor};
-  ${t.bgImg &&
-    css`
+  ${t.bgImg
+    && css`
       background-image: url(${t.bgImg});
     `};
 
@@ -106,14 +99,10 @@ export default ({ theme: t, css, rootSize }) => css`
 
   ${() => {
     if (t.borderWidth && t.borderStyle && t.borderColor) {
-      const params = `${value({ param: t.borderWidth, rootSize })} ${
-        t.borderStyle
-      } ${t.borderColor};`
+      const params = `${value({ param: t.borderWidth, rootSize })} ${t.borderStyle} ${t.borderColor};`
       if (t.borderSide) return css`border-${t.borderSide}: ${params};`
 
-      return css`
-        border: ${params};
-      `
+      return css`border: ${params};`;
     }
 
     return null

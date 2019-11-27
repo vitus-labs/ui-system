@@ -10,7 +10,7 @@ export default CONFIG().styled(CONFIG().component)`
     CONFIG().css`
       box-sizing: border-box;
     `};
-    
+
   display: flex;
   width: 100%;
   flex-direction: column;

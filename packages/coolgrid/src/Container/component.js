@@ -1,7 +1,16 @@
 import React, { useContext } from 'react'
-import { CONFIG, extendedCss, sortBreakpoints, omit, pickThemeProps } from '@vitus-labs/core'
+import {
+  CONFIG,
+  extendedCss,
+  sortBreakpoints,
+  omit,
+  pickThemeProps
+} from '@vitus-labs/core'
 import { merge, createGridContext } from '../utils'
-import { CONTAINER_RESERVED_KEYS as RESERVED_KEYS, BASE_RESERVED_KEYS } from '../constants'
+import {
+  CONTAINER_RESERVED_KEYS as RESERVED_KEYS,
+  BASE_RESERVED_KEYS
+} from '../constants'
 import Context from './context'
 import Styled from './styled'
 
@@ -13,7 +22,6 @@ const Element = ({ children, width, component, css, ...props }) => {
 
   return (
     <Styled
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...omit(props, [...RESERVED_KEYS, ...BASE_RESERVED_KEYS])}
       as={component}
       coolgrid={{

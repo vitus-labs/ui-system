@@ -16,7 +16,9 @@ import Styled from './styled'
 const Element = ({ children, component, css, ...props }) => {
   const theme = useContext(CONFIG().context)
   const [width, setWidth] = useState(0)
-  const { coolgrid: ctxTheme, rowCss, rowComponent, ...ctx } = useContext(ContainerContext)
+  const { coolgrid: ctxTheme, rowCss, rowComponent, ...ctx } = useContext(
+    ContainerContext
+  )
 
   const gridContext = createGridContext(props, ctx, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
@@ -47,15 +49,16 @@ const Element = ({ children, component, css, ...props }) => {
   }
 
   return (
-    <Styled
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...finalProps}
-    >
+    <Styled {...finalProps}>
       <RowContext.Provider
         value={{
           ...gridContext,
           ...merge(props, ctx, RESERVED_KEYS),
-          coolgrid: { ...ctxTheme, ...pickThemeProps(props, keywords), RNparentWidth: width }
+          coolgrid: {
+            ...ctxTheme,
+            ...pickThemeProps(props, keywords),
+            RNparentWidth: width
+          }
         }}
       >
         {children}
