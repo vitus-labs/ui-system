@@ -1,0 +1,18 @@
+{
+  "name": "@internal/storybook",
+  "version": "0.0.0",
+  "main": "./config.js",
+  "dependencies": {
+    "@storybook/addon-notes": "^5.3.0-beta.12",
+    "@storybook/addon-storysource": "^5.3.0-beta.12",
+    "@storybook/addon-viewport": "^5.3.0-beta.12",
+    "@storybook/addons": "^5.3.0-beta.12",
+    "@storybook/react": "^5.3.0-beta.12"
+  },
+  "devDependencies": {
+    "@storybook/addon-info": "^5.2.6",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.6",
+    "react-docgen-typescript-loader": "^3.6.0"
+  }
+}

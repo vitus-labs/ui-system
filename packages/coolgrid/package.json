@@ -41,7 +41,7 @@
   "scripts": {
     "prepublish": "yarn build",
     "build": "yarn clean && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006 -c",
+    "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook -c tools/storybook -o docs/",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
@@ -63,6 +63,7 @@
   "devDependencies": {
     "@internal/docz": "*",
     "@internal/rollup": "*",
+    "@internal/storybook": "*",
     "@vitus-labs/core": "*"
   }
 }

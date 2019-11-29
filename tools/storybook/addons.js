@@ -1,3 +1,6 @@
-import '@storybook/addon-storysource/register'
-import '@storybook/addon-notes/register'
-import '@storybook/addon-storysource/register'
+module.exports = {
+  addons: [
+    '@storybook/addon-storysource/register',
+    '@storybook/addon-viewport/register'
+  ]
+}

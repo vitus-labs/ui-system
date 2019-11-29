@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react'
-import { configure, addDecorator, storiesOf } from '@storybook/react'
-import { configureViewport, INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
+import { configure, addParameters, addDecorator, storiesOf } from '@storybook/react'
+import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
 import themeDecorator from './decorators/themeDecorator'
 
-const newViewports = {
+const customViewports = {
   xs: {
     name: 'XS Screen',
     styles: {
@@ -66,17 +66,15 @@ global.React = React
 global.Fragment = Fragment
 global.storiesOf = storiesOf
 
-const req = require.context('../../src', true, /\/*stories.js$/)
-
-function loadStories() {
-  req.keys().forEach(filename => req(filename))
+export default ({ source, theme }) => {
+  addParameters({
+    viewport: {
+      viewports: {
+        ...INITIAL_VIEWPORTS,
+        ...customViewports
+      }
+    }
+  })
+  addDecorator(themeDecorator(theme))
+  configure(source, module)
 }
-
-configureViewport({
-  viewports: { ...newViewports, ...INITIAL_VIEWPORTS },
-  defaultViewport: 'xxl'
-})
-
-addDecorator(themeDecorator)
-
-configure(loadStories, module)
