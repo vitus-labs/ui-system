@@ -17,7 +17,7 @@ export const stripUnit = (value, unitReturn) => {
 export const value = ({
   param,
   rootSize = 16,
-  outputUnit = config().isWeb ? 'rem' : 'px'
+  outputUnit = config.isWeb ? 'rem' : 'px'
 }) => {
   if (!param && param !== 0) return null
 

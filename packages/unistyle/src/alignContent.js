@@ -35,7 +35,7 @@ const alignValue = map => attr => map[attr]
 
 const alignValueX = alignValue(MAP_ALIGN_X)
 const alignValueY = alignValue(MAP_ALIGN_Y)
-const setDirection = alignValue(MAP_DIRECTION[config().platform])
+const setDirection = alignValue(MAP_DIRECTION[config.platform])
 
 const alignContent = attrs => {
   if (

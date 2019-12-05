@@ -1,4 +1,5 @@
-import { CONFIG, makeItResponsive, value } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
+import { makeItResponsive, value } from '@vitus-labs/unistyle'
 
 const isNumber = number => Number.isFinite(number)
 
@@ -7,7 +8,7 @@ const styles = ({ theme, css, rootSize }) => {
   t.padding = theme.padding
   t.gap = theme.gap / 2
 
-  if (CONFIG().isWeb) {
+  if (config.isWeb) {
     const width = (theme.size / theme.columns) * 100
 
     if (width) {
@@ -20,7 +21,7 @@ const styles = ({ theme, css, rootSize }) => {
     }
   }
 
-  if (CONFIG().isNative) {
+  if (config.isNative) {
     const width = (theme.RNparentWidth / theme.columns) * theme.size
 
     if (isNumber(width)) {
@@ -60,9 +61,9 @@ const styles = ({ theme, css, rootSize }) => {
   `
 }
 
-export default CONFIG().styled(CONFIG().component)`
-  ${CONFIG().isWeb &&
-    CONFIG().css`
+export default config.styled(config.component)`
+  ${config.isWeb &&
+    config.css`
       box-sizing: border-box;
     `};
 
@@ -72,7 +73,7 @@ export default CONFIG().styled(CONFIG().component)`
   flex-grow: 1;
 
   ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: CONFIG().css })({
+    makeItResponsive({ theme: rest, styles, css: config.css })({
       theme: { breakpoints, rootSize }
     })};
 `

@@ -1,4 +1,4 @@
-import { CONFIG } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
 import { makeItResponsive, alignContent, extendedCss } from '@vitus-labs/unistyle'
 
 const styles = ({ css, theme: t }) => css`
@@ -19,9 +19,9 @@ const styles = ({ css, theme: t }) => css`
   ${t.extendCss && extendedCss(t.extendCss)};
 `
 
-export default CONFIG().styled(CONFIG().component)`
-  ${CONFIG().isWeb &&
-    CONFIG().css`
+export default config.styled(config.component)`
+  ${config.isWeb &&
+    config.css`
       box-sizing: border-box;
     `}
   display: flex;
@@ -29,9 +29,9 @@ export default CONFIG().styled(CONFIG().component)`
 
   ${({ isContent }) =>
     isContent &&
-    CONFIG().css`
+    config.css`
     flex: 1;
   `};
 
-  ${makeItResponsive({ key: 'element', styles, css: CONFIG().css })};
+  ${makeItResponsive({ key: 'element', styles, css: config.css })};
 `

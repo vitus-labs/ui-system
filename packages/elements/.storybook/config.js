@@ -1,6 +1,6 @@
 import storybook from '@internal/storybook'
-// import theme from '../src/theme'
+import { breakpoints } from '@vitus-labs/unistyle'
 
 const source = require.context('../src', true, /\/*stories.js$/)
 
-storybook({ source, theme: {} })
+storybook({ source, theme: { ...breakpoints } })

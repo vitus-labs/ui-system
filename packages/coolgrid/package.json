@@ -58,12 +58,14 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
+    "@vitus-labs/unistyle": "*",
     "react": ">= 16.7"
   },
   "devDependencies": {
     "@internal/docz": "*",
     "@internal/rollup": "*",
     "@internal/storybook": "*",
-    "@vitus-labs/core": "*"
+    "@vitus-labs/core": "*",
+    "@vitus-labs/unistyle": "*"
   }
 }

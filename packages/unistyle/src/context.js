@@ -6,12 +6,12 @@ const isEmpty = param =>
   Object.entries(param).length === 0 && param.constructor === Object
 
 export default () => {
-  const { breakpoints } = useContext(config().context)
+  const { breakpoints } = useContext(config.context)
 
   const result = {
-    component: config().component,
-    isWeb: config().isWeb,
-    isNative: config().isNative
+    component: config.component,
+    isWeb: config.isWeb,
+    isNative: config.isNative
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {

@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react'
+import config, { omit } from '@vitus-labs/core'
 import {
-  CONFIG,
   extendedCss,
   sortBreakpoints,
   optimizeTheme,
-  omit,
   pickThemeProps
-} from '@vitus-labs/core'
+} from '@vitus-labs/unistyle'
 import { merge, createGridContext } from '../utils'
 import { ROW_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
 import { Context as ContainerContext } from '../Container'
@@ -14,7 +13,7 @@ import RowContext from './context'
 import Styled from './styled'
 
 const Element = ({ children, component, css, ...props }) => {
-  const theme = useContext(CONFIG().context)
+  const theme = useContext(config.context)
   const [width, setWidth] = useState(0)
   const { coolgrid: ctxTheme, rowCss, rowComponent, ...ctx } = useContext(
     ContainerContext
@@ -41,7 +40,7 @@ const Element = ({ children, component, css, ...props }) => {
   }
 
   // react native helper to calculate column width
-  if (CONFIG().isNative) {
+  if (config.isNative) {
     finalProps.onLayout = event => {
       const { width } = event.nativeEvent.layout
       setWidth(width)

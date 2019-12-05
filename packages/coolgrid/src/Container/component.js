@@ -1,11 +1,6 @@
 import React, { useContext } from 'react'
-import {
-  CONFIG,
-  extendedCss,
-  sortBreakpoints,
-  omit,
-  pickThemeProps
-} from '@vitus-labs/core'
+import config, { omit } from '@vitus-labs/core'
+import { extendedCss, sortBreakpoints, pickThemeProps } from '@vitus-labs/unistyle'
 import { merge, createGridContext } from '../utils'
 import {
   CONTAINER_RESERVED_KEYS as RESERVED_KEYS,
@@ -15,7 +10,7 @@ import Context from './context'
 import Styled from './styled'
 
 const Element = ({ children, width, component, css, ...props }) => {
-  const theme = useContext(CONFIG().context)
+  const theme = useContext(config.context)
   const gridContext = createGridContext(props, {}, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
   const ctxTheme = pickThemeProps(props, [...RESERVED_KEYS, ...breakpoints])

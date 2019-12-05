@@ -1,16 +1,16 @@
 import React from 'react'
-import { CONFIG } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
 import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
 
-const LeftContent = CONFIG().styled.span`
+const LeftContent = config.styled.span`
   margin-right: 10px;
   padding: 5px;
   border-radius: 4px;
   background-color: black;
 `
 
-const RightContent = CONFIG().styled.span`
+const RightContent = config.styled.span`
   margin-left: 10px;
   padding: 2px;
   border-radius: 4px;
@@ -22,7 +22,7 @@ const RightContent = CONFIG().styled.span`
   ${({ hover }) => {
     return (
       hover &&
-      CONFIG().css`
+      config.css`
         &:hover {
           background-color: black;
         };

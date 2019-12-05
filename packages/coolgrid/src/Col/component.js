@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
+import { omit } from '@vitus-labs/core'
 import {
   extendedCss,
   sortBreakpoints,
   optimizeTheme,
-  pickThemeProps,
-  omit
-} from '@vitus-labs/core'
+  pickThemeProps
+} from '@vitus-labs/unistyle'
 import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
 import RowContext from '../Row/context'
 import Styled from './styled'

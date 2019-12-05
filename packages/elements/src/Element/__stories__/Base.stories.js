@@ -1,7 +1,7 @@
-import { CONFIG } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
 import Element from '~/Element'
 
-const extendCss = CONFIG().css`
+const extendCss = config.css`
   background-color: #fff;
   border: 1px solid black;
   color: black;
@@ -22,11 +22,7 @@ const beforeContent = ({ hover, ...props }) => {
 storiesOf('Element', module)
   .add('Basics', () => {
     return (
-      <Element
-        css={extendCss}
-        beforeContent={beforeContent}
-        afterContent="right"
-      >
+      <Element css={extendCss} beforeContent={beforeContent} afterContent="right">
         child
       </Element>
     )

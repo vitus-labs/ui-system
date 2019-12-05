@@ -1,11 +1,11 @@
 import React from 'react'
-import { CONFIG } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
 import { Icon } from 'react-icons-kit'
 import { home } from 'react-icons-kit/icomoon/home'
 import WithState from '~/WithState'
 import Element from '~/Element'
 
-const extendCss = CONFIG().css`
+const extendCss = config.css`
   border: 1px solid #d3d3d3;
   border-radius: 4px;
   font-weight: 400;
@@ -20,7 +20,7 @@ const extendCss = CONFIG().css`
 
   ${({ hover }) =>
     hover &&
-    CONFIG().css`
+    config.css`
       &:hover {
         border-color: #007bff;
       }
@@ -28,17 +28,17 @@ const extendCss = CONFIG().css`
 
   ${({ focus }) =>
     focus &&
-    CONFIG().css`
+    config.css`
       border-color: #007bff;
     `};
 `
 
-const Label = CONFIG().styled.label`
+const Label = config.styled.label`
   display: inline-block;
   margin-bottom: 0.5rem;
 `
 
-const Input = CONFIG().styled.input`
+const Input = config.styled.input`
   border: none;
   outline: none;
   align-self: stretch;
@@ -47,7 +47,7 @@ const Input = CONFIG().styled.input`
 
 const Ico = () => <Icon icon={home} />
 
-const LeftContent = CONFIG().styled.span`
+const LeftContent = config.styled.span`
   padding: 5px;
   background-color: transparent;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
@@ -55,13 +55,13 @@ const LeftContent = CONFIG().styled.span`
 
   ${({ hover, focus }) =>
     (hover || focus) &&
-    CONFIG().css`
+    config.css`
       color: #fff;
       background-color: #007bff;
     `};
 `
 
-const RightContent = CONFIG().styled.span`
+const RightContent = config.styled.span`
   padding: 5px;
   margin-left: 5px;
   margin-right: 5px;

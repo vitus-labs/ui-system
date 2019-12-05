@@ -1,6 +1,6 @@
 import React, { forwardRef, memo } from 'react'
-import { CONFIG } from '@vitus-labs/core'
-import { vitusContext, optimizeTheme, omit } from '@vitus-labs/unistyle'
+import config, { omit } from '@vitus-labs/core'
+import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
 import Styled from './styled'
 
@@ -16,7 +16,7 @@ const KEYWORDS = [
 const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
   const restProps = omit(props, KEYWORDS)
 
-  const needsFix = CONFIG().isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : null
+  const needsFix = config.isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : null
 
   const ctx = vitusContext()
   const normalizedTheme = optimizeTheme({
@@ -25,7 +25,7 @@ const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
     props
   })
 
-  if (!needsFix || CONFIG().isNative) {
+  if (!needsFix || config.isNative) {
     return (
       <Styled
         ref={ref || innerRef}
@@ -59,7 +59,7 @@ const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
           block: undefined
         }}
         extendCss={[
-          CONFIG().css`
+          config.css`
           height: 100%;
           width: 100%;
         `

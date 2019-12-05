@@ -1,14 +1,14 @@
-import { CONFIG } from '@vitus-labs/core'
+import config from '@vitus-labs/core'
 import { alignContent, extendedCss, makeItResponsive } from '@vitus-labs/unistyle'
 
 const styles = ({ needsFix, css, theme: t }) => css`
-  ${CONFIG().isWeb &&
+  ${config.isWeb &&
     !needsFix &&
     css`
       display: flex;
     `};
 
-  ${CONFIG().isWeb &&
+  ${config.isWeb &&
     t.block &&
     css`
       width: 100%;
@@ -25,19 +25,19 @@ const styles = ({ needsFix, css, theme: t }) => css`
 `
 
 // TODO: display quick fix to be improved later
-export default CONFIG().styled(CONFIG().component)`
+export default config.styled(config.component)`
   position: relative;
 
-  ${!CONFIG().isNative &&
-    CONFIG().css`
+  ${!config.isNative &&
+    config.css`
       box-sizing: border-box;
       display: flex;
     `};
 
-  ${CONFIG().isNative &&
-    CONFIG().css`
+  ${config.isNative &&
+    config.css`
       display: flex;
     `};
 
-  ${makeItResponsive({ key: 'element', styles, css: CONFIG().css })};
+  ${makeItResponsive({ key: 'element', styles, css: config.css })};
 `

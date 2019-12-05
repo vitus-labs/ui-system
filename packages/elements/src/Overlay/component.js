@@ -1,11 +1,11 @@
 import React, { Component, createRef } from 'react'
-import { CONFIG, renderContent, throttle } from '@vitus-labs/core'
+import config, { renderContent, throttle } from '@vitus-labs/core'
 import { stripUnit, value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 import Util from '~/Util'
 
-const Utility = CONFIG().styled(Util)`
-  ${({ overlay: t }) => CONFIG().css`
+const Utility = config.styled(Util)`
+  ${({ overlay: t }) => config.css`
     position: ${t.position};
     top: ${value({ param: t.top })};
     bottom: ${value({ param: t.bottom })};
