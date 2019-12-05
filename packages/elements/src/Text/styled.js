@@ -1,4 +1,5 @@
-import { CONFIG, extendedCss } from '@vitus-labs/core'
+import { CONFIG } from '@vitus-labs/core'
+import { extendedCss } from '@vitus-labs/unistyle'
 
 export default CONFIG().styled(CONFIG().textComponent)`
   color: inherit;

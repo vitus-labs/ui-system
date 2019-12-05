@@ -1,9 +1,5 @@
-import {
-  CONFIG,
-  makeItResponsive,
-  alignContent,
-  extendedCss
-} from '@vitus-labs/core'
+import { CONFIG } from '@vitus-labs/core'
+import { makeItResponsive, alignContent, extendedCss } from '@vitus-labs/unistyle'
 
 const styles = ({ css, theme: t }) => css`
   ${t.contentDirection &&

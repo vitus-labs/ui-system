@@ -1,11 +1,6 @@
 import React, { Component, createRef } from 'react'
-import {
-  CONFIG,
-  stripUnit,
-  value,
-  renderContent,
-  throttle
-} from '@vitus-labs/core'
+import { CONFIG, renderContent, throttle } from '@vitus-labs/core'
+import { stripUnit, value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 import Util from '~/Util'
 
@@ -48,11 +43,7 @@ export default class Overlay extends Component {
     const { openOn, closeOn, throttleDelay } = this.props
     this.mounted = true
 
-    if (
-      openOn === 'click' ||
-      closeOn === 'click' ||
-      closeOn === 'triggerClick'
-    ) {
+    if (openOn === 'click' || closeOn === 'click' || closeOn === 'triggerClick') {
       window.addEventListener('click', this.handleDocumentClick, false)
       window.addEventListener('touchend', this.handleDocumentClick, false)
     }
@@ -81,8 +72,7 @@ export default class Overlay extends Component {
   observeTrigger = e => {
     if (e && e.target && this.trigger.current) {
       return (
-        this.trigger.current.contains(e.target) ||
-        e.target === this.trigger.current
+        this.trigger.current.contains(e.target) || e.target === this.trigger.current
       )
     }
 
@@ -92,8 +82,7 @@ export default class Overlay extends Component {
   observeHoverElement = e => {
     if (e && e.target && this.content.current) {
       return (
-        this.content.current.contains(e.target) ||
-        e.target === this.content.current
+        this.content.current.contains(e.target) || e.target === this.content.current
       )
     }
 
@@ -138,15 +127,7 @@ export default class Overlay extends Component {
   }
 
   calculateContentPosition = () => {
-    const {
-      type,
-      align,
-      alignX,
-      alignY,
-      offsetX,
-      offsetY,
-      position
-    } = this.props
+    const { type, align, alignX, alignY, offsetX, offsetY, position } = this.props
 
     const dimensions = this.trigger.current.getBoundingClientRect()
 

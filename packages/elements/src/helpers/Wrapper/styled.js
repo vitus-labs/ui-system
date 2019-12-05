@@ -1,9 +1,5 @@
-import {
-  CONFIG,
-  alignContent,
-  extendedCss,
-  makeItResponsive
-} from "@vitus-labs/core";
+import { CONFIG } from '@vitus-labs/core'
+import { alignContent, extendedCss, makeItResponsive } from '@vitus-labs/unistyle'
 
 const styles = ({ needsFix, css, theme: t }) => css`
   ${CONFIG().isWeb &&
@@ -26,7 +22,7 @@ const styles = ({ needsFix, css, theme: t }) => css`
     })};
 
   ${t.extendCss && extendedCss(t.extendCss)};
-`;
+`
 
 // TODO: display quick fix to be improved later
 export default CONFIG().styled(CONFIG().component)`
@@ -43,5 +39,5 @@ export default CONFIG().styled(CONFIG().component)`
       display: flex;
     `};
 
-  ${makeItResponsive({ key: "element", styles, css: CONFIG().css })};
-`;
+  ${makeItResponsive({ key: 'element', styles, css: CONFIG().css })};
+`

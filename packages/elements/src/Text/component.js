@@ -1,8 +1,4 @@
-import React, {
-  Children,
-  isValidElement,
-  cloneElement,
-} from 'react'
+import React, { Children, isValidElement, cloneElement } from 'react'
 import Styled from './styled'
 
 const INLINE_TAGS = {
@@ -15,7 +11,7 @@ const INLINE_TAGS = {
   marked: 'mark',
   strong: 'strong',
   italic: 'em',
-  inline: 'span',
+  inline: 'span'
 }
 
 const getTag = props => {
