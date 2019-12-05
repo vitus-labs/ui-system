@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import renderContent from '../utils/renderContent'
+import { renderContent } from '@vitus-labs/core'
 
 export default () => WrappedComponent => {
   const dataComponentName =

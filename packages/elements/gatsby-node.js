@@ -1,4 +1,1 @@
-const path = require('path')
-const internal = require('@internal/docz')
-
-exports.onCreateBabelConfig = internal.onCreateBabelConfig
+exports.onCreateBabelConfig = require('@internal/docz').onCreateBabelConfig

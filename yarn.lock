@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/cli@^7.5.5":
+"@babel/cli@^7.5.5", "@babel/cli@^7.7.4":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.7.4.tgz#38804334c8db40209f88c69a5c90998e60cca18b"
   integrity sha512-O7mmzaWdm+VabWQmxuM8hqNrWGGihN83KfhPUzp2lAW4kzIMwBxujXkZbD4fMwKMYY9FXTbDvXsJqU+5XHXi4A==
@@ -3218,13 +3218,6 @@
   version "0.2.13"
   resolved "https://registry.yarnpkg.com/@vitus-labs/core/-/core-0.2.13.tgz#a14b2bade36e706d854da7ff091b10f11f1b099d"
   integrity sha512-qC3kUZzUOEUv6Ie8QnMId/s0DpQhJcEwtf6RCghaDhAuIft8Eo8AlNnAkJQrR+Cp+fi7IJAKpuiS9Sqv8jhEpg==
-  dependencies:
-    lodash "^4.17.15"
-
-"@vitus-labs/core@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/core/-/core-0.0.5.tgz#e8beafd7dbaffbed95f88d4521f1aba16b105c12"
-  integrity sha512-ZsK3FtcfBswq15yPk4I/ksIVzJa8Q5/S8NmQkM2bfOiEA8nDWZLEdA3ZrSJ3JhuuccnHXv4T1tynS1SYYx0Itg==
   dependencies:
     lodash "^4.17.15"
 

@@ -13,5 +13,22 @@
     "no-restricted-syntax": 0,
     "no-shadow": 0,
     "react/jsx-props-no-spreading": 0
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.stories.js"],
+      "globals": {
+        "storiesOf": true
+      },
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-no-undef": [
+          "on",
+          {
+            "allowGlobals": true
+          }
+        ]
+      }
+    }
+  ]
 }

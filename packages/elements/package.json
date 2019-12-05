@@ -24,8 +24,8 @@
   "scripts": {
     "prepublish": "yarn build",
     "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006 -c tools/storybook/web",
-    "storybook:build": "build-storybook -c tools/storybook/web -o docs/storybook",
+    "storybook": "start-storybook -p 6006",
+    "storybook:build": "build-storybook -o docs/storybook",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "lint": "yarn lint:css && yarn lint:ts",
@@ -45,7 +45,8 @@
     "url": "https://github.com/vitus-labs/elements/issues"
   },
   "peerDependencies": {
-    "@vitus-labs/core": ">= 0.2 <1",
+    "@vitus-labs/core": "*",
+    "@vitus-labs/unistyle": "*",
     "react": ">= 16.7"
   },
   "devDependencies": {
@@ -53,6 +54,7 @@
     "@internal/rollup": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
+    "@vitus-labs/unistyle": "*",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-icons-kit": "^1.2.0"
   }

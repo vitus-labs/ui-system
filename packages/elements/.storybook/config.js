@@ -1,6 +1,6 @@
 import storybook from '@internal/storybook'
-import theme from '../src/theme'
+// import theme from '../src/theme'
 
 const source = require.context('../src', true, /\/*stories.js$/)
 
-storybook({ source, theme })
+storybook({ source, theme: {} })

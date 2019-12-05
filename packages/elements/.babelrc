@@ -1,0 +1,15 @@
+{
+  "extends": "../../babel.config.js",
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "cwd": "babelrc",
+        "extensions": [".js"],
+        "alias": {
+          "~": "./src"
+        }
+      }
+    ]
+  ]
+}

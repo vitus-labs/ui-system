@@ -1,6 +1,6 @@
-const docz = require('@internal/docz')
+import { config } from '@internal/docz'
 
-export default docz.config({
+export default config({
   base: '/elements/',
   title: 'Elements',
   description: 'React elements',

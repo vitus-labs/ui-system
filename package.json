@@ -25,6 +25,10 @@
     "tools/*"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
     "babel-plugin-module-resolver": "^3.2.0",
     "coveralls": "^3.0.4",
     "cpr": "^3.0.1",

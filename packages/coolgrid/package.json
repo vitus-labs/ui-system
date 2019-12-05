@@ -57,7 +57,7 @@
     "rollup": "rollup -c"
   },
   "peerDependencies": {
-    "@vitus-labs/core": ">= 0.1 <1",
+    "@vitus-labs/core": "*",
     "react": ">= 16.7"
   },
   "devDependencies": {
