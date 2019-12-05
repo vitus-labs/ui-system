@@ -1,17 +1,17 @@
 import { useContext } from 'react'
-import { sortBreakpoints } from './utils'
-import CONFIG from './config'
+import config from '@vitus-labs/core'
+import { sortBreakpoints } from './mediaQueries'
 
 const isEmpty = param =>
   Object.entries(param).length === 0 && param.constructor === Object
 
 export default () => {
-  const { breakpoints } = useContext(CONFIG().context)
+  const { breakpoints } = useContext(config().context)
 
   const result = {
-    component: CONFIG().component,
-    isWeb: CONFIG().isWeb,
-    isNative: CONFIG().isNative
+    component: config().component,
+    isWeb: config().isWeb,
+    isNative: config().isNative
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {

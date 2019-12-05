@@ -1,4 +1,4 @@
-import { set, get, pick } from 'lodash'
+import { set, get, pick } from '@vitus-labs/core'
 
 // ------------------------------------------
 // pickTheme props

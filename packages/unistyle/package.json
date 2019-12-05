@@ -1,23 +1,23 @@
 {
-  "name": "@vitus-labs/styles",
+  "name": "@vitus-labs/unistyle",
   "version": "0.0.0",
   "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
-  "description": "Styles",
+  "description": "Universal styles",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "license": "MIT",
-  "main": "dist/vitus-labs-styles.js",
-  "umd:main": "dist/vitus-labs-styles.umd.js",
-  "module": "dist/vitus-labs-styles.module.js",
+  "main": "dist/vitus-labs-unistyle.js",
+  "umd:main": "dist/vitus-labs-unistyle.umd.js",
+  "module": "dist/vitus-labs-unistyle.module.js",
   "browser": {
-    "./dist/vitus-labs-styles.js": "./dist/vitus-labs-styles.js",
-    "./dist/vitus-labs-styles.module.js": "./dist/vitus-labs-styles.module.js"
+    "./dist/vitus-labs-unistyle.js": "./dist/vitus-labs-unistyle.js",
+    "./dist/vitus-labs-unistyle.module.js": "./dist/vitus-labs-unistyle.module.js"
   },
-  "unpkg": "dist/vitus-labs-styles.umd.min.js",
-  "jsnext:main": "dist/vitus-labs-styles.module.js",
-  "react-native": "dist/vitus-labs-styles.module.js",
+  "unpkg": "dist/vitus-labs-unistyle.umd.min.js",
+  "jsnext:main": "dist/vitus-labs-unistyle.module.js",
+  "react-native": "dist/vitus-labs-unistyle.module.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist/"
@@ -25,8 +25,8 @@
   "scripts": {
     "prepublish": "yarn build",
     "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006 -c tools/storybook",
-    "storybook:build": "build-storybook -c tools/storybook -o docs/",
+    "storybook": "start-storybook -p 6006",
+    "storybook:build": "build-storybook -o docs/",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "lint": "yarn lint:css && yarn lint:js",
@@ -47,13 +47,12 @@
     "url": "git+https://github.com/vitus-labs/core.git"
   },
   "peerDependencies": {
+    "@vitus-labs/core": "*",
     "react": ">= 16.7",
     "styled-components": ">= 4"
   },
-  "dependencies": {
-    "lodash": "^4.17.15"
-  },
   "devDependencies": {
-    "@internal/rollup": "*"
+    "@internal/rollup": "*",
+    "@vitus-labs/core": "*"
   }
 }

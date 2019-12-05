@@ -1,9 +1,9 @@
-import CONFIG from './config'
+import config from '@vitus-labs/core'
 
 const extendedCss = styles => {
   if (!styles) return undefined
   if (typeof styles === 'function') {
-    return styles(CONFIG().css)
+    return styles(config().css)
   }
 
   return styles
