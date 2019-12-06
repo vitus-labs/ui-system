@@ -89,7 +89,7 @@ const styleComponent = options => {
     __STYLED_COMPONENT__ = calculateStyles({
       component: options.component,
       styles: options.styles,
-      config: config
+      config
     })
   }
 

@@ -2,16 +2,16 @@
   "name": "@internal/storybook",
   "version": "0.0.0",
   "main": "./config.js",
-  "dependencies": {
-    "@storybook/addon-notes": "^5.3.0-beta.12",
-    "@storybook/addon-storysource": "^5.3.0-beta.12",
-    "@storybook/addon-viewport": "^5.3.0-beta.12",
-    "@storybook/addons": "^5.3.0-beta.12",
-    "@storybook/react": "^5.3.0-beta.12",
-    "@storybook/react-native": "^5.3.0-beta.12"
+  "peerDependencies": {
+    "react": "*"
   },
-  "devDependencies": {
-    "@storybook/addon-info": "^5.2.6",
+  "dependencies": {
+    "@storybook/addon-info": "^5.2.0-beta.33",
+    "@storybook/addon-notes": "^5.2.0-beta.33",
+    "@storybook/addon-storysource": "^5.2.0-beta.33",
+    "@storybook/addon-viewport": "^5.2.0-beta.33",
+    "@storybook/addons": "^5.2.0-beta.33",
+    "@storybook/react": "^5.2.0-beta.33",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
     "react-docgen-typescript-loader": "^3.6.0"

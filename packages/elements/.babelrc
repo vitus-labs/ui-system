@@ -4,7 +4,6 @@
     [
       "module-resolver",
       {
-        "cwd": "babelrc",
         "extensions": [".js"],
         "alias": {
           "~": "./src"
