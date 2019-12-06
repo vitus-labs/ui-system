@@ -1,7 +1,7 @@
 import rollup from '@internal/rollup'
 
 export default rollup({
-  name: 'vitus-labs-coolgrid',
+  name: 'coolgrid',
   external: ['react', '@vitus-labs/core'],
   globals: {
     react: 'React',

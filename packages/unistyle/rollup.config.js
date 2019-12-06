@@ -1,7 +1,7 @@
 import rollup from '@internal/rollup'
 
 export default rollup({
-  name: 'vitus-labs-unistyle',
+  name: 'unistyle',
   external: ['react', '@vitus-labs/unistyle'],
   globals: {
     react: 'React',

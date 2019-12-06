@@ -15,14 +15,18 @@ const Context = createContext({})
 const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles']
 const generateClonedKeys = (keys, opts, defaultOpts) => {
   const result = {}
-  keys.forEach(item => (result[item] = chainOptions(opts[item], defaultOpts[item])))
+  keys.forEach(item => {
+    result[item] = chainOptions(opts[item], defaultOpts[item])
+  })
 
   return result
 }
 
 const generateConfigEnhancer = ({ dimensionKeys, func }) => {
   const result = {}
-  dimensionKeys.forEach(item => (result[item] = func(item)))
+  dimensionKeys.forEach(item => {
+    result[item] = func(item)
+  })
 
   return result
 }

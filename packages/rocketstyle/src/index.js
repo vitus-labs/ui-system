@@ -1,3 +1,3 @@
-import createComponent from './rocketstyle'
+import rocketstyle from './rocketstyle'
 
-export default createComponent
+export default rocketstyle

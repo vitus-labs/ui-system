@@ -1,7 +1,7 @@
 import rollup from '@internal/rollup'
 
 export default rollup({
-  name: 'vitus-labs-native-rocketstyle',
+  name: 'rocketstyle',
   external: ['react', '@vitus-labs/core', 'hoist-non-react-statics'],
   globals: {
     react: 'React',

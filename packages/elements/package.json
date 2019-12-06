@@ -53,6 +53,7 @@
     "@internal/docz": "*",
     "@internal/jest": "*",
     "@internal/rollup": "*",
+    "@internal/storybook": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
     "@vitus-labs/unistyle": "*"
