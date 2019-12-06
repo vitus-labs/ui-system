@@ -27,6 +27,18 @@ module.exports = api => {
       }
     },
     ignore: ['node_modules'],
-    plugins: ['@babel/plugin-proposal-class-properties']
+    plugins: [
+      [
+        'module-resolver',
+        {
+          cwd: 'packagejson',
+          extensions: ['.js'],
+          alias: {
+            '~': './src'
+          }
+        }
+      ],
+      '@babel/plugin-proposal-class-properties'
+    ]
   }
 }
