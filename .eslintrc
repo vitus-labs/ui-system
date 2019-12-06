@@ -19,7 +19,8 @@
       "files": ["*.stories.js"],
       "globals": {
         "storiesOf": true,
-        "Fragment": true
+        "Fragment": true,
+        "React": true
       },
       "rules": {
         "react/react-in-jsx-scope": "off",
@@ -36,7 +37,8 @@
       "globals": {
         "mountWithTheme": true,
         "shallowWithTheme": true,
-        "Fragment": true
+        "Fragment": true,
+        "React": true
       },
       "rules": {
         "react/react-in-jsx-scope": "off",
