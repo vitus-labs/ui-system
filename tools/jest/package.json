@@ -1,0 +1,13 @@
+{
+  "name": "@internal/jest",
+  "version": "0.0.0",
+  "main": "./config.js",
+  "dependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "enzyme-to-json": "^3.4.3",
+    "jest": "^24.9.0",
+    "jest-styled-components": "^6.3.3",
+    "jsdom": "^15.2.1"
+  }
+}

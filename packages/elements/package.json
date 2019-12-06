@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@internal/docz": "*",
+    "@internal/jest": "*",
     "@internal/rollup": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",

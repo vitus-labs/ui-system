@@ -1,6 +1,6 @@
 import React from 'react'
 import { JSDOM } from 'jsdom'
-import { shallow, mount, render } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import { ThemeProvider } from 'styled-components'
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>')
@@ -46,10 +46,10 @@ global.document = window.document
 global.navigator = {
   userAgent: 'node.js'
 }
-global.requestAnimationFrame = function(callback) {
+global.requestAnimationFrame = callback => {
   return setTimeout(callback, 0)
 }
-global.cancelAnimationFrame = function(id) {
+global.cancelAnimationFrame = id => {
   clearTimeout(id)
 }
 copyProps(window, global)
