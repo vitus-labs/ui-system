@@ -1,6 +1,12 @@
+const addons = [
+  'a11y',
+  'backgrounds',
+  'design-assets',
+  'jest',
+  'storysource',
+  'viewport'
+]
+
 module.exports = {
-  addons: [
-    '@storybook/addon-storysource/register',
-    '@storybook/addon-viewport/register'
-  ]
+  addons: addons.map(item => `@storybook/addon-${item}/register`)
 }
