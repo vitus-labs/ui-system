@@ -18,7 +18,25 @@
     {
       "files": ["*.stories.js"],
       "globals": {
-        "storiesOf": true
+        "storiesOf": true,
+        "Fragment": true
+      },
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-no-undef": [
+          2,
+          {
+            "allowGlobals": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.test.js"],
+      "globals": {
+        "mountWithTheme": true,
+        "shallowWithTheme": true,
+        "Fragment": true
       },
       "rules": {
         "react/react-in-jsx-scope": "off",
