@@ -1,4 +1,3 @@
-import { shallow, mount, render } from 'enzyme'
 import Component from '..'
 import Content from '../../helpers/Content'
 

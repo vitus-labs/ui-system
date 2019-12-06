@@ -1,6 +1,6 @@
 import React from 'react'
 import { JSDOM } from 'jsdom'
-import { shallow, mount } from 'enzyme'
+import { shallow, mount, render } from 'enzyme'
 import { ThemeProvider } from 'styled-components'
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>')
@@ -38,6 +38,9 @@ export const mountWithTheme = tree =>
     wrappingComponent: ThemeProviderWrapper
   })
 
+global.mount = mount
+global.redner = render
+global.shallow = shallow
 global.mountWithTheme = mountWithTheme
 global.shallowWithTheme = shallowWithTheme
 global.React = React
@@ -52,4 +55,5 @@ global.requestAnimationFrame = callback => {
 global.cancelAnimationFrame = id => {
   clearTimeout(id)
 }
+
 copyProps(window, global)
