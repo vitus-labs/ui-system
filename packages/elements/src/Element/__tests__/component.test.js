@@ -1,7 +1,6 @@
 import { shallow, mount, render } from 'enzyme'
 import Component from '..'
 import Content from '../../helpers/Content'
-import Wrapper from '../../helpers/Wrapper'
 
 describe(Component.displayName, () => {
   it('Component renders correctly', async () => {
@@ -198,11 +197,7 @@ describe(Component.displayName, () => {
 
     it('prop alignX takes precendence over contentAlignX with before / after', async () => {
       const tree = shallow(
-        <Component
-          alignX="center"
-          contentAlignX="right"
-          beforeContent="content"
-        />
+        <Component alignX="center" contentAlignX="right" beforeContent="content" />
       )
       const wrapper = tree.props().alignX
 
@@ -249,11 +244,7 @@ describe(Component.displayName, () => {
 
     it('prop alignX takes precendence over contentAlignX with before / after', async () => {
       const tree = shallow(
-        <Component
-          alignX="center"
-          contentAlignX="right"
-          beforeContent="content"
-        />
+        <Component alignX="center" contentAlignX="right" beforeContent="content" />
       )
       const wrapper = tree.props().alignX
 
