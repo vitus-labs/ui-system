@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/elements",
-  "version": "0.6.0-experimental.11",
+  "version": "0.6.1",
   "description": "",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "build": "rm -rf lib dist && babel src -d lib && cpr lib dist --delete-first && yarn rollup",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook -o docs/storybook",
     "docs:dev": "docz dev",
@@ -54,8 +54,6 @@
     "@internal/rollup": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
-    "@vitus-labs/unistyle": "*",
-    "react-docgen-typescript-webpack-plugin": "^1.1.0",
-    "react-icons-kit": "^1.2.0"
+    "@vitus-labs/unistyle": "*"
   }
 }

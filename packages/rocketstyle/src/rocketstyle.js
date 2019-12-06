@@ -1,12 +1,12 @@
 import React, { forwardRef, createContext, createElement, Component } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { omit, pick, compose, CONFIG } from '@vitus-labs/core'
+import config, { omit, pick, compose } from '@vitus-labs/core'
 import {
   chainOptions,
   calculateStyles,
   calculateValues,
   calculateStyledAttrs,
-  calculateTheme,
+  calculateTheme
 } from './utils'
 
 const Context = createContext({})
@@ -33,13 +33,7 @@ const generateComponentStatics = ({ context, dimensionKeys, func, opts }) => {
   })
 }
 
-const RESERVED_STATIC_KEYS = [
-  'compose',
-  'attrs',
-  'theme',
-  'styles',
-  'dimensions'
-]
+const RESERVED_STATIC_KEYS = ['compose', 'attrs', 'theme', 'styles', 'dimensions']
 // const generateComponentStaticHelpers = ({ context, dimensionKeys, func }) => {
 //   dimensionKeys.forEach(item => {
 //     context[item] = func(item)
@@ -54,7 +48,7 @@ const generateKeys = (context, theme, config) => {
 
 const generateThemes = (context, theme, config) => {
   config.dimensionKeys.forEach(item => {
-    context[item] = calculateValues(config[item], theme, CONFIG().css)
+    context[item] = calculateValues(config[item], theme, config.css)
   })
 }
 
@@ -95,7 +89,7 @@ const styleComponent = options => {
     __STYLED_COMPONENT__ = calculateStyles({
       component: options.component,
       styles: options.styles,
-      config: CONFIG(),
+      config: config
     })
   }
 
@@ -114,15 +108,11 @@ const styleComponent = options => {
       this.__ROCKETSTYLE__.themes.base = calculateValues(
         options.theme,
         theme,
-        CONFIG().css
+        config.css
       )
 
       generateThemes(this.__ROCKETSTYLE__.themes, theme, options)
-      generateKeys(
-        this.__ROCKETSTYLE__.keys,
-        this.__ROCKETSTYLE__.themes,
-        options
-      )
+      generateKeys(this.__ROCKETSTYLE__.keys, this.__ROCKETSTYLE__.themes, options)
 
       this.__ROCKETSTYLE__.KEYWORDS = [
         ...this.__ROCKETSTYLE__.keys.states,
@@ -192,12 +182,10 @@ const styleComponent = options => {
   let ExtendedComponent = forwardRef((props, ref) => (
     <EnhancedComponent {...props} ref={ref} />
   ))
-  ExtendedComponent = CONFIG().withTheme(ExtendedComponent)
+  ExtendedComponent = config.withTheme(ExtendedComponent)
 
   if (options.compose && Object.values(options.compose).length > 0) {
-    ExtendedComponent = compose(Object.values(options.compose))(
-      ExtendedComponent
-    )
+    ExtendedComponent = compose(Object.values(options.compose))(ExtendedComponent)
   }
 
   // ------------------------------------------------------

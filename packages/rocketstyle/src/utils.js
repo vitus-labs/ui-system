@@ -46,9 +46,7 @@ export const calculateValues = (opts = [], ...args) => {
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
-export const calculateStyledAttrs = ({
-  props, dimensions, states, useBooleans,
-}) => {
+export const calculateStyledAttrs = ({ props, dimensions, states, useBooleans }) => {
   const result = {}
 
   Object.keys(props).forEach(key => {
@@ -57,8 +55,8 @@ export const calculateStyledAttrs = ({
     if (useBooleans && typeof value === 'boolean' && value === true) {
       Object.keys(states).forEach(stateKey => {
         if (
-          (Array.isArray(result[stateKey]) || !result[stateKey])
-          && states[stateKey].includes(key)
+          (Array.isArray(result[stateKey]) || !result[stateKey]) &&
+          states[stateKey].includes(key)
         ) {
           const isMultiKey = Array.isArray(dimensions[stateKey])
           const keyName = isMultiKey ? dimensions[stateKey][0] : dimensions[stateKey]
@@ -101,11 +99,7 @@ export const mergeThemes = (obj, keys) => {
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-export const calculateTheme = ({
-  styledAttributes,
-  themes,
-  config,
-}) => {
+export const calculateTheme = ({ styledAttributes, themes, config }) => {
   // generate final theme which will be passed to styled component
   let finalTheme = themes.base
 
@@ -120,13 +114,13 @@ export const calculateTheme = ({
         finalTheme = Object.assign(
           {},
           finalTheme,
-          mergeThemes(themes[dimensionKey], styledAttributes[dimensionKey]),
+          mergeThemes(themes[dimensionKey], styledAttributes[dimensionKey])
         )
       } else {
         finalTheme = Object.assign(
           {},
           finalTheme,
-          themes[dimensionKey][styledAttributes[keyName] || 'base'],
+          themes[dimensionKey][styledAttributes[keyName] || 'base']
         )
       }
     }
