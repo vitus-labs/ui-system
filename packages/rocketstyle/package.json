@@ -40,8 +40,8 @@
   "scripts": {
     "prepublish": "yarn build",
     "build": "rm -rf lib && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006 -c tools/storybook",
-    "storybook:build": "build-storybook -c tools/storybook -o docs/storybook",
+    "storybook": "start-storybook -p 6006",
+    "storybook:build": "build-storybook -o docs/storybook",
     "lint": "yarn lint:js",
     "lint:js": "eslint src",
     "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
@@ -64,7 +64,11 @@
   },
   "devDependencies": {
     "@internal/docz": "*",
+    "@internal/jest": "*",
     "@internal/rollup": "*",
-    "@vitus-labs/core": "*"
+    "@internal/storybook": "*",
+    "@vitus-labs/core": "*",
+    "@vitus-labs/elements": "*",
+    "@vitus-labs/unistyle": "*"
   }
 }

@@ -1,6 +1,6 @@
 import styled, { withTheme, css, ThemeContext } from 'styled-components'
 
-let internal = {
+const internal = {
   css,
   styled,
   withTheme,
@@ -34,9 +34,6 @@ const config = {
   },
   get css() {
     return internal.css
-  },
-  get styled() {
-    return internal.styled
   },
   get withTheme() {
     return internal.withTheme
