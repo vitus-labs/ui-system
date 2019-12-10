@@ -51,7 +51,7 @@ const Element = forwardRef(
           tag={tag}
           extendCss={css}
           contentDirection="inline"
-          alignX="left"
+          alignX="stretch"
           alignY="center"
           block={block}
           {...props}
@@ -61,6 +61,9 @@ const Element = forwardRef(
     const SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
     const INJECTED_PROPS = pick(props, passProps)
 
+    // --------------------------------------------------------
+    // direction & alignX calculations
+    // --------------------------------------------------------
     let wrapperDirection = 'inline'
 
     if (contentDirection && !beforeContent && !afterContent) {
@@ -84,13 +87,19 @@ const Element = forwardRef(
       wrapperAlignY = contentAlignY
     }
 
+    const getAlignXDirection = (x, direction) => {
+      if (x) return x
+      if (direction !== 'inline') return 'stretch'
+      return 'left'
+    }
+
     return (
       <Wrapper
         ref={ref || innerRef}
         tag={tag}
         extendCss={css}
         contentDirection={wrapperDirection || 'inline'}
-        alignX={wrapperAlignX || 'left'}
+        alignX={getAlignXDirection(wrapperAlignX, wrapperDirection)}
         alignY={wrapperAlignY || 'center'}
         block={block}
         {...props}
@@ -100,7 +109,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={beforeContentCss}
             contentDirection={beforeContentDirection || 'inline'}
-            alignX={beforeContentAlignX || 'left'}
+            alignX={getAlignXDirection(beforeContentAlignX, beforeContentDirection)}
             alignY={beforeContentAlignY || 'center'}
             equalCols={equalCols}
           >
@@ -113,7 +122,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={contentCss}
             contentDirection={contentDirection || 'inline'}
-            alignX={contentAlignX || 'left'}
+            alignX={getAlignXDirection(contentAlignX, contentDirection)}
             alignY={contentAlignY || 'center'}
             equalCols={equalCols}
             isContent
@@ -129,7 +138,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={afterContentCss}
             contentDirection={afterContentDirection || 'inline'}
-            alignX={afterContentAlignX || 'right'}
+            alignX={getAlignXDirection(afterContentAlignX, afterContentDirection)}
             alignY={afterContentAlignY || 'center'}
             equalCols={equalCols}
           >

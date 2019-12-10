@@ -33,12 +33,12 @@ const extendCss = config.css`
     `};
 `
 
-const Label = config.styled.label`
+const Label = config.styled('label')`
   display: inline-block;
   margin-bottom: 0.5rem;
 `
 
-const Input = config.styled.input`
+const Input = config.styled('input')`
   border: none;
   outline: none;
   align-self: stretch;
@@ -47,7 +47,7 @@ const Input = config.styled.input`
 
 const Ico = () => <Icon icon={home} />
 
-const LeftContent = config.styled.span`
+const LeftContent = config.styled('span')`
   padding: 5px;
   background-color: transparent;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
@@ -61,7 +61,7 @@ const LeftContent = config.styled.span`
     `};
 `
 
-const RightContent = config.styled.span`
+const RightContent = config.styled('span')`
   padding: 5px;
   margin-left: 5px;
   margin-right: 5px;
@@ -77,7 +77,7 @@ const RightContent = config.styled.span`
   }
 `
 
-const TextField = ({ label, placeholder, ...props }) => {
+const TextField = ({ label, placeholder }) => {
   return (
     <WithState>
       {({ state, setFocus, unsetFocus, setHover, unsetHover }) => (
