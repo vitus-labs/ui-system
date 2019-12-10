@@ -51,7 +51,7 @@ const Element = forwardRef(
           tag={tag}
           extendCss={css}
           contentDirection="inline"
-          alignX="stretch"
+          alignX="left"
           alignY="center"
           block={block}
           {...props}
@@ -87,19 +87,13 @@ const Element = forwardRef(
       wrapperAlignY = contentAlignY
     }
 
-    const getAlignXDirection = (x, direction) => {
-      if (x) return x
-      if (direction !== 'inline') return 'stretch'
-      return 'left'
-    }
-
     return (
       <Wrapper
         ref={ref || innerRef}
         tag={tag}
         extendCss={css}
         contentDirection={wrapperDirection || 'inline'}
-        alignX={getAlignXDirection(wrapperAlignX, wrapperDirection)}
+        alignX={wrapperAlignX || 'left'}
         alignY={wrapperAlignY || 'center'}
         block={block}
         {...props}
@@ -109,7 +103,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={beforeContentCss}
             contentDirection={beforeContentDirection || 'inline'}
-            alignX={getAlignXDirection(beforeContentAlignX, beforeContentDirection)}
+            alignX={beforeContentAlignX || 'left'}
             alignY={beforeContentAlignY || 'center'}
             equalCols={equalCols}
           >
@@ -122,7 +116,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={contentCss}
             contentDirection={contentDirection || 'inline'}
-            alignX={getAlignXDirection(contentAlignX, contentDirection)}
+            alignX={contentAlignX || 'left'}
             alignY={contentAlignY || 'center'}
             equalCols={equalCols}
             isContent
@@ -138,7 +132,7 @@ const Element = forwardRef(
             tag={SUB_TAG}
             extendCss={afterContentCss}
             contentDirection={afterContentDirection || 'inline'}
-            alignX={getAlignXDirection(afterContentAlignX, afterContentDirection)}
+            alignX={afterContentAlignX || 'left'}
             alignY={afterContentAlignY || 'center'}
             equalCols={equalCols}
           >

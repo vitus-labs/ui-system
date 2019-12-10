@@ -1,17 +1,25 @@
 import config from '@vitus-labs/core'
 import { alignContent, extendedCss, makeItResponsive } from '@vitus-labs/unistyle'
 
-// ${config.isWeb &&
-//     t.block &&
-//     css`
-//       width: 100%;
-//     `}
-
-const styles = ({ needsFix, css, theme: t }) => css`
+const styles = ({ css, theme: t }) => css`
   ${config.isWeb &&
-    !needsFix &&
     css`
-      display: flex;
+      display: ${({ needsFix }) => {
+        if (needsFix) return
+        return t.block ? 'flex' : 'inline-flex'
+      }};
+    `};
+
+  ${config.isWeb &&
+    t.block &&
+    css`
+      width: 100%;
+    `};
+
+  ${config.isNative &&
+    t.block &&
+    css`
+      align-self: stretch;
     `};
 
   ${t.contentDirection &&

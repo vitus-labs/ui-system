@@ -4,7 +4,7 @@ const MAP_SHARED = {
   center: 'center',
   spaceBetween: 'space-between',
   spaceAround: 'space-around',
-  stretch: 'stretch'
+  block: 'stretch'
 }
 
 const MAP_ALIGN_X = {

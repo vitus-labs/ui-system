@@ -3,7 +3,7 @@ import config from '@vitus-labs/core'
 import Element from '~/Element'
 
 export const Inner = config.styled('div')`
-  display: block;
+  display: flex;
   min-width: 20px;
   max-width: 200px;
   height: 20px;
