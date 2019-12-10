@@ -1,4 +1,4 @@
-import React, { createElement } from 'react'
+import { createElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 
 export default theme => story =>
