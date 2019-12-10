@@ -1,19 +1,22 @@
 import config from '@vitus-labs/core'
 
+const MAP_SHARED = {
+  center: 'center',
+  spaceBetween: 'space-between',
+  spaceAround: 'space-around',
+  stretch: 'stretch'
+}
+
 const MAP_ALIGN_X = {
   left: 'flex-start',
   right: 'flex-end',
-  center: 'center',
-  spaceBetween: 'space-between',
-  spaceAround: 'space-around'
+  ...MAP_SHARED
 }
 
 const MAP_ALIGN_Y = {
   top: 'flex-start',
   bottom: 'flex-end',
-  center: 'center',
-  spaceBetween: 'space-between',
-  spaceAround: 'space-around'
+  ...MAP_SHARED
 }
 
 const MAP_DIRECTION = {
