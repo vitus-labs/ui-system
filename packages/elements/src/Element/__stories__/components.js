@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react'
-import styled, { css } from 'styled-components'
+import config from '@vitus-labs/core'
 import Element from '~/Element'
 
-export const Inner = styled.span`
+export const Inner = config.styled('div')`
   display: block;
   min-width: 20px;
   max-width: 200px;
@@ -14,16 +14,16 @@ export const Wrapper = forwardRef((props, ref) => (
   <Element
     {...props}
     ref={ref}
-    css={css`
+    css={config.css`
       height: 60px;
       padding: 10px;
       background-color: papayawhip;
       margin: 10px;
     `}
-    beforeContentCss={css`
+    beforeContentCss={config.css`
       padding-right: 10px;
     `}
-    afterContentCss={css`
+    afterContentCss={config.css`
       padding-left: 10px;
     `}
     {...props}
