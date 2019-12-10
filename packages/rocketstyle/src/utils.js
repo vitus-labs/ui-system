@@ -11,6 +11,19 @@ export const chainOptions = (opts, defaultOpts = []) => {
 }
 
 // --------------------------------------------------------
+// combine values
+// --------------------------------------------------------
+export const calculateChainOptions = (opts = [], ...args) => {
+  let result = {}
+
+  opts.forEach(item => {
+    result = { ...result, ...item(...args) }
+  })
+
+  return result
+}
+
+// --------------------------------------------------------
 // calculate styles
 // --------------------------------------------------------
 export const calculateStyles = ({ component, styles, config: { styled, css } }) => {
@@ -25,19 +38,6 @@ export const calculateStyles = ({ component, styles, config: { styled, css } }) 
         ${styles}
       `
     }
-  })
-
-  return result
-}
-
-// --------------------------------------------------------
-// combine values
-// --------------------------------------------------------
-export const calculateValues = (opts = [], ...args) => {
-  let result = {}
-
-  opts.forEach(item => {
-    result = Object.assign({}, result, item(...args))
   })
 
   return result
@@ -87,9 +87,8 @@ export const mergeThemes = (obj, keys) => {
   Object.keys(obj).forEach(key => {
     const value = obj[key]
 
-    if (Array.isArray(keys) && keys.includes(key)) {
-      const helper = Object.assign({}, result)
-      result = { ...helper, ...(typeof value === 'object' ? value : {}) }
+    if (Array.isArray(keys) && keys.includes(key) && typeof value === 'object') {
+      result = { ...result, ...value }
     }
   })
 
@@ -99,29 +98,33 @@ export const mergeThemes = (obj, keys) => {
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-export const calculateTheme = ({ styledAttributes, themes, config }) => {
+const isDimensionMultiKey = key =>
+  // check if key is an array and if it has `multi` set to true
+  // as an argument on index 1
+  Array.isArray(key) && key[1].multi === true
+
+// --------------------------------------------------------
+// generate theme
+// --------------------------------------------------------
+export const calculateTheme = ({
+  styledAttributes,
+  themes,
+  config: { dimensions }
+}) => {
   // generate final theme which will be passed to styled component
   let finalTheme = themes.base
 
   Object.keys(themes).forEach(dimensionKey => {
-    const isMultiKey = config.isDimensionMultiKey(dimensionKey)
-    const keyName = isMultiKey
-      ? config.dimensions[dimensionKey][0]
-      : config.dimensions[dimensionKey]
+    const value = dimensions[dimensionKey]
+    const isMultiKey = isDimensionMultiKey(value)
+    const keyName = isMultiKey ? value[0] : value
 
     if (keyName) {
-      if (isMultiKey) {
-        finalTheme = Object.assign(
-          {},
-          finalTheme,
-          mergeThemes(themes[dimensionKey], styledAttributes[dimensionKey])
-        )
-      } else {
-        finalTheme = Object.assign(
-          {},
-          finalTheme,
-          themes[dimensionKey][styledAttributes[keyName] || 'base']
-        )
+      finalTheme = {
+        ...finalTheme,
+        ...(isMultiKey
+          ? mergeThemes(themes[dimensionKey], styledAttributes[dimensionKey])
+          : themes[dimensionKey][styledAttributes[keyName] || 'base'])
       }
     }
   })

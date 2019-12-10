@@ -1,3 +1,3 @@
-import rocketstyle from './rocketstyle'
+import rocketstyle from './init'
 
 export default rocketstyle
