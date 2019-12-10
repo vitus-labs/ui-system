@@ -8,7 +8,7 @@ const colCss = css => css`
   padding: 20px;
 `
 
-storiesOf('Bootstrap Grid Examples', module)
+storiesOf('COOLGRID | Bootstrap Grid Examples', module)
   .add('Three Equal Columns', () => (
     <Container colCss={colCss}>
       <Row>

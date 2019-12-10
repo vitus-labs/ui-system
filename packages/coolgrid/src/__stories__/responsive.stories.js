@@ -8,7 +8,7 @@ const colCss = css => css`
   padding: 20px;
 `
 
-storiesOf('Responsive Examples', module)
+storiesOf('COOLGRID | Responsive Examples', module)
   .add('Defined column sizes on each Column component', () => {
     return (
       <Container colCss={colCss}>
@@ -107,7 +107,13 @@ storiesOf('Responsive Examples', module)
   })
   .add('Responsive paddings', () => {
     return (
-      <Container xs={12} md={4} lg={6} colCss={colCss} padding={{ xs: 30, md: 10, lg: 60 }}>
+      <Container
+        xs={12}
+        md={4}
+        lg={6}
+        colCss={colCss}
+        padding={{ xs: 30, md: 10, lg: 60 }}
+      >
         <Row gap={0}>
           <Col>xs:12, md:4, lg:6</Col>
           <Col>xs:12, md:4, lg:6</Col>

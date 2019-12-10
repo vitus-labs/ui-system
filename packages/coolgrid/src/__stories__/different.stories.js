@@ -2,13 +2,13 @@ import Container from '../Container'
 import Row from '../Row'
 import Col from '../Col'
 
-const columnCss = (css) => css`
+const columnCss = css => css`
   background-color: #e0e0eb;
   border: 1px solid #b3b3cc;
   padding: 20px;
 `
 
-storiesOf('__EXAMPLES__', module)
+storiesOf('COOLGRID | __EXAMPLES__', module)
   .add('5 Columns Grid without using Container', () => {
     return (
       <Fragment>

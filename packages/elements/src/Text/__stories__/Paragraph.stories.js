@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { storiesOf } from '@storybook/react'
 import Text from '..'
 
-storiesOf('Text', module).add('Paragraph', () => {
+storiesOf('ELEMENTS | Text', module).add('Paragraph', () => {
   return (
     <Fragment>
       <Text>
@@ -11,8 +11,7 @@ storiesOf('Text', module).add('Paragraph', () => {
       </Text>
 
       <Text deleted>
-        This is a Text{' '}
-        <Text replaced>This is an inline text inside paragraph</Text>{' '}
+        This is a Text <Text replaced>This is an inline text inside paragraph</Text>{' '}
         <Text>Another inline text should be rendered as span</Text>
       </Text>
     </Fragment>

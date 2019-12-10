@@ -1,5 +1,5 @@
 import Button from './Button'
 
-storiesOf('Element', module).add('Button', () => {
+storiesOf('ELEMENTS | Element', module).add('Button', () => {
   return <Button />
 })

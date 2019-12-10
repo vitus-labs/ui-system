@@ -1,7 +1,7 @@
 import Iterator from '..'
 
 const Item = ({ name }) => <p>{name}</p>
-storiesOf('Iterator', module)
+storiesOf('ELEMENTS | Iterator', module)
   .add('Plain', () => {
     const data = ['a', 'b', 'c', 'd']
     return <Iterator data={data} component={Item} itemKeyName="name" />

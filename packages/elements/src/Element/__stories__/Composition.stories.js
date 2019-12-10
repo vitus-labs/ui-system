@@ -1,6 +1,6 @@
 import { Container, Inner } from './Composition'
 
-storiesOf('Element', module).add('Composition', () => (
+storiesOf('ELEMENTS | Element', module).add('Composition', () => (
   <Fragment>
     <Container>
       <Inner>Hello</Inner>

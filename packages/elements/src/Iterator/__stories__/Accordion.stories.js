@@ -9,7 +9,7 @@ const Item = ({ name, active, toggleItemActive, ...props }) => (
   </div>
 )
 
-storiesOf('Iterator', module)
+storiesOf('ELEMENTS | Iterator', module)
   .add('Accordion', () => {
     const data = ['a', 'b', 'c', 'd']
     return <NewIterator data={data} component={Item} itemKeyName="name" />
@@ -22,7 +22,5 @@ storiesOf('Iterator', module)
         <Iterator {...props} />
       </div>
     ))
-    return (
-      <Wrapper type="multi" data={data} component={Item} itemKeyName="name" />
-    )
+    return <Wrapper type="multi" data={data} component={Item} itemKeyName="name" />
   })

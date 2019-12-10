@@ -11,7 +11,7 @@ const Item = props => (
   />
 )
 
-storiesOf('List', module)
+storiesOf('ELEMENTS | List', module)
   .add('List', () => {
     return (
       <List

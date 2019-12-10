@@ -8,7 +8,7 @@ const colCss = css => css`
   padding: 20px;
 `
 
-storiesOf('Spacing Examples', module)
+storiesOf('COOLGRID | Spacing Examples', module)
   .add('Row with 0px vs 10px gap', () => {
     return (
       <Container colCss={colCss}>

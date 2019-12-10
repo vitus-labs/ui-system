@@ -19,7 +19,7 @@ const beforeContent = ({ hover, ...props }) => {
   return <span>{hover ? 'normal' : 'hover'}</span>
 }
 
-storiesOf('Element', module)
+storiesOf('ELEMENTS | Element', module)
   .add('Basics', () => {
     return (
       <Element css={extendCss} beforeContent={beforeContent} afterContent="right">

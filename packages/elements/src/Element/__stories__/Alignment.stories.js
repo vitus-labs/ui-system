@@ -12,7 +12,7 @@ const NewElement = withEqualWidthBeforeAfter(Wrapper)
 //   <Inner />
 //       </NewElement >
 
-storiesOf('Element', module).add('Alignment', () => {
+storiesOf('ELEMENTS | Element', module).add('Alignment', () => {
   return (
     <Fragment>
       <Wrapper block beforeContent={Inner} afterContent={Inner}>

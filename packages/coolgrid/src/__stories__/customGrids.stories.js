@@ -8,7 +8,7 @@ const columnCss = css => css`
   padding: 20px;
 `
 
-storiesOf('Custom Grid Examples', module)
+storiesOf('COOLGRID | Custom Grid Examples', module)
   .add('5 Columns Grid', () => (
     <Container columns={5} colCss={columnCss}>
       <Row>

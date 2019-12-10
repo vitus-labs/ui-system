@@ -14,7 +14,7 @@ const columnCss1 = css => css`
   padding: 20px;
 `
 
-storiesOf('Context usage', module)
+storiesOf('COOLGRID | Context usage', module)
   .add('Define gap and size on Container', () => {
     return (
       <Container gap={10} size={4} colCss={columnCss}>
