@@ -3,6 +3,7 @@ const addons = [
   'backgrounds',
   'design-assets',
   'jest',
+  'knobs',
   'storysource',
   'viewport'
 ]

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import { configure, addParameters, addDecorator, storiesOf } from '@storybook/react'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
+import { withKnobs } from '@storybook/addon-knobs'
 import { withA11y } from '@storybook/addon-a11y'
 import themeDecorator from './decorators/themeDecorator'
 
@@ -77,6 +78,7 @@ export default ({ source, theme }) => {
     }
   })
   addDecorator(withA11y)
+  addDecorator(withKnobs)
   addDecorator(themeDecorator(theme))
   configure(source, module)
 }
