@@ -104,7 +104,7 @@ const styleComponent = options => {
   class EnhancedComponent extends Component {
     constructor(props) {
       super(props)
-      const { theme } = props
+      const { theme, hook } = props
 
       // define empty objects so they can be reassigned later
       this[namespace] = {
@@ -121,6 +121,10 @@ const styleComponent = options => {
       generateThemes(this[namespace].themes, theme, options)
       generateKeys(this[namespace].keys, this[namespace].themes, options)
 
+      this[namespace].rocketConfig = {}
+      this[namespace].rocketConfig.dimensions = options.dimensions
+      this[namespace].rocketConfig.useBooleans = options.useBooleans
+
       this[namespace].KEYWORDS = [
         ...this[namespace].keys.states,
         ...this[namespace].keys.sizes,
@@ -128,6 +132,10 @@ const styleComponent = options => {
         ...this[namespace].keys.multiple,
         ...options.dimensionValues
       ]
+
+      if (hook) {
+        hook(this[namespace])
+      }
     }
 
     render() {
