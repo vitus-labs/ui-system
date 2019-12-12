@@ -28,110 +28,109 @@ export const element = rocketstyle()({
         useDefaultHover,
         useDefaultActive,
         useDefaultOutline,
+        rocketstyle,
+        rocketstate,
         href,
         onClick,
-        disabled,
         hover,
         active,
-        focus,
-        outline,
-        rocketstyle
+        focus
       }) => {
         const isDynamic = onClick || href
 
-        const baseTheme = {
+        const getBaseTheme = {
           ...omit(rocketstyle, ['base', 'hover', 'focus', 'active']),
           ...pick(rocketstyle, ['base']).base
         }
 
-        const hoverTheme = pick(rocketstyle, ['hover'])
-        const focusTheme = pick(rocketstyle, ['focus'])
-        const activeTheme = pick(rocketstyle, ['active'])
+        const getHoverTheme = pick(rocketstyle, ['hover'])
+        const getFocusTheme = pick(rocketstyle, ['focus'])
+        const getActiveTheme = pick(rocketstyle, ['active'])
 
-        const _baseTheme = makeItResponsive({
-          theme: baseTheme || {},
+        const baseTheme = makeItResponsive({
+          theme: getBaseTheme || {},
           styles,
           css
         })
 
-        const _hoverTheme = makeItResponsive({
-          theme: hoverTheme.hover || {},
+        const hoverTheme = makeItResponsive({
+          theme: getHoverTheme.hover || {},
           styles,
           css
         })
 
-        const _focusTheme = makeItResponsive({
-          theme: focusTheme.focus || {},
+        const focusTheme = makeItResponsive({
+          theme: getFocusTheme.focus || {},
           styles,
           css
         })
 
-        const _activeTheme = makeItResponsive({
-          theme: activeTheme.active || {},
+        const activeTheme = makeItResponsive({
+          theme: getActiveTheme.active || {},
           styles,
           css
         })
 
         return css`
-          ${_baseTheme};
+          ${baseTheme};
 
-          ${!disabled &&
+          ${!rocketstate.disabled &&
             isDynamic &&
             css`
               cursor: pointer;
             `}
 
-          ${!disabled &&
+          ${!rocketstate.disabled &&
             (isDynamic || useDefaultHover) &&
-            !active &&
+            !rocketstate.active &&
             css`
               &:hover {
-                ${_hoverTheme};
+                ${hoverTheme};
               }
             `};
 
-          ${!disabled &&
+          ${!rocketstate.disabled &&
             (isDynamic || useDefaultFocus) &&
             css`
               &:focus {
-                ${_focusTheme};
+                ${focusTheme};
               }
             `};
 
-          ${!disabled &&
+          ${!rocketstate.disabled &&
             (isDynamic || useDefaultActive) &&
             css`
               &:active {
-                ${_activeTheme};
+                ${activeTheme};
               }
             `};
 
-          ${!disabled &&
-            outline &&
+          ${!rocketstate.disabled &&
+            rocketstate.outline &&
             useDefaultOutline &&
             css`
               background-color: transparent;
-              border-color: ${baseTheme.borderColor};
-              color: ${baseTheme.bgColor || baseTheme.color};
+              border-color: ${getBaseTheme.borderColor};
+              color: ${getBaseTheme.bgColor || getBaseTheme.color};
 
               ${isDynamic &&
                 css`
                   &:hover {
-                    background-color: ${baseTheme.bgColor};
-                    border-color: ${baseTheme.bgColor};
-                    color: ${baseTheme.color};
+                    background-color: ${getBaseTheme.bgColor};
+                    border-color: ${getBaseTheme.bgColor};
+                    color: ${getBaseTheme.color};
                   }
                 `};
             `}
 
-          ${!disabled &&
+          ${!rocketstate.disabled &&
             css`
-              ${hover && _hoverTheme};
-              ${focus && _focusTheme};
-              ${active && _activeTheme};
+              ${hover && hoverTheme};
+              ${focus && focusTheme};
+              ${active && activeTheme};
             `};
 
-          ${disabled &&
+          ${rocketstate.disabled &&
             css`
               pointer-events: none;
               cursor: default;
