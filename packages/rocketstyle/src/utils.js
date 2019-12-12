@@ -68,9 +68,14 @@ export const calculateStyledAttrs = ({ props, dimensions, states, useBooleans })
     }
 
     // prop with one of the following key names always has a priority
-    // TODO: fix multiple support when array
-    const propNames = Object.values(dimensions)
-    if (propNames.includes(key)) {
+    const propNames = []
+
+    Object.values(dimensions).forEach(item => {
+      if (Array.isArray(item)) propNames.push(item[0])
+      if (typeof item === 'string') propNames.push(item)
+    })
+
+    if (propNames.includes(key) && !!value) {
       result[key] = value
     }
   })
