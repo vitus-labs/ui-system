@@ -1,6 +1,6 @@
 import React, { createContext, createElement, Component } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import config, { omit, pick, compose } from '@vitus-labs/core'
+import config, { omit, pick, difference, compose } from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
@@ -136,13 +136,26 @@ const styleComponent = options => {
         const calculatedAttrs = calculateChainOptions(options.attrs, this.props, {
           createElement
         })
-        const newProps = { ...ctxData, ...calculatedAttrs, ...this.props }
 
+        const newProps = omit({ ...ctxData, ...calculatedAttrs, ...this.props }, [
+          'theme'
+        ])
         const styledAttributes = calculateStyledAttrs({
           props: pick(newProps, KEYWORDS),
           states: keys,
           dimensions: options.dimensions,
           useBooleans: options.useBooleans
+        })
+
+        const rocketstate = { ...styledAttributes }
+        Object.values(styledAttributes).forEach(item => {
+          if (Array.isArray(item)) {
+            item.forEach(item => {
+              rocketstate[item] = true
+            })
+          } else {
+            rocketstate[item] = true
+          }
         })
 
         // calculated final theme which will be passed to styled component
@@ -152,14 +165,29 @@ const styleComponent = options => {
           config: options
         })
 
+        // this removes styling state from props and passes its state
+        // under rocketstate key only (except boolean valid HTML attributes)
+        let passProps
+        if (config.isWeb) {
+          const boolAttrs = require('./booleanTags')
+          const propsOmmitedAttrs = difference(
+            this[namespace].KEYWORDS,
+            boolAttrs.default
+          )
+          passProps = omit(newProps, propsOmmitedAttrs)
+        } else {
+          passProps = omit(newProps, this[namespace].KEYWORDS)
+        }
+
         const renderedComponent = createElement(STYLED_COMPONENT, {
-          ...omit(newProps, ['theme']),
-          rocketstyle
+          ...passProps,
+          rocketstyle,
+          rocketstate
         })
 
         if (options.provider) {
           return (
-            <Context.Provider value={styledAttributes}>
+            <Context.Provider value={rocketstate}>
               {renderedComponent}
             </Context.Provider>
           )
