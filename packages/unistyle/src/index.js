@@ -8,7 +8,7 @@ import makeItResponsive, {
   transformTheme
 } from './mediaQueries'
 import optimizeTheme, { pickThemeProps } from './optimizeTheme'
-import styles, { stripUnit, value } from './styles'
+import styles, { stripUnit, normalizeUnit, value } from './styles'
 
 export {
   alignContent,
@@ -23,5 +23,6 @@ export {
   pickThemeProps,
   styles,
   stripUnit,
+  normalizeUnit,
   value
 }

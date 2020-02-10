@@ -14,7 +14,7 @@ export const stripUnit = (value, unitReturn) => {
   return value
 }
 
-export const value = ({
+export const normalizeUnit = ({
   param,
   rootSize = 16,
   outputUnit = config.isWeb ? 'rem' : 'px'
@@ -36,11 +36,19 @@ export const value = ({
   return `${value}${outputUnit}`
 }
 
-const getValue = (...values) =>
+const getValueOf = (...values) =>
   values.find(value => typeof value !== 'undefined' && value !== null)
 
+export const value = (rootSize, values) => {
+  return normalizeUnit({
+    param: getValueOf(...values),
+    rootSize
+  })
+}
+
 export default ({ theme: t, css, rootSize }) => css`
-  ${t.hideEmpty &&
+  ${config.isWeb &&
+    t.hideEmpty &&
     css`
       &:empty {
         display: none;
@@ -56,44 +64,48 @@ export default ({ theme: t, css, rootSize }) => css`
       bottom: 0;
     `};
 
-  ${t.display && `display: ${t.display};`};
-  ${t.position && `position: ${t.position};`};
+  /* POSITION attributes */
+  display: ${t.display};
+  position: ${t.position};
 
-  ${t.top && `top: ${t.top};`};
-  ${t.bottom && `bottom: ${t.bottom};`};
-  ${t.left && `left: ${t.left};`};
-  ${t.top && `right: ${t.right};`};
+  top: ${value(rootSize, [t.top, t.positionY])};
+  bottom: ${value(rootSize, [t.bottom, t.positionY])};
+  left: ${value(rootSize, [t.left, t.positionX])};
+  right: ${value(rootSize, [t.right, t.positionX])};
 
-  width: ${value({ param: getValue(t.width, t.size), rootSize })};
-  min-width: ${value({ param: getValue(t.minWidth, t.minSize), rootSize })};
-  max-width: ${value({ param: getValue(t.maxWidth, t.maxSize), rootSize })};
+  /* SIZE attributes */
+  width: ${value(rootSize, [t.width, t.size])};
+  min-width: ${value(rootSize, [t.minWidth, t.minSize])};
+  max-width: ${value(rootSize, [t.maxWidth, t.maxSize])};
 
-  height: ${value({ param: getValue(t.height, t.size), rootSize })};
-  min-height: ${value({ param: getValue(t.minHeight, t.minSize), rootSize })};
-  max-height: ${value({ param: getValue(t.maxHeight, t.maxSize), rootSize })};
+  height: ${value(rootSize, [t.height, t.size])};
+  min-height: ${value(rootSize, [t.minHeight, t.minSize])};
+  max-height: ${value(rootSize, [t.maxHeight, t.maxSize])};
 
-  margin-top: ${value({ param: getValue(t.marginTop, t.marginY), rootSize })};
-  margin-bottom: ${value({ param: getValue(t.marginBottom, t.marginY), rootSize })};
-  margin-left: ${value({ param: getValue(t.marginLeft, t.marginX), rootSize })};
-  margin-right: ${value({ param: getValue(t.marginRight, t.marginX), rootSize })};
+  /* SPACING attributes */
+  margin: ${value(rootSize, [t.margin])};
+  margin-top: ${value(rootSize, [t.marginTop, t.marginY])};
+  margin-bottom: ${value(rootSize, [t.marginBottom, t.marginY])};
+  margin-left: ${value(rootSize, [t.marginLeft, t.marginX])};
+  margin-right: ${value(rootSize, [t.marginRight, t.marginX])};
 
-  padding-top: ${value({ param: getValue(t.paddingTop, t.paddingY), rootSize })};
-  padding-bottom: ${value({
-    param: getValue(t.paddingBottom, t.paddingY),
-    rootSize
-  })};
-  padding-left: ${value({ param: getValue(t.paddingLeft, t.paddingX), rootSize })};
-  padding-right: ${value({ param: getValue(t.paddingRight, t.paddingX), rootSize })};
+  padding: ${value(rootSize, [t.padding])};
+  padding-top: ${value(rootSize, [t.paddingTop, t.paddingY])};
+  padding-bottom: ${value(rootSize, [t.paddingBottom, t.paddingY])};
+  padding-left: ${value(rootSize, [t.paddingLeft, t.paddingX])};
+  padding-right: ${value(rootSize, [t.paddingRight, t.paddingX])};
 
+  /* FONT attributes */
   line-height: ${t.lineHeight};
   font-family: ${t.fontFamily};
-  font-size: ${value({ param: t.fontSize, rootSize })};
+  font-size: ${value(rootSize, [t.fontSize])};
   font-style: ${t.fontStyle};
   font-weight: ${t.fontWeight};
   text-align: ${t.textAlign};
   text-transform: ${t.textTransform};
   text-decoration: ${t.textDecoration};
 
+  /* COLORS attributes */
   color: ${t.color};
   background-size: ${t.bgSize};
   background-color: ${t.bgColor};
@@ -102,11 +114,15 @@ export default ({ theme: t, css, rootSize }) => css`
       background-image: url(${t.bgImg});
     `};
 
-  border-radius: ${value({ param: t.borderRadius, rootSize })};
+  /* BORDERS attributes */
+  border-radius: ${value(rootSize, [t.borderRadius])};
+  border-style: ${t.borderStyle};
+  border-color: ${t.borderColor};
+  border-width: ${t.borderColor};
 
   ${() => {
     if (t.borderWidth && t.borderStyle && t.borderColor) {
-      const params = `${value({ param: t.borderWidth, rootSize })} ${
+      const params = `${normalizeUnit({ param: t.borderWidth, rootSize })} ${
         t.borderStyle
       } ${t.borderColor};`
       if (t.borderSide) return css`border-${t.borderSide}: ${params};`
