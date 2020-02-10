@@ -21,7 +21,7 @@ const Element = ({ children, component, css, ...props }) => {
 
   const gridContext = createGridContext(props, ctx, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
-  const keywords = [...RESERVED_KEYS, ...breakpoints]
+  const keywords = [...breakpoints, ...RESERVED_KEYS]
 
   const normalizedTheme = optimizeTheme({
     breakpoints,
@@ -66,6 +66,6 @@ const Element = ({ children, component, css, ...props }) => {
   )
 }
 
-Element.displayName = 'vitus-labs/coolgrid/Row'
+Element.displayName = '@vitus-labs/coolgrid/Row'
 
 export default Element

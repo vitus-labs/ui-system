@@ -13,7 +13,7 @@ const Element = ({ children, width, component, css, ...props }) => {
   const theme = useContext(config.context)
   const gridContext = createGridContext(props, {}, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
-  const ctxTheme = pickThemeProps(props, [...RESERVED_KEYS, ...breakpoints])
+  const ctxTheme = pickThemeProps(props, [...breakpoints, ...RESERVED_KEYS])
 
   return (
     <Styled
@@ -38,6 +38,6 @@ const Element = ({ children, width, component, css, ...props }) => {
   )
 }
 
-Element.displayName = 'vitus-labs/coolgrid/Container'
+Element.displayName = '@vitus-labs/coolgrid/Container'
 
 export default Element

@@ -1,8 +1,8 @@
 import config from '@vitus-labs/core'
-import { makeItResponsive, value } from '@vitus-labs/unistyle'
+import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
 const styles = ({ theme: t, css, rootSize }) => css`
-  max-width: ${value({ param: t.width, rootSize })};
+  max-width: ${normalizeUnit({ param: t.width, rootSize })};
   ${t.extendCss};
 `
 

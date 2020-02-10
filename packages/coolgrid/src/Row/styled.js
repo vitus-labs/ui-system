@@ -1,5 +1,5 @@
 import config from '@vitus-labs/core'
-import { makeItResponsive, value } from '@vitus-labs/unistyle'
+import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
 const styles = ({ theme: t, css, rootSize }) => {
   let vertical = t.gap / 2
@@ -10,7 +10,7 @@ const styles = ({ theme: t, css, rootSize }) => {
 
   return css`
     ${(vertical || horizontal) &&
-      `margin: ${value({ param: vertical, rootSize })} ${value({
+      `margin: ${normalizeUnit({ param: vertical, rootSize })} ${normalizeUnit({
         param: horizontal,
         rootSize
       })};`};

@@ -1,19 +1,15 @@
 import config from '@vitus-labs/core'
-import { makeItResponsive, value } from '@vitus-labs/unistyle'
+import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
 const isNumber = number => Number.isFinite(number)
 
 const styles = ({ theme, css, rootSize }) => {
   const t = {}
   t.padding = theme.padding
-  t.gap = theme.gap / 2
+  t.margin = theme.gap / 2
 
   if (config.isWeb) {
     const width = (theme.size / theme.columns) * 100
-
-    if (width) {
-      t.width = theme.gap ? `calc(${width}% - ${theme.gap}px)` : `${theme.width}%`
-    }
 
     if (isNumber(width)) {
       t.flex = 0
@@ -31,30 +27,22 @@ const styles = ({ theme, css, rootSize }) => {
   }
 
   return css`
-    ${theme.size === 0
-      ? css`
-          display: none;
-        `
-      : css`
-          display: flex;
-        `};
-
     ${t.width &&
       css`
-        max-width: ${value({ param: t.width, rootSize })};
+        max-width: ${normalizeUnit({ param: t.width, rootSize })};
         flex-grow: ${t.flex};
         flex-shrink: ${t.flex};
-        flex-basis: ${value({ param: t.width, rootSize })};
+        flex-basis: ${normalizeUnit({ param: t.width, rootSize })};
       `};
 
-    ${isNumber(t.gap) &&
+    ${isNumber(t.margin) &&
       css`
-        margin: ${value({ param: t.gap, rootSize })};
+        margin: ${normalizeUnit({ param: t.margin, rootSize })};
       `};
 
     ${isNumber(t.padding) &&
       css`
-        padding: ${value({ param: t.padding, rootSize })};
+        padding: ${normalizeUnit({ param: t.padding, rootSize })};
       `};
 
     ${theme.extendCss};

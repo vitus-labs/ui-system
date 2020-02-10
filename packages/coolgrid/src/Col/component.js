@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { omit } from '@vitus-labs/core'
 import {
+  vitusContext,
   extendedCss,
   sortBreakpoints,
   optimizeTheme,
@@ -10,13 +11,36 @@ import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
 import RowContext from '../Row/context'
 import Styled from './styled'
 
+const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
+  let foundBp = false
+  let isHidden = false
+  const reversed = sortedBreakpoints.slice().reverse()
+
+  for (let i = 0; i < sortedBreakpoints.length; i += 1) {
+    const item = reversed[i]
+
+    if (item === currentBreakpoint) {
+      foundBp = true
+    }
+
+    if (foundBp && Number.isFinite(size[item])) {
+      isHidden = size[item] === 0 || false
+      break
+    }
+  }
+
+  return isHidden
+}
+
 const Element = ({ children, component, css, ...rest }) => {
+  const vitusLabsCtx = vitusContext()
   const { coolgrid: ctxTheme, colCss, colComponent, ...ctx } = useContext(RowContext)
 
   const breakpoints = sortBreakpoints(ctx.breakpoints)
   const omitKeywords = ['columns', 'gap', 'gutter', 'RNparentWidth']
-  const keywords = [...RESERVED_KEYS, ...omitKeywords, ...breakpoints]
-  // delete gap, it can be passed only via context from Container or Row
+  const keywords = [...breakpoints, ...RESERVED_KEYS, ...omitKeywords]
+  // delete gap, and some other props which can be passed only
+  // via context from Container or Row
   const props = omit(rest, omitKeywords)
 
   const normalizedTheme = optimizeTheme({
@@ -24,6 +48,17 @@ const Element = ({ children, component, css, ...rest }) => {
     keywords,
     props: { ...ctxTheme, ...pickThemeProps(rest, keywords), columns: ctx.columns }
   })
+
+  if (
+    normalizedTheme.size &&
+    isHidden({
+      sortedBreakpoints: breakpoints,
+      size: normalizedTheme.size,
+      currentBreakpoint: vitusLabsCtx.currentBreakpoint
+    })
+  ) {
+    return null
+  }
 
   return (
     <Styled
@@ -41,6 +76,6 @@ const Element = ({ children, component, css, ...rest }) => {
   )
 }
 
-Element.displayName = 'vitus-labs/coolgrid/Col'
+Element.displayName = '@vitus-labs/coolgrid/Col'
 
 export default Element
