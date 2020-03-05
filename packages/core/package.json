@@ -54,6 +54,6 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@internal/rollup": "*"
+    "@vitus-labs/tools-rollup": "*"
   }
 }
