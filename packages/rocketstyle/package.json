@@ -63,10 +63,10 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@internal/docz": "*",
-    "@internal/jest": "*",
-    "@internal/rollup": "*",
-    "@internal/storybook": "*",
+    "@vitus-labs/tools-docz": "*",
+    "@vitus-labs/tools-jest": "*",
+    "@vitus-labs/tools-rollup": "*",
+    "@vitus-labs/tools-storybook": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/elements": "*",
     "@vitus-labs/unistyle": "*"
