@@ -49,15 +49,16 @@ const Element = ({ children, component, css, ...rest }) => {
     props: { ...ctxTheme, ...pickThemeProps(rest, keywords), columns: ctx.columns }
   })
 
-  if (
-    normalizedTheme.size &&
-    isHidden({
-      sortedBreakpoints: breakpoints,
-      size: normalizedTheme.size,
-      currentBreakpoint: vitusLabsCtx.currentBreakpoint
-    })
-  ) {
-    return null
+  // hide column when size=0 for a breakpoint and up
+  if (normalizedTheme.size) {
+    if (
+      isHidden({
+        sortedBreakpoints: breakpoints,
+        size: normalizedTheme.size,
+        currentBreakpoint: vitusLabsCtx.currentBreakpoint
+      })
+    )
+      return null
   }
 
   return (

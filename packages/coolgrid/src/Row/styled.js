@@ -8,12 +8,14 @@ const styles = ({ theme: t, css, rootSize }) => {
   if (t.gutter === 0) vertical *= -1
   else if (t.gutter) vertical = t.gutter
 
+  const value = param => normalizeUnit({ param, rootSize })
+
   return css`
     ${(vertical || horizontal) &&
-      `margin: ${normalizeUnit({ param: vertical, rootSize })} ${normalizeUnit({
-        param: horizontal,
-        rootSize
-      })};`};
+      css`
+        margin: ${value(vertical)} ${value(horizontal)};
+      `};
+
     ${t.extendCss};
   `
 }

@@ -11,9 +11,12 @@ import Styled from './styled'
 
 const Element = ({ children, width, component, css, ...props }) => {
   const theme = useContext(config.context)
+
   const gridContext = createGridContext(props, {}, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
-  const ctxTheme = pickThemeProps(props, [...breakpoints, ...RESERVED_KEYS])
+  const keywords = [...breakpoints, ...RESERVED_KEYS]
+
+  const ctxTheme = pickThemeProps(props, keywords)
 
   return (
     <Styled

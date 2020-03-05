@@ -14,19 +14,21 @@ import Styled from './styled'
 
 const Element = ({ children, component, css, ...props }) => {
   const theme = useContext(config.context)
+
   const [width, setWidth] = useState(0)
-  const { coolgrid: ctxTheme, rowCss, rowComponent, ...ctx } = useContext(
-    ContainerContext
-  )
+  const { coolgrid, rowCss, rowComponent, ...ctx } = useContext(ContainerContext)
 
   const gridContext = createGridContext(props, ctx, theme)
   const breakpoints = sortBreakpoints(gridContext.breakpoints)
   const keywords = [...breakpoints, ...RESERVED_KEYS]
 
+  const ctxTheme = { ...coolgrid, ...pickThemeProps(props, keywords) }
+
+  // creates responsive params
   const normalizedTheme = optimizeTheme({
     breakpoints,
     keywords,
-    props: { ...ctxTheme, ...pickThemeProps(props, keywords) }
+    props: ctxTheme
   })
 
   const finalProps = {
@@ -53,11 +55,7 @@ const Element = ({ children, component, css, ...props }) => {
         value={{
           ...gridContext,
           ...merge(props, ctx, RESERVED_KEYS),
-          coolgrid: {
-            ...ctxTheme,
-            ...pickThemeProps(props, keywords),
-            RNparentWidth: width
-          }
+          coolgrid: { RNparentWidth: width, ...ctxTheme }
         }}
       >
         {children}
