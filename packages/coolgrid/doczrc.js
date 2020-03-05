@@ -1,4 +1,4 @@
-const docz = require('@internal/docz')
+const docz = require('@vitus-labs/tools-docz')
 
 export default docz.config({
   base: '/vitus-labs/coolgrid/',

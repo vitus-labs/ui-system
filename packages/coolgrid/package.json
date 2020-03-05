@@ -39,6 +39,7 @@
     "url": "https://github.com/vitus-labs/coolgrid/issues"
   },
   "scripts": {
+    "dev": "yarn storybook",
     "prepublish": "yarn build",
     "build": "yarn clean && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
     "storybook": "start-storybook -p 6006",
@@ -62,9 +63,9 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@internal/docz": "*",
-    "@internal/rollup": "*",
-    "@internal/storybook": "*",
+    "@vitus-labs/tools-docz": "*",
+    "@vitus-labs/tools-rollup": "*",
+    "@vitus-labs/tools-storybook": "*",
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*"
   }
