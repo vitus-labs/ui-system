@@ -18,7 +18,8 @@ const calculateBreakpointState = (breakpoints, width) => {
   return result
 }
 
-const calculateCurrentBreakpoint = ({ sortedBreakpoints, breakpoints, width }) => {
+const calculateCurrentBreakpoint = (breakpoints, width) => {
+  const sortedBreakpoints = sortBreakpoints(breakpoints)
   let result = ''
 
   sortedBreakpoints.forEach((item, i) => {
@@ -38,7 +39,11 @@ export default () => {
     component: config.component,
     isWeb: config.isWeb,
     isNative: config.isNative,
-    viewport: { width, height }
+    viewport: { width, height },
+    getCurrentBreakpoint: breakpoints =>
+      calculateCurrentBreakpoint(breakpoints, width),
+    getAllBreakpointsState: breakpoints =>
+      calculateBreakpointState(breakpoints, width)
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {
@@ -53,11 +58,7 @@ export default () => {
 
     result.sortedBreakpoints = sortedBreakpoints
     result.breakpoints = calculateBreakpointState(breakpoints, width)
-    result.currentBreakpoint = calculateCurrentBreakpoint({
-      breakpoints,
-      sortedBreakpoints,
-      width
-    })
+    result.currentBreakpoint = calculateCurrentBreakpoint(breakpoints, width)
   }
 
   return result

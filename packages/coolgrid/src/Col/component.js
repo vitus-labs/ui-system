@@ -34,7 +34,7 @@ const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
 
 const Element = ({ children, component, css, ...rest }) => {
   const vitusLabsCtx = vitusContext()
-  const { coolgrid: ctxTheme, colCss, colComponent, ...ctx } = useContext(RowContext)
+  const { coolgrid, colCss, colComponent, ...ctx } = useContext(RowContext)
 
   const breakpoints = sortBreakpoints(ctx.breakpoints)
   const omitKeywords = ['columns', 'gap', 'gutter', 'RNparentWidth']
@@ -46,7 +46,7 @@ const Element = ({ children, component, css, ...rest }) => {
   const normalizedTheme = optimizeTheme({
     breakpoints,
     keywords,
-    props: { ...ctxTheme, ...pickThemeProps(rest, keywords), columns: ctx.columns }
+    props: { ...coolgrid, ...pickThemeProps(rest, keywords), columns: ctx.columns }
   })
 
   // hide column when size=0 for a breakpoint and up
@@ -55,7 +55,7 @@ const Element = ({ children, component, css, ...rest }) => {
       isHidden({
         sortedBreakpoints: breakpoints,
         size: normalizedTheme.size,
-        currentBreakpoint: vitusLabsCtx.currentBreakpoint
+        currentBreakpoint: vitusLabsCtx.getCurrentBreakpoint(ctx.breakpoints)
       })
     )
       return null
@@ -66,7 +66,7 @@ const Element = ({ children, component, css, ...rest }) => {
       {...omit(props, RESERVED_KEYS)}
       as={component || colComponent}
       coolgrid={{
-        RNparentWidth: ctxTheme.RNparentWidth,
+        RNparentWidth: coolgrid.RNparentWidth,
         ...ctx,
         ...normalizedTheme,
         extendCss: extendedCss(css || colCss)
