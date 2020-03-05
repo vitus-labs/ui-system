@@ -1,4 +1,4 @@
-import { config } from '@internal/docz'
+import { config } from '@vitus-labs/tools-docz'
 
 export default config({
   base: '/elements/',

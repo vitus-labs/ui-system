@@ -1,1 +1,1 @@
-module.exports = require('@internal/jest')
+module.exports = require('@vitus-labs/tools-jest')

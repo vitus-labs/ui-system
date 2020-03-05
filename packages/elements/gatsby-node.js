@@ -1,1 +1,1 @@
-exports.onCreateBabelConfig = require('@internal/docz').onCreateBabelConfig
+exports.onCreateBabelConfig = require('@vitus-labs/tools-docz').onCreateBabelConfig

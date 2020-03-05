@@ -1,1 +1,1 @@
-module.exports = require('@internal/storybook/webpack')
+module.exports = require('@vitus-labs/tools-storybook/webpack')

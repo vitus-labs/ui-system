@@ -1,1 +1,1 @@
-module.exports = require('@internal/storybook/addons')
+module.exports = require('@vitus-labs/tools-storybook/addons')
