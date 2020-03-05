@@ -12,8 +12,7 @@ const calculateBreakpointState = (breakpoints, width) => {
   Object.keys(breakpoints).forEach(item => {
     const breakpointWidth = breakpoints[item]
 
-    if (width >= breakpointWidth) result[item] = true
-    else result[item] = false
+    result[item] = width >= breakpointWidth
   })
 
   return result
