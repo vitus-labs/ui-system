@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { pick, renderContent } from '@vitus-labs/core'
+import config, { pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 
@@ -43,22 +43,29 @@ const Element = forwardRef(
   ) => {
     const CHILDREN = children || label
     const shouldBeEmpty = EMPTY_ELEMENTS.includes(tag)
+    const sharedProps = {
+      ref: ref || innerRef,
+      extendCss: css,
+      tag,
+      block
+    }
 
     if (shouldBeEmpty)
       return (
         <Wrapper
-          ref={ref || innerRef}
-          tag={tag}
-          extendCss={css}
+          {...sharedProps}
           contentDirection="inline"
           alignX="left"
           alignY="center"
-          block={block}
           {...props}
         />
       )
 
-    const SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
+    let SUB_TAG
+    if (config.isWeb) {
+      SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
+    }
+
     const INJECTED_PROPS = pick(props, passProps)
 
     // --------------------------------------------------------
@@ -89,13 +96,10 @@ const Element = forwardRef(
 
     return (
       <Wrapper
-        ref={ref || innerRef}
-        tag={tag}
-        extendCss={css}
+        {...sharedProps}
         contentDirection={wrapperDirection || 'inline'}
         alignX={wrapperAlignX || 'left'}
         alignY={wrapperAlignY || 'center'}
-        block={block}
         {...props}
       >
         {beforeContent && (

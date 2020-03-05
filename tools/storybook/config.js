@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { configure, addParameters, addDecorator, storiesOf } from '@storybook/react'
+import { boolean, text } from '@storybook/addon-knobs'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
 import { withKnobs } from '@storybook/addon-knobs'
 import { withA11y } from '@storybook/addon-a11y'
@@ -67,6 +68,7 @@ const customViewports = {
 global.React = React
 global.Fragment = Fragment
 global.storiesOf = storiesOf
+global.is = { text, boolean }
 
 export default ({ source, theme }) => {
   addParameters({

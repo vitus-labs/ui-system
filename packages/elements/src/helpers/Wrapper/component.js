@@ -16,7 +16,7 @@ const KEYWORDS = [
 const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
   const restProps = omit(props, KEYWORDS)
 
-  const needsFix = config.isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : null
+  const needsFix = config.isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : false
 
   const ctx = vitusContext()
   const normalizedTheme = optimizeTheme({

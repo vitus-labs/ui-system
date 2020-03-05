@@ -5,7 +5,7 @@ const styles = ({ css, theme: t }) => css`
   ${config.isWeb &&
     css`
       display: ${({ needsFix }) => {
-        if (needsFix) return
+        if (needsFix) return ''
         return t.block ? 'flex' : 'inline-flex'
       }};
     `};
