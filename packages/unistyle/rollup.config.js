@@ -1,4 +1,4 @@
-import rollup from '@internal/rollup'
+import rollup from '@vitus-labs/tools-rollup'
 
 export default rollup({
   name: 'unistyle',

@@ -1,5 +1,5 @@
 {
-  "name": "@internal/storybook",
+  "name": "@vitus-labs/tools-storybook",
   "version": "0.0.0",
   "main": "./config.js",
   "peerDependencies": {

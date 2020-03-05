@@ -140,6 +140,7 @@ const styleComponent = options => {
 
     render() {
       const { KEYWORDS, keys, themes } = this[namespace]
+
       const finalElement = (ctxData = {}) => {
         const calculatedAttrs = calculateChainOptions(options.attrs, this.props, {
           createElement
@@ -148,6 +149,7 @@ const styleComponent = options => {
         const newProps = omit({ ...ctxData, ...calculatedAttrs, ...this.props }, [
           'theme'
         ])
+
         const styledAttributes = calculateStyledAttrs({
           props: pick(newProps, KEYWORDS),
           states: keys,

@@ -1,5 +1,5 @@
 {
-  "name": "@internal/rollup",
+  "name": "@vitus-labs/tools-rollup",
   "version": "0.0.0",
   "main": "./index.js",
   "dependencies": {
