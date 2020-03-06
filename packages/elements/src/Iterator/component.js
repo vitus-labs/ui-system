@@ -3,15 +3,15 @@ import { renderContent } from '@vitus-labs/core'
 
 const RESERVED_PROPS = [
   'children',
-  'itemKey',
-  'injectProps',
   'component',
   'data',
+  'itemKey',
   'itemProps',
-  'itemKeyName'
+  'extendProps'
 ]
 
 const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
+  key,
   first: position === firstItem,
   last: position === lastItem,
   odd: position % 2 === 1,
@@ -30,19 +30,13 @@ export default class Element extends Component {
   getItemKey = (item, index) => {
     const { itemKey } = this.props
 
-    if (itemKey) return itemKey(item, index)
+    if (typeof itemKey === 'function') return itemKey(item, index)
+    if (typeof itemKey === 'string') return itemKey
     return item.key || item.id || item.itemId || index
   }
 
   renderItems = () => {
-    const {
-      children,
-      component,
-      data,
-      itemKeyName,
-      injectProps,
-      itemProps
-    } = this.props
+    const { children, component, data, extendProps, itemProps } = this.props
 
     const injectItemProps =
       typeof itemProps === 'function' ? key => itemProps(key) : () => itemProps
@@ -52,14 +46,18 @@ export default class Element extends Component {
       const firstItem = 0
       const lastItem = children.length - 1
 
-      return Children.map(children, (child, i) => {
-        const key = this.getItemKey(child, i)
+      return Children.map(children, (item, i) => {
+        const key = this.getItemKey(item, i)
+        const extendedProps = attachItemProps({
+          key,
+          position: i,
+          firstItem,
+          lastItem
+        })
 
-        return renderContent(child, {
-          ...(injectProps
-            ? attachItemProps({ key, position: i, firstItem, lastItem })
-            : {}),
-          ...injectItemProps(key)
+        return renderContent(item, {
+          ...(extendProps ? extendedProps : {}),
+          ...injectItemProps(extendedProps)
         })
       })
     }
@@ -67,17 +65,22 @@ export default class Element extends Component {
     if (component && Array.isArray(data)) {
       const firstItem = 0
       const lastItem = data.length - 1
-      const keyName = itemKeyName || 'children'
 
       return data.map((item, i) => {
         if (typeof item !== 'object') {
           const key = i
+          const keyName = this.getItemKey(item, i) || 'children'
+          const extendedProps = attachItemProps({
+            key,
+            position: i,
+            firstItem,
+            lastItem
+          })
+
           return renderContent(component, {
             key,
-            ...(injectProps
-              ? attachItemProps({ key, position: i, firstItem, lastItem })
-              : {}),
-            ...injectItemProps(i),
+            ...(extendProps ? extendedProps : {}),
+            ...injectItemProps(extendedProps),
             [keyName]: item
           })
         }
@@ -85,13 +88,17 @@ export default class Element extends Component {
         const { component: itemComponent, ...restItem } = item
         const renderItem = itemComponent || component
         const key = this.getItemKey(restItem, i)
+        const extendedProps = attachItemProps({
+          key,
+          position: i,
+          firstItem,
+          lastItem
+        })
 
         return renderContent(renderItem, {
           key,
-          ...(injectProps
-            ? attachItemProps({ key, position: i, firstItem, lastItem })
-            : {}),
-          ...injectItemProps(key),
+          ...(extendProps ? extendedProps : {}),
+          ...injectItemProps(extendedProps),
           ...restItem
         })
       })
