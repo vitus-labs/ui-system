@@ -33,21 +33,14 @@ const RightContent = config.styled.span`
 
 export const Button = rocketstyle()({ name: 'Button', component: Element })
   .attrs({
-    primary: true,
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
     afterContent: () => <RightContent>✕</RightContent>
   })
   .theme({
-    a: true,
-    b: false
-  })
-  .states({
-    primary: {
-      bgColor: '#007bff',
-      color: '#fff'
-    }
+    bgColor: '#007bff',
+    color: '#fff'
   })
   .styles(
     css => css`
@@ -79,5 +72,11 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
       `};
     `
   )
+
+const ExtendedButtonA = props => <Button {...props} />
+
+export const HoistedButton = Button.config({
+  component: ExtendedButtonA
+}).theme({ bgColor: 'papayawhip' })
 
 export default Button
