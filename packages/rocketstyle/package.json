@@ -38,6 +38,7 @@
     "dist/"
   ],
   "scripts": {
+    "dev": "yarn storybook",
     "prepublish": "yarn build",
     "build": "rm -rf lib && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
     "storybook": "start-storybook -p 6006",
