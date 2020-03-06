@@ -2,40 +2,43 @@ import React, { forwardRef } from 'react'
 import config, { pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
+import { transformVerticalProp } from './utils'
 
 const Element = forwardRef(
   (
     {
-      passProps = [],
+      forwardProps = [],
       innerRef,
       tag,
-      block,
       label,
       children,
       beforeContent,
       afterContent,
 
+      block,
       equalCols,
+      gap,
+
       vertical,
-      alignX,
-      alignY,
+      alignX = 'left',
+      alignY = 'center',
 
       css,
       contentCss,
       beforeContentCss,
       afterContentCss,
 
-      contentDirection,
-      contentAlignX,
-      contentAlignY,
+      contentDirection = 'inline',
+      contentAlignX = 'left',
+      contentAlignY = 'center',
 
-      beforeContentDirection,
-      beforeContentAlignX,
-      beforeContentAlignY,
+      beforeContentDirection = 'inline',
+      beforeContentAlignX = 'left',
+      beforeContentAlignY = 'center',
 
-      afterContentDirection,
-      afterContentAlignX,
-      afterContentAlignY,
+      afterContentDirection = 'inline',
+      afterContentAlignX = 'right',
+      afterContentAlignY = 'center',
 
       ...props
     },
@@ -43,73 +46,55 @@ const Element = forwardRef(
   ) => {
     const CHILDREN = children || label
     const shouldBeEmpty = EMPTY_ELEMENTS.includes(tag)
+    const isSimple = !beforeContent && !afterContent
+
     const sharedProps = {
       ref: ref || innerRef,
       extendCss: css,
       tag,
-      block
+      block,
+      contentDirection,
+      alignX: contentAlignX,
+      alignY: contentAlignY
     }
 
-    if (shouldBeEmpty)
-      return (
-        <Wrapper
-          {...sharedProps}
-          contentDirection="inline"
-          alignX="left"
-          alignY="center"
-          {...props}
-        />
-      )
+    if (shouldBeEmpty) return <Wrapper {...sharedProps} {...props} />
 
     let SUB_TAG
     if (config.isWeb) {
       SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
     }
 
-    const INJECTED_PROPS = pick(props, passProps)
+    const INJECTED_PROPS = pick(props, forwardProps)
 
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    let wrapperDirection = 'inline'
+    const wrapperAlignX = isSimple && contentAlignX ? contentAlignX : alignX
+    const wrapperAlignY = isSimple && contentAlignY ? contentAlignY : alignY
+    let wrapperDirection = isSimple && contentDirection ? contentDirection : 'inline'
 
-    if (contentDirection && !beforeContent && !afterContent) {
-      wrapperDirection = contentDirection
-    } else if (typeof vertical === 'boolean') {
-      wrapperDirection = vertical ? 'rows' : 'inline'
-    } else if (typeof vertical === 'object') {
-      wrapperDirection = {}
-      Object.keys(vertical).forEach(item => {
-        wrapperDirection[item] = vertical[item] ? 'rows' : 'inline'
-      })
-    }
-
-    let wrapperAlignX = alignX
-    if (contentAlignX && !beforeContent && !afterContent) {
-      wrapperAlignX = contentAlignX
-    }
-
-    let wrapperAlignY = alignY
-    if (contentAlignY && !beforeContent && !afterContent) {
-      wrapperAlignY = contentAlignY
-    }
+    if (vertical) wrapperDirection = transformVerticalProp(vertical)
 
     return (
       <Wrapper
         {...sharedProps}
-        contentDirection={wrapperDirection || 'inline'}
-        alignX={wrapperAlignX || 'left'}
-        alignY={wrapperAlignY || 'center'}
+        contentDirection={wrapperDirection}
+        alignX={wrapperAlignX}
+        alignY={wrapperAlignY}
         {...props}
       >
         {beforeContent && (
           <Content
             tag={SUB_TAG}
+            type="before"
+            parentDirection={wrapperDirection}
             extendCss={beforeContentCss}
-            contentDirection={beforeContentDirection || 'inline'}
-            alignX={beforeContentAlignX || 'left'}
-            alignY={beforeContentAlignY || 'center'}
+            contentDirection={beforeContentDirection}
+            alignX={beforeContentAlignX}
+            alignY={beforeContentAlignY}
             equalCols={equalCols}
+            gap={gap}
           >
             {renderContent(beforeContent, INJECTED_PROPS)}
           </Content>
@@ -118,10 +103,12 @@ const Element = forwardRef(
         {beforeContent || afterContent ? (
           <Content
             tag={SUB_TAG}
+            type="content"
+            parentDirection={wrapperDirection}
             extendCss={contentCss}
-            contentDirection={contentDirection || 'inline'}
-            alignX={contentAlignX || 'left'}
-            alignY={contentAlignY || 'center'}
+            contentDirection={contentDirection}
+            alignX={contentAlignX}
+            alignY={contentAlignY}
             equalCols={equalCols}
             isContent
           >
@@ -134,11 +121,14 @@ const Element = forwardRef(
         {afterContent && (
           <Content
             tag={SUB_TAG}
+            type="after"
+            parentDirection={wrapperDirection}
             extendCss={afterContentCss}
-            contentDirection={afterContentDirection || 'inline'}
-            alignX={afterContentAlignX || 'left'}
-            alignY={afterContentAlignY || 'center'}
+            contentDirection={afterContentDirection}
+            alignX={afterContentAlignX}
+            alignY={afterContentAlignY}
             equalCols={equalCols}
+            gap={gap}
           >
             {renderContent(afterContent, INJECTED_PROPS)}
           </Content>

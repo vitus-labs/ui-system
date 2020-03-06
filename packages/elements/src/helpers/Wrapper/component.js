@@ -1,26 +1,20 @@
-import React, { forwardRef, memo } from 'react'
-import config, { omit } from '@vitus-labs/core'
+import React, { forwardRef } from 'react'
+import config, { omit, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
 import Styled from './styled'
 
-const KEYWORDS = [
-  'block',
-  'contentDirection',
-  'alignX',
-  'alignY',
-  'equalCols',
-  'extendCss'
-]
+const KEYWORDS_WRAPPER = ['block', 'extendCss']
+const KEYWORDS_INNER = ['contentDirection', 'alignX', 'alignY', 'equalCols']
+const KEYWORDS = [...KEYWORDS_WRAPPER, ...KEYWORDS_INNER]
 
 const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
+  const needsFix = config.isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : false
   const restProps = omit(props, KEYWORDS)
 
-  const needsFix = config.isWeb ? INLINE_ELEMENTS_FLEX_FIX.includes(tag) : false
-
-  const ctx = vitusContext()
+  const { sortedBreakpoints } = vitusContext()
   const normalizedTheme = optimizeTheme({
-    breakpoints: ctx.sortedBreakpoints,
+    breakpoints: sortedBreakpoints,
     keywords: KEYWORDS,
     props
   })
@@ -44,26 +38,16 @@ const Element = forwardRef(({ children, tag, innerRef, ...props }, ref) => {
       as={tag}
       {...restProps}
       needsFix
-      element={{
-        ...normalizedTheme,
-        alignX: undefined,
-        alignY: undefined,
-        contentDirection: undefined,
-        extendCss: undefined
-      }}
+      element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
     >
       <Styled
         as="span"
-        element={{
-          ...normalizedTheme,
-          block: undefined
-        }}
-        extendCss={[
-          config.css`
+        isInner
+        element={pick(normalizedTheme, KEYWORDS_INNER)}
+        extendCss={config.css`
           height: 100%;
           width: 100%;
-        `
-        ]}
+        `}
       >
         {children}
       </Styled>

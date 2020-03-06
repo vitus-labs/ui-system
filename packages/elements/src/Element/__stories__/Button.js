@@ -4,20 +4,17 @@ import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
 
 const LeftContent = config.styled.span`
-  margin-right: 10px;
   padding: 5px;
   border-radius: 4px;
   background-color: black;
 `
 
 const RightContent = config.styled.span`
-  margin-left: 10px;
   padding: 2px;
   border-radius: 4px;
   background-color: #0069d9;
   line-height: 1;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 
   ${({ hover }) => {
     return (
@@ -48,19 +45,12 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
   .styles(
     css => css`
       border: 1px solid transparent;
-      padding: 0 0.75rem;
-      height: 80px;
+      padding: 0.75rem;
+      min-height: 80px;
       font-size: 1rem;
       border-radius: 0.25rem;
-      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition: all 0.15s ease-in-out;
       cursor: pointer;
-
-      &::before,
-      &::after {
-        content: '';
-        flex: 1 0 auto;
-      }
 
       ${({ rocketstyle: t }) => css`
         color: ${t.color};

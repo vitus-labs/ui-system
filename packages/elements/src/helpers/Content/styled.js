@@ -1,7 +1,40 @@
 import config from '@vitus-labs/core'
-import { makeItResponsive, alignContent, extendedCss } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  alignContent,
+  extendedCss,
+  value
+} from '@vitus-labs/unistyle'
 
-const styles = ({ css, theme: t }) => css`
+const calculateGap = ({ direction, type, value, css }) => {
+  if (direction === 'inline') {
+    if (type === 'before')
+      return css`
+        margin-right: ${value};
+      `
+
+    if (type === 'after')
+      return css`
+        margin-left: ${value};
+      `
+  }
+
+  if (direction === 'rows') {
+    if (type === 'before')
+      return css`
+        margin-bottom: ${value};
+      `
+
+    if (type === 'after')
+      return css`
+        margin-top: ${value};
+      `
+  }
+
+  return ''
+}
+
+const styles = ({ css, theme: t, rootSize }) => css`
   ${t.contentDirection &&
     t.alignX &&
     t.alignY &&
@@ -15,6 +48,17 @@ const styles = ({ css, theme: t }) => css`
     css`
       flex: 1;
     `};
+
+  ${t.gap &&
+    css`
+      ${({ type }) =>
+        calculateGap({
+          direction: t.parentDirection,
+          type,
+          value: value(rootSize, [t.gap]),
+          css
+        })}
+    `}
 
   ${t.extendCss && extendedCss(t.extendCss)};
 `

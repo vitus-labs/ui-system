@@ -13,18 +13,13 @@ export const Inner = config.styled('div')`
 export const Wrapper = forwardRef((props, ref) => (
   <Element
     {...props}
+    gap={10}
     ref={ref}
     css={config.css`
-      height: 60px;
+      min-height: 80px;
       padding: 10px;
       background-color: papayawhip;
       margin: 10px;
-    `}
-    beforeContentCss={config.css`
-      padding-right: 10px;
-    `}
-    afterContentCss={config.css`
-      padding-left: 10px;
     `}
     {...props}
   />

@@ -1,6 +1,8 @@
 import config from '@vitus-labs/core'
 import { alignContent, extendedCss, makeItResponsive } from '@vitus-labs/unistyle'
 
+const isValue = val => val !== null && val !== undefined
+
 const styles = ({ css, theme: t }) => css`
   ${config.isWeb &&
     css`
@@ -11,10 +13,14 @@ const styles = ({ css, theme: t }) => css`
     `};
 
   ${config.isWeb &&
-    t.block &&
+    isValue(t.block) &&
     css`
-      width: 100%;
-    `};
+      ${({ needsFix }) =>
+        needsFix &&
+        css`
+          width: ${t.block ? '100%' : 'initial'};
+        `}
+    `}
 
   ${config.isNative &&
     t.block &&
@@ -23,6 +29,8 @@ const styles = ({ css, theme: t }) => css`
     `};
 
   ${t.contentDirection &&
+    t.alignX &&
+    t.alignY &&
     alignContent({
       direction: t.contentDirection,
       alignX: t.alignX,
@@ -32,7 +40,6 @@ const styles = ({ css, theme: t }) => css`
   ${t.extendCss && extendedCss(t.extendCss)};
 `
 
-// TODO: display quick fix to be improved later
 export default config.styled(config.component)`
   position: relative;
 
@@ -45,6 +52,13 @@ export default config.styled(config.component)`
     config.css`
       display: flex;
     `};
+
+  ${({ isInner }) =>
+    isInner &&
+    config.css`
+    width: 100%;
+    height: 100%;
+  `}
 
   ${makeItResponsive({ key: 'element', styles, css: config.css })};
 `
