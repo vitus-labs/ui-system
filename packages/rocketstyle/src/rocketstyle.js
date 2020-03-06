@@ -1,6 +1,12 @@
-import React, { createContext, createElement, Component } from 'react'
+import React, { createContext, Component } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import config, { omit, pick, difference, compose } from '@vitus-labs/core'
+import config, {
+  omit,
+  pick,
+  difference,
+  compose,
+  renderContent
+} from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
@@ -139,12 +145,18 @@ const styleComponent = options => {
     }
 
     render() {
+      const { theme } = this.props
       const { KEYWORDS, keys, themes } = this[namespace]
 
       const finalElement = (ctxData = {}) => {
-        const calculatedAttrs = calculateChainOptions(options.attrs, this.props, {
-          createElement
-        })
+        const calculatedAttrs = calculateChainOptions(
+          options.attrs,
+          this.props,
+          theme,
+          {
+            renderContent
+          }
+        )
 
         const newProps = omit({ ...ctxData, ...calculatedAttrs, ...this.props }, [
           'theme'
@@ -177,19 +189,19 @@ const styleComponent = options => {
 
         // this removes styling state from props and passes its state
         // under rocketstate key only (except boolean valid HTML attributes)
-        let passProps
-        if (config.isWeb) {
-          const boolAttrs = require('./booleanTags')
-          const propsOmmitedAttrs = difference(
-            this[namespace].KEYWORDS,
-            boolAttrs.default
-          )
-          passProps = omit(newProps, propsOmmitedAttrs)
-        } else {
-          passProps = omit(newProps, this[namespace].KEYWORDS)
-        }
+        const passProps = omit(newProps, this[namespace].KEYWORDS)
+        // if (config.isWeb) {
+        //   const boolAttrs = require('./booleanTags')
+        //   const propsOmmitedAttrs = difference(
+        //     this[namespace].KEYWORDS,
+        //     boolAttrs.default
+        //   )
+        //   passProps = omit(newProps, propsOmmitedAttrs)
+        // } else {
+        //   passProps = omit(newProps, this[namespace].KEYWORDS)
+        // }
 
-        const renderedComponent = createElement(STYLED_COMPONENT, {
+        const renderedComponent = renderContent(STYLED_COMPONENT, {
           ...passProps,
           rocketstyle,
           rocketstate
