@@ -47,17 +47,18 @@ export default () => {
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`
-        vitusLabs Context Consumer is not getting any breakpoints
-        from your Theme Provider
-      `)
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   console.warn(`
+    //     vitusLabs Context Consumer is not getting any breakpoints
+    //     from your Theme Provider
+    //   `)
+    // }
   } else {
     const sortedBreakpoints = sortBreakpoints(breakpoints)
 
+    result.breakpoints = breakpoints
     result.sortedBreakpoints = sortedBreakpoints
-    result.breakpoints = calculateBreakpointState(breakpoints, width)
+    result.breakpointsState = calculateBreakpointState(breakpoints, width)
     result.currentBreakpoint = calculateCurrentBreakpoint(breakpoints, width)
   }
 

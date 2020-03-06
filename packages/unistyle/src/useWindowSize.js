@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { throttle } from '@vitus-labs/core'
 
-const useWindowSize = () => {
+const useWindowSize = (throttleDelay = 200) => {
   const isClient = typeof window === 'object'
 
   function getSize() {
@@ -15,9 +16,9 @@ const useWindowSize = () => {
   useEffect(() => {
     if (!isClient) return false
 
-    const handleResize = () => {
+    const handleResize = throttle(() => {
       setWindowSize(getSize())
-    }
+    }, throttleDelay)
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)

@@ -113,7 +113,17 @@ const normalizeTheme = ({ props, keywords, breakpoints }) => {
   return result
 }
 
-export { pickThemeProps }
+const groupByBreakpoint = props => {
+  const result = {}
+
+  Object.keys(props).forEach(attr => {
+    Object.keys(props[attr]).forEach(bp => set(result, [bp, attr], props[attr][bp]))
+  })
+
+  return result
+}
+
+export { pickThemeProps, normalizeTheme, groupByBreakpoint }
 
 export default ({ props, keywords, breakpoints }) => {
   if (!breakpoints || !breakpoints.length > 0) {

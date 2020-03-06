@@ -7,7 +7,11 @@ import makeItResponsive, {
   createMediaQueries,
   transformTheme
 } from './mediaQueries'
-import optimizeTheme, { pickThemeProps } from './optimizeTheme'
+import optimizeTheme, {
+  pickThemeProps,
+  normalizeTheme,
+  groupByBreakpoint
+} from './optimizeTheme'
 import styles, { stripUnit, normalizeUnit, value } from './styles'
 
 export {
@@ -21,6 +25,8 @@ export {
   transformTheme,
   optimizeTheme,
   pickThemeProps,
+  normalizeTheme,
+  groupByBreakpoint,
   styles,
   stripUnit,
   normalizeUnit,
