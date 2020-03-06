@@ -11,6 +11,7 @@ const Element = forwardRef(
       innerRef,
       tag,
       label,
+      content,
       children,
       beforeContent,
       afterContent,
@@ -44,7 +45,7 @@ const Element = forwardRef(
     },
     ref
   ) => {
-    const CHILDREN = children || label
+    const CHILDREN = children || content || label
     const shouldBeEmpty = EMPTY_ELEMENTS.includes(tag)
     const isSimple = !beforeContent && !afterContent
 
@@ -87,7 +88,7 @@ const Element = forwardRef(
         {beforeContent && (
           <Content
             tag={SUB_TAG}
-            type="before"
+            contentType="before"
             parentDirection={wrapperDirection}
             extendCss={beforeContentCss}
             contentDirection={beforeContentDirection}
@@ -103,7 +104,7 @@ const Element = forwardRef(
         {beforeContent || afterContent ? (
           <Content
             tag={SUB_TAG}
-            type="content"
+            contentType="content"
             parentDirection={wrapperDirection}
             extendCss={contentCss}
             contentDirection={contentDirection}
@@ -121,7 +122,7 @@ const Element = forwardRef(
         {afterContent && (
           <Content
             tag={SUB_TAG}
-            type="after"
+            contentType="after"
             parentDirection={wrapperDirection}
             extendCss={afterContentCss}
             contentDirection={afterContentDirection}
