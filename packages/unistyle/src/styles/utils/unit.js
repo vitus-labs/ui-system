@@ -39,7 +39,7 @@ export const normalizeUnit = ({
 export const getValueOf = (...values) =>
   values.find(value => typeof value !== 'undefined' && value !== null)
 
-export const value = (rootSize, values) => {
+export const value = (rootSize, values, outputUnit) => {
   const param = getValueOf(...values)
 
   if (Array.isArray(param)) {
@@ -49,7 +49,8 @@ export const value = (rootSize, values) => {
       result.push(
         normalizeUnit({
           param: item,
-          rootSize
+          rootSize,
+          outputUnit
         })
       )
     })
@@ -59,6 +60,7 @@ export const value = (rootSize, values) => {
 
   return normalizeUnit({
     param,
-    rootSize
+    rootSize,
+    outputUnit
   })
 }
