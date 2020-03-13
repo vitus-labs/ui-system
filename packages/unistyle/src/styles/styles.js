@@ -1,5 +1,5 @@
 import config from '@vitus-labs/core'
-import { normalizeUnit, value } from './utils/unit'
+import { value } from './utils/unit'
 
 export default ({ theme: t, css, rootSize }) => css`
   ${config.isWeb &&
@@ -108,24 +108,24 @@ export default ({ theme: t, css, rootSize }) => css`
   /* BORDERS attributes */
   border-radius: ${value(rootSize, [t.borderRadius])};
   border-top-left-radius: ${value(rootSize, [
-    t.borderTopLeftRadius,
-    t.borderLeftRadius,
-    t.borderTopRadius
+    t.borderRadiusTopLeft,
+    t.borderRadiusLeft,
+    t.borderRadiusTop
   ])};
   border-top-right-radius: ${value(rootSize, [
-    t.borderTopRightRadius,
-    t.borderRightRadius,
-    t.borderTopRadius
+    t.borderRadiusTopRight,
+    t.borderRadiusRight,
+    t.borderRadiusTop
   ])};
   border-bottom-left-radius: ${value(rootSize, [
-    t.borderBottomLeftRadius,
-    t.borderLeftRadius,
-    t.borderBottomRadius
+    t.borderRadiusBottomLeft,
+    t.borderRadiusLeft,
+    t.borderRadiusBottom
   ])};
   border-bottom-right-radius: ${value(rootSize, [
-    t.borderBottomRightRadius,
-    t.borderRightRadius,
-    t.borderBottomRadius
+    t.borderRadiusBottomRight,
+    t.borderRadiusRight,
+    t.borderRadiusBottom
   ])};
 
   border: ${t.border};
@@ -134,40 +134,29 @@ export default ({ theme: t, css, rootSize }) => css`
   border-left: ${t.borderLeft};
   border-right: ${t.borderRight};
 
+  border-width: ${t.borderWidth};
   border-style: ${t.borderStyle};
   border-color: ${t.borderColor};
-  border-width: ${t.borderWidth};
 
-  border-top-style: ${t.borderTopStyle};
-  border-top-color: ${t.borderTopColor};
-  border-top-width: ${t.borderTopWidth};
+  border-top-width: ${value(rootSize, [t.borderWidthTop, t.borderWidthY], 'px')};
+  border-top-style: ${t.borderStyleTop || t.borderStyleY};
+  border-top-color: ${t.borderColorTop || t.bordetColorY};
 
-  border-bottom-style: ${t.borderBottomStyle};
-  border-bottom-color: ${t.borderBottomColor};
-  border-bottom-width: ${t.borderBottomWidth};
+  border-bottom-width: ${value(
+    rootSize,
+    [t.borderWidthBottom, t.borderWidthY],
+    'px'
+  )};
+  border-bottom-style: ${t.borderStyleBottom || t.borderStyleY};
+  border-bottom-color: ${t.borderColorBottom || t.bordetColorY};
 
-  border-left-style: ${t.borderLeftStyle};
-  border-left-color: ${t.borderLeftColor};
-  border-left-width: ${t.borderLeftWidth};
+  border-left-width: ${value(rootSize, [t.borderWidthLeft, t.borderWidthX], 'px')};
+  border-left-style: ${t.borderStyleLeft || t.borderStyleX};
+  border-left-color: ${t.borderColorLeft || t.bordetColorX};
 
-  border-right-style: ${t.borderRightStyle};
-  border-right-color: ${t.borderRightColor};
-  border-right-width: ${t.borderRightWidth};
-
-  ${() => {
-    if (t.borderWidth && t.borderStyle && t.borderColor) {
-      const params = `${normalizeUnit({ param: t.borderWidth, rootSize })} ${
-        t.borderStyle
-      } ${t.borderColor};`
-      if (t.borderSide) return css`border-${t.borderSide}: ${params};`
-
-      return css`
-        border: ${params};
-      `
-    }
-
-    return null
-  }};
+  border-right-width: ${value(rootSize, [t.borderWidthRight, t.borderWidthX], 'px')};
+  border-right-style: ${t.borderStyleRight || t.borderStyleX};
+  border-right-color: ${t.borderColorRight || t.bordetColorX};
 
   /* OTHER ATTRIBUTES */
   outline: ${t.outline};
@@ -189,3 +178,18 @@ export default ({ theme: t, css, rootSize }) => css`
 
   ${t.extendCss};
 `
+
+// ${() => {
+//   if (t.borderWidth && t.borderStyle && t.borderColor) {
+//     const params = `${normalizeUnit({ param: t.borderWidth, rootSize })} ${
+//       t.borderStyle
+//     } ${t.borderColor};`
+//     if (t.borderSide) return css`border-${t.borderSide}: ${params};`
+
+//     return css`
+//       border: ${params};
+//     `
+//   }
+
+//   return null
+// }};
