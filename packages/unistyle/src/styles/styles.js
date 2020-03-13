@@ -1,50 +1,5 @@
 import config from '@vitus-labs/core'
-
-export const stripUnit = (value, unitReturn) => {
-  const cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/
-  if (typeof value !== 'string') return unitReturn ? [value, undefined] : value
-  const matchedValue = value.match(cssRegex)
-
-  if (unitReturn) {
-    if (matchedValue) return [parseFloat(value), matchedValue[2]]
-    return [value, undefined]
-  }
-
-  if (matchedValue) return parseFloat(value)
-  return value
-}
-
-export const normalizeUnit = ({
-  param,
-  rootSize = 16,
-  outputUnit = config.isWeb ? 'rem' : 'px'
-}) => {
-  if (!param && param !== 0) return null
-
-  const [value, unit] = stripUnit(param, true)
-  if (!value && value !== 0) return null
-  if (value === 0 || typeof value === 'string') return param // zero should be unitless
-
-  if (rootSize && !Number.isNaN(value)) {
-    if (!unit && outputUnit === 'px') return `${value}${outputUnit}`
-    if (!unit) return `${value / rootSize}rem`
-    if (unit === 'px' && outputUnit === 'rem') return `${value / rootSize}rem`
-  }
-
-  if (unit) return param
-
-  return `${value}${outputUnit}`
-}
-
-const getValueOf = (...values) =>
-  values.find(value => typeof value !== 'undefined' && value !== null)
-
-export const value = (rootSize, values) => {
-  return normalizeUnit({
-    param: getValueOf(...values),
-    rootSize
-  })
-}
+import { normalizeUnit, value } from './utils/unit'
 
 export default ({ theme: t, css, rootSize }) => css`
   ${config.isWeb &&
@@ -52,6 +7,16 @@ export default ({ theme: t, css, rootSize }) => css`
     css`
       &:empty {
         display: none;
+      }
+    `};
+
+  ${config.isWeb &&
+    t.clearFix &&
+    css`
+      &::after: {
+        clear: both;
+        content: '';
+        display: table;
       }
     `};
 
@@ -65,8 +30,10 @@ export default ({ theme: t, css, rootSize }) => css`
     `};
 
   /* POSITION attributes */
+  all: ${t.resetAll};
   display: ${t.display};
   position: ${t.position};
+  box-sizing: ${t.boxSizing};
 
   top: ${value(rootSize, [t.top, t.positionY])};
   bottom: ${value(rootSize, [t.bottom, t.positionY])};
@@ -95,6 +62,12 @@ export default ({ theme: t, css, rootSize }) => css`
   padding-left: ${value(rootSize, [t.paddingLeft, t.paddingX])};
   padding-right: ${value(rootSize, [t.paddingRight, t.paddingX])};
 
+  /* POSITIONING attrs */
+  object-fit: ${t.objectFit};
+  object-position: ${t.objectPosition};
+  order: ${t.order};
+  resize: ${t.resize};
+
   /* FONT attributes */
   line-height: ${t.lineHeight};
   font-family: ${t.fontFamily};
@@ -104,21 +77,82 @@ export default ({ theme: t, css, rootSize }) => css`
   text-align: ${t.textAlign};
   text-transform: ${t.textTransform};
   text-decoration: ${t.textDecoration};
+  letter-spacing: ${t.letterSpacing};
+  text-shadow: ${t.textShadow};
+  text-overflow: ${t.textOverflow};
+  text-indent: ${t.textIndent};
+  white-space: ${t.whiteSpace};
+  word-break: ${t.wordBreak};
+  word-wrap: ${t.wordWrap};
+  writing-mode: ${t.writingMode};
+
+  /* LIST attributes */
+  list-style: ${t.listStyle};
+  list-style-type: ${t.listStyleType};
+  list-style-position: ${t.listStylePosition};
+  list-style-image: ${t.listStyleImage};
 
   /* COLORS attributes */
   color: ${t.color};
-  background-size: ${t.bgSize};
   background-color: ${t.bgColor};
   ${t.bgImg &&
     css`
       background-image: url(${t.bgImg});
     `};
+  background-clip: ${t.bgClip};
+  background-origin: ${t.bgOrigin};
+  background-position: ${t.bgPosition};
+  background-repeat: ${t.bgRepeat};
+  background-size: ${t.bgSize};
 
   /* BORDERS attributes */
   border-radius: ${value(rootSize, [t.borderRadius])};
+  border-top-left-radius: ${value(rootSize, [
+    t.borderTopLeftRadius,
+    t.borderLeftRadius,
+    t.borderTopRadius
+  ])};
+  border-top-right-radius: ${value(rootSize, [
+    t.borderTopRightRadius,
+    t.borderRightRadius,
+    t.borderTopRadius
+  ])};
+  border-bottom-left-radius: ${value(rootSize, [
+    t.borderBottomLeftRadius,
+    t.borderLeftRadius,
+    t.borderBottomRadius
+  ])};
+  border-bottom-right-radius: ${value(rootSize, [
+    t.borderBottomRightRadius,
+    t.borderRightRadius,
+    t.borderBottomRadius
+  ])};
+
+  border: ${t.border};
+  border-top: ${t.borderTop};
+  border-bottom: ${t.borderBottom};
+  border-left: ${t.borderLeft};
+  border-right: ${t.borderRight};
+
   border-style: ${t.borderStyle};
   border-color: ${t.borderColor};
-  border-width: ${t.borderColor};
+  border-width: ${t.borderWidth};
+
+  border-top-style: ${t.borderTopStyle};
+  border-top-color: ${t.borderTopColor};
+  border-top-width: ${t.borderTopWidth};
+
+  border-bottom-style: ${t.borderBottomStyle};
+  border-bottom-color: ${t.borderBottomColor};
+  border-bottom-width: ${t.borderBottomWidth};
+
+  border-left-style: ${t.borderLeftStyle};
+  border-left-color: ${t.borderLeftColor};
+  border-left-width: ${t.borderLeftWidth};
+
+  border-right-style: ${t.borderRightStyle};
+  border-right-color: ${t.borderRightColor};
+  border-right-width: ${t.borderRightWidth};
 
   ${() => {
     if (t.borderWidth && t.borderStyle && t.borderColor) {
@@ -135,6 +169,7 @@ export default ({ theme: t, css, rootSize }) => css`
     return null
   }};
 
+  /* OTHER ATTRIBUTES */
   outline: ${t.outline};
   transition: ${t.transition};
   animation: ${t.keyframe} ${t.animation};
@@ -143,7 +178,14 @@ export default ({ theme: t, css, rootSize }) => css`
   transform: ${t.transform};
   opacity: ${t.opacity};
   overflow: ${t.overflow};
-  white-space: ${t.whiteSpace};
+  overflow-x: ${t.overflowX};
+  overflow-y: ${t.overflowY};
+  cursor: ${t.cursor};
+
+  visibility: ${t.visibility};
+  user-select: ${t.userSelect};
+  pointer-events: ${t.pointerEvents};
+  direction: ${t.writingDirection};
 
   ${t.extendCss};
 `
