@@ -134,7 +134,7 @@ export default ({ theme: t, css, rootSize }) => css`
   border-left: ${t.borderLeft};
   border-right: ${t.borderRight};
 
-  border-width: ${t.borderWidth};
+  border-width: ${value(rootSize, [t.borderWidth], 'px')};
   border-style: ${t.borderStyle};
   border-color: ${t.borderColor};
 
