@@ -4,14 +4,18 @@ const logHeading = name => {
     'color: #828282',
     'font-weight: 700',
     'padding: 5px',
-    'background-color: #F2F2F2',
+    'background-color: #F2F2F2'
   ].join(';')
 
   console.log(`%c ${name}`, style1)
 }
 
 const logPropertyName = (property, value) => {
-  console.log(`%c ${property}: %c ${value || ''}`, 'font-weight: 600;', 'color: #828282;')
+  console.log(
+    `%c ${property}: %c ${value || ''}`,
+    'font-weight: 600;',
+    'color: #828282;'
+  )
 }
 
 const logListItem = (index, value) => {
