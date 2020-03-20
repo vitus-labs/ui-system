@@ -29,6 +29,7 @@ export default base
   .theme(t => ({
     bgColor: t.color.white,
     borderWidth: t.borderWidth,
+    borderStyle: 'solid',
     borderColor: rgba(t.color.black, 0.125),
     borderRadius: t.borderRadius.base,
     separatorSpacing: t.spacing.reset,

@@ -15,7 +15,9 @@ const STATE = [
 ]
 
 const renderExamples = props =>
-  STATE.map(value => <Button label={value} {...{ [value]: true }} {...props} />)
+  STATE.map(value => (
+    <Button key={value} label={value} {...{ [value]: true }} {...props} />
+  ))
 
 storiesOf(Button.displayName, module)
   .addDecorator(theme)

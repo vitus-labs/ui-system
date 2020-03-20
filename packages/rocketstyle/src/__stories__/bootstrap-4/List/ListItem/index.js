@@ -58,6 +58,7 @@ export default element
     paddingX: t.spacing.xl,
     fontSize: 'inherit',
     borderRadius: t.borderRadius.base,
+    borderStyle: 'solid',
     borderWidth: t.borderWidth
   }))
   .states(t => ({
@@ -101,11 +102,7 @@ export default element
       t.color.white,
       'rgba(0, 0, 0, 0.125)'
     ),
-    active: createStaticState(
-      t.color.white,
-      t.color.primary,
-      'rgba(0, 0, 0, 0.125)'
-    )
+    active: createStaticState(t.color.white, t.color.primary, 'rgba(0, 0, 0, 0.125)')
   }))
   .variants({
     flush: {

@@ -11,14 +11,13 @@ export const element = rocketstyle()({
   //   tag: href ? 'a' : onClick ? 'button' : tag
   // }))
   .theme(t => ({
+    boxSizing: 'border-box',
     fontFamily: t.fontFamily.base,
     lineHeight: t.lineHeight,
-    color: t.color.gray900,
-    borderStyle: 'solid'
+    color: t.color.gray900
   }))
   .styles(
     css => css`
-      box-sizing: border-box;
       text-decoration: none;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;

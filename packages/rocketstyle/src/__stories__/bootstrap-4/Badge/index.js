@@ -27,6 +27,7 @@ export default element
     color: t.color.white,
     borderRadius: t.borderRadius.base,
     borderWidth: t.borderWidth,
+    borderStyle: 'solid',
     lineHeight: 1,
     ...createState(t.color.black)
   }))

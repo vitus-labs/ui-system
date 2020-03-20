@@ -13,14 +13,16 @@ const renderExamples = props =>
     'info',
     'light',
     'dark'
-  ].map(value => <Badge label={value} {...{ [value]: true }} {...props} />)
+  ].map(value => (
+    <Badge key={value} label={value} {...{ [value]: true }} {...props} />
+  ))
 
 storiesOf(Badge.displayName, module)
   .addDecorator(theme)
   .add('Examples', () => (
     <Fragment>
       {['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map(value => (
-        <Heading {...{ [value]: true }}>
+        <Heading key={value} {...{ [value]: true }}>
           Example heading <Badge secondary label="New" />
         </Heading>
       ))}

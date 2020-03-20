@@ -29,19 +29,13 @@ export const createState = color => ({
 })
 
 const styles = css => css`
-  text-transform: none;
-  white-space: nowrap;
-  text-decoration: none;
-  user-select: none;
-  outline: 0;
-
   ${({ as, block, rocketstyle: t }) => css`
     ${as === 'button' &&
       css`
         -webkit-appearance: button;
       `};
 
-    // Button as a block full width element
+    /* Button as a block full width element */
     ${block &&
       css`
         & + & {
@@ -58,12 +52,16 @@ export default element
   .styles(styles)
   .attrs(({ tag, active, disabled }) => ({
     useDefaultOutline: true,
+    gap: t => {
+      console.log(t)
+      return t.spacing.sm
+    },
     tag: 'button',
     contentAlignX: 'center',
     type: tag === 'a' ? 'button' : undefined,
     role: tag === 'a' ? 'button' : undefined,
     tabIndex: tag === 'a' && disabled ? '-1' : undefined,
-    'aria-pressed': active ? true : false,
+    'aria-pressed': active,
     'aria-disabled': disabled ? true : undefined,
     // FIXME: use value helper
     beforeContentCss: css => css`
@@ -81,6 +79,11 @@ export default element
     borderColor: t.color.transparent,
     color: t.color.white,
     overflow: 'visible',
+    outline: 'none',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    textDecoration: 'none',
+    userSelect: 'none',
     transition: `
       color 0.15s ease-in-out,
       background-color 0.15s ease-in-out,

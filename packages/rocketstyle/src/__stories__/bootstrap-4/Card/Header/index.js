@@ -15,9 +15,9 @@ export default base
   .theme(t => ({
     paddingY: t.spacing.base,
     paddingX: t.spacing.xl,
-    borderWidth: t.borderWidth,
-    borderColor: rgba(t.color.black, 0.125),
-    borderSide: 'bottom',
+    borderWidthBottom: t.borderWidth,
+    borderStyleBottom: 'solid',
+    borderColorBottom: rgba(t.color.black, 0.125),
     bgColor: rgba(t.color.black, 0.03),
     marginBottom: t.spacing.reset
   }))
