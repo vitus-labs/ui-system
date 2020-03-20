@@ -20,10 +20,18 @@
     "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
   "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
-  "workspaces": [
-    "packages/*",
-    "tools/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "tools/*"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**",
+      "**/expo",
+      "**/expo/**"
+    ]
+  },
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",

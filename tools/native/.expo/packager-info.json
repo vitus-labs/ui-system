@@ -1,0 +1,9 @@
+{
+  "expoServerPort": 19000,
+  "expoServerNgrokUrl": "https://rv-nyz.vitbokisch.native.exp.direct",
+  "packagerNgrokUrl": "https://packager.rv-nyz.vitbokisch.native.exp.direct",
+  "ngrokPid": 26716,
+  "devToolsPort": 19002,
+  "packagerPort": 19001,
+  "packagerPid": 26699
+}
