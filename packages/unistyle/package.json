@@ -24,14 +24,13 @@
   ],
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "build": "rm -rf lib && yarn rollup -c",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c"
+    "cover": "coveralls < .coverage/lcov.info"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/core/issues"

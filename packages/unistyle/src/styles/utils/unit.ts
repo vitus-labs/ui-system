@@ -1,4 +1,4 @@
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 
 export const stripUnit = (value, unitReturn) => {
   const cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/
@@ -17,7 +17,7 @@ export const stripUnit = (value, unitReturn) => {
 export const normalizeUnit = ({
   param,
   rootSize = 16,
-  outputUnit = config.isWeb ? 'rem' : 'px'
+  outputUnit = config.isWeb ? 'rem' : 'px',
 }) => {
   if (!param && param !== 0) return null
 
@@ -37,20 +37,20 @@ export const normalizeUnit = ({
 }
 
 export const getValueOf = (...values) =>
-  values.find(value => typeof value !== 'undefined' && value !== null)
+  values.find((value) => typeof value !== 'undefined' && value !== null)
 
-export const value = (rootSize, values, outputUnit) => {
+export const value = (rootSize, values, outputUnit?: string) => {
   const param = getValueOf(...values)
 
   if (Array.isArray(param)) {
     const result = []
 
-    param.forEach(item => {
+    param.forEach((item) => {
       result.push(
         normalizeUnit({
           param: item,
           rootSize,
-          outputUnit
+          outputUnit,
         })
       )
     })
@@ -61,6 +61,6 @@ export const value = (rootSize, values, outputUnit) => {
   return normalizeUnit({
     param,
     rootSize,
-    outputUnit
+    outputUnit,
   })
 }

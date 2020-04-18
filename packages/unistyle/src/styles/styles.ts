@@ -1,33 +1,33 @@
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import { value } from './utils/unit'
 
 export default ({ theme: t, css, rootSize }) => css`
   ${config.isWeb &&
-    t.hideEmpty &&
-    css`
-      &:empty {
-        display: none;
-      }
-    `};
+  t.hideEmpty &&
+  css`
+    &:empty {
+      display: none;
+    }
+  `};
 
   ${config.isWeb &&
-    t.clearFix &&
-    css`
-      &::after: {
-        clear: both;
-        content: '';
-        display: table;
-      }
-    `};
+  t.clearFix &&
+  css`
+    &::after: {
+      clear: both;
+      content: '';
+      display: table;
+    }
+  `};
 
   ${t.fullScreen &&
-    css`
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    `};
+  css`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  `};
 
   /* POSITION attributes */
   all: ${t.resetAll};
@@ -96,9 +96,9 @@ export default ({ theme: t, css, rootSize }) => css`
   color: ${t.color};
   background-color: ${t.bgColor};
   ${t.bgImg &&
-    css`
-      background-image: url(${t.bgImg});
-    `};
+  css`
+    background-image: url(${t.bgImg});
+  `};
   background-clip: ${t.bgClip};
   background-origin: ${t.bgOrigin};
   background-position: ${t.bgPosition};
@@ -110,22 +110,22 @@ export default ({ theme: t, css, rootSize }) => css`
   border-top-left-radius: ${value(rootSize, [
     t.borderRadiusTopLeft,
     t.borderRadiusLeft,
-    t.borderRadiusTop
+    t.borderRadiusTop,
   ])};
   border-top-right-radius: ${value(rootSize, [
     t.borderRadiusTopRight,
     t.borderRadiusRight,
-    t.borderRadiusTop
+    t.borderRadiusTop,
   ])};
   border-bottom-left-radius: ${value(rootSize, [
     t.borderRadiusBottomLeft,
     t.borderRadiusLeft,
-    t.borderRadiusBottom
+    t.borderRadiusBottom,
   ])};
   border-bottom-right-radius: ${value(rootSize, [
     t.borderRadiusBottomRight,
     t.borderRadiusRight,
-    t.borderRadiusBottom
+    t.borderRadiusBottom,
   ])};
 
   border: ${t.border};
@@ -138,7 +138,11 @@ export default ({ theme: t, css, rootSize }) => css`
   border-style: ${t.borderStyle};
   border-color: ${t.borderColor};
 
-  border-top-width: ${value(rootSize, [t.borderWidthTop, t.borderWidthY], 'px')};
+  border-top-width: ${value(
+    rootSize,
+    [t.borderWidthTop, t.borderWidthY],
+    'px'
+  )};
   border-top-style: ${t.borderStyleTop || t.borderStyleY};
   border-top-color: ${t.borderColorTop || t.bordetColorY};
 
@@ -150,11 +154,19 @@ export default ({ theme: t, css, rootSize }) => css`
   border-bottom-style: ${t.borderStyleBottom || t.borderStyleY};
   border-bottom-color: ${t.borderColorBottom || t.bordetColorY};
 
-  border-left-width: ${value(rootSize, [t.borderWidthLeft, t.borderWidthX], 'px')};
+  border-left-width: ${value(
+    rootSize,
+    [t.borderWidthLeft, t.borderWidthX],
+    'px'
+  )};
   border-left-style: ${t.borderStyleLeft || t.borderStyleX};
   border-left-color: ${t.borderColorLeft || t.bordetColorX};
 
-  border-right-width: ${value(rootSize, [t.borderWidthRight, t.borderWidthX], 'px')};
+  border-right-width: ${value(
+    rootSize,
+    [t.borderWidthRight, t.borderWidthX],
+    'px'
+  )};
   border-right-style: ${t.borderStyleRight || t.borderStyleX};
   border-right-color: ${t.borderColorRight || t.bordetColorX};
 

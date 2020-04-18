@@ -1,15 +1,15 @@
 import { useContext } from 'react'
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'
 import useWindowSize from './useWindowSize'
 
-const isEmpty = param =>
+const isEmpty = (param) =>
   Object.entries(param).length === 0 && param.constructor === Object
 
 const calculateBreakpointState = (breakpoints, width) => {
   const result = {}
 
-  Object.keys(breakpoints).forEach(item => {
+  Object.keys(breakpoints).forEach((item) => {
     const breakpointWidth = breakpoints[item]
 
     result[item] = width >= breakpointWidth
@@ -36,14 +36,18 @@ export default () => {
   const { width, height } = useWindowSize()
 
   const result = {
+    breakpoints: {},
+    sortedBreakpoints: {},
+    breakpointsState: {},
+    currentBreakpoint: {},
     component: config.component,
     isWeb: config.isWeb,
     isNative: config.isNative,
     viewport: { width, height },
-    getCurrentBreakpoint: breakpoints =>
+    getCurrentBreakpoint: (breakpoints) =>
       calculateCurrentBreakpoint(breakpoints, width),
-    getAllBreakpointsState: breakpoints =>
-      calculateBreakpointState(breakpoints, width)
+    getAllBreakpointsState: (breakpoints) =>
+      calculateBreakpointState(breakpoints, width),
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {

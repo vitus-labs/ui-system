@@ -6,7 +6,7 @@ import { set, get, pick } from '@vitus-labs/core'
 const pickThemeProps = (props, keywords) => {
   const result = {}
 
-  keywords.forEach(item => {
+  keywords.forEach((item) => {
     const value = props[item]
     if (value || typeof value === 'number') result[item] = value
   })
@@ -20,7 +20,7 @@ const pickThemeProps = (props, keywords) => {
 const calculateTheme = ({ breakpoints, keywords, props }) => {
   const theme = {}
 
-  keywords.forEach(item => {
+  keywords.forEach((item) => {
     const propItem = props[item]
 
     if (propItem === undefined || propItem === null) return
@@ -28,7 +28,7 @@ const calculateTheme = ({ breakpoints, keywords, props }) => {
     // if it is a prop key as a breakpoint (like xs, sm,...)
     if (breakpoints.includes(item)) {
       if (typeof item === 'object') {
-        Object.keys(item).forEach(child => {
+        Object.keys(item).forEach((child) => {
           set(theme, [child, propItem], item[child])
         })
       } else {
@@ -39,11 +39,11 @@ const calculateTheme = ({ breakpoints, keywords, props }) => {
         set(theme, [item, breakpoints[i]], value)
       })
     } else if (typeof propItem === 'object') {
-      Object.keys(propItem).forEach(child => {
+      Object.keys(propItem).forEach((child) => {
         set(theme, [item, child], propItem[child])
       })
     } else {
-      breakpoints.forEach(breakpoint => {
+      breakpoints.forEach((breakpoint) => {
         set(theme, [item, breakpoint], propItem)
       })
     }
@@ -66,7 +66,7 @@ const assignValue = ({ name, index, breakpoints, source, result }) => {
 }
 
 const shouldReassign = ({ theme, breakpoints, position }) =>
-  Object.keys(theme).some(name => {
+  Object.keys(theme).some((name) => {
     const currentValue = get(theme, [name, breakpoints[position]])
     const previousValue = get(theme, [name, breakpoints[position - 1]])
 
@@ -78,13 +78,13 @@ const optimizeTheme = ({ theme, breakpoints }) => {
 
   breakpoints.forEach((bp, i) => {
     if (shouldReassign({ theme, breakpoints, position: i })) {
-      Object.keys(theme).forEach(name => {
+      Object.keys(theme).forEach((name) => {
         assignValue({
           name,
           index: i,
           breakpoints,
           source: theme,
-          result
+          result,
         })
       })
     }
@@ -99,13 +99,13 @@ const normalizeTheme = ({ props, keywords, breakpoints }) => {
 
   // normalize size, paddings, ... for each breakpoint
   breakpoints.forEach((bp, i) => {
-    Object.keys(theme).forEach(name => {
+    Object.keys(theme).forEach((name) => {
       assignValue({
         name,
         index: i,
         breakpoints,
         source: theme,
-        result
+        result,
       })
     })
   })
@@ -113,11 +113,13 @@ const normalizeTheme = ({ props, keywords, breakpoints }) => {
   return result
 }
 
-const groupByBreakpoint = props => {
+const groupByBreakpoint = (props) => {
   const result = {}
 
-  Object.keys(props).forEach(attr => {
-    Object.keys(props[attr]).forEach(bp => set(result, [bp, attr], props[attr][bp]))
+  Object.keys(props).forEach((attr) => {
+    Object.keys(props[attr]).forEach((bp) =>
+      set(result, [bp, attr], props[attr][bp])
+    )
   })
 
   return result
@@ -126,7 +128,8 @@ const groupByBreakpoint = props => {
 export { pickThemeProps, normalizeTheme, groupByBreakpoint }
 
 export default ({ props, keywords, breakpoints }) => {
-  if (!breakpoints || !breakpoints.length > 0) {
+  // FIXME:  || !breakpoints?.length > 0
+  if (!breakpoints) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(`
         You are not passing an array of sorted breakpoint keys to
@@ -136,7 +139,14 @@ export default ({ props, keywords, breakpoints }) => {
 
     return pick(props, keywords)
   }
-  const helper = normalizeTheme({ props, keywords, breakpoints })
+  const helper = normalizeTheme({
+    props,
+    keywords,
+    breakpoints,
+  })
 
-  return optimizeTheme({ theme: helper, breakpoints })
+  return optimizeTheme({
+    theme: helper,
+    breakpoints,
+  })
 }

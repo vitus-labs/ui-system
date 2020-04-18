@@ -7,14 +7,14 @@ const useWindowSize = (throttleDelay = 200) => {
   function getSize() {
     return {
       width: isClient ? window.innerWidth : undefined,
-      height: isClient ? window.innerHeight : undefined
+      height: isClient ? window.innerHeight : undefined,
     }
   }
 
   const [windowSize, setWindowSize] = useState(getSize)
 
   useEffect(() => {
-    if (!isClient) return false
+    if (!isClient) return undefined
 
     const handleResize = throttle(() => {
       setWindowSize(getSize())

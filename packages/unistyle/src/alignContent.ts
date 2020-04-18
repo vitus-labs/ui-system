@@ -1,22 +1,22 @@
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 
 const MAP_SHARED = {
   center: 'center',
   spaceBetween: 'space-between',
   spaceAround: 'space-around',
-  block: 'stretch'
+  block: 'stretch',
 }
 
 const MAP_ALIGN_X = {
   left: 'flex-start',
   right: 'flex-end',
-  ...MAP_SHARED
+  ...MAP_SHARED,
 }
 
 const MAP_ALIGN_Y = {
   top: 'flex-start',
   bottom: 'flex-end',
-  ...MAP_SHARED
+  ...MAP_SHARED,
 }
 
 const MAP_DIRECTION = {
@@ -24,23 +24,23 @@ const MAP_DIRECTION = {
     column: 'column',
     reverseColumn: 'reverse-column',
     rows: 'row',
-    reverseRows: 'reverse-row'
+    reverseRows: 'reverse-row',
   },
   native: {
     column: 'column',
     reverseColumn: 'column-reverse',
     rows: 'row',
-    reverseRows: 'row-reverse'
-  }
+    reverseRows: 'row-reverse',
+  },
 }
 
-const alignValue = map => attr => map[attr]
+const alignValue = (map) => (attr) => map[attr]
 
 const alignValueX = alignValue(MAP_ALIGN_X)
 const alignValueY = alignValue(MAP_ALIGN_Y)
 const setDirection = alignValue(MAP_DIRECTION[config.platform])
 
-const alignContent = attrs => {
+const alignContent = (attrs) => {
   if (
     !attrs ||
     typeof attrs !== 'object' ||
@@ -68,23 +68,23 @@ const alignContent = attrs => {
     rows: {
       direction: setDirection('column'),
       alignX: alignValueX(alignX),
-      alignY: alignValueY(alignY)
+      alignY: alignValueY(alignY),
     },
     reverseRows: {
       direction: setDirection('reverseColumn'),
       alignX: alignValueX(alignX),
-      alignY: alignValueY(alignY)
+      alignY: alignValueY(alignY),
     },
     inline: {
       direction: setDirection('rows'),
       alignX: alignValueY(alignY),
-      alignY: alignValueX(alignX)
+      alignY: alignValueX(alignX),
     },
     reverseInline: {
       direction: setDirection('reverseRows'),
       alignX: alignValueY(alignY),
-      alignY: alignValueX(alignX)
-    }
+      alignY: alignValueX(alignX),
+    },
   }
 
   return styles(map[direction])

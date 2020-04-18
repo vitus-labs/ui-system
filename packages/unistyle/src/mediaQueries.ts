@@ -1,4 +1,4 @@
-const sortBreakpoints = breakpoints =>
+const sortBreakpoints = (breakpoints) =>
   Object.keys(breakpoints).sort((a, b) => breakpoints[a] - breakpoints[b])
 
 const createMediaQueries = ({ breakpoints, rootSize, css }) =>
@@ -17,18 +17,18 @@ const createMediaQueries = ({ breakpoints, rootSize, css }) =>
 const transformTheme = ({ theme, breakpoints }) => {
   const newTheme = {}
 
-  breakpoints.forEach(item => {
+  breakpoints.forEach((item) => {
     newTheme[item] = {}
   })
 
-  Object.keys(theme).forEach(item => {
+  Object.keys(theme).forEach((item) => {
     if (Array.isArray(theme[item])) {
       theme[item].forEach((child, i) => {
         newTheme[breakpoints[i]][item] = child
       })
     } else if (typeof theme[item] === 'object') {
       const subObject = theme[item]
-      Object.keys(subObject).forEach(child => {
+      Object.keys(subObject).forEach((child) => {
         newTheme[child][item] = subObject[child]
       })
     } else {
@@ -49,11 +49,12 @@ const makeItResponsive = ({ theme: customTheme, key, css, styles }) => ({
   const sortedBreakpoints = sortBreakpoints(breakpoints)
   const transformedTheme = transformTheme({
     theme: internalTheme,
-    breakpoints: sortedBreakpoints
+    breakpoints: sortedBreakpoints,
   })
 
   return sortedBreakpoints.map((item, i) => {
-    const hasBreakpointProperties = Object.keys(transformedTheme[item]).length > 0
+    const hasBreakpointProperties =
+      Object.keys(transformedTheme[item]).length > 0
 
     if (hasBreakpointProperties) {
       const result = styles({ theme: transformedTheme[item], css, rootSize })

@@ -5,14 +5,14 @@ import extendedCss from './extendedCss'
 import makeItResponsive, {
   sortBreakpoints,
   createMediaQueries,
-  transformTheme
+  transformTheme,
 } from './mediaQueries'
 import optimizeTheme, {
   pickThemeProps,
   normalizeTheme,
-  groupByBreakpoint
+  groupByBreakpoint,
 } from './optimizeTheme'
-import styles, { stripUnit, normalizeUnit, value } from './styles'
+import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 
 export {
   alignContent,
@@ -30,5 +30,6 @@ export {
   styles,
   stripUnit,
   normalizeUnit,
-  value
+  value,
+  getValueOf,
 }
