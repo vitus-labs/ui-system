@@ -2,7 +2,7 @@ import Container from '../Container'
 import Row from '../Row'
 import Col from '../Col'
 
-const colCss = css => css`
+const colCss = (css) => css`
   background-color: #e0e0eb;
   border: 1px solid #b3b3cc;
   padding: 20px;
@@ -108,10 +108,10 @@ storiesOf('COOLGRID | Bootstrap Grid Examples', module)
       <Row>
         <Col>
           Lorem ipsum dolor sit amet, cibo sensibus interesset no sit. Et dolor
-          possim volutpat qui. No malis tollit iriure eam, et vel tale zril blandit,
-          rebum vidisse nostrum qui eu. No nostrud dolorem legendos mea, ea eum
-          mucius oporteat platonem.Eam an case scribentur, ei clita causae cum, alia
-          debet eu vel.
+          possim volutpat qui. No malis tollit iriure eam, et vel tale zril
+          blandit, rebum vidisse nostrum qui eu. No nostrud dolorem legendos
+          mea, ea eum mucius oporteat platonem.Eam an case scribentur, ei clita
+          causae cum, alia debet eu vel.
         </Col>
         <Col />
         <Col />

@@ -39,7 +39,7 @@
     "url": "https://github.com/vitus-labs/coolgrid/issues"
   },
   "scripts": {
-    "dev": "yarn storybook",
+    "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
     "build": "yarn clean && yarn rollup -c",
     "storybook": "start-storybook -p 6006",

@@ -2,7 +2,7 @@ import Container from '../Container'
 import Row from '../Row'
 import Col from '../Col'
 
-const columnCss = css => css`
+const columnCss = (css) => css`
   background-color: #e0e0eb;
   border: 1px solid #b3b3cc;
   padding: 20px;
@@ -58,13 +58,13 @@ storiesOf('COOLGRID | __EXAMPLES__', module)
     const breakpoints = {
       phone: 320,
       tablet: 768,
-      notebook: 1366
+      notebook: 1366,
     }
 
     const width = {
       phone: 300,
       tablet: 740,
-      notebook: 1200
+      notebook: 1200,
     }
 
     return (

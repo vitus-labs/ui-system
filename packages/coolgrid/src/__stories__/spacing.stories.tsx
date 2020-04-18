@@ -2,7 +2,7 @@ import Container from '../Container'
 import Row from '../Row'
 import Col from '../Col'
 
-const colCss = css => css`
+const colCss = (css) => css`
   background-color: #e0e0eb;
   border: 1px solid #b3b3cc;
   padding: 20px;
@@ -131,7 +131,7 @@ storiesOf('COOLGRID | Spacing Examples', module)
     )
   })
   .add('Columns with padding', () => {
-    const colCss = css => css`
+    const colCss = (css) => css`
       background-color: #e0e0eb;
       border: 1px solid #b3b3cc;
     `
