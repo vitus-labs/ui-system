@@ -1,4 +1,13 @@
-import styled, { withTheme, css, ThemeContext } from 'styled-components'
+import { Context } from 'react'
+import styled, {
+  withTheme,
+  css,
+  ThemeContext,
+  BaseWithThemeFnInterface,
+  ThemedCssFunction,
+  ThemedStyledInterface,
+  DefaultTheme,
+} from 'styled-components'
 
 const internal = {
   css,
@@ -16,7 +25,19 @@ const init = ({ platform, component, textComponent }) => {
   internal.textComponent = textComponent
 }
 
-const config = {
+interface Config {
+  readonly platform: string
+  readonly isWeb: boolean
+  readonly isNative: boolean
+  readonly context: Context<any>
+  readonly styled: ThemedStyledInterface<DefaultTheme>
+  readonly css: ThemedCssFunction<object>
+  readonly withTheme: BaseWithThemeFnInterface<object>
+  readonly component: string
+  readonly textComponent: string
+}
+
+const config: Config = {
   get platform() {
     return internal.platform
   },
