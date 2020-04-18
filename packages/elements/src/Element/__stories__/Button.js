@@ -1,5 +1,5 @@
 import React from 'react'
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
 
@@ -34,16 +34,16 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
-    afterContent: () => <RightContent>✕</RightContent>
+    afterContent: () => <RightContent>✕</RightContent>,
   })
   .states({
     primary: {
       bgColor: '#007bff',
-      color: '#fff'
-    }
+      color: '#fff',
+    },
   })
   .styles(
-    css => css`
+    (css) => css`
       border: 1px solid transparent;
       padding: 0.75rem;
       min-height: 80px;

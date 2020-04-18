@@ -1,5 +1,5 @@
 import React from 'react'
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import rocketstyle from '../index'
 
@@ -36,14 +36,14 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
-    afterContent: () => <RightContent>✕</RightContent>
+    afterContent: () => <RightContent>✕</RightContent>,
   })
   .theme({
     bgColor: '#007bff',
-    color: '#fff'
+    color: '#fff',
   })
   .styles(
-    css => css`
+    (css) => css`
       border: 1px solid transparent;
       padding: 0 0.75rem;
       height: 80px;
@@ -73,10 +73,10 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
     `
   )
 
-const ExtendedButtonA = props => <Button {...props} />
+const ExtendedButtonA = (props) => <Button {...props} />
 
 export const HoistedButton = Button.config({
-  component: ExtendedButtonA
+  component: ExtendedButtonA,
 }).theme({ bgColor: 'papayawhip' })
 
 export default Button

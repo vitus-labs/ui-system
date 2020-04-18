@@ -1,4 +1,4 @@
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 
 export const InfoTable = config.styled(config.component)`
   padding: 20px;

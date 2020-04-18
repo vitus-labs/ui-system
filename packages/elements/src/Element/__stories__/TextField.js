@@ -1,5 +1,5 @@
 import React from 'react'
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import { Icon } from 'react-icons-kit'
 import { home } from 'react-icons-kit/icomoon/home'
 import WithState from '~/WithState'

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import config from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import Element from '~/Element'
 
 export const Inner = config.styled('div')`
