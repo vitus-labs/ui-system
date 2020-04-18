@@ -1,24 +1,67 @@
+const typescript = require('rollup-plugin-typescript2')
+const resolve = require('@rollup/plugin-node-resolve')
 const filesize = require('rollup-plugin-filesize')
-const resolve = require('rollup-plugin-node-resolve')
+const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
-const visualizer = require('rollup-plugin-visualizer')
+const babel = require('rollup-plugin-babel')
 
 const prefixName = 'vitus-labs'
+const extensions = ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs']
+const exclude = [
+  '*.d.ts',
+  'node_modules/**',
+  '__tests__',
+  '__specs__',
+  '**/__stories__/**',
+  '*.test.*',
+  '*.spec.*',
+  '*.stories.*',
+]
 
-const devPlugins = () => [resolve(), filesize(), visualizer()]
+const babelConfig = {
+  extensions,
+  include: ['src'],
+  exclude,
+}
 
-const prodPlugins = () => [resolve(), terser(), filesize(), visualizer()]
+const tsConfig = {
+  exclude,
+  useTsconfigDeclarationDir: true,
+  tsconfigDefaults: {
+    compilerOptions: {
+      declarationDir: 'lib/types',
+    },
+  },
+}
+
+const devPlugins = () => [
+  resolve({ extensions }),
+  typescript(tsConfig),
+  replace({ 'process.env.NODE_ENV': JSON.stringify('development') }),
+  babel(babelConfig),
+  filesize(),
+]
+
+const prodPlugins = () => [
+  resolve({ extensions }),
+  typescript(tsConfig),
+  replace({ 'process.env.NODE_ENV': JSON.stringify('production') }),
+  babel(babelConfig),
+  terser(),
+  filesize(),
+]
 
 const config = ({ globals, external }) => (outFile, format, mode) => ({
-  input: './lib/index.js',
+  input: 'src',
   output: {
-    file: `./dist/${outFile}`,
+    file: `./lib/${outFile}`,
     format,
     globals,
-    name: format === 'umd' ? `${prefixName.replace('-', '')}` : undefined
+    exports: 'named',
+    name: format === 'umd' ? `${prefixName.replace('-', '')}` : undefined,
   },
   external,
-  plugins: mode === 'production' ? prodPlugins() : devPlugins()
+  plugins: mode === 'production' ? prodPlugins() : devPlugins(),
 })
 
 const generateConfig = ({ name, globals, external }) => {
@@ -30,7 +73,7 @@ const generateConfig = ({ name, globals, external }) => {
     build(`${bundleName}.min.js`, 'cjs', 'production'),
     build(`${bundleName}.umd.js`, 'umd', 'development'),
     build(`${bundleName}.umd.min.js`, 'umd', 'production'),
-    build(`${bundleName}.module.js`, 'es', 'development')
+    build(`${bundleName}.module.js`, 'es', 'development'),
   ]
 }
 
