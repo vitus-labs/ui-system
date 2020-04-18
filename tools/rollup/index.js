@@ -4,8 +4,15 @@ const filesize = require('rollup-plugin-filesize')
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const babel = require('rollup-plugin-babel')
+const {
+  NAMESPACE,
+  PKG_NAME_WITHOUT_PREFIX,
+  PKG_DEPENDENCIES,
+  PKG_PEER_DEPENDENCIES,
+} = require('@vitus-labs/tools-core')
 
-const prefixName = 'vitus-labs'
+const bundleName = `${NAMESPACE}-${PKG_NAME_WITHOUT_PREFIX}`
+const external = [...PKG_DEPENDENCIES, ...PKG_PEER_DEPENDENCIES]
 const extensions = ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs']
 const exclude = [
   '*.d.ts',
@@ -17,6 +24,15 @@ const exclude = [
   '*.spec.*',
   '*.stories.*',
 ]
+
+const globals = {
+  react: 'React',
+  'styled-components': 'styled',
+  lodash: 'lodash',
+  '@vitus-labs/core': '@vitus-labs/core',
+  '@vitus-labs/unistyle': '@vitus-labs/unistyle',
+  '@vitus-labs/elements': '@vitus-labs/elements',
+}
 
 const babelConfig = {
   extensions,
@@ -32,6 +48,21 @@ const tsConfig = {
       declarationDir: 'lib/types',
     },
   },
+}
+
+// converts package name to umd or iife valid format
+// example: cnmn-design-system => cnmnDesignSystem
+const camelspaceBundleName = (name) => {
+  const arrayStringsCamel = (arr) =>
+    arr.map((item, i) =>
+      i === 0
+        ? item
+        : item.charAt(0).toUpperCase() + item.substr(1).toLowerCase()
+    )
+  const arr = name.split('-')
+  const result = arrayStringsCamel(arr).join('')
+
+  return result
 }
 
 const devPlugins = () => [
@@ -51,30 +82,28 @@ const prodPlugins = () => [
   filesize(),
 ]
 
-const config = ({ globals, external }) => (outFile, format, mode) => ({
+const build = (outFile, format, mode) => ({
   input: 'src',
   output: {
     file: `./lib/${outFile}`,
     format,
     globals,
     exports: 'named',
-    name: format === 'umd' ? `${prefixName.replace('-', '')}` : undefined,
+    sourcemap: true,
+    name: ['umd', 'iife'].includes(format)
+      ? camelspaceBundleName(bundleName)
+      : undefined,
   },
   external,
   plugins: mode === 'production' ? prodPlugins() : devPlugins(),
 })
 
-const generateConfig = ({ name, globals, external }) => {
-  const bundleName = `${prefixName}-${name}`
-  const build = config({ globals, external })
+const bundles = [
+  build(`${bundleName}.js`, 'cjs', 'development'),
+  build(`${bundleName}.min.js`, 'cjs', 'production'),
+  build(`${bundleName}.umd.js`, 'umd', 'development'),
+  build(`${bundleName}.umd.min.js`, 'umd', 'production'),
+  build(`${bundleName}.module.js`, 'es', 'development'),
+]
 
-  return [
-    build(`${bundleName}.js`, 'cjs', 'development'),
-    build(`${bundleName}.min.js`, 'cjs', 'production'),
-    build(`${bundleName}.umd.js`, 'umd', 'development'),
-    build(`${bundleName}.umd.min.js`, 'umd', 'production'),
-    build(`${bundleName}.module.js`, 'es', 'development'),
-  ]
-}
-
-exports.default = generateConfig
+exports.default = bundles
