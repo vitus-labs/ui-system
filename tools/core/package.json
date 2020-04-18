@@ -1,0 +1,9 @@
+{
+  "name": "@vitus-labs/tools-core",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "module": "./index.ts",
+  "dependencies": {
+    "find-up": "^4.1.0"
+  }
+}
