@@ -8,19 +8,19 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "license": "MIT",
-  "main": "dist/vitus-labs-unistyle.js",
-  "umd:main": "dist/vitus-labs-unistyle.umd.js",
-  "module": "dist/vitus-labs-unistyle.module.js",
+  "main": "lib/vitus-labs-unistyle.js",
+  "umd:main": "lib/vitus-labs-unistyle.umd.js",
+  "module": "lib/vitus-labs-unistyle.module.js",
   "browser": {
-    "./dist/vitus-labs-unistyle.js": "./dist/vitus-labs-unistyle.js",
-    "./dist/vitus-labs-unistyle.module.js": "./dist/vitus-labs-unistyle.module.js"
+    "./lib/vitus-labs-unistyle.js": "./lib/vitus-labs-unistyle.js",
+    "./lib/vitus-labs-unistyle.module.js": "./lib/vitus-labs-unistyle.module.js"
   },
-  "unpkg": "dist/vitus-labs-unistyle.umd.min.js",
-  "jsnext:main": "dist/vitus-labs-unistyle.module.js",
-  "react-native": "dist/vitus-labs-unistyle.module.js",
-  "typings": "dist/index.d.ts",
+  "unpkg": "lib/vitus-labs-unistyle.umd.min.js",
+  "jsnext:main": "lib/vitus-labs-unistyle.module.js",
+  "react-native": "lib/vitus-labs-unistyle.module.js",
+  "typings": "lib/index.d.ts",
   "files": [
-    "dist/"
+    "lib/"
   ],
   "scripts": {
     "prepublish": "yarn build",

@@ -6,5 +6,6 @@ export default rollup({
   globals: {
     react: 'React',
     'styled-components': 'styled',
+    '@vitus-labs/core': 'vitusLabsCore',
   },
 })
