@@ -33,6 +33,9 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "@types/styled-components": "^5.1.0",
     "coveralls": "^3.0.4",
     "cpr": "^3.0.1",
     "lerna": "^3.19.0",
