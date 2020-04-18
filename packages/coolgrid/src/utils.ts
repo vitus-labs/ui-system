@@ -14,7 +14,8 @@ export const createGridContext = (props = {}, ctx = {}, theme = {}) => ({
     get(ctx, 'rootSize') ||
     get(theme, 'rootSize') ||
     get(theme, 'grid.rootSize'),
-  columns: get(props, 'columns') || get(ctx, 'columns') || get(theme, 'grid.columns')
+  columns:
+    get(props, 'columns') || get(ctx, 'columns') || get(theme, 'grid.columns'),
 })
 
 // ------------------------------------------
@@ -25,6 +26,6 @@ export const merge = (props = {}, ctx = {}, reservedKeys) => {
 
   return {
     ...pick(ctx, reservedKeys),
-    ...pick(props, reservedKeys)
+    ...pick(props, reservedKeys),
   }
 }

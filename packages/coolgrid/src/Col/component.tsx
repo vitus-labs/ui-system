@@ -5,7 +5,7 @@ import {
   extendedCss,
   sortBreakpoints,
   optimizeTheme,
-  pickThemeProps
+  pickThemeProps,
 } from '@vitus-labs/unistyle'
 import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
 import RowContext from '../Row/context'
@@ -13,7 +13,7 @@ import Styled from './styled'
 
 const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
   let foundBp = false
-  let isHidden = false
+  let hidden = false
   const reversed = sortedBreakpoints.slice().reverse()
 
   for (let i = 0; i < sortedBreakpoints.length; i += 1) {
@@ -24,12 +24,12 @@ const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
     }
 
     if (foundBp && Number.isFinite(size[item])) {
-      isHidden = size[item] === 0 || false
+      hidden = size[item] === 0 || false
       break
     }
   }
 
-  return isHidden
+  return hidden
 }
 
 const Element = ({ children, component, css, ...rest }) => {
@@ -46,7 +46,11 @@ const Element = ({ children, component, css, ...rest }) => {
   const normalizedTheme = optimizeTheme({
     breakpoints,
     keywords,
-    props: { ...coolgrid, ...pickThemeProps(rest, keywords), columns: ctx.columns }
+    props: {
+      ...coolgrid,
+      ...pickThemeProps(rest, keywords),
+      columns: ctx.columns,
+    },
   })
 
   // hide column when size=0 for a breakpoint and up
@@ -55,7 +59,7 @@ const Element = ({ children, component, css, ...rest }) => {
       isHidden({
         sortedBreakpoints: breakpoints,
         size: normalizedTheme.size,
-        currentBreakpoint: vitusLabsCtx.getCurrentBreakpoint(ctx.breakpoints)
+        currentBreakpoint: vitusLabsCtx.getCurrentBreakpoint(ctx.breakpoints),
       })
     )
       return null
@@ -66,10 +70,11 @@ const Element = ({ children, component, css, ...rest }) => {
       {...omit(props, RESERVED_KEYS)}
       as={component || colComponent}
       coolgrid={{
+        // @ts-ignore
         RNparentWidth: coolgrid.RNparentWidth,
         ...ctx,
         ...normalizedTheme,
-        extendCss: extendedCss(css || colCss)
+        extendCss: extendedCss(css || colCss),
       }}
     >
       {children}

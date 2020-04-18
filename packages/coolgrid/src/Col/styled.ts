@@ -1,10 +1,12 @@
-import config from '@vitus-labs/core'
+// @ts-nocheck
+import { config } from '@vitus-labs/core'
 import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
-const isNumber = number => Number.isFinite(number)
+const isNumber = (number) => Number.isFinite(number)
 
 const styles = ({ theme, css, rootSize }) => {
   const t = {}
+
   t.padding = theme.padding
   t.margin = theme.gap / 2
 
@@ -28,32 +30,34 @@ const styles = ({ theme, css, rootSize }) => {
 
   return css`
     ${t.width &&
-      css`
-        max-width: ${normalizeUnit({ param: t.width, rootSize })};
-        flex-grow: ${t.flex};
-        flex-shrink: ${t.flex};
-        flex-basis: ${normalizeUnit({ param: t.width, rootSize })};
-      `};
+    css`
+      max-width: ${normalizeUnit({ param: t.width, rootSize })};
+      flex-grow: ${t.flex};
+      flex-shrink: ${t.flex};
+      flex-basis: ${normalizeUnit({ param: t.width, rootSize })};
+    `};
 
     ${isNumber(t.margin) &&
-      css`
-        margin: ${normalizeUnit({ param: t.margin, rootSize })};
-      `};
+    css`
+      margin: ${normalizeUnit({ param: t.margin, rootSize })};
+    `};
 
     ${isNumber(t.padding) &&
-      css`
-        padding: ${normalizeUnit({ param: t.padding, rootSize })};
-      `};
+    css`
+      padding: ${normalizeUnit({ param: t.padding, rootSize })};
+    `};
 
     ${theme.extendCss};
   `
 }
 
 export default config.styled(config.component)`
-  ${config.isWeb &&
+  ${
+    config.isWeb &&
     config.css`
       box-sizing: border-box;
-    `};
+    `
+  };
 
   position: relative;
   display: flex;
@@ -62,6 +66,6 @@ export default config.styled(config.component)`
 
   ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
     makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize }
+      theme: { breakpoints, rootSize },
     })};
 `

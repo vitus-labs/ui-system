@@ -1,10 +1,14 @@
 import React, { useContext } from 'react'
-import config, { omit } from '@vitus-labs/core'
-import { extendedCss, sortBreakpoints, pickThemeProps } from '@vitus-labs/unistyle'
+import { config, omit } from '@vitus-labs/core'
+import {
+  extendedCss,
+  sortBreakpoints,
+  pickThemeProps,
+} from '@vitus-labs/unistyle'
 import { merge, createGridContext } from '../utils'
 import {
   CONTAINER_RESERVED_KEYS as RESERVED_KEYS,
-  BASE_RESERVED_KEYS
+  BASE_RESERVED_KEYS,
 } from '../constants'
 import Context from './context'
 import Styled from './styled'
@@ -25,14 +29,14 @@ const Element = ({ children, width, component, css, ...props }) => {
       coolgrid={{
         ...gridContext,
         width: width || theme.grid.container,
-        extendCss: extendedCss(css)
+        extendCss: extendedCss(css),
       }}
     >
       <Context.Provider
         value={{
           ...gridContext,
           ...merge(props, {}, RESERVED_KEYS),
-          coolgrid: ctxTheme
+          coolgrid: ctxTheme,
         }}
       >
         {children}

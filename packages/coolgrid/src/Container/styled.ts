@@ -1,4 +1,5 @@
-import config from '@vitus-labs/core'
+// @ts-nocheck
+import { config } from '@vitus-labs/core'
 import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
 const styles = ({ theme: t, css, rootSize }) => css`
@@ -7,10 +8,12 @@ const styles = ({ theme: t, css, rootSize }) => css`
 `
 
 export default config.styled(config.component)`
-  ${config.isWeb &&
+  ${
+    config.isWeb &&
     config.css`
       box-sizing: border-box;
-    `};
+    `
+  };
 
   display: flex;
   width: 100%;
@@ -20,6 +23,6 @@ export default config.styled(config.component)`
 
   ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
     makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize }
+      theme: { breakpoints, rootSize },
     })};
 `
