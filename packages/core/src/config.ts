@@ -7,7 +7,7 @@ const internal = {
   context: ThemeContext,
   platform: 'web',
   component: 'div',
-  textComponent: 'p'
+  textComponent: 'p',
 }
 
 const init = ({ platform, component, textComponent }) => {
@@ -43,7 +43,7 @@ const config = {
   },
   get textComponent() {
     return internal.textComponent
-  }
+  },
 }
 
 export { init }

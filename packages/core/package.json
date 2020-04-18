@@ -8,23 +8,23 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "license": "MIT",
-  "main": "dist/vitus-labs-core.js",
-  "umd:main": "dist/vitus-labs-core.umd.js",
-  "module": "dist/vitus-labs-core.module.js",
+  "main": "lib/vitus-labs-core.js",
+  "umd:main": "lib/vitus-labs-core.umd.js",
+  "module": "lib/vitus-labs-core.module.js",
   "browser": {
-    "./dist/vitus-labs-core.js": "./dist/vitus-labs-core.js",
-    "./dist/vitus-labs-core.module.js": "./dist/vitus-labs-core.module.js"
+    "./lib/vitus-labs-core.js": "./lib/vitus-labs-core.js",
+    "./lib/vitus-labs-core.module.js": "./lib/vitus-labs-core.module.js"
   },
-  "unpkg": "dist/vitus-labs-core.umd.min.js",
-  "jsnext:main": "dist/vitus-labs-core.module.js",
-  "react-native": "dist/vitus-labs-core.module.js",
-  "typings": "dist/index.d.ts",
+  "unpkg": "lib/vitus-labs-core.umd.min.js",
+  "jsnext:main": "lib/vitus-labs-core.module.js",
+  "react-native": "lib/vitus-labs-core.module.js",
+  "typings": "lib/types/index.d.ts",
   "files": [
-    "dist/"
+    "lib/"
   ],
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
+    "build": "rm -rf lib && yarn rollup -c",
     "storybook": "start-storybook -p 6006 -c tools/storybook",
     "storybook:build": "build-storybook -c tools/storybook -o docs/",
     "docs:dev": "docz dev",
@@ -36,8 +36,7 @@
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c"
+    "cover": "coveralls < .coverage/lcov.info"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/core/issues"

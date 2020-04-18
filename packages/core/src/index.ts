@@ -3,5 +3,15 @@ import compose from './compose'
 import renderContent from './renderContent'
 import config, { init } from './config'
 
-export { init, compose, renderContent, difference, omit, pick, set, get, throttle }
-export default config
+export {
+  config,
+  init,
+  compose,
+  renderContent,
+  difference,
+  omit,
+  pick,
+  set,
+  get,
+  throttle,
+}
