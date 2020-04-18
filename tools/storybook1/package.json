@@ -1,0 +1,27 @@
+{
+  "name": "@vitus-labs/tools-storybook1",
+  "version": "0.0.0",
+  "main": "./config.js",
+  "peerDependencies": {
+    "react": "*"
+  },
+  "bin": {
+    "run-stories": "./cli.js"
+  },
+  "dependencies": {
+    "@storybook/addon-a11y": "^5.3.0-beta.19",
+    "@storybook/addon-actions": "^5.3.0-beta.19",
+    "@storybook/addon-backgrounds": "^5.3.0-beta.19",
+    "@storybook/addon-design-assets": "^5.3.0-beta.19",
+    "@storybook/addon-info": "^5.3.0-beta.19",
+    "@storybook/addon-jest": "^5.3.0-beta.19",
+    "@storybook/addon-knobs": "^5.3.0-beta.19",
+    "@storybook/addon-notes": "^5.3.0-beta.19",
+    "@storybook/addon-storyshots": "^5.3.0-beta.19",
+    "@storybook/addon-storysource": "^5.3.0-beta.19",
+    "@storybook/addon-viewport": "^5.3.0-beta.19",
+    "@storybook/addons": "^5.3.0-beta.19",
+    "@storybook/react": "^5.3.0-beta.19",
+    "yargs": "^15.0.2"
+  }
+}
