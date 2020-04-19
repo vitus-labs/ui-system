@@ -3,7 +3,7 @@ import { config } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'
 import useWindowSize from './useWindowSize'
 
-const isEmpty = (param) =>
+const isEmpty = (param: object) =>
   Object.entries(param).length === 0 && param.constructor === Object
 
 const calculateBreakpointState = (breakpoints, width) => {

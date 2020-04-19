@@ -34,13 +34,19 @@ const MAP_DIRECTION = {
   },
 }
 
-const alignValue = (map) => (attr) => map[attr]
+const alignValue = <T>(map: T) => (attr: keyof T) => map[attr]
 
 const alignValueX = alignValue(MAP_ALIGN_X)
 const alignValueY = alignValue(MAP_ALIGN_Y)
 const setDirection = alignValue(MAP_DIRECTION[config.platform])
 
-const alignContent = (attrs) => {
+interface Attrs {
+  direction: keyof typeof MAP_DIRECTION[typeof config.platform]
+  alignX: keyof typeof MAP_ALIGN_X
+  alignY: keyof typeof MAP_ALIGN_Y
+}
+
+const alignContent = (attrs: Attrs) => {
   if (
     !attrs ||
     typeof attrs !== 'object' ||
@@ -54,11 +60,11 @@ const alignContent = (attrs) => {
       `)
     }
 
-    return ''
+    return []
   }
 
   const { direction, alignX, alignY } = attrs
-  const styles = ({ direction, alignX, alignY }) => `
+  const styles = ({ direction, alignX, alignY }) => config.css`
     flex-direction: ${direction};
     align-items: ${alignX};
     justify-content: ${alignY};

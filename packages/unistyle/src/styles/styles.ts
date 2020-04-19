@@ -1,7 +1,13 @@
 import { config } from '@vitus-labs/core'
 import { value } from './utils/unit'
 
-export default ({ theme: t, css, rootSize }) => css`
+interface Styles {
+  theme: Partial<import('./styles.types').Theme>
+  css: any
+  rootSize: number
+}
+
+export default ({ theme: t, css, rootSize }: Styles) => css`
   ${config.isWeb &&
   t.hideEmpty &&
   css`
@@ -144,7 +150,7 @@ export default ({ theme: t, css, rootSize }) => css`
     'px'
   )};
   border-top-style: ${t.borderStyleTop || t.borderStyleY};
-  border-top-color: ${t.borderColorTop || t.bordetColorY};
+  border-top-color: ${t.borderColorTop || t.borderColorY};
 
   border-bottom-width: ${value(
     rootSize,
@@ -152,7 +158,7 @@ export default ({ theme: t, css, rootSize }) => css`
     'px'
   )};
   border-bottom-style: ${t.borderStyleBottom || t.borderStyleY};
-  border-bottom-color: ${t.borderColorBottom || t.bordetColorY};
+  border-bottom-color: ${t.borderColorBottom || t.borderColorY};
 
   border-left-width: ${value(
     rootSize,
@@ -160,7 +166,7 @@ export default ({ theme: t, css, rootSize }) => css`
     'px'
   )};
   border-left-style: ${t.borderStyleLeft || t.borderStyleX};
-  border-left-color: ${t.borderColorLeft || t.bordetColorX};
+  border-left-color: ${t.borderColorLeft || t.borderColorX};
 
   border-right-width: ${value(
     rootSize,
@@ -168,7 +174,7 @@ export default ({ theme: t, css, rootSize }) => css`
     'px'
   )};
   border-right-style: ${t.borderStyleRight || t.borderStyleX};
-  border-right-color: ${t.borderColorRight || t.bordetColorX};
+  border-right-color: ${t.borderColorRight || t.borderColorX};
 
   /* OTHER ATTRIBUTES */
   outline: ${t.outline};
