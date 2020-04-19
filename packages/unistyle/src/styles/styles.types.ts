@@ -2,6 +2,8 @@ type value = 'auto' | 'inital' | 'inherit' | number | string
 type defaults = 'initial' | 'inherit'
 type length = number | string
 
+type borderColor = string | 'transparent' | defaults
+
 type borderStyle =
   | 'none'
   | 'hidden'
@@ -56,6 +58,46 @@ type listStyleType =
 
 type overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | defaults
 
+type cursor =
+  | 'alias'
+  | 'all-scroll'
+  | 'auto'
+  | 'cell'
+  | 'context-menu'
+  | 'col-resize'
+  | 'copy'
+  | 'crosshair'
+  | 'default'
+  | 'e-resize'
+  | 'ew-resize'
+  | 'grab'
+  | 'grabbing'
+  | 'help'
+  | 'move'
+  | 'n-resize'
+  | 'ne-resize'
+  | 'nesw-resize'
+  | 'ns-resize'
+  | 'nw-resize'
+  | 'nwse-resize'
+  | 'no-drop'
+  | 'none'
+  | 'not-allowed'
+  | 'pointer'
+  | 'progress'
+  | 'row-resize'
+  | 's-resize'
+  | 'se-resize'
+  | 'sw-resize'
+  | 'text'
+  | 'URL'
+  | 'vertical-text'
+  | 'w-resize'
+  | 'wait'
+  | 'zoom-in'
+  | 'zoom-out'
+  | defaults
+
 export interface Theme {
   hideEmpty: boolean
   clearFix: boolean
@@ -101,7 +143,7 @@ export interface Theme {
     | 'none'
     | 'initial'
     | 'inherit'
-  objectPosition
+  objectPosition: any
   order: number | defaults
   resize: 'none' | 'both' | 'horizontal' | 'vertical' | defaults
   fontFamily: string
@@ -174,13 +216,13 @@ export interface Theme {
   borderStyleBottom: borderStyle
   borderStyleLeft: borderStyle
   borderStyleRight: borderStyle
-  borderColor: string | 'transparent' | defaults
-  borderColorX: string | 'transparent' | defaults
-  borderColorY: string | 'transparent' | defaults
-  borderColorTop: string | 'transparent' | defaults
-  borderColorBottom: string | 'transparent' | defaults
-  borderColorLeft: string | 'transparent' | defaults
-  borderColorRight: string | 'transparent' | defaults
+  borderColor: borderColor
+  borderColorX: borderColor
+  borderColorY: borderColor
+  borderColorTop: borderColor
+  borderColorBottom: borderColor
+  borderColorLeft: borderColor
+  borderColorRight: borderColor
   outline: string
   transition: string
   keyframe: any
@@ -193,45 +235,7 @@ export interface Theme {
   overflowX: overflow
   overflowY: overflow
   visibility: 'visible' | 'hidden' | 'collapse' | defaults
-  cursor:
-    | 'alias'
-    | 'all-scroll'
-    | 'auto'
-    | 'cell'
-    | 'context-menu'
-    | 'col-resize'
-    | 'copy'
-    | 'crosshair'
-    | 'default'
-    | 'e-resize'
-    | 'ew-resize'
-    | 'grab'
-    | 'grabbing'
-    | 'help'
-    | 'move'
-    | 'n-resize'
-    | 'ne-resize'
-    | 'nesw-resize'
-    | 'ns-resize'
-    | 'nw-resize'
-    | 'nwse-resize'
-    | 'no-drop'
-    | 'none'
-    | 'not-allowed'
-    | 'pointer'
-    | 'progress'
-    | 'row-resize'
-    | 's-resize'
-    | 'se-resize'
-    | 'sw-resize'
-    | 'text'
-    | 'URL'
-    | 'vertical-text'
-    | 'w-resize'
-    | 'wait'
-    | 'zoom-in'
-    | 'zoom-out'
-    | defaults
+  cursor: cursor
   userSelect: 'auto' | 'none' | 'text' | 'all' | defaults
   pointerEvents: 'auto' | 'none' | defaults
   writingDirection: 'ltr' | 'rtl' | defaults
