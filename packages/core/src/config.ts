@@ -1,15 +1,17 @@
 import { Context } from 'react'
-import styled, {
-  withTheme,
-  css,
-  ThemeContext,
-  BaseWithThemeFnInterface,
-  ThemedCssFunction,
-  ThemedStyledInterface,
-  DefaultTheme,
-} from 'styled-components'
+import styled, { withTheme, css, ThemeContext } from 'styled-components'
 
-const internal = {
+interface Internal {
+  css: import('styled-components').ThemedCssFunction<object>
+  styled: import('styled-components').ThemedStyledInterface<
+    import('styled-components').DefaultTheme
+  >
+  withTheme: import('styled-components').BaseWithThemeFnInterface<object>
+  context: Context<any>
+  platform: 'web' | 'native'
+}
+
+const internal: Internal & { [key: string]: any } = {
   css,
   styled,
   withTheme,
@@ -25,19 +27,19 @@ const init = ({ platform, component, textComponent }) => {
   internal.textComponent = textComponent
 }
 
-interface Config {
-  readonly platform: string
-  readonly isWeb: boolean
-  readonly isNative: boolean
-  readonly context: Context<any>
-  readonly styled: ThemedStyledInterface<DefaultTheme>
-  readonly css: ThemedCssFunction<object>
-  readonly withTheme: BaseWithThemeFnInterface<object>
-  readonly component: string
-  readonly textComponent: string
-}
+// interface Config {
+//   readonly platform: 'web' | 'native'
+//   readonly isWeb: boolean
+//   readonly isNative: boolean
+//   readonly context: Context<any>
+//   readonly styled: ThemedStyledInterface<DefaultTheme>
+//   readonly css: ThemedCssFunction<object>
+//   readonly withTheme: BaseWithThemeFnInterface<object>
+//   readonly component: string
+//   readonly textComponent: string
+// }
 
-const config: Config = {
+const config = {
   get platform() {
     return internal.platform
   },
