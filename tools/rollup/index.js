@@ -27,6 +27,7 @@ const exclude = [
 
 const globals = {
   react: 'React',
+  'react-dom': 'ReactDOM',
   'styled-components': 'styled',
   lodash: 'lodash',
   'hoist-non-react-statics': 'hoistNonReactStatics',
