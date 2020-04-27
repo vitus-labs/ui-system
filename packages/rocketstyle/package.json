@@ -25,25 +25,22 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitus-labs/rocketstyle"
+    "url": "https://github.com/vitus-labs/vitus-labs"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/rocketstyle/issues"
+    "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
-  "main": "dist/vitus-labs-rocketstyle.js",
-  "umd:main": "dist/vitus-labs-rocketstyle.umd.js",
-  "module": "dist/vitus-labs-rocketstyle.module.js",
-  "typings": "dist/index.d.ts",
+  "main": "lib/vitus-labs-rocketstyle.js",
+  "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
+  "module": "lib/vitus-labs-rocketstyle.module.js",
+  "typings": "lib/index.d.ts",
   "files": [
-    "dist/"
+    "lib/"
   ],
   "scripts": {
     "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
     "build": "rm -rf lib && yarn rollup -c",
-    "lint": "yarn lint:js",
-    "lint:js": "eslint src",
-    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",

@@ -1,13 +1,13 @@
 {
   "name": "@vitus-labs/core",
   "version": "0.3.1",
-  "homepage": "https://github.com/vitus-labs/core#readme",
-  "description": "Core and utility functions for vitus-labs packages",
+  "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "license": "MIT",
+  "homepage": "https://vitus-labs.github.io/vitus-labs/core/",
+  "description": "Core and utility functions for vitus-labs packages",
   "main": "lib/vitus-labs-core.js",
   "umd:main": "lib/vitus-labs-core.umd.js",
   "module": "lib/vitus-labs-core.module.js",
@@ -22,6 +22,17 @@
   "files": [
     "lib/"
   ],
+  "keywords": [
+    "vitus-labs",
+    "core"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/vitus-labs"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+  },
   "scripts": {
     "prepublish": "yarn build",
     "build": "rm -rf lib && yarn rollup -c",
@@ -37,13 +48,6 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"
-  },
-  "bugs": {
-    "url": "https://github.com/vitus-labs/core/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vitus-labs/core.git"
   },
   "peerDependencies": {
     "react": ">= 16.7",

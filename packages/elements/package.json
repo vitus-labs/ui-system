@@ -1,26 +1,40 @@
 {
   "name": "@vitus-labs/elements",
   "version": "0.6.1",
-  "description": "",
+  "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "license": "MIT",
-  "main": "dist/vitus-labs-elements.js",
-  "umd:main": "dist/vitus-labs-elements.umd.js",
-  "module": "dist/vitus-labs-elements.module.js",
+  "homepage": "https://vitus-labs.github.io/vitus-labs/elements/",
+  "description": "Most basic react reusable components",
+  "main": "lib/vitus-labs-elements.js",
+  "umd:main": "lib/vitus-labs-elements.umd.js",
+  "module": "lib/vitus-labs-elements.module.js",
   "browser": {
-    "./dist/vitus-labs-elements.js": "./dist/vitus-labs-elements.js",
-    "./dist/vitus-labs-elements.module.js": "./dist/vitus-labs-elements.module.js"
+    "./lib/vitus-labs-elements.js": "./lib/vitus-labs-elements.js",
+    "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.module.js"
   },
-  "unpkg": "dist/vitus-labs-elements.umd.min.js",
-  "jsnext:main": "dist/vitus-labs-elements.module.js",
-  "react-native": "dist/vitus-labs-elements.module.js",
-  "typings": "dist/index.d.ts",
+  "unpkg": "lib/vitus-labs-elements.umd.min.js",
+  "jsnext:main": "lib/vitus-labs-elements.module.js",
+  "react-native": "lib/vitus-labs-elements.module.js",
+  "typings": "lib/types/index.d.ts",
   "files": [
-    "dist/"
+    "lib/"
   ],
+  "keywords": [
+    "vitus-labs",
+    "elements",
+    "react",
+    "reusable"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/vitus-labs"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+  },
   "scripts": {
     "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
@@ -28,33 +42,24 @@
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "lint": "yarn lint:css && yarn lint:ts",
-    "lint:css": "stylelint './src/**/*.ts*'",
-    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vitus-labs/elements"
-  },
-  "bugs": {
-    "url": "https://github.com/vitus-labs/elements/issues"
-  },
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
     "react": ">= 16.7",
-    "react-dom": "*"
+    "react-dom": ">= 16.7"
   },
   "devDependencies": {
+    "@vitus-labs/core": "*",
+    "@vitus-labs/rocketstyle": "*",
+    "@vitus-labs/unistyle": "*",
     "@vitus-labs/tools-docz": "*",
     "@vitus-labs/tools-jest": "*",
     "@vitus-labs/tools-rollup": "*",
-    "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/core": "*",
-    "@vitus-labs/rocketstyle": "*",
-    "@vitus-labs/unistyle": "*"
+    "@vitus-labs/tools-storybook": "*"
   }
 }
