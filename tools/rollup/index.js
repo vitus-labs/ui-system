@@ -29,6 +29,7 @@ const globals = {
   react: 'React',
   'styled-components': 'styled',
   lodash: 'lodash',
+  'hoist-non-react-statics': 'hoistNonReactStatics',
   '@vitus-labs/core': '@vitus-labs/core',
   '@vitus-labs/unistyle': '@vitus-labs/unistyle',
   '@vitus-labs/elements': '@vitus-labs/elements',

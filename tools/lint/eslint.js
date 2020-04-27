@@ -60,8 +60,8 @@ module.exports = {
           requireLast: false,
         },
         singleline: {
-          delimiter: 'semi',
-          requireLast: true,
+          delimiter: 'none',
+          requireLast: false,
         },
       },
     ],

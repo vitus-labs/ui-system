@@ -12,7 +12,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-dom": "*"
+    "react-dom": "*",
+    "typescript": "*"
   },
   "dependencies": {
     "expo": "~36.0.0",
@@ -25,8 +26,7 @@
     "@types/react": "~16.9.0",
     "@types/react-native": "~0.60.23",
     "babel-loader": "^8.1.0",
-    "babel-preset-expo": "~8.0.0",
-    "typescript": "~3.6.3"
+    "babel-preset-expo": "~8.0.0"
   },
   "private": true
 }
