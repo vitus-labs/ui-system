@@ -20,5 +20,5 @@ export {
   Portal,
   Text,
   Util,
-  WithState
+  WithState,
 }

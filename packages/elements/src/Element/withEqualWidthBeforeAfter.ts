@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { Component, createRef, createElement } from 'react'
 import { throttle } from '@vitus-labs/core'
 
-export default WrappedComponent =>
+export default (WrappedComponent) =>
   class EqualWidth extends Component {
     static defaultProps = {
-      throttleDelay: 50
+      throttleDelay: 50,
     }
 
     elementRef = createRef()
@@ -74,7 +75,7 @@ export default WrappedComponent =>
     render() {
       return createElement(WrappedComponent, {
         ...this.props,
-        ref: this.elementRef
+        ref: this.elementRef,
       })
     }
   }

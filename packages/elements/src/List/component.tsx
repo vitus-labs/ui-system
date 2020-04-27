@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import Base from '~/Element'

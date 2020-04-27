@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Component, Children } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
@@ -7,7 +8,7 @@ const RESERVED_PROPS = [
   'data',
   'itemKey',
   'itemProps',
-  'extendProps'
+  'extendProps',
 ]
 
 const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
@@ -16,7 +17,7 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   last: position === lastItem,
   odd: position % 2 === 1,
   even: position % 2 === 0,
-  position
+  position,
 })
 
 export default class Element extends Component {
@@ -24,7 +25,7 @@ export default class Element extends Component {
   static RESERVED_PROPS = RESERVED_PROPS
   static displayName = 'vitus-labs/elements/Iterator'
   static defaultProps = {
-    itemProps: {}
+    itemProps: {},
   }
 
   getItemKey = (item, index) => {
@@ -39,7 +40,9 @@ export default class Element extends Component {
     const { children, component, data, extendProps, itemProps } = this.props
 
     const injectItemProps =
-      typeof itemProps === 'function' ? key => itemProps(key) : () => itemProps
+      typeof itemProps === 'function'
+        ? (key) => itemProps(key)
+        : () => itemProps
 
     // children have priority over props component + data
     if (children) {
@@ -52,12 +55,12 @@ export default class Element extends Component {
           key,
           position: i,
           firstItem,
-          lastItem
+          lastItem,
         })
 
         return renderContent(item, {
           ...(extendProps ? extendedProps : {}),
-          ...injectItemProps(extendedProps)
+          ...injectItemProps(extendedProps),
         })
       })
     }
@@ -74,14 +77,14 @@ export default class Element extends Component {
             key,
             position: i,
             firstItem,
-            lastItem
+            lastItem,
           })
 
           return renderContent(component, {
             key,
             ...(extendProps ? extendedProps : {}),
             ...injectItemProps(extendedProps),
-            [keyName]: item
+            [keyName]: item,
           })
         }
 
@@ -92,14 +95,14 @@ export default class Element extends Component {
           key,
           position: i,
           firstItem,
-          lastItem
+          lastItem,
         })
 
         return renderContent(renderItem, {
           key,
           ...(extendProps ? extendedProps : {}),
           ...injectItemProps(extendedProps),
-          ...restItem
+          ...restItem,
         })
       })
     }

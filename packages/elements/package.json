@@ -22,11 +22,9 @@
     "dist/"
   ],
   "scripts": {
-    "dev": "yarn storybook",
+    "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib dist && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook -o docs/storybook",
+    "build": "rm -rf lib && yarn rollup -c",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "lint": "yarn lint:css && yarn lint:ts",
@@ -35,8 +33,7 @@
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c"
+    "cover": "coveralls < .coverage/lcov.info"
   },
   "repository": {
     "type": "git",
@@ -48,7 +45,8 @@
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 16.7"
+    "react": ">= 16.7",
+    "react-dom": "*"
   },
   "devDependencies": {
     "@vitus-labs/tools-docz": "*",

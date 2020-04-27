@@ -1,15 +1,16 @@
+// @ts-nocheck
 import { Component, createElement } from 'react'
 import { omit, renderContent } from '@vitus-labs/core'
 
 const RESERVED_KEYS = ['type', 'activeItems', 'itemProps']
 
-export default WrappedComponent =>
+export default (WrappedComponent) =>
   class Element extends Component {
     static RESERVED_KEYS = RESERVED_KEYS
     static displayName = 'vitus-labs/elements/Iterator/withActiveState'
     static defaultProps = {
       type: 'single',
-      itemProps: {}
+      itemProps: {},
     }
 
     constructor(props) {
@@ -33,7 +34,7 @@ export default WrappedComponent =>
           ? activeItems
           : [activeItems]
         this.state = {
-          activeItems: new Map(activeItemsHelper.map(id => [id, true]))
+          activeItems: new Map(activeItemsHelper.map((id) => [id, true])),
         }
       }
     }
@@ -42,11 +43,11 @@ export default WrappedComponent =>
       const { type } = this.props
 
       if (type === 'single') {
-        this.setState(prevState => ({
-          activeItems: prevState.activeItems === key ? undefined : key
+        this.setState((prevState) => ({
+          activeItems: prevState.activeItems === key ? undefined : key,
         }))
       } else if (type === 'multi') {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           const activeItems = new Map(prevState.activeItems)
           activeItems.set(key, toggle ? !activeItems.get(key) : status)
           return { activeItems }
@@ -57,21 +58,21 @@ export default WrappedComponent =>
     }
 
     // available for type multiple only
-    updateAllItemsState = status => {
+    updateAllItemsState = (status) => {
       if (!status) {
         this.setState({ activeItems: new Map() })
       }
     }
 
-    setItemActive = key => {
+    setItemActive = (key) => {
       this.updateItemState(key, true)
     }
 
-    unsetItemActive = key => {
+    unsetItemActive = (key) => {
       this.updateItemState(key, false)
     }
 
-    toggleItemActive = key => {
+    toggleItemActive = (key) => {
       this.updateItemState(key, false, true)
     }
 
@@ -83,7 +84,7 @@ export default WrappedComponent =>
       this.updateAllItemsState(false)
     }
 
-    isItemActive = key => {
+    isItemActive = (key) => {
       const { type } = this.props
       const { activeItems } = this.state
 
@@ -92,11 +93,11 @@ export default WrappedComponent =>
       else return false
     }
 
-    attachItemProps = key => {
+    attachItemProps = (key) => {
       const { type, itemProps } = this.props
       const result = {
         ...itemProps,
-        active: this.isItemActive(key)
+        active: this.isItemActive(key),
       }
 
       if (type === 'single' || type === 'multi') {
@@ -116,7 +117,7 @@ export default WrappedComponent =>
       }
 
       return {
-        unsetAllItemsActive: () => this.unsetAllItemsActive()
+        unsetAllItemsActive: () => this.unsetAllItemsActive(),
       }
     }
 
@@ -124,7 +125,7 @@ export default WrappedComponent =>
       return renderContent(WrappedComponent, {
         itemProps: this.attachItemProps,
         ...this.attachMultipleProps(),
-        ...omit(this.props, RESERVED_KEYS)
+        ...omit(this.props, RESERVED_KEYS),
       })
     }
   }

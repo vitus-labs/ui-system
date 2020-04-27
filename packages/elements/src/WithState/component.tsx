@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Component, Children } from 'react'
 import { renderContent, omit, pick } from '@vitus-labs/core'
 
@@ -7,7 +8,7 @@ const STATE_HANDLERS = [
   'setPressed',
   'unsetPressed',
   'setFocus',
-  'unsetFocus'
+  'unsetFocus',
 ]
 
 const RESERVED_KEYS = [
@@ -16,7 +17,7 @@ const RESERVED_KEYS = [
   'onMouseDown',
   'onMouseUp',
   'onFocus',
-  'onBlur'
+  'onBlur',
 ]
 
 export default class WithState extends Component {
@@ -25,7 +26,7 @@ export default class WithState extends Component {
   state = {
     hover: false,
     focus: false,
-    pressed: false
+    pressed: false,
   }
 
   setHover = () => {
@@ -52,32 +53,32 @@ export default class WithState extends Component {
     this.setState({ focus: false })
   }
 
-  onMouseEnter = e => {
+  onMouseEnter = (e) => {
     this.setHover()
     if (this.props.onMouseEnter) this.props.onMouseEnter(e)
   }
 
-  onMouseLeave = e => {
+  onMouseLeave = (e) => {
     this.unsetHover()
     if (this.props.onMouseLeave) this.props.onMouseLeave(e)
   }
 
-  onMouseDown = e => {
+  onMouseDown = (e) => {
     this.setPressed()
     if (this.props.onMouseDown) this.props.onMouseDown(e)
   }
 
-  onMouseUp = e => {
+  onMouseUp = (e) => {
     this.unsetPressed()
     if (this.props.onMouseUp) this.props.onMouseUp(e)
   }
 
-  onFocus = e => {
+  onFocus = (e) => {
     this.setFocus()
     if (this.props.onFocus) this.props.onFocus(e)
   }
 
-  onBlur = e => {
+  onBlur = (e) => {
     this.unsetFocus()
     if (this.props.onBlur) this.props.onBlur(e)
   }
@@ -91,7 +92,7 @@ export default class WithState extends Component {
         ...(passProps ? pick(this, RESERVED_KEYS) : {}),
         ...pick(this, STATE_HANDLERS),
         ...this.state,
-        state: this.state
+        state: this.state,
       })
     )
   }

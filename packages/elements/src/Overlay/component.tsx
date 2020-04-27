@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { Component, createRef } from 'react'
 import config, { renderContent, throttle } from '@vitus-labs/core'
 import { stripUnit, value } from '@vitus-labs/unistyle'
@@ -28,12 +29,12 @@ export default class Overlay extends Component {
     alignY: 'bottom', // top | center | bottom
     offsetX: 0,
     offsetY: 0,
-    throttleDelay: 200
+    throttleDelay: 200,
   }
 
   state = {
     visible: false,
-    theme: {}
+    theme: {},
   }
 
   trigger = createRef()
@@ -43,7 +44,11 @@ export default class Overlay extends Component {
     const { openOn, closeOn, throttleDelay } = this.props
     this.mounted = true
 
-    if (openOn === 'click' || closeOn === 'click' || closeOn === 'triggerClick') {
+    if (
+      openOn === 'click' ||
+      closeOn === 'click' ||
+      closeOn === 'triggerClick'
+    ) {
       window.addEventListener('click', this.handleDocumentClick, false)
       window.addEventListener('touchend', this.handleDocumentClick, false)
     }
@@ -69,27 +74,29 @@ export default class Overlay extends Component {
     )
   }
 
-  observeTrigger = e => {
+  observeTrigger = (e) => {
     if (e && e.target && this.trigger.current) {
       return (
-        this.trigger.current.contains(e.target) || e.target === this.trigger.current
+        this.trigger.current.contains(e.target) ||
+        e.target === this.trigger.current
       )
     }
 
     return false
   }
 
-  observeHoverElement = e => {
+  observeHoverElement = (e) => {
     if (e && e.target && this.content.current) {
       return (
-        this.content.current.contains(e.target) || e.target === this.content.current
+        this.content.current.contains(e.target) ||
+        e.target === this.content.current
       )
     }
 
     return false
   }
 
-  handleDocumentClick = e => {
+  handleDocumentClick = (e) => {
     const { openOn, closeOn } = this.props
     const { visible } = this.state
 
@@ -127,7 +134,15 @@ export default class Overlay extends Component {
   }
 
   calculateContentPosition = () => {
-    const { type, align, alignX, alignY, offsetX, offsetY, position } = this.props
+    const {
+      type,
+      align,
+      alignX,
+      alignY,
+      offsetX,
+      offsetY,
+      position,
+    } = this.props
 
     const dimensions = this.trigger.current.getBoundingClientRect()
 
@@ -210,14 +225,14 @@ export default class Overlay extends Component {
     }
 
     this.setState({
-      theme
+      theme,
     })
   }
 
   showContent = () => {
     const { type } = this.props
     this.setState({
-      visible: true
+      visible: true,
     })
 
     this.calculateContentPosition()
@@ -242,7 +257,7 @@ export default class Overlay extends Component {
     return (
       <>
         {renderContent(trigger, {
-          [refName]: this.trigger
+          [refName]: this.trigger,
         })}
 
         {this.state.visible && (
@@ -253,7 +268,7 @@ export default class Overlay extends Component {
                 alignX,
                 alignY,
                 showContent: this.showContent,
-                hideContent: this.hideContent
+                hideContent: this.hideContent,
               })}
             </Utility>
           </Portal>

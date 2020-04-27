@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { forwardRef } from 'react'
 import config, { pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
@@ -56,7 +57,7 @@ const Element = forwardRef(
       block,
       contentDirection,
       alignX: contentAlignX,
-      alignY: contentAlignY
+      alignY: contentAlignY,
     }
 
     if (shouldBeEmpty) return <Wrapper {...sharedProps} {...props} />
@@ -73,7 +74,8 @@ const Element = forwardRef(
     // --------------------------------------------------------
     const wrapperAlignX = isSimple && contentAlignX ? contentAlignX : alignX
     const wrapperAlignY = isSimple && contentAlignY ? contentAlignY : alignY
-    let wrapperDirection = isSimple && contentDirection ? contentDirection : 'inline'
+    let wrapperDirection =
+      isSimple && contentDirection ? contentDirection : 'inline'
 
     if (vertical) wrapperDirection = transformVerticalProp(vertical)
 

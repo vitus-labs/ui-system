@@ -1,12 +1,22 @@
+// @ts-nocheck
 import { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
+const parseJSON = (object) => {
+  let result = {}
+  try {
+    result = JSON.parse(object)
+  } catch (e) {}
+
+  return result
+}
+
 const Element = forwardRef(({ children, className, style }, ref) => {
-  const passProps = JSON.parse(
+  const passProps = parseJSON(
     JSON.stringify({
       className,
       style,
-      ref
+      ref,
     })
   )
 

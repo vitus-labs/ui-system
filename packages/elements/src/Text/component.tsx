@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { Children, isValidElement, cloneElement } from 'react'
 import Styled from './styled'
 
@@ -11,10 +12,10 @@ const INLINE_TAGS = {
   marked: 'mark',
   strong: 'strong',
   italic: 'em',
-  inline: 'span'
+  inline: 'span',
 }
 
-const getTag = props => {
+const getTag = (props) => {
   for (const key in props) {
     const value = INLINE_TAGS[key]
     if (value) {
@@ -30,7 +31,7 @@ const Element = ({ inline, children, tag, ...props }) => {
 
   return (
     <Styled as={_tag} {...props}>
-      {Children.map(children, child => {
+      {Children.map(children, (child) => {
         if (isValidElement(child) && child.type.isText === true) {
           return cloneElement(child, { inline: true })
         }
