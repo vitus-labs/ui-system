@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { createElement } from 'react'
 import {
   NoAvailableOptions,
@@ -6,12 +7,13 @@ import {
   OptionBlock,
   H2,
   CodeExample,
-  Text
+  Text,
 } from './styled'
 import { create } from 'domain'
 
-const randomPick = arr => arr[Math.floor(Math.random() * arr.length)]
-const getStateName = state => state.charAt(0).toUpperCase() + state.substring(1)
+const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)]
+const getStateName = (state) =>
+  state.charAt(0).toUpperCase() + state.substring(1)
 
 const AvailableOptions = ({ data }) => {
   if (data.length <= 0)
@@ -19,7 +21,7 @@ const AvailableOptions = ({ data }) => {
 
   return (
     <BadgeBox>
-      {data.map(item => (
+      {data.map((item) => (
         <Badge key={item}>{item}</Badge>
       ))}
     </BadgeBox>
@@ -32,7 +34,7 @@ const DimensionOptionsExample = ({
   dimensionKey,
   options,
   component,
-  baseKnobs
+  baseKnobs,
 }) => {
   const randomlyPickedOption = randomPick(options)
   const isDimensionKeyMultiple = Array.isArray(dimensionKey)
@@ -52,7 +54,7 @@ const DimensionOptionsExample = ({
           <CodeExample>{`<Component ${propAttr} />`}</CodeExample>
 
           <div>
-            {options.map(item =>
+            {options.map((item) =>
               createElement(component, { ...baseKnobs, [dimensionKey]: item })
             )}
           </div>
@@ -65,7 +67,7 @@ const DimensionOptionsExample = ({
           )}
 
           <div>
-            {options.map(item =>
+            {options.map((item) =>
               createElement(component, { ...baseKnobs, [item]: true })
             )}
           </div>

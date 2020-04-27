@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   text,
   number,
@@ -6,10 +7,10 @@ import {
   color,
   button,
   select,
-  optionsKnob
+  optionsKnob,
 } from '@storybook/addon-knobs'
 
-const isColor = strColor => {
+const isColor = (strColor) => {
   const s = new Option().style
   s.color = strColor
   return s.color !== ''
@@ -22,7 +23,7 @@ function dateKnob(name, defaultValue, groupId) {
 
 export const getBasicKnobs = (params, groupId = 'Base') => {
   const result = {}
-  Object.keys(params).forEach(item => {
+  Object.keys(params).forEach((item) => {
     const value = params[item]
     const type = typeof value
 
@@ -64,14 +65,14 @@ export const generateKnobs = (options, dimensions, useBools) => {
   const result = {}
 
   if (useBools) {
-    Object.keys(options).map(item => {
-      options[item].map(item => {
+    Object.keys(options).map((item) => {
+      options[item].map((item) => {
         result[item] = boolean(item, false, groupId)
       })
     })
   }
 
-  Object.keys(options).map(item => {
+  Object.keys(options).map((item) => {
     const isKeyArray = Array.isArray(dimensions[item])
     const keyName = isKeyArray ? dimensions[item][0] : dimensions[item]
 
@@ -79,7 +80,7 @@ export const generateKnobs = (options, dimensions, useBools) => {
 
     selectOptions['---'] = undefined
 
-    options[item].map(item => {
+    options[item].map((item) => {
       selectOptions[item] = item
     })
 
@@ -89,7 +90,7 @@ export const generateKnobs = (options, dimensions, useBools) => {
         selectOptions,
         '',
         {
-          display: 'multi-select'
+          display: 'multi-select',
         },
         groupId
       )

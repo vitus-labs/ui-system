@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { createElement, useState } from 'react'
 import Documentation from './components/Documentation'
 import Dimension from './components/Dimension'
@@ -13,14 +14,16 @@ const Element = ({ component, type, props = {} }) => {
   const rocketstyleDimensions = state.rocketConfig.dimensions
   const useBooleans = state.rocketConfig.useBooleans
   const transformProps = typeof props === 'function' ? props : () => props
-  const componentProps = getBasicKnobs(transformProps(rocketstyleDimensions[type]))
+  const componentProps = getBasicKnobs(
+    transformProps(rocketstyleDimensions[type])
+  )
 
-  const componentKnobs = useBool =>
+  const componentKnobs = (useBool) =>
     generateKnobs(state.keys, state.rocketConfig.dimensions, useBool)
 
   const baseProps = {
     title: component.displayName,
-    useBooleans
+    useBooleans,
   }
 
   if (type === 'documentation') {

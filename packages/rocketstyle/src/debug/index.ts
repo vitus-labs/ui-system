@@ -1,3 +1,4 @@
+// @ts-nocheck
 export default ({ __DEBUG__, attributes, keys, theme }) => {
   if (__DEBUG__ === 'basic' || __DEBUG__ === 'verbose') {
     debugGeneralInfo('General info', {
@@ -5,12 +6,18 @@ export default ({ __DEBUG__, attributes, keys, theme }) => {
       State: attributes.state,
       Size: attributes.size,
       Variant: attributes.variant,
-      Multiples: attributes.multiple.length > 0 ? attributes.multiple : undefined
+      Multiples:
+        attributes.multiple.length > 0 ? attributes.multiple : undefined,
     })
   }
 
   if (__DEBUG__ === 'states' || __DEBUG__ === 'verbose') {
-    debugProperty('State ❤️🧡💛💚💙💜🖤', keys.state, attributes.state, theme.state)
+    debugProperty(
+      'State ❤️🧡💛💚💙💜🖤',
+      keys.state,
+      attributes.state,
+      theme.state
+    )
   }
 
   if (__DEBUG__ === 'sizes' || __DEBUG__ === 'verbose') {
