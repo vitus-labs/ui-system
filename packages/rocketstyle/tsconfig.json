@@ -1,43 +1,11 @@
 {
+  "extends": "@vitus-labs/tools-typescript/config",
+  "include": ["src"],
+  "exclude": ["node_modules", "lib", "__stories__"],
   "compilerOptions": {
-    "outDir": "lib/",
-    "module": "es2015",
-    "target": "es6",
-    "lib": ["esnext", "dom"],
-    "sourceMap": true,
-    "allowJs": false,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "rootDir": "src",
     "baseUrl": "src",
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    // "strict": true,
-    // "strictPropertyInitialization": false,
-    // "strictNullChecks": true,
-    "noFallthroughCasesInSwitch": true,
-    "importHelpers": true,
-    "stripInternal": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "declaration": true,
-    "allowSyntheticDefaultImports": true
-  },
-  "include": ["src/**/*.ts*"],
-  "exclude": [
-    "node_modules",
-    "lib",
-    "dist",
-    "build",
-    "scripts",
-    "tools/*",
-    "src/**/*.stories.*",
-    "src/**/stories.*",
-    "src/**/*.test.*",
-    "src/**/__snapshots__/**/*",
-    "themes/**/*"
-  ]
+    "paths": {
+      "~/*": ["*"]
+    }
+  }
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { createContext, Component } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import config, {
@@ -5,14 +6,14 @@ import config, {
   pick,
   difference,
   compose,
-  renderContent
+  renderContent,
 } from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
   calculateStyles,
   calculateStyledAttrs,
-  calculateTheme
+  calculateTheme,
 } from './utils'
 
 const Context = createContext({})
@@ -26,7 +27,7 @@ const RESERVED_STATIC_KEYS = [...RESERVED_CLONED_KEYS, 'compose', 'dimensions']
 // --------------------------------------------------------
 const orOptions = (keys, opts, defaultOpts) => {
   const result = {}
-  keys.forEach(item => {
+  keys.forEach((item) => {
     result[item] = opts[item] || defaultOpts[item]
   })
 
@@ -35,7 +36,7 @@ const orOptions = (keys, opts, defaultOpts) => {
 
 const chainReservedOptions = (keys, opts, defaultOpts) => {
   const result = {}
-  keys.forEach(item => {
+  keys.forEach((item) => {
     result[item] = chainOptions(opts[item], defaultOpts[item])
   })
 
@@ -46,13 +47,13 @@ const chainReservedOptions = (keys, opts, defaultOpts) => {
 // class constructor helpers
 // --------------------------------------------------------
 const generateKeys = (context, theme, config) => {
-  config.dimensionKeys.forEach(item => {
+  config.dimensionKeys.forEach((item) => {
     context[item] = Object.keys(theme[item])
   })
 }
 
 const generateThemes = (context, theme, options) => {
-  options.dimensionKeys.forEach(item => {
+  options.dimensionKeys.forEach((item) => {
     context[item] = calculateChainOptions(options[item], theme, config.css)
   })
 }
@@ -61,8 +62,8 @@ const generateThemes = (context, theme, options) => {
 // helpers for create statics on class
 // --------------------------------------------------------
 const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
-  dimensionKeys.forEach(item => {
-    context[item] = props => func({ [item]: props }, opts)
+  dimensionKeys.forEach((item) => {
+    context[item] = (props) => func({ [item]: props }, opts)
   })
 }
 
@@ -82,7 +83,7 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
       [...defaultOpts.dimensionKeys, ...RESERVED_CLONED_KEYS],
       opts,
       defaultOpts
-    )
+    ),
   })
 
 // --------------------------------------------------------
@@ -92,7 +93,7 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const styleComponent = options => {
+const styleComponent = (options) => {
   const { component, styles } = options
 
   // create styled component with all options.styles if available
@@ -102,7 +103,7 @@ const styleComponent = options => {
     STYLED_COMPONENT = calculateStyles({
       component,
       styles,
-      config
+      config,
     })
   }
 
@@ -115,7 +116,7 @@ const styleComponent = options => {
       // define empty objects so they can be reassigned later
       this[namespace] = {
         keys: {},
-        themes: {}
+        themes: {},
       }
 
       this[namespace].themes.base = calculateChainOptions(
@@ -136,7 +137,7 @@ const styleComponent = options => {
         ...this[namespace].keys.sizes,
         ...this[namespace].keys.variants,
         ...this[namespace].keys.multiple,
-        ...options.dimensionValues
+        ...options.dimensionValues,
       ]
 
       if (hook) {
@@ -154,25 +155,26 @@ const styleComponent = options => {
           this.props,
           theme,
           {
-            renderContent
+            renderContent,
           }
         )
 
-        const newProps = omit({ ...ctxData, ...calculatedAttrs, ...this.props }, [
-          'theme'
-        ])
+        const newProps = omit(
+          { ...ctxData, ...calculatedAttrs, ...this.props },
+          ['theme']
+        )
 
         const styledAttributes = calculateStyledAttrs({
           props: pick(newProps, KEYWORDS),
           states: keys,
           dimensions: options.dimensions,
-          useBooleans: options.useBooleans
+          useBooleans: options.useBooleans,
         })
 
         const rocketstate = { ...styledAttributes }
-        Object.values(styledAttributes).forEach(item => {
+        Object.values(styledAttributes).forEach((item) => {
           if (Array.isArray(item)) {
-            item.forEach(item => {
+            item.forEach((item) => {
               rocketstate[item] = true
             })
           } else {
@@ -184,7 +186,7 @@ const styleComponent = options => {
         const rocketstyle = calculateTheme({
           styledAttributes,
           themes,
-          config: options
+          config: options,
         })
 
         // this removes styling state from props and passes its state
@@ -204,7 +206,7 @@ const styleComponent = options => {
         const renderedComponent = renderContent(STYLED_COMPONENT, {
           ...passProps,
           rocketstyle,
-          rocketstate
+          rocketstate,
         })
 
         if (options.provider) {
@@ -221,7 +223,7 @@ const styleComponent = options => {
       if (options.consumer) {
         return (
           <Context.Consumer>
-            {value => finalElement(options.consumer(value))}
+            {(value) => finalElement(options.consumer(value))}
           </Context.Consumer>
         )
       }
@@ -246,7 +248,7 @@ const styleComponent = options => {
     context: ExtendedComponent,
     dimensionKeys: [...options.dimensionKeys, ...RESERVED_STATIC_KEYS],
     func: cloneAndEnhance,
-    opts: options
+    opts: options,
   })
   // ------------------------------------------------------
   ExtendedComponent.displayName = options.name

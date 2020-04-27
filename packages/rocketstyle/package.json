@@ -38,11 +38,9 @@
     "dist/"
   ],
   "scripts": {
-    "dev": "yarn storybook",
+    "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib && babel src -d lib --root-mode upward && cpr lib dist --delete-first && yarn rollup",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook -o docs/storybook",
+    "build": "rm -rf lib && yarn rollup -c",
     "lint": "yarn lint:js",
     "lint:js": "eslint src",
     "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
@@ -50,9 +48,6 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info",
-    "rollup": "rollup -c",
-    "pkgs": "rm -rf node_modules/ package-lock.json yarn.lock && yarn",
-    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write",
     "docz:dev": "docz dev",
     "docz:build": "docz build"
   },
@@ -64,12 +59,12 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
+    "@vitus-labs/core": "*",
+    "@vitus-labs/elements": "*",
+    "@vitus-labs/unistyle": "*",
     "@vitus-labs/tools-docz": "*",
     "@vitus-labs/tools-jest": "*",
     "@vitus-labs/tools-rollup": "*",
-    "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/core": "*",
-    "@vitus-labs/elements": "*",
-    "@vitus-labs/unistyle": "*"
+    "@vitus-labs/tools-storybook": "*"
   }
 }
