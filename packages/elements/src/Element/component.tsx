@@ -5,7 +5,39 @@ import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
 
-const Element = forwardRef(
+type alignX = 'left' | 'center' | 'right'
+type alignY = 'top' | 'center' | 'bottom'
+type direction = 'inline' | 'vertical'
+
+type Ref = HTMLElement
+
+interface Props {
+  forwardProps?: string[]
+  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  innerRef: Ref
+  label: React.ReactNode
+  children: React.ReactNode
+  content: React.ReactNode
+  beforeContent: React.ReactNode
+  afterContent: React.ReactNode
+  block: boolean | boolean[] | Record<string, boolean>
+  equalCols: boolean | boolean[] | Record<string, boolean>
+  gap: number | number[] | Record<string, number>
+  vertical: boolean | boolean[] | Record<string, boolean>
+  alignX: alignX | alignX[] | Record<string, alignX>
+  contentAlignX: alignX | alignX[] | Record<string, alignX>
+  beforeContentAlignX: alignX | alignX[] | Record<string, alignX>
+  afterContentAlignX: alignX | alignX[] | Record<string, alignX>
+  alignY: alignY | alignY[] | Record<string, alignY>
+  contentAlignY: alignY | alignY[] | Record<string, alignY>
+  beforeContentAlignY: alignY | alignY[] | Record<string, alignY>
+  afterContentAlignY: alignY | alignY[] | Record<string, alignY>
+  contentDirection: direction | direction[] | Record<string, direction>
+  beforeContentDirection: direction | direction[] | Record<string, direction>
+  afterContentDirection: direction | direction[] | Record<string, direction>
+}
+
+const Element = forwardRef<Ref, Partial<Props>>(
   (
     {
       forwardProps = [],
