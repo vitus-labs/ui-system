@@ -1,7 +1,8 @@
+// @ts-nocheck
 import React, { Component } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
-export default () => WrappedComponent => {
+export default () => (WrappedComponent) => {
   const dataComponentName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
@@ -12,7 +13,7 @@ export default () => WrappedComponent => {
       return renderContent(WrappedComponent, {
         'data-component-name': dataComponentName,
         'data-test': dataComponentName,
-        ...this.props
+        ...this.props,
       })
     }
   }

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { forwardRef } from 'react'
-import config, { pick, renderContent } from '@vitus-labs/core'
+import { config, pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'

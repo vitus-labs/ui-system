@@ -28,8 +28,10 @@ const exclude = [
 const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
+  'react-native': 'reactNative',
   'styled-components': 'styled',
   lodash: 'lodash',
+  'lodash.pick': 'pick',
   'hoist-non-react-statics': 'hoistNonReactStatics',
   '@vitus-labs/core': '@vitus-labs/core',
   '@vitus-labs/unistyle': '@vitus-labs/unistyle',

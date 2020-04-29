@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { Component, createRef } from 'react'
-import config, { renderContent, throttle } from '@vitus-labs/core'
+import { config, renderContent, throttle } from '@vitus-labs/core'
 import { stripUnit, value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 import Util from '~/Util'

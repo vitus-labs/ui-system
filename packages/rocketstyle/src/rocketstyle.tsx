@@ -1,7 +1,8 @@
 // @ts-nocheck
 import React, { createContext, Component } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import config, {
+import {
+  config,
   omit,
   pick,
   difference,

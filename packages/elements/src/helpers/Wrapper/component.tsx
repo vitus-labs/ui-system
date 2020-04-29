@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { forwardRef, ReactNode } from 'react'
-import config, { omit, pick } from '@vitus-labs/core'
+import { config, omit, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
 import Styled from './styled'
