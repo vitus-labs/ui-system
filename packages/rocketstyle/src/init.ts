@@ -1,15 +1,15 @@
-import styleComponent from './rocketstyle'
+import styleComponent from './rocketstyle1'
 
 const defaultDimensions = {
   states: 'state',
   sizes: 'size',
   variants: 'variant',
-  multiple: ['multiple', { multi: true }]
+  multiple: ['multiple', { multi: true }],
 }
 
 const rocketstyle = ({
   dimensions = defaultDimensions,
-  useBooleans = true
+  useBooleans = true,
 } = {}) => ({ name, component }) => {
   // if (!name) {
   //   throw Error('Component name is missing in params')
@@ -24,10 +24,10 @@ const rocketstyle = ({
     useBooleans,
     dimensions,
     dimensionKeys: Object.keys(dimensions),
-    dimensionValues: Object.values(dimensions).map(item => {
+    dimensionValues: Object.values(dimensions).map((item) => {
       if (Array.isArray(item)) return item[0]
       return item
-    })
+    }),
   })
 }
 
