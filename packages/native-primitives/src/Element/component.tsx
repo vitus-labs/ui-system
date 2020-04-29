@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import pick from 'lodash.pick'
@@ -5,9 +6,9 @@ import Context from '../context'
 import Text from '../Text'
 import TEXT_PROPS_KEYS from './constants'
 
-const pickTextStyle = styles => {
+const pickTextStyle = (styles) => {
   if (Array.isArray(styles)) {
-    return styles.map(item => pickTextStyle(item))
+    return styles.map((item) => pickTextStyle(item))
   }
 
   if (typeof styles === 'object') {
@@ -35,7 +36,7 @@ const Element = ({ onPress, children, style, ...props }) => {
   const finalProps = {
     ...props,
     style,
-    onPress
+    onPress,
   }
 
   if (onPress) {
