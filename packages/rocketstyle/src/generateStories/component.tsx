@@ -8,7 +8,7 @@ const Element = ({ component, type, props = {} }) => {
   const [state, setState] = useState(null)
 
   if (!state) {
-    if (component) return createElement(component, { hook: setState })
+    if (component) return createElement(component, { onMount: setState })
   }
 
   const rocketstyleDimensions = state.rocketConfig.dimensions

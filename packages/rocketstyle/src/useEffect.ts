@@ -1,12 +1,10 @@
 // @ts-nocheck
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { config } from '@vitus-labs/core'
 import { calculateChainOptions } from './utils'
 
-const namespace = '__ROCKETSTYLE__'
-
 // --------------------------------------------------------
-// class constructor helpers
+// helpers
 // --------------------------------------------------------
 const generateKeys = (context, theme, config) => {
   config.dimensionKeys.forEach((item) => {
