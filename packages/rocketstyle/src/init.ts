@@ -1,4 +1,4 @@
-import styleComponent from './rocketstyle1'
+import styleComponent from './rocketstyle'
 
 const defaultDimensions = {
   states: 'state',
