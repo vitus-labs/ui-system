@@ -199,9 +199,11 @@ const styleComponent = (options) => {
     func: cloneAndEnhance,
     opts: options,
   })
+  console.log(options.component.name)
   // ------------------------------------------------------
-  ExtendedComponent.displayName = options.name
   ExtendedComponent.IS_ROCKETSTYLE = true
+  ExtendedComponent.displayName =
+    options.name || options.component.displayName || options.component.name
   // ------------------------------------------------------
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
