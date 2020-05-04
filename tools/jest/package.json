@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/tools-jest",
-  "version": "0.0.0",
+  "version": "0.7.1",
   "private": true,
   "main": "./config.js",
   "dependencies": {

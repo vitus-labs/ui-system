@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/tools-typescript",
-  "version": "0.0.0",
+  "version": "0.7.1",
   "private": true,
   "main": "./index.json",
   "module": "./index.json",

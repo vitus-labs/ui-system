@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/tools-storybook",
-  "version": "0.0.0",
+  "version": "0.7.1",
   "private": true,
   "main": "./index.js",
   "module": "./index.js",
@@ -16,7 +16,6 @@
     "react-dom": "*"
   },
   "dependencies": {
-    "@vitus-labs/tools-core": "*",
     "@storybook/addon-a11y": "^5.3.18",
     "@storybook/addon-backgrounds": "^5.3.18",
     "@storybook/addon-docs": "^5.3.18",
@@ -26,6 +25,7 @@
     "@storybook/addons": "^5.3.18",
     "@storybook/react": "^5.3.18",
     "@storybook/theming": "^5.3.18",
+    "@vitus-labs/tools-core": "^0.7.1",
     "react-docgen-typescript-loader": "^3.7.2",
     "ts-loader": "^7.0.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/core",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -57,6 +57,6 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rollup": "*"
+    "@vitus-labs/tools-rollup": "^0.7.1"
   }
 }
