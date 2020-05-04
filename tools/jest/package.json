@@ -1,6 +1,7 @@
 {
   "name": "@vitus-labs/tools-jest",
   "version": "0.0.0",
+  "private": true,
   "main": "./config.js",
   "dependencies": {
     "enzyme": "^3.10.0",

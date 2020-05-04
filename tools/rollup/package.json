@@ -1,6 +1,7 @@
 {
   "name": "@vitus-labs/tools-rollup",
   "version": "0.0.0",
+  "private": true,
   "main": "./index.js",
   "dependencies": {
     "@rollup/plugin-node-resolve": "^7.1.3",

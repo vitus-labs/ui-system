@@ -1,6 +1,7 @@
 {
   "name": "@vitus-labs/tools-docz",
   "version": "0.0.0",
+  "private": true,
   "main": "./index.js",
   "dependencies": {
     "docz": "^2.0.0-rc.55"
