@@ -6,8 +6,7 @@
   "version": "0.7.0",
   "command": {
     "publish": {
-      "ignore": "tools-*",
-      "ignoreChanges": ["ignored-file", "*.md"],
+      "ignoreChanges": ["ignored-file", "*.md", "tools-*"],
       "message": "chore(release): publish",
       "registry": "https://npm.pkg.github.com"
     }
