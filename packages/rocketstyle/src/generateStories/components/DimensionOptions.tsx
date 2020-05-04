@@ -9,7 +9,6 @@ import {
   CodeExample,
   Text,
 } from './styled'
-import { create } from 'domain'
 
 const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const getStateName = (state) =>
