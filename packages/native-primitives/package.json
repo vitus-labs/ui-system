@@ -18,7 +18,6 @@
   "unpkg": "lib/vitus-labs-native-primitives.umd.min.js",
   "jsnext:main": "lib/vitus-labs-native-primitives.module.js",
   "react-native": "lib/vitus-labs-native-primitives.module.js",
-  "typings": "lib/types/index.d.ts",
   "files": [
     "lib/"
   ],

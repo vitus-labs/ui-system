@@ -33,7 +33,6 @@
   "main": "lib/vitus-labs-rocketstyle.js",
   "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
   "module": "lib/vitus-labs-rocketstyle.module.js",
-  "typings": "lib/index.d.ts",
   "files": [
     "lib/"
   ],

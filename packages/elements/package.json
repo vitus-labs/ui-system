@@ -18,7 +18,6 @@
   "unpkg": "lib/vitus-labs-elements.umd.min.js",
   "jsnext:main": "lib/vitus-labs-elements.module.js",
   "react-native": "lib/vitus-labs-elements.module.js",
-  "typings": "lib/types/index.d.ts",
   "files": [
     "lib/"
   ],
