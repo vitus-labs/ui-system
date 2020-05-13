@@ -18,7 +18,6 @@ module.exports = {
     config.resolve.extensions.push('.ts', '.tsx')
     config.resolve.alias['~'] = path.resolve(process.cwd(), 'src/')
 
-    console.log(config)
     return config
   },
 

@@ -87,7 +87,7 @@ const prodPlugins = () => [
 ]
 
 const build = (outFile, format, mode) => ({
-  input: 'src',
+  input: 'src/index',
   output: {
     file: `./lib/${outFile}`,
     format,

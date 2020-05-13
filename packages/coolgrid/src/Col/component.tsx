@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useContext } from 'react'
 import { omit } from '@vitus-labs/core'
 import {
