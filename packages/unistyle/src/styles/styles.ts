@@ -100,16 +100,16 @@ export default ({ theme: t, css, rootSize }: Styles) => css`
 
   /* COLORS attributes */
   color: ${t.color};
-  background-color: ${t.bgColor};
-  ${t.bgImg &&
+  background-color: ${t.backgroundColor};
+  ${t.backgroundImg &&
   css`
-    background-image: url(${t.bgImg});
+    background-image: url(${t.backgroundImg});
   `};
-  background-clip: ${t.bgClip};
-  background-origin: ${t.bgOrigin};
-  background-position: ${t.bgPosition};
-  background-repeat: ${t.bgRepeat};
-  background-size: ${t.bgSize};
+  background-clip: ${t.backgroundClip};
+  background-origin: ${t.backgroundOrigin};
+  background-position: ${t.backgroundPosition};
+  background-repeat: ${t.backgroundRepeat};
+  background-size: ${t.backgroundSize};
 
   /* BORDERS attributes */
   border-radius: ${value(rootSize, [t.borderRadius])};
@@ -187,6 +187,7 @@ export default ({ theme: t, css, rootSize }: Styles) => css`
   overflow: ${t.overflow};
   overflow-x: ${t.overflowX};
   overflow-y: ${t.overflowY};
+  overflow-wrap: ${t.overflowWrap};
   cursor: ${t.cursor};
 
   visibility: ${t.visibility};
