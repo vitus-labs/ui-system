@@ -34,7 +34,11 @@ export default (WrappedComponent) =>
     }
 
     shouldCalculate = () => {
-      const { equalBeforeAfter, beforeContent, afterContent } = this.props
+      const {
+        equalBeforeAfter = true,
+        beforeContent,
+        afterContent,
+      } = this.props
 
       if (equalBeforeAfter && beforeContent && afterContent) return true
       return false
