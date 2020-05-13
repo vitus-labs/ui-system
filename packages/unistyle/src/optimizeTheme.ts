@@ -1,3 +1,4 @@
+//@ts-ignore
 import { set, get, pick } from '@vitus-labs/core'
 
 // ------------------------------------------

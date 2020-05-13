@@ -1,3 +1,4 @@
+//@ts-ignore
 import { config } from '@vitus-labs/core'
 import { value } from './utils/unit'
 

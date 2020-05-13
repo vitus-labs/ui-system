@@ -1,3 +1,4 @@
+//@ts-ignore
 const sortBreakpoints = (breakpoints) =>
   Object.keys(breakpoints).sort((a, b) => breakpoints[a] - breakpoints[b])
 

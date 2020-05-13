@@ -1,3 +1,4 @@
+//@ts-ignore
 import { config } from '@vitus-labs/core'
 
 const MAP_SHARED = {
@@ -40,13 +41,7 @@ const alignValueX = alignValue(MAP_ALIGN_X)
 const alignValueY = alignValue(MAP_ALIGN_Y)
 const setDirection = alignValue(MAP_DIRECTION[config.platform])
 
-interface Attrs {
-  direction: keyof typeof MAP_DIRECTION[typeof config.platform]
-  alignX: keyof typeof MAP_ALIGN_X
-  alignY: keyof typeof MAP_ALIGN_Y
-}
-
-const alignContent = (attrs: Attrs) => {
+const alignContent = (attrs) => {
   if (
     !attrs ||
     typeof attrs !== 'object' ||
