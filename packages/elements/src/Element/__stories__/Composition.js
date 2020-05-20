@@ -2,7 +2,7 @@ import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
 
 const element = rocketstyle()({ component: Element, name: 'base' }).styles(
-  css => css`
+  (css) => css`
     ${({ rocketstyle: t }) => css`
       background-color: ${t.bgColor};
     `}
@@ -11,15 +11,15 @@ const element = rocketstyle()({ component: Element, name: 'base' }).styles(
 
 export const Container = element
   .config({
-    name: 'base/Container'
+    name: 'base/Container',
   })
   .attrs({
     block: true,
-    contentDirection: 'rows'
+    contentDirection: 'rows',
   })
   .theme({ bgColor: 'papayawhip' })
   .styles(
-    css => css`
+    (css) => css`
       padding: 20px;
       min-height: 100px;
     `
@@ -27,8 +27,8 @@ export const Container = element
 
 export const Inner = element
   .config({
-    name: 'base/Inner'
+    name: 'base/Inner',
   })
   .theme({
-    bgColor: 'blue'
+    bgColor: 'blue',
   })

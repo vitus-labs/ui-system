@@ -11,7 +11,7 @@ import {
   CONTAINER_RESERVED_KEYS as RESERVED_KEYS,
   BASE_RESERVED_KEYS,
 } from '../constants'
-import Context from './context'
+import Context from '../context/ContainerContext'
 import Styled from './styled'
 
 const Element = ({ children, width, component, css, ...props }) => {

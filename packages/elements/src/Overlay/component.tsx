@@ -1,17 +1,17 @@
 // @ts-nocheck
 import React, { Component, createRef } from 'react'
 import { config, renderContent, throttle } from '@vitus-labs/core'
-import { stripUnit, value } from '@vitus-labs/unistyle'
+import { value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 import Util from '~/Util'
 
 const Utility = config.styled(Util)`
-  ${({ overlay: t }) => config.css`
+  ${({ theme, overlay: t, ...props }) => config.css`
     position: ${t.position};
-    top: ${value({ param: t.top })};
-    bottom: ${value({ param: t.bottom })};
-    left: ${value({ param: t.left })};
-    right: ${value({ param: t.right })};
+    top: ${value(theme.rootSize, [t.top])};
+    bottom: ${value(theme.rootSize, [t.bottom])};
+    left: ${value(theme.rootSize, [t.left])};
+    right: ${value(theme.rootSize, [t.right])};
     transform: ${t.transformX} ${t.transformY};
   `};
 `

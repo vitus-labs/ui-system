@@ -9,7 +9,7 @@ import {
   pickThemeProps,
 } from '@vitus-labs/unistyle'
 import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
-import RowContext from '../Row/context'
+import RowContext from '../context/RowContext'
 import Styled from './styled'
 
 const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {

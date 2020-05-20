@@ -9,8 +9,8 @@ import {
 } from '@vitus-labs/unistyle'
 import { merge, createGridContext } from '../utils'
 import { ROW_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
-import { Context as ContainerContext } from '../Container'
-import RowContext from './context'
+import ContainerContext from '../context/ContainerContext'
+import RowContext from '../context/RowContext'
 import Styled from './styled'
 
 const Element = ({ children, component, css, ...props }) => {
