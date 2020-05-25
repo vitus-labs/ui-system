@@ -1,12 +1,14 @@
-import Button, { HoistedButton } from './Button'
+import Button, { HoistedButton, ElementExample } from './Button'
 
 // console.log(Button)
 
 storiesOf('ROCKETSTYLE | Element', module).add('Button', () => {
   return (
     <>
-      <Button />
-      <HoistedButton />
+      <Button active />
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
     </>
   )
 })

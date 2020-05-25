@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useContext, useEffect } from 'react'
 import { config } from '@vitus-labs/core'
-import { calculateChainOptions } from './utils'
+import { calculateChainOptions } from '../utils'
 
 // --------------------------------------------------------
 // helpers
