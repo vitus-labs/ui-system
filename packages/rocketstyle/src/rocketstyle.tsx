@@ -16,7 +16,8 @@ import {
   calculateStyledAttrs,
   calculateTheme,
 } from './utils'
-import useTheme from './useEffect'
+import useTheme from './hooks/useTheme'
+import usePseudoState from './hooks/usePseudoState'
 
 const Context = createContext({})
 const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
@@ -94,6 +95,7 @@ const styleComponent = (options) => {
   }
 
   const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
+    const pseudo = usePseudoState(props)
     const {
       theme,
       __ROCKETSTYLE__: { KEYWORDS, keys, themes },
@@ -120,7 +122,7 @@ const styleComponent = (options) => {
         useBooleans: options.useBooleans,
       })
 
-      const rocketstate = { ...styledAttributes }
+      const rocketstate = { ...styledAttributes, pseudo: pseudo.pseudoState }
       Object.values(styledAttributes).forEach((item) => {
         if (Array.isArray(item)) {
           item.forEach((item) => {
@@ -152,11 +154,12 @@ const styleComponent = (options) => {
       //   passProps = omit(newProps, this[namespace].KEYWORDS)
       // }
 
-      const renderedComponent = renderContent(STYLED_COMPONENT, {
+      let renderedComponent = renderContent(STYLED_COMPONENT, {
         ...passProps,
+        ...pseudo.events,
+        $rocketstyle: rocketstyle,
+        $rocketstate: rocketstate,
         ref,
-        rocketstyle,
-        rocketstate,
       })
 
       if (options.provider) {
