@@ -52,8 +52,8 @@ export default (WrappedComponent) =>
       const afterContent = get(this.elementRef, 'current.children[2]')
 
       if (vertical) {
-        const beforeContentHeight = beforeContent.offsetHeight
-        const afterContentHeight = afterContent.offsetHeight
+        const beforeContentHeight = get(beforeContent, 'offsetHeight')
+        const afterContentHeight = get(afterContent, 'offsetHeight')
 
         if (beforeContentHeight > afterContentHeight) {
           beforeContent.style.height = `${beforeContentHeight}px`
@@ -63,8 +63,8 @@ export default (WrappedComponent) =>
           afterContent.style.height = `${afterContentHeight}px`
         }
       } else {
-        const beforeContentWidth = beforeContent.offsetWidth
-        const afterContentWidth = afterContent.offsetWidth
+        const beforeContentWidth = get(beforeContent, 'offsetWidth')
+        const afterContentWidth = get(afterContent, 'offsetWidth')
 
         if (beforeContentWidth > afterContentWidth) {
           beforeContent.style.width = `${beforeContentWidth}px`
