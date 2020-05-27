@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Component, createRef, createElement } from 'react'
-import { throttle } from '@vitus-labs/core'
+import { throttle, get } from '@vitus-labs/core'
 
 export default (WrappedComponent) =>
   class EqualWidth extends Component {
@@ -48,8 +48,8 @@ export default (WrappedComponent) =>
       if (!this.shouldCalculate()) return
 
       const { vertical } = this.props
-      const beforeContent = this.elementRef.current.children[0]
-      const afterContent = this.elementRef.current.children[2]
+      const beforeContent = get(this.elementRef, 'current.children[0]')
+      const afterContent = get(this.elementRef, 'current.children[2]')
 
       if (vertical) {
         const beforeContentHeight = beforeContent.offsetHeight
