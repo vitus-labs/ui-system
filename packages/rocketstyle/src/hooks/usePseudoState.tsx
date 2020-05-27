@@ -18,39 +18,33 @@ import { useState } from 'react'
 //   'onBlur',
 // ]
 
-export default (props) => {
+export default () => {
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  const onMouseEnter = (e) => {
+  const onMouseEnter = () => {
     setHover(true)
-    if (props.onMouseEnter) props.onMouseEnter(e)
   }
 
-  const onMouseLeave = (e) => {
+  const onMouseLeave = () => {
     setHover(false)
-    if (props.onMouseLeave) props.onMouseLeave(e)
   }
 
-  const onMouseDown = (e) => {
+  const onMouseDown = () => {
     setPressed(true)
-    if (props.onMouseDown) props.onMouseDown(e)
   }
 
-  const onMouseUp = (e) => {
+  const onMouseUp = () => {
     setPressed(false)
-    if (props.onMouseUp) props.onMouseUp(e)
   }
 
-  const onFocus = (e) => {
+  const onFocus = () => {
     setFocus(true)
-    if (props.onFocus) props.onFocus(e)
   }
 
-  const onBlur = (e) => {
+  const onBlur = () => {
     setFocus(false)
-    if (props.onBlur) props.onBlur(e)
   }
 
   return {

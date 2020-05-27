@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { createContext, forwardRef, useState } from 'react'
+import React, { createContext, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import {
   config,
@@ -17,6 +17,7 @@ import {
   calculateTheme,
 } from './utils'
 import useTheme from './hooks/useTheme'
+import usePseudo from './hooks/usePseudoState'
 
 const Context = createContext({})
 const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
@@ -94,29 +95,11 @@ const styleComponent = (options) => {
   }
 
   const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
-    const [hover, setHover] = useState(false)
-    const [focus, setFocus] = useState(false)
-    const [pressed, setPressed] = useState(false)
+    const pseudo = usePseudo()
     const {
       theme,
       __ROCKETSTYLE__: { KEYWORDS, keys, themes },
     } = useTheme({ options, onMount })
-
-    const handleEvent = (e) => {
-      if (e.type === 'mousedown') {
-        setPressed(true)
-      } else if (e.type === 'mouseup') {
-        setPressed(false)
-      } else if (e.type === 'focus') {
-        setFocus(true)
-      } else if (e.type === 'blur') {
-        setFocus(false)
-      } else if (e.type === 'mouseenter') {
-        setHover(true)
-      } else if (e.type === 'mouseleave') {
-        setHover(false)
-      }
-    }
 
     const finalElement = (ctxData = {}) => {
       const calculatedAttrs = calculateChainOptions(
@@ -160,6 +143,7 @@ const styleComponent = (options) => {
       // this removes styling state from props and passes its state
       // under rocketstate key only (except boolean valid HTML attributes)
       const passProps = omit(newProps, KEYWORDS)
+
       // if (config.isWeb) {
       //   const boolAttrs = require('./booleanTags')
       //   const propsOmmitedAttrs = difference(
@@ -171,18 +155,11 @@ const styleComponent = (options) => {
       //   passProps = omit(newProps, this[namespace].KEYWORDS)
       // }
 
-      const pseudo = { hover, pressed, focus }
-
       let renderedComponent = renderContent(STYLED_COMPONENT, {
         ...passProps,
-        onMouseDown: handleEvent,
-        onMouseUp: handleEvent,
-        onBlur: handleEvent,
-        onFocus: handleEvent,
-        onMouseEnter: handleEvent,
-        onMouseLeave: handleEvent,
+        ...pseudo.events,
         $rocketstyle: rocketstyle,
-        $rocketstate: { ...rocketstate, pseudo },
+        $rocketstate: { ...rocketstate, pseudo: pseudo.pseudoState },
         ref,
       })
 
