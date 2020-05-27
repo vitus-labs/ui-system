@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { createContext, forwardRef } from 'react'
+import React, { createContext, forwardRef, useState } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import {
   config,
@@ -17,7 +17,6 @@ import {
   calculateTheme,
 } from './utils'
 import useTheme from './hooks/useTheme'
-import usePseudo from './hooks/usePseudoState'
 
 const Context = createContext({})
 const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
@@ -95,11 +94,47 @@ const styleComponent = (options) => {
   }
 
   const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
-    const pseudo = usePseudo()
+    const [hover, setHover] = useState(false)
+    const [focus, setFocus] = useState(false)
+    const [pressed, setPressed] = useState(false)
+
     const {
       theme,
       __ROCKETSTYLE__: { KEYWORDS, keys, themes },
     } = useTheme({ options, onMount })
+
+    const onMouseEnter = () => {
+      setHover(true)
+    }
+
+    const onMouseLeave = () => {
+      setHover(false)
+    }
+
+    const onMouseDown = () => {
+      setPressed(true)
+    }
+
+    const onMouseUp = () => {
+      setPressed(false)
+    }
+
+    const onFocus = () => {
+      setFocus(true)
+    }
+
+    const onBlur = () => {
+      setFocus(false)
+    }
+
+    const pseudoEvents = {
+      onMouseEnter,
+      onMouseLeave,
+      onMouseDown,
+      onMouseUp,
+      onFocus,
+      onBlur,
+    }
 
     const finalElement = (ctxData = {}) => {
       const calculatedAttrs = calculateChainOptions(
@@ -122,7 +157,11 @@ const styleComponent = (options) => {
         useBooleans: options.useBooleans,
       })
 
-      const rocketstate = { ...styledAttributes }
+      const pseudo = { hover, focus, pressed }
+
+      // console.log(pseudo)
+
+      const rocketstate = { ...styledAttributes, pseudo }
       Object.values(styledAttributes).forEach((item) => {
         if (Array.isArray(item)) {
           item.forEach((item) => {
@@ -144,26 +183,16 @@ const styleComponent = (options) => {
       // under rocketstate key only (except boolean valid HTML attributes)
       const passProps = omit(newProps, KEYWORDS)
 
-      // if (config.isWeb) {
-      //   const boolAttrs = require('./booleanTags')
-      //   const propsOmmitedAttrs = difference(
-      //     this[namespace].KEYWORDS,
-      //     boolAttrs.default
-      //   )
-      //   passProps = omit(newProps, propsOmmitedAttrs)
-      // } else {
-      //   passProps = omit(newProps, this[namespace].KEYWORDS)
-      // }
-
       let renderedComponent = renderContent(STYLED_COMPONENT, {
         ...passProps,
-        ...pseudo.events,
+        ...pseudoEvents,
         $rocketstyle: rocketstyle,
-        $rocketstate: { ...rocketstate, pseudo: pseudo.pseudoState },
+        $rocketstate: rocketstate,
         ref,
       })
 
       if (options.provider) {
+        console.log(rocketstate)
         return (
           <Context.Provider value={rocketstate}>
             {renderedComponent}
