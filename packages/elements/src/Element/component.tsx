@@ -1,43 +1,40 @@
-// @ts-nocheck
-import React, { forwardRef } from 'react'
+import React, { forwardRef, ReactNode, Ref } from 'react'
 import { config, pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
+import { alignX, alignY, direction, boltype } from '~/types'
 
-type alignX = 'left' | 'center' | 'right'
-type alignY = 'top' | 'center' | 'bottom'
-type direction = 'inline' | 'vertical'
-
-type Ref = HTMLElement
+type Reference = Ref<any>
 
 interface Props {
   forwardProps?: string[]
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  innerRef: Ref
-  label: React.ReactNode
-  children: React.ReactNode
-  content: React.ReactNode
-  beforeContent: React.ReactNode
-  afterContent: React.ReactNode
-  block: boolean | boolean[] | Record<string, boolean>
-  equalCols: boolean | boolean[] | Record<string, boolean>
+  innerRef: Reference
+  label: ReactNode
+  children: ReactNode
+  content: ReactNode
+  beforeContent: ReactNode
+  afterContent: ReactNode
+  block: boolean | Array<boltype> | Record<string, boolean>
+  equalCols: boolean | Array<boltype> | Record<string, boolean>
   gap: number | number[] | Record<string, number>
-  vertical: boolean | boolean[] | Record<string, boolean>
-  alignX: alignX | alignX[] | Record<string, alignX>
-  contentAlignX: alignX | alignX[] | Record<string, alignX>
-  beforeContentAlignX: alignX | alignX[] | Record<string, alignX>
-  afterContentAlignX: alignX | alignX[] | Record<string, alignX>
-  alignY: alignY | alignY[] | Record<string, alignY>
-  contentAlignY: alignY | alignY[] | Record<string, alignY>
-  beforeContentAlignY: alignY | alignY[] | Record<string, alignY>
-  afterContentAlignY: alignY | alignY[] | Record<string, alignY>
-  contentDirection: direction | direction[] | Record<string, direction>
-  beforeContentDirection: direction | direction[] | Record<string, direction>
-  afterContentDirection: direction | direction[] | Record<string, direction>
+  vertical: boolean | Array<boltype> | Record<string, boolean>
+  alignX: alignX
+  contentAlignX: alignX
+  beforeContentAlignX: alignX
+  afterContentAlignX: alignX
+  alignY: alignY
+  contentAlignY: alignY
+  beforeContentAlignY: alignY
+  afterContentAlignY: alignY
+  contentDirection: direction
+  beforeContentDirection: direction
+  afterContentDirection: direction
+  dangerouslySetInnerHTML: any
 }
 
-const Element = forwardRef<Ref, Partial<Props>>(
+const Element = forwardRef<Reference, Partial<Props>>(
   (
     {
       forwardProps = [],
