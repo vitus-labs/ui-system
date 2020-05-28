@@ -3,5 +3,10 @@
   "hoist": true,
   "useWorkspaces": true,
   "packages": ["packages/*"],
-  "version": "0.0.0"
+  "version": "0.7.0",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["ignored-file", "*.md", "tools/*"]
+    }
+  }
 }

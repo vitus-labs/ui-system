@@ -25,13 +25,15 @@ const getTag = (props) => {
   return
 }
 
-const Element = ({ inline, children, tag, ...props }) => {
+const Element = ({ inline, label, children, tag, ...props }) => {
   let _tag = tag || getTag(props)
   if (!_tag && inline) _tag = 'span'
 
+  const content = children || label
+
   return (
     <Styled as={_tag} {...props}>
-      {Children.map(children, (child) => {
+      {Children.map(content, (child) => {
         if (isValidElement(child) && child.type.isText === true) {
           return cloneElement(child, { inline: true })
         }

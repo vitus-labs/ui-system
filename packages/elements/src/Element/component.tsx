@@ -79,7 +79,8 @@ const Element = forwardRef<Ref, Partial<Props>>(
     ref
   ) => {
     const CHILDREN = children || content || label
-    const shouldBeEmpty = EMPTY_ELEMENTS.includes(tag)
+    const shouldBeEmpty =
+      props.dangerouslySetInnerHTML || EMPTY_ELEMENTS.includes(tag)
     const isSimple = !beforeContent && !afterContent
 
     const sharedProps = {

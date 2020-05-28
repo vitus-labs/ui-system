@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Component, createRef, createElement } from 'react'
-import { throttle } from '@vitus-labs/core'
+import { throttle, get } from '@vitus-labs/core'
 
 export default (WrappedComponent) =>
   class EqualWidth extends Component {
@@ -34,7 +34,11 @@ export default (WrappedComponent) =>
     }
 
     shouldCalculate = () => {
-      const { equalBeforeAfter, beforeContent, afterContent } = this.props
+      const {
+        equalBeforeAfter = true,
+        beforeContent,
+        afterContent,
+      } = this.props
 
       if (equalBeforeAfter && beforeContent && afterContent) return true
       return false
@@ -44,30 +48,40 @@ export default (WrappedComponent) =>
       if (!this.shouldCalculate()) return
 
       const { vertical } = this.props
-      const beforeContent = this.elementRef.current.children[0]
-      const afterContent = this.elementRef.current.children[2]
+      const beforeContent = get(this.elementRef, 'current.children[0]')
+      const afterContent = get(this.elementRef, 'current.children[2]')
 
       if (vertical) {
-        const beforeContentHeight = beforeContent.offsetHeight
-        const afterContentHeight = afterContent.offsetHeight
+        const beforeContentHeight = get(beforeContent, 'offsetHeight')
+        const afterContentHeight = get(afterContent, 'offsetHeight')
 
-        if (beforeContentHeight > afterContentHeight) {
-          beforeContent.style.height = `${beforeContentHeight}px`
-          afterContent.style.height = `${beforeContentHeight}px`
-        } else {
-          beforeContent.style.height = `${afterContentHeight}px`
-          afterContent.style.height = `${afterContentHeight}px`
+        if (
+          Number.isInteger(beforeContentWidth) &&
+          Number.isInteger(afterContentWidth)
+        ) {
+          if (beforeContentHeight > afterContentHeight) {
+            beforeContent.style.height = `${beforeContentHeight}px`
+            afterContent.style.height = `${beforeContentHeight}px`
+          } else {
+            beforeContent.style.height = `${afterContentHeight}px`
+            afterContent.style.height = `${afterContentHeight}px`
+          }
         }
       } else {
-        const beforeContentWidth = beforeContent.offsetWidth
-        const afterContentWidth = afterContent.offsetWidth
+        const beforeContentWidth = get(beforeContent, 'offsetWidth')
+        const afterContentWidth = get(afterContent, 'offsetWidth')
 
-        if (beforeContentWidth > afterContentWidth) {
-          beforeContent.style.width = `${beforeContentWidth}px`
-          afterContent.style.width = `${beforeContentWidth}px`
-        } else {
-          beforeContent.style.width = `${afterContentWidth}px`
-          afterContent.style.width = `${afterContentWidth}px`
+        if (
+          Number.isInteger(beforeContentWidth) &&
+          Number.isInteger(afterContentWidth)
+        ) {
+          if (beforeContentWidth > afterContentWidth) {
+            beforeContent.style.width = `${beforeContentWidth}px`
+            afterContent.style.width = `${beforeContentWidth}px`
+          } else {
+            beforeContent.style.width = `${afterContentWidth}px`
+            afterContent.style.width = `${afterContentWidth}px`
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/tools-native",
-  "version": "0.0.0",
+  "version": "0.7.1",
   "main": "index.js",
   "scripts": {
     "start": "expo start",

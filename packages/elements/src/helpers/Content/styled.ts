@@ -71,6 +71,7 @@ export default config.styled(config.component)`
       box-sizing: border-box;
     `
   }
+  position: relative;
   display: flex;
   align-self: stretch;
 

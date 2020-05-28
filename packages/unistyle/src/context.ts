@@ -1,3 +1,4 @@
+//@ts-ignore
 import { useContext } from 'react'
 import { config } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'

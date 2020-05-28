@@ -5,55 +5,54 @@ export const createSize = (padding, fontSize, borderRadius) => ({
   paddingY: padding,
   paddingX: padding * 2,
   fontSize,
-  borderRadius
+  borderRadius,
 })
 
-export const createState = color => ({
+export const createState = (color) => ({
   base: {
     bgColor: color,
-    borderColor: color
+    borderColor: color,
   },
   hover: {
     bgColor: darken(0.05, color),
     borderColor: darken(0.05, color),
-    zIndex: 2
+    zIndex: 2,
   },
   focus: {
     boxShadow: `0 0 0 0.2rem ${rgba(color, 0.5)}`,
-    zIndex: 2
+    zIndex: 2,
   },
   active: {
     bgColor: darken(0.15, color),
-    borderColor: darken(0.15, color)
-  }
+    borderColor: darken(0.15, color),
+  },
 })
 
-const styles = css => css`
+const styles = (css) => css`
   ${({ as, block, rocketstyle: t }) => css`
     ${as === 'button' &&
-      css`
-        -webkit-appearance: button;
-      `};
+    css`
+      -webkit-appearance: button;
+    `};
 
     /* Button as a block full width element */
     ${block &&
-      css`
-        & + & {
-          margin-top: ${t.marginTopInBlock};
-        }
-      `};
+    css`
+      & + & {
+        margin-top: ${t.marginTopInBlock};
+      }
+    `};
   `}
 `
 
 export default element
   .config({
-    name: 'bootstrap-4/Button'
+    name: 'bootstrap-4/Button',
   })
   .styles(styles)
   .attrs(({ tag, active, disabled }) => ({
     useDefaultOutline: true,
-    gap: t => {
-      console.log(t)
+    gap: (t) => {
       return t.spacing.sm
     },
     tag: 'button',
@@ -64,14 +63,14 @@ export default element
     'aria-pressed': active,
     'aria-disabled': disabled ? true : undefined,
     // FIXME: use value helper
-    beforeContentCss: css => css`
+    beforeContentCss: (css) => css`
       margin-right: 0.75rem;
     `,
-    afterContentCss: css => css`
+    afterContentCss: (css) => css`
       margin-left: 0.75rem;
-    `
+    `,
   }))
-  .theme(t => ({
+  .theme((t) => ({
     marginX: t.spacing.reset,
     marginY: t.spacing.reset,
     fontWeight: t.fontWeight.base,
@@ -91,14 +90,14 @@ export default element
       box-shadow 0.15s ease-in-out
     `,
     ...createSize(t.spacing.xsm, t.fontSize.base, t.borderRadius.base),
-    ...createState(t.color.primary)
+    ...createState(t.color.primary),
   }))
-  .sizes(t => ({
+  .sizes((t) => ({
     sm: createSize(t.spacing.xs, t.fontSize.sm, t.borderRadius.sm),
     md: createSize(t.spacing.xsm, t.fontSize.base, t.borderRadius.base),
-    lg: createSize(t.spacing.sm, t.fontSize.lg, t.borderRadius.lg)
+    lg: createSize(t.spacing.sm, t.fontSize.lg, t.borderRadius.lg),
   }))
-  .states(t => ({
+  .states((t) => ({
     primary: createState(t.color.primary),
     secondary: createState(t.color.secondary),
     success: createState(t.color.success),
@@ -111,34 +110,34 @@ export default element
       base: {
         bgColor: t.color.transparent,
         border: t.color.transparent,
-        color: t.color.primary
+        color: t.color.primary,
       },
       hover: {
         bgColor: t.color.transparent,
         borderColor: t.color.transparent,
         color: '#0056b3',
-        textDecoration: 'underline'
+        textDecoration: 'underline',
       },
       focus: {
         boxShadow: false,
-        textDecoration: 'underline'
+        textDecoration: 'underline',
       },
       active: {
         bgColor: t.color.transparent,
-        borderColor: t.color.transparent
-      }
-    }
+        borderColor: t.color.transparent,
+      },
+    },
   }))
-  .multiple(t => ({
+  .multiple((t) => ({
     active: true,
     outline: true,
     disabled: {
-      opacity: 0.65
+      opacity: 0.65,
     },
     block: {
-      marginTopInBlock: t.spacing.sm
+      marginTopInBlock: t.spacing.sm,
     },
     rounded: {
-      borderRadius: t.borderRadius.extra
-    }
+      borderRadius: t.borderRadius.extra,
+    },
   }))

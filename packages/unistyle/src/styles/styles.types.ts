@@ -181,13 +181,13 @@ export interface Theme {
   listStyleImage: 'none' | string | defaults
   listStylePosition: string
   color: string
-  bgColor: string | 'transparent' | defaults
-  bgImg: string | 'none' | defaults
-  bgClip: 'border-box' | 'padding-box' | 'content-box' | defaults
-  bgOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
-  bgPosition: any
-  bgRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
-  bgSize: 'auto' | value | 'cover' | 'contain' | defaults
+  backgroundColor: string | 'transparent' | defaults
+  backgroundImg: string | 'none' | defaults
+  backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
+  backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
+  backgroundPosition: any
+  backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
+  backgroundSize: 'auto' | value | 'cover' | 'contain' | defaults
   borderRadius: string
   borderRadiusTopLeft: value | defaults
   borderRadiusLeft: value | defaults
@@ -234,6 +234,7 @@ export interface Theme {
   overflow: overflow
   overflowX: overflow
   overflowY: overflow
+  overflowWrap: 'normal' | 'break-word' | defaults
   visibility: 'visible' | 'hidden' | 'collapse' | defaults
   cursor: cursor
   userSelect: 'auto' | 'none' | 'text' | 'all' | defaults

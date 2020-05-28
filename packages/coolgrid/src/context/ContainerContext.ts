@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createContext } from 'react'
 
 interface Context {
@@ -6,8 +7,6 @@ interface Context {
   coolgrid?: object
   rowCss?: object
   rowComponent?: React.ReactNode
-  colCss?: object
-  colComponent?: React.ReactNode
 }
 
 export default createContext<Context>({})

@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/coolgrid",
-  "version": "v0.1.0-experimental.2",
+  "version": "0.7.6",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -12,13 +12,12 @@
   "umd:main": "lib/vitus-labs-coolgrid.umd.js",
   "module": "lib/vitus-labs-coolgrid.module.js",
   "browser": {
-    "lib/vitus-labs-coolgrid.js": "lib/vitus-labs-coolgrid.js",
-    "lib/vitus-labs-coolgrid.module.js": "lib/vitus-labs-coolgrid.module.js"
+    "./lib/vitus-labs-coolgrid.js": "./lib/vitus-labs-coolgrid.js",
+    "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.module.js"
   },
   "unpkg": "lib/vitus-labs-coolgrid.umd.min.js",
   "jsnext:main": "lib/vitus-labs-coolgrid.module.js",
   "react-native": "lib/vitus-labs-coolgrid.module.js",
-  "typings": "lib/types/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -63,10 +62,10 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@vitus-labs/tools-docz": "*",
-    "@vitus-labs/tools-rollup": "*",
-    "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/core": "*",
-    "@vitus-labs/unistyle": "*"
+    "@vitus-labs/core": "^0.7.1",
+    "@vitus-labs/tools-docz": "^0.7.1",
+    "@vitus-labs/tools-rollup": "^0.7.1",
+    "@vitus-labs/tools-storybook": "^0.7.1",
+    "@vitus-labs/unistyle": "^0.7.1"
   }
 }

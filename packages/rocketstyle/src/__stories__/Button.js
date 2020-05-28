@@ -59,7 +59,7 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
         flex: 1 0 auto;
       }
 
-      ${({ rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
         border-color: ${t.bgColor};
@@ -72,11 +72,39 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
       `};
     `
   )
+  .multiple({
+    active: true,
+  })
 
 const ExtendedButtonA = (props) => <Button {...props} />
 
+const ExampleComponent = (props) => <span {...props} />
+
+export const ElementExample = rocketstyle()({
+  name: 'Button',
+  component: ExampleComponent,
+})
+  .config({
+    consumer: ({ pseudo }) => {
+      return { state: pseudo.hover ? 'primary' : null }
+    },
+  })
+  .states({
+    primary: { color: 'blue' },
+    secondary: { color: 'green' },
+    danger: { color: 'pink' },
+  })
+  .styles(
+    (css) => css`
+      ${({ $rocketstyle: t }) => css`
+        color: ${t.color};
+      `}
+    `
+  )
+
 export const HoistedButton = Button.config({
   component: ExtendedButtonA,
+  provider: true,
 }).theme({ bgColor: 'papayawhip' })
 
 export default Button

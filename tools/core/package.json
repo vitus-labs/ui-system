@@ -1,6 +1,7 @@
 {
   "name": "@vitus-labs/tools-core",
-  "version": "1.0.0",
+  "version": "0.7.1",
+  "private": true,
   "main": "./index.ts",
   "module": "./index.ts",
   "dependencies": {

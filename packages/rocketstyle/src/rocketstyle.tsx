@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { createContext, Component } from 'react'
+import React, { createContext, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import {
   config,
@@ -16,9 +16,10 @@ import {
   calculateStyledAttrs,
   calculateTheme,
 } from './utils'
+import useTheme from './hooks/useTheme'
+import usePseudoState from './hooks/usePseudoState'
 
 const Context = createContext({})
-const namespace = '__ROCKETSTYLE__'
 const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
 const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles']
 const RESERVED_STATIC_KEYS = [...RESERVED_CLONED_KEYS, 'compose', 'dimensions']
@@ -42,21 +43,6 @@ const chainReservedOptions = (keys, opts, defaultOpts) => {
   })
 
   return result
-}
-
-// --------------------------------------------------------
-// class constructor helpers
-// --------------------------------------------------------
-const generateKeys = (context, theme, config) => {
-  config.dimensionKeys.forEach((item) => {
-    context[item] = Object.keys(theme[item])
-  })
-}
-
-const generateThemes = (context, theme, options) => {
-  options.dimensionKeys.forEach((item) => {
-    context[item] = calculateChainOptions(options[item], theme, config.css)
-  })
 }
 
 // --------------------------------------------------------
@@ -108,130 +94,95 @@ const styleComponent = (options) => {
     })
   }
 
-  // valid react component
-  class EnhancedComponent extends Component {
-    constructor(props) {
-      super(props)
-      const { theme, hook } = props
+  const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
+    const pseudo = usePseudoState(props)
+    const {
+      theme,
+      __ROCKETSTYLE__: { KEYWORDS, keys, themes },
+    } = useTheme({ options, onMount })
 
-      // define empty objects so they can be reassigned later
-      this[namespace] = {
-        keys: {},
-        themes: {},
-      }
-
-      this[namespace].themes.base = calculateChainOptions(
-        options.theme,
+    const finalElement = (ctxData = {}) => {
+      const calculatedAttrs = calculateChainOptions(
+        options.attrs,
+        props,
         theme,
-        config.css
+        {
+          renderContent,
+        }
       )
 
-      generateThemes(this[namespace].themes, theme, options)
-      generateKeys(this[namespace].keys, this[namespace].themes, options)
+      const newProps = omit({ ...ctxData, ...calculatedAttrs, ...props }, [
+        'theme',
+      ])
 
-      this[namespace].rocketConfig = {}
-      this[namespace].rocketConfig.dimensions = options.dimensions
-      this[namespace].rocketConfig.useBooleans = options.useBooleans
+      const styledAttributes = calculateStyledAttrs({
+        props: pick(newProps, KEYWORDS),
+        states: keys,
+        dimensions: options.dimensions,
+        useBooleans: options.useBooleans,
+      })
 
-      this[namespace].KEYWORDS = [
-        ...this[namespace].keys.states,
-        ...this[namespace].keys.sizes,
-        ...this[namespace].keys.variants,
-        ...this[namespace].keys.multiple,
-        ...options.dimensionValues,
-      ]
-
-      if (hook) {
-        hook(this[namespace])
-      }
-    }
-
-    render() {
-      const { theme } = this.props
-      const { KEYWORDS, keys, themes } = this[namespace]
-
-      const finalElement = (ctxData = {}) => {
-        const calculatedAttrs = calculateChainOptions(
-          options.attrs,
-          this.props,
-          theme,
-          {
-            renderContent,
-          }
-        )
-
-        const newProps = omit(
-          { ...ctxData, ...calculatedAttrs, ...this.props },
-          ['theme']
-        )
-
-        const styledAttributes = calculateStyledAttrs({
-          props: pick(newProps, KEYWORDS),
-          states: keys,
-          dimensions: options.dimensions,
-          useBooleans: options.useBooleans,
-        })
-
-        const rocketstate = { ...styledAttributes }
-        Object.values(styledAttributes).forEach((item) => {
-          if (Array.isArray(item)) {
-            item.forEach((item) => {
-              rocketstate[item] = true
-            })
-          } else {
+      const rocketstate = { ...styledAttributes, pseudo: pseudo.pseudoState }
+      Object.values(styledAttributes).forEach((item) => {
+        if (Array.isArray(item)) {
+          item.forEach((item) => {
             rocketstate[item] = true
-          }
-        })
-
-        // calculated final theme which will be passed to styled component
-        const rocketstyle = calculateTheme({
-          styledAttributes,
-          themes,
-          config: options,
-        })
-
-        // this removes styling state from props and passes its state
-        // under rocketstate key only (except boolean valid HTML attributes)
-        const passProps = omit(newProps, this[namespace].KEYWORDS)
-        // if (config.isWeb) {
-        //   const boolAttrs = require('./booleanTags')
-        //   const propsOmmitedAttrs = difference(
-        //     this[namespace].KEYWORDS,
-        //     boolAttrs.default
-        //   )
-        //   passProps = omit(newProps, propsOmmitedAttrs)
-        // } else {
-        //   passProps = omit(newProps, this[namespace].KEYWORDS)
-        // }
-
-        const renderedComponent = renderContent(STYLED_COMPONENT, {
-          ...passProps,
-          rocketstyle,
-          rocketstate,
-        })
-
-        if (options.provider) {
-          return (
-            <Context.Provider value={rocketstate}>
-              {renderedComponent}
-            </Context.Provider>
-          )
+          })
+        } else {
+          rocketstate[item] = true
         }
+      })
 
-        return renderedComponent
-      }
+      // calculated final theme which will be passed to styled component
+      const rocketstyle = calculateTheme({
+        styledAttributes,
+        themes,
+        config: options,
+      })
 
-      if (options.consumer) {
+      // this removes styling state from props and passes its state
+      // under rocketstate key only (except boolean valid HTML attributes)
+      const passProps = omit(newProps, KEYWORDS)
+      // if (config.isWeb) {
+      //   const boolAttrs = require('./booleanTags')
+      //   const propsOmmitedAttrs = difference(
+      //     this[namespace].KEYWORDS,
+      //     boolAttrs.default
+      //   )
+      //   passProps = omit(newProps, propsOmmitedAttrs)
+      // } else {
+      //   passProps = omit(newProps, this[namespace].KEYWORDS)
+      // }
+
+      let renderedComponent = renderContent(STYLED_COMPONENT, {
+        ...passProps,
+        ...pseudo.events,
+        $rocketstyle: rocketstyle,
+        $rocketstate: rocketstate,
+        ref,
+      })
+
+      if (options.provider) {
         return (
-          <Context.Consumer>
-            {(value) => finalElement(options.consumer(value))}
-          </Context.Consumer>
+          <Context.Provider value={rocketstate}>
+            {renderedComponent}
+          </Context.Provider>
         )
       }
 
-      return finalElement()
+      return renderedComponent
     }
-  }
+
+    if (options.consumer) {
+      return (
+        <Context.Consumer>
+          {(value) => finalElement(options.consumer(value))}
+        </Context.Consumer>
+      )
+    }
+
+    return finalElement()
+  })
 
   let ExtendedComponent = config.withTheme(EnhancedComponent)
 
@@ -252,8 +203,9 @@ const styleComponent = (options) => {
     opts: options,
   })
   // ------------------------------------------------------
-  ExtendedComponent.displayName = options.name
   ExtendedComponent.IS_ROCKETSTYLE = true
+  ExtendedComponent.displayName =
+    options.name || options.component.displayName || options.component.name
   // ------------------------------------------------------
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
