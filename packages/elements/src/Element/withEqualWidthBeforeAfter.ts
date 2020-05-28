@@ -55,23 +55,33 @@ export default (WrappedComponent) =>
         const beforeContentHeight = get(beforeContent, 'offsetHeight')
         const afterContentHeight = get(afterContent, 'offsetHeight')
 
-        if (beforeContentHeight > afterContentHeight) {
-          beforeContent.style.height = `${beforeContentHeight}px`
-          afterContent.style.height = `${beforeContentHeight}px`
-        } else {
-          beforeContent.style.height = `${afterContentHeight}px`
-          afterContent.style.height = `${afterContentHeight}px`
+        if (
+          Number.isInteger(beforeContentWidth) &&
+          Number.isInteger(afterContentWidth)
+        ) {
+          if (beforeContentHeight > afterContentHeight) {
+            beforeContent.style.height = `${beforeContentHeight}px`
+            afterContent.style.height = `${beforeContentHeight}px`
+          } else {
+            beforeContent.style.height = `${afterContentHeight}px`
+            afterContent.style.height = `${afterContentHeight}px`
+          }
         }
       } else {
         const beforeContentWidth = get(beforeContent, 'offsetWidth')
         const afterContentWidth = get(afterContent, 'offsetWidth')
 
-        if (beforeContentWidth > afterContentWidth) {
-          beforeContent.style.width = `${beforeContentWidth}px`
-          afterContent.style.width = `${beforeContentWidth}px`
-        } else {
-          beforeContent.style.width = `${afterContentWidth}px`
-          afterContent.style.width = `${afterContentWidth}px`
+        if (
+          Number.isInteger(beforeContentWidth) &&
+          Number.isInteger(afterContentWidth)
+        ) {
+          if (beforeContentWidth > afterContentWidth) {
+            beforeContent.style.width = `${beforeContentWidth}px`
+            afterContent.style.width = `${beforeContentWidth}px`
+          } else {
+            beforeContent.style.width = `${afterContentWidth}px`
+            afterContent.style.width = `${afterContentWidth}px`
+          }
         }
       }
     }

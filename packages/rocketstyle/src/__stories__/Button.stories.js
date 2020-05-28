@@ -9,6 +9,30 @@ storiesOf('ROCKETSTYLE | Element', module).add('Button', () => {
       <HoistedButton>
         <ElementExample>sometext inside</ElementExample>
       </HoistedButton>
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
+      <HoistedButton>
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
+      <HoistedButton
+        tag="a"
+        href="/ale"
+        onClick={() => {
+          'hello'
+        }}
+      >
+        <ElementExample>sometext inside</ElementExample>
+      </HoistedButton>
     </>
   )
 })
