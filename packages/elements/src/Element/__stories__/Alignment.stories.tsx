@@ -1,16 +1,44 @@
+import React from 'react'
+import Element, { withEqualWidthBeforeAfter } from '~/Element'
 import { Wrapper, Inner } from './components'
 
-storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
+const NewElement = withEqualWidthBeforeAfter(Wrapper)
+
+//   < NewElement
+// block
+// equalBeforeAfter
+// beforeContent = { Inner }
+// afterContent = { Inner }
+//   >
+//   <Inner />
+//       </NewElement >
+
+storiesOf('ELEMENTS | Element', module).add('Alignment', () => {
   return (
     <Fragment>
-      <Wrapper vertical block beforeContent={Inner} afterContent={Inner}>
+      <Element block />
+      <NewElement
+        beforeContent={
+          <>
+            <Inner />
+            <Inner />
+            <Inner />
+            <Inner />
+            <Inner />
+            <Inner />
+          </>
+        }
+        afterContent={Inner}
+      >
+        some content
+      </NewElement>
+      <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
         <Inner />
       </Wrapper>
-      <Wrapper vertical block beforeContent={Inner} afterContent={Inner}>
+      <Wrapper block beforeContent={Inner} afterContent={Inner}>
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -21,7 +49,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -32,7 +59,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -43,7 +69,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -54,7 +79,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -65,7 +89,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -76,7 +99,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -87,7 +109,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
@@ -98,7 +119,6 @@ storiesOf('ELEMENTS | Element', module).add('Vertical Alignment', () => {
         <Inner />
       </Wrapper>
       <Wrapper
-        vertical
         block
         beforeContent={Inner}
         afterContent={Inner}
