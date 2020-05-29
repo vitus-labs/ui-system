@@ -163,7 +163,7 @@ const styleComponent = (options) => {
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,
         ref,
-        'data-vb-rocketstyle': componentName,
+        'data-rocketstyle': componentName,
       })
 
       if (options.provider) {
