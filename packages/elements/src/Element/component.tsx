@@ -99,6 +99,7 @@ const Element = forwardRef(
             alignY={beforeContentAlignY}
             equalCols={equalCols}
             gap={gap}
+            data-vb-element="before"
           >
             {renderContent(beforeContent, INJECTED_PROPS)}
           </Content>
@@ -115,6 +116,7 @@ const Element = forwardRef(
             alignY={contentAlignY}
             equalCols={equalCols}
             isContent
+            data-vb-element="content"
           >
             {renderContent(CHILDREN, INJECTED_PROPS)}
           </Content>
@@ -133,6 +135,7 @@ const Element = forwardRef(
             alignY={afterContentAlignY}
             equalCols={equalCols}
             gap={gap}
+            data-vb-element="after"
           >
             {renderContent(afterContent, INJECTED_PROPS)}
           </Content>

@@ -83,6 +83,9 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
 const styleComponent = (options) => {
   const { component, styles } = options
 
+  const componentName =
+    options.name || options.component.displayName || options.component.name
+
   // create styled component with all options.styles if available
   let STYLED_COMPONENT = component
 
@@ -160,6 +163,7 @@ const styleComponent = (options) => {
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,
         ref,
+        'data-vb-rocketstyle': componentName,
       })
 
       if (options.provider) {
@@ -204,8 +208,7 @@ const styleComponent = (options) => {
   })
   // ------------------------------------------------------
   ExtendedComponent.IS_ROCKETSTYLE = true
-  ExtendedComponent.displayName =
-    options.name || options.component.displayName || options.component.name
+  ExtendedComponent.displayName = componentName
   // ------------------------------------------------------
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
