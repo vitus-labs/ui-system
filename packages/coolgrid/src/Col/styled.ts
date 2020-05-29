@@ -63,6 +63,8 @@ export default config.styled(config.component)`
   display: flex;
   flex-basis: 0;
   flex-grow: 1;
+  flex-direction: column;
+  justify-content: stretch;
 
   ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
     makeItResponsive({ theme: rest, styles, css: config.css })({
