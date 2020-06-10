@@ -4,13 +4,33 @@ import { pick, omit } from '@vitus-labs/core'
 import Base from '~/Element'
 import Iterator from '~/Iterator'
 
-const Element = ({ children, passProps = [], itemProps = {}, ...props }) => {
-  const extendItemProps = pick(props, passProps)
+type Props = {
+  rootElement: boolean
+  children: React.ReactNode
+  itemsProps?: object
+}
+
+const Element = ({
+  rootElement = true,
+  children,
+  itemProps = {},
+  ...props
+}: Props) => {
+  const renderedList = (
+    <Iterator
+      itemProps={{ ...itemProps }}
+      {...pick(props, Iterator.RESERVED_PROPS)}
+    >
+      {children}
+    </Iterator>
+  )
+
+  if (!rootElement) return renderedList
 
   return (
     <Base {...omit(props, Iterator.RESERVED_PROPS)}>
       <Iterator
-        itemProps={{ ...extendItemProps, ...itemProps }}
+        itemProps={{ ...itemProps }}
         {...pick(props, Iterator.RESERVED_PROPS)}
       >
         {children}
