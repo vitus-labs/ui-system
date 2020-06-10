@@ -1,6 +1,6 @@
 import React, { useEffect, createRef, ReactNode } from 'react'
 import { get } from '@vitus-labs/core'
-
+import { Props as ElementProps } from './component'
 const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
 
 const types = {
@@ -29,16 +29,16 @@ interface Props {
   equalBeforeAfter: boolean
 }
 
-const withEqualBeforeAfter = <T extends Partial<Props>>(
+const withEqualBeforeAfter = <T extends ElementProps>(
   WrappedComponent: React.ComponentType<T>
 ): {
-  (props: T): JSX.Element
+  (props: T & Partial<Props>): JSX.Element
   displayName: string
 } => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props: Omit<T, keyof Props>) => {
+  const Enhanced = (props: T & Partial<Props>) => {
     const {
       equalBeforeAfter,
       vertical,

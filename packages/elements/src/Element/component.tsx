@@ -13,7 +13,7 @@ type Responsive =
   | Array<string | number>
   | Record<string, number | string>
 
-interface Props {
+export type Props = Partial<{
   forwardProps?: string[]
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
@@ -42,9 +42,9 @@ interface Props {
   contentCss: any
   beforeContentCss: any
   afterContentCss: any
-}
+}>
 
-const Element = forwardRef<any, Partial<Props>>(
+const Element = forwardRef<any, Props>(
   (
     {
       forwardProps = [],
