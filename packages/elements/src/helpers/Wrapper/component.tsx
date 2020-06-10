@@ -9,7 +9,7 @@ const KEYWORDS_WRAPPER = ['block', 'extendCss']
 const KEYWORDS_INNER = ['contentDirection', 'alignX', 'alignY', 'equalCols']
 const KEYWORDS = [...KEYWORDS_WRAPPER, ...KEYWORDS_INNER]
 
-type Reference = Ref<HTMLElement>
+type Reference = any
 
 type Props = {
   children: ReactNode

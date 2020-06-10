@@ -5,21 +5,27 @@ import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
 import { alignX, alignY, direction, boltype } from '~/types'
 
-type Reference = Ref<any>
+// type Reference = HTMLElement
+
+type ResponsiveBoolean = boolean | Array<boltype> | Record<string, boolean>
+type Responsive =
+  | number
+  | Array<string | number>
+  | Record<string, number | string>
 
 interface Props {
   forwardProps?: string[]
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  innerRef: Reference
+  innerRef: any
   label: ReactNode
   children: ReactNode
   content: ReactNode
   beforeContent: ReactNode
   afterContent: ReactNode
-  block: boolean | Array<boltype> | Record<string, boolean>
-  equalCols: boolean | Array<boltype> | Record<string, boolean>
-  gap: number | number[] | Record<string, number>
-  vertical: boolean | Array<boltype> | Record<string, boolean>
+  block: ResponsiveBoolean
+  equalCols: ResponsiveBoolean
+  gap: Responsive
+  vertical: ResponsiveBoolean
   alignX: alignX
   contentAlignX: alignX
   beforeContentAlignX: alignX
@@ -38,7 +44,7 @@ interface Props {
   afterContentCss: any
 }
 
-const Element = forwardRef<Reference, Partial<Props>>(
+const Element = forwardRef<any, Partial<Props>>(
   (
     {
       forwardProps = [],
