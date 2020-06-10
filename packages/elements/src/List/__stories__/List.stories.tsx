@@ -40,7 +40,6 @@ storiesOf('ELEMENTS | List', module)
         component={Item}
         data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
         itemProps={{ primary: true }}
-        itemKey
       />
     )
   })
