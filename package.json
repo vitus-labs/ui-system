@@ -7,7 +7,9 @@
     "example": "examples"
   },
   "scripts": {
+    "postinstall": "yarn pkgs:build",
     "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
+    "pkgs:build": "lerna run build --stream",
     "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
   },
   "repository": {
