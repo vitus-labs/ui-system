@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { createContext, forwardRef } from 'react'
+import React, { createContext, forwardRef, FC, ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import {
   config,
@@ -23,6 +22,7 @@ const Context = createContext({})
 const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
 const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles']
 const RESERVED_STATIC_KEYS = [...RESERVED_CLONED_KEYS, 'compose', 'dimensions']
+
 
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
@@ -60,9 +60,9 @@ const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
 // always returns styleComponent with static functions
 // assigned
 // --------------------------------------------------------
-const cloneAndEnhance = (opts, defaultOpts = {}) =>
+const cloneAndEnhance = <T,>(opts, defaultOpts: OptionsType) =>
   // eslint-disable-next-line no-use-before-define
-  styleComponent({
+  styleComponent<T>({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
     ...orOptions(RESERVED_OR_KEYS, opts, defaultOpts),
@@ -80,10 +80,34 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const styleComponent = (options) => {
+
+type ComponentProps = {
+  onMount: any
+}
+
+
+
+export type OptionsType = {
+  name:string,
+  component: React.ComponentType<any>
+  useBooleans: boolean
+  dimensions: any
+  dimensionKeys: any
+  dimensionValues: any
+  styles?: any
+  attrs?: any
+  compose?: any
+  provider?: boolean
+  consumer?: any
+}
+
+
+type StyleComponentType = {config: <T,>(opts: Partial<OptionsType>)=> StyleComponentType,IS_ROCKETSTYLE: boolean}
+
+const styleComponent = <T,BaseType = any>(options:OptionsType) => {
   const { component, styles } = options
 
-  const componentName =
+  const componentName:string =
     options.name || options.component.displayName || options.component.name
 
   // create styled component with all options.styles if available
@@ -97,7 +121,7 @@ const styleComponent = (options) => {
     })
   }
 
-  const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
+  const EnhancedComponent = forwardRef(({ onMount, ...props }:ComponentProps, ref) => {
     const pseudo = usePseudoState(props)
     const {
       theme,
@@ -132,6 +156,7 @@ const styleComponent = (options) => {
             rocketstate[item] = true
           })
         } else {
+          // TODO verify
           rocketstate[item] = true
         }
       })
@@ -188,7 +213,8 @@ const styleComponent = (options) => {
     return finalElement()
   })
 
-  let ExtendedComponent = config.withTheme(EnhancedComponent)
+
+  let ExtendedComponent:BaseType & React.ComponentType<T> & StyleComponentType  = config.withTheme(EnhancedComponent)
 
   const composeFuncs = Object.values(options.compose || {})
   if (composeFuncs.length > 0) {
@@ -210,10 +236,10 @@ const styleComponent = (options) => {
   ExtendedComponent.IS_ROCKETSTYLE = true
   ExtendedComponent.displayName = componentName
   // ------------------------------------------------------
-  ExtendedComponent.config = (opts = {}) => {
+  ExtendedComponent.config = <T,>(opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
-    return cloneAndEnhance(result, options)
+    return cloneAndEnhance<T>(result, options)
   }
 
   return ExtendedComponent

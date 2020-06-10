@@ -22,7 +22,7 @@ const useTheme = ({ options, onMount }) => {
   const theme = useContext(config.context)
 
   // define empty objects so they can be reassigned later
-  const __ROCKETSTYLE__ = {
+  const __ROCKETSTYLE__: Partial<{keys: object,themes:object,KEYWORDS: any}> = {
     keys: {},
     themes: {},
   }

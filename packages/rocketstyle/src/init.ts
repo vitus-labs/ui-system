@@ -1,4 +1,5 @@
-import styleComponent from './rocketstyle'
+import styleComponent, { OptionsType } from './rocketstyle'
+import * as React from 'react'
 
 const defaultDimensions = {
   states: 'state',
@@ -7,10 +8,31 @@ const defaultDimensions = {
   multiple: ['multiple', { multi: true }],
 }
 
-const rocketstyle = ({
+type RocketStyleProps = Partial<{
+  dimensions:{
+    [key:string] : string | Array<string|{[key:string]:boolean}>
+  }
+  useBooleans: boolean
+}>
+
+type ConfigProps = {
+  name: string
+  component: React.ComponentType<any>
+}
+
+type ComponentType<T> = React.ComponentType<T> & {
+  config: <T,>(opts: Partial<OptionsType>)=> ComponentType<T>
+  states: ((...args: any)=> ComponentType<T>)
+  styles:  ((...args: any)=> ComponentType<T>)
+  attrs:  ((...args: any)=> ComponentType<T>)
+  multiple:  ((...args: any)=> ComponentType<T>)
+  theme:  ((...args: any)=> ComponentType<T>)
+}
+
+const rocketstyle = <T,BaseType = ComponentType<T>>({
   dimensions = defaultDimensions,
   useBooleans = true,
-} = {}) => ({ name, component }) => {
+}: RocketStyleProps = {}) => ({ name, component }: ConfigProps) => {
   // if (!name) {
   //   throw Error('Component name is missing in params')
   // }
@@ -18,7 +40,7 @@ const rocketstyle = ({
     throw Error('Rendered component is missing in params')
   }
 
-  return styleComponent({
+  return styleComponent<T,BaseType>({
     name,
     component,
     useBooleans,

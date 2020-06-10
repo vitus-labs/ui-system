@@ -30,8 +30,11 @@ const RightContent = config.styled.span`
     )
   }};
 `
+type Props = {
+  active: boolean
+}
 
-export const Button = rocketstyle()({ name: 'Button', component: Element })
+export const Button= rocketstyle<Props>()({ name: 'Button', component: Element })
   .attrs({
     tag: 'button',
     label: 'This is a label',
@@ -80,7 +83,11 @@ const ExtendedButtonA = (props) => <Button {...props} />
 
 const ExampleComponent = (props) => <span {...props} />
 
-export const ElementExample = rocketstyle()({
+type PropsTest = {
+  newProps: string
+}
+
+export const ElementExample = rocketstyle<PropsTest>()({
   name: 'Button',
   component: ExampleComponent,
 })
@@ -102,7 +109,7 @@ export const ElementExample = rocketstyle()({
     `
   )
 
-export const HoistedButton = Button.config({
+export const HoistedButton = Button.config<Props>({
   component: ExtendedButtonA,
   provider: true,
 }).theme({ bgColor: 'papayawhip' })
