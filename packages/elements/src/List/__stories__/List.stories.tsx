@@ -1,3 +1,4 @@
+import React from 'react'
 import Element from '~/Element'
 import List from '~/List'
 
@@ -23,7 +24,7 @@ storiesOf('ELEMENTS | List', module)
   })
   .add('List with children', () => {
     return (
-      <List injectProps passProps={['primary']} primary>
+      <List>
         <Item>Label</Item>
         <Item>Label</Item>
         <Item>Label</Item>
@@ -39,6 +40,7 @@ storiesOf('ELEMENTS | List', module)
         component={Item}
         data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
         itemProps={{ primary: true }}
+        itemKey
       />
     )
   })

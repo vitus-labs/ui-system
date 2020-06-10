@@ -2,13 +2,13 @@
 import React from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import Base from '~/Element'
-import Iterator from '~/Iterator'
+import Iterator, { Props as IteratorProps } from '~/Iterator'
 
 type Props = {
-  rootElement: boolean
-  children: React.ReactNode
+  rootElement?: boolean
+  children?: React.ReactNode
   itemsProps?: object
-}
+} & IteratorProps
 
 const Element = ({
   rootElement = true,
