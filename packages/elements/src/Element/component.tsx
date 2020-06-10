@@ -32,6 +32,10 @@ interface Props {
   beforeContentDirection: direction
   afterContentDirection: direction
   dangerouslySetInnerHTML: any
+  css: any
+  contentCss: any
+  beforeContentCss: any
+  afterContentCss: any
 }
 
 const Element = forwardRef<Reference, Partial<Props>>(
