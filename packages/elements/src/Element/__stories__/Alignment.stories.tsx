@@ -2,7 +2,7 @@ import React from 'react'
 import Element, { withEqualWidthBeforeAfter } from '~/Element'
 import { Wrapper, Inner } from './components'
 
-const NewElement = withEqualWidthBeforeAfter(Wrapper)
+const NewElement = withEqualWidthBeforeAfter(Element)
 
 //   < NewElement
 // block
