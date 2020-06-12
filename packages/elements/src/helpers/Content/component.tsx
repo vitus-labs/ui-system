@@ -15,6 +15,7 @@ const KEYWORDS = [
 ]
 
 type Props = {
+  contentType: 'before' | 'content' | 'after'
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   contentDirection: direction

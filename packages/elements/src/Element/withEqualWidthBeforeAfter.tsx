@@ -1,6 +1,12 @@
 import React, { useEffect, createRef, ReactNode } from 'react'
 import { get } from '@vitus-labs/core'
-import { Props as ElementProps } from './component'
+
+type ExtractProps<
+  TComponentOrTProps
+> = TComponentOrTProps extends React.ComponentType<infer TProps>
+  ? TProps
+  : TComponentOrTProps
+
 const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
 
 const types = {
@@ -25,20 +31,25 @@ const calculate = ({ beforeContent, afterContent }) => (
   }
 }
 
-interface Props {
+type Props = Partial<{
   equalBeforeAfter: boolean
-}
+  vertical?: boolean
+  afterContent?: React.ReactNode
+  beforeContent?: React.ReactNode
+}>
 
-const withEqualBeforeAfter = <T extends ElementProps>(
+const withEqualBeforeAfter = <T extends {}>(
   WrappedComponent: React.ComponentType<T>
 ): {
-  (props: T & Partial<Props>): JSX.Element
-  displayName: string
+  (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
+  displayName?: string
 } => {
+  type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>
+
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props: T & Partial<Props>) => {
+  const Enhanced = (props: EnhancedProps) => {
     const {
       equalBeforeAfter,
       vertical,
@@ -46,7 +57,7 @@ const withEqualBeforeAfter = <T extends ElementProps>(
       beforeContent,
       ...rest
     } = props
-    const elementRef = createRef()
+    const elementRef = createRef<HTMLElement>()
 
     const calculateSize = () => {
       const beforeContent = get(elementRef, 'current.children[0]')
@@ -63,7 +74,7 @@ const withEqualBeforeAfter = <T extends ElementProps>(
 
     return (
       <WrappedComponent
-        {...(rest as T)}
+        {...(rest as EnhancedProps)}
         afterContent={afterContent}
         beforeContent={beforeContent}
         ref={elementRef}
