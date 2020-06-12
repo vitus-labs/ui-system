@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { renderContent, throttle } from '@vitus-labs/core'
+import React, { useRef, useState, useEffect, useContext } from 'react'
+import { config, renderContent, throttle } from '@vitus-labs/core'
+import { value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
-import Util from './styled'
+import Util from '~/Util'
 
 interface Props {
   children: React.ReactNode
@@ -19,6 +20,16 @@ interface Props {
   throttleDelay?: number
 }
 
+type OverlayPosition = {
+  position: 'absolute' | 'fixed' | 'static' | 'relative'
+  top?: number | string
+  bottom?: number | string
+  left?: number | string
+  right?: number | string
+  transformY?: string
+  transformX?: string
+}
+
 const component = ({
   children,
   trigger,
@@ -34,14 +45,17 @@ const component = ({
   offsetY = 20,
   throttleDelay = 200,
 }: Props) => {
+  const { rootSize } = useContext(config.context)
   const [visible, setVisible] = useState(false)
-  const [theme, setTheme] = useState({})
+  const [overlayPosition, setOverlayPosition] = useState<OverlayPosition>({
+    position,
+  })
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
   useEffect(() => {
     calculateContentPosition()
-  }, [visible])
+  }, [])
 
   useEffect(() => {
     if (
@@ -61,7 +75,18 @@ const component = ({
       )
     }
 
+    window.addEventListener(
+      'resize',
+      throttle(calculateContentPosition, throttleDelay),
+      false
+    )
+
     return () => {
+      window.removeEventListener(
+        'resize',
+        throttle(calculateContentPosition, throttleDelay),
+        false
+      )
       window.removeEventListener('click', handleDocumentClick, false)
       window.removeEventListener('touchend', handleDocumentClick, false)
       window.removeEventListener(
@@ -109,6 +134,10 @@ const component = ({
     }
   }
 
+  const handleResize = () => {
+    const { innerHeight, innerWidth } = window
+  }
+
   const calculateContentPosition = () => {
     // if (process.env.node_env !== 'production') {
 
@@ -126,95 +155,88 @@ const component = ({
     }
     const dimensions = triggerRef.current.getBoundingClientRect()
 
-    type Theme = {
-      position: 'absolute' | 'fixed' | 'static' | 'relative'
-      top?: number | string
-      bottom?: number | string
-      left?: number | string
-      right?: number | string
-      transformY?: string
-      transformX?: string
+    const overlayPosition: OverlayPosition = {
+      position,
     }
-    const theme: Theme = { position }
 
     if (type === 'dropdown' || type === 'tooltip' || type === 'popover') {
       if (align === 'top' || align === 'bottom') {
         if (align === 'top') {
-          theme.top = dimensions.top + offsetY + window.scrollY
-          theme.transformY = 'translateY(-100%)'
+          overlayPosition.top = dimensions.top + offsetY + window.scrollY
+          overlayPosition.transformY = 'translateY(-100%)'
         } else {
-          theme.top = dimensions.bottom + offsetY + window.scrollY
+          overlayPosition.top = dimensions.bottom + offsetY + window.scrollY
         }
 
         switch (alignX) {
           case 'right':
-            theme.left = dimensions.right + offsetX + window.scrollX
-            theme.transformX = 'translateX(-100%)'
+            overlayPosition.left = dimensions.right + offsetX + window.scrollX
+            overlayPosition.transformX = 'translateX(-100%)'
             break
           case 'center':
-            theme.left =
+            overlayPosition.left =
               dimensions.left +
               (dimensions.right - dimensions.left) / 2 +
               window.scrollX
-            theme.transformX = 'translateX(-50%)'
+            overlayPosition.transformX = 'translateX(-50%)'
             break
           case 'left':
           default:
-            theme.left = dimensions.left - offsetX + window.scrollX
+            overlayPosition.left = dimensions.left - offsetX + window.scrollX
         }
       } else if (align === 'left' || align === 'right') {
         if (align === 'left') {
-          theme.left = dimensions.left - offsetX + window.scrollX
-          theme.transformX = 'translateX(-100%)'
+          overlayPosition.left = dimensions.left - offsetX + window.scrollX
+          overlayPosition.transformX = 'translateX(-100%)'
         } else {
-          theme.left = dimensions.right + offsetX + window.scrollX
+          overlayPosition.left = dimensions.right + offsetX + window.scrollX
         }
         switch (alignY) {
           case 'top':
-            theme.top = dimensions.top - offsetY + window.scrollY
+            overlayPosition.top = dimensions.top - offsetY + window.scrollY
             break
           case 'center':
-            theme.top =
+            overlayPosition.top =
               dimensions.top +
               (dimensions.bottom - dimensions.top) / 2 +
               window.scrollY
-            theme.transformY = 'translateY(-50%)'
+            overlayPosition.transformY = 'translateY(-50%)'
             break
           case 'bottom':
           default:
-            theme.top = dimensions.bottom + offsetY + window.scrollY
+            overlayPosition.top = dimensions.bottom + offsetY + window.scrollY
         }
       }
     } else if (type === 'modal') {
       switch (alignX) {
         case 'right':
-          theme.right = offsetX
-          // theme.transform = 'translateX(-100%)'
+          overlayPosition.right = offsetX
+          // overlayPosition.transform = 'translateX(-100%)'
           break
         case 'left':
-          theme.left = offsetX
+          overlayPosition.left = offsetX
         case 'center':
         default:
-          theme.left = '50%'
-          theme.transformX = 'translateX(-50%)'
+          overlayPosition.left = '50%'
+          overlayPosition.transformX = 'translateX(-50%)'
           break
       }
       switch (alignY) {
         case 'top':
-          theme.top = offsetY
+          overlayPosition.top = offsetY
           break
         case 'center':
-          theme.top = '50%'
-          theme.transformY = 'translateY(-50%)'
+          overlayPosition.top = '50%'
+          overlayPosition.transformY = 'translateY(-50%)'
           break
         case 'bottom':
         default:
-          theme.bottom = offsetY
+          overlayPosition.bottom = offsetY
           break
       }
     }
 
-    setTheme(theme)
+    setOverlayPosition(overlayPosition)
   }
 
   const handleDocumentClick = (e) => {
@@ -251,6 +273,17 @@ const component = ({
     }
   }
 
+  console.log(overlayPosition)
+
+  const POSITION_STYLE = {
+    position: overlayPosition.position,
+    top: value(rootSize, [overlayPosition.top]),
+    bottom: value(rootSize, [overlayPosition.bottom]),
+    left: value(rootSize, [overlayPosition.left]),
+    right: value(rootSize, [overlayPosition.right]),
+    transform: `${overlayPosition.transformX} ${overlayPosition.transformY}`,
+  }
+
   return (
     <>
       {renderContent(trigger, {
@@ -260,7 +293,7 @@ const component = ({
 
       {visible && (
         <Portal>
-          <Util $overlay={theme}>
+          <Util style={POSITION_STYLE}>
             {renderContent(children, {
               [refName]: contentRef,
               active: visible,
