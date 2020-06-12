@@ -38,7 +38,7 @@ const component = ({
   closeOn = 'click', // click | triggerClick | hover | manual
   type = 'dropdown', // dropdown | tooltip | popover | modal
   align = 'bottom', // * main align prop * top | left | bottom | right
-  position = 'absolute', // absolute | fixed | relative | static
+  position = 'fixed', // absolute | fixed | relative | static
   alignX = 'left', // left | center | right
   alignY = 'bottom', // top | center | bottom
   offsetX = 20,
@@ -119,7 +119,6 @@ const component = ({
 
   const showContent = () => {
     setVisible(true)
-    calculateContentPosition()
 
     if (type === 'modal' && document.body) {
       document.body.style.overflow = 'hidden'
@@ -132,10 +131,6 @@ const component = ({
     if (type === 'modal' && document.body) {
       document.body.style.overflow = 'auto'
     }
-  }
-
-  const handleResize = () => {
-    const { innerHeight, innerWidth } = window
   }
 
   const calculateContentPosition = () => {
@@ -273,8 +268,6 @@ const component = ({
     }
   }
 
-  console.log(overlayPosition)
-
   const POSITION_STYLE = {
     position: overlayPosition.position,
     top: value(rootSize, [overlayPosition.top]),
@@ -297,8 +290,6 @@ const component = ({
             {renderContent(children, {
               [refName]: contentRef,
               active: visible,
-              // alignX,
-              // alignY,
               showContent,
               hideContent,
             })}

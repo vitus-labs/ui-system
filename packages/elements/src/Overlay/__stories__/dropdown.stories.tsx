@@ -7,6 +7,7 @@ const Trigger = ({ innerRef, ...props }: any) => (
     Click on me
   </button>
 )
+
 const Menu = ({ innerRef, ...props }: any) => (
   <button ref={innerRef} {...props}>
     some content here
