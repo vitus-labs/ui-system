@@ -3,11 +3,11 @@ import { config, pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
-import { alignX, alignY, direction, boltype } from '~/types'
+import { AlignX, AlignY, Direction, Booltype } from '~/types'
 
 // type Reference = HTMLElement
 
-type ResponsiveBoolean = boolean | Array<boltype> | Record<string, boolean>
+type ResponsiveBoolean = boolean | Array<Booltype> | Record<string, boolean>
 type Responsive =
   | number
   | Array<string | number>
@@ -26,17 +26,17 @@ export type Props = Partial<{
   equalCols: ResponsiveBoolean
   gap: Responsive
   vertical: ResponsiveBoolean
-  alignX: alignX
-  contentAlignX: alignX
-  beforeContentAlignX: alignX
-  afterContentAlignX: alignX
-  alignY: alignY
-  contentAlignY: alignY
-  beforeContentAlignY: alignY
-  afterContentAlignY: alignY
-  contentDirection: direction
-  beforeContentDirection: direction
-  afterContentDirection: direction
+  alignX: AlignX
+  contentAlignX: AlignX
+  beforeContentAlignX: AlignX
+  afterContentAlignX: AlignX
+  alignY: AlignY
+  contentAlignY: AlignY
+  beforeContentAlignY: AlignY
+  afterContentAlignY: AlignY
+  contentDirection: Direction
+  beforeContentDirection: Direction
+  afterContentDirection: Direction
   dangerouslySetInnerHTML: any
   css: any
   contentCss: any

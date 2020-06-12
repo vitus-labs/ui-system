@@ -3,7 +3,7 @@ import { config, omit, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
 import Styled from './styled'
-import { direction, alignX, alignY, boltype } from '~/types'
+import { Direction, AlignX, AlignY, Booltype } from '~/types'
 
 const KEYWORDS_WRAPPER = ['block', 'extendCss']
 const KEYWORDS_INNER = ['contentDirection', 'alignX', 'alignY', 'equalCols']
@@ -15,10 +15,10 @@ type Props = {
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: Reference
-  contentDirection: direction
-  alignX: alignX
-  alignY: alignY
-  equalCols: boltype
+  contentDirection: Direction
+  alignX: AlignX
+  alignY: AlignY
+  equalCols: Booltype
   [key: string]: any
 }
 

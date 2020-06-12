@@ -2,7 +2,7 @@ import React, { forwardRef, ReactNode, Ref } from 'react'
 import { omit } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import Styled from './styled'
-import { direction, alignX, alignY, boltype } from '~/types'
+import { Direction, AlignX, AlignY, Booltype } from '~/types'
 
 const KEYWORDS = [
   'parentDirection',
@@ -18,10 +18,10 @@ type Props = {
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  contentDirection: direction
-  alignX: alignX
-  alignY: alignY
-  equalCols: boltype
+  contentDirection: Direction
+  alignX: AlignX
+  alignY: AlignY
+  equalCols: Booltype
   [key: string]: any
 }
 type Reference = Ref<HTMLElement>
