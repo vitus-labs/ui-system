@@ -21,3 +21,9 @@ export type Direction =
   | Record<string, ContentDirection>
 
 export type Booltype = boolean | Array<boolean> | Record<string, boolean>
+
+export type ExtractProps<
+  TComponentOrTProps
+> = TComponentOrTProps extends React.ComponentType<infer TProps>
+  ? TProps
+  : TComponentOrTProps

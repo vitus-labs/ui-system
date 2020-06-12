@@ -1,11 +1,6 @@
 import React, { useEffect, createRef, ReactNode } from 'react'
 import { get } from '@vitus-labs/core'
-
-type ExtractProps<
-  TComponentOrTProps
-> = TComponentOrTProps extends React.ComponentType<infer TProps>
-  ? TProps
-  : TComponentOrTProps
+import { ExtractProps } from '~/types'
 
 const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
 
