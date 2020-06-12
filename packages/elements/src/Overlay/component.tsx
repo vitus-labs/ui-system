@@ -1,152 +1,141 @@
-// @ts-nocheck
-import React, { Component, createRef } from 'react'
-import { config, renderContent, throttle } from '@vitus-labs/core'
-import { value } from '@vitus-labs/unistyle'
+import React, { useRef, useState, useEffect } from 'react'
+import { renderContent, throttle } from '@vitus-labs/core'
 import Portal from '~/Portal'
-import Util from '~/Util'
+import Util from './styled'
 
-const Utility = config.styled(Util)`
-  ${({ theme, overlay: t, ...props }) => config.css`
-    position: ${t.position};
-    top: ${value(theme.rootSize, [t.top])};
-    bottom: ${value(theme.rootSize, [t.bottom])};
-    left: ${value(theme.rootSize, [t.left])};
-    right: ${value(theme.rootSize, [t.right])};
-    transform: ${t.transformX} ${t.transformY};
-  `};
-`
+interface Props {
+  children: React.ReactNode
+  trigger: React.ReactNode
+  refName?: string
+  openOn?: 'click' | 'triggerClick' | 'hover'
+  closeOn?: 'click' | 'triggerClick' | 'hover'
+  type?: 'dropdown' | 'tooltip' | 'popover' | 'modal'
+  position?: 'absolute' | 'fixed' | 'relative' | 'static'
+  align?: 'bottom' | 'top' | 'left' | 'bottom' | 'right'
+  alignX?: 'left' | 'center' | 'right'
+  alignY?: 'bottom' | 'top' | 'center'
+  offsetX?: number
+  offsetY?: number
+  throttleDelay?: number
+}
 
-export default class Overlay extends Component {
-  static displayName = 'vitus-labs/elements/Overlay'
-  static defaultProps = {
-    refName: 'ref',
-    openOn: 'click', // click | hover
-    closeOn: 'click', // click | triggerClick | hover | manual
-    type: 'dropdown', // dropdown | tooltip | popover | modal
-    align: 'bottom', // * main align prop * top | left | bottom | right
-    position: 'absolute', // absolute | fixed | relative | static
-    alignX: 'left', // left | center | right
-    alignY: 'bottom', // top | center | bottom
-    offsetX: 0,
-    offsetY: 0,
-    throttleDelay: 200,
-  }
+const component = ({
+  children,
+  trigger,
+  refName = 'ref',
+  openOn = 'click', // click | hover
+  closeOn = 'click', // click | triggerClick | hover | manual
+  type = 'dropdown', // dropdown | tooltip | popover | modal
+  align = 'bottom', // * main align prop * top | left | bottom | right
+  position = 'absolute', // absolute | fixed | relative | static
+  alignX = 'left', // left | center | right
+  alignY = 'bottom', // top | center | bottom
+  offsetX = 20,
+  offsetY = 20,
+  throttleDelay = 200,
+}: Props) => {
+  const [visible, setVisible] = useState(false)
+  const [theme, setTheme] = useState({})
+  const triggerRef = useRef<HTMLElement>()
+  const contentRef = useRef<HTMLElement>()
 
-  state = {
-    visible: false,
-    theme: {},
-  }
+  useEffect(() => {
+    calculateContentPosition()
+  }, [visible])
 
-  trigger = createRef()
-  content = createRef()
-
-  componentDidMount() {
-    const { openOn, closeOn, throttleDelay } = this.props
-    this.mounted = true
-
+  useEffect(() => {
     if (
       openOn === 'click' ||
       closeOn === 'click' ||
       closeOn === 'triggerClick'
     ) {
-      window.addEventListener('click', this.handleDocumentClick, false)
-      window.addEventListener('touchend', this.handleDocumentClick, false)
+      window.addEventListener('click', handleDocumentClick, false)
+      window.addEventListener('touchend', handleDocumentClick, false)
     }
 
     if (openOn === 'hover' || closeOn === 'hover') {
       window.addEventListener(
         'mousemove',
-        throttle(this.handleDocumentClick, throttleDelay),
+        throttle(handleDocumentClick, throttleDelay),
         false
       )
     }
-  }
 
-  componentWillUnmount() {
-    const { throttleDelay } = this.props
-    this.mounted = false
-    window.removeEventListener('click', this.handleDocumentClick, false)
-    window.removeEventListener('touchend', this.handleDocumentClick, false)
-    window.removeEventListener(
-      'mousemove',
-      throttle(this.handleDocumentClick, throttleDelay),
-      false
-    )
-  }
+    return () => {
+      window.removeEventListener('click', handleDocumentClick, false)
+      window.removeEventListener('touchend', handleDocumentClick, false)
+      window.removeEventListener(
+        'mousemove',
+        throttle(handleDocumentClick, throttleDelay),
+        false
+      )
+    }
+  }, [visible])
 
-  observeTrigger = (e) => {
-    if (e && e.target && this.trigger.current) {
+  const observeTrigger = (e) => {
+    if (e && e.target && triggerRef.current) {
       return (
-        this.trigger.current.contains(e.target) ||
-        e.target === this.trigger.current
+        triggerRef.current.contains(e.target) || e.target === triggerRef.current
       )
     }
 
     return false
   }
 
-  observeHoverElement = (e) => {
-    if (e && e.target && this.content.current) {
+  const observeHoverElement = (e) => {
+    if (e && e.target && contentRef.current) {
       return (
-        this.content.current.contains(e.target) ||
-        e.target === this.content.current
+        contentRef.current.contains(e.target) || e.target === contentRef.current
       )
     }
 
     return false
   }
 
-  handleDocumentClick = (e) => {
-    const { openOn, closeOn } = this.props
-    const { visible } = this.state
+  const showContent = () => {
+    setVisible(true)
+    calculateContentPosition()
 
-    if (!visible) {
-      if (openOn === 'hover' && e.type === 'mousemove') {
-        if (this.observeTrigger(e)) {
-          this.showContent()
-        }
-      }
-
-      if (openOn === 'click' && e.type === 'click') {
-        if (this.observeTrigger(e)) {
-          this.showContent()
-        }
-      }
-    }
-
-    if (visible) {
-      if (closeOn === 'hover' && e.type === 'mousemove') {
-        if (!this.observeTrigger(e) && !this.observeHoverElement(e)) {
-          this.hideContent()
-        }
-      }
-
-      if (closeOn === 'click' && e.type === 'click') {
-        this.hideContent()
-      }
-
-      if (closeOn === 'triggerClick' && e.type === 'click') {
-        if (this.observeTrigger(e)) {
-          this.hideContent()
-        }
-      }
+    if (type === 'modal' && document.body) {
+      document.body.style.overflow = 'hidden'
     }
   }
 
-  calculateContentPosition = () => {
-    const {
-      type,
-      align,
-      alignX,
-      alignY,
-      offsetX,
-      offsetY,
-      position,
-    } = this.props
+  const hideContent = () => {
+    setVisible(false)
 
-    const dimensions = this.trigger.current.getBoundingClientRect()
+    if (type === 'modal' && document.body) {
+      document.body.style.overflow = 'auto'
+    }
+  }
 
-    const theme = { position }
+  const calculateContentPosition = () => {
+    // if (process.env.node_env !== 'production') {
+
+    // }
+    if (!triggerRef.current) {
+      console.error(
+        `
+        Error in 'vitus-labs/elements/Overlay'.
+        Trigger is not correctly using ref. Therefore cannot
+        be calculated position of content
+        `
+      )
+
+      return
+    }
+    const dimensions = triggerRef.current.getBoundingClientRect()
+
+    type Theme = {
+      position: 'absolute' | 'fixed' | 'static' | 'relative'
+      top?: number | string
+      bottom?: number | string
+      left?: number | string
+      right?: number | string
+      transformY?: string
+      transformX?: string
+    }
+    const theme: Theme = { position }
 
     if (type === 'dropdown' || type === 'tooltip' || type === 'popover') {
       if (align === 'top' || align === 'bottom') {
@@ -169,7 +158,7 @@ export default class Overlay extends Component {
               window.scrollX
             theme.transformX = 'translateX(-50%)'
             break
-          case 'bottom':
+          case 'left':
           default:
             theme.left = dimensions.left - offsetX + window.scrollX
         }
@@ -191,6 +180,7 @@ export default class Overlay extends Component {
               window.scrollY
             theme.transformY = 'translateY(-50%)'
             break
+          case 'bottom':
           default:
             theme.top = dimensions.bottom + offsetY + window.scrollY
         }
@@ -224,56 +214,68 @@ export default class Overlay extends Component {
       }
     }
 
-    this.setState({
-      theme,
-    })
+    setTheme(theme)
   }
 
-  showContent = () => {
-    const { type } = this.props
-    this.setState({
-      visible: true,
-    })
+  const handleDocumentClick = (e) => {
+    if (!visible) {
+      if (openOn === 'hover' && e.type === 'mousemove') {
+        if (observeTrigger(e)) {
+          showContent()
+        }
+      }
 
-    this.calculateContentPosition()
+      if (openOn === 'click' && e.type === 'click') {
+        if (observeTrigger(e)) {
+          showContent()
+        }
+      }
+    }
 
-    if (type === 'modal' && document.body) {
-      document.body.style.overflow = 'hidden'
+    if (visible) {
+      if (closeOn === 'hover' && e.type === 'mousemove') {
+        if (!observeTrigger(e) && !observeHoverElement(e)) {
+          hideContent()
+        }
+      }
+
+      if (closeOn === 'click' && e.type === 'click') {
+        hideContent()
+      }
+
+      if (closeOn === 'triggerClick' && e.type === 'click') {
+        if (observeTrigger(e)) {
+          hideContent()
+        }
+      }
     }
   }
 
-  hideContent = () => {
-    const { type } = this.props
-    this.setState({ visible: false })
+  return (
+    <>
+      {renderContent(trigger, {
+        [refName]: triggerRef,
+        active: visible,
+      })}
 
-    if (type === 'modal' && document.body) {
-      document.body.style.overflow = 'auto'
-    }
-  }
-
-  render() {
-    const { refName, trigger, alignX, alignY, children } = this.props
-
-    return (
-      <>
-        {renderContent(trigger, {
-          [refName]: this.trigger,
-        })}
-
-        {this.state.visible && (
-          <Portal>
-            <Utility overlay={this.state.theme}>
-              {renderContent(children, {
-                [refName]: this.content,
-                alignX,
-                alignY,
-                showContent: this.showContent,
-                hideContent: this.hideContent,
-              })}
-            </Utility>
-          </Portal>
-        )}
-      </>
-    )
-  }
+      {visible && (
+        <Portal>
+          <Util $overlay={theme}>
+            {renderContent(children, {
+              [refName]: contentRef,
+              active: visible,
+              // alignX,
+              // alignY,
+              showContent,
+              hideContent,
+            })}
+          </Util>
+        </Portal>
+      )}
+    </>
+  )
 }
+
+component.displayName = 'vitus-labs/elements/Overlay'
+
+export default component
