@@ -21,7 +21,7 @@ type ConfigProps = {
 }
 
 type ComponentType<T> = React.ComponentType<T> & {
-  config: <T,>(opts: Partial<OptionsType>)=> ComponentType<T>
+  config: <P,>(opts: Partial<OptionsType>)=> ComponentType<T & P>
   states: ((...args: any)=> ComponentType<T>)
   styles:  ((...args: any)=> ComponentType<T>)
   attrs:  ((...args: any)=> ComponentType<T>)

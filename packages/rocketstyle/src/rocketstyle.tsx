@@ -86,7 +86,7 @@ type ComponentProps = {
 }
 
 
-
+// Option types
 export type OptionsType = {
   name:string,
   component: React.ComponentType<any>
@@ -101,7 +101,7 @@ export type OptionsType = {
   consumer?: any
 }
 
-
+// default props that are used in all components
 type StyleComponentType = {config: <T,>(opts: Partial<OptionsType>)=> StyleComponentType,IS_ROCKETSTYLE: boolean}
 
 const styleComponent = <T,BaseType = any>(options:OptionsType) => {
@@ -214,7 +214,7 @@ const styleComponent = <T,BaseType = any>(options:OptionsType) => {
   })
 
 
-  let ExtendedComponent:BaseType & React.ComponentType<T> & StyleComponentType  = config.withTheme(EnhancedComponent)
+  let ExtendedComponent: BaseType & React.ComponentType<T> & StyleComponentType = config.withTheme(EnhancedComponent)
 
   const composeFuncs = Object.values(options.compose || {})
   if (composeFuncs.length > 0) {
@@ -236,10 +236,12 @@ const styleComponent = <T,BaseType = any>(options:OptionsType) => {
   ExtendedComponent.IS_ROCKETSTYLE = true
   ExtendedComponent.displayName = componentName
   // ------------------------------------------------------
-  ExtendedComponent.config = <T,>(opts = {}) => {
+  // P is new props defined in each component
+  ExtendedComponent.config = <P,>(opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
-    return cloneAndEnhance<T>(result, options)
+    // clone component with -> new props & base props
+    return cloneAndEnhance<T & P>(result, options)
   }
 
   return ExtendedComponent

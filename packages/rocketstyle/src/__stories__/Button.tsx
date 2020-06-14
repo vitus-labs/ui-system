@@ -109,6 +109,16 @@ export const ElementExample = rocketstyle<PropsTest>()({
     `
   )
 
+// This button must have active + extended prop
+type NewProps = {
+  extended: string
+}
+
+export const ButtonExtended = Button.config<NewProps>({
+  component: ExtendedButtonA,
+})
+
+
 export const HoistedButton = Button.config<Props>({
   component: ExtendedButtonA,
   provider: true,
