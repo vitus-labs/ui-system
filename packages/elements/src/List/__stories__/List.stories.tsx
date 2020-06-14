@@ -1,7 +1,8 @@
+import React from 'react'
 import Element from '~/Element'
 import List from '~/List'
 
-const Item = props => (
+const Item = (props) => (
   <Element
     {...props}
     css={`
@@ -17,20 +18,28 @@ storiesOf('ELEMENTS | List', module)
       <List
         component={Item}
         data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
-        injectProps
-        primary
-        passProps={['primary']}
+        itemProps={{ primary: true }}
       />
     )
   })
   .add('List with children', () => {
     return (
-      <List injectProps passProps={['primary']} primary>
+      <List>
         <Item>Label</Item>
         <Item>Label</Item>
         <Item>Label</Item>
         <Item>Label</Item>
         <Item>Label</Item>
       </List>
+    )
+  })
+  .add('Render without root element', () => {
+    return (
+      <List
+        rootElement={false}
+        component={Item}
+        data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
+        itemProps={{ primary: true }}
+      />
     )
   })
