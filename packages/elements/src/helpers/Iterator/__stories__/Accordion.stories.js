@@ -1,4 +1,5 @@
-import Iterator, { withActiveState } from '..'
+import Iterator from '..'
+import withActiveState from '../../../List/withActiveState'
 
 const NewIterator = withActiveState(Iterator)
 
@@ -22,5 +23,7 @@ storiesOf('ELEMENTS | Iterator', module)
         <Iterator {...props} />
       </div>
     ))
-    return <Wrapper type="multi" data={data} component={Item} itemKeyName="name" />
+    return (
+      <Wrapper type="multi" data={data} component={Item} itemKeyName="name" />
+    )
   })

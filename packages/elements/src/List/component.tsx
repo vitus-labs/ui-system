@@ -2,7 +2,7 @@
 import React from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import Base from '~/Element'
-import Iterator, { Props as IteratorProps } from '~/Iterator'
+import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
 
 type Props = {
   rootElement?: boolean

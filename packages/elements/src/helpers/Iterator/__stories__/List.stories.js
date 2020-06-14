@@ -1,5 +1,5 @@
 import Iterator from '..'
-import withActiveState from '../withActiveState'
+import withActiveState from '../../../List/withActiveState'
 
 const ActiveList = withActiveState(Iterator)
 
