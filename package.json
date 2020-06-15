@@ -1,27 +1,14 @@
 {
   "name": "@vitus-labs/vitus-labs",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": true,
   "description": "vitus-labs",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "license": "MIT",
+  "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
   "directories": {
     "example": "examples"
   },
-  "scripts": {
-    "postinstall": "yarn pkgs:build",
-    "pkgs": "rm -rf node_modules/ yarn.lock && yarn",
-    "pkgs:build": "lerna run build --stream",
-    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vitus-labs/vitus-labs.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
-  },
-  "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -33,6 +20,19 @@
       "**/expo",
       "**/expo/**"
     ]
+  },
+  "scripts": {
+    "postinstall": "yarn pkgs:build",
+    "pkgs:clean": "rm -rf node_modules/ yarn.lock && yarn",
+    "pkgs:build": "lerna run build --stream",
+    "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/vitus-labs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
   "devDependencies": {
     "@types/react": "^16.9.34",
@@ -46,7 +46,6 @@
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^16.12.0",
     "react-icons-kit": "^1.2.0",
-    "react-native": "^0.62.2",
     "styled-components": "^5.1.0",
     "typescript": "^3.8.3"
   }
