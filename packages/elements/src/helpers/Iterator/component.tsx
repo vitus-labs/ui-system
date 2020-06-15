@@ -22,7 +22,7 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
 
 export type Props = {
   children?: React.ReactNode
-  component?: React.ComponentType
+  component?: React.ReactNode
   data?: Array<string | number | object>
   itemKey?: string
   itemProps?: Record<string, any> | (() => Record<string, any>)

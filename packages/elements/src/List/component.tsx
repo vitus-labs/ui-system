@@ -7,33 +7,12 @@ type Props = {
   rootElement?: boolean
 } & Iterator['props']
 
-const Element = ({
-  rootElement = true,
-  children,
-  itemProps = {},
-  ...props
-}: Props) => {
-  const renderedList = (
-    <Iterator
-      itemProps={{ ...itemProps }}
-      {...pick(props, Iterator.RESERVED_PROPS)}
-    >
-      {children}
-    </Iterator>
-  )
+const Element = ({ rootElement = true, ...props }: Props) => {
+  const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
   if (!rootElement) return renderedList
 
-  return (
-    <Base {...omit(props, Iterator.RESERVED_PROPS)}>
-      <Iterator
-        itemProps={{ ...itemProps }}
-        {...pick(props, Iterator.RESERVED_PROPS)}
-      >
-        {children}
-      </Iterator>
-    </Base>
-  )
+  return <Base {...omit(props, Iterator.RESERVED_PROPS)}>{renderedList}</Base>
 }
 
 Element.displayName = 'vitus-labs/elements/List'

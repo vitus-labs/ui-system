@@ -1,6 +1,8 @@
 import React from 'react'
 import Element from '~/Element'
-import List from '~/List'
+import List, { withActiveState } from '~/List'
+
+const ActiveList = withActiveState(List)
 
 const Item = (props) => (
   <Element
@@ -40,6 +42,81 @@ storiesOf('ELEMENTS | List', module)
         component={Item}
         data={[{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }]}
         itemProps={{ primary: true }}
+      />
+    )
+  })
+  .add('With single active state', () => {
+    const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+    const itemProps = (props) => {
+      return {
+        onClick: () => ({}),
+        surname: 'hello',
+      }
+    }
+
+    const Item = ({
+      onClick,
+      active,
+      name,
+      surname,
+      handleItemActive,
+      ...props
+    }) => {
+      return (
+        <button
+          {...props}
+          onClick={(e) => {
+            onClick(e)
+            handleItemActive()
+          }}
+        >
+          {name} {surname} {active ? 'yes' : 'no'}
+        </button>
+      )
+    }
+
+    return (
+      <ActiveList
+        type="single"
+        activeItems={3}
+        activeItemRequired
+        data={data}
+        component={Item}
+        itemProps={itemProps}
+      />
+    )
+  })
+  .add('With multi active state', () => {
+    const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+    const itemProps = (props) => {
+      return {
+        onClick: () => {},
+        surname: 'hello',
+      }
+    }
+
+    const Item = ({ onClick, active, name, surname, ...props }) => {
+      return (
+        <button
+          {...props}
+          onClick={(e) => {
+            onClick(e)
+            props.handleItemActive()
+          }}
+        >
+          {name} {surname} {active ? 'yes' : 'no'}
+        </button>
+      )
+    }
+
+    return (
+      <ActiveList
+        type="multi"
+        activeItems={3}
+        activeItemRequired
+        data={data}
+        component={Item}
+        itemProps={itemProps}
       />
     )
   })

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { ExtractProps } from '~/types'
 
 const RESERVED_KEYS = ['type', 'activeItems', 'itemProps', 'activeItemRequired']
 
@@ -20,14 +21,26 @@ type Props = {
   itemProps?: Record<string, any> | (() => Record<string, any>)
 }
 
-const component = (WrappedComponent) => {
-  const Enhanced = ({
-    type = 'single',
-    activeItemRequired,
-    activeItems,
-    itemProps,
-    ...props
-  }) => {
+const component = <T extends {}>(
+  WrappedComponent: React.ComponentType<T>
+): {
+  (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
+  displayName?: string
+} => {
+  type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>
+
+  const displayName =
+    WrappedComponent.displayName || WrappedComponent.name || 'Component'
+
+  const Enhanced = (props: EnhancedProps) => {
+    const {
+      type = 'single',
+      activeItemRequired,
+      activeItems,
+      itemProps,
+      ...rest
+    } = props
+
     const initActiveItems = () => {
       if (type === 'single') {
         if (Array.isArray(activeItems)) {
@@ -49,13 +62,9 @@ const component = (WrappedComponent) => {
     const countActiveItems = (data) => {
       let result = 0
 
-      console.log(data)
-
       data.forEach((value, key) => {
         if (value) result = result + 1
       })
-
-      console.log(result)
 
       return result
     }
@@ -67,6 +76,8 @@ const component = (WrappedComponent) => {
         )
       } else if (type === 'multi') {
         setActiveItems((prevState) => {
+          // @ts-ignore
+          // TODO: add conditional type to fix this
           const activeItems = new Map(prevState)
 
           if (
@@ -118,6 +129,8 @@ const component = (WrappedComponent) => {
 
     const isItemActive = (key: Key): boolean => {
       if (type === 'single') return innerActiveItems === key
+      // @ts-ignore
+      // TODO: add conditional type to fix this
       else if (type === 'multi') return innerActiveItems.get(key)
       else return false
     }
@@ -128,7 +141,10 @@ const component = (WrappedComponent) => {
 
     const attachItemProps = (props: ItemPropsData) => {
       const { key } = props
+
       const defaultItemProps =
+        // @ts-ignore
+        // TODO: add conditional type to fix this
         typeof itemProps === 'object' ? itemProps : itemProps(props)
 
       const result = {
@@ -152,7 +168,12 @@ const component = (WrappedComponent) => {
       }
     }, [type, activeItems])
 
-    return <WrappedComponent {...props} itemProps={attachItemProps} />
+    return (
+      <WrappedComponent
+        {...(rest as EnhancedProps)}
+        itemProps={attachItemProps}
+      />
+    )
   }
   Enhanced.RESERVED_KEYS = RESERVED_KEYS
 
