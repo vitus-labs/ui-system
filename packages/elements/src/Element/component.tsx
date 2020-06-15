@@ -13,7 +13,7 @@ type Responsive =
   | Array<string | number>
   | Record<string, number | string>
 
-export type Props = Partial<{
+type Props = Partial<{
   forwardProps?: string[]
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
