@@ -1,7 +1,6 @@
 import { Content, Wrapper } from './helpers'
 import Element, { withEqualWidthBeforeAfter } from './Element'
-import Iterator, { withActiveState } from './Iterator'
-import List from './List'
+import List, { withActiveState } from './List'
 import Overlay from './Overlay'
 import Portal from './Portal'
 import Text from './Text'
@@ -13,7 +12,6 @@ export {
   Wrapper,
   Element,
   withEqualWidthBeforeAfter,
-  Iterator,
   withActiveState,
   List,
   Overlay,

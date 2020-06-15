@@ -1,4 +1,7 @@
 import Iterator from '..'
+import withActiveState from '../../../List/withActiveState'
+
+const ActiveList = withActiveState(Iterator)
 
 const Item = ({ name, surname, ...props }) => {
   return (
@@ -24,6 +27,81 @@ storiesOf('ELEMENTS | Iterator', module)
     })
 
     return <Iterator data={data} component={Item} itemProps={itemProps} />
+  })
+  .add('With single active state', () => {
+    const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+    const itemProps = (props) => {
+      return {
+        onClick: () => ({}),
+        surname: 'hello',
+      }
+    }
+
+    const Item = ({
+      onClick,
+      active,
+      name,
+      surname,
+      handleItemActive,
+      ...props
+    }) => {
+      return (
+        <button
+          {...props}
+          onClick={(e) => {
+            onClick(e)
+            handleItemActive()
+          }}
+        >
+          {name} {surname} {active ? 'yes' : 'no'}
+        </button>
+      )
+    }
+
+    return (
+      <ActiveList
+        type="single"
+        activeItems={3}
+        activeItemRequired
+        data={data}
+        component={Item}
+        itemProps={itemProps}
+      />
+    )
+  })
+  .add('With multi active state', () => {
+    const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+    const itemProps = (props) => {
+      return {
+        onClick: () => {},
+        surname: 'hello',
+      }
+    }
+
+    const Item = ({ onClick, active, name, surname, ...props }) => {
+      return (
+        <button
+          {...props}
+          onClick={(e) => {
+            onClick(e)
+            props.handleItemActive()
+          }}
+        >
+          {name} {surname} {active ? 'yes' : 'no'}
+        </button>
+      )
+    }
+
+    return (
+      <ActiveList
+        type="multi"
+        activeItems={3}
+        activeItemRequired
+        data={data}
+        component={Item}
+        itemProps={itemProps}
+      />
+    )
   })
   .add('Add item props as a function', () => {
     const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
