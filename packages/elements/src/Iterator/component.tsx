@@ -20,7 +20,16 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   position,
 })
 
-export default class Element extends Component {
+export type Props = {
+  children?: React.ReactNode
+  component?: React.ComponentType
+  data?: Array<string | number | object>
+  itemKey?: string
+  itemProps?: Record<string, any> | (() => Record<string, any>)
+  extendProps?: boolean
+}
+
+export default class Element extends Component<Props> {
   static isIterator = true
   static RESERVED_PROPS = RESERVED_PROPS
   static displayName = 'vitus-labs/elements/Iterator'
