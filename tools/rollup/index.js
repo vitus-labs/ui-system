@@ -1,5 +1,5 @@
 const typescript = require('rollup-plugin-typescript2')
-const resolve = require('@rollup/plugin-node-resolve')
+const resolve = require('@rollup/plugin-node-resolve').default
 const filesize = require('rollup-plugin-filesize')
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
