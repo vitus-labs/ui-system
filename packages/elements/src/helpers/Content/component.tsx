@@ -1,8 +1,8 @@
 import React, { forwardRef, ReactNode, Ref } from 'react'
 import { omit } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
-import Styled from './styled'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
+import Styled from './styled'
 
 const KEYWORDS = [
   'parentDirection',

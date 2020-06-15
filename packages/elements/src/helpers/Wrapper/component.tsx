@@ -1,9 +1,9 @@
 import React, { forwardRef, ReactNode, Ref } from 'react'
 import { config, omit, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
+import { Direction, AlignX, AlignY, Booltype } from '~/types'
 import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
 import Styled from './styled'
-import { Direction, AlignX, AlignY, Booltype } from '~/types'
 
 const KEYWORDS_WRAPPER = ['block', 'extendCss']
 const KEYWORDS_INNER = ['contentDirection', 'alignX', 'alignY', 'equalCols']
