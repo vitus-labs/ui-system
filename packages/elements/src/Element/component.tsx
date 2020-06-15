@@ -1,11 +1,50 @@
-// @ts-nocheck
-import React, { forwardRef } from 'react'
+import React, { forwardRef, ReactNode, Ref } from 'react'
 import { config, pick, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
+import { AlignX, AlignY, Direction, Booltype } from '~/types'
 
-const Element = forwardRef(
+// type Reference = HTMLElement
+
+type ResponsiveBoolean = boolean | Array<Booltype> | Record<string, boolean>
+type Responsive =
+  | number
+  | Array<string | number>
+  | Record<string, number | string>
+
+type Props = Partial<{
+  forwardProps?: string[]
+  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  innerRef: any
+  label: ReactNode
+  children: ReactNode
+  content: ReactNode
+  beforeContent: ReactNode
+  afterContent: ReactNode
+  block: ResponsiveBoolean
+  equalCols: ResponsiveBoolean
+  gap: Responsive
+  vertical: ResponsiveBoolean
+  alignX: AlignX
+  contentAlignX: AlignX
+  beforeContentAlignX: AlignX
+  afterContentAlignX: AlignX
+  alignY: AlignY
+  contentAlignY: AlignY
+  beforeContentAlignY: AlignY
+  afterContentAlignY: AlignY
+  contentDirection: Direction
+  beforeContentDirection: Direction
+  afterContentDirection: Direction
+  dangerouslySetInnerHTML: any
+  css: any
+  contentCss: any
+  beforeContentCss: any
+  afterContentCss: any
+}>
+
+const Element = forwardRef<any, Props>(
   (
     {
       forwardProps = [],
