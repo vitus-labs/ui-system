@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Component, Children } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
@@ -20,7 +19,20 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   position,
 })
 
-export default class Element extends Component {
+type Props = {
+  children?: React.ReactNode
+  component?: React.ReactNode
+  data?: Array<string | number | object>
+  itemKey?:
+    | string
+    | ((item: Record<string, any>, index: number) => string | number)
+  itemProps?:
+    | Record<string, any>
+    | ((key: string | number) => Record<string, any>)
+  extendProps?: boolean
+}
+
+export default class Element extends Component<Props> {
   static isIterator = true
   static RESERVED_PROPS = RESERVED_PROPS
   static displayName = 'vitus-labs/elements/Iterator'
@@ -47,6 +59,8 @@ export default class Element extends Component {
     // children have priority over props component + data
     if (children) {
       const firstItem = 0
+      // @ts-ignore
+      // TODO: add conditional types to fix this
       const lastItem = children.length - 1
 
       return Children.map(children, (item, i) => {
@@ -88,6 +102,8 @@ export default class Element extends Component {
           })
         }
 
+        // @ts-ignore
+        // TODO: add conditional types to fix this
         const { component: itemComponent, ...restItem } = item
         const renderItem = itemComponent || component
         const key = this.getItemKey(restItem, i)

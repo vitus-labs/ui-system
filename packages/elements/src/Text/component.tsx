@@ -25,7 +25,14 @@ const getTag = (props) => {
   return
 }
 
-const Element = ({ inline, label, children, tag, ...props }) => {
+type Props = Partial<{
+  inline: boolean
+  label: React.ReactNode
+  children: React.ReactNode
+  tag: import('styled-components').StyledComponentPropsWithRef<any>
+}>
+
+const Element = ({ inline, label, children, tag, ...props }: Props) => {
   let _tag = tag || getTag(props)
   if (!_tag && inline) _tag = 'span'
 

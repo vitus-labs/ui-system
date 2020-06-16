@@ -12,7 +12,6 @@ export const Inner = config.styled('div')`
 
 export const Wrapper = forwardRef((props, ref) => (
   <Element
-    {...props}
     gap={10}
     ref={ref}
     css={config.css`

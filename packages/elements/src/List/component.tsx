@@ -1,22 +1,18 @@
-// @ts-nocheck
 import React from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import Base from '~/Element'
-import Iterator from '~/Iterator'
+import Iterator from '~/helpers/Iterator'
 
-const Element = ({ children, passProps = [], itemProps = {}, ...props }) => {
-  const extendItemProps = pick(props, passProps)
+type Props = {
+  rootElement?: boolean
+} & Iterator['props']
 
-  return (
-    <Base {...omit(props, Iterator.RESERVED_PROPS)}>
-      <Iterator
-        itemProps={{ ...extendItemProps, ...itemProps }}
-        {...pick(props, Iterator.RESERVED_PROPS)}
-      >
-        {children}
-      </Iterator>
-    </Base>
-  )
+const Element = ({ rootElement = true, ...props }: Props) => {
+  const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
+
+  if (!rootElement) return renderedList
+
+  return <Base {...omit(props, Iterator.RESERVED_PROPS)}>{renderedList}</Base>
 }
 
 Element.displayName = 'vitus-labs/elements/List'

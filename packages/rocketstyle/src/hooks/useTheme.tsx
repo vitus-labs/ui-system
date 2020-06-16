@@ -27,28 +27,7 @@ const useTheme = ({ options, onMount }) => {
     themes: {},
   }
 
-  __ROCKETSTYLE__.themes.base = calculateChainOptions(
-    options.theme,
-    theme,
-    config.css
-  )
-
-  generateThemes(__ROCKETSTYLE__.themes, theme, options)
-  generateKeys(__ROCKETSTYLE__.keys, __ROCKETSTYLE__.themes, options)
-
-  __ROCKETSTYLE__.rocketConfig = {}
-  __ROCKETSTYLE__.rocketConfig.dimensions = options.dimensions
-  __ROCKETSTYLE__.rocketConfig.useBooleans = options.useBooleans
-
-  __ROCKETSTYLE__.KEYWORDS = [
-    ...__ROCKETSTYLE__.keys.states,
-    ...__ROCKETSTYLE__.keys.sizes,
-    ...__ROCKETSTYLE__.keys.variants,
-    ...__ROCKETSTYLE__.keys.multiple,
-    ...options.dimensionValues,
-  ]
-
-  useEffect(() => {
+  const calculate = () => {
     __ROCKETSTYLE__.themes.base = calculateChainOptions(
       options.theme,
       theme,
@@ -62,13 +41,25 @@ const useTheme = ({ options, onMount }) => {
     __ROCKETSTYLE__.rocketConfig.dimensions = options.dimensions
     __ROCKETSTYLE__.rocketConfig.useBooleans = options.useBooleans
 
+    __ROCKETSTYLE__.KEYWORDS = []
+
+    options.dimensionKeys.forEach((item) => {
+      __ROCKETSTYLE__.KEYWORDS = [
+        ...__ROCKETSTYLE__.KEYWORDS,
+        ...__ROCKETSTYLE__.keys[item],
+      ]
+    })
+
     __ROCKETSTYLE__.KEYWORDS = [
-      ...__ROCKETSTYLE__.keys.states,
-      ...__ROCKETSTYLE__.keys.sizes,
-      ...__ROCKETSTYLE__.keys.variants,
-      ...__ROCKETSTYLE__.keys.multiple,
+      ...__ROCKETSTYLE__.KEYWORDS,
       ...options.dimensionValues,
     ]
+  }
+
+  calculate()
+
+  useEffect(() => {
+    calculate()
 
     if (onMount) {
       onMount(__ROCKETSTYLE__)
