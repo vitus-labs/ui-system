@@ -11,6 +11,7 @@
   "main": "lib/vitus-labs-elements.js",
   "umd:main": "lib/vitus-labs-elements.umd.js",
   "module": "lib/vitus-labs-elements.module.js",
+  "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-elements.js": "./lib/vitus-labs-elements.js",
     "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.module.js"
