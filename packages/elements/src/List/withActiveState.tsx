@@ -37,7 +37,7 @@ const component = <T extends {}>(
       type = 'single',
       activeItemRequired,
       activeItems,
-      itemProps,
+      itemProps = {},
       ...rest
     } = props
 
