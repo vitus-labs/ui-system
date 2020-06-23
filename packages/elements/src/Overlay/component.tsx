@@ -41,8 +41,8 @@ const component = ({
   position = 'fixed', // absolute | fixed | relative | static
   alignX = 'left', // left | center | right
   alignY = 'bottom', // top | center | bottom
-  offsetX = 20,
-  offsetY = 20,
+  offsetX = 0,
+  offsetY = 0,
   throttleDelay = 200,
 }: Props) => {
   const { rootSize } = useContext(config.context)
@@ -95,7 +95,7 @@ const component = ({
         false
       )
     }
-  }, [visible])
+  })
 
   const observeTrigger = (e) => {
     if (e && e.target && triggerRef.current) {
@@ -268,13 +268,25 @@ const component = ({
     }
   }
 
+  const TRANSFORM = () => {
+    let result = ``
+
+    if (overlayPosition.transformX) result += overlayPosition.transformX
+    if (overlayPosition.transformY) {
+      result += ' '
+      result += overlayPosition.transformY
+    }
+
+    return result
+  }
+
   const POSITION_STYLE = {
     position: overlayPosition.position,
     top: value(rootSize, [overlayPosition.top]),
     bottom: value(rootSize, [overlayPosition.bottom]),
     left: value(rootSize, [overlayPosition.left]),
     right: value(rootSize, [overlayPosition.right]),
-    transform: `${overlayPosition.transformX} ${overlayPosition.transformY}`,
+    transform: TRANSFORM(),
   }
 
   return (

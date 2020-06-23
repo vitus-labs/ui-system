@@ -2,6 +2,12 @@ import React from 'react'
 import { config } from '@vitus-labs/core'
 import Overlay from '..'
 
+const Box = config.styled.div`
+  width: 100px;
+  height: 300px;
+  background-color: black;
+`
+
 const Trigger = ({ innerRef, ...props }: any) => (
   <button ref={innerRef} {...props}>
     Click on me
@@ -9,28 +15,45 @@ const Trigger = ({ innerRef, ...props }: any) => (
 )
 
 const Menu = ({ innerRef, ...props }: any) => (
-  <button ref={innerRef} {...props}>
+  <Box ref={innerRef} {...props}>
     some content here
-  </button>
+  </Box>
 )
 
 storiesOf('ELEMENTS | Overlay', module).add('Dropdown', () => {
   return (
-    <>
-      <Overlay refName="innerRef" trigger={(props) => <Trigger {...props} />}>
+    <div style={{ position: 'absolute', left: 200 }}>
+      <Overlay
+        // type="popover"
+        refName="innerRef"
+        alignX="right"
+        trigger={(props) => <Trigger {...props} />}
+      >
         <Menu />
       </Overlay>
-      <Overlay refName="innerRef" trigger={(props) => <Trigger {...props} />}>
+      <Overlay
+        refName="innerRef"
+        alignX="center"
+        trigger={(props) => <Trigger {...props} />}
+      >
         <Menu />
       </Overlay>
-      <Overlay refName="innerRef" trigger={(props) => <Trigger {...props} />}>
+      <Overlay
+        refName="innerRef"
+        alignX="left"
+        trigger={(props) => <Trigger {...props} />}
+      >
         <Menu />
       </Overlay>
       <div style={{ position: 'absolute', right: 40 }}>
-        <Overlay refName="innerRef" trigger={(props) => <Trigger {...props} />}>
+        <Overlay
+          refName="innerRef"
+          alignX="right"
+          trigger={(props) => <Trigger {...props} />}
+        >
           <Menu />
         </Overlay>
       </div>
-    </>
+    </div>
   )
 })
