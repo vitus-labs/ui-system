@@ -125,7 +125,10 @@ const styleComponent = (options) => {
         useBooleans: options.useBooleans,
       })
 
-      const rocketstate = { ...styledAttributes, pseudo: pseudo.pseudoState }
+      const rocketstate = {
+        ...styledAttributes,
+        pseudo: pseudo.pseudoState,
+      }
       Object.values(styledAttributes).forEach((item) => {
         if (Array.isArray(item)) {
           item.forEach((item) => {
@@ -159,7 +162,7 @@ const styleComponent = (options) => {
 
       let renderedComponent = renderContent(STYLED_COMPONENT, {
         ...passProps,
-        ...pseudo.events,
+        ...(options.provider ? pseudo.events : {}),
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,
         ref,

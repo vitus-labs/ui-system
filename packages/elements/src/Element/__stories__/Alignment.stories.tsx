@@ -16,8 +16,8 @@ const NewElement = withEqualWidthBeforeAfter(Element)
 storiesOf('ELEMENTS | Element', module).add('Alignment', () => {
   return (
     <Fragment>
-      <Element block beforeContent={Inner} afterContent={Inner} />
-      <NewElement
+      {/* <Element block beforeContent={Inner} afterContent={Inner} /> */}
+      {/* <NewElement
         beforeContent={
           <>
             <Inner />
@@ -31,7 +31,7 @@ storiesOf('ELEMENTS | Element', module).add('Alignment', () => {
         afterContent={Inner}
       >
         some content
-      </NewElement>
+      </NewElement> */}
       <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
         <Inner />
       </Wrapper>
