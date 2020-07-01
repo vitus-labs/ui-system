@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode, Ref } from 'react'
-import { config, pick, renderContent } from '@vitus-labs/core'
+import { config, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 import { transformVerticalProp } from './utils'
@@ -14,7 +14,6 @@ type Responsive =
   | Record<string, number | string>
 
 type Props = Partial<{
-  forwardProps?: string[]
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
   label: ReactNode
@@ -47,7 +46,6 @@ type Props = Partial<{
 const Element = forwardRef<any, Props>(
   (
     {
-      forwardProps = [],
       innerRef,
       tag,
       label,
@@ -85,10 +83,8 @@ const Element = forwardRef<any, Props>(
     },
     ref
   ) => {
-    const CHILDREN = children || content || label
     const shouldBeEmpty =
       props.dangerouslySetInnerHTML || EMPTY_ELEMENTS.includes(tag)
-    const isSimple = !beforeContent && !afterContent
 
     const sharedProps = {
       ref: ref || innerRef,
@@ -106,8 +102,8 @@ const Element = forwardRef<any, Props>(
     if (config.isWeb) {
       SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
     }
-
-    const INJECTED_PROPS = pick(props, forwardProps)
+    const isSimple = !beforeContent && !afterContent
+    const CHILDREN = children || content || label
 
     // --------------------------------------------------------
     // direction & alignX calculations
@@ -140,7 +136,7 @@ const Element = forwardRef<any, Props>(
             gap={gap}
             data-element="before"
           >
-            {renderContent(beforeContent, INJECTED_PROPS)}
+            {renderContent(beforeContent)}
           </Content>
         )}
 
@@ -157,10 +153,10 @@ const Element = forwardRef<any, Props>(
             isContent
             data-element="content"
           >
-            {renderContent(CHILDREN, INJECTED_PROPS)}
+            {renderContent(CHILDREN)}
           </Content>
         ) : (
-          renderContent(CHILDREN, INJECTED_PROPS)
+          renderContent(CHILDREN)
         )}
 
         {afterContent && (
@@ -176,7 +172,7 @@ const Element = forwardRef<any, Props>(
             gap={gap}
             data-element="after"
           >
-            {renderContent(afterContent, INJECTED_PROPS)}
+            {renderContent(afterContent)}
           </Content>
         )}
       </Wrapper>
