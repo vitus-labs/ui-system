@@ -1,5 +1,9 @@
 import { createElement, isValidElement, cloneElement, Children } from 'react'
 
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0
+}
+
 const renderContent = (content, attachProps = {}) => {
   if (!content) return null
 
@@ -12,11 +16,11 @@ const renderContent = (content, attachProps = {}) => {
   }
 
   if (isValidElement(content)) {
-    if (typeof attachProps === 'object') {
-      return cloneElement(Children.only(content), attachProps)
+    if (isEmpty(attachProps)) {
+      return content
     }
 
-    return content
+    return cloneElement(Children.only(content), attachProps)
   }
 
   if (typeof content === 'object') {
