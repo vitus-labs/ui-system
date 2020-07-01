@@ -185,7 +185,7 @@ const styleComponent = (options) => {
     return finalElement()
   })
 
-  let ExtendedComponent = config.withTheme(EnhancedComponent)
+  let ExtendedComponent = EnhancedComponent
 
   const composeFuncs = Object.values(options.compose || {})
   if (composeFuncs.length > 0) {
