@@ -141,18 +141,8 @@ const styleComponent = (options) => {
       })
 
       // this removes styling state from props and passes its state
-      // under rocketstate key only (except boolean valid HTML attributes)
+      // under rocketstate key only
       const passProps = omit(newProps, KEYWORDS)
-      // if (config.isWeb) {
-      //   const boolAttrs = require('./booleanTags')
-      //   const propsOmmitedAttrs = difference(
-      //     this[namespace].KEYWORDS,
-      //     boolAttrs.default
-      //   )
-      //   passProps = omit(newProps, propsOmmitedAttrs)
-      // } else {
-      //   passProps = omit(newProps, this[namespace].KEYWORDS)
-      // }
 
       let renderedComponent = renderContent(STYLED_COMPONENT, {
         ...passProps,
