@@ -3,7 +3,7 @@ import Element from '~/Element'
 
 const element = rocketstyle()({ component: Element, name: 'base' }).styles(
   (css) => css`
-    ${({ rocketstyle: t }) => css`
+    ${({ $rocketstyle: t }) => css`
       background-color: ${t.bgColor};
     `}
   `
