@@ -1,12 +1,11 @@
 import { Context } from 'react'
-import styled, { withTheme, css, ThemeContext } from 'styled-components'
+import styled, { css, ThemeContext } from 'styled-components'
 
 interface Internal {
   css: import('styled-components').ThemedCssFunction<object>
   styled: import('styled-components').ThemedStyledInterface<
     import('styled-components').DefaultTheme
   >
-  withTheme: import('styled-components').BaseWithThemeFnInterface<object>
   context: Context<any>
   platform: 'web' | 'native'
 }
@@ -14,7 +13,6 @@ interface Internal {
 const internal: Internal & { [key: string]: any } = {
   css,
   styled,
-  withTheme,
   context: ThemeContext,
   platform: 'web',
   component: 'div',
@@ -57,9 +55,6 @@ const config = {
   },
   get css() {
     return internal.css
-  },
-  get withTheme() {
-    return internal.withTheme
   },
   get component() {
     return internal.component
