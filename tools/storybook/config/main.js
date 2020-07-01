@@ -1,7 +1,10 @@
 const path = require('path')
 
 module.exports = {
-  stories: [`${process.cwd()}/src/**/*.stories.(js|jsx|ts|tsx|mdx)`],
+  stories: [
+    `${process.cwd()}/src/**/*.stories.(js|jsx|ts|tsx|mdx)`,
+    `${process.cwd()}/src/**/stories.(js|jsx|ts|tsx|mdx)`,
+  ],
   addons: [
     '@storybook/addon-viewport/register',
     '@storybook/addon-a11y/register',
