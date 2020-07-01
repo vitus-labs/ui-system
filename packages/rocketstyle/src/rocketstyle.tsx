@@ -87,9 +87,15 @@ const styleComponent = (options) => {
     options.name || options.component.displayName || options.component.name
 
   // create styled component with all options.styles if available
-  const STYLED_COMPONENT = config.styled(component)`
-    ${calculateStyles(styles, config.css)}
-  `
+  let STYLED_COMPONENT = component
+
+  if (styles) {
+    STYLED_COMPONENT = calculateStyles({
+      component,
+      styles,
+      config,
+    })
+  }
 
   const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
     const pseudo = usePseudoState(props)
