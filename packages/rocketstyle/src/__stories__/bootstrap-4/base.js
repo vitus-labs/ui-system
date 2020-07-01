@@ -5,19 +5,19 @@ import rocketstyle from '../../index'
 
 export const element = rocketstyle()({
   name: 'Bootstrap.Element',
-  component: Element
+  component: Element,
 })
   // .attrs(({ onClick, href, tag }) => ({
   //   tag: href ? 'a' : onClick ? 'button' : tag
   // }))
-  .theme(t => ({
+  .theme((t) => ({
     boxSizing: 'border-box',
     fontFamily: t.fontFamily.base,
     lineHeight: t.lineHeight,
-    color: t.color.gray900
+    color: t.color.gray900,
   }))
   .styles(
-    css => css`
+    (css) => css`
       text-decoration: none;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -27,113 +27,113 @@ export const element = rocketstyle()({
         useDefaultHover,
         useDefaultActive,
         useDefaultOutline,
-        rocketstyle,
-        rocketstate,
+        $rocketstyle,
+        $rocketstate,
         href,
         onClick,
         hover,
         active,
-        focus
+        focus,
       }) => {
         const isDynamic = onClick || href
 
         const getBaseTheme = {
-          ...omit(rocketstyle, ['base', 'hover', 'focus', 'active']),
-          ...pick(rocketstyle, ['base']).base
+          ...omit($rocketstyle, ['base', 'hover', 'focus', 'active']),
+          ...pick($rocketstyle, ['base']).base,
         }
 
-        const getHoverTheme = pick(rocketstyle, ['hover'])
-        const getFocusTheme = pick(rocketstyle, ['focus'])
-        const getActiveTheme = pick(rocketstyle, ['active'])
+        const getHoverTheme = pick($rocketstyle, ['hover'])
+        const getFocusTheme = pick($rocketstyle, ['focus'])
+        const getActiveTheme = pick($rocketstyle, ['active'])
 
         const baseTheme = makeItResponsive({
           theme: getBaseTheme || {},
           styles,
-          css
+          css,
         })
 
         const hoverTheme = makeItResponsive({
           theme: getHoverTheme.hover || {},
           styles,
-          css
+          css,
         })
 
         const focusTheme = makeItResponsive({
           theme: getFocusTheme.focus || {},
           styles,
-          css
+          css,
         })
 
         const activeTheme = makeItResponsive({
           theme: getActiveTheme.active || {},
           styles,
-          css
+          css,
         })
 
         return css`
           ${baseTheme};
 
-          ${!rocketstate.disabled &&
-            isDynamic &&
-            css`
-              cursor: pointer;
-            `}
+          ${!$rocketstate.disabled &&
+          isDynamic &&
+          css`
+            cursor: pointer;
+          `}
 
-          ${!rocketstate.disabled &&
-            (isDynamic || useDefaultHover) &&
-            !rocketstate.active &&
+          ${!$rocketstate.disabled &&
+          (isDynamic || useDefaultHover) &&
+          !$rocketstate.active &&
+          css`
+            &:hover {
+              ${hoverTheme};
+            }
+          `};
+
+          ${!$rocketstate.disabled &&
+          (isDynamic || useDefaultFocus) &&
+          css`
+            &:focus {
+              ${focusTheme};
+            }
+          `};
+
+          ${!$rocketstate.disabled &&
+          (isDynamic || useDefaultActive) &&
+          css`
+            &:active {
+              ${activeTheme};
+            }
+          `};
+
+          ${!$rocketstate.disabled &&
+          $rocketstate.outline &&
+          useDefaultOutline &&
+          css`
+            background-color: transparent;
+            border-color: ${getBaseTheme.borderColor};
+            color: ${getBaseTheme.bgColor || getBaseTheme.color};
+
+            ${isDynamic &&
             css`
               &:hover {
-                ${hoverTheme};
+                background-color: ${getBaseTheme.bgColor};
+                border-color: ${getBaseTheme.bgColor};
+                color: ${getBaseTheme.color};
               }
             `};
+          `}
 
-          ${!rocketstate.disabled &&
-            (isDynamic || useDefaultFocus) &&
-            css`
-              &:focus {
-                ${focusTheme};
-              }
-            `};
+          ${!$rocketstate.disabled &&
+          css`
+            ${hover && hoverTheme};
+            ${focus && focusTheme};
+            ${active && activeTheme};
+          `};
 
-          ${!rocketstate.disabled &&
-            (isDynamic || useDefaultActive) &&
-            css`
-              &:active {
-                ${activeTheme};
-              }
-            `};
-
-          ${!rocketstate.disabled &&
-            rocketstate.outline &&
-            useDefaultOutline &&
-            css`
-              background-color: transparent;
-              border-color: ${getBaseTheme.borderColor};
-              color: ${getBaseTheme.bgColor || getBaseTheme.color};
-
-              ${isDynamic &&
-                css`
-                  &:hover {
-                    background-color: ${getBaseTheme.bgColor};
-                    border-color: ${getBaseTheme.bgColor};
-                    color: ${getBaseTheme.color};
-                  }
-                `};
-            `}
-
-          ${!rocketstate.disabled &&
-            css`
-              ${hover && hoverTheme};
-              ${focus && focusTheme};
-              ${active && activeTheme};
-            `};
-
-          ${rocketstate.disabled &&
-            css`
-              pointer-events: none;
-              cursor: default;
-            `}
+          ${$rocketstate.disabled &&
+          css`
+            pointer-events: none;
+            cursor: default;
+          `}
         `
       }};
     `
@@ -142,10 +142,10 @@ export const element = rocketstyle()({
 export const list = element
   .config({
     name: 'Bootstrap.List',
-    component: List
+    component: List,
   })
   .styles(
-    css => css`
+    (css) => css`
       ${({ vertical }) =>
         vertical &&
         css`
@@ -186,12 +186,12 @@ export const list = element
 
 export const text = element.config({
   name: 'Bootstrap.Text',
-  component: Text
+  component: Text,
 })
 
 export const utility = rocketstyle()({
   name: 'Bootstrap.Utility',
-  component: Util
+  component: Util,
 })
 
 export { Overlay }
