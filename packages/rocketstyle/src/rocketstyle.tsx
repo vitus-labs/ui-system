@@ -1,14 +1,14 @@
 // @ts-nocheck
-import React, { createContext, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import {
-  config,
-  omit,
-  pick,
-  difference,
-  compose,
-  renderContent,
-} from '@vitus-labs/core'
+import React, {
+  createContext,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useContext,
+} from 'react'
+import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
+
 import {
   chainOptions,
   calculateChainOptions,
@@ -61,7 +61,6 @@ const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
 // assigned
 // --------------------------------------------------------
 const cloneAndEnhance = (opts, defaultOpts = {}) =>
-  // eslint-disable-next-line no-use-before-define
   styleComponent({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -91,12 +90,23 @@ const styleComponent = (options) => {
     ${calculateStyles(styles, config.css)}
   `
 
+  // --------------------------------------------------------
+  // ENHANCED COMPONENT (returned component)
+  // --------------------------------------------------------
   const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
+    const theme = useContext(config.context)
     const pseudo = usePseudoState(props)
+
     const {
-      theme,
       __ROCKETSTYLE__: { KEYWORDS, keys, themes },
-    } = useTheme({ options, onMount })
+    } = useMemo(() => useTheme({ theme, options }), [theme])
+
+    // if onMount is provided (useful for development tooling or so)
+    useEffect(() => {
+      if (onMount) {
+        onMount(__ROCKETSTYLE__)
+      }
+    }, [])
 
     const finalElement = (ctxData = {}) => {
       const calculatedAttrs = calculateChainOptions(
@@ -108,9 +118,11 @@ const styleComponent = (options) => {
         }
       )
 
-      const newProps = omit({ ...ctxData, ...calculatedAttrs, ...props }, [
-        'theme',
-      ])
+      const newProps = {
+        ...ctxData,
+        ...calculatedAttrs,
+        ...props,
+      }
 
       const styledAttributes = calculateStyledAttrs({
         props: pick(newProps, KEYWORDS),
@@ -123,6 +135,7 @@ const styleComponent = (options) => {
         ...styledAttributes,
         pseudo: pseudo.pseudoState,
       }
+
       Object.values(styledAttributes).forEach((item) => {
         if (Array.isArray(item)) {
           item.forEach((item) => {
@@ -140,28 +153,18 @@ const styleComponent = (options) => {
         config: options,
       })
 
-      // this removes styling state from props and passes its state
-      // under rocketstate key only (except boolean valid HTML attributes)
-      const passProps = omit(newProps, KEYWORDS)
-      // if (config.isWeb) {
-      //   const boolAttrs = require('./booleanTags')
-      //   const propsOmmitedAttrs = difference(
-      //     this[namespace].KEYWORDS,
-      //     boolAttrs.default
-      //   )
-      //   passProps = omit(newProps, propsOmmitedAttrs)
-      // } else {
-      //   passProps = omit(newProps, this[namespace].KEYWORDS)
-      // }
-
-      let renderedComponent = renderContent(STYLED_COMPONENT, {
-        ...passProps,
+      const passProps = {
+        // this removes styling state from props and passes its state
+        // under rocketstate key only
+        ...omit(newProps, KEYWORDS),
         ...(options.provider ? pseudo.events : {}),
+        ref,
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,
-        ref,
         'data-rocketstyle': componentName,
-      })
+      }
+
+      const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
 
       if (options.provider) {
         return (
@@ -185,7 +188,7 @@ const styleComponent = (options) => {
     return finalElement()
   })
 
-  let ExtendedComponent = config.withTheme(EnhancedComponent)
+  let ExtendedComponent = EnhancedComponent
 
   const composeFuncs = Object.values(options.compose || {})
   if (composeFuncs.length > 0) {
