@@ -1,4 +1,4 @@
-/* eslint-disable import/prefer-default-export */
+import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 
 export const transformVerticalProp = (vertical) => {
   let result
@@ -12,4 +12,20 @@ export const transformVerticalProp = (vertical) => {
   }
 
   return result
+}
+
+export const calculateSubTag = (tag, isWeb) => {
+  if (isWeb) {
+    return INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
+  }
+
+  return undefined
+}
+
+export const getShouldBeEmpty = (tag, isWeb) => {
+  if (isWeb) {
+    return EMPTY_ELEMENTS.includes(tag)
+  }
+
+  return undefined
 }

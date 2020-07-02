@@ -1,8 +1,12 @@
-import React, { forwardRef, ReactNode, Ref } from 'react'
+import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
-import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
-import { transformVerticalProp } from './utils'
+import { EMPTY_ELEMENTS } from './constants'
+import {
+  transformVerticalProp,
+  calculateSubTag,
+  getShouldBeEmpty,
+} from './utils'
 import { AlignX, AlignY, Direction, Booltype } from '~/types'
 
 // type Reference = HTMLElement
@@ -83,8 +87,11 @@ const Element = forwardRef<any, Props>(
     },
     ref
   ) => {
-    const shouldBeEmpty =
-      props.dangerouslySetInnerHTML || EMPTY_ELEMENTS.includes(tag)
+    const shouldBeEmpty = useMemo(
+      () =>
+        getShouldBeEmpty(tag, config.isWeb) || props.dangerouslySetInnerHTML,
+      [tag, props.dangerouslySetInnerHTML]
+    )
 
     const sharedProps = {
       ref: ref || innerRef,
@@ -98,10 +105,7 @@ const Element = forwardRef<any, Props>(
 
     if (shouldBeEmpty) return <Wrapper {...sharedProps} {...props} />
 
-    let SUB_TAG
-    if (config.isWeb) {
-      SUB_TAG = INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
-    }
+    const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 

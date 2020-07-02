@@ -79,5 +79,5 @@ export default config.styled(config.component)`
     flex: 1;
   `};
 
-  ${makeItResponsive({ key: 'element', styles, css: config.css })};
+  ${makeItResponsive({ key: '$element', styles, css: config.css })};
 `

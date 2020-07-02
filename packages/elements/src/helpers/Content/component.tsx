@@ -1,5 +1,4 @@
-import React, { forwardRef, ReactNode, Ref } from 'react'
-import { omit } from '@vitus-labs/core'
+import React, { forwardRef, useMemo, ReactNode, Ref } from 'react'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
 import Styled from './styled'
@@ -27,23 +26,50 @@ type Props = {
 type Reference = Ref<HTMLElement>
 
 const Element = forwardRef<Reference, Partial<Props>>(
-  ({ tag, ...props }, ref) => {
+  (
+    {
+      tag,
+      parentDirection,
+      contentDirection,
+      alignX,
+      alignY,
+      equalCols,
+      gap,
+      extendCss,
+      ...props
+    },
+    ref
+  ) => {
     const { sortedBreakpoints } = vitusContext()
+    const localProps = {
+      parentDirection,
+      contentDirection,
+      alignX,
+      alignY,
+      equalCols,
+      gap,
+      extendCss,
+    }
 
-    const normalizedTheme = optimizeTheme({
-      breakpoints: sortedBreakpoints,
-      keywords: KEYWORDS,
-      props,
-    })
+    // const normalizedTheme = useMemo(
+    //   () =>
+    //     optimizeTheme({
+    //       breakpoints: sortedBreakpoints,
+    //       keywords: KEYWORDS,
+    //       props: localProps,
+    //     }),
+    //   [
+    //     parentDirection,
+    //     contentDirection,
+    //     alignX,
+    //     alignY,
+    //     equalCols,
+    //     gap,
+    //     extendCss,
+    //   ]
+    // )
 
-    return (
-      <Styled
-        ref={ref}
-        as={tag}
-        element={normalizedTheme}
-        {...omit(props, KEYWORDS)}
-      />
-    )
+    return <Styled ref={ref} as={tag} $element={localProps} {...props} />
   }
 )
 

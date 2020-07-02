@@ -68,5 +68,5 @@ export default config.styled(config.component)`
     height: 100%;
   `}
 
-  ${makeItResponsive({ key: 'element', styles, css: config.css })};
+  ${makeItResponsive({ key: '$element', styles, css: config.css })};
 `
