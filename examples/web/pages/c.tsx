@@ -1,10 +1,10 @@
-import React from "react";
-import styled, { ThemeProvider } from "styled-components";
-import { Element } from "@vitus-labs/elements";
-import theme from "../theme";
+import React from 'react'
+import styled, { ThemeProvider } from 'styled-components'
+import { Element } from '@vitus-labs/elements'
+import theme from '../theme'
 
 const TestA = styled(Element)`
-  text-decoration: none;
+  /* text-decoration: none;
   outline: none;
   box-sizing: border-box;
   height: 1.375rem;
@@ -14,8 +14,8 @@ const TestA = styled(Element)`
   font-weight: 500;
   color: #fff;
   background-color: #000;
-  border-radius: 0.25rem;
-`;
+  border-radius: 0.25rem; */
+`
 
 export default () => (
   <ThemeProvider theme={theme}>
@@ -987,4 +987,4 @@ export default () => (
     <TestA>hello world</TestA>
     <TestA>hello world</TestA>
   </ThemeProvider>
-);
+)

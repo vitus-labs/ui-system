@@ -1,6 +1,6 @@
-import React, { memo } from "react";
-import styled, { css, ThemeProvider } from "styled-components";
-import theme from "../theme";
+import React from 'react'
+import styled, { ThemeProvider } from 'styled-components'
+import theme from '../theme'
 
 const Inner = styled.span`
   text-decoration: none;
@@ -14,16 +14,16 @@ const Inner = styled.span`
   color: #fff;
   background-color: #000;
   border-radius: 0.25rem;
-`;
+`
 
-const TestA = memo(({ children, beforeContentA, beforeContentB }) => (
+const TestA = ({ children, beforeContentA = null, beforeContentB = null }) => (
   <Inner>
     {beforeContentA && <Inner />}
     {beforeContentA || (beforeContentB && <Inner>{children}</Inner>)}
     {!beforeContentA && !beforeContentB && children}
     {beforeContentB && <Inner />}
   </Inner>
-));
+)
 
 export default () => (
   <ThemeProvider theme={theme}>
@@ -995,4 +995,4 @@ export default () => (
     <TestA>hello world</TestA>
     <TestA>hello world</TestA>
   </ThemeProvider>
-);
+)
