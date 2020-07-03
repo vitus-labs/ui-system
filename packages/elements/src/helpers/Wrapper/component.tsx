@@ -1,8 +1,8 @@
-import React, { forwardRef, ReactNode, Ref } from 'react'
-import { config, omit, pick } from '@vitus-labs/core'
+import React, { forwardRef, useMemo, ReactNode } from 'react'
+import { config, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
-import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
+import { isFixNeeded } from './utils'
 import Styled from './styled'
 
 const KEYWORDS_WRAPPER = ['block', 'extendCss']
@@ -14,7 +14,6 @@ type Reference = any
 type Props = {
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  innerRef: Reference
   contentDirection: Direction
   alignX: AlignX
   alignY: AlignY
@@ -23,27 +22,54 @@ type Props = {
 }
 
 const Element = forwardRef<Reference, Partial<Props>>(
-  ({ children, tag, innerRef, ...props }, ref) => {
-    const needsFix = config.isWeb
-      ? INLINE_ELEMENTS_FLEX_FIX.includes(tag)
-      : false
-    const restProps = omit(props, KEYWORDS)
+  (
+    {
+      children,
+      tag,
+      block,
+      extendCss,
+      contentDirection,
+      alignX,
+      alignY,
+      equalCols,
+      ...props
+    },
+    ref
+  ) => {
+    const needsFix = useMemo(() => isFixNeeded(tag, config.isWeb), [tag])
+
+    const localProps = {
+      block,
+      extendCss,
+      contentDirection,
+      alignX,
+      alignY,
+      equalCols,
+    }
 
     const { sortedBreakpoints } = vitusContext()
-    const normalizedTheme = optimizeTheme({
-      breakpoints: sortedBreakpoints,
-      keywords: KEYWORDS,
-      props,
-    })
+
+    const normalizedTheme = useMemo(
+      () =>
+        optimizeTheme({
+          breakpoints: sortedBreakpoints,
+          keywords: KEYWORDS,
+          props: localProps,
+        }),
+      [
+        sortedBreakpoints,
+        block,
+        extendCss,
+        contentDirection,
+        alignX,
+        alignY,
+        equalCols,
+      ]
+    )
 
     if (!needsFix || config.isNative) {
       return (
-        <Styled
-          ref={ref || innerRef}
-          as={tag}
-          {...restProps}
-          element={normalizedTheme}
-        >
+        <Styled ref={ref} as={tag} {...props} $element={normalizedTheme}>
           {children}
         </Styled>
       )
@@ -51,20 +77,16 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     return (
       <Styled
-        ref={ref || innerRef}
+        ref={ref}
         as={tag}
-        {...restProps}
-        needsFix
-        element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
+        {...props}
+        $needsFix
+        $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
       >
         <Styled
           as="span"
-          isInner
-          element={pick(normalizedTheme, KEYWORDS_INNER)}
-          extendCss={config.css`
-          height: 100%;
-          width: 100%;
-        `}
+          $isInner
+          $element={pick(normalizedTheme, KEYWORDS_INNER)}
         >
           {children}
         </Styled>

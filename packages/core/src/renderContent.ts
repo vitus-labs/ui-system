@@ -1,8 +1,5 @@
 import { createElement, isValidElement, cloneElement, Children } from 'react'
-
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0
-}
+import isEmpty from './isEmpty'
 
 const renderContent = (content, attachProps = {}) => {
   if (!content) return null

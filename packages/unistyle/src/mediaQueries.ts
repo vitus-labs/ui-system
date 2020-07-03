@@ -40,12 +40,21 @@ const transformTheme = ({ theme, breakpoints }) => {
   return newTheme
 }
 
-const makeItResponsive = ({ theme: customTheme, key, css, styles }) => ({
+const makeItResponsive = ({ theme: customTheme, key = '', css, styles }) => ({
   theme,
   ...props
 }) => {
   const internalTheme = customTheme || props[key]
   const { rootSize, breakpoints } = theme
+
+  if (!breakpoints || breakpoints.length === 0) {
+    const result = styles({ theme: internalTheme, css, rootSize })
+
+    return css`
+      ${result}
+    `
+  }
+
   const media = createMediaQueries({ breakpoints, rootSize, css })
   const sortedBreakpoints = sortBreakpoints(breakpoints)
   const transformedTheme = transformTheme({
@@ -66,6 +75,7 @@ const makeItResponsive = ({ theme: customTheme, key, css, styles }) => ({
           ${result}
         `
       }
+
       return media[item]`
         ${result};
       `

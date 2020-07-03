@@ -126,28 +126,47 @@ const groupByBreakpoint = (props) => {
   return result
 }
 
+const isAnyComplexType = (props: object) => {
+  return Object.values(props).some(
+    (item) => typeof item === 'object' || Array.isArray(item)
+  )
+}
+
 export { pickThemeProps, normalizeTheme, groupByBreakpoint }
 
 export default ({ props, keywords, breakpoints }) => {
   // FIXME:  || !breakpoints?.length > 0
-  if (!breakpoints) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`
-        You are not passing an array of sorted breakpoint keys to
-        this function so it will return back picked props and not optimized theme.
-      `)
-    }
+  if (!breakpoints || breakpoints.length === 0) {
+    // if (process.env.NODE_ENV !== 'production') {
+    //   console.warn(`
+    //     You are not passing an array of sorted breakpoint keys to
+    //     this function so it will return back picked props and not optimized theme.
+    //   `)
+    // }
 
     return pick(props, keywords)
   }
+
+  if (!isAnyComplexType(props)) {
+    const result = {}
+
+    Object.entries(props).forEach(([key, value]) => {
+      if (value) result[key] = { [breakpoints[0]]: value }
+    })
+
+    return result
+  }
+
   const helper = normalizeTheme({
     props,
     keywords,
     breakpoints,
   })
 
-  return optimizeTheme({
+  const optimizedTheme = optimizeTheme({
     theme: helper,
     breakpoints,
   })
+
+  return optimizedTheme
 }

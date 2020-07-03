@@ -10,8 +10,8 @@ const isValue = (val) => val !== null && val !== undefined
 const styles = ({ css, theme: t }) => css`
   ${config.isWeb &&
   css`
-    display: ${({ needsFix }) => {
-      if (needsFix) return ''
+    display: ${({ $needsFix }) => {
+      if ($needsFix) return ''
       return t.block ? 'flex' : 'inline-flex'
     }};
   `};
@@ -24,7 +24,7 @@ const styles = ({ css, theme: t }) => css`
       css`
         width: ${t.block ? '100%' : 'initial'};
       `}
-  `}
+  `};
 
   ${config.isNative &&
   t.block &&
@@ -61,12 +61,12 @@ export default config.styled(config.component)`
     `
   };
 
-  ${({ isInner }) =>
-    isInner &&
+  ${({ $isInner }) =>
+    $isInner &&
     config.css`
     width: 100%;
     height: 100%;
-  `}
+  `};
 
-  ${makeItResponsive({ key: 'element', styles, css: config.css })};
+  ${makeItResponsive({ key: '$element', styles, css: config.css })};
 `

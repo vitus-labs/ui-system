@@ -58,7 +58,7 @@ const styles = ({ css, theme: t, rootSize }) => css`
         value: value(rootSize, [t.gap]),
         css,
       })}
-  `}
+  `};
 
   ${t.extendCss && extendedCss(t.extendCss)};
 `
@@ -69,7 +69,8 @@ export default config.styled(config.component)`
     config.css`
       box-sizing: border-box;
     `
-  }
+  };
+
   display: flex;
   align-self: stretch;
 
@@ -79,5 +80,5 @@ export default config.styled(config.component)`
     flex: 1;
   `};
 
-  ${makeItResponsive({ key: 'element', styles, css: config.css })};
+  ${makeItResponsive({ key: '$element', styles, css: config.css })};
 `
