@@ -1,17 +1,24 @@
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 
 export const transformVerticalProp = (vertical) => {
-  let result
   if (typeof vertical === 'boolean') {
-    result = vertical ? 'rows' : 'inline'
-  } else if (typeof vertical === 'object') {
-    result = {}
+    return vertical ? 'rows' : 'inline'
+  }
+
+  if (typeof vertical === 'object') {
+    const result = {}
     Object.keys(vertical).forEach((item) => {
       result[item] = vertical[item] ? 'rows' : 'inline'
     })
+
+    return result
   }
 
-  return result
+  if (Array.isArray(vertical)) {
+    return vertical.map((item) => (vertical ? 'rows' : 'inline'))
+  }
+
+  return undefined
 }
 
 export const calculateSubTag = (tag, isWeb) => {

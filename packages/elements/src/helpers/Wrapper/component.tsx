@@ -14,7 +14,6 @@ type Reference = any
 type Props = {
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  innerRef: Reference
   contentDirection: Direction
   alignX: AlignX
   alignY: AlignY
@@ -27,7 +26,6 @@ const Element = forwardRef<Reference, Partial<Props>>(
     {
       children,
       tag,
-      innerRef,
       block,
       extendCss,
       contentDirection,
@@ -63,12 +61,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     if (!needsFix || config.isNative) {
       return (
-        <Styled
-          ref={ref || innerRef}
-          as={tag}
-          {...props}
-          $element={normalizedTheme}
-        >
+        <Styled ref={ref} as={tag} {...props} $element={normalizedTheme}>
           {children}
         </Styled>
       )
@@ -76,20 +69,16 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     return (
       <Styled
-        ref={ref || innerRef}
+        ref={ref}
         as={tag}
         {...props}
-        needsFix
-        element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
+        $needsFix
+        $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
       >
         <Styled
           as="span"
-          isInner
-          element={pick(normalizedTheme, KEYWORDS_INNER)}
-          extendCss={config.css`
-          height: 100%;
-          width: 100%;
-        `}
+          $isInner
+          $element={pick(normalizedTheme, KEYWORDS_INNER)}
         >
           {children}
         </Styled>
