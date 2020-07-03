@@ -56,7 +56,15 @@ const Element = forwardRef<Reference, Partial<Props>>(
           keywords: KEYWORDS,
           props: localProps,
         }),
-      [block, extendCss, contentDirection, alignX, alignY, equalCols]
+      [
+        sortedBreakpoints,
+        block,
+        extendCss,
+        contentDirection,
+        alignX,
+        alignY,
+        equalCols,
+      ]
     )
 
     if (!needsFix || config.isNative) {

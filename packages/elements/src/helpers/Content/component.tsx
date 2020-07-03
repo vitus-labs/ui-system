@@ -59,6 +59,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
           props: localProps,
         }),
       [
+        sortedBreakpoints,
         parentDirection,
         contentDirection,
         alignX,
