@@ -1,0 +1,66 @@
+{
+  "name": "@vitus-labs/rocketstories",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "homepage": "https://vitus-labs.github.io/rocketstyle/",
+  "description": "Rocketstyle is ultra powerful and extensible styling system for building React components blazingly fast, easily and make them easily extensible and reusable.",
+  "keywords": [
+    "rocketstyle",
+    "style",
+    "styled-components",
+    "css",
+    "flexible",
+    "extensible",
+    "powerful",
+    "styling",
+    "styled",
+    "system",
+    "react",
+    "reusability",
+    "extensible"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/vitus-labs"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+  },
+  "main": "lib/vitus-labs-rocketstories.js",
+  "umd:main": "lib/vitus-labs-rocketstories.umd.js",
+  "module": "lib/vitus-labs-rocketstories.module.js",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "dev": "yarn vl_run-stories",
+    "prepublish": "yarn build",
+    "build:pkg": "rm -rf lib && yarn rollup -c",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.1.0"
+  },
+  "peerDependencies": {
+    "@vitus-labs/core": "*",
+    "react": ">= 16.7"
+  },
+  "devDependencies": {
+    "@vitus-labs/core": "*",
+    "@vitus-labs/elements": "*",
+    "@vitus-labs/tools-docz": "*",
+    "@vitus-labs/tools-jest": "*",
+    "@vitus-labs/tools-rollup": "*",
+    "@vitus-labs/tools-storybook": "*",
+    "@vitus-labs/unistyle": "*"
+  }
+}
