@@ -1,8 +1,9 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, pick } from '@vitus-labs/core'
-import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
+import { vitusContext } from '@vitus-labs/unistyle'
+import optimizeTheme, { refactoredOptimize } from '../../optimizeTheme'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
-import { INLINE_ELEMENTS_FLEX_FIX } from './constants'
+import { isFixNeeded } from './utils'
 import Styled from './styled'
 
 const KEYWORDS_WRAPPER = ['block', 'extendCss']
@@ -38,9 +39,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
     },
     ref
   ) => {
-    const needsFix = config.isWeb
-      ? INLINE_ELEMENTS_FLEX_FIX.includes(tag)
-      : false
+    const needsFix = useMemo(() => isFixNeeded(tag, config.isWeb), [tag])
 
     const localProps = {
       block,
@@ -55,7 +54,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     // const normalizedTheme = useMemo(
     //   () =>
-    //     optimizeTheme({
+    //     refactoredOptimize({
     //       breakpoints: sortedBreakpoints,
     //       keywords: KEYWORDS,
     //       props: localProps,
