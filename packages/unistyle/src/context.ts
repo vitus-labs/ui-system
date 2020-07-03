@@ -1,11 +1,8 @@
 //@ts-ignore
 import { useContext, useMemo } from 'react'
-import { config } from '@vitus-labs/core'
+import { config, isEmpty } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'
 // import useWindowSize from './useWindowSize'
-
-const isEmpty = (param: object) =>
-  Object.entries(param).length === 0 && param.constructor === Object
 
 // const calculateBreakpointState = (breakpoints, width) => {
 //   const result = {}
@@ -38,10 +35,10 @@ export default () => {
 
   const result = {
     breakpoints: {},
-    sortedBreakpoints: {},
-    breakpointsState: {},
-    currentBreakpoint: {},
-    component: config.component,
+    sortedBreakpoints: [],
+    // breakpointsState: {},
+    // currentBreakpoint: {},
+    // component: config.component,
     isWeb: config.isWeb,
     isNative: config.isNative,
     // viewport: { width, height },
