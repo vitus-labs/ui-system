@@ -39,7 +39,7 @@
   "scripts": {
     "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn rollup -c",
+    "build:pkg": "rm -rf lib && yarn rollup -c",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
