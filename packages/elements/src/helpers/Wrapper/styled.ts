@@ -24,7 +24,7 @@ const styles = ({ css, theme: t }) => css`
       css`
         width: ${t.block ? '100%' : 'initial'};
       `}
-  `}
+  `};
 
   ${config.isNative &&
   t.block &&
@@ -66,7 +66,7 @@ export default config.styled(config.component)`
     config.css`
     width: 100%;
     height: 100%;
-  `}
+  `};
 
   ${makeItResponsive({ key: '$element', styles, css: config.css })};
 `
