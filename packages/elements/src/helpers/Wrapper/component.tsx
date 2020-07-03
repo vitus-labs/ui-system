@@ -1,6 +1,6 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, pick } from '@vitus-labs/core'
-import optimizeTheme, { vitusContext } from '@vitus-labs/unistyle'
+import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
 import { isFixNeeded } from './utils'
 import Styled from './styled'
