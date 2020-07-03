@@ -1,6 +1,5 @@
 import React, { forwardRef, useMemo, ReactNode, Ref } from 'react'
-import { vitusContext } from '@vitus-labs/unistyle'
-import optimizeTheme, { refactoredOptimize } from '../../optimizeTheme'
+import optimizeTheme, { vitusContext } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
 import Styled from './styled'
 
@@ -51,26 +50,26 @@ const Element = forwardRef<Reference, Partial<Props>>(
       extendCss,
     }
 
-    // const { sortedBreakpoints } = vitusContext()
-    // const normalizedTheme = useMemo(
-    //   () =>
-    //     refactoredOptimize({
-    //       breakpoints: sortedBreakpoints,
-    //       keywords: KEYWORDS,
-    //       props: localProps,
-    //     }),
-    //   [
-    //     parentDirection,
-    //     contentDirection,
-    //     alignX,
-    //     alignY,
-    //     equalCols,
-    //     gap,
-    //     extendCss,
-    //   ]
-    // )
+    const { sortedBreakpoints } = vitusContext()
+    const normalizedTheme = useMemo(
+      () =>
+        optimizeTheme({
+          breakpoints: sortedBreakpoints,
+          keywords: KEYWORDS,
+          props: localProps,
+        }),
+      [
+        parentDirection,
+        contentDirection,
+        alignX,
+        alignY,
+        equalCols,
+        gap,
+        extendCss,
+      ]
+    )
 
-    return <Styled ref={ref} as={tag} $element={localProps} {...props} />
+    return <Styled ref={ref} as={tag} $element={normalizedTheme} {...props} />
   }
 )
 

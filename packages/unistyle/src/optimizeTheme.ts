@@ -126,6 +126,12 @@ const groupByBreakpoint = (props) => {
   return result
 }
 
+const isAnyComplexType = (props: object) => {
+  return Object.values(props).some(
+    (item) => typeof item === 'object' || Array.isArray(item)
+  )
+}
+
 export { pickThemeProps, normalizeTheme, groupByBreakpoint }
 
 export default ({ props, keywords, breakpoints }) => {
@@ -140,14 +146,27 @@ export default ({ props, keywords, breakpoints }) => {
 
     return pick(props, keywords)
   }
+
+  if (!isAnyComplexType(props)) {
+    const result = {}
+
+    Object.entries(props).forEach(([key, value]) => {
+      if (value) result[key] = { [breakpoints[0]]: value }
+    })
+
+    return result
+  }
+
   const helper = normalizeTheme({
     props,
     keywords,
     breakpoints,
   })
 
-  return optimizeTheme({
+  const optimizedTheme = optimizeTheme({
     theme: helper,
     breakpoints,
   })
+
+  return optimizedTheme
 }

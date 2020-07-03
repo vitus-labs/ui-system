@@ -1,7 +1,6 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, pick } from '@vitus-labs/core'
-import { vitusContext } from '@vitus-labs/unistyle'
-import optimizeTheme, { refactoredOptimize } from '../../optimizeTheme'
+import optimizeTheme, { vitusContext } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, Booltype } from '~/types'
 import { isFixNeeded } from './utils'
 import Styled from './styled'
@@ -50,21 +49,26 @@ const Element = forwardRef<Reference, Partial<Props>>(
       equalCols,
     }
 
-    // const { sortedBreakpoints } = vitusContext()
+    const { sortedBreakpoints } = vitusContext()
 
-    // const normalizedTheme = useMemo(
-    //   () =>
-    //     refactoredOptimize({
-    //       breakpoints: sortedBreakpoints,
-    //       keywords: KEYWORDS,
-    //       props: localProps,
-    //     }),
-    //   [block, extendCss, contentDirection, alignX, alignY, equalCols]
-    // )
+    const normalizedTheme = useMemo(
+      () =>
+        optimizeTheme({
+          breakpoints: sortedBreakpoints,
+          keywords: KEYWORDS,
+          props: localProps,
+        }),
+      [block, extendCss, contentDirection, alignX, alignY, equalCols]
+    )
 
     if (!needsFix || config.isNative) {
       return (
-        <Styled ref={ref || innerRef} as={tag} {...props} $element={localProps}>
+        <Styled
+          ref={ref || innerRef}
+          as={tag}
+          {...props}
+          $element={normalizedTheme}
+        >
           {children}
         </Styled>
       )
@@ -76,12 +80,12 @@ const Element = forwardRef<Reference, Partial<Props>>(
         as={tag}
         {...props}
         needsFix
-        element={pick(localProps, KEYWORDS_WRAPPER)}
+        element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
       >
         <Styled
           as="span"
           isInner
-          element={pick(localProps, KEYWORDS_INNER)}
+          element={pick(normalizedTheme, KEYWORDS_INNER)}
           extendCss={config.css`
           height: 100%;
           width: 100%;

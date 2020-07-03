@@ -1,40 +1,40 @@
 //@ts-ignore
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { config } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'
-import useWindowSize from './useWindowSize'
+// import useWindowSize from './useWindowSize'
 
 const isEmpty = (param: object) =>
   Object.entries(param).length === 0 && param.constructor === Object
 
-const calculateBreakpointState = (breakpoints, width) => {
-  const result = {}
+// const calculateBreakpointState = (breakpoints, width) => {
+//   const result = {}
 
-  Object.keys(breakpoints).forEach((item) => {
-    const breakpointWidth = breakpoints[item]
+//   Object.keys(breakpoints).forEach((item) => {
+//     const breakpointWidth = breakpoints[item]
 
-    result[item] = width >= breakpointWidth
-  })
+//     result[item] = width >= breakpointWidth
+//   })
 
-  return result
-}
+//   return result
+// }
 
-const calculateCurrentBreakpoint = (breakpoints, width) => {
-  const sortedBreakpoints = sortBreakpoints(breakpoints)
-  let result = ''
+// const calculateCurrentBreakpoint = (breakpoints, width) => {
+//   const sortedBreakpoints = sortBreakpoints(breakpoints)
+//   let result = ''
 
-  sortedBreakpoints.forEach((item, i) => {
-    const breakpointWidth = breakpoints[sortedBreakpoints[i]]
+//   sortedBreakpoints.forEach((item, i) => {
+//     const breakpointWidth = breakpoints[sortedBreakpoints[i]]
 
-    if (width >= breakpointWidth) result = item
-  })
+//     if (width >= breakpointWidth) result = item
+//   })
 
-  return result
-}
+//   return result
+// }
 
 export default () => {
   const { breakpoints } = useContext(config.context)
-  const { width, height } = useWindowSize()
+  // const { width, height } = useWindowSize()
 
   const result = {
     breakpoints: {},
@@ -44,11 +44,11 @@ export default () => {
     component: config.component,
     isWeb: config.isWeb,
     isNative: config.isNative,
-    viewport: { width, height },
-    getCurrentBreakpoint: (breakpoints) =>
-      calculateCurrentBreakpoint(breakpoints, width),
-    getAllBreakpointsState: (breakpoints) =>
-      calculateBreakpointState(breakpoints, width),
+    // viewport: { width, height },
+    // getCurrentBreakpoint: (breakpoints) =>
+    //   calculateCurrentBreakpoint(breakpoints, width),
+    // getAllBreakpointsState: (breakpoints) =>
+    //   calculateBreakpointState(breakpoints, width),
   }
 
   if (!breakpoints || isEmpty(breakpoints)) {
@@ -59,12 +59,14 @@ export default () => {
     //   `)
     // }
   } else {
-    const sortedBreakpoints = sortBreakpoints(breakpoints)
+    const sortedBreakpoints = useMemo(() => sortBreakpoints(breakpoints), [
+      breakpoints,
+    ])
 
     result.breakpoints = breakpoints
     result.sortedBreakpoints = sortedBreakpoints
-    result.breakpointsState = calculateBreakpointState(breakpoints, width)
-    result.currentBreakpoint = calculateCurrentBreakpoint(breakpoints, width)
+    // result.breakpointsState = calculateBreakpointState(breakpoints, width)
+    // result.currentBreakpoint = calculateCurrentBreakpoint(breakpoints, width)
   }
 
   return result
