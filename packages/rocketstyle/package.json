@@ -55,12 +55,12 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@vitus-labs/core": "^0.7.1",
-    "@vitus-labs/elements": "^0.7.1",
-    "@vitus-labs/tools-docz": "^0.7.1",
-    "@vitus-labs/tools-jest": "^0.7.1",
-    "@vitus-labs/tools-rollup": "^0.7.1",
-    "@vitus-labs/tools-storybook": "^0.7.1",
-    "@vitus-labs/unistyle": "^0.7.1"
+    "@vitus-labs/core": "*",
+    "@vitus-labs/elements": "*",
+    "@vitus-labs/tools-docz": "*",
+    "@vitus-labs/tools-jest": "*",
+    "@vitus-labs/tools-rollup": "*",
+    "@vitus-labs/tools-storybook": "*",
+    "@vitus-labs/unistyle": "*"
   }
 }

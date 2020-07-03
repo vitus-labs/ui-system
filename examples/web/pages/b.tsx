@@ -16,12 +16,45 @@ const Inner = styled.span`
   border-radius: 0.25rem;
 `
 
-const TestA = ({ children, beforeContentA = null, beforeContentB = null }) => (
-  <Inner>
-    {beforeContentA && <Inner />}
-    {beforeContentA || (beforeContentB && <Inner>{children}</Inner>)}
+const TestA = ({
+  children,
+  beforeContentA = null,
+  beforeContentB = null,
+  block,
+  equalCols,
+  gap,
+  vertical,
+  alignX,
+  contentAlignX,
+  beforeContentAlignX,
+  afterContentAlignX,
+  alignY,
+  contentAlignY,
+  beforeContentAlignY,
+  afterContentAlignY,
+  contentDirection,
+  beforeContentDirection,
+  afterContentDirection,
+}) => (
+  <Inner
+    vertical={vertical}
+    contentDirection={contentDirection}
+    alignX={contentAlignX}
+    alignY={contentAlignY}
+  >
+    {beforeContentA && <Inner alignX={alignX} gap={gap} alignY={alignY} />}
+    {beforeContentA ||
+      (beforeContentB && (
+        <Inner
+          contentDirection={contentDirection}
+          alignX={contentAlignX}
+          alignY={contentAlignY}
+        >
+          {children}
+        </Inner>
+      ))}
     {!beforeContentA && !beforeContentB && children}
-    {beforeContentB && <Inner />}
+    {beforeContentB && <Inner alignX={alignX} gap={gap} alignY={alignY} />}
   </Inner>
 )
 

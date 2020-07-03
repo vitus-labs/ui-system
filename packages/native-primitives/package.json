@@ -55,6 +55,6 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rollup": "^0.7.1"
+    "@vitus-labs/tools-rollup": "*"
   }
 }

@@ -5,7 +5,6 @@ import Overlay from './Overlay'
 import Portal from './Portal'
 import Text from './Text'
 import Util from './Util'
-import WithState from './WithState'
 
 export {
   Content,
@@ -18,5 +17,4 @@ export {
   Portal,
   Text,
   Util,
-  WithState,
 }

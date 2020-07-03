@@ -1,7 +1,6 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
-import { EMPTY_ELEMENTS } from './constants'
 import {
   transformVerticalProp,
   calculateSubTag,
@@ -105,9 +104,9 @@ const Element = forwardRef<any, Props>(
 
     if (shouldBeEmpty) return <Wrapper {...sharedProps} {...props} />
 
-    const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
+    const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
 
     // --------------------------------------------------------
     // direction & alignX calculations
