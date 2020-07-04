@@ -8,8 +8,9 @@ interface Props {
   children: React.ReactNode
   trigger: React.ReactNode
   refName?: string
-  openOn?: 'click' | 'triggerClick' | 'hover'
-  closeOn?: 'click' | 'triggerClick' | 'hover'
+  isOpen?: boolean
+  openOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
+  closeOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
   type?: 'dropdown' | 'tooltip' | 'popover' | 'modal'
   position?: 'absolute' | 'fixed' | 'relative' | 'static'
   align?: 'bottom' | 'top' | 'left' | 'bottom' | 'right'
@@ -34,6 +35,7 @@ const component = ({
   children,
   trigger,
   refName = 'ref',
+  isOpen = false,
   openOn = 'click', // click | hover
   closeOn = 'click', // click | triggerClick | hover | manual
   type = 'dropdown', // dropdown | tooltip | popover | modal
@@ -43,10 +45,10 @@ const component = ({
   alignY = 'bottom', // top | center | bottom
   offsetX = 0,
   offsetY = 0,
-  throttleDelay = 200,
+  throttleDelay = 500,
 }: Props) => {
   const { rootSize } = useContext(config.context)
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(isOpen)
   const [overlayPosition, setOverlayPosition] = useState<OverlayPosition>({
     position,
   })
@@ -54,8 +56,8 @@ const component = ({
   const contentRef = useRef<HTMLElement>()
 
   useEffect(() => {
-    calculateContentPosition()
-  }, [])
+    if (visible) calculateContentPosition()
+  }, [visible])
 
   useEffect(() => {
     if (
@@ -68,32 +70,16 @@ const component = ({
     }
 
     if (openOn === 'hover' || closeOn === 'hover') {
-      window.addEventListener(
-        'mousemove',
-        throttle(handleDocumentClick, throttleDelay),
-        false
-      )
+      window.addEventListener('mousemove', handleMouseMoveResize, false)
     }
 
-    window.addEventListener(
-      'resize',
-      throttle(calculateContentPosition, throttleDelay),
-      false
-    )
+    window.addEventListener('resize', handleWindowResize, false)
 
     return () => {
-      window.removeEventListener(
-        'resize',
-        throttle(calculateContentPosition, throttleDelay),
-        false
-      )
+      window.removeEventListener('resize', handleWindowResize, false)
       window.removeEventListener('click', handleDocumentClick, false)
       window.removeEventListener('touchend', handleDocumentClick, false)
-      window.removeEventListener(
-        'mousemove',
-        throttle(handleDocumentClick, throttleDelay),
-        false
-      )
+      window.removeEventListener('mousemove', handleMouseMoveResize, false)
     }
   })
 
@@ -134,21 +120,23 @@ const component = ({
   }
 
   const calculateContentPosition = () => {
+    if (!visible) return
     // if (process.env.node_env !== 'production') {
 
     // }
     if (!triggerRef.current) {
-      console.error(
-        `
-        Error in 'vitus-labs/elements/Overlay'.
-        Trigger is not correctly using ref. Therefore cannot
-        be calculated position of content
-        `
-      )
-
       return
+      // console.error(
+      //   `
+      //   Error in 'vitus-labs/elements/Overlay'.
+      //   Trigger is not correctly using ref. Therefore cannot
+      //   be calculated position of content
+      //   `
+      // )
     }
-    const dimensions = triggerRef.current.getBoundingClientRect()
+
+    const triggerDimensions = triggerRef.current.getBoundingClientRect()
+    const contentDimensions = contentRef.current.getBoundingClientRect()
 
     const overlayPosition: OverlayPosition = {
       position,
@@ -157,56 +145,73 @@ const component = ({
     if (type === 'dropdown' || type === 'tooltip' || type === 'popover') {
       if (align === 'top' || align === 'bottom') {
         if (align === 'top') {
-          overlayPosition.top = dimensions.top + offsetY + window.scrollY
-          overlayPosition.transformY = 'translateY(-100%)'
+          overlayPosition.top =
+            triggerDimensions.top +
+            offsetY +
+            window.scrollY -
+            contentDimensions.height
         } else {
-          overlayPosition.top = dimensions.bottom + offsetY + window.scrollY
+          overlayPosition.top =
+            triggerDimensions.bottom + offsetY + window.scrollY
         }
 
         switch (alignX) {
           case 'right':
-            overlayPosition.left = dimensions.right + offsetX + window.scrollX
-            overlayPosition.transformX = 'translateX(-100%)'
+            overlayPosition.left =
+              triggerDimensions.right +
+              offsetX +
+              window.scrollX -
+              contentDimensions.width
             break
           case 'center':
             overlayPosition.left =
-              dimensions.left +
-              (dimensions.right - dimensions.left) / 2 +
-              window.scrollX
-            overlayPosition.transformX = 'translateX(-50%)'
+              triggerDimensions.left +
+              (triggerDimensions.right - triggerDimensions.left) / 2 +
+              window.scrollX -
+              contentDimensions.width / 2
+
             break
           case 'left':
           default:
-            overlayPosition.left = dimensions.left - offsetX + window.scrollX
+            overlayPosition.left =
+              triggerDimensions.left - offsetX + window.scrollX
         }
       } else if (align === 'left' || align === 'right') {
         if (align === 'left') {
-          overlayPosition.left = dimensions.left - offsetX + window.scrollX
-          overlayPosition.transformX = 'translateX(-100%)'
+          overlayPosition.left =
+            triggerDimensions.left -
+            offsetX +
+            window.scrollX -
+            contentDimensions.width
         } else {
-          overlayPosition.left = dimensions.right + offsetX + window.scrollX
+          overlayPosition.left =
+            triggerDimensions.right + offsetX + window.scrollX
         }
         switch (alignY) {
           case 'top':
-            overlayPosition.top = dimensions.top - offsetY + window.scrollY
+            overlayPosition.top =
+              triggerDimensions.top - offsetY + window.scrollY
             break
           case 'center':
             overlayPosition.top =
-              dimensions.top +
-              (dimensions.bottom - dimensions.top) / 2 +
-              window.scrollY
-            overlayPosition.transformY = 'translateY(-50%)'
+              triggerDimensions.top +
+              (triggerDimensions.bottom - triggerDimensions.top) / 2 +
+              window.scrollY -
+              contentDimensions.height / 2
             break
           case 'bottom':
           default:
-            overlayPosition.top = dimensions.bottom + offsetY + window.scrollY
+            overlayPosition.top =
+              triggerDimensions.bottom +
+              offsetY +
+              window.scrollY -
+              contentDimensions.height
         }
       }
     } else if (type === 'modal') {
       switch (alignX) {
         case 'right':
           overlayPosition.right = offsetX
-          // overlayPosition.transform = 'translateX(-100%)'
           break
         case 'left':
           overlayPosition.left = offsetX
@@ -268,7 +273,10 @@ const component = ({
     }
   }
 
-  const TRANSFORM = () => {
+  const handleWindowResize = throttle(calculateContentPosition, throttleDelay)
+  const handleMouseMoveResize = throttle(handleDocumentClick, throttleDelay)
+
+  const getTransformValue = () => {
     let result = ``
 
     if (overlayPosition.transformX) result += overlayPosition.transformX
@@ -286,14 +294,17 @@ const component = ({
     bottom: value(rootSize, [overlayPosition.bottom]),
     left: value(rootSize, [overlayPosition.left]),
     right: value(rootSize, [overlayPosition.right]),
-    transform: TRANSFORM(),
+    transform: getTransformValue(),
   }
+
+  const passHandlers = openOn === 'manual' || closeOn === 'manual'
 
   return (
     <>
       {renderContent(trigger, {
         [refName]: triggerRef,
         active: visible,
+        ...(passHandlers ? { showContent, hideContent } : {}),
       })}
 
       {visible && (
@@ -302,8 +313,7 @@ const component = ({
             {renderContent(children, {
               [refName]: contentRef,
               active: visible,
-              showContent,
-              hideContent,
+              ...(passHandlers ? { showContent, hideContent } : {}),
             })}
           </Util>
         </Portal>

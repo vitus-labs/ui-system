@@ -61,6 +61,106 @@ storiesOf('ELEMENTS | Overlay', module)
       </div>
     )
   })
+  .add('Dropdown Top', () => {
+    return (
+      <div style={{ position: 'absolute', left: 200, top: 300 }}>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="left"
+          align="top"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="center"
+          align="top"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="right"
+          align="top"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+      </div>
+    )
+  })
+  .add('Dropdown Bottom', () => {
+    return (
+      <div style={{ position: 'absolute', left: 200, top: 300 }}>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="left"
+          align="bottom"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="center"
+          align="bottom"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignX="right"
+          align="bottom"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+      </div>
+    )
+  })
+  .add('Dropdown Left', () => {
+    return (
+      <div style={{ position: 'absolute', left: 200, top: 300 }}>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignY="top"
+          align="left"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          refName="innerRef"
+          alignY="center"
+          align="left"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+        <Overlay
+          // type="popover"
+          closeOn="hover"
+          refName="innerRef"
+          alignY="bottom"
+          align="left"
+          trigger={(props) => <Trigger {...props} />}
+        >
+          <Menu />
+        </Overlay>
+      </div>
+    )
+  })
   .add('Dropdown inside Element', () => {
     return (
       <EqualElement
