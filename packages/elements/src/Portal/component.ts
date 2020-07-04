@@ -2,18 +2,23 @@ import { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 
 interface Props {
+  position?: HTMLElement
   children: React.ReactNode
   tag?: string
 }
 
-const component = ({ tag = 'div', children }: Props) => {
+const component = ({
+  position = document.body,
+  tag = 'div',
+  children,
+}: Props) => {
   const [element] = useState(document.createElement(tag))
 
   useEffect(() => {
-    document.body.appendChild(element)
+    position.appendChild(element)
 
     return () => {
-      document.body.removeChild(element)
+      position.removeChild(element)
     }
   }, [])
 
