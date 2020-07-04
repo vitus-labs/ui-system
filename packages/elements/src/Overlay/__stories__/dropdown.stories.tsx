@@ -9,6 +9,18 @@ const Box = config.styled.div`
   background-color: black;
 `
 
+const Scroll = config.styled.div`
+  width: 100px;
+  height: 2000px;
+  background-color: papayawhip;
+`
+
+const ScrollX = config.styled.div`
+  width: 2000px;
+  height: 200px;
+  background-color: papayawhip;
+`
+
 const EqualElement = withEqualWidthBeforeAfter(Element)
 
 const Trigger = ({ innerRef, ...props }: any) => (
@@ -63,7 +75,7 @@ storiesOf('ELEMENTS | Overlay', module)
   })
   .add('Dropdown Top', () => {
     return (
-      <div style={{ position: 'absolute', left: 200, top: 300 }}>
+      <div style={{ position: 'absolute', left: 200, top: 301 }}>
         <Overlay
           // type="popover"
           refName="innerRef"
@@ -91,12 +103,14 @@ storiesOf('ELEMENTS | Overlay', module)
         >
           <Menu />
         </Overlay>
+        <Scroll />
       </div>
     )
   })
   .add('Dropdown Bottom', () => {
     return (
       <div style={{ position: 'absolute', left: 200, top: 300 }}>
+        <Scroll />
         <Overlay
           // type="popover"
           refName="innerRef"
@@ -124,14 +138,15 @@ storiesOf('ELEMENTS | Overlay', module)
         >
           <Menu />
         </Overlay>
+        <Scroll />
       </div>
     )
   })
   .add('Dropdown Left', () => {
     return (
       <div style={{ position: 'absolute', left: 200, top: 300 }}>
+        <ScrollX />
         <Overlay
-          // type="popover"
           refName="innerRef"
           alignY="top"
           align="left"
@@ -140,7 +155,6 @@ storiesOf('ELEMENTS | Overlay', module)
           <Menu />
         </Overlay>
         <Overlay
-          // type="popover"
           refName="innerRef"
           alignY="center"
           align="left"
@@ -149,7 +163,6 @@ storiesOf('ELEMENTS | Overlay', module)
           <Menu />
         </Overlay>
         <Overlay
-          // type="popover"
           closeOn="hover"
           refName="innerRef"
           alignY="bottom"
@@ -158,6 +171,7 @@ storiesOf('ELEMENTS | Overlay', module)
         >
           <Menu />
         </Overlay>
+        <ScrollX />
       </div>
     )
   })

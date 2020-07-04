@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect, useContext } from 'react'
 import { config, renderContent, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
-import Util from '~/Util'
 
 interface Props {
   children: React.ReactNode
@@ -27,8 +26,6 @@ type OverlayPosition = {
   bottom?: number | string
   left?: number | string
   right?: number | string
-  transformY?: string
-  transformX?: string
 }
 
 const component = ({
@@ -44,14 +41,11 @@ const component = ({
   alignX = 'left', // left | center | right
   alignY = 'bottom', // top | center | bottom
   offsetX = 0,
-  offsetY = 0,
-  throttleDelay = 500,
+  offsetY = 20,
+  throttleDelay = 200,
 }: Props) => {
   const { rootSize } = useContext(config.context)
   const [visible, setVisible] = useState(isOpen)
-  const [overlayPosition, setOverlayPosition] = useState<OverlayPosition>({
-    position,
-  })
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
@@ -74,9 +68,11 @@ const component = ({
     }
 
     window.addEventListener('resize', handleWindowResize, false)
+    window.addEventListener('scroll', handleWindowResize, false)
 
     return () => {
       window.removeEventListener('resize', handleWindowResize, false)
+      window.addEventListener('scroll', handleWindowResize, false)
       window.removeEventListener('click', handleDocumentClick, false)
       window.removeEventListener('touchend', handleDocumentClick, false)
       window.removeEventListener('mousemove', handleMouseMoveResize, false)
@@ -121,10 +117,8 @@ const component = ({
 
   const calculateContentPosition = () => {
     if (!visible) return
-    // if (process.env.node_env !== 'production') {
 
-    // }
-    if (!triggerRef.current) {
+    if (!triggerRef.current || !contentRef.current) {
       return
       // console.error(
       //   `
@@ -144,68 +138,65 @@ const component = ({
 
     if (type === 'dropdown' || type === 'tooltip' || type === 'popover') {
       if (align === 'top' || align === 'bottom') {
+        const positionTop =
+          triggerDimensions.top - offsetY - contentDimensions.height
+        const positionBottom = triggerDimensions.bottom + offsetY
+
         if (align === 'top') {
-          overlayPosition.top =
-            triggerDimensions.top +
-            offsetY +
-            window.scrollY -
-            contentDimensions.height
+          overlayPosition.top = positionTop >= 0 ? positionTop : positionBottom
         } else {
           overlayPosition.top =
-            triggerDimensions.bottom + offsetY + window.scrollY
+            positionBottom + contentDimensions.height <= window.innerHeight
+              ? positionBottom
+              : positionTop
         }
 
         switch (alignX) {
           case 'right':
             overlayPosition.left =
-              triggerDimensions.right +
-              offsetX +
-              window.scrollX -
-              contentDimensions.width
+              triggerDimensions.right + offsetX - contentDimensions.width
             break
           case 'center':
             overlayPosition.left =
               triggerDimensions.left +
-              (triggerDimensions.right - triggerDimensions.left) / 2 +
-              window.scrollX -
+              (triggerDimensions.right - triggerDimensions.left) / 2 -
               contentDimensions.width / 2
-
             break
           case 'left':
           default:
-            overlayPosition.left =
-              triggerDimensions.left - offsetX + window.scrollX
+            overlayPosition.left = triggerDimensions.left - offsetX
         }
       } else if (align === 'left' || align === 'right') {
+        const positionLeft =
+          triggerDimensions.left - offsetX - contentDimensions.width
+
+        const positionRight = triggerDimensions.right + offsetX
+
         if (align === 'left') {
           overlayPosition.left =
-            triggerDimensions.left -
-            offsetX +
-            window.scrollX -
-            contentDimensions.width
+            positionLeft >= 0 ? positionLeft : positionRight
         } else {
           overlayPosition.left =
-            triggerDimensions.right + offsetX + window.scrollX
+            positionRight + contentDimensions.width <= window.innerWidth
+              ? positionRight
+              : positionLeft
         }
+
         switch (alignY) {
           case 'top':
-            overlayPosition.top =
-              triggerDimensions.top - offsetY + window.scrollY
+            overlayPosition.top = triggerDimensions.top + offsetY
             break
           case 'center':
             overlayPosition.top =
-              triggerDimensions.top +
-              (triggerDimensions.bottom - triggerDimensions.top) / 2 +
-              window.scrollY -
+              triggerDimensions.top -
+              offsetY +
+              (triggerDimensions.bottom - triggerDimensions.top) / 2 -
               contentDimensions.height / 2
             break
           case 'bottom':
           default:
             overlayPosition.top =
-              triggerDimensions.bottom +
-              offsetY +
-              window.scrollY -
-              contentDimensions.height
+              triggerDimensions.bottom - offsetY - contentDimensions.height
         }
       }
     } else if (type === 'modal') {
@@ -217,8 +208,8 @@ const component = ({
           overlayPosition.left = offsetX
         case 'center':
         default:
-          overlayPosition.left = '50%'
-          overlayPosition.transformX = 'translateX(-50%)'
+          overlayPosition.left =
+            window.innerWidth / 2 - contentDimensions.width / 2
           break
       }
       switch (alignY) {
@@ -226,8 +217,8 @@ const component = ({
           overlayPosition.top = offsetY
           break
         case 'center':
-          overlayPosition.top = '50%'
-          overlayPosition.transformY = 'translateY(-50%)'
+          overlayPosition.top =
+            window.innerHeight / 2 - contentDimensions.height / 2
           break
         case 'bottom':
         default:
@@ -236,7 +227,12 @@ const component = ({
       }
     }
 
-    setOverlayPosition(overlayPosition)
+    // ADD POSITION STYLES TO CONTENT
+    contentRef.current.style.position = overlayPosition.position
+    contentRef.current.style.top = value(rootSize, [overlayPosition.top])
+    contentRef.current.style.bottom = value(rootSize, [overlayPosition.bottom])
+    contentRef.current.style.left = value(rootSize, [overlayPosition.left])
+    contentRef.current.style.right = value(rootSize, [overlayPosition.right])
   }
 
   const handleDocumentClick = (e) => {
@@ -276,27 +272,6 @@ const component = ({
   const handleWindowResize = throttle(calculateContentPosition, throttleDelay)
   const handleMouseMoveResize = throttle(handleDocumentClick, throttleDelay)
 
-  const getTransformValue = () => {
-    let result = ``
-
-    if (overlayPosition.transformX) result += overlayPosition.transformX
-    if (overlayPosition.transformY) {
-      result += ' '
-      result += overlayPosition.transformY
-    }
-
-    return result
-  }
-
-  const POSITION_STYLE = {
-    position: overlayPosition.position,
-    top: value(rootSize, [overlayPosition.top]),
-    bottom: value(rootSize, [overlayPosition.bottom]),
-    left: value(rootSize, [overlayPosition.left]),
-    right: value(rootSize, [overlayPosition.right]),
-    transform: getTransformValue(),
-  }
-
   const passHandlers = openOn === 'manual' || closeOn === 'manual'
 
   return (
@@ -309,13 +284,11 @@ const component = ({
 
       {visible && (
         <Portal>
-          <Util style={POSITION_STYLE}>
-            {renderContent(children, {
-              [refName]: contentRef,
-              active: visible,
-              ...(passHandlers ? { showContent, hideContent } : {}),
-            })}
-          </Util>
+          {renderContent(children, {
+            [refName]: contentRef,
+            active: visible,
+            ...(passHandlers ? { showContent, hideContent } : {}),
+          })}
         </Portal>
       )}
     </>
