@@ -6,6 +6,7 @@ import Portal from '~/Portal'
 interface Props {
   children: React.ReactNode
   trigger: React.ReactNode
+  DOMLocation?: any
   refName?: string
   isOpen?: boolean
   openOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
@@ -31,6 +32,7 @@ type OverlayPosition = {
 const component = ({
   children,
   trigger,
+  DOMLocation,
   refName = 'ref',
   isOpen = false,
   openOn = 'click', // click | hover
@@ -283,7 +285,7 @@ const component = ({
       })}
 
       {visible && (
-        <Portal>
+        <Portal position={DOMLocation}>
           {renderContent(children, {
             [refName]: contentRef,
             active: visible,
