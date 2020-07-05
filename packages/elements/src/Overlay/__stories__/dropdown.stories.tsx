@@ -144,12 +144,65 @@ storiesOf('ELEMENTS | Overlay', module)
   })
   .add('Dropdown Left', () => {
     return (
-      <div style={{ position: 'absolute', left: 200, top: 300 }}>
+      <>
+        <Scroll />
+        <div
+          style={{
+            position: 'absolute',
+            left: 200,
+            top: 300,
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <ScrollX />
+          <Overlay
+            refName="innerRef"
+            alignY="top"
+            align="left"
+            trigger={(props) => <Trigger {...props} />}
+          >
+            <Menu />
+          </Overlay>
+          <Overlay
+            refName="innerRef"
+            alignY="center"
+            align="left"
+            trigger={(props) => <Trigger {...props} />}
+          >
+            <Menu />
+          </Overlay>
+          <Overlay
+            closeOn="hover"
+            refName="innerRef"
+            alignY="bottom"
+            align="left"
+            trigger={(props) => <Trigger {...props} />}
+          >
+            <Menu />
+          </Overlay>
+          <ScrollX />
+        </div>
+        <Scroll />
+      </>
+    )
+  })
+  .add('Dropdown Right', () => {
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          left: 200,
+          top: 300,
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
         <ScrollX />
         <Overlay
           refName="innerRef"
           alignY="top"
-          align="left"
+          align="right"
           trigger={(props) => <Trigger {...props} />}
         >
           <Menu />
@@ -157,7 +210,7 @@ storiesOf('ELEMENTS | Overlay', module)
         <Overlay
           refName="innerRef"
           alignY="center"
-          align="left"
+          align="right"
           trigger={(props) => <Trigger {...props} />}
         >
           <Menu />
@@ -166,7 +219,7 @@ storiesOf('ELEMENTS | Overlay', module)
           closeOn="hover"
           refName="innerRef"
           alignY="bottom"
-          align="left"
+          align="right"
           trigger={(props) => <Trigger {...props} />}
         >
           <Menu />
