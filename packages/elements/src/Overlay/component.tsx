@@ -9,7 +9,7 @@ interface Props {
   DOMLocation?: any
   refName?: string
   isOpen?: boolean
-  openOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
+  openOn?: 'click' | 'hover' | 'manual'
   closeOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
   type?: 'dropdown' | 'tooltip' | 'popover' | 'modal'
   position?: 'absolute' | 'fixed' | 'relative' | 'static'
