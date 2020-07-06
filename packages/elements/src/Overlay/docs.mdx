@@ -9,7 +9,7 @@ route: /components/overlay
 A component to be used for creating Dropdowns, Tooltips, Popovers, Modals
 or any other element where you need to show an overlay element(s).
 
-It uses internally `Portal` and `Util` components. So it will append children
+It uses internally `Portal` component. So, by default, it will append children
 to the end of DOM right before the end of `</body>` element in your app.
 
 ## Examples
@@ -18,17 +18,22 @@ TODO
 
 ## Properties
 
-Below are default propertes.
+Below are propertes which can be passed to component.
 
-| Property Name | Type                                   | Default Value | Description                                           |
-| ------------- | -------------------------------------- | ------------- | ----------------------------------------------------- |
-| openOn        | `click`,`hover`                        | `click`       | event when should be overlay opened                   |
-| closeOn       | `click`,`triggerClick`,`hover`         | `click`       | event when should be overlay closed                   |
-| type          | `dropdown`,`tooltip`,`popover`,`modal` | `dropdown`    | type of overlay, based on this it calculates position |
-| align         | `top`,`left`,`bottom`,`right`          | `bottom`      |                                                       |
-| position      | `absolute`,`fixed`,`relative`,`static` | `absolute`    |
-| alignX        | `left`,`center`,`right`                | `left`        |                                                       |
-| alignY        | `top`,`center`,`bottom`                | `bottom`      |                                                       |
-| offsetX       | `number`                               | `0`           |                                                       |
-| offsetY       | `number`                               | `0`           |                                                       |
-| throttleDelay | `number`                               | `200`         | optimization value for window listeners               |
+| Property Name | Type                                          | Default Value   | Description                                                              |
+| ------------- | --------------------------------------------- | --------------- | ------------------------------------------------------------------------ |
+| children      | `ReactNode` with accepting `ref` (by default) |                 | children to be rendered when is `Overlay` set to visible                 |
+| trigger       | `ReactNode` with accepting `ref` (by default) |                 | an element which triggers opening and closing `Overlay`                  |
+| refName       | `children` and `trigger` `ref` name props     | `ref`           | when component doesn't accept `ref` you can change it e.g. to `innerRef` |
+| isOpen        | boolean                                       | `false`         | initial value whether is Overlay visible                                 |
+| openOn        | `click`, `hover`, `manual`                    | `click`         | event when should be overlay opened                                      |
+| closeOn       | `click`, `triggerClick`, `hover`, `manual`    | `click`         | event when should be overlay closed                                      |
+| type          | `dropdown`,`tooltip`,`popover`,`modal`        | `dropdown`      | type of overlay, based on this it calculates position                    |
+| align         | `top`,`left`,`bottom`,`right`                 | `bottom`        | sets from which side of trigger should be children aligned               |
+| position      | `absolute`,`fixed`,`relative`,`static`        | `absolute`      | css position of children                                                 |
+| alignX        | `left`,`center`,`right`                       | `left`          | used when `align` is set to `top` or `bottom`                            |
+| alignY        | `top`,`center`,`bottom`                       | `bottom`        | used when `align` is set to `left` or `right`                            |
+| offsetX       | `number`                                      | `0`             | offset from trigger on axis X                                            |
+| offsetY       | `number`                                      | `0`             | offset from trigger on axis Y                                            |
+| throttleDelay | `number`                                      | `200`           | optimization value for window listeners                                  |
+| DOMLocation   | HTML element with `appendChild` to be called  | `document.body` | element where will be portal rendered                                    |

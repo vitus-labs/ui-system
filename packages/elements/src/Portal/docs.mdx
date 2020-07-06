@@ -7,7 +7,8 @@ route: /components/portal
 # Portal
 
 Component which uses [React Portal API](https://reactjs.org/docs/portals.html)
-in the background and appends children into `div` in the end of document `<body>`.
+in the background and by default appends children into `div` in the end
+of document `<body>`.
 
 ## Examples
 
@@ -17,6 +18,8 @@ TODO
 
 Below are default propertes.
 
-| Property Name | Type | Default Value | Description |
-| ------------- | ---- | ------------- | ----------- |
-| children      | any  |               |             |
+| Property Name | Type                                         | Default Value   | Description                                       |
+| ------------- | -------------------------------------------- | --------------- | ------------------------------------------------- |
+| children      | any                                          |                 | a content to be rendered                          |
+| position      | HTML element with `appendChild` to be called | `document.body` | a place where will be `Portal` rendered in DOM    |
+| tag           | valid HTML tag                               | `div`           | a tag for rendering Portal component root element |
