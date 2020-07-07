@@ -7,8 +7,8 @@ route: /components/element
 import { Fragment } from 'react'
 import { Playground } from 'docz'
 // import { Wrapper, Inner } from './__stories__/components'
-import Button from './__stories__/Button.js'
-import TextField from './__stories__/Textfield.js'
+// import Button from './__stories__/Button.js'
+// import TextField from './__stories__/Textfield.js'
 import { ThemeProvider } from 'styled-components'
 import Element from '.'
 
@@ -37,19 +37,19 @@ to `span` element so it is HTML valid.
         sm: 576,
         md: 768,
         lg: 992,
-        xl: 1200
-      }
+        xl: 1200,
+      },
     }
     return (
       <ThemeProvider theme={theme}>
         <Fragment>
           <h4>Simple Element example</h4>
-          <Button />
+          {/* <Button />
           <h4>TextField example</h4>
           <TextField
             label="This is a Text Field"
             placeholder="Type something..."
-          />
+          /> */}
         </Fragment>
       </ThemeProvider>
     )
@@ -85,7 +85,7 @@ _direction_, _horizontal_ and _vertical_ alignment by using props `contentDirect
 you can use the same props but changed prefix according to its name
 (`beforeContentDirection` etc.) See the examples below.
 
-You don't need to write flex css styles and thing aboyt proper styling when changing
+You don't need to write flex css styles and think about proper styling when changing
 direction anymore.
 
 <!-- // <Playground>
@@ -216,7 +216,7 @@ so you don't need to import it by yourself (and safe one line of code):
 
 ```jsx
 <Element
-  contentCss={css =>
+  contentCss={(css) =>
     css`
       text-align: center;
     `
@@ -230,29 +230,31 @@ The same rules applies to all `css` properties.
 
 Below are default propertes.
 
-| Property Name              | Type                                                 | Default Value | Description                                                                |
-| -------------------------- | ---------------------------------------------------- | ------------- | -------------------------------------------------------------------------- |
-| tag                        | any                                                  |               | HTML valid tag                                                             |
-| block                      | boolean                                              | false         | Makes element behave like block element                                    |
-| passProps                  | string[]                                             | []            | Keys of props to be passed to its children, beforeContent and afterContent |
-| label                      | any                                                  | -             |                                                                            |
-| children                   | any                                                  | -             |                                                                            |
-| beforeContent              | any                                                  | -             |                                                                            |
-| afterContent               | any                                                  | -             |                                                                            |
-| equalCols                  | boolean                                              | false         |                                                                            |
-| vertical                   | boolean                                              | false         |                                                                            |
-| alignX                     | `left`,`center`,`right`,`spaceBetween`,`spaceAround` |               |                                                                            |
-| alignY                     | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` |               |                                                                            |
-| css                        | `string`, `func`                                     |               |                                                                            |
-| contentCss                 | `string`, `func`                                     |               |                                                                            |
-| beforeContentCss           | `string`, `func`                                     |               |                                                                            |
-| afterContentCss            | `string`, `func`                                     |               |                                                                            |
-| contentDirection           | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
-| contentAlignX              | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `left`        |                                                                            |
-| contentAlignY              | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |
-| beforeContentDirection     | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
-| beforeContentAlignX        | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `left`        |                                                                            |
-| beforeContentAlignY        | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |
-| afterafterContentDirection | `inline`,`rows`,`reverseRows`,`reverseInline`        | `inline`      |                                                                            |
-| afterContentAlignX         | `left`,`center`,`right`,`spaceBetween`,`spaceAround` | `right`       |                                                                            |
-| afterContentAlignY         | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround` | `center`      |                                                                            |
+| Property Name          | Type                                                  | Default Value | Description                                                                            |
+| ---------------------- | ----------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| tag                    | HTML valid tag                                        |               | HTML valid tag                                                                         |
+| innerRef               | React `ref` name, can be used as an alternative to it |               | React `ref`                                                                            |
+| label                  | `ReactNode`                                           | -             | Content to be rendered, priorities `children` => `contnent` => `label`                 |
+| children               | `ReactNode`                                           | -             | Content to be rendered, priorities `children` => `contnent` => `label`                 |
+| content                | `ReactNode`                                           | -             | Content to be rendered, priorities `children` => `contnent` => `label`                 |
+| block                  | boolean                                               | false         | Makes element behave like block element and inside `flex` element make it `100% width` |
+| equalCols              | boolean                                               | false         | Makes all three boxes of equal size                                                    |
+| gap                    | number                                                |               | Margin between elements before - content - after                                       |
+| beforeContent          | `ReactNode`                                           | -             | A content to be rendered before main content                                           |
+| afterContent           | `ReactNode`                                           | -             | A content to be rendered after main content                                            |
+| vertical               | boolean                                               | false         | Makes elements inside vertically aligned                                               |
+| alignX                 | `left`,`center`,`right`,`spaceBetween`,`spaceAround`  |               | alignment on axis X of elements inside _wrapper_ content component                     |
+| alignY                 | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround`  |               | alignment on axis Y of elements inside _wrapper_ content component                     |
+| css                    | `string`, `func`                                      |               | css styles to be passed to _wrapper_ element component                                 |
+| contentCss             | `string`, `func`                                      |               | css styles to be passed to _main_ content component                                    |
+| beforeContentCss       | `string`, `func`                                      |               | css styles to be passed to _before_ content component                                  |
+| afterContentCss        | `string`, `func`                                      |               | css styles to be passed to _after_ content component                                   |
+| contentDirection       | `inline`,`rows`,`reverseRows`,`reverseInline`         | `inline`      | alignment of elements inside _main_ content component                                  |
+| contentAlignX          | `left`,`center`,`right`,`spaceBetween`,`spaceAround`  | `left`        | alignment on axis X of elements inside _main_ content component                        |
+| contentAlignY          | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround`  | `center`      | alignment on axis Y of elements inside _main_ content component                        |
+| beforeContentDirection | `inline`,`rows`,`reverseRows`,`reverseInline`         | `inline`      | alignment of elements inside _before_ content component                                |
+| beforeContentAlignX    | `left`,`center`,`right`,`spaceBetween`,`spaceAround`  | `left`        | alignment on axis X of elements inside _before_ content component                      |
+| beforeContentAlignY    | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround`  | `center`      | alignment on axis Y of elements inside _before_ content component                      |
+| afterContentDirection  | `inline`,`rows`,`reverseRows`,`reverseInline`         | `inline`      | alignment of elements inside _after_ content component                                 |
+| afterContentAlignX     | `left`,`center`,`right`,`spaceBetween`,`spaceAround`  | `right`       | alignment on axis X of elements inside _after_ content component                       |
+| afterContentAlignY     | `top`,`center`,`bottom`,`spaceBetween`,`spaceAround`  | `center`      | alignment on axis Y of elements inside _after_ content component                       |

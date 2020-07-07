@@ -1,7 +1,7 @@
 type isEmpty = null | undefined
 type ContentAlignX = 'left' | 'center' | 'right' | isEmpty
 type ContentAlignY = 'top' | 'center' | 'bottom' | isEmpty
-type ContentDirection = 'inline' | 'vertical' | isEmpty
+type ContentDirection = 'inline' | 'rows' | isEmpty
 
 export type Ref = HTMLElement
 

@@ -60,11 +60,12 @@ module.exports = {
           requireLast: false,
         },
         singleline: {
-          delimiter: 'none',
+          delimiter: 'semi',
           requireLast: false,
         },
       },
     ],
+    'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
     'react/jsx-filename-extension': [
       1,

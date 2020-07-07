@@ -9,7 +9,15 @@ export default config({
     'Getting Started',
     {
       name: 'Components',
-      menu: ['Element', 'Iterator', 'List', 'Text', 'Overlay', 'Portal', 'Util']
-    }
-  ]
+      menu: [
+        'Element',
+        'Iterator',
+        'List',
+        'Text',
+        'Overlay',
+        'Portal',
+        'Util',
+      ],
+    },
+  ],
 })

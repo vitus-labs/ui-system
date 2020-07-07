@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-ignore
 import { useContext, useMemo } from 'react'
 import { config, isEmpty } from '@vitus-labs/core'
 import { sortBreakpoints } from './mediaQueries'
