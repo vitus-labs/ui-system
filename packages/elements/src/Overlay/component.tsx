@@ -122,13 +122,6 @@ const component = ({
 
     if (!triggerRef.current || !contentRef.current) {
       return
-      // console.error(
-      //   `
-      //   Error in 'vitus-labs/elements/Overlay'.
-      //   Trigger is not correctly using ref. Therefore cannot
-      //   be calculated position of content
-      //   `
-      // )
     }
 
     const triggerDimensions = triggerRef.current.getBoundingClientRect()
@@ -208,6 +201,7 @@ const component = ({
           break
         case 'left':
           overlayPosition.left = offsetX
+          break
         case 'center':
         default:
           overlayPosition.left =
