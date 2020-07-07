@@ -69,7 +69,7 @@ export default {
 
 export const exampleDropdown = () => {
   return (
-    <Overlay refName="innerRef" trigger={Trigger}>
+    <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
       <Menu />
     </Overlay>
   )
@@ -234,6 +234,12 @@ export const DropdownRight = () => (
 
 export const DropdownInsideElement = () => (
   <EqualElement
+    block
+    beforeContent={
+      <Overlay refName="innerRef" alignX="left" trigger={Trigger}>
+        <Menu />
+      </Overlay>
+    }
     afterContent={
       <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
         <Menu />
