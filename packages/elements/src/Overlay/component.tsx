@@ -62,24 +62,24 @@ const component = ({
       closeOn === 'triggerClick'
     ) {
       window.addEventListener('click', handleDocumentClick, false)
-      window.addEventListener('touchend', handleDocumentClick, false)
     }
 
     if (openOn === 'hover' || closeOn === 'hover') {
-      window.addEventListener('mousemove', handleMouseMoveResize, false)
+      window.addEventListener('mousemove', handleMouseMove, false)
     }
 
-    window.addEventListener('resize', handleWindowResize, false)
-    window.addEventListener('scroll', handleWindowResize, false)
+    window.addEventListener('resize', handleWindow, false)
+    window.addEventListener('scroll', handleWindow, false)
+    window.addEventListener('scroll', handleMouseMove, false)
 
     return () => {
-      window.removeEventListener('resize', handleWindowResize, false)
-      window.addEventListener('scroll', handleWindowResize, false)
+      window.removeEventListener('resize', handleWindow, false)
+      window.removeEventListener('scroll', handleWindow, false)
+      window.removeEventListener('scroll', handleMouseMove, false)
       window.removeEventListener('click', handleDocumentClick, false)
-      window.removeEventListener('touchend', handleDocumentClick, false)
-      window.removeEventListener('mousemove', handleMouseMoveResize, false)
+      window.removeEventListener('mousemove', handleMouseMove, false)
     }
-  })
+  }, [openOn, closeOn, visible])
 
   const observeTrigger = (e) => {
     if (e && e.target && triggerRef.current) {
@@ -137,6 +137,10 @@ const component = ({
           triggerDimensions.top - offsetY - contentDimensions.height
         const positionBottom = triggerDimensions.bottom + offsetY
 
+        const positionLeft = triggerDimensions.left - offsetX
+        const positionRight =
+          triggerDimensions.right + offsetX - contentDimensions.width
+
         if (align === 'top') {
           overlayPosition.top = positionTop >= 0 ? positionTop : positionBottom
         } else {
@@ -149,7 +153,7 @@ const component = ({
         switch (alignX) {
           case 'right':
             overlayPosition.left =
-              triggerDimensions.right + offsetX - contentDimensions.width
+              positionRight >= 0 ? positionRight : positionLeft
             break
           case 'center':
             overlayPosition.left =
@@ -159,13 +163,19 @@ const component = ({
             break
           case 'left':
           default:
-            overlayPosition.left = triggerDimensions.left - offsetX
+            overlayPosition.left =
+              positionLeft + contentDimensions.width <= window.innerWidth
+                ? positionLeft
+                : positionRight
         }
       } else if (align === 'left' || align === 'right') {
         const positionLeft =
           triggerDimensions.left - offsetX - contentDimensions.width
-
         const positionRight = triggerDimensions.right + offsetX
+
+        const positionTop = triggerDimensions.top + offsetY
+        const positionBottom =
+          triggerDimensions.bottom - offsetY - contentDimensions.height
 
         if (align === 'left') {
           overlayPosition.left =
@@ -179,7 +189,10 @@ const component = ({
 
         switch (alignY) {
           case 'top':
-            overlayPosition.top = triggerDimensions.top + offsetY
+            overlayPosition.top =
+              positionTop + contentDimensions.height <= window.innerHeight
+                ? positionTop
+                : positionBottom
             break
           case 'center':
             overlayPosition.top =
@@ -191,7 +204,7 @@ const component = ({
           case 'bottom':
           default:
             overlayPosition.top =
-              triggerDimensions.bottom - offsetY - contentDimensions.height
+              positionBottom >= 0 ? positionBottom : positionTop
         }
       }
     } else if (type === 'modal') {
@@ -208,6 +221,7 @@ const component = ({
             window.innerWidth / 2 - contentDimensions.width / 2
           break
       }
+
       switch (alignY) {
         case 'top':
           overlayPosition.top = offsetY
@@ -253,6 +267,10 @@ const component = ({
         }
       }
 
+      if (closeOn === 'hover' && e.type === 'scroll') {
+        hideContent()
+      }
+
       if (closeOn === 'click' && e.type === 'click') {
         hideContent()
       }
@@ -265,8 +283,8 @@ const component = ({
     }
   }
 
-  const handleWindowResize = throttle(calculateContentPosition, throttleDelay)
-  const handleMouseMoveResize = throttle(handleDocumentClick, throttleDelay)
+  const handleWindow = throttle(calculateContentPosition, throttleDelay)
+  const handleMouseMove = throttle(handleDocumentClick, throttleDelay)
 
   const passHandlers = openOn === 'manual' || closeOn === 'manual'
 

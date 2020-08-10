@@ -46,6 +46,7 @@ module.exports = {
       },
     ],
     'prettier/prettier': 'error',
+    'no-use-before-define': 'off',
     'no-unused-vars': 'off',
     'no-useless-constructor': 'off',
     'no-shadow': 'off',
@@ -65,6 +66,7 @@ module.exports = {
         },
       },
     ],
+    'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
     'react/jsx-filename-extension': [

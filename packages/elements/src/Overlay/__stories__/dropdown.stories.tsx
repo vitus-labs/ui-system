@@ -170,7 +170,7 @@ export const DropdownLeft = () => (
       style={{
         position: 'absolute',
         left: 200,
-        top: 300,
+        top: 800,
         display: 'flex',
         flexDirection: 'row',
       }}
@@ -188,7 +188,6 @@ export const DropdownLeft = () => (
         <Menu />
       </Overlay>
       <Overlay
-        closeOn="hover"
         refName="innerRef"
         alignY="bottom"
         align="left"
@@ -248,4 +247,59 @@ export const DropdownInsideElement = () => (
   >
     some content here
   </EqualElement>
+)
+
+export const DropdownEdgePositions = () => (
+  <div
+    style={{
+      position: 'absolute',
+      left: 200,
+      top: 500,
+      display: 'flex',
+      flexDirection: 'row',
+    }}
+  >
+    <ScrollX />
+    <ScrollX />
+    <Overlay refName="innerRef" alignY="top" align="bottom" trigger={Trigger}>
+      <Menu />
+    </Overlay>
+    <Overlay refName="innerRef" alignY="center" align="right" trigger={Trigger}>
+      <Menu />
+    </Overlay>
+    <Overlay
+      closeOn="hover"
+      refName="innerRef"
+      alignY="bottom"
+      align="right"
+      trigger={Trigger}
+    >
+      <Menu />
+    </Overlay>
+    <ScrollX />
+    <ScrollX />
+  </div>
+)
+
+export const DropdownHandleHover = () => (
+  <>
+    <ScrollY />
+    <ScrollY />
+    <ScrollX />
+    <ScrollX />
+    <Overlay
+      refName="innerRef"
+      openOn="hover"
+      closeOn="hover"
+      alignY="top"
+      align="bottom"
+      trigger={Trigger}
+    >
+      <Menu />
+    </Overlay>
+    <ScrollX />
+    <ScrollX />
+    <ScrollY />
+    <ScrollY />
+  </>
 )
