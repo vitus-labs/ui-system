@@ -74,10 +74,10 @@ const Element = forwardRef<Reference, Partial<Props>>(
     )
 
     const COMMON_PROPS = {
-      ref,
-      as: tag,
       ...props,
       ...debugProps,
+      ref,
+      as: tag,
     }
 
     if (!needsFix || config.isNative) {

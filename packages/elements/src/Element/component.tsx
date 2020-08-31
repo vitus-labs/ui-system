@@ -80,7 +80,7 @@ const Element = forwardRef<any, Props>(
       beforeContentAlignY = 'center',
 
       afterContentDirection = 'inline',
-      afterContentAlignX = 'right',
+      afterContentAlignX = 'left',
       afterContentAlignY = 'center',
 
       ...props
