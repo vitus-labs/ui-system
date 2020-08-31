@@ -5,7 +5,7 @@ import Styled from './styled'
 
 const KEYWORDS = [
   'parentDirection',
-  'contentDirection',
+  'direction',
   'alignX',
   'alignY',
   'equalCols',
@@ -17,7 +17,7 @@ type Props = {
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  contentDirection: Direction
+  direction: Direction
   alignX: AlignX
   alignY: AlignY
   equalCols: Booltype
@@ -30,7 +30,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
     {
       tag,
       parentDirection,
-      contentDirection,
+      direction,
       alignX,
       alignY,
       equalCols,
@@ -40,9 +40,9 @@ const Element = forwardRef<Reference, Partial<Props>>(
     },
     ref
   ) => {
-    const localProps = {
+    const stylingProps = {
       parentDirection,
-      contentDirection,
+      direction,
       alignX,
       alignY,
       equalCols,
@@ -56,12 +56,12 @@ const Element = forwardRef<Reference, Partial<Props>>(
         optimizeTheme({
           breakpoints: sortedBreakpoints,
           keywords: KEYWORDS,
-          props: localProps,
+          props: stylingProps,
         }),
       [
         sortedBreakpoints,
         parentDirection,
-        contentDirection,
+        direction,
         alignX,
         alignY,
         equalCols,

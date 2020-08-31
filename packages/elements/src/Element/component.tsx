@@ -8,8 +8,6 @@ import {
 } from './utils'
 import { AlignX, AlignY, Direction, Booltype } from '~/types'
 
-// type Reference = HTMLElement
-
 type ResponsiveBoolean = boolean | Array<Booltype> | Record<string, boolean>
 type Responsive =
   | number
@@ -36,6 +34,7 @@ type Props = Partial<{
   contentAlignY: AlignY
   beforeContentAlignY: AlignY
   afterContentAlignY: AlignY
+  direction: Direction
   contentDirection: Direction
   beforeContentDirection: Direction
   afterContentDirection: Direction
@@ -44,7 +43,8 @@ type Props = Partial<{
   contentCss: any
   beforeContentCss: any
   afterContentCss: any
-}>
+}> &
+  Record<string, any>
 
 const Element = forwardRef<any, Props>(
   (
@@ -62,6 +62,7 @@ const Element = forwardRef<any, Props>(
       gap,
 
       vertical,
+      direction = 'inline',
       alignX = 'left',
       alignY = 'center',
 
@@ -86,13 +87,19 @@ const Element = forwardRef<any, Props>(
     },
     ref
   ) => {
+    // --------------------------------------------------------
+    // check if should render only single element
+    // --------------------------------------------------------
     const shouldBeEmpty = useMemo(
       () =>
         getShouldBeEmpty(tag, config.isWeb) || props.dangerouslySetInnerHTML,
       [tag, props.dangerouslySetInnerHTML]
     )
 
-    const sharedProps = {
+    // --------------------------------------------------------
+    // common wrapper props
+    // --------------------------------------------------------
+    const WRAPPER_PROPS = {
       ref: ref || innerRef,
       extendCss: css,
       tag,
@@ -102,8 +109,14 @@ const Element = forwardRef<any, Props>(
       alignY: contentAlignY,
     }
 
-    if (shouldBeEmpty) return <Wrapper {...sharedProps} {...props} />
+    // --------------------------------------------------------
+    // return simple/empty element like input
+    // --------------------------------------------------------
+    if (shouldBeEmpty) return <Wrapper {...WRAPPER_PROPS} {...props} />
 
+    // --------------------------------------------------------
+    // if not single element, calculate values
+    // --------------------------------------------------------
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
     const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
@@ -111,20 +124,25 @@ const Element = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    const wrapperAlignX = isSimple && contentAlignX ? contentAlignX : alignX
-    const wrapperAlignY = isSimple && contentAlignY ? contentAlignY : alignY
-    let wrapperDirection =
-      isSimple && contentDirection ? contentDirection : 'inline'
+    let wrapperDirection: Direction = 'inline'
+    let wrapperAlignX: AlignX = alignX
+    let wrapperAlignY: AlignY = alignY
+
+    if (isSimple) {
+      if (contentDirection) wrapperDirection = contentDirection
+      if (contentAlignX) wrapperAlignX = contentAlignX
+      if (contentAlignY) wrapperAlignY = contentAlignY
+    }
 
     if (vertical) wrapperDirection = transformVerticalProp(vertical)
 
     return (
       <Wrapper
-        {...sharedProps}
-        contentDirection={wrapperDirection}
+        {...WRAPPER_PROPS}
+        {...props}
+        direction={wrapperDirection}
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}
-        {...props}
       >
         {beforeContent && (
           <Content
@@ -132,12 +150,11 @@ const Element = forwardRef<any, Props>(
             contentType="before"
             parentDirection={wrapperDirection}
             extendCss={beforeContentCss}
-            contentDirection={beforeContentDirection}
+            direction={beforeContentDirection}
             alignX={beforeContentAlignX}
             alignY={beforeContentAlignY}
             equalCols={equalCols}
             gap={gap}
-            data-element="before"
           >
             {renderContent(beforeContent)}
           </Content>
@@ -149,12 +166,11 @@ const Element = forwardRef<any, Props>(
             contentType="content"
             parentDirection={wrapperDirection}
             extendCss={contentCss}
-            contentDirection={contentDirection}
+            direction={contentDirection}
             alignX={contentAlignX}
             alignY={contentAlignY}
             equalCols={equalCols}
             isContent
-            data-element="content"
           >
             {renderContent(CHILDREN)}
           </Content>
@@ -168,12 +184,11 @@ const Element = forwardRef<any, Props>(
             contentType="after"
             parentDirection={wrapperDirection}
             extendCss={afterContentCss}
-            contentDirection={afterContentDirection}
+            direction={afterContentDirection}
             alignX={afterContentAlignX}
             alignY={afterContentAlignY}
             equalCols={equalCols}
             gap={gap}
-            data-element="after"
           >
             {renderContent(afterContent)}
           </Content>
