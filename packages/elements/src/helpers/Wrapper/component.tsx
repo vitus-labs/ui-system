@@ -46,6 +46,13 @@ const Element = forwardRef<Reference, Partial<Props>>(
       equalCols,
     }
 
+    const debugProps =
+      process.env.NODE_ENV !== 'production'
+        ? {
+            'data-vb-element': 'Element',
+          }
+        : {}
+
     const { sortedBreakpoints } = vitusContext()
 
     const normalizedTheme = useMemo(
@@ -66,9 +73,16 @@ const Element = forwardRef<Reference, Partial<Props>>(
       ]
     )
 
+    const COMMON_PROPS = {
+      ref,
+      as: tag,
+      ...props,
+      ...debugProps,
+    }
+
     if (!needsFix || config.isNative) {
       return (
-        <Styled ref={ref} as={tag} {...props} $element={normalizedTheme}>
+        <Styled {...COMMON_PROPS} $element={normalizedTheme}>
           {children}
         </Styled>
       )
@@ -76,9 +90,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     return (
       <Styled
-        ref={ref}
-        as={tag}
-        {...props}
+        {...COMMON_PROPS}
         $needsFix
         $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
       >

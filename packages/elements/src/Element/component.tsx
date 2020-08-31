@@ -107,6 +107,7 @@ const Element = forwardRef<any, Props>(
       contentDirection,
       alignX: contentAlignX,
       alignY: contentAlignY,
+      as: undefined, // reset styled-components `as` prop
     }
 
     // --------------------------------------------------------
@@ -124,7 +125,7 @@ const Element = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    let wrapperDirection: Direction = 'inline'
+    let wrapperDirection: Direction = direction
     let wrapperAlignX: AlignX = alignX
     let wrapperAlignY: AlignY = alignY
 
@@ -138,8 +139,8 @@ const Element = forwardRef<any, Props>(
 
     return (
       <Wrapper
-        {...WRAPPER_PROPS}
         {...props}
+        {...WRAPPER_PROPS}
         direction={wrapperDirection}
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}

@@ -50,6 +50,13 @@ const Element = forwardRef<Reference, Partial<Props>>(
       extendCss,
     }
 
+    const debugProps =
+      process.env.NODE_ENV !== 'production'
+        ? {
+            'data-vb-element': props.contentType,
+          }
+        : {}
+
     const { sortedBreakpoints } = vitusContext()
     const normalizedTheme = useMemo(
       () =>
@@ -70,7 +77,15 @@ const Element = forwardRef<Reference, Partial<Props>>(
       ]
     )
 
-    return <Styled ref={ref} as={tag} $element={normalizedTheme} {...props} />
+    return (
+      <Styled
+        ref={ref}
+        as={tag}
+        $element={normalizedTheme}
+        {...debugProps}
+        {...props}
+      />
+    )
   }
 )
 
