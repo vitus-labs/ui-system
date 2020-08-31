@@ -1,6 +1,6 @@
 import React from 'react'
 import { config } from '@vitus-labs/core'
-import Element, { withEqualWidthBeforeAfter } from '../../Element'
+import Element, { withEqualSizeBeforeAfter } from '../../Element'
 import Overlay from '..'
 
 const Button = ({ innerRef, children, ...props }: any) => (
@@ -60,7 +60,7 @@ const ScrollX = config.styled.div`
   background-color: papayawhip;
 `
 
-const EqualElement = withEqualWidthBeforeAfter(Element)
+const EqualElement = withEqualSizeBeforeAfter(Element)
 
 export default {
   component: Overlay,
