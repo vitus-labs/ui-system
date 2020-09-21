@@ -1,21 +1,19 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Element from '~/Element'
 import { Wrapper, Inner } from './components'
 
 export default {
   component: Element,
-  title: `${Element.displayName}/Inline Element`,
+  title: `${Element.displayName}`,
 }
 
-export const inlineElement = () => (
+export const verticalElement = () => (
   <>
-    <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
-      <Inner />
-    </Wrapper>
-    <Wrapper block beforeContent={Inner} afterContent={Inner}>
+    <Wrapper vertical block beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -26,6 +24,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -36,6 +35,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -46,6 +46,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -56,6 +57,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -66,6 +68,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -76,6 +79,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -86,6 +90,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -96,6 +101,7 @@ export const inlineElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
+      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}

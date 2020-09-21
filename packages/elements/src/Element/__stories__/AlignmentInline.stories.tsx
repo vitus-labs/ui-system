@@ -1,19 +1,21 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import Element from '~/Element'
 import { Wrapper, Inner } from './components'
 
 export default {
   component: Element,
-  title: `${Element.displayName}/Vertical Element`,
+  title: `${Element.displayName}`,
 }
 
-export const verticalElement = () => (
+export const inlineElement = () => (
   <>
-    <Wrapper vertical block beforeContent={Inner} afterContent={Inner}>
+    <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
+      <Inner />
+    </Wrapper>
+    <Wrapper block beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -24,7 +26,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -35,7 +36,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -46,7 +46,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -57,7 +56,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -68,7 +66,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -79,7 +76,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -90,7 +86,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -101,7 +96,6 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
       block
       beforeContent={Inner}
       afterContent={Inner}

@@ -1,10 +1,43 @@
 import React from 'react'
-import { Container, Inner } from './Composition'
+import rocketstyle from '@vitus-labs/rocketstyle'
+import Element from '~/Element'
 
 export default {
-  component: Container,
-  title: 'ELEMENTS | Element',
+  component: Element,
+  title: `${Element.displayName}`,
 }
+
+const element = rocketstyle()({ component: Element, name: 'base' }).styles(
+  (css) => css`
+    ${({ $rocketstyle: t }) => css`
+      background-color: ${t.bgColor};
+    `}
+  `
+)
+
+const Container = element
+  .config({
+    name: 'base/Container',
+  })
+  .attrs({
+    block: true,
+    contentDirection: 'rows',
+  })
+  .theme({ bgColor: 'papayawhip' })
+  .styles(
+    (css) => css`
+      padding: 20px;
+      min-height: 100px;
+    `
+  )
+
+const Inner = element
+  .config({
+    name: 'base/Inner',
+  })
+  .theme({
+    bgColor: 'blue',
+  })
 
 export const composition = () => (
   <>
