@@ -4,7 +4,7 @@ import { Wrapper, Inner } from './components'
 
 export default {
   component: Element,
-  title: `${Element.displayName}`,
+  title: Element.displayName,
 }
 
 export const inlineElement = () => (

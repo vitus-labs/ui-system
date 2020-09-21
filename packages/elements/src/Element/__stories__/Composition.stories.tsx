@@ -4,7 +4,7 @@ import Element from '~/Element'
 
 export default {
   component: Element,
-  title: `${Element.displayName}`,
+  title: Element.displayName,
 }
 
 const element = rocketstyle()({ component: Element, name: 'base' }).styles(

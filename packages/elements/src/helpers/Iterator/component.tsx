@@ -1,4 +1,4 @@
-import { Component, Children } from 'react'
+import React, { Children } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
 const RESERVED_PROPS = [
@@ -19,38 +19,41 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   position,
 })
 
+type Static = {
+  isIterator: true
+  RESERVED_PROPS: typeof RESERVED_PROPS
+}
+
 type Props = {
-  children?: React.ReactNode
+  children?: React.ReactNodeArray
   component?: React.ReactNode
   data?: Array<string | number | object>
+  extendProps?: boolean
   itemKey?:
     | string
     | ((item: Record<string, any>, index: number) => string | number)
   itemProps?:
     | Record<string, any>
     | ((key: string | number) => Record<string, any>)
-  extendProps?: boolean
 }
 
-export default class Element extends Component<Props> {
-  static isIterator = true
-  static RESERVED_PROPS = RESERVED_PROPS
-  static displayName = 'vitus-labs/elements/Iterator'
-  static defaultProps = {
-    itemProps: {},
-  }
+const Component: React.FC<Props> & Static = (props) => {
+  const {
+    itemKey,
+    children,
+    component,
+    data,
+    extendProps,
+    itemProps = {},
+  } = props
 
-  getItemKey = (item, index) => {
-    const { itemKey } = this.props
-
+  const getItemKey = (item, index) => {
     if (typeof itemKey === 'function') return itemKey(item, index)
     if (typeof itemKey === 'string') return itemKey
     return item.key || item.id || item.itemId || index
   }
 
-  renderItems = () => {
-    const { children, component, data, extendProps, itemProps } = this.props
-
+  const renderItems = () => {
     const injectItemProps =
       typeof itemProps === 'function'
         ? (key) => itemProps(key)
@@ -59,12 +62,10 @@ export default class Element extends Component<Props> {
     // children have priority over props component + data
     if (children) {
       const firstItem = 0
-      // @ts-ignore
-      // TODO: add conditional types to fix this
       const lastItem = children.length - 1
 
       return Children.map(children, (item, i) => {
-        const key = this.getItemKey(item, i)
+        const key = getItemKey(item, i)
         const extendedProps = attachItemProps({
           key,
           position: i,
@@ -86,7 +87,7 @@ export default class Element extends Component<Props> {
       return data.map((item, i) => {
         if (typeof item !== 'object') {
           const key = i
-          const keyName = this.getItemKey(item, i) || 'children'
+          const keyName = getItemKey(item, i) || 'children'
           const extendedProps = attachItemProps({
             key,
             position: i,
@@ -106,7 +107,7 @@ export default class Element extends Component<Props> {
         // TODO: add conditional types to fix this
         const { component: itemComponent, ...restItem } = item
         const renderItem = itemComponent || component
-        const key = this.getItemKey(restItem, i)
+        const key = getItemKey(restItem, i)
         const extendedProps = attachItemProps({
           key,
           position: i,
@@ -128,7 +129,11 @@ export default class Element extends Component<Props> {
     return null
   }
 
-  render() {
-    return this.renderItems()
-  }
+  return renderItems()
 }
+
+Component.isIterator = true
+Component.RESERVED_PROPS = RESERVED_PROPS
+Component.displayName = 'vitus-labs/elements/Iterator'
+
+export default Component
