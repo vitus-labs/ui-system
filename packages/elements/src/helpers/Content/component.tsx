@@ -53,7 +53,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
-            'data-vb-element': props.contentType,
+            'data-vl-element': props.contentType,
           }
         : {}
 
