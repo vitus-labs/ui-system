@@ -1,5 +1,5 @@
 import { Content, Wrapper } from './helpers'
-import Element, { withEqualWidthBeforeAfter } from './Element'
+import Element, { withEqualSizeBeforeAfter } from './Element'
 import List, { withActiveState } from './List'
 import Overlay from './Overlay'
 import Portal from './Portal'
@@ -10,7 +10,7 @@ export {
   Content,
   Wrapper,
   Element,
-  withEqualWidthBeforeAfter,
+  withEqualSizeBeforeAfter,
   withActiveState,
   List,
   Overlay,
