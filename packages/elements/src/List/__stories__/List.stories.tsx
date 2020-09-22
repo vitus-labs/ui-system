@@ -61,7 +61,7 @@ export const dataAsAnArrayOfObjects = () => {
     )
   }
 
-  return <List data={data} component={Item} itemKey="name" />
+  return <List data={data} component={Item} />
 }
 
 export const ItemPropsAsAnObject = () => {
@@ -77,9 +77,7 @@ export const ItemPropsAsAnObject = () => {
     )
   }
 
-  return (
-    <List data={data} component={Item} itemKey="name" itemProps={itemProps} />
-  )
+  return <List data={data} component={Item} itemProps={itemProps} />
 }
 
 export const ItemPropsAsAFunction = () => {
@@ -95,9 +93,7 @@ export const ItemPropsAsAFunction = () => {
     )
   }
 
-  return (
-    <List data={data} component={Item} itemKey="name" itemProps={itemProps} />
-  )
+  return <List data={data} component={Item} itemProps={itemProps} />
 }
 
 export const renderCustomComponentInItem = () => {
