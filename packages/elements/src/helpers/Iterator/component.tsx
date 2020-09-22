@@ -19,15 +19,18 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   position,
 })
 
-type Static = {
-  isIterator: true
-  RESERVED_PROPS: typeof RESERVED_PROPS
-}
+type DataArrayObject = Partial<{
+  component: any
+  id: string | number
+  key: string | number
+  itemId: string | number
+}> &
+  Record<string, any>
 
 type Props = {
   children?: React.ReactNodeArray
   component?: React.ReactNode
-  data?: Array<string | number | object>
+  data?: Array<string | number | DataArrayObject>
   extendProps?: boolean
   itemKey?:
     | string
@@ -37,7 +40,7 @@ type Props = {
     | ((key: string | number) => Record<string, any>)
 }
 
-const Component: React.FC<Props> & Static = (props) => {
+const Component = (props: Props) => {
   const {
     itemKey,
     children,
@@ -56,7 +59,7 @@ const Component: React.FC<Props> & Static = (props) => {
   const renderItems = () => {
     const injectItemProps =
       typeof itemProps === 'function'
-        ? (key) => itemProps(key)
+        ? (props) => itemProps(props)
         : () => itemProps
 
     // children have priority over props component + data
@@ -85,6 +88,7 @@ const Component: React.FC<Props> & Static = (props) => {
       const lastItem = data.length - 1
 
       return data.map((item, i) => {
+        // if it's array of strings or numbers
         if (typeof item !== 'object') {
           const key = i
           const keyName = getItemKey(item, i) || 'children'
@@ -103,8 +107,7 @@ const Component: React.FC<Props> & Static = (props) => {
           })
         }
 
-        // @ts-ignore
-        // TODO: add conditional types to fix this
+        // if it's array of objects
         const { component: itemComponent, ...restItem } = item
         const renderItem = itemComponent || component
         const key = getItemKey(restItem, i)

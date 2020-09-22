@@ -1,5 +1,5 @@
 import React, { Children, isValidElement, cloneElement } from 'react'
-import { config, renderContent } from '@vitus-labs/core'
+import { config } from '@vitus-labs/core'
 import Styled from './styled'
 
 const AVAILABLE_TAGS = {
@@ -51,8 +51,12 @@ const Element: React.FC<Props> & { isText: boolean } = ({
     return (
       <Styled as={finalTag} {...props}>
         {Children.map(content, (child) => {
+          // @ts-ignore
           if (isValidElement(child) && child.type.isText === true) {
-            return cloneElement(child, { inline: true })
+            return cloneElement(child, {
+              // @ts-ignore
+              inline: true,
+            })
           }
           return child
         })}
