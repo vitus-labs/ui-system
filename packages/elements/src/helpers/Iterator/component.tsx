@@ -1,5 +1,6 @@
-import { Component, Children } from 'react'
-import { renderContent } from '@vitus-labs/core'
+import React, { Children } from 'react'
+import { renderContent, isEmpty } from '@vitus-labs/core'
+import type { Props, DataArrayObject } from './types'
 
 const RESERVED_PROPS = [
   'children',
@@ -10,8 +11,15 @@ const RESERVED_PROPS = [
   'extendProps',
 ]
 
-const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
-  key,
+const attachItemProps = ({
+  position,
+  firstItem,
+  lastItem,
+}: {
+  position: number
+  firstItem: number
+  lastItem: number
+}) => ({
   first: position === firstItem,
   last: position === lastItem,
   odd: position % 2 === 1,
@@ -19,116 +27,141 @@ const attachItemProps = ({ key, position, firstItem, lastItem }) => ({
   position,
 })
 
-type Props = {
-  children?: React.ReactNode
-  component?: React.ReactNode
-  data?: Array<string | number | object>
-  itemKey?:
-    | string
-    | ((item: Record<string, any>, index: number) => string | number)
-  itemProps?:
-    | Record<string, any>
-    | ((key: string | number) => Record<string, any>)
-  extendProps?: boolean
+type Static = {
+  isIterator: true
+  RESERVED_PROPS: typeof RESERVED_PROPS
 }
 
-export default class Element extends Component<Props> {
-  static isIterator = true
-  static RESERVED_PROPS = RESERVED_PROPS
-  static displayName = 'vitus-labs/elements/Iterator'
-  static defaultProps = {
-    itemProps: {},
-  }
+// @ts-ignore
+const Component: React.FC<Props> & Static = (props: Props) => {
+  const {
+    itemKey,
+    children,
+    component,
+    data,
+    extendProps,
+    itemProps = {},
+  } = props
 
-  getItemKey = (item, index) => {
-    const { itemKey } = this.props
-
-    if (typeof itemKey === 'function') return itemKey(item, index)
-    if (typeof itemKey === 'string') return itemKey
-    return item.key || item.id || item.itemId || index
-  }
-
-  renderItems = () => {
-    const { children, component, data, extendProps, itemProps } = this.props
-
+  const renderItems = () => {
     const injectItemProps =
       typeof itemProps === 'function'
-        ? (key) => itemProps(key)
+        ? (props) => itemProps(props)
         : () => itemProps
 
+    // --------------------------------------------------------
     // children have priority over props component + data
+    // --------------------------------------------------------
     if (children) {
       const firstItem = 0
-      // @ts-ignore
-      // TODO: add conditional types to fix this
       const lastItem = children.length - 1
 
       return Children.map(children, (item, i) => {
-        const key = this.getItemKey(item, i)
-        const extendedProps = attachItemProps({
-          key,
-          position: i,
-          firstItem,
-          lastItem,
-        })
+        if (!extendProps && !itemProps) return item
+
+        const extendedProps = extendProps
+          ? attachItemProps({
+              position: i,
+              firstItem,
+              lastItem,
+            })
+          : {}
 
         return renderContent(item, {
-          ...(extendProps ? extendedProps : {}),
+          key: i,
+          ...extendedProps,
           ...injectItemProps(extendedProps),
         })
       })
     }
 
+    // --------------------------------------------------------
+    // render props component + data
+    // --------------------------------------------------------
     if (component && Array.isArray(data)) {
       const firstItem = 0
       const lastItem = data.length - 1
 
       return data.map((item, i) => {
+        // --------------------------------------------------------
+        // if it's empty object, just return
+        // --------------------------------------------------------
+        if (typeof item === 'object' && isEmpty(item)) {
+          return null
+        }
+
+        // --------------------------------------------------------
+        // if it's array of strings or numbers
+        // --------------------------------------------------------
         if (typeof item !== 'object') {
           const key = i
-          const keyName = this.getItemKey(item, i) || 'children'
-          const extendedProps = attachItemProps({
-            key,
-            position: i,
-            firstItem,
-            lastItem,
-          })
+          const keyName = itemKey || 'children'
+          const extendedProps = extendProps
+            ? attachItemProps({
+                position: i,
+                firstItem,
+                lastItem,
+              })
+            : {}
 
           return renderContent(component, {
             key,
-            ...(extendProps ? extendedProps : {}),
+            ...extendedProps,
             ...injectItemProps(extendedProps),
             [keyName]: item,
           })
         }
 
-        // @ts-ignore
-        // TODO: add conditional types to fix this
-        const { component: itemComponent, ...restItem } = item
-        const renderItem = itemComponent || component
-        const key = this.getItemKey(restItem, i)
-        const extendedProps = attachItemProps({
-          key,
-          position: i,
-          firstItem,
-          lastItem,
-        })
+        // --------------------------------------------------------
+        // if it's array of objects
+        // --------------------------------------------------------
+        if (typeof item === 'object' && !isEmpty(item)) {
+          const getKey = (item: DataArrayObject, index) => {
+            if (typeof itemKey === 'function')
+              return itemKey<typeof item>(item, index)
+            if (typeof itemKey === 'string') return itemKey
 
-        return renderContent(renderItem, {
-          key,
-          ...(extendProps ? extendedProps : {}),
-          ...injectItemProps(extendedProps),
-          ...restItem,
-        })
+            return item.key || item.id || item.itemId || index
+          }
+
+          const {
+            component: itemComponent,
+            ...restItem
+          } = item as DataArrayObject
+          const renderItem = itemComponent || component
+          const key = getKey(restItem, i)
+          const extendedProps = extendProps
+            ? attachItemProps({
+                position: i,
+                firstItem,
+                lastItem,
+              })
+            : {}
+
+          return renderContent(renderItem, {
+            key,
+            ...extendedProps,
+            ...injectItemProps(extendedProps),
+            ...restItem,
+          })
+        }
+
+        return null
       })
     }
 
+    // --------------------------------------------------------
     // if there are no children or valid react component and data as an array,
     // return null to prevent error
+    // --------------------------------------------------------
     return null
   }
 
-  render() {
-    return this.renderItems()
-  }
+  return renderItems()
 }
+
+Component.isIterator = true
+Component.RESERVED_PROPS = RESERVED_PROPS
+Component.displayName = 'vitus-labs/elements/Iterator'
+
+export default Component

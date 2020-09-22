@@ -19,8 +19,8 @@ const styles = ({ css, theme: t }) => css`
   ${config.isWeb &&
   isValue(t.block) &&
   css`
-    ${({ needsFix }) =>
-      needsFix &&
+    ${({ $needsFix }) =>
+      $needsFix &&
       css`
         width: ${t.block ? '100%' : 'initial'};
       `}
@@ -32,11 +32,11 @@ const styles = ({ css, theme: t }) => css`
     align-self: stretch;
   `};
 
-  ${t.contentDirection &&
+  ${t.direction &&
   t.alignX &&
   t.alignY &&
   alignContent({
-    direction: t.contentDirection,
+    direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,
   })};
@@ -61,9 +61,17 @@ export default config.styled(config.component)`
     `
   };
 
+   ${({ $needsFix }) =>
+     $needsFix &&
+     config.css`
+    display: flex;
+    flex-direction: column;
+  `};
+
   ${({ $isInner }) =>
     $isInner &&
     config.css`
+    flex: 1;
     width: 100%;
     height: 100%;
   `};

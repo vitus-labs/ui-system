@@ -1,19 +1,44 @@
-export type activeItemsMap = Map<string | number, boolean>
-export type activeItems = activeItemsMap | number | string
-export type key = string | number
-export type status = boolean
+export type KeyType = React.ReactText
+export type ComponentType = React.ReactNode
 
-export interface Props {
-  type?: 'simple' | 'single' | 'multi'
-  activeItems?: string | number | string[] | number[]
-  children?: React.ReactNode
-  itemKey?: () => key
-  injectProps?: boolean
-  component?: Function | React.ReactNode | object
-  data?: any[]
-  itemProps?: Object
+type ArrayObjectData = Partial<{ component: ComponentType }> &
+  Record<string, any>
+
+type ItemIdType = ArrayObjectData & {
+  id?: KeyType
 }
 
-export interface State {
-  activeItems?: activeItemsMap | number | string
+type ItemKeyType = ArrayObjectData & {
+  key?: KeyType
 }
+
+type ItemItemIdType = ArrayObjectData & {
+  itemId?: KeyType
+}
+
+export type DataArrayObject = ItemIdType | ItemKeyType | ItemItemIdType
+
+type BaseProps = Partial<{
+  extendProps: boolean
+  itemProps:
+    | Record<string, any>
+    | ((key: string | number) => Record<string, any>)
+}>
+
+type ChildrenType = BaseProps & {
+  children: React.ReactNodeArray
+}
+
+type DataSimpleArrayType = BaseProps & {
+  component: ComponentType
+  data: Array<string | number>
+  itemKey?: string
+}
+
+type DataObjectArrayType = BaseProps & {
+  component: ComponentType
+  data: Array<DataArrayObject>
+  itemKey?: <T extends {}>(item: T, index: number) => string | number
+}
+
+export type Props = ChildrenType | DataSimpleArrayType | DataObjectArrayType

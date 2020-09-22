@@ -1,7 +1,12 @@
 import React from 'react'
 import { config } from '@vitus-labs/core'
-import Element, { withEqualWidthBeforeAfter } from '../../Element'
+import Element, { withEqualSizeBeforeAfter } from '../../Element'
 import Overlay from '..'
+
+export default {
+  component: Overlay,
+  title: Overlay.displayName,
+}
 
 const Button = ({ innerRef, children, ...props }: any) => (
   <button ref={innerRef} {...props}>
@@ -60,12 +65,7 @@ const ScrollX = config.styled.div`
   background-color: papayawhip;
 `
 
-const EqualElement = withEqualWidthBeforeAfter(Element)
-
-export default {
-  component: Overlay,
-  title: 'ELEMENTS | Overlay',
-}
+const EqualElement = withEqualSizeBeforeAfter(Element)
 
 export const exampleDropdown = () => {
   return (

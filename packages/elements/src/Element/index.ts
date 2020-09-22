@@ -1,6 +1,6 @@
 import component from './component'
-import withEqualWidthBeforeAfter from './withEqualWidthBeforeAfter'
+import withEqualSizeBeforeAfter from './withEqualSizeBeforeAfter'
 
-export { withEqualWidthBeforeAfter }
+export { withEqualSizeBeforeAfter }
 
 export default component

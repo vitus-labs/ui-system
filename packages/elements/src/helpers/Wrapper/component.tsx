@@ -6,7 +6,7 @@ import { isFixNeeded } from './utils'
 import Styled from './styled'
 
 const KEYWORDS_WRAPPER = ['block', 'extendCss']
-const KEYWORDS_INNER = ['contentDirection', 'alignX', 'alignY', 'equalCols']
+const KEYWORDS_INNER = ['direction', 'alignX', 'alignY', 'equalCols']
 const KEYWORDS = [...KEYWORDS_WRAPPER, ...KEYWORDS_INNER]
 
 type Reference = any
@@ -14,12 +14,11 @@ type Reference = any
 type Props = {
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
-  contentDirection: Direction
+  direction: Direction
   alignX: AlignX
   alignY: AlignY
   equalCols: Booltype
-  [key: string]: any
-}
+} & Record<string, any>
 
 const Element = forwardRef<Reference, Partial<Props>>(
   (
@@ -28,7 +27,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
       tag,
       block,
       extendCss,
-      contentDirection,
+      direction,
       alignX,
       alignY,
       equalCols,
@@ -38,14 +37,21 @@ const Element = forwardRef<Reference, Partial<Props>>(
   ) => {
     const needsFix = useMemo(() => isFixNeeded(tag, config.isWeb), [tag])
 
-    const localProps = {
+    const stylingProps = {
       block,
       extendCss,
-      contentDirection,
+      direction,
       alignX,
       alignY,
       equalCols,
     }
+
+    const debugProps =
+      process.env.NODE_ENV !== 'production'
+        ? {
+            'data-vb-element': 'Element',
+          }
+        : {}
 
     const { sortedBreakpoints } = vitusContext()
 
@@ -54,22 +60,29 @@ const Element = forwardRef<Reference, Partial<Props>>(
         optimizeTheme({
           breakpoints: sortedBreakpoints,
           keywords: KEYWORDS,
-          props: localProps,
+          props: stylingProps,
         }),
       [
         sortedBreakpoints,
         block,
         extendCss,
-        contentDirection,
+        direction,
         alignX,
         alignY,
         equalCols,
       ]
     )
 
+    const COMMON_PROPS = {
+      ...props,
+      ...debugProps,
+      ref,
+      as: tag,
+    }
+
     if (!needsFix || config.isNative) {
       return (
-        <Styled ref={ref} as={tag} {...props} $element={normalizedTheme}>
+        <Styled {...COMMON_PROPS} $element={normalizedTheme}>
           {children}
         </Styled>
       )
@@ -77,9 +90,7 @@ const Element = forwardRef<Reference, Partial<Props>>(
 
     return (
       <Styled
-        ref={ref}
-        as={tag}
-        {...props}
+        {...COMMON_PROPS}
         $needsFix
         $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
       >

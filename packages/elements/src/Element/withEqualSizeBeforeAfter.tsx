@@ -77,7 +77,7 @@ const withEqualBeforeAfter = <T extends {}>(
     )
   }
 
-  Enhanced.displayName = displayName
+  Enhanced.displayName = `withEqualSizeBeforeAfter(${displayName})`
 
   return Enhanced
 }
