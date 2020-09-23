@@ -37,8 +37,21 @@ export const listWithChildren = () => (
   </List>
 )
 
+export const listUsingWrappComponent = () => {
+  const Wrapper = ({ children }) => <li>{children}</li>
+  return (
+    <List tag="ul" wrapComponent={Wrapper}>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+    </List>
+  )
+}
+
 export const dataAsAnArrayOfStrings = () => {
-  const data = ['a', 'b', 'c', 'd']
+  const data = ['a', 'b', null, undefined, 'c', 'd']
   const Item = ({ name, surname, ...props }) => {
     return (
       <span {...props}>
@@ -51,7 +64,15 @@ export const dataAsAnArrayOfStrings = () => {
 }
 
 export const dataAsAnArrayOfObjects = () => {
-  const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
+  const data = [
+    { name: 'a' },
+    {},
+    null,
+    undefined,
+    { name: 'b' },
+    { name: 'c' },
+    { name: 'd' },
+  ]
 
   const Item = ({ name, surname, ...props }) => {
     return (

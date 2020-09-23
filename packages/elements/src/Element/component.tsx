@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, ReactNode } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
@@ -6,47 +6,10 @@ import {
   calculateSubTag,
   getShouldBeEmpty,
 } from './utils'
-import { AlignX, AlignY, Direction, Booltype } from '~/types'
+import { AlignX, AlignY, Direction } from '~/types'
+import type { Props } from './types'
 
-type ResponsiveBoolean = boolean | Array<Booltype> | Record<string, boolean>
-type Responsive =
-  | number
-  | Array<string | number>
-  | Record<string, number | string>
-
-type Props = Partial<{
-  tag: import('styled-components').StyledComponentPropsWithRef<any>
-  innerRef: any
-  label: ReactNode
-  children: ReactNode
-  content: ReactNode
-  beforeContent: ReactNode
-  afterContent: ReactNode
-  block: ResponsiveBoolean
-  equalCols: ResponsiveBoolean
-  gap: Responsive
-  vertical: ResponsiveBoolean
-  alignX: AlignX
-  contentAlignX: AlignX
-  beforeContentAlignX: AlignX
-  afterContentAlignX: AlignX
-  alignY: AlignY
-  contentAlignY: AlignY
-  beforeContentAlignY: AlignY
-  afterContentAlignY: AlignY
-  direction: Direction
-  contentDirection: Direction
-  beforeContentDirection: Direction
-  afterContentDirection: Direction
-  dangerouslySetInnerHTML: any
-  css: any
-  contentCss: any
-  beforeContentCss: any
-  afterContentCss: any
-}> &
-  Record<string, any>
-
-const Element = forwardRef<any, Props>(
+const Component = forwardRef<any, Props>(
   (
     {
       innerRef,
@@ -199,6 +162,6 @@ const Element = forwardRef<any, Props>(
   }
 )
 
-Element.displayName = 'vitus-labs/elements/Element'
+Component.displayName = 'vitus-labs/elements/Element'
 
-export default Element
+export default Component

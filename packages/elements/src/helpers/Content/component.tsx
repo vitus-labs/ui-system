@@ -21,11 +21,10 @@ type Props = {
   alignX: AlignX
   alignY: AlignY
   equalCols: Booltype
-  [key: string]: any
 }
 type Reference = Ref<HTMLElement>
 
-const Element = forwardRef<Reference, Partial<Props>>(
+const Component = forwardRef<Reference, Partial<Props>>(
   (
     {
       tag,
@@ -89,4 +88,4 @@ const Element = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Element
+export default Component

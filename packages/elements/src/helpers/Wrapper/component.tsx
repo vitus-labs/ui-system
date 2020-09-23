@@ -18,9 +18,9 @@ type Props = {
   alignX: AlignX
   alignY: AlignY
   equalCols: Booltype
-} & Record<string, any>
+}
 
-const Element = forwardRef<Reference, Partial<Props>>(
+const Component = forwardRef<Reference, Partial<Props>>(
   (
     {
       children,
@@ -106,4 +106,4 @@ const Element = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Element
+export default Component

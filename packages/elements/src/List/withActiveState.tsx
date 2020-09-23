@@ -21,7 +21,7 @@ type Props = {
   itemProps?: Record<string, any> | (() => Record<string, any>)
 }
 
-const component = <T extends {}>(
+const Component = <T extends {}>(
   WrappedComponent: React.ComponentType<T>
 ): {
   (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
@@ -62,7 +62,7 @@ const component = <T extends {}>(
     const countActiveItems = (data) => {
       let result = 0
 
-      data.forEach((value, key) => {
+      data.forEach((value) => {
         if (value) result = result + 1
       })
 
@@ -86,10 +86,9 @@ const component = <T extends {}>(
             countActiveItems(activeItems) === 1
           ) {
             return activeItems
-          } else {
-            activeItems.set(key, !activeItems.get(key))
           }
 
+          activeItems.set(key, !activeItems.get(key))
           return activeItems
         })
       } else {
@@ -131,8 +130,8 @@ const component = <T extends {}>(
       if (type === 'single') return innerActiveItems === key
       // @ts-ignore
       // TODO: add conditional type to fix this
-      else if (type === 'multi') return innerActiveItems.get(key)
-      else return false
+      if (type === 'multi') return innerActiveItems.get(key)
+      return false
     }
 
     const attachMultipleProps = {
@@ -176,10 +175,9 @@ const component = <T extends {}>(
     )
   }
   Enhanced.RESERVED_KEYS = RESERVED_KEYS
+  Enhanced.displayName = `vitus-labs/elements/List/withActiveState(${displayName})`
 
   return Enhanced
 }
 
-component.displayName = 'vitus-labs/elements/Iterator/withActiveState'
-
-export default component
+export default Component

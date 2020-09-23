@@ -1,3 +1,5 @@
+import React from 'react'
+
 export type KeyType = React.ReactText
 export type ComponentType = React.ReactNode
 
@@ -19,6 +21,7 @@ type ItemItemIdType = ArrayObjectData & {
 export type DataArrayObject = ItemIdType | ItemKeyType | ItemItemIdType
 
 type BaseProps = Partial<{
+  wrapComponent: React.ReactNode
   extendProps: boolean
   itemProps:
     | Record<string, any>
@@ -38,7 +41,7 @@ type DataSimpleArrayType = BaseProps & {
 type DataObjectArrayType = BaseProps & {
   component: ComponentType
   data: Array<DataArrayObject>
-  itemKey?: <T extends {}>(item: T, index: number) => string | number
+  itemKey?: string | ((item: object, index: number) => string | number)
 }
 
 export type Props = ChildrenType | DataSimpleArrayType | DataObjectArrayType
