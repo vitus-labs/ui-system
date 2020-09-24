@@ -16,7 +16,7 @@ const internal: Internal & { [key: string]: any } = {
   context: ThemeContext,
   platform: 'web',
   component: 'div',
-  textComponent: 'p',
+  textComponent: 'span',
 }
 
 const init = ({ platform, component, textComponent }) => {

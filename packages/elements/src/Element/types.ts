@@ -43,8 +43,4 @@ type LabelProps = BaseProps & {
   label: ReactNode
 }
 
-type ContentProps = BaseProps & {
-  content: ReactNode
-}
-
-export type Props = ChildrenProps | LabelProps | ContentProps
+export type Props = ChildrenProps | LabelProps

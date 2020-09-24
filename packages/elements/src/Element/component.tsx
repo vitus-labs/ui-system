@@ -16,8 +16,6 @@ const Component = forwardRef<any, Props>(
       tag,
       // @ts-ignore
       label,
-      // @ts-ignore
-      content,
       children,
       beforeContent,
       afterContent,
@@ -84,7 +82,7 @@ const Component = forwardRef<any, Props>(
     // if not single element, calculate values
     // --------------------------------------------------------
     const isSimple = !beforeContent && !afterContent
-    const CHILDREN = children || content || label
+    const CHILDREN = children || label
     const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
 
     // --------------------------------------------------------
