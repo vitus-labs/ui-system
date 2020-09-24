@@ -4,7 +4,10 @@ import Element from '~/Element'
 import Iterator from '~/helpers/Iterator'
 import { ExtractProps } from '~/types'
 
-type DefaultProps = ExtractProps<typeof Iterator> & ExtractProps<typeof Element>
+type DefaultProps = ExtractProps<typeof Iterator> &
+  ExtractProps<typeof Element> & {
+    rootElement?: boolean
+  }
 
 type WithoutRoot = ExtractProps<typeof Iterator> & {
   rootElement?: false
@@ -17,7 +20,7 @@ type WithRoot = DefaultProps & {
 type Props = DefaultProps | WithRoot | WithoutRoot
 
 const Component = forwardRef<any, Props>(
-  ({ rootElement = true, ...props }, ref) => {
+  ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
     if (!rootElement) return renderedList

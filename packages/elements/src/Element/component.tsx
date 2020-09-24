@@ -14,7 +14,9 @@ const Component = forwardRef<any, Props>(
     {
       innerRef,
       tag,
+      // @ts-ignore
       label,
+      // @ts-ignore
       content,
       children,
       beforeContent,

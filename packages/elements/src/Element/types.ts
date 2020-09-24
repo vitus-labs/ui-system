@@ -1,21 +1,21 @@
 import { ReactNode } from 'react'
-import { AlignX, AlignY, Direction, Booltype } from '~/types'
-
-type ResponsiveBoolean = boolean | Array<Booltype> | Record<string, boolean>
-type Responsive =
-  | number
-  | Array<string | number>
-  | Record<string, number | string>
+import {
+  AlignX,
+  AlignY,
+  Direction,
+  ResponsiveBooltype,
+  Responsive,
+} from '~/types'
 
 type BaseProps = Partial<{
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
   beforeContent: ReactNode
   afterContent: ReactNode
-  block: ResponsiveBoolean
-  equalCols: ResponsiveBoolean
+  block: ResponsiveBooltype
+  equalCols: ResponsiveBooltype
   gap: Responsive
-  vertical: ResponsiveBoolean
+  vertical: ResponsiveBooltype
   alignX: AlignX
   contentAlignX: AlignX
   beforeContentAlignX: AlignX

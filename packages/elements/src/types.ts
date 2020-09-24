@@ -20,7 +20,15 @@ export type Direction =
   | ContentDirection[]
   | Record<string, ContentDirection>
 
-export type Booltype = boolean | Array<boolean> | Record<string, boolean>
+export type ResponsiveBooltype =
+  | boolean
+  | Array<boolean>
+  | Record<string, boolean>
+
+export type Responsive =
+  | number
+  | Array<string | number>
+  | Record<string, number | string>
 
 export type ExtractProps<
   TComponentOrTProps

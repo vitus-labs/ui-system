@@ -1,7 +1,7 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
 import { config, pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
-import { Direction, AlignX, AlignY, Booltype } from '~/types'
+import { Direction, AlignX, AlignY, ResponsiveBooltype } from '~/types'
 import { isFixNeeded } from './utils'
 import Styled from './styled'
 
@@ -14,10 +14,12 @@ type Reference = any
 type Props = {
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
+  block: ResponsiveBooltype
   direction: Direction
   alignX: AlignX
   alignY: AlignY
-  equalCols: Booltype
+  equalCols: ResponsiveBooltype
+  extendCss: any
 }
 
 const Component = forwardRef<Reference, Partial<Props>>(
