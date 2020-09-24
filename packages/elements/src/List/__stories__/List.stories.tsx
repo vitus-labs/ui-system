@@ -60,7 +60,7 @@ export const dataAsAnArrayOfStrings = () => {
     )
   }
 
-  return <List data={data} component={Item} itemKey="name" />
+  return <List data={data} component={Item} />
 }
 
 export const dataAsAnArrayOfObjects = () => {
