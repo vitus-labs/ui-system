@@ -5,6 +5,7 @@ import type { Props, DataArrayObject } from './types'
 const RESERVED_PROPS = [
   'children',
   'component',
+  'wrapComponent',
   'data',
   'itemKey',
   'itemProps',
@@ -32,122 +33,177 @@ type Static = {
   RESERVED_PROPS: typeof RESERVED_PROPS
 }
 
-// @ts-ignore
 const Component: React.FC<Props> & Static = (props: Props) => {
   const {
+    // @ts-ignore
     itemKey,
+    // @ts-ignore
     children,
+    // @ts-ignore
     component,
+    // @ts-ignore
     data,
+    wrapComponent: Wrapper,
     extendProps,
     itemProps = {},
   } = props
 
-  const renderItems = () => {
-    const injectItemProps =
-      typeof itemProps === 'function'
-        ? (props) => itemProps(props)
-        : () => itemProps
+  const renderedElement = (component, props) => renderContent(component, props)
 
+  const injectItemProps =
+    typeof itemProps === 'function'
+      ? (props) => itemProps(props)
+      : () => itemProps
+
+  // --------------------------------------------------------
+  // render children
+  // --------------------------------------------------------
+  const renderChildren = () => {
+    const firstItem = 0
+    const lastItem = children.length - 1
+
+    return Children.map(children, (item, i) => {
+      const key = i
+      if (!extendProps && !itemProps && !Wrapper) return item
+
+      const extendedProps = extendProps
+        ? attachItemProps({
+            position: i,
+            firstItem,
+            lastItem,
+          })
+        : {}
+
+      const finalProps = {
+        ...extendedProps,
+        ...injectItemProps(extendedProps),
+      }
+
+      if (Wrapper) {
+        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
+      }
+
+      return renderContent(item, {
+        key: i,
+        ...finalProps,
+      })
+    })
+  }
+
+  // --------------------------------------------------------
+  // render array of strings or numbers
+  // --------------------------------------------------------
+  const renderSimpleArray = (data) => {
+    const renderData = data.filter(
+      (item) => item !== null || item !== undefined // remove empty values
+    )
+    const firstItem = 0
+    const lastItem = renderData.length - 1
+
+    // if it's empty
+    if (renderData.length === 0) return null
+
+    return renderData.map((item, i) => {
+      const key = i
+      const keyName = itemKey || 'children'
+      const extendedProps = extendProps
+        ? attachItemProps({
+            position: i,
+            firstItem,
+            lastItem,
+          })
+        : {}
+
+      const finalProps = {
+        key,
+        ...extendedProps,
+        ...injectItemProps(extendedProps),
+        [keyName]: item,
+      }
+
+      if (Wrapper) {
+        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
+      }
+
+      return renderedElement(item, { key, ...finalProps })
+    })
+  }
+
+  // --------------------------------------------------------
+  // render array of strings or numbers
+  // --------------------------------------------------------
+  const renderComplexArray = (data) => {
+    const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects
+    const firstItem = 0
+    const lastItem = renderData.length - 1
+
+    // if it's empty
+    if (renderData.length === 0) return null
+
+    const getKey = (item: DataArrayObject, index) => {
+      if (!itemKey) return item.key || item.id || item.itemId || index
+      if (typeof itemKey === 'function') return itemKey(item, index)
+      if (typeof itemKey === 'string') return item[itemKey]
+
+      return index
+    }
+
+    return renderData.map((item, i) => {
+      const { component: itemComponent, ...restItem } = item as DataArrayObject
+      const renderItem = itemComponent || component
+      const key = getKey(restItem, i)
+      const extendedProps = extendProps
+        ? attachItemProps({
+            position: i,
+            firstItem,
+            lastItem,
+          })
+        : {}
+
+      const finalProps = {
+        ...extendedProps,
+        ...injectItemProps(extendedProps),
+        ...restItem,
+      }
+
+      if (Wrapper) {
+        return (
+          <Wrapper key={key}>{renderedElement(renderItem, finalProps)}</Wrapper>
+        )
+      }
+
+      return renderedElement(renderItem, { key, ...finalProps })
+    })
+  }
+
+  // --------------------------------------------------------
+  // render list items
+  // --------------------------------------------------------
+  const renderItems = () => {
     // --------------------------------------------------------
     // children have priority over props component + data
     // --------------------------------------------------------
-    if (children) {
-      const firstItem = 0
-      const lastItem = children.length - 1
-
-      return Children.map(children, (item, i) => {
-        if (!extendProps && !itemProps) return item
-
-        const extendedProps = extendProps
-          ? attachItemProps({
-              position: i,
-              firstItem,
-              lastItem,
-            })
-          : {}
-
-        return renderContent(item, {
-          key: i,
-          ...extendedProps,
-          ...injectItemProps(extendedProps),
-        })
-      })
-    }
+    if (children) return renderChildren()
 
     // --------------------------------------------------------
     // render props component + data
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      const firstItem = 0
-      const lastItem = data.length - 1
+      const clearData = data.filter(
+        (item) => item !== null && item !== undefined
+      )
 
-      return data.map((item, i) => {
-        // --------------------------------------------------------
-        // if it's empty object, just return
-        // --------------------------------------------------------
-        if (typeof item === 'object' && isEmpty(item)) {
-          return null
-        }
+      const isSimpleArray = clearData.every(
+        (item) => typeof item === 'string' || typeof item === 'number'
+      )
 
-        // --------------------------------------------------------
-        // if it's array of strings or numbers
-        // --------------------------------------------------------
-        if (typeof item !== 'object') {
-          const key = i
-          const keyName = itemKey || 'children'
-          const extendedProps = extendProps
-            ? attachItemProps({
-                position: i,
-                firstItem,
-                lastItem,
-              })
-            : {}
+      if (isSimpleArray) return renderSimpleArray(clearData)
 
-          return renderContent(component, {
-            key,
-            ...extendedProps,
-            ...injectItemProps(extendedProps),
-            [keyName]: item,
-          })
-        }
+      const isComplexArray = clearData.every((item) => typeof item === 'object')
 
-        // --------------------------------------------------------
-        // if it's array of objects
-        // --------------------------------------------------------
-        if (typeof item === 'object' && !isEmpty(item)) {
-          const getKey = (item: DataArrayObject, index) => {
-            if (typeof itemKey === 'function')
-              return itemKey<typeof item>(item, index)
-            if (typeof itemKey === 'string') return itemKey
+      if (isComplexArray) return renderComplexArray(clearData)
 
-            return item.key || item.id || item.itemId || index
-          }
-
-          const {
-            component: itemComponent,
-            ...restItem
-          } = item as DataArrayObject
-          const renderItem = itemComponent || component
-          const key = getKey(restItem, i)
-          const extendedProps = extendProps
-            ? attachItemProps({
-                position: i,
-                firstItem,
-                lastItem,
-              })
-            : {}
-
-          return renderContent(renderItem, {
-            key,
-            ...extendedProps,
-            ...injectItemProps(extendedProps),
-            ...restItem,
-          })
-        }
-
-        return null
-      })
+      return null
     }
 
     // --------------------------------------------------------

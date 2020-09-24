@@ -1,21 +1,38 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
-import Base from '~/Element'
+import Element from '~/Element'
 import Iterator from '~/helpers/Iterator'
 import { ExtractProps } from '~/types'
 
-type Props = {
-  rootElement?: boolean
-} & ExtractProps<typeof Iterator>
+type DefaultProps = ExtractProps<typeof Iterator> &
+  ExtractProps<typeof Element> & {
+    rootElement?: boolean
+  }
 
-const Element = ({ rootElement = true, ...props }: Props) => {
-  const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
-
-  if (!rootElement) return renderedList
-
-  return <Base {...omit(props, Iterator.RESERVED_PROPS)}>{renderedList}</Base>
+type WithoutRoot = ExtractProps<typeof Iterator> & {
+  rootElement?: false
 }
 
-Element.displayName = 'vitus-labs/elements/List'
+type WithRoot = DefaultProps & {
+  rootElement?: true
+}
 
-export default Element
+type Props = DefaultProps | WithRoot | WithoutRoot
+
+const Component = forwardRef<any, Props>(
+  ({ rootElement = false, ...props }, ref) => {
+    const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
+
+    if (!rootElement) return renderedList
+
+    return (
+      <Element ref={ref} {...omit(props, Iterator.RESERVED_PROPS)}>
+        {renderedList}
+      </Element>
+    )
+  }
+)
+
+Component.displayName = 'vitus-labs/elements/List'
+
+export default Component

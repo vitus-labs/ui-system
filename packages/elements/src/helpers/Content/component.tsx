@@ -1,6 +1,12 @@
 import React, { forwardRef, useMemo, ReactNode, Ref } from 'react'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
-import { Direction, AlignX, AlignY, Booltype } from '~/types'
+import {
+  Direction,
+  AlignX,
+  AlignY,
+  ResponsiveBooltype,
+  Responsive,
+} from '~/types'
 import Styled from './styled'
 
 const KEYWORDS = [
@@ -14,18 +20,21 @@ const KEYWORDS = [
 ]
 
 type Props = {
+  parentDirection: Direction
+  gap: Responsive
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   direction: Direction
   alignX: AlignX
   alignY: AlignY
-  equalCols: Booltype
-  [key: string]: any
+  equalCols: ResponsiveBooltype
+  extendCss: any
+  isContent?: boolean
 }
 type Reference = Ref<HTMLElement>
 
-const Element = forwardRef<Reference, Partial<Props>>(
+const Component = forwardRef<Reference, Partial<Props>>(
   (
     {
       tag,
@@ -89,4 +98,4 @@ const Element = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Element
+export default Component
