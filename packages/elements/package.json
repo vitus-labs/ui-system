@@ -38,7 +38,8 @@
   "scripts": {
     "dev": "yarn vl_run-stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn rollup -c",
+    "build": "rm -rf lib && yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
     "lint": "yarn lint:css && yarn lint:ts",
@@ -56,9 +57,9 @@
   "devDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
-    "@vitus-labs/tools-docz": "*",
-    "@vitus-labs/tools-jest": "*",
-    "@vitus-labs/tools-rollup": "*",
+    "@vitus-labs/tools-babel": "0.1.3",
+    "@vitus-labs/tools-rollup": "0.1.2",
+    "@vitus-labs/tools-typescript": "0.1.2",
     "@vitus-labs/tools-storybook": "*",
     "@vitus-labs/unistyle": "*"
   }

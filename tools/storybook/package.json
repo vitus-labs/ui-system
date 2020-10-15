@@ -25,7 +25,6 @@
     "@storybook/addons": "^5.3.18",
     "@storybook/react": "^5.3.18",
     "@storybook/theming": "^5.3.18",
-    "@vitus-labs/tools-core": "^0.7.1",
     "react-docgen-typescript-loader": "^3.7.2",
     "ts-loader": "^7.0.0"
   }
