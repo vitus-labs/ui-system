@@ -1,5 +1,5 @@
 import React, { forwardRef, useMemo, ReactNode } from 'react'
-import { config, pick } from '@vitus-labs/core'
+import { pick } from '@vitus-labs/core'
 import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
 import { Direction, AlignX, AlignY, ResponsiveBooltype } from '~/types'
 import { isFixNeeded } from './utils'
@@ -37,7 +37,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
     },
     ref
   ) => {
-    const needsFix = useMemo(() => isFixNeeded(tag, config.isWeb), [tag])
+    const needsFix = useMemo(() => isFixNeeded(tag, __WEB__), [tag])
 
     const stylingProps = {
       block,
@@ -82,7 +82,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
       as: tag,
     }
 
-    if (!needsFix || config.isNative) {
+    if (!needsFix || __NATIVE__) {
       return (
         <Styled {...COMMON_PROPS} $element={normalizedTheme}>
           {children}

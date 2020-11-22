@@ -8,7 +8,7 @@ import {
 const isValue = (val) => val !== null && val !== undefined
 
 const styles = ({ css, theme: t }) => css`
-  ${config.isWeb &&
+  ${__WEB__ &&
   css`
     display: ${({ $needsFix }) => {
       if ($needsFix) return ''
@@ -16,7 +16,7 @@ const styles = ({ css, theme: t }) => css`
     }};
   `};
 
-  ${config.isWeb &&
+  ${__WEB__ &&
   isValue(t.block) &&
   css`
     ${({ $needsFix }) =>
@@ -26,7 +26,7 @@ const styles = ({ css, theme: t }) => css`
       `}
   `};
 
-  ${config.isNative &&
+  ${__NATIVE__ &&
   t.block &&
   css`
     align-self: stretch;
@@ -48,14 +48,14 @@ export default config.styled(config.component)`
   position: relative;
 
   ${
-    !config.isNative &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
   };
 
   ${
-    config.isNative &&
+    __NATIVE__ &&
     config.css`
       display: flex;
     `

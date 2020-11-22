@@ -7,9 +7,12 @@ import {
   Responsive,
 } from '~/types'
 
-type BaseProps = Partial<{
+export type Props = Partial<{
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
+  children: ReactNode
+  content: ReactNode
+  label: ReactNode
   beforeContent: ReactNode
   afterContent: ReactNode
   block: ResponsiveBooltype
@@ -34,13 +37,3 @@ type BaseProps = Partial<{
   beforeContentCss: any
   afterContentCss: any
 }>
-
-type ChildrenProps = BaseProps & {
-  children: ReactNode
-}
-
-type LabelProps = BaseProps & {
-  label: ReactNode
-}
-
-export type Props = ChildrenProps | LabelProps

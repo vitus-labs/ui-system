@@ -14,8 +14,8 @@ const Component = forwardRef<any, Props>(
     {
       innerRef,
       tag,
-      // @ts-ignore
       label,
+      content,
       children,
       beforeContent,
       afterContent,
@@ -54,8 +54,7 @@ const Component = forwardRef<any, Props>(
     // check if should render only single element
     // --------------------------------------------------------
     const shouldBeEmpty = useMemo(
-      () =>
-        getShouldBeEmpty(tag, config.isWeb) || props.dangerouslySetInnerHTML,
+      () => getShouldBeEmpty(tag, __WEB__) || props.dangerouslySetInnerHTML,
       [tag, props.dangerouslySetInnerHTML]
     )
 
@@ -82,8 +81,8 @@ const Component = forwardRef<any, Props>(
     // if not single element, calculate values
     // --------------------------------------------------------
     const isSimple = !beforeContent && !afterContent
-    const CHILDREN = children || label
-    const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
+    const CHILDREN = children || content || label
+    const SUB_TAG = useMemo(() => calculateSubTag(tag, __WEB__), [tag])
 
     // --------------------------------------------------------
     // direction & alignX calculations

@@ -8,25 +8,23 @@ const RESERVED_PROPS = [
   'wrapComponent',
   'data',
   'itemKey',
+  'valueName',
   'itemProps',
   'extendProps',
 ]
 
-const attachItemProps = ({
-  position,
-  firstItem,
-  lastItem,
-}: {
-  position: number
-  firstItem: number
-  lastItem: number
-}) => ({
-  first: position === firstItem,
-  last: position === lastItem,
-  odd: position % 2 === 1,
-  even: position % 2 === 0,
-  position,
-})
+const attachItemProps = ({ i, length }: { i: number; length: number }) => {
+  const position = i + 1
+
+  return {
+    index: i,
+    first: position === 1,
+    last: position === length,
+    odd: position % 2 === 1,
+    even: position % 2 === 0,
+    position,
+  }
+}
 
 type Static = {
   isIterator: true
@@ -37,6 +35,8 @@ const Component: React.FC<Props> & Static = (props: Props) => {
   const {
     // @ts-ignore
     itemKey,
+    // @ts-ignore
+    valueName,
     // @ts-ignore
     children,
     // @ts-ignore
@@ -52,35 +52,39 @@ const Component: React.FC<Props> & Static = (props: Props) => {
 
   const injectItemProps =
     typeof itemProps === 'function'
-      ? (props) => itemProps(props)
+      ? (props, extendedProps) => itemProps(props, extendedProps)
       : () => itemProps
 
   // --------------------------------------------------------
   // render children
   // --------------------------------------------------------
   const renderChildren = () => {
-    const firstItem = 0
-    const lastItem = children.length - 1
+    const { length } = children
+
+    // if no props extension is required, just return children
+    if (!extendProps && !itemProps && !Wrapper) return children
 
     return Children.map(children, (item, i) => {
       const key = i
-      if (!extendProps && !itemProps && !Wrapper) return item
-
-      const extendedProps = extendProps
-        ? attachItemProps({
-            position: i,
-            firstItem,
-            lastItem,
-          })
-        : {}
+      const extendedProps =
+        extendProps || itemProps
+          ? attachItemProps({
+              i,
+              length,
+            })
+          : {}
 
       const finalProps = {
         ...extendedProps,
-        ...injectItemProps(extendedProps),
+        ...(itemProps ? injectItemProps({}, extendedProps) : {}),
       }
 
       if (Wrapper) {
-        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
+        return (
+          <Wrapper key={key} {...finalProps}>
+            {renderedElement(item, finalProps)}
+          </Wrapper>
+        )
       }
 
       return renderContent(item, {
@@ -97,32 +101,43 @@ const Component: React.FC<Props> & Static = (props: Props) => {
     const renderData = data.filter(
       (item) => item !== null || item !== undefined // remove empty values
     )
-    const firstItem = 0
-    const lastItem = renderData.length - 1
+    const { length } = renderData
 
     // if it's empty
     if (renderData.length === 0) return null
 
+    const getKey = (item: string | number, index) => {
+      if (typeof itemKey === 'function') return itemKey(item, index)
+
+      return index
+    }
+
     return renderData.map((item, i) => {
-      const key = i
-      const keyName = itemKey || 'children'
-      const extendedProps = extendProps
-        ? attachItemProps({
-            position: i,
-            firstItem,
-            lastItem,
-          })
-        : {}
+      const key = getKey(item, i)
+      const keyName = valueName || 'children'
+      const extendedProps =
+        extendProps || itemProps
+          ? attachItemProps({
+              i,
+              length,
+            })
+          : {}
 
       const finalProps = {
         key,
         ...extendedProps,
-        ...injectItemProps(extendedProps),
+        ...(itemProps
+          ? injectItemProps({ [valueName]: item }, extendedProps)
+          : {}),
         [keyName]: item,
       }
 
       if (Wrapper) {
-        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
+        return (
+          <Wrapper key={key} {...finalProps}>
+            {renderedElement(item, finalProps)}
+          </Wrapper>
+        )
       }
 
       return renderedElement(item, { key, ...finalProps })
@@ -134,8 +149,7 @@ const Component: React.FC<Props> & Static = (props: Props) => {
   // --------------------------------------------------------
   const renderComplexArray = (data) => {
     const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects
-    const firstItem = 0
-    const lastItem = renderData.length - 1
+    const { length } = renderData
 
     // if it's empty
     if (renderData.length === 0) return null
@@ -152,23 +166,25 @@ const Component: React.FC<Props> & Static = (props: Props) => {
       const { component: itemComponent, ...restItem } = item as DataArrayObject
       const renderItem = itemComponent || component
       const key = getKey(restItem, i)
-      const extendedProps = extendProps
-        ? attachItemProps({
-            position: i,
-            firstItem,
-            lastItem,
-          })
-        : {}
+      const extendedProps =
+        extendProps || itemProps
+          ? attachItemProps({
+              i,
+              length,
+            })
+          : {}
 
       const finalProps = {
         ...extendedProps,
-        ...injectItemProps(extendedProps),
+        ...(itemProps ? injectItemProps(item, extendedProps) : {}),
         ...restItem,
       }
 
       if (Wrapper) {
         return (
-          <Wrapper key={key}>{renderedElement(renderItem, finalProps)}</Wrapper>
+          <Wrapper key={key} {...finalProps}>
+            {renderedElement(renderItem, finalProps)}
+          </Wrapper>
         )
       }
 

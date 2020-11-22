@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, ReactNode } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
 const parseJSON = (object) => {
@@ -11,7 +11,7 @@ const parseJSON = (object) => {
 }
 
 interface Props {
-  children: React.ReactNode
+  children: ReactNode
   className?: string | string[]
   style?: object
 }

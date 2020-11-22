@@ -34,7 +34,8 @@ type ChildrenType = BaseProps & {
 type DataSimpleArrayType = BaseProps & {
   component: ReactNode
   data: Array<string | number>
-  itemKey?: string
+  itemKey?: (item: string | number, index: number) => string | number
+  valueName: string
 }
 
 type DataObjectArrayType = BaseProps & {

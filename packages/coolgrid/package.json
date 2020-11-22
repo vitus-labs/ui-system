@@ -64,10 +64,10 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "*",
-    "@vitus-labs/tools-babel": "0.1.5",
-    "@vitus-labs/tools-rollup": "0.1.2",
+    "@vitus-labs/tools-babel": "0.2.0",
+    "@vitus-labs/tools-rollup": "0.2.0",
     "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/tools-typescript": "0.1.2",
+    "@vitus-labs/tools-typescript": "0.2.0",
     "@vitus-labs/unistyle": "*"
   }
 }

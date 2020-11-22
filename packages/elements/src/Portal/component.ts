@@ -1,26 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FC, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 
 interface Props {
   position?: HTMLElement
-  children: React.ReactNode
+  children: ReactNode
   tag?: string
 }
 
-const component = ({
+const component: FC<Props> = ({
   position = document.body,
   tag = 'div',
   children,
 }: Props) => {
-  const [element] = useState(document.createElement(tag))
+  const [element, setElement] = useState(null)
 
   useEffect(() => {
+    setElement(document.createElement(tag))
+
     position.appendChild(element)
 
     return () => {
       position.removeChild(element)
     }
-  }, [])
+  }, [tag, position])
 
   return ReactDOM.createPortal(children, element)
 }

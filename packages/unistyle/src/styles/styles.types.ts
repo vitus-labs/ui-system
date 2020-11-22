@@ -240,5 +240,5 @@ export interface Theme {
   userSelect: 'auto' | 'none' | 'text' | 'all' | defaults
   pointerEvents: 'auto' | 'none' | defaults
   writingDirection: 'ltr' | 'rtl' | defaults
-  extendCss
+  extendCss: any
 }
