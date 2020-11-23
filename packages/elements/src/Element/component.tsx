@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
@@ -100,17 +100,21 @@ const Component = forwardRef<any, Props>(
     let wrapperAlignX: AlignX = alignX
     let wrapperAlignY: AlignY = alignY
 
-    if (isSimple) {
-      if (contentDirection) wrapperDirection = contentDirection
-      if (contentAlignX) wrapperAlignX = contentAlignX
-      if (contentAlignY) wrapperAlignY = contentAlignY
-    } else if (direction) {
-      wrapperDirection = direction
-    } else if (vertical !== undefined && vertical !== null) {
-      wrapperDirection = transformVerticalProp(vertical)
-    } else {
-      wrapperDirection = defaultDirection
-    }
+    const calculateDirection = useCallback(() => {
+      if (isSimple) {
+        if (contentDirection) wrapperDirection = contentDirection
+        if (contentAlignX) wrapperAlignX = contentAlignX
+        if (contentAlignY) wrapperAlignY = contentAlignY
+      } else if (direction) {
+        wrapperDirection = direction
+      } else if (vertical !== undefined && vertical !== null) {
+        wrapperDirection = transformVerticalProp(vertical)
+      } else {
+        wrapperDirection = defaultDirection
+      }
+    }, [isSimple, direction, vertical])
+
+    calculateDirection()
 
     return (
       <Wrapper

@@ -1,6 +1,7 @@
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 
 type Value = 'rows' | 'inline'
+
 type TransformVerticalProp = (
   vertical: boolean | Record<string, boolean> | Array<boolean>
 ) => Value | Record<string, Value> | Array<Value>

@@ -19,6 +19,10 @@ export type Props = Partial<{
   equalCols: ResponsiveBooltype
   gap: Responsive
   vertical: ResponsiveBooltype
+  direction: Direction
+  contentDirection: Direction
+  beforeContentDirection: Direction
+  afterContentDirection: Direction
   alignX: AlignX
   contentAlignX: AlignX
   beforeContentAlignX: AlignX
@@ -27,10 +31,6 @@ export type Props = Partial<{
   contentAlignY: AlignY
   beforeContentAlignY: AlignY
   afterContentAlignY: AlignY
-  direction: Direction
-  contentDirection: Direction
-  beforeContentDirection: Direction
-  afterContentDirection: Direction
   dangerouslySetInnerHTML: any
   css: any
   contentCss: any

@@ -12,9 +12,6 @@ export const inlineElement = () => (
     <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
-    <Wrapper block beforeContent={Inner} afterContent={Inner}>
-      <Inner />
-    </Wrapper>
     <Wrapper
       block
       beforeContent={Inner}
