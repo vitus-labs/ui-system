@@ -96,7 +96,7 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    let wrapperDirection: Direction = defaultDirection
+    let wrapperDirection: Direction
     let wrapperAlignX: AlignX = alignX
     let wrapperAlignY: AlignY = alignY
 
@@ -106,8 +106,10 @@ const Component = forwardRef<any, Props>(
       if (contentAlignY) wrapperAlignY = contentAlignY
     } else if (direction) {
       wrapperDirection = direction
-    } else if (vertical !== undefined || vertical !== null) {
+    } else if (vertical !== undefined && vertical !== null) {
       wrapperDirection = transformVerticalProp(vertical)
+    } else {
+      wrapperDirection = defaultDirection
     }
 
     return (

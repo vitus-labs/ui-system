@@ -10,6 +10,8 @@ import {
 // calculate spacing between before / content / after
 // --------------------------------------------------------
 const calculateGap = ({ direction, type, value, css }) => {
+  if (!direction || !type) return undefined
+
   const data = {
     inline: {
       before: 'margin-right',
