@@ -1,10 +1,18 @@
-import { createElement, isValidElement, cloneElement, Children } from 'react'
+import {
+  createElement,
+  isValidElement,
+  cloneElement,
+  Children,
+  ReactElement,
+} from 'react'
 import isEmpty from './isEmpty'
 
-const renderContent: (
-  content?: React.ReactElement,
+type RenderContent = (
+  content?: ReactElement,
   attachProps?: Record<string, any>
-) => React.ReactElement = (content, attachProps = {}) => {
+) => ReactElement
+
+const renderContent: RenderContent = (content, attachProps = {}) => {
   if (!content) return null
 
   if (Array.isArray(content)) {

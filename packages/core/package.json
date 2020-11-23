@@ -11,6 +11,7 @@
   "main": "lib/vitus-labs-core.js",
   "umd:main": "lib/vitus-labs-core.umd.js",
   "module": "lib/vitus-labs-core.module.js",
+  "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-core.js": "./lib/vitus-labs-core.js",
     "./lib/vitus-labs-core.module.js": "./lib/vitus-labs-core.module.js"
