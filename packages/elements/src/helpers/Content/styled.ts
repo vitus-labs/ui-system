@@ -6,39 +6,31 @@ import {
   value,
 } from '@vitus-labs/unistyle'
 
+// --------------------------------------------------------
+// calculate spacing between before / content / after
+// --------------------------------------------------------
 const calculateGap = ({ direction, type, value, css }) => {
-  if (direction === 'inline') {
-    if (type === 'before')
-      return css`
-        margin-right: ${value};
-      `
-
-    if (type === 'after')
-      return css`
-        margin-left: ${value};
-      `
+  const data = {
+    inline: {
+      before: 'margin-right',
+      after: 'margin-left',
+    },
+    rows: {
+      before: 'margin-bottom',
+      after: 'margin-top',
+    },
   }
 
-  if (direction === 'rows') {
-    if (type === 'before')
-      return css`
-        margin-bottom: ${value};
-      `
-
-    if (type === 'after')
-      return css`
-        margin-top: ${value};
-      `
-  }
-
-  return ''
+  return css`
+    ${data[direction][type]}: ${value};
+  `
 }
 
+// --------------------------------------------------------
+// calculations of styles to be rendered
+// --------------------------------------------------------
 const styles = ({ css, theme: t, rootSize }) => css`
-  ${t.direction &&
-  t.alignX &&
-  t.alignY &&
-  alignContent({
+  ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,
@@ -51,10 +43,10 @@ const styles = ({ css, theme: t, rootSize }) => css`
 
   ${t.gap &&
   css`
-    ${({ contentType }) =>
+    ${({ $contentType }) =>
       calculateGap({
         direction: t.parentDirection,
-        type: contentType,
+        type: $contentType,
         value: value(rootSize, [t.gap]),
         css,
       })}
@@ -74,8 +66,8 @@ export default config.styled(config.component)`
   display: flex;
   align-self: stretch;
 
-  ${({ isContent }) =>
-    isContent &&
+  ${({ $contentType }) =>
+    $contentType === 'content' &&
     config.css`
     flex: 1;
   `};

@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react'
+
 type isEmpty = null | undefined
 type ContentAlignX = 'left' | 'center' | 'right' | isEmpty
 type ContentAlignY = 'top' | 'center' | 'bottom' | isEmpty
@@ -22,8 +24,8 @@ export type Direction =
 
 export type ResponsiveBooltype =
   | boolean
-  | Array<boolean>
   | Record<string, boolean>
+  | Array<boolean>
 
 export type Responsive =
   | number
@@ -32,6 +34,6 @@ export type Responsive =
 
 export type ExtractProps<
   TComponentOrTProps
-> = TComponentOrTProps extends React.ComponentType<infer TProps>
+> = TComponentOrTProps extends ComponentType<infer TProps>
   ? TProps
   : TComponentOrTProps

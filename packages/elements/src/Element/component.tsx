@@ -1,5 +1,5 @@
-import React, { forwardRef, useMemo } from 'react'
-import { config, renderContent } from '@vitus-labs/core'
+import React, { forwardRef } from 'react'
+import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
   transformVerticalProp,
@@ -8,6 +8,10 @@ import {
 } from './utils'
 import { AlignX, AlignY, Direction } from '~/types'
 import type { Props } from './types'
+
+const defaultDirection = 'inline'
+const defaultAlignX = 'left'
+const defaultAlignY = 'center'
 
 const Component = forwardRef<any, Props>(
   (
@@ -25,26 +29,26 @@ const Component = forwardRef<any, Props>(
       gap,
 
       vertical,
-      direction = 'inline',
-      alignX = 'left',
-      alignY = 'center',
+      direction,
+      alignX = defaultAlignX,
+      alignY = defaultAlignY,
 
       css,
       contentCss,
       beforeContentCss,
       afterContentCss,
 
-      contentDirection = 'inline',
-      contentAlignX = 'left',
-      contentAlignY = 'center',
+      contentDirection = defaultDirection,
+      contentAlignX = defaultAlignX,
+      contentAlignY = defaultAlignY,
 
-      beforeContentDirection = 'inline',
-      beforeContentAlignX = 'left',
-      beforeContentAlignY = 'center',
+      beforeContentDirection = defaultDirection,
+      beforeContentAlignX = defaultAlignX,
+      beforeContentAlignY = defaultAlignY,
 
-      afterContentDirection = 'inline',
-      afterContentAlignX = 'left',
-      afterContentAlignY = 'center',
+      afterContentDirection = defaultDirection,
+      afterContentAlignX = defaultAlignX,
+      afterContentAlignY = defaultAlignY,
 
       ...props
     },
@@ -53,10 +57,9 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // check if should render only single element
     // --------------------------------------------------------
-    const shouldBeEmpty = useMemo(
-      () => getShouldBeEmpty(tag, __WEB__) || props.dangerouslySetInnerHTML,
-      [tag, props.dangerouslySetInnerHTML]
-    )
+    const shouldBeEmpty =
+      !!props.dangerouslySetInnerHTML ||
+      (__WEB__ && tag && getShouldBeEmpty(tag))
 
     // --------------------------------------------------------
     // common wrapper props
@@ -82,12 +85,18 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
-    const SUB_TAG = useMemo(() => calculateSubTag(tag, __WEB__), [tag])
+
+    let SUB_TAG
+    if (__WEB__) {
+      if (tag) {
+        SUB_TAG = calculateSubTag(tag)
+      }
+    }
 
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    let wrapperDirection: Direction = direction
+    let wrapperDirection: Direction = defaultDirection
     let wrapperAlignX: AlignX = alignX
     let wrapperAlignY: AlignY = alignY
 
@@ -95,9 +104,11 @@ const Component = forwardRef<any, Props>(
       if (contentDirection) wrapperDirection = contentDirection
       if (contentAlignX) wrapperAlignX = contentAlignX
       if (contentAlignY) wrapperAlignY = contentAlignY
+    } else if (direction) {
+      wrapperDirection = direction
+    } else if (vertical !== undefined || vertical !== null) {
+      wrapperDirection = transformVerticalProp(vertical)
     }
-
-    if (vertical) wrapperDirection = transformVerticalProp(vertical)
 
     return (
       <Wrapper
@@ -133,7 +144,6 @@ const Component = forwardRef<any, Props>(
             alignX={contentAlignX}
             alignY={contentAlignY}
             equalCols={equalCols}
-            isContent
           >
             {renderContent(CHILDREN)}
           </Content>

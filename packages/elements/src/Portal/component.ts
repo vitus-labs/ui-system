@@ -12,11 +12,9 @@ const component: FC<Props> = ({
   tag = 'div',
   children,
 }: Props) => {
-  const [element, setElement] = useState(null)
+  const [element] = useState(document.createElement(tag))
 
   useEffect(() => {
-    setElement(document.createElement(tag))
-
     position.appendChild(element)
 
     return () => {

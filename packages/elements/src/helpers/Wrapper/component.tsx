@@ -1,13 +1,7 @@
-import React, { forwardRef, useMemo, ReactNode } from 'react'
-import { pick } from '@vitus-labs/core'
-import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
+import React, { forwardRef, ReactNode } from 'react'
 import { Direction, AlignX, AlignY, ResponsiveBooltype } from '~/types'
-import { isFixNeeded } from './utils'
+import { isWebFixNeeded } from './utils'
 import Styled from './styled'
-
-const KEYWORDS_WRAPPER = ['block', 'extendCss']
-const KEYWORDS_INNER = ['direction', 'alignX', 'alignY', 'equalCols']
-const KEYWORDS = [...KEYWORDS_WRAPPER, ...KEYWORDS_INNER]
 
 type Reference = any
 
@@ -37,43 +31,12 @@ const Component = forwardRef<Reference, Partial<Props>>(
     },
     ref
   ) => {
-    const needsFix = useMemo(() => isFixNeeded(tag, __WEB__), [tag])
-
-    const stylingProps = {
-      block,
-      extendCss,
-      direction,
-      alignX,
-      alignY,
-      equalCols,
-    }
-
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
             'data-vb-element': 'Element',
           }
         : {}
-
-    const { sortedBreakpoints } = vitusContext()
-
-    const normalizedTheme = useMemo(
-      () =>
-        optimizeTheme({
-          breakpoints: sortedBreakpoints,
-          keywords: KEYWORDS,
-          props: stylingProps,
-        }),
-      [
-        sortedBreakpoints,
-        block,
-        extendCss,
-        direction,
-        alignX,
-        alignY,
-        equalCols,
-      ]
-    )
 
     const COMMON_PROPS = {
       ...props,
@@ -82,9 +45,24 @@ const Component = forwardRef<Reference, Partial<Props>>(
       as: tag,
     }
 
+    let needsFix = false
+    if (__WEB__) {
+      needsFix = isWebFixNeeded(tag)
+    }
+
     if (!needsFix || __NATIVE__) {
       return (
-        <Styled {...COMMON_PROPS} $element={normalizedTheme}>
+        <Styled
+          {...COMMON_PROPS}
+          $element={{
+            block,
+            extendCss,
+            direction,
+            alignX,
+            alignY,
+            equalCols,
+          }}
+        >
           {children}
         </Styled>
       )
@@ -94,12 +72,20 @@ const Component = forwardRef<Reference, Partial<Props>>(
       <Styled
         {...COMMON_PROPS}
         $needsFix
-        $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
+        $element={{
+          block,
+          extendCss,
+        }}
       >
         <Styled
           as="span"
           $isInner
-          $element={pick(normalizedTheme, KEYWORDS_INNER)}
+          $element={{
+            direction,
+            alignX,
+            alignY,
+            equalCols,
+          }}
         >
           {children}
         </Styled>
