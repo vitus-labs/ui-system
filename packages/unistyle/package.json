@@ -11,13 +11,14 @@
   "main": "lib/vitus-labs-unistyle.js",
   "umd:main": "lib/vitus-labs-unistyle.umd.js",
   "module": "lib/vitus-labs-unistyle.module.js",
+  "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-unistyle.js": "./lib/vitus-labs-unistyle.js",
-    "./lib/vitus-labs-unistyle.module.js": "./lib/vitus-labs-unistyle.module.js"
+    "./lib/vitus-labs-unistyle.module.js": "./lib/vitus-labs-unistyle.browser.js"
   },
   "unpkg": "lib/vitus-labs-unistyle.umd.min.js",
   "jsnext:main": "lib/vitus-labs-unistyle.module.js",
-  "react-native": "lib/vitus-labs-unistyle.module.js",
+  "react-native": "lib/vitus-labs-unistyle.native.js",
   "files": [
     "lib/"
   ],

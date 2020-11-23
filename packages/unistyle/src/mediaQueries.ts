@@ -1,20 +1,56 @@
-//@ts-ignore
-const sortBreakpoints = (breakpoints) =>
-  Object.keys(breakpoints).sort((a, b) => breakpoints[a] - breakpoints[b])
+type RootSize = number
+type CssFn = (l: TemplateStringsArray, ...p: any[]) => string
 
-const createMediaQueries = ({ breakpoints, rootSize, css }) =>
+// --------------------------------------------------------
+// sort breakpoints
+// --------------------------------------------------------
+// type SortBreakpoints = <T>(breakpoints: T) => Array<keyof T>
+const sortBreakpoints = (breakpoints) => {
+  const result = Object.keys(breakpoints).sort(
+    (a, b) => breakpoints[a] - breakpoints[b]
+  )
+
+  return result
+}
+
+// --------------------------------------------------------
+// create media queries
+// --------------------------------------------------------
+type CreateMediaQueries = <B>({
+  breakpoints,
+  rootSize,
+  css,
+}: {
+  breakpoints: B
+  rootSize: RootSize
+  css: CssFn
+}) => Record<keyof B, typeof css>
+
+const createMediaQueries: CreateMediaQueries = ({
+  breakpoints,
+  rootSize,
+  css,
+}) =>
   Object.keys(breakpoints).reduce((accumulator, label) => {
     // use em in breakpoints to work properly cross-browser and support users
     // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
     const emSize = breakpoints[label] / rootSize
-    accumulator[label] = (...args) => css`
-      @media (min-width: ${emSize}em) {
-        ${css(...args)};
-      }
-    `
+    /* eslint-disable-next-line no-param-reassign */
+    accumulator[label] = (
+      literals: TemplateStringsArray,
+      ...placeholders: any[]
+    ) =>
+      css`
+        @media (min-width: ${emSize}em) {
+          ${css(literals, ...placeholders)};
+        }
+      `
     return accumulator
-  }, {})
+  }, {} as Record<keyof typeof breakpoints, (l: TemplateStringsArray, ...p: any[]) => string>)
 
+// --------------------------------------------------------
+// transform theme
+// --------------------------------------------------------
 const transformTheme = ({ theme, breakpoints }) => {
   const newTheme = {}
 
@@ -40,18 +76,41 @@ const transformTheme = ({ theme, breakpoints }) => {
   return newTheme
 }
 
-const makeItResponsive = ({ theme: customTheme, key = '', css, styles }) => ({
+// --------------------------------------------------------
+// make it responsive
+// --------------------------------------------------------
+type CustomTheme = Record<string, object | number | string | boolean>
+type Theme = {
+  rootSize: number
+  breakpoints?: Record<string, number>
+} & CustomTheme
+
+type MakeItResponsive = ({
   theme,
-  ...props
-}) => {
+  key,
+  css,
+  styles,
+}: {
+  theme?: CustomTheme
+  key?: string
+  css: any
+  styles: any
+}) => ({ theme }: { theme?: Theme }) => any
+
+const makeItResponsive: MakeItResponsive = ({
+  theme: customTheme,
+  key = '',
+  css,
+  styles,
+}) => ({ theme, ...props }) => {
   const internalTheme = customTheme || props[key]
   const { rootSize, breakpoints } = theme
 
-  if (!breakpoints || breakpoints.length === 0) {
-    const result = styles({ theme: internalTheme, css, rootSize })
+  const renderStyles = (theme: object) => styles({ theme, css, rootSize })
 
+  if (!breakpoints || breakpoints.length === 0) {
     return css`
-      ${result}
+      ${renderStyles(internalTheme)}
     `
   }
 

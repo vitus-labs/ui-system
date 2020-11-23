@@ -1,8 +1,11 @@
-//@ts-ignore
 import { useState, useEffect } from 'react'
 import { throttle } from '@vitus-labs/core'
 
-const useWindowSize = (throttleDelay = 200) => {
+type UseWindowSize = (
+  throttleDelay: number
+) => { width: number; height: number }
+
+const useWindowSize: UseWindowSize = (throttleDelay = 200) => {
   const isClient = typeof window === 'object'
 
   function getSize() {

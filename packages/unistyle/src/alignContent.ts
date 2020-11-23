@@ -1,5 +1,4 @@
-//@ts-ignore
-import { config } from '@vitus-labs/core'
+import { config, isEmpty } from '@vitus-labs/core'
 
 const MAP_SHARED = {
   center: 'center',
@@ -8,87 +7,66 @@ const MAP_SHARED = {
   block: 'stretch',
 }
 
-const MAP_ALIGN_X = {
+const ALIGN_X = {
   left: 'flex-start',
   right: 'flex-end',
   ...MAP_SHARED,
 }
 
-const MAP_ALIGN_Y = {
+const ALIGN_Y = {
   top: 'flex-start',
   bottom: 'flex-end',
   ...MAP_SHARED,
 }
 
-const MAP_DIRECTION = {
-  web: {
-    column: 'column',
-    reverseColumn: 'reverse-column',
-    rows: 'row',
-    reverseRows: 'reverse-row',
-  },
-  native: {
-    column: 'column',
-    reverseColumn: 'column-reverse',
-    rows: 'row',
-    reverseRows: 'row-reverse',
-  },
+type DIRECTION_TYPE = {
+  inline: string
+  reverseInline: string
+  rows: string
+  reverseRows: string
 }
 
-const alignValue = <T>(map: T) => (attr: keyof T) => map[attr]
-
-const alignValueX = alignValue(MAP_ALIGN_X)
-const alignValueY = alignValue(MAP_ALIGN_Y)
-const setDirection = alignValue(MAP_DIRECTION[config.platform])
-
-const alignContent = (attrs) => {
-  if (
-    !attrs ||
-    typeof attrs !== 'object' ||
-    !attrs.direction ||
-    !attrs.alignX ||
-    !attrs.alignY
-  ) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`
-        You are not passing an object with keys direction, alignX and alignY.
-      `)
+const DIRECTION: DIRECTION_TYPE = __NATIVE__
+  ? {
+      inline: 'row',
+      reverseInline: 'row-reverse',
+      rows: 'column',
+      reverseRows: 'column-reverse',
+    }
+  : {
+      inline: 'row',
+      reverseInline: 'reverse-row',
+      rows: 'column',
+      reverseRows: 'reverse-column',
     }
 
-    return []
-  }
+type AlignContentProps = ({
+  direction,
+  alignX,
+  alignY,
+}: {
+  direction: keyof DIRECTION_TYPE
+  alignX: keyof typeof ALIGN_X
+  alignY: keyof typeof ALIGN_Y
+}) => ReturnType<typeof config.css>
 
+const alignContent: AlignContentProps = (attrs) => {
   const { direction, alignX, alignY } = attrs
-  const styles = ({ direction, alignX, alignY }) => config.css`
-    flex-direction: ${direction};
-    align-items: ${alignX};
-    justify-content: ${alignY};
-  `
 
-  const map = {
-    rows: {
-      direction: setDirection('column'),
-      alignX: alignValueX(alignX),
-      alignY: alignValueY(alignY),
-    },
-    reverseRows: {
-      direction: setDirection('reverseColumn'),
-      alignX: alignValueX(alignX),
-      alignY: alignValueY(alignY),
-    },
-    inline: {
-      direction: setDirection('rows'),
-      alignX: alignValueY(alignY),
-      alignY: alignValueX(alignX),
-    },
-    reverseInline: {
-      direction: setDirection('reverseRows'),
-      alignX: alignValueY(alignY),
-      alignY: alignValueX(alignX),
-    },
+  if (isEmpty(attrs) || !direction || !alignX || !alignY) {
+    return undefined
   }
 
-  return styles(map[direction])
+  const isReverted = ['inline', 'inlineReverse'].includes(direction)
+  const dir = DIRECTION[direction]
+  const aX = ALIGN_X[alignX]
+  const aY = ALIGN_Y[alignY]
+
+  return config.css`
+    flex-direction: ${dir};
+    align-items: ${isReverted ? aY : aX};
+    justify-content: ${isReverted ? aX : aY};
+  `
 }
 
 export default alignContent
