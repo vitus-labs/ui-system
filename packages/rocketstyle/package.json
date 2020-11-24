@@ -37,7 +37,7 @@
     "lib/"
   ],
   "scripts": {
-    "dev": "yarn vl_run-stories",
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
     "build": "rm -rf lib && yarn vl_build",
     "build:watch": "yarn vl_build-watch",
