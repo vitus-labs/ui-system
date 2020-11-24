@@ -1,10 +1,12 @@
+import { set } from '@vitus-labs/core'
+
 // --------------------------------------------------------
 // sort breakpoints
 // --------------------------------------------------------
 type SortBreakpoints = <T extends Record<string, any>>(
   breakpoints: T
 ) => Array<keyof T>
-const sortBreakpoints: SortBreakpoints = (breakpoints) => {
+export const sortBreakpoints: SortBreakpoints = (breakpoints) => {
   const result = Object.keys(breakpoints).sort(
     (a, b) => breakpoints[a] - breakpoints[b]
   )
@@ -29,7 +31,7 @@ type CreateMediaQueries = <
   css: C
 }) => Record<keyof B, ReturnType<C>>
 
-const createMediaQueries: CreateMediaQueries = ({
+export const createMediaQueries: CreateMediaQueries = ({
   breakpoints,
   rootSize,
   css,
@@ -49,41 +51,60 @@ const createMediaQueries: CreateMediaQueries = ({
   }, {} as Record<keyof typeof breakpoints, ReturnType<typeof css>>)
 
 // --------------------------------------------------------
+// remove unexpected keys
+// --------------------------------------------------------
+const removeUnexpectedKeys = (obj, keys) => {
+  const result = {}
+  keys.forEach((bp) => {
+    const value = obj[bp]
+
+    if (value) {
+      result[bp] = value
+    }
+  })
+
+  return result
+}
+
+// --------------------------------------------------------
 // transform theme
 // --------------------------------------------------------
-const transformTheme = ({ theme, breakpoints }) => {
-  const newTheme = {}
+type TransformTheme = ({
+  theme,
+  breakpoints,
+}: {
+  theme: object
+  breakpoints: Array<string>
+}) => any
+export const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
+  const result = {}
 
-  // init breakpoints object
-  // { xs: {}, sm: {}, md: {},... }
-  breakpoints.forEach((item) => {
-    newTheme[item] = {}
-  })
-
-  Object.keys(theme).forEach((item) => {
-    if (Array.isArray(theme[item])) {
-      theme[item].forEach((child, i) => {
-        newTheme[breakpoints[i]][item] = child
+  // can be one of following types
+  // { fontSize: 12 }
+  // { fontSize: { xs: 12, md: 15 }}
+  // { fontSize: [12, 15] }
+  Object.entries(theme).forEach(([key, value]) => {
+    // array
+    if (Array.isArray(value) && value.length > 0) {
+      value.forEach((child, i) => {
+        const indexBreakpoint = breakpoints[i]
+        set(result, [indexBreakpoint, key], child)
       })
-    } else if (typeof theme[item] === 'object') {
-      const subObject = theme[item]
-      Object.keys(subObject).forEach((child) => {
-        newTheme[child][item] = subObject[child]
+    }
+    // object
+    else if (typeof value === 'object') {
+      Object.entries(value).forEach(([childKey, childValue]) => {
+        set(result, [childKey, key], childValue)
       })
-    } else {
-      newTheme[breakpoints[0]][item] = theme[item]
+    }
+    // normal value
+    else if (value != null) {
+      const firstBreakpoint = breakpoints[0]
+      set(result, [firstBreakpoint, key], value)
     }
   })
 
-  const cleanedTheme = {}
-  Object.keys(newTheme).forEach((item) => {
-    const theme = newTheme[item]
-    if (Object.keys(theme).length > 0) {
-      cleanedTheme[item] = theme
-    }
-  })
-
-  return cleanedTheme
+  return removeUnexpectedKeys(result, breakpoints)
 }
 
 // --------------------------------------------------------
@@ -111,7 +132,7 @@ type MakeItResponsive = ({
   styles: any
 }) => ({ theme }: { theme?: Theme }) => any
 
-const makeItResponsive: MakeItResponsive = ({
+export const makeItResponsive: MakeItResponsive = ({
   theme: customTheme,
   key = '',
   css,
@@ -137,9 +158,13 @@ const makeItResponsive: MakeItResponsive = ({
   })
 
   // this breakpoint will not be rendered within media query
-  const firstBreakpoint = sortBreakpoints[0]
+  const firstBreakpoint = sortedBreakpoints[0]
 
   return sortedBreakpoints.map((item) => {
+    const breakpointTheme = transformedTheme[item]
+
+    if (!breakpointTheme) return undefined
+
     const result = renderStyles(transformedTheme[item])
 
     // first breakpoint is rendered without media queries
@@ -154,7 +179,3 @@ const makeItResponsive: MakeItResponsive = ({
       `
   })
 }
-
-export { sortBreakpoints, createMediaQueries, transformTheme }
-
-export default makeItResponsive

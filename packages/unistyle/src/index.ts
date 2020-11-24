@@ -2,7 +2,8 @@ import alignContent from './alignContent'
 import breakpoints from './breakpoints'
 import { Provider } from './context'
 import extendedCss from './extendedCss'
-import makeItResponsive, {
+import {
+  makeItResponsive,
   sortBreakpoints,
   createMediaQueries,
   transformTheme,
