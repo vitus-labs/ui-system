@@ -32,10 +32,7 @@ const styles = ({ css, theme: t }) => css`
     align-self: stretch;
   `};
 
-  ${t.direction &&
-  t.alignX &&
-  t.alignY &&
-  alignContent({
+  ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,

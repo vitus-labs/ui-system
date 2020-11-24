@@ -1,7 +1,14 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
-  "include": ["declaration.d.ts","src"],
-  "exclude": ["node_modules", "lib", "__stories__"],
+  "include": [
+    "declaration.d.ts",
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "__stories__"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

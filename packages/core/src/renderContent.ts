@@ -3,14 +3,14 @@ import {
   isValidElement,
   cloneElement,
   Children,
-  ReactElement,
+  ReactNode,
 } from 'react'
 import isEmpty from './isEmpty'
 
 type RenderContent = (
-  content?: ReactElement,
+  content?: ReactNode,
   attachProps?: Record<string, any>
-) => ReactElement
+) => ReactNode
 
 const renderContent: RenderContent = (content, attachProps = {}) => {
   if (!content) return null
@@ -20,6 +20,7 @@ const renderContent: RenderContent = (content, attachProps = {}) => {
   }
 
   if (typeof content === 'function') {
+    // @ts-ignore
     return createElement(content, attachProps)
   }
 
@@ -31,9 +32,10 @@ const renderContent: RenderContent = (content, attachProps = {}) => {
     return cloneElement(Children.only(content), attachProps)
   }
 
-  if (typeof content === 'object') {
+  if (typeof content === 'object' && !isEmpty(content)) {
     // FIXME: quick fix for rendering invalid elements
     // no idea of what is going on here yet
+    // @ts-ignore
     return createElement(content, attachProps)
   }
 
