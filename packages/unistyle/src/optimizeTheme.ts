@@ -3,16 +3,12 @@ import { set, get, pick } from '@vitus-labs/core'
 // ------------------------------------------
 // pickTheme props
 // ------------------------------------------
-const pickThemeProps = (props, keywords) => {
-  const result = {}
-
-  keywords.forEach((item) => {
-    const value = props[item]
-    if (value || typeof value === 'number') result[item] = value
-  })
-
-  return result
-}
+type PickThemeProps = <T extends Record<string, any>>(
+  props: T,
+  keywords: Array<keyof T>
+) => any
+const pickThemeProps: PickThemeProps = (props, keywords) =>
+  pick(props, keywords)
 
 // ------------------------------------------
 // calculate theme
@@ -23,7 +19,9 @@ const calculateTheme = ({ breakpoints, keywords, props }) => {
   keywords.forEach((item) => {
     const propItem = props[item]
 
-    if (propItem === undefined || propItem === null) return
+    // https://www.tutorialrepublic.com/faq/how-to-determine-if-variable-is-undefined-or-null-in-javascript.php#:~:text=Answer%3A%20Use%20the%20equality%20operator%20(%20%3D%3D%20)&text=In%20simple%20words%20you%20can,no%20yet%20assigned%20a%20value.
+    // checks if undefined || null
+    if (propItem != null) return
 
     // if it is a prop key as a breakpoint (like xs, sm,...)
     if (breakpoints.includes(item)) {

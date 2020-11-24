@@ -1,8 +1,6 @@
-// @ts-ignore
-import React, { ReactNode, useContext, useMemo, FC } from 'react'
+import React, { ReactNode, FC } from 'react'
 import { config, isEmpty } from '@vitus-labs/core'
 import { sortBreakpoints, createMediaQueries } from './mediaQueries'
-// import useWindowSize from './useWindowSize'
 
 const StyledProvider = config.context.Provider
 
@@ -31,43 +29,23 @@ const StyledProvider = config.context.Provider
 //   return result
 // }
 
-export default () => {
-  const { breakpoints } = useContext(config.context)
-  // const { width, height } = useWindowSize()
+// const Consumer =  () => {
+//   const
+//   // const { width, height } = useWindowSize()
 
-  const result = {
-    breakpoints: {},
-    sortedBreakpoints: [],
-    // breakpointsState: {},
-    // currentBreakpoint: {},
-    // component: config.component,
-    // viewport: { width, height },
-    // getCurrentBreakpoint: (breakpoints) =>
-    //   calculateCurrentBreakpoint(breakpoints, width),
-    // getAllBreakpointsState: (breakpoints) =>
-    //   calculateBreakpointState(breakpoints, width),
-  }
+//   const result = {
+//     // breakpointsState: {},
+//     // currentBreakpoint: {},
+//     // component: config.component,
+//     // viewport: { width, height },
+//     // getCurrentBreakpoint: (breakpoints) =>
+//     //   calculateCurrentBreakpoint(breakpoints, width),
+//     // getAllBreakpointsState: (breakpoints) =>
+//     //   calculateBreakpointState(breakpoints, width),
+//   }
 
-  if (!breakpoints || isEmpty(breakpoints)) {
-    // if (process.env.NODE_ENV !== 'production') {
-    //   console.warn(`
-    //     vitusLabs Context Consumer is not getting any breakpoints
-    //     from your Theme Provider
-    //   `)
-    // }
-  } else {
-    const sortedBreakpoints = useMemo(() => sortBreakpoints(breakpoints), [
-      breakpoints,
-    ])
-
-    result.breakpoints = breakpoints
-    result.sortedBreakpoints = sortedBreakpoints
-    // result.breakpointsState = calculateBreakpointState(breakpoints, width)
-    // result.currentBreakpoint = calculateCurrentBreakpoint(breakpoints, width)
-  }
-
-  return result
-}
+//   return result
+// }
 
 type VitusLabsContext = {
   sortedBreakpoints?: ReturnType<typeof sortBreakpoints>
@@ -90,7 +68,7 @@ const Provider: FC<ProviderType> = ({ theme, children }) => {
 
   const { breakpoints, rootSize } = theme
 
-  if (breakpoints) {
+  if (!isEmpty(breakpoints)) {
     __VITUS_LABS__.sortedBreakpoints = sortBreakpoints(breakpoints)
     __VITUS_LABS__.media = createMediaQueries({
       breakpoints,
@@ -106,3 +84,6 @@ const Provider: FC<ProviderType> = ({ theme, children }) => {
 
   return <StyledProvider value={result}>{children}</StyledProvider>
 }
+
+// eslint-disable-next-line import/prefer-default-export
+export { Provider }

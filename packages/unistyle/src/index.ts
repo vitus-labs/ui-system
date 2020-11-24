@@ -1,6 +1,6 @@
 import alignContent from './alignContent'
 import breakpoints from './breakpoints'
-import vitusContext from './context'
+import { Provider } from './context'
 import extendedCss from './extendedCss'
 import makeItResponsive, {
   sortBreakpoints,
@@ -17,7 +17,7 @@ import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 export {
   alignContent,
   breakpoints,
-  vitusContext,
+  Provider,
   extendedCss,
   makeItResponsive,
   sortBreakpoints,

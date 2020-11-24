@@ -1,11 +1,10 @@
-type RootSize = number
-type CssFn = (l: TemplateStringsArray, ...p: any[]) => string
-
 // --------------------------------------------------------
 // sort breakpoints
 // --------------------------------------------------------
-// type SortBreakpoints = <T>(breakpoints: T) => Array<keyof T>
-const sortBreakpoints = (breakpoints) => {
+type SortBreakpoints = <T extends Record<string, any>>(
+  breakpoints: T
+) => Array<keyof T>
+const sortBreakpoints: SortBreakpoints = (breakpoints) => {
   const result = Object.keys(breakpoints).sort(
     (a, b) => breakpoints[a] - breakpoints[b]
   )
@@ -16,15 +15,19 @@ const sortBreakpoints = (breakpoints) => {
 // --------------------------------------------------------
 // create media queries
 // --------------------------------------------------------
-type CreateMediaQueries = <B>({
+type CreateMediaQueries = <
+  B,
+  R extends number,
+  C extends (...args: any) => any
+>({
   breakpoints,
   rootSize,
   css,
 }: {
   breakpoints: B
-  rootSize: RootSize
-  css: CssFn
-}) => Record<keyof B, typeof css>
+  rootSize: R
+  css: C
+}) => Record<keyof B, ReturnType<C>>
 
 const createMediaQueries: CreateMediaQueries = ({
   breakpoints,
@@ -36,17 +39,14 @@ const createMediaQueries: CreateMediaQueries = ({
     // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
     const emSize = breakpoints[label] / rootSize
     /* eslint-disable-next-line no-param-reassign */
-    accumulator[label] = (
-      literals: TemplateStringsArray,
-      ...placeholders: any[]
-    ) =>
+    accumulator[label] = (...args: any[]) =>
       css`
         @media (min-width: ${emSize}em) {
-          ${css(literals, ...placeholders)};
+          ${css(...args)};
         }
       `
     return accumulator
-  }, {} as Record<keyof typeof breakpoints, (l: TemplateStringsArray, ...p: any[]) => string>)
+  }, {} as Record<keyof typeof breakpoints, ReturnType<typeof css>>)
 
 // --------------------------------------------------------
 // transform theme
@@ -54,6 +54,8 @@ const createMediaQueries: CreateMediaQueries = ({
 const transformTheme = ({ theme, breakpoints }) => {
   const newTheme = {}
 
+  // init breakpoints object
+  // { xs: {}, sm: {}, md: {},... }
   breakpoints.forEach((item) => {
     newTheme[item] = {}
   })
@@ -73,7 +75,15 @@ const transformTheme = ({ theme, breakpoints }) => {
     }
   })
 
-  return newTheme
+  const cleanedTheme = {}
+  Object.keys(newTheme).forEach((item) => {
+    const theme = newTheme[item]
+    if (Object.keys(theme).length > 0) {
+      cleanedTheme[item] = theme
+    }
+  })
+
+  return cleanedTheme
 }
 
 // --------------------------------------------------------
@@ -83,6 +93,10 @@ type CustomTheme = Record<string, object | number | string | boolean>
 type Theme = {
   rootSize: number
   breakpoints?: Record<string, number>
+  __VITUS_LABS__?: {
+    media?: ReturnType<typeof createMediaQueries>
+    sortedBreakpoints?: ReturnType<typeof sortBreakpoints>
+  }
 } & CustomTheme
 
 type MakeItResponsive = ({
@@ -104,43 +118,40 @@ const makeItResponsive: MakeItResponsive = ({
   styles,
 }) => ({ theme, ...props }) => {
   const internalTheme = customTheme || props[key]
-  const { rootSize, breakpoints } = theme
+  const { rootSize, breakpoints, __VITUS_LABS__ } = theme
+  const renderStyles = (theme: object): ReturnType<typeof styles> =>
+    styles({ theme, css, rootSize })
 
-  const renderStyles = (theme: object) => styles({ theme, css, rootSize })
-
-  if (!breakpoints || breakpoints.length === 0) {
+  // if there are no breakpoints, return just standard css
+  if (!breakpoints || breakpoints.length === 0 || !__VITUS_LABS__) {
     return css`
       ${renderStyles(internalTheme)}
     `
   }
 
-  const media = createMediaQueries({ breakpoints, rootSize, css })
-  const sortedBreakpoints = sortBreakpoints(breakpoints)
+  const { media, sortedBreakpoints } = __VITUS_LABS__
+
   const transformedTheme = transformTheme({
     theme: internalTheme,
     breakpoints: sortedBreakpoints,
   })
 
-  return sortedBreakpoints.map((item, i) => {
-    const hasBreakpointProperties =
-      Object.keys(transformedTheme[item]).length > 0
+  // this breakpoint will not be rendered within media query
+  const firstBreakpoint = sortBreakpoints[0]
 
-    if (hasBreakpointProperties) {
-      const result = styles({ theme: transformedTheme[item], css, rootSize })
+  return sortedBreakpoints.map((item) => {
+    const result = renderStyles(transformedTheme[item])
 
-      // first breakpoint is rendered without media queries
-      if (i === 0) {
-        return css`
-          ${result}
-        `
-      }
-
-      return media[item]`
-        ${result};
+    // first breakpoint is rendered without media queries
+    if (item === firstBreakpoint) {
+      return css`
+        ${result}
       `
     }
 
-    return null
+    return media[item]`
+        ${result};
+      `
   })
 }
 
