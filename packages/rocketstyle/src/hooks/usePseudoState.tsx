@@ -1,68 +1,72 @@
 import { useState } from 'react'
+import type { MouseAction, FocusAction } from '~/types'
 
-// const STATE_HANDLERS = [
-//   'setHover',
-//   'unsetHover',
-//   'setPressed',
-//   'unsetPressed',
-//   'setFocus',
-//   'unsetFocus',
-// ]
+type Props = {
+  onMouseEnter: MouseAction
+  onMouseLeave: MouseAction
+  onMouseDown: MouseAction
+  onMouseUp: MouseAction
+  onFocus: FocusAction
+  onBlur: FocusAction
+}
 
-// const RESERVED_KEYS = [
-//   'onMouseEnter',
-//   'onMouseLeave',
-//   'onMouseDown',
-//   'onMouseUp',
-//   'onFocus',
-//   'onBlur',
-// ]
+type PseudoState = { hover: boolean; focus: boolean; pressed: boolean }
 
-export default (props) => {
+type UsePseudoState = ({
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  onMouseUp,
+  onFocus,
+  onBlur,
+}: Partial<Props>) => { state: PseudoState; events: Props }
+
+const usePseudoState: UsePseudoState = (props) => {
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  const onMouseEnter = (e) => {
+  const onMouseEnter = (e: MouseEvent) => {
+    e.preventDefault()
     setHover(true)
     if (props.onMouseEnter) props.onMouseEnter(e)
   }
 
-  const onMouseLeave = (e) => {
+  const onMouseLeave = (e: MouseEvent) => {
+    e.preventDefault()
     setHover(false)
     if (props.onMouseLeave) props.onMouseLeave(e)
   }
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: MouseEvent) => {
+    e.preventDefault()
     setPressed(true)
     if (props.onMouseDown) props.onMouseDown(e)
   }
 
-  const onMouseUp = (e) => {
+  const onMouseUp = (e: MouseEvent) => {
+    e.preventDefault()
     setPressed(false)
     if (props.onMouseUp) props.onMouseUp(e)
   }
 
-  const onFocus = (e) => {
+  const onFocus = (e: FocusEvent) => {
+    e.preventDefault()
     setFocus(true)
     if (props.onFocus) props.onFocus(e)
   }
 
-  const onBlur = (e) => {
+  const onBlur = (e: FocusEvent) => {
+    e.preventDefault()
     setFocus(false)
     if (props.onBlur) props.onBlur(e)
   }
 
   return {
-    pseudoState: {
+    state: {
       hover,
       focus,
       pressed,
-    },
-    pseudoEvents: {
-      setHover,
-      setFocus,
-      setPressed,
     },
     events: {
       onMouseEnter,
@@ -74,3 +78,5 @@ export default (props) => {
     },
   }
 }
+
+export default usePseudoState

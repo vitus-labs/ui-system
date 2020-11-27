@@ -1,57 +1,70 @@
-// @ts-nocheck
-import { config } from '@vitus-labs/core'
+import { config, set } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
+import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
-// --------------------------------------------------------
-// helpers
-// --------------------------------------------------------
-const generateKeys = (context, theme, config) => {
-  config.dimensionKeys.forEach((item) => {
-    context[item] = Object.keys(theme[item])
-  })
+const isMultiKey = (value) => {
+  if (Array.isArray(value)) return [true, value[0]]
+  return [false, value]
 }
 
-const generateThemes = (context, theme, options) => {
-  options.dimensionKeys.forEach((item) => {
-    context[item] = calculateChainOptions(options[item], theme, config.css)
-  })
-}
+const calculateDimensionsMap = (theme, useBooleans) =>
+  Object.entries(theme).reduce(
+    (accumulator, [key, value]) => {
+      const { keysMap, keywords } = accumulator
+      keywords.push(key)
 
-const useTheme = ({ theme, options }) => {
-  // define empty objects so they can be reassigned later
-  const __ROCKETSTYLE__ = {
-    keys: {},
-    themes: {},
-  }
+      Object.keys(value).forEach((item) => {
+        if (useBooleans) {
+          keywords.push(item)
+        }
 
-  __ROCKETSTYLE__.themes.base = calculateChainOptions(
-    options.theme,
-    theme,
-    config.css
+        set(keysMap, [key, item], true)
+      })
+
+      return accumulator
+    },
+    { keysMap: {}, keywords: [] }
   )
 
-  generateThemes(__ROCKETSTYLE__.themes, theme, options)
-  generateKeys(__ROCKETSTYLE__.keys, __ROCKETSTYLE__.themes, options)
+const calculateDimensionThemes = (theme, options) =>
+  Object.entries(options.dimensions).reduce((accumulator, [key, value]) => {
+    const [, dimension] = isMultiKey(value)
 
-  __ROCKETSTYLE__.rocketConfig = {}
-  __ROCKETSTYLE__.rocketConfig.dimensions = options.dimensions
-  __ROCKETSTYLE__.rocketConfig.useBooleans = options.useBooleans
+    // eslint-disable-next-line no-param-reassign
+    accumulator[dimension] = calculateChainOptions(
+      options[key],
+      theme,
+      config.css
+    )
 
-  __ROCKETSTYLE__.KEYWORDS = []
+    return accumulator
+  }, {})
 
-  options.dimensionKeys.forEach((item) => {
-    __ROCKETSTYLE__.KEYWORDS = [
-      ...__ROCKETSTYLE__.KEYWORDS,
-      ...__ROCKETSTYLE__.keys[item],
-    ]
-  })
+type UseTheme = <T extends Record<string, unknown>>({
+  theme,
+  options,
+}: {
+  theme: T
+  options: Configuration
+}) => __ROCKETSTYLE__
 
-  __ROCKETSTYLE__.KEYWORDS = [
-    ...__ROCKETSTYLE__.KEYWORDS,
-    ...options.dimensionValues,
-  ]
+const useTheme: UseTheme = ({ theme, options }) => {
+  const themes = calculateDimensionThemes(theme, options)
+  const { keysMap, keywords } = calculateDimensionsMap(
+    themes,
+    options.useBooleans
+  )
 
-  return { __ROCKETSTYLE__ }
+  // define empty objects so they can be reassigned later
+  // eslint-disable-next-line no-underscore-dangle
+  const __ROCKETSTYLE__ = {
+    dimensions: keysMap,
+    reservedPropNames: keywords,
+    baseTheme: calculateChainOptions(options.theme, [theme, config.css]),
+    themes,
+  }
+
+  return __ROCKETSTYLE__
 }
 
 export default useTheme

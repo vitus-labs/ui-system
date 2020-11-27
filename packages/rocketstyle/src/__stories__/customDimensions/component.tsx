@@ -1,20 +1,46 @@
 import { Element } from '@vitus-labs/elements'
 import rocketstyle from '../..'
 
+const Example = () => <div></div>
+
 export default rocketstyle({
   dimensions: {
     gaps: 'gap',
     paddings: 'padding',
+    multiple: ['m', { multi: true }],
   },
   useBooleans: true,
 })({ name: 'Button', component: Element })
+  .config({
+    component: Example,
+  })
   .attrs({
     tag: 'button',
     label: 'This is a label',
+    test: 'test',
+    example: 'hello',
   })
-  .theme({
+  .attrs((a) => ({
+    newProp: a.example ? 'a' : 'b',
+    newExampleProp: a.test ? 'a' : 'b',
+  }))
+  .theme((t) => ({
     bgColor: '#007bff',
     color: '#fff',
+  }))
+  .theme({
+    test: 'a',
+  })
+  .theme({
+    bgColor: 'a',
+  })
+  .gaps({
+    xxl: {
+      padding: 10,
+    },
+    xl: {
+      padding: 10,
+    },
   })
   .styles(
     (css) => css`
@@ -58,4 +84,18 @@ export default rocketstyle({
     gapxl: {
       marginX: 50,
     },
+    gapXxl: {
+      marginX: 60,
+    },
+    gapXxxl: {
+      marginX: 70,
+    },
   }))
+  .multiple({
+    test: {
+      fontSize: 20,
+    },
+    testB: {
+      textAlign: 'right',
+    },
+  })

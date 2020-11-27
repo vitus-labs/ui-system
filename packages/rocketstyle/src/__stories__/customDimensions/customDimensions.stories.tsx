@@ -7,4 +7,6 @@ export default {
   title: 'Custom dimensions',
 }
 
-export const customDimensions = () => <Button gapxl />
+export const customDimensions = () => (
+  <Button padding="paddingxl" gapxl gapXxl testB />
+)

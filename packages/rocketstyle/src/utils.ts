@@ -13,10 +13,19 @@ export const chainOptions = (opts, defaultOpts = []) => {
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
-export const calculateChainOptions = (opts = [], ...args) => {
+type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
+type CalculateChainOptions = <A>(
+  options: Array<OptionFunc<A>>,
+  ...args: Array<A>
+) => ReturnType<OptionFunc<A>>
+
+export const calculateChainOptions: CalculateChainOptions = (
+  options,
+  ...args
+) => {
   let result = {}
 
-  opts.forEach((item) => {
+  options.forEach((item) => {
     result = { ...result, ...item(...args) }
   })
 
@@ -32,70 +41,81 @@ export const calculateStyles = (styles, css) => {
   return styles.map((item) => item(css))
 }
 
+export const isInDimensions = (key, dimensions) => {
+  const hasKey = () => {
+    Object.values(dimensions).some((value) => value[key])
+  }
+
+  if (dimensions[key] || hasKey()) return true
+}
+
+export const splitProps = (props, dimensions) => {
+  const styleProps = {}
+  const otherProps = {}
+
+  Object.entries(props).forEach(([key, value]) => {
+    if (isInDimensions(key, dimensions)) styleProps[key] = value
+    else otherProps[key] = value
+  })
+
+  return { styleProps, otherProps }
+}
+
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
 export const calculateStyledAttrs = ({
   props,
   dimensions,
-  states,
   useBooleans,
+  multiKeys,
 }) => {
   const result = {}
 
-  Object.keys(props).forEach((key) => {
-    const value = props[key]
+  // (1) find dimension keys values & initialize
+  // object with possible options
+  Object.keys(dimensions).forEach((item) => {
+    const pickedProp = props[item]
+    const valueTypes = ['number', 'string']
 
-    if (useBooleans && typeof value === 'boolean' && value === true) {
-      Object.keys(states).forEach((stateKey) => {
-        if (
-          (Array.isArray(result[stateKey]) || !result[stateKey]) &&
-          states[stateKey].includes(key)
-        ) {
-          const isMultiKey = Array.isArray(dimensions[stateKey])
-          const keyName = isMultiKey
-            ? dimensions[stateKey][0]
-            : dimensions[stateKey]
+    // if the property is mutli key, allow assign array as well
+    if (multiKeys[item] && Array.isArray(pickedProp)) {
+      result[item] = pickedProp
+    } else {
+      // assign when it's only a string or number otherwise it's considered
+      // as invalid param
+      result[item] = valueTypes.includes(typeof pickedProp)
+        ? pickedProp
+        : undefined
+    }
+  })
 
-          if (isMultiKey) result[keyName] = [...(result[keyName] || []), key]
-          else result[keyName] = key
+  // (2) if booleans are being used let's find the rest
+  if (useBooleans) {
+    Object.entries(result).forEach(([key, value]) => {
+      const isMultiKey = multiKeys[key]
+
+      // when value in result is not assigned yet
+      if (!value) {
+        let newDimensionValue
+        const keywords = Object.keys(dimensions[key])
+        const propsKeys = Object.keys(props)
+
+        if (isMultiKey) {
+          newDimensionValue = propsKeys.filter((key) => keywords.includes(key))
+        } else {
+          // reverse props to guarantee the last one will have
+          // a priority over previous ones
+          newDimensionValue = propsKeys.reverse().find((key) => {
+            if (keywords.includes(key) && props[key]) return key
+            return false
+          })
         }
-      })
-    }
 
-    // prop with one of the following key names always has a priority
-    const propNames = []
-
-    Object.values(dimensions).forEach((item) => {
-      if (Array.isArray(item)) propNames.push(item[0])
-      if (typeof item === 'string') propNames.push(item)
+        result[key] = newDimensionValue
+      }
     })
-
-    if (propNames.includes(key) && !!value) {
-      result[key] = value
-    }
-  })
-
-  return result
-}
-
-// --------------------------------------------------------
-// merge themes
-// --------------------------------------------------------
-export const mergeThemes = (obj, keys) => {
-  let result = {}
-
-  Object.keys(obj).forEach((key) => {
-    const value = obj[key]
-
-    if (
-      Array.isArray(keys) &&
-      keys.includes(key) &&
-      typeof value === 'object'
-    ) {
-      result = { ...result, ...value }
-    }
-  })
+  }
 
   return result
 }
@@ -103,36 +123,47 @@ export const mergeThemes = (obj, keys) => {
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-const isDimensionMultiKey = (key) =>
-  // check if key is an array and if it has `multi` set to true
-  // as an argument on index 1
-  Array.isArray(key) && key[1].multi === true
-
-// --------------------------------------------------------
-// generate theme
-// --------------------------------------------------------
-export const calculateTheme = ({
-  styledAttributes,
+type CalculateTheme = <
+  P extends Record<string, string>,
+  T extends Record<string, string>,
+  B extends Record<string, string | number | object>
+>({
+  props,
   themes,
-  config: { dimensions },
+  baseTheme,
+}: {
+  props: P
+  themes: T
+  baseTheme: B
+}) => B & Record<string, string | number | object>
+
+export const calculateTheme: CalculateTheme = ({
+  props,
+  themes,
+  baseTheme,
 }) => {
   // generate final theme which will be passed to styled component
-  let finalTheme = themes.base
+  let finalTheme = { ...baseTheme }
 
-  Object.keys(themes).forEach((dimensionKey) => {
-    const value = dimensions[dimensionKey]
-    const isMultiKey = isDimensionMultiKey(value)
-    const keyName = isMultiKey ? value[0] : value
+  Object.entries(props).forEach(
+    ([key, value]: [string, string | Array<string>]) => {
+      const keyTheme = themes[key]
 
-    if (keyName) {
-      finalTheme = {
-        ...finalTheme,
-        ...(isMultiKey
-          ? mergeThemes(themes[dimensionKey], styledAttributes[dimensionKey])
-          : themes[dimensionKey][styledAttributes[keyName] || 'base']),
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          finalTheme = {
+            ...finalTheme,
+            ...keyTheme[item],
+          }
+        })
+      } else {
+        finalTheme = {
+          ...finalTheme,
+          ...keyTheme[value],
+        }
       }
     }
-  })
+  )
 
   return finalTheme
 }

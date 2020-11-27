@@ -1,13 +1,14 @@
-// @ts-nocheck
 import hoistNonReactStatics from 'hoist-non-react-statics'
+import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import React, {
   createContext,
   forwardRef,
   useEffect,
   useMemo,
   useContext,
+  ReactNode,
+  ComponentType,
 } from 'react'
-import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 
 import {
   chainOptions,
@@ -18,9 +19,17 @@ import {
 } from './utils'
 import useTheme from './hooks/useTheme'
 import usePseudoState from './hooks/usePseudoState'
+import type { RocketComponent, StyleComponent, Configuration } from './types'
 
 const Context = createContext({})
-const RESERVED_OR_KEYS = ['provider', 'consumer', 'DEBUG', 'name', 'component']
+const RESERVED_OR_KEYS = [
+  'provider',
+  'consumer',
+  'DEBUG',
+  'name',
+  'component',
+  'passBoolProps',
+]
 const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles']
 const RESERVED_STATIC_KEYS = [...RESERVED_CLONED_KEYS, 'compose', 'dimensions']
 
@@ -60,7 +69,12 @@ const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
 // always returns styleComponent with static functions
 // assigned
 // --------------------------------------------------------
-const cloneAndEnhance = (opts, defaultOpts = {}) =>
+type CloneAndEnhance = <C>(
+  opts: Configuration,
+  defaultOpts: Configuration
+) => ReturnType<StyleComponent<C, unknown, unknown, unknown>>
+
+const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts = {}) =>
   styleComponent({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -72,6 +86,16 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
     ),
   })
 
+const ReturnConsumer = ({ children }) => {
+  const ctx = useContext(Context)
+
+  return children(ctx)
+}
+
+const ReturnProvider = ({ children, value }) => (
+  <Context.Provider value={value}>{children}</Context.Provider>
+)
+
 // --------------------------------------------------------
 // styleComponent
 // helper function which allows function chaining
@@ -79,7 +103,21 @@ const cloneAndEnhance = (opts, defaultOpts = {}) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const styleComponent = (options) => {
+export type OptionsType = {
+  name: string
+  component: React.ComponentType<any>
+  useBooleans: boolean
+  dimensions: any
+  dimensionKeys: any
+  dimensionValues: any
+  styles?: any
+  attrs?: any
+  compose?: any
+  provider?: boolean
+  consumer?: any
+}
+
+const styleComponent: StyleComponent<ComponentType> = (options) => {
   const { component, styles } = options
 
   const componentName =
@@ -93,22 +131,66 @@ const styleComponent = (options) => {
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
-  const EnhancedComponent = forwardRef(({ onMount, ...props }, ref) => {
+  const EnhancedComponent: RocketComponent<
+    unknown,
+    unknown,
+    unknown,
+    unknown,
+    unknown,
+    unknown
+  > = forwardRef(({ onMount, ...props }, ref) => {
+    // general theme passed in context
     const theme = useContext(config.context)
-    const pseudo = usePseudoState(props)
 
+    // desctructure events used for pseudo state detection
     const {
-      __ROCKETSTYLE__: { KEYWORDS, keys, themes },
-    } = useMemo(() => useTheme({ theme, options }), [theme])
+      onMouseEnter,
+      onMouseLeave,
+      onMouseUp,
+      onMouseDown,
+      onFocus,
+      onBlur,
+    } = props
+
+    // pseudo hook to detect states hover / pressed / focus
+    const pseudo = usePseudoState({
+      onMouseEnter,
+      onMouseLeave,
+      onMouseUp,
+      onMouseDown,
+      onFocus,
+      onBlur,
+    })
+
+    // calculate themes for all possible styling dimensions
+    // eslint-disable-next-line no-underscore-dangle
+    const __ROCKETSTYLE__ = useMemo(
+      () => useTheme<typeof theme>({ theme, options }),
+      [theme]
+    )
+
+    const { reservedPropNames, themes, dimensions, baseTheme } = __ROCKETSTYLE__
 
     // if onMount is provided (useful for development tooling or so)
+    // it will pass all available styling options in the callback
     useEffect(() => {
-      if (onMount) {
-        onMount(__ROCKETSTYLE__)
-      }
-    }, [])
+      const { multiKeys, dimensionKeys, dimensionValues } = options
 
-    const finalElement = (ctxData = {}) => {
+      if (onMount) {
+        onMount({
+          multiKeys,
+          dimensionKeys,
+          dimensionValues,
+          ...__ROCKETSTYLE__,
+        })
+      }
+    }, [theme])
+
+    type FinalElement = (ctxData?: Record<string, unknown>) => ReactNode
+
+    const finalElement: FinalElement = (ctxData = {}) => {
+      // first we need to calculate final props which are
+      // being returned by using `attr` chaining method
       const calculatedAttrs = calculateChainOptions(
         options.attrs,
         props,
@@ -118,45 +200,53 @@ const styleComponent = (options) => {
         }
       )
 
-      const newProps = {
+      // get final props which are
+      // (1) merged from context,
+      // (2) `attrs` chaining method, and from
+      // (3) passing them directly to component
+      const componentProps = {
         ...ctxData,
         ...calculatedAttrs,
         ...props,
       }
 
-      const styledAttributes = calculateStyledAttrs({
-        props: pick(newProps, KEYWORDS),
-        states: keys,
-        dimensions: options.dimensions,
+      const styledProps = calculateStyledAttrs({
+        props: componentProps,
+        multiKeys: options.multiKeys,
+        dimensions,
         useBooleans: options.useBooleans,
       })
 
+      // final component state including pseudo state
       const rocketstate = {
-        ...styledAttributes,
-        pseudo: pseudo.pseudoState,
+        ...styledProps,
+        pseudo: pseudo.state,
       }
 
-      Object.values(styledAttributes).forEach((item) => {
-        if (Array.isArray(item)) {
-          item.forEach((item) => {
-            rocketstate[item] = true
-          })
-        } else {
-          rocketstate[item] = true
-        }
-      })
+      // if (options.useBooleans) {
+      //   Object.values(styledProps).forEach((item) => {
+      //     if (Array.isArray(item)) {
+      //       item.forEach((item) => {
+      //         rocketstate[item] = true
+      //       })
+      //     } else {
+      //       rocketstate[item] = true
+      //     }
+      //   })
+      // }
 
-      // calculated final theme which will be passed to styled component
+      // calculated final theme which will be passed to our styled component
+      // under $rocketstyle prop
       const rocketstyle = calculateTheme({
-        styledAttributes,
+        props: styledProps,
         themes,
-        config: options,
+        baseTheme,
       })
 
       const passProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(newProps, KEYWORDS),
+        ...omit(componentProps, reservedPropNames),
         ...(options.provider ? pseudo.events : {}),
         ref,
         $rocketstyle: rocketstyle,
@@ -213,7 +303,7 @@ const styleComponent = (options) => {
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
-    return cloneAndEnhance(result, options)
+    return cloneAndEnhance<typeof options.component>(result, options)
   }
 
   return ExtendedComponent
