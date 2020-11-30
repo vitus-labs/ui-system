@@ -1,6 +1,6 @@
 import React, { useEffect, createRef, ReactNode } from 'react'
 import { get } from '@vitus-labs/core'
-import { ExtractProps } from '~/types'
+import type { ExtractProps } from '~/types'
 
 const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
 

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import {
+import type { ReactNode } from 'react'
+import type {
   AlignX,
   AlignY,
   Direction,
@@ -7,7 +7,7 @@ import {
   Responsive,
 } from '~/types'
 
-export type Props = Partial<{
+export type Props = {
   tag: import('styled-components').StyledComponentPropsWithRef<any>
   innerRef: any
   children: ReactNode
@@ -36,4 +36,4 @@ export type Props = Partial<{
   contentCss: any
   beforeContentCss: any
   afterContentCss: any
-}>
+}

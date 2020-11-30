@@ -6,7 +6,6 @@ import {
   calculateSubTag,
   getShouldBeEmpty,
 } from './utils'
-import { AlignX, AlignY, Direction } from '~/types'
 import type { Props } from './types'
 
 const defaultDirection = 'inline'
@@ -96,9 +95,9 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX calculations
     // --------------------------------------------------------
-    let wrapperDirection: Direction
-    let wrapperAlignX: AlignX = alignX
-    let wrapperAlignY: AlignY = alignY
+    let wrapperDirection: typeof direction
+    let wrapperAlignX: typeof alignX = alignX
+    let wrapperAlignY: typeof alignY = alignY
 
     const calculateDirection = useCallback(() => {
       if (isSimple) {

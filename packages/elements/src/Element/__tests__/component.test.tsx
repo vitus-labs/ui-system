@@ -79,14 +79,11 @@ describe(Component.displayName, () => {
         beforeContentCss: `font-size: 20px`,
         beforeContentDirection: 'inline',
         beforeContentAlignX: 'right',
-        beforeContentAlignY: 'top'
+        beforeContentAlignY: 'top',
       }
 
       const tree = shallow(<Component {...props} />)
-      const content = tree
-        .find(Content)
-        .first()
-        .props()
+      const content = tree.find(Content).first().props()
 
       expect(content.children).toEqual(props.beforeContent)
       expect(content.children).toEqual(props.beforeContent)
@@ -102,14 +99,11 @@ describe(Component.displayName, () => {
         afterContentCss: `font-size: 20px`,
         afterContentDirection: 'inline',
         afterContentAlignX: 'right',
-        afterContentAlignY: 'top'
+        afterContentAlignY: 'top',
       }
 
       const tree = shallow(<Component {...props} />)
-      const content = tree
-        .find(Content)
-        .last()
-        .props()
+      const content = tree.find(Content).last().props()
 
       expect(content.children).toEqual(props.afterContent)
       expect(content.extendCss).toEqual(props.afterContentCss)
@@ -129,26 +123,11 @@ describe(Component.displayName, () => {
           label={label}
         />
       )
-      expect(
-        tree
-          .find(Content)
-          .first()
-          .props().children
-      ).toEqual(beforeContent)
+      expect(tree.find(Content).first().props().children).toEqual(beforeContent)
 
-      expect(
-        tree
-          .find(Content)
-          .at(1)
-          .props().children
-      ).toEqual(label)
+      expect(tree.find(Content).at(1).props().children).toEqual(label)
 
-      expect(
-        tree
-          .find(Content)
-          .last()
-          .props().children
-      ).toEqual(afterContent)
+      expect(tree.find(Content).last().props().children).toEqual(afterContent)
     })
   })
 
@@ -196,7 +175,11 @@ describe(Component.displayName, () => {
 
     it('prop alignX takes precendence over contentAlignX with before / after', async () => {
       const tree = shallow(
-        <Component alignX="center" contentAlignX="right" beforeContent="content" />
+        <Component
+          alignX="center"
+          contentAlignX="right"
+          beforeContent="content"
+        />
       )
       const wrapper = tree.props().alignX
 
@@ -243,7 +226,11 @@ describe(Component.displayName, () => {
 
     it('prop alignX takes precendence over contentAlignX with before / after', async () => {
       const tree = shallow(
-        <Component alignX="center" contentAlignX="right" beforeContent="content" />
+        <Component
+          alignX="center"
+          contentAlignX="right"
+          beforeContent="content"
+        />
       )
       const wrapper = tree.props().alignX
 
