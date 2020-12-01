@@ -1,10 +1,9 @@
-import { Content, Wrapper } from './helpers'
-import Element, { withEqualSizeBeforeAfter } from './Element'
-import List, { withActiveState } from './List'
-import Overlay from './Overlay'
-import Portal from './Portal'
-import Text from './Text'
-import Util from './Util'
+import { Content, Wrapper } from '~/helpers'
+import Element, { withEqualSizeBeforeAfter } from '~/Element'
+import List, { withActiveState } from '~/List'
+import Overlay from '~/Overlay'
+import Portal from '~/Portal'
+import Text from '~/Text'
 
 export {
   Content,
@@ -16,5 +15,4 @@ export {
   Overlay,
   Portal,
   Text,
-  Util,
 }

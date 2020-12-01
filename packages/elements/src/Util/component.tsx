@@ -10,10 +10,10 @@ const parseJSON = (object) => {
   return result
 }
 
-interface Props {
+type Props = {
   children: ReactNode
   className?: string | string[]
-  style?: object
+  style?: Record<string, unknown>
 }
 
 const Element = forwardRef<any, Props>(
