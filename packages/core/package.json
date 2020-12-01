@@ -35,7 +35,7 @@
   },
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn vl_build",
+    "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
     "storybook": "start-storybook -p 6006 -c tools/storybook",
     "storybook:build": "build-storybook -c tools/storybook -o docs/",
@@ -58,8 +58,8 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "0.2.0",
-    "@vitus-labs/tools-rollup": "0.2.0",
-    "@vitus-labs/tools-typescript": "0.2.0"
+    "@vitus-labs/tools-babel": "0.3.0",
+    "@vitus-labs/tools-rollup": "0.3.0",
+    "@vitus-labs/tools-typescript": "0.3.0"
   }
 }

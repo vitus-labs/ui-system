@@ -38,7 +38,7 @@
   },
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn vl_build",
+    "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
@@ -56,8 +56,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "0.2.0",
-    "@vitus-labs/tools-rollup": "0.2.0",
-    "@vitus-labs/tools-typescript": "0.2.0"
+    "@vitus-labs/tools-babel": "0.3.0",
+    "@vitus-labs/tools-rollup": "0.3.0",
+    "@vitus-labs/tools-typescript": "0.3.0"
   }
 }

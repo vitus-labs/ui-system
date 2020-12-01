@@ -1,20 +1,24 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
   "include": [
-    "declaration.d.ts",
     "src"
   ],
   "exclude": [
     "node_modules",
-    "lib",
-    "__stories__"
+    "__stories__",
+    "lib"
   ],
   "compilerOptions": {
+    "types": [
+      "@vitus-labs/tools-rollup"
+    ],
+    "rootDir": "src",
+    "outDir": "lib",
     "baseUrl": ".",
     "paths": {
       "~/*": [
-        "./src/*"
+        "src/*"
       ]
-    }
-  }
+    },
+  },
 }

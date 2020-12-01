@@ -39,7 +39,7 @@
   "scripts": {
     "dev": "yarn vl_stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn vl_build",
+    "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
@@ -58,10 +58,10 @@
   "devDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/elements": "*",
-    "@vitus-labs/tools-babel": "0.2.0",
-    "@vitus-labs/tools-rollup": "0.2.0",
+    "@vitus-labs/tools-babel": "0.3.0",
+    "@vitus-labs/tools-rollup": "0.3.0",
     "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/tools-typescript": "0.2.0",
+    "@vitus-labs/tools-typescript": "0.3.0",
     "@vitus-labs/unistyle": "*"
   }
 }
