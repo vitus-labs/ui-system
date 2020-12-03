@@ -1,3 +1,5 @@
+import { config } from '@vitus-labs/core'
+
 type value = 'auto' | 'inital' | 'inherit' | number | string
 type defaults = 'initial' | 'inherit'
 type length = number | string
@@ -98,7 +100,7 @@ type cursor =
   | 'zoom-out'
   | defaults
 
-export interface Theme {
+export type Theme = Partial<{
   hideEmpty: boolean
   clearFix: boolean
   fullScreen: boolean
@@ -240,5 +242,5 @@ export interface Theme {
   userSelect: 'auto' | 'none' | 'text' | 'all' | defaults
   pointerEvents: 'auto' | 'none' | defaults
   writingDirection: 'ltr' | 'rtl' | defaults
-  extendCss: any
-}
+  extendCss: ReturnType<typeof config.css> | string
+}>

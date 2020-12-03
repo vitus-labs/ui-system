@@ -1,14 +1,18 @@
-//@ts-ignore
 import { config } from '@vitus-labs/core'
 import { value } from './utils/unit'
+import type { Theme } from './types'
 
-interface Styles {
-  theme: Partial<import('./styles.types').Theme>
-  css: any
+type Styles = ({
+  theme,
+  css,
+  rootSize,
+}: {
+  theme: Theme
+  css: typeof config.css
   rootSize: number
-}
+}) => ReturnType<typeof css>
 
-export default ({ theme: t, css, rootSize }: Styles) => css`
+const styles: Styles = ({ theme: t, css, rootSize }) => css`
   ${config.isWeb &&
   t.hideEmpty &&
   css`
@@ -213,3 +217,5 @@ export default ({ theme: t, css, rootSize }: Styles) => css`
 
 //   return null
 // }};
+
+export default styles
