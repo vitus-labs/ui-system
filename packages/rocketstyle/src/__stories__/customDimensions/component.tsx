@@ -3,11 +3,14 @@ import rocketstyle from '../..'
 
 const Example = () => <div></div>
 
-export default rocketstyle({
+export default rocketstyle()({
   dimensions: {
     gaps: 'gap',
     paddings: 'padding',
-    multiple: ['m', { multi: true }],
+    multiple: {
+      propName: 'm',
+      multi: true,
+    },
   },
   useBooleans: true,
 })({ name: 'Button', component: Element })
@@ -31,6 +34,9 @@ export default rocketstyle({
   .theme({
     test: 'a',
   })
+  .gaps({
+    label: 'test',
+  })
   .theme({
     bgColor: 'a',
   })
@@ -43,7 +49,7 @@ export default rocketstyle({
     },
   })
   .styles(
-    (css) => css`
+    (css) => css<{ $rocketstyle: any }>`
       border: 1px solid transparent;
       ${'' /* padding: 0 0.75rem; */}
 

@@ -1,4 +1,3 @@
-// import Button, { HoistedButton, ElementExample } from '../Button'
 import React from 'react'
 import Button from './component'
 

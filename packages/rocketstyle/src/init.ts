@@ -1,4 +1,3 @@
-import { ComponentType } from 'react'
 import { isEmpty } from '@vitus-labs/core'
 import styleComponent from './rocketstyle'
 import {
@@ -6,39 +5,41 @@ import {
   getMultipleDimensions,
   getDimensionsValues,
 } from './initUtils'
-import { Dimensions, StyleComponent } from './types'
+import { Dimensions, StyleComponent, ElementType } from './types'
 
 const defaultDimensions = {
   states: 'state',
   sizes: 'size',
   variants: 'variant',
-  multiple: ['multiple', { multi: true }],
+  multiple: {
+    propName: 'multiple',
+    multi: true,
+  },
 }
 
-type Rocketstyle = <
-  T = unknown,
-  S extends Record<string, unknown> = Record<string, unknown>,
+type Rocketstyle = <T = unknown, CT = unknown>() => <
+  // S extends Style = Style,
   D extends Dimensions = typeof defaultDimensions
+  UB extends boolean = true
 >({
   dimensions,
-  styles,
   useBooleans,
-}: {
+}: // styles,
+{
   dimensions?: D
-  styles?: S
-  useBooleans: boolean
-}) => <C = ComponentType>({
+  useBooleans: UB
+  // styles?: S
+}) => <C extends ElementType>({
   name,
   component,
 }: {
   name: string
   component: C
-}) => ReturnType<StyleComponent<C, T, S, D>>
+}) => ReturnType<StyleComponent<C, T, CT, D, UB>>
 
-const rocketstyle: Rocketstyle = ({
+const rocketstyle: Rocketstyle = () => ({
   dimensions = defaultDimensions,
   useBooleans = true,
-  styles,
 }) => ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode
@@ -56,9 +57,9 @@ const rocketstyle: Rocketstyle = ({
       errors.component = 'Parameter `component` is missing in params!'
     }
 
-    if (!styles) {
-      errors.styles = 'Parameter `styles` is missing in params!'
-    }
+    // if (!styles) {
+    //   errors.styles = 'Parameter `styles` is missing in params!'
+    // }
 
     if (!name) {
       errors.name = 'Parameter `name` is missing in params!'
@@ -76,7 +77,7 @@ const rocketstyle: Rocketstyle = ({
   return styleComponent({
     name,
     component,
-    styles,
+    // styles,
     useBooleans,
     dimensions,
     dimensionKeys: getKeys(dimensions),
