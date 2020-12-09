@@ -18,17 +18,14 @@ const defaultDimensions = {
 }
 
 type Rocketstyle = <T = unknown, CT = unknown>() => <
-  // S extends Style = Style,
-  D extends Dimensions = typeof defaultDimensions
+  D extends Dimensions = typeof defaultDimensions,
   UB extends boolean = true
 >({
   dimensions,
   useBooleans,
-}: // styles,
-{
+}: {
   dimensions?: D
   useBooleans: UB
-  // styles?: S
 }) => <C extends ElementType>({
   name,
   component,
@@ -47,7 +44,6 @@ const rocketstyle: Rocketstyle = () => ({
   if (process.env.NODE_ENV !== 'production') {
     type Errors = Partial<{
       component: string
-      styles: string
       name: string
       dimensions: string
     }>
@@ -56,10 +52,6 @@ const rocketstyle: Rocketstyle = () => ({
     if (!component) {
       errors.component = 'Parameter `component` is missing in params!'
     }
-
-    // if (!styles) {
-    //   errors.styles = 'Parameter `styles` is missing in params!'
-    // }
 
     if (!name) {
       errors.name = 'Parameter `name` is missing in params!'
@@ -77,7 +69,6 @@ const rocketstyle: Rocketstyle = () => ({
   return styleComponent({
     name,
     component,
-    // styles,
     useBooleans,
     dimensions,
     dimensionKeys: getKeys(dimensions),

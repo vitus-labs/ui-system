@@ -1,14 +1,40 @@
 import { ComponentType, ForwardRefExoticComponent } from 'react'
-import { config } from '@vitus-labs/core'
+import { config, renderContent } from '@vitus-labs/core'
+
+const defaultDimensions = {
+  states: 'state',
+  sizes: 'size',
+  variants: 'variant',
+  multiple: {
+    propName: 'multiple',
+    multi: true,
+  },
+} as const
+
+const Test: ExtractDimensionMulti<typeof defaultDimensions['multiple']>
 
 // --------------------------------------------------------
 // utility types
 // --------------------------------------------------------
+
+export type TObj = Record<string, unknown>
+export type TFn = (...args: any) => any
+
 export type ExtractProps<
   TComponentOrTProps
 > = TComponentOrTProps extends ComponentType<infer TProps>
   ? TProps
   : TComponentOrTProps
+
+type ExtractDimensionKey<T extends DimensionValue> = T extends DimensionValueObj
+  ? T['propName']
+  : T
+
+type ExtractDimensionMulti<
+  T extends DimensionValue
+> = T extends DimensionValueObj ? true : false
+
+// type AtLeastOne<T> = { [K in keyof T]: Pick<T, K> }[keyof T]
 
 // --------------------------------------------------------
 // primitive props
@@ -17,12 +43,13 @@ export type DisplayName = string
 export type MouseAction = (e: MouseEvent) => void
 export type FocusAction = (e: FocusEvent) => void
 
-export type DimensionValue =
-  | string
-  | {
-      propName: string
-      multi?: boolean
-    }
+export type DimensionValuePrimitive = string
+export type DimensionValueObj = {
+  propName: string
+  multi?: boolean
+}
+
+export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
 
 type Css = typeof config.css
 export type Style = ReturnType<typeof config.css>
@@ -82,12 +109,11 @@ export type ConfigCB = ({
 
 // ATTRS chaining types
 // --------------------------------------------------------
-export type AttrsCb<A> = (params: A) => Partial<A>
-// export type AttrsCb<P, A> = P extends Record<string, unknown>
-//   ? (params: A & P) => Partial<A & P>
-//   : (params: A) => A
-
-export type AttrsReturn<P, A> = P extends Record<string, unknown> ? A & P : A
+export type AttrsCb<A, P, T> = (
+  props: Partial<A>,
+  theme: T,
+  helpers: { createElement: typeof renderContent }
+) => P extends unknown ? Partial<A> : Partial<A & P>
 
 // THEME chaining types
 // --------------------------------------------------------
@@ -104,27 +130,67 @@ export type DimensionCb<T, CT> = (
   css: Css
 ) => Record<string, Partial<CT>>
 
-export type DimensionReturn<P, A> = P extends Record<string, unknown>
-  ? A & P
-  : A
+export type DimensionReturn<P, A> = P extends TObj ? A & P : A
 
-type DKPTypesAsObj<P, DKP> = Record<keyof DKP | keyof P, boolean>
+type ExtractDimensionValues<DKP, P extends TFn | TObj> = P extends TFn
+  ? keyof DKP | keyof ReturnType<P>
+  : P extends TObj
+  ? keyof DKP | keyof P
+  : any
 
-type DKPTypesAsCb<P extends (...args: any) => any, DKP> = Record<
-  keyof ReturnType<P> | keyof DKP,
+type DKPTypesAsObj<P extends TObj, DKP> = Record<
+  ExtractDimensionValues<DKP, P>,
   boolean
 >
 
-type ExtendDimensionTypesAsObj<P, K, DKP, UB> = UB extends true
-  ? Record<keyof P | keyof DKP, boolean> & Record<K, keyof DKP | keyof P>
-  : Record<K, keyof DKP | keyof P>
+type DKPTypesAsCb<P extends TFn, DKP> = Record<
+  ExtractDimensionValues<DKP, P>,
+  boolean
+>
 
-type ExtendDimensionTypesAsCb<P, K, DKP, UB> = UB extends true
-  ? Record<keyof ReturnType<P> | keyof DKP, boolean> &
-      Record<K, keyof DKP | keyof ReturnType<P>>
-  : Record<K, keyof DKP | keyof ReturnType<P>>
+type KeyValueType<K, DKP, P> = K extends DimensionValueObj
+  ? K['multi'] extends false
+    ? Array<ExtractDimensionValues<DKP, P>>
+    : ExtractDimensionValues<DKP, P>
+  : ExtractDimensionValues<DKP, P>
 
-// type ExampleAttrs<P, A> = P extends unknown ? A : AttrsCb<P, A>
+type DimensionPropsObjBool<P, DKP> = Record<
+  ExtractDimensionValues<DKP, P>,
+  boolean
+>
+type DimensionPropsObjKeys<
+  K extends DimensionValuePrimitive | DimensionValueObj,
+  P,
+  DKP
+> = Record<ExtractDimensionKey<K>, KeyValueType<K, DKP, P>>
+
+type DimensionPropsCbBool<P, DKP> = Record<
+  ExtractDimensionValues<DKP, P>,
+  boolean
+>
+type DimensionPropsCbKeys<
+  P,
+  DKP,
+  K extends DimensionValuePrimitive | DimensionValueObj
+> = Record<ExtractDimensionKey<K>, KeyValueType<K, DKP, P>>
+
+type ExtendDimensionTypesAsObj<
+  P,
+  K extends DimensionValue,
+  DKP,
+  UB
+> = UB extends true
+  ? DimensionPropsObjBool<P, DKP> & DimensionPropsObjKeys<K, P, DKP>
+  : DimensionPropsObjKeys<K, P, DKP>
+
+type ExtendDimensionTypesAsCb<
+  P,
+  K extends DimensionValue,
+  DKP,
+  UB
+> = UB extends true
+  ? DimensionPropsCbBool<P, DKP> & DimensionPropsCbKeys<P, DKP, K>
+  : DimensionPropsCbKeys<P, DKP, K>
 
 // --------------------------------------------------------
 // THIS IS WHERE ALL MAGIC HAPPENS
@@ -138,45 +204,68 @@ type ExtendDimensionTypesAsCb<P, K, DKP, UB> = UB extends true
  */
 export type RocketComponent<
   // attrs
-  A extends Record<string, unknown> | unknown,
+  A extends TObj | unknown,
+  // original component props
+  OA extends TObj | unknown,
   // theme
-  T extends Record<string, unknown> | unknown,
+  T extends TObj | unknown,
   // custom theme properties
-  CT extends Record<string, unknown> | unknown,
+  CT extends TObj | unknown,
   // dimensions
-  D extends Record<string, unknown>,
+  D extends Dimensions,
   // use booleans
   UB extends boolean,
   // CONFIG
-  DKP extends Record<string, unknown> | unknown
+  DKP extends TObj | unknown
 > = ForwardRefExoticComponent<A> & {
-  // attrs: <P extends Record<string, unknown>>(
-  //   cb: AttrsCb<P, A>
-  // ) => RocketComponent<AttrsReturn<P, A>, T, CT, D, DK, DKP>
-  // theme: (param: ThemeCb<T, CT>) => RocketComponent<A, T, CT, D, DK, DKP>
+  // CONFIG chaining method
+  // --------------------------------------------------------
   config: (
     params: Partial<ConfigAttrs>
-  ) => RocketComponent<A, T, CT, D, UB, DKP>
-  attrs: <P extends AttrsCb<A> | Partial<A>>(
-    param: P
-  ) => P extends Partial<A>
-    ? RocketComponent<A & Partial<Omit<P, keyof A>>, T, CT, D, UB, DKP>
-    : P extends AttrsCb<A>
-    ? RocketComponent<
-        A & Partial<Omit<ReturnType<P>, keyof A>>,
-        T,
-        CT,
-        D,
-        UB,
-        DKP
-      >
-    : A
-  theme: <P extends ThemeCb<T, CT> | Partial<CT>>(
-    param: P
-  ) => RocketComponent<A, T, CT, D, UB, DKP>
-  styles: (param: StylesCb) => RocketComponent<A, T, CT, D, UB, DKP>
+  ) => RocketComponent<A, OA, T, CT, D, UB, DKP>
 
-  // readonly IS_ROCKETSTYLE: true
+  // ATTRS chaining method
+  // --------------------------------------------------------
+  attrs: <P extends AttrsCb<A, unknown, T> | Partial<A> | TObj>(
+    param: P extends AttrsCb<A, unknown, T>
+      ? AttrsCb<A, unknown, T>
+      : P extends Partial<A>
+      ? Partial<A>
+      : P extends TObj
+      ? AttrsCb<A, P, T> | Partial<A & P>
+      : any
+  ) => P extends AttrsCb<A, unknown, T>
+    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    : P extends Partial<A>
+    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    : P extends TObj
+    ? RocketComponent<A & P, OA & P, T, CT, D, UB, DKP>
+    : RocketComponent<A, OA, T, CT, D, UB, DKP>
+
+  // THEME chaining method
+  // --------------------------------------------------------
+  theme: <P extends ThemeCb<T, CT> | Partial<CT> | TObj>(
+    param: P extends ThemeCb<T, CT>
+      ? ThemeCb<T, CT>
+      : P extends Partial<CT>
+      ? Partial<CT>
+      : P extends TObj
+      ? ThemeCb<T, CT & P> | Partial<CT & P>
+      : any
+  ) => P extends ThemeCb<T, CT>
+    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    : P extends Partial<CT>
+    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    : P extends TObj
+    ? RocketComponent<A, OA, T, CT & P, D, UB, DKP>
+    : RocketComponent<A, OA, T, CT, D, UB, DKP>
+
+  // STYLES chaining method
+  // --------------------------------------------------------
+  styles: (param: StylesCb) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+
+  // Dynamic dimensions chaining method (set dynamically from configuration)
+  // --------------------------------------------------------
 } & Record<
     keyof D,
     <
@@ -188,6 +277,7 @@ export type RocketComponent<
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypesAsObj<P, K, DKP, UB>> &
             ExtendDimensionTypesAsObj<P, K, DKP, UB>,
+          OA,
           T,
           CT,
           D,
@@ -198,13 +288,14 @@ export type RocketComponent<
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypesAsCb<P, K, DKP, UB>> &
             Partial<ExtendDimensionTypesAsCb<P, K, DKP, UB>>,
+          OA,
           T,
           CT,
           D,
           UB,
           DKPTypesAsCb<P, DKP>
         >
-      : RocketComponent<A, T, CT, D, UB, DKP>
+      : RocketComponent<A, OA, T, CT, D, UB, DKP>
   > & {
     displayName: never
   }
@@ -263,21 +354,8 @@ export type StyleComponent<
     | 'multiKeys'
   >
 ) => RocketComponent<
-  ExtractProps<C> &
-    DefaultPseudoProps &
-    OnMountCB<
-      Pick<
-        Configuration<C, D>,
-        | 'name'
-        | 'component'
-        | 'useBooleans'
-        | 'styles'
-        | 'dimensions'
-        | 'dimensionKeys'
-        | 'dimensionValues'
-        | 'multiKeys'
-      >
-    >,
+  DefaultProps<C, D>,
+  DefaultProps<C, D>,
   T,
   CT,
   D,
@@ -285,11 +363,18 @@ export type StyleComponent<
   unknown
 >
 
-// type DimensionKeys<D extends Dimensions, K extends D[keyof D]> = Record<
-//   K extends Record<string, unknown>
-//     ? Pick<K, 'propName'>
-//     : K extends string
-//     ? K
-//     : K,
-//   boolean
-// >
+type DefaultProps<C, D extends Dimensions> = ExtractProps<C> &
+  DefaultPseudoProps &
+  OnMountCB<
+    Pick<
+      Configuration<C, D>,
+      | 'name'
+      | 'component'
+      | 'useBooleans'
+      | 'styles'
+      | 'dimensions'
+      | 'dimensionKeys'
+      | 'dimensionValues'
+      | 'multiKeys'
+    >
+  >

@@ -13,74 +13,75 @@ const theme = {
 type ThemeType = Parameters<typeof styles>[0]['theme']
 
 const defaultDimensions = {
-  gaps: 'state',
+  states: 'state',
   sizes: 'size',
   variants: 'variant',
   multiple: { propName: 'multiple', multi: true },
 } as const
 
 const Test = rocketstyle<typeof theme, ThemeType>()({
-  useBooleans: true,
+  useBooleans: false,
   dimensions: defaultDimensions,
 })({
   component: Element,
   name: 'Hello',
 })
+
   .attrs(({ contentAlignX }) => ({
     contentAlignX,
     beforeContentAlignX: 'left',
-    hello: 'hello',
   }))
-  .attrs(({ beforeContentAlignX }) => ({
+  .attrs<{ something: boolean }>(({ beforeContentAlignX }) => ({
     afterContentAlignX: beforeContentAlignX,
     contentAlignX: beforeContentAlignX,
+  }))
+  .attrs(({ vertical, ...props }) => ({
+    content: 'a',
+    beforeContentAlignX: 'left',
+    something: true,
+    children: 'a',
+    test: true,
   }))
   .attrs({
     beforeContentAlignX: 'right',
     contentAlignX: 'right',
   })
-  .attrs((p) => ({
-    beforeContentAlignX: 'right',
-    afterContent: p.afterContent,
-  }))
+  // .attrs((p) => ({
+  //   beforeContentAlignX: 'right',
+  //   afterContent: p.afterContent,
+  // }))
   .styles(
     (css) => css`
       text-align: center;
     `
   )
-  .attrs((p) => ({
-    content: p.afterContent,
-    beforeContentAlignX: 'left',
-    hello: 'test',
-  }))
   .attrs({
     beforeContent: false,
     beforeContentAlignX: 'left',
-    test: 'hello',
     afterContentAlignX: 'left',
   })
-  .variants((t, css) => ({
-    primary: {
-      fontSize: t.fontSize.a,
-      size: t.fontSize.a,
-      some: 'a',
-      width: t.fontSize.a,
-      extendCss: css`
-        text-align: center;
-      `,
-    },
-  }))
-  .variants((t, css) => ({
-    secondary: {
-      fontSize: t.fontSize.a,
-      size: t.fontSize.a,
-      some: 'a',
-      width: t.fontSize.a,
-      extendCss: css`
-        text-align: center;
-      `,
-    },
-  }))
+  // .variants((t, css) => ({
+  //   primary: {
+  //     fontSize: t.fontSize.a,
+  //     size: t.fontSize.a,
+  //     some: 'a',
+  //     width: t.fontSize.a,
+  //     extendCss: css`
+  //       text-align: center;
+  //     `,
+  //   },
+  // }))
+  // .variants((t, css) => ({
+  //   secondary: {
+  //     fontSize: t.fontSize.a,
+  //     size: t.fontSize.a,
+  //     some: 'a',
+  //     width: t.fontSize.a,
+  //     extendCss: css`
+  //       text-align: center;
+  //     `,
+  //   },
+  // }))
   .sizes({
     xl: {
       fontSize: 10,
@@ -89,34 +90,33 @@ const Test = rocketstyle<typeof theme, ThemeType>()({
       fontSize: 10,
     },
   })
-  .sizes((t) => ({
-    xl: {
-      fontSize: t.fontSize.a,
-    },
-    sm: {
-      fontSize: t.fontSize.a,
-    },
-  }))
-  .sizes((t) => ({
-    xxxl: {
-      fontSize: t.fontSize.a,
-    },
-  }))
-  .variants((t) => ({
-    primary: {
-      fontSize: t.fontSize.a,
-      size: t.fontSize.a,
-      some: 'a',
-    },
-  }))
+  // .sizes((t) => ({
+  //   xl: {
+  //     fontSize: t.fontSize.a,
+  //   },
+  //   sm: {
+  //     fontSize: t.fontSize.a,
+  //   },
+  // }))
+  // .sizes((t) => ({
+  //   xxxl: {
+  //     fontSize: t.fontSize.a,
+  //   },
+  // }))
+  // .variants((t) => ({
+  //   primary: {
+  //     fontSize: t.fontSize.a,
+  //     size: t.fontSize.a,
+  //     some: 'a',
+  //   },
+  // }))
   .multiple((t) => ({
-    test: {
-      fontSize: 4,
-    },
-    something: {
-      fontSize: 5,
-    },
+    multiKey: null,
   }))
+  .theme({
+    fontFamily: '',
+    fontSize: 4,
+  })
 
 const Component = (props) => (
   <Test

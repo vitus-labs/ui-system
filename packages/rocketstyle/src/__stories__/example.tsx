@@ -1,5 +1,6 @@
 import React from 'react'
 import { Element } from '@vitus-labs/elements'
+import { Theme } from '@vitus-labs/unistyle/lib/types/styles/styles.types'
 import rocketstyle from '~/init'
 
 const theme = {
@@ -9,15 +10,16 @@ const theme = {
   },
 }
 
-// const defaultDimensions = {
-//   gaps: 'state',
-//   sizes: 'size',
-//   variants: 'variant',
-//   multiple: ['multiple', { multi: true }],
-// }
+const defaultDimensions = {
+  gaps: 'state',
+  sizes: 'size',
+  variants: 'variant',
+  multiple: { propName: 'multiple', multi: true },
+} as const
 
-const Test = rocketstyle<typeof theme>({
+const Test = rocketstyle<typeof theme, Theme>()({
   useBooleans: true,
+  dimensions: defaultDimensions,
 })({
   component: Element,
   name: 'Hello',
@@ -29,30 +31,50 @@ const Test = rocketstyle<typeof theme>({
     name: 'name',
     DEBUG: true,
   })
-  .theme((t) => ({
+  .theme((t, css) => ({
     a: t.fontSize.a,
-    b: t.fontSize.b,
+    extendCss: css`
+      text-align: center;
+    `,
   }))
-  .sizes((t) => ({
-    hello: t.fontSize.b,
+  .attrs({
+    test: null,
+    beforeContentAlignX: 'center',
+    afterContentAlignX: 'right',
+  })
+  .attrs(({ contentAlignX }) => ({
+    contentAlignX,
+    beforeContentAlignX: 'left',
   }))
-  .sizes((t) => ({
-    a: t.fontSize.b,
-  }))
-  .variants((t, css) => ({
-    a: {
-      test: t.fontSize.b,
-      a: css`
-        text-align: center;
-      `,
+  .variants({
+    variantA: {
+      fontFamily: 'something',
+      someExtra: 'string',
     },
-  }))
+  })
 
 const Component = (props) => (
   <Test
+    contentAlignX="right"
+    direction="inline"
     beforeContent
     afterContentAlignX
     beforeContentDirection="inline"
     {...props}
   />
 )
+
+// const def = {
+//   test: 'hello',
+// }
+
+// const example = (a: typeof def) => {
+//   const c = a === 'hello' ? 'c' : 'd'
+
+//   return {
+//     something: 'b',
+//     c,
+//   }
+// }
+
+// const smth = example(def)
