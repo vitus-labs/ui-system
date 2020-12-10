@@ -102,13 +102,13 @@ const Test = rocketstyle<typeof theme, ThemeType>()({
       fontSize: t.fontSize.a,
     },
   }))
-  .variants((t) => ({
+  .variants({
     primary: {
-      fontSize: t.fontSize.a,
-      size: t.fontSize.a,
+      fontSize: 10,
+      size: 20,
       some: 'a',
     },
-  }))
+  })
   .multiple((t) => ({
     multiKey: null,
   }))

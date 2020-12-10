@@ -180,7 +180,7 @@ type ExtendDimensionTypes<
   : DimensionKeyProps<K, DKP>
 
 // --------------------------------------------------------
-// THIS IS WHERE ALL MAGIC HAPPENS
+// THIS IS WHERE ALL THE MAGIC HAPPENS
 // --------------------------------------------------------
 /**
  * @param A    Generic _props_ params.
@@ -249,7 +249,7 @@ export type RocketComponent<
       K extends DimensionValue = D[I]
     >(
       param: P
-    ) => P extends Record<string, Partial<CT>>
+    ) => P extends DimensionCb<T, CT>
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
             Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
@@ -260,7 +260,7 @@ export type RocketComponent<
           UB,
           DKPTypes<K, D, P, DKP>
         >
-      : P extends DimensionCb<T, CT>
+      : P extends Record<string, Partial<CT>>
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
             Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
