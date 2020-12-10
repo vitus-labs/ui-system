@@ -20,22 +20,21 @@ const defaultDimensions = {
 } as const
 
 const Test = rocketstyle<typeof theme, ThemeType>()({
-  useBooleans: false,
+  useBooleans: true,
   dimensions: defaultDimensions,
 })({
   component: Element,
   name: 'Hello',
 })
-
   .attrs(({ contentAlignX }) => ({
     contentAlignX,
     beforeContentAlignX: 'left',
   }))
-  .attrs<{ something: boolean }>(({ beforeContentAlignX }) => ({
+  .attrs(({ beforeContentAlignX }) => ({
     afterContentAlignX: beforeContentAlignX,
     contentAlignX: beforeContentAlignX,
   }))
-  .attrs(({ vertical, ...props }) => ({
+  .attrs(() => ({
     content: 'a',
     beforeContentAlignX: 'left',
     something: true,
@@ -46,10 +45,10 @@ const Test = rocketstyle<typeof theme, ThemeType>()({
     beforeContentAlignX: 'right',
     contentAlignX: 'right',
   })
-  // .attrs((p) => ({
-  //   beforeContentAlignX: 'right',
-  //   afterContent: p.afterContent,
-  // }))
+  .attrs((p) => ({
+    beforeContentAlignX: 'right',
+    afterContent: p.afterContent,
+  }))
   .styles(
     (css) => css`
       text-align: center;
@@ -60,56 +59,56 @@ const Test = rocketstyle<typeof theme, ThemeType>()({
     beforeContentAlignX: 'left',
     afterContentAlignX: 'left',
   })
-  // .variants((t, css) => ({
-  //   primary: {
-  //     fontSize: t.fontSize.a,
-  //     size: t.fontSize.a,
-  //     some: 'a',
-  //     width: t.fontSize.a,
-  //     extendCss: css`
-  //       text-align: center;
-  //     `,
-  //   },
-  // }))
-  // .variants((t, css) => ({
-  //   secondary: {
-  //     fontSize: t.fontSize.a,
-  //     size: t.fontSize.a,
-  //     some: 'a',
-  //     width: t.fontSize.a,
-  //     extendCss: css`
-  //       text-align: center;
-  //     `,
-  //   },
-  // }))
+  .variants((t, css) => ({
+    primary: {
+      fontSize: t.fontSize.a,
+      size: t.fontSize.a,
+      some: 'a',
+      width: t.fontSize.a,
+      extendCss: css`
+        text-align: center;
+      `,
+    },
+  }))
+  .variants((t, css) => ({
+    secondary: {
+      fontSize: t.fontSize.a,
+      size: t.fontSize.a,
+      some: 'a',
+      width: t.fontSize.a,
+      extendCss: css`
+        text-align: center;
+      `,
+    },
+  }))
   .sizes({
-    xl: {
+    xxxxl: {
       fontSize: 10,
     },
-    sm: {
+    small: {
       fontSize: 10,
     },
   })
-  // .sizes((t) => ({
-  //   xl: {
-  //     fontSize: t.fontSize.a,
-  //   },
-  //   sm: {
-  //     fontSize: t.fontSize.a,
-  //   },
-  // }))
-  // .sizes((t) => ({
-  //   xxxl: {
-  //     fontSize: t.fontSize.a,
-  //   },
-  // }))
-  // .variants((t) => ({
-  //   primary: {
-  //     fontSize: t.fontSize.a,
-  //     size: t.fontSize.a,
-  //     some: 'a',
-  //   },
-  // }))
+  .sizes((t) => ({
+    xl: {
+      fontSize: t.fontSize.a,
+    },
+    sm: {
+      fontSize: t.fontSize.a,
+    },
+  }))
+  .sizes((t) => ({
+    xxxl: {
+      fontSize: t.fontSize.a,
+    },
+  }))
+  .variants((t) => ({
+    primary: {
+      fontSize: t.fontSize.a,
+      size: t.fontSize.a,
+      some: 'a',
+    },
+  }))
   .multiple((t) => ({
     multiKey: null,
   }))

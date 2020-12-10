@@ -4,9 +4,6 @@ import { config, renderContent } from '@vitus-labs/core'
 // --------------------------------------------------------
 // utility types
 // --------------------------------------------------------
-export type TObj = Record<string, unknown>
-export type TFn = (...args: any) => any
-
 type ValueOf<T> = T[keyof T]
 
 export type ExtractProps<
@@ -28,6 +25,8 @@ type ExtractDimensionMulti<
 // --------------------------------------------------------
 // primitive props
 // --------------------------------------------------------
+export type TObj = Record<string, unknown>
+export type TFn = (...args: any) => any
 export type DisplayName = string
 export type MouseAction = (e: MouseEvent) => void
 export type FocusAction = (e: FocusEvent) => void
@@ -37,6 +36,11 @@ export type DimensionValueObj = {
   propName: string
   multi?: boolean
 }
+
+export type TDKP = Record<
+  ExtractDimensionKey<Dimensions[keyof Dimensions]>,
+  Record<string, boolean | never>
+>
 
 export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
 
@@ -51,8 +55,8 @@ export type ElementType = ComponentType
 export type __ROCKETSTYLE__ = {
   dimensions: Record<string, string>
   reservedPropNames: Array<string>
-  baseTheme: Record<string, any>
-  themes: Record<string, any>
+  baseTheme: Record<string, unknown>
+  themes: Record<string, unknown>
 }
 
 export type Styles = <T>({
@@ -62,7 +66,7 @@ export type Styles = <T>({
 }: {
   theme: T
   rootSize: number
-  css: any
+  css: Css
 }) => typeof css
 
 // --------------------------------------------------------
@@ -137,82 +141,43 @@ export type DimensionCb<T, CT> = (
 
 export type DimensionReturn<P, A> = P extends TObj ? A & P : A
 
-type ExtractDimensionValues<K, DKP, P extends TFn | TObj> = P extends TFn
-  ? keyof DKP[ExtractDimensionKey<K>] | keyof ReturnType<P>
-  : P extends TObj
-  ? keyof DKP[ExtractDimensionKey<K>] | keyof P
-  : any
+type ReturnParam<P extends TFn | TObj> = P extends TFn ? ReturnType<P> : P
 
-type DKPTypesAsObj<
+type DKPTypes<
   K extends DimensionValue,
   D extends Dimensions,
-  P extends TFn,
-  DKP
+  P extends TFn | TObj,
+  DKP extends TDKP
 > = {
   [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
-    ? { [J in keyof DKP[I] | keyof P]: boolean }
+    ? { [J in keyof DKP[I] | keyof ReturnParam<P>]: boolean }
     : { [J in keyof DKP[I]]: boolean }
 }
 
-type DKPTypesAsCb<
+type DimensionBoolProps<
   K extends DimensionValue,
-  D extends Dimensions,
-  P extends TFn,
-  DKP
-> = {
-  [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
-    ? { [J in keyof DKP[I] | keyof ReturnType<P>]: boolean }
-    : { [J in keyof DKP[I]]: boolean }
-}
+  DKP extends TDKP
+> = DKP[ExtractDimensionKey<K>]
 
-type DimensionPropsObjBool<P extends TObj, DKP> = Record<
-  ExtractDimensionValues<DKP, P>,
-  boolean
->
-
-type DimensionPropsObjKeys<
+type ExtractDimensionKeyValues<
   K extends DimensionValue,
-  P extends TObj,
-  DKP
-> = Record<
+  DKP extends TDKP
+> = keyof DimensionBoolProps<K, DKP>
+
+type DimensionKeyProps<K extends DimensionValue, DKP extends TDKP> = Record<
   ExtractDimensionKey<K>,
   ExtractDimensionMulti<K> extends true
-    ? Array<ExtractDimensionValues<K, DKP, P>>
-    : ExtractDimensionValues<K, DKP, P>
+    ? Array<ExtractDimensionKeyValues<K, DKP>>
+    : ExtractDimensionKeyValues<K, DKP>
 >
 
-type DimensionPropsCbBool<P extends TFn, DKP> = Record<
-  ExtractDimensionValues<K, DKP, P>,
-  boolean
->
-type DimensionPropsCbKeys<
+type ExtendDimensionTypes<
   K extends DimensionValue,
-  P extends TFn,
-  DKP
-> = Record<
-  ExtractDimensionKey<K>,
-  ExtractDimensionMulti<K> extends true
-    ? Array<ExtractDimensionValues<K, DKP, P>>
-    : ExtractDimensionValues<K, DKP, P>
->
-
-type ExtendDimensionTypesAsObj<
-  P extends TObj,
-  K extends DimensionValue,
-  DKP,
+  DKP extends TDKP,
   UB extends boolean
 > = UB extends true
-  ? /* DimensionPropsObjBool<P, DKP> & */ DimensionPropsObjKeys<K, P, DKP>
-  : DimensionPropsObjKeys<K, P, DKP>
-
-type ExtendDimensionTypesAsCb<
-  P extends TFn,
-  K extends DimensionValue,
-  DKP,
-  UB extends boolean
-> = UB extends true
-  ? /*DimensionPropsCbBool<P, DKP> &*/ DimensionPropsCbKeys<K, P, DKP>
-  : DimensionPropsCbKeys<P, DKP, K>
+  ? DimensionBoolProps<K, DKP> & DimensionKeyProps<K, DKP>
+  : DimensionKeyProps<K, DKP>
 
 // --------------------------------------------------------
 // THIS IS WHERE ALL MAGIC HAPPENS
@@ -240,7 +205,7 @@ export type RocketComponent<
   // use booleans
   UB extends boolean,
   // CONFIG
-  DKP extends TObj | unknown
+  DKP extends TDKP | unknown
 > = ForwardRefExoticComponent<A> & {
   // CONFIG chaining method
   // --------------------------------------------------------
@@ -286,27 +251,25 @@ export type RocketComponent<
       param: P
     ) => P extends Record<string, Partial<CT>>
       ? RocketComponent<
-          // DKPTypesAsObj<K, D, P, DKP>,
-          Omit<A, keyof ExtendDimensionTypesAsObj<P, K, DKP, UB>> &
-            ExtendDimensionTypesAsObj<P, K, DKP, UB>,
+          Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
+            Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
           OA,
           T,
           CT,
           D,
           UB,
-          DKPTypesAsObj<K, D, P, DKP>
+          DKPTypes<K, D, P, DKP>
         >
       : P extends DimensionCb<T, CT>
       ? RocketComponent<
-          // DKPTypesAsCb<K, D, P, DKP>,
-          Omit<A, keyof ExtendDimensionTypesAsCb<P, K, DKP, UB>> &
-            Partial<ExtendDimensionTypesAsCb<P, K, DKP, UB>>,
+          Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
+            Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
           OA,
           T,
           CT,
           D,
           UB,
-          DKPTypesAsCb<K, D, P, DKP>
+          DKPTypes<K, D, P, DKP>
         >
       : RocketComponent<A, OA, T, CT, D, UB, DKP>
   } & {
