@@ -14,7 +14,7 @@ type Theme = Parameters<typeof styles>[0]['theme']
 type ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
 
 const defaultDimensions = {
-  gaps: 'state',
+  gaps: 'gap',
   sizes: 'size',
   variants: 'variant',
   // multiple: { propName: 'multiple', multi: true },
@@ -50,6 +50,16 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
     extendCss: css`
       text-align: center;
     `,
+  }))
+  .gaps((theme) => ({
+    xs: {
+      padding: 3,
+      margin: 3,
+    },
+    md: {
+      padding: 3,
+      margin: 3,
+    },
   }))
 
 const Component = (props) => (

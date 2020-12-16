@@ -15,7 +15,7 @@ const defaultDimensions = {
     propName: 'multiple',
     multi: true,
   },
-}
+} as const
 
 type Rocketstyle = <T = unknown, CT = unknown>() => <
   D extends Dimensions = typeof defaultDimensions,
@@ -37,6 +37,7 @@ type Rocketstyle = <T = unknown, CT = unknown>() => <
 const rocketstyle: Rocketstyle = () => ({
   dimensions = defaultDimensions,
   useBooleans = true,
+  // @ts-ignore
 }) => ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode

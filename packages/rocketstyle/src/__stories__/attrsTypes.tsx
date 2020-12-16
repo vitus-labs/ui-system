@@ -112,6 +112,9 @@ const Test = rocketstyle<typeof theme, ThemeType>()({
   .multiple((t) => ({
     multiKey: null,
   }))
+  .multiple((t) => ({
+    another: null,
+  }))
   .theme({
     fontFamily: '',
     fontSize: 4,

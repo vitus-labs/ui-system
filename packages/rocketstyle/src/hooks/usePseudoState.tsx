@@ -12,53 +12,56 @@ type Props = {
 
 type PseudoState = { hover: boolean; focus: boolean; pressed: boolean }
 
-type UsePseudoState = ({
-  onMouseEnter,
-  onMouseLeave,
-  onMouseDown,
-  onMouseUp,
-  onFocus,
-  onBlur,
-}: Partial<Props>) => { state: PseudoState; events: Props }
+type UsePseudoState = (
+  {
+    onMouseEnter,
+    onMouseLeave,
+    onMouseDown,
+    onMouseUp,
+    onFocus,
+    onBlur,
+  }: Partial<Props>,
+  isProvider: boolean | unknown
+) => { state: PseudoState; events: Props }
 
-const usePseudoState: UsePseudoState = (props) => {
+const usePseudoState: UsePseudoState = (props, isProvider) => {
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
   const onMouseEnter = (e: MouseEvent) => {
     e.preventDefault()
-    setHover(true)
+    if (isProvider) setHover(true)
     if (props.onMouseEnter) props.onMouseEnter(e)
   }
 
   const onMouseLeave = (e: MouseEvent) => {
     e.preventDefault()
-    setHover(false)
+    if (isProvider) setHover(false)
     if (props.onMouseLeave) props.onMouseLeave(e)
   }
 
   const onMouseDown = (e: MouseEvent) => {
     e.preventDefault()
-    setPressed(true)
+    if (isProvider) setPressed(true)
     if (props.onMouseDown) props.onMouseDown(e)
   }
 
   const onMouseUp = (e: MouseEvent) => {
     e.preventDefault()
-    setPressed(false)
+    if (isProvider) setPressed(false)
     if (props.onMouseUp) props.onMouseUp(e)
   }
 
   const onFocus = (e: FocusEvent) => {
     e.preventDefault()
-    setFocus(true)
+    if (isProvider) setFocus(true)
     if (props.onFocus) props.onFocus(e)
   }
 
   const onBlur = (e: FocusEvent) => {
     e.preventDefault()
-    setFocus(false)
+    if (isProvider) setFocus(false)
     if (props.onBlur) props.onBlur(e)
   }
 

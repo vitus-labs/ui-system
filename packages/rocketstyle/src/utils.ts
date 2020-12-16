@@ -1,3 +1,5 @@
+import { config } from '@vitus-labs/core'
+import type { OptionStyles } from '~/types'
 // --------------------------------------------------------
 // chain options
 // --------------------------------------------------------
@@ -35,21 +37,45 @@ export const calculateChainOptions: CalculateChainOptions = (
 // --------------------------------------------------------
 // calculate styles
 // --------------------------------------------------------
-export const calculateStyles = (styles, css) => {
+type CalculateStyles = <S extends OptionStyles, C extends typeof config.css>(
+  styles: S,
+  css: C
+) => Array<ReturnType<OptionStyles[number]>>
+export const calculateStyles: CalculateStyles = (styles, css) => {
   if (!styles) return null
 
   return styles.map((item) => item(css))
 }
 
-export const isInDimensions = (key, dimensions) => {
+// --------------------------------------------------------
+// is in dimensions
+// --------------------------------------------------------
+type IsInDimensions = <K extends string, D extends Record<string, unknown>>(
+  key: K,
+  dimensions: D
+) => boolean
+export const isInDimensions: IsInDimensions = (key, dimensions) => {
   const hasKey = () => {
     Object.values(dimensions).some((value) => value[key])
   }
 
   if (dimensions[key] || hasKey()) return true
+  return false
 }
 
-export const splitProps = (props, dimensions) => {
+// --------------------------------------------------------
+// split props
+// --------------------------------------------------------
+type Props = Record<string, unknown>
+type Result = { styleProps: Props; otherProps: Props }
+type SplitProps = <
+  P extends Record<string, unknown>,
+  D extends Record<string, unknown>
+>(
+  props: P,
+  dimensions: D
+) => Result
+export const splitProps: SplitProps = (props, dimensions) => {
   const styleProps = {}
   const otherProps = {}
 
@@ -125,8 +151,8 @@ export const calculateStyledAttrs = ({
 // --------------------------------------------------------
 type CalculateTheme = <
   P extends Record<string, string>,
-  T extends Record<string, string>,
-  B extends Record<string, string | number | object>
+  T extends Record<string, unknown>,
+  B extends Record<string, string | number | Record<string, unknown>>
 >({
   props,
   themes,
@@ -135,7 +161,7 @@ type CalculateTheme = <
   props: P
   themes: T
   baseTheme: B
-}) => B & Record<string, string | number | object>
+}) => B & Record<string, string | number | Record<string, unknown>>
 
 export const calculateTheme: CalculateTheme = ({
   props,

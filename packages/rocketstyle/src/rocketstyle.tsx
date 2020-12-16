@@ -7,7 +7,6 @@ import React, {
   useMemo,
   useContext,
   ReactNode,
-  ComponentType,
 } from 'react'
 
 import {
@@ -17,21 +16,27 @@ import {
   calculateStyledAttrs,
   calculateTheme,
 } from './utils'
+import {
+  RESERVED_OR_KEYS,
+  RESERVED_CLONED_KEYS,
+  RESERVED_STATIC_KEYS,
+} from './constants'
 import useTheme from './hooks/useTheme'
 import usePseudoState from './hooks/usePseudoState'
-import type { RocketComponent, StyleComponent, Configuration } from './types'
+import type {
+  RocketComponent,
+  StyleComponent,
+  Configuration,
+  PseudoState,
+} from './types'
 
-const Context = createContext({})
-const RESERVED_OR_KEYS = [
-  'provider',
-  'consumer',
-  'DEBUG',
-  'name',
-  'component',
-  'passBoolProps',
-]
-const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles']
-const RESERVED_STATIC_KEYS = [...RESERVED_CLONED_KEYS, 'compose', 'dimensions']
+type TContext = Partial<
+  {
+    pseudo: PseudoState
+  } & Record<string, unknown>
+>
+
+const Context = createContext<TContext>({})
 
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
@@ -59,6 +64,7 @@ const chainReservedOptions = (keys, opts, defaultOpts) => {
 // --------------------------------------------------------
 const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
   dimensionKeys.forEach((item) => {
+    // eslint-disable-next-line no-param-reassign
     context[item] = (props) => func({ [item]: props }, opts)
   })
 }
@@ -69,12 +75,12 @@ const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
 // always returns styleComponent with static functions
 // assigned
 // --------------------------------------------------------
-type CloneAndEnhance = <C>(
-  opts: Configuration,
-  defaultOpts: Configuration
-) => ReturnType<StyleComponent<C, unknown, unknown, unknown>>
+type CloneAndEnhance = <A extends Configuration, B extends Configuration>(
+  opts: A,
+  defaultOpts: B
+) => ReturnType<typeof styleComponent>
 
-const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts = {}) =>
+const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
   styleComponent({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -86,15 +92,15 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts = {}) =>
     ),
   })
 
-const ReturnConsumer = ({ children }) => {
-  const ctx = useContext(Context)
+// const ReturnConsumer = ({ children }) => {
+//   const ctx = useContext(Context)
 
-  return children(ctx)
-}
+//   return children(ctx)
+// }
 
-const ReturnProvider = ({ children, value }) => (
-  <Context.Provider value={value}>{children}</Context.Provider>
-)
+// const ReturnProvider = ({ children, value }) => (
+//   <Context.Provider value={value}>{children}</Context.Provider>
+// )
 
 // --------------------------------------------------------
 // styleComponent
@@ -103,21 +109,7 @@ const ReturnProvider = ({ children, value }) => (
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-export type OptionsType = {
-  name: string
-  component: React.ComponentType<any>
-  useBooleans: boolean
-  dimensions: any
-  dimensionKeys: any
-  dimensionValues: any
-  styles?: any
-  attrs?: any
-  compose?: any
-  provider?: boolean
-  consumer?: any
-}
-
-const styleComponent: StyleComponent<ComponentType> = (options) => {
+const styleComponent: StyleComponent = (options) => {
   const { component, styles } = options
 
   const componentName =
@@ -131,158 +123,163 @@ const styleComponent: StyleComponent<ComponentType> = (options) => {
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
-  const EnhancedComponent: RocketComponent<
-    unknown,
-    unknown,
-    unknown,
-    unknown,
-    unknown,
-    unknown
-  > = forwardRef(({ onMount, ...props }, ref) => {
-    // general theme passed in context
-    const theme = useContext(config.context)
+  const EnhancedComponent: RocketComponent = forwardRef(
+    ({ onMount, ...props }, ref) => {
+      // general theme passed in context
+      const theme = useContext(config.context)
 
-    // desctructure events used for pseudo state detection
-    const {
-      onMouseEnter,
-      onMouseLeave,
-      onMouseUp,
-      onMouseDown,
-      onFocus,
-      onBlur,
-    } = props
+      // desctructure events used for pseudo state detection
+      const {
+        onMouseEnter,
+        onMouseLeave,
+        onMouseUp,
+        onMouseDown,
+        onFocus,
+        onBlur,
+      } = props
 
-    // pseudo hook to detect states hover / pressed / focus
-    const pseudo = usePseudoState({
-      onMouseEnter,
-      onMouseLeave,
-      onMouseUp,
-      onMouseDown,
-      onFocus,
-      onBlur,
-    })
-
-    // calculate themes for all possible styling dimensions
-    // eslint-disable-next-line no-underscore-dangle
-    const __ROCKETSTYLE__ = useMemo(
-      () => useTheme<typeof theme>({ theme, options }),
-      [theme]
-    )
-
-    const { reservedPropNames, themes, dimensions, baseTheme } = __ROCKETSTYLE__
-
-    // if onMount is provided (useful for development tooling or so)
-    // it will pass all available styling options in the callback
-    useEffect(() => {
-      const { multiKeys, dimensionKeys, dimensionValues } = options
-
-      if (onMount) {
-        onMount({
-          multiKeys,
-          dimensionKeys,
-          dimensionValues,
-          ...__ROCKETSTYLE__,
-        })
-      }
-    }, [theme])
-
-    type FinalElement = (ctxData?: Record<string, unknown>) => ReactNode
-
-    const finalElement: FinalElement = (ctxData = {}) => {
-      // first we need to calculate final props which are
-      // being returned by using `attr` chaining method
-      const calculatedAttrs = calculateChainOptions(
-        options.attrs,
-        props,
-        theme,
+      // pseudo hook to detect states hover / pressed / focus
+      const pseudo = usePseudoState(
         {
-          renderContent,
-        }
+          onMouseEnter,
+          onMouseLeave,
+          onMouseUp,
+          onMouseDown,
+          onFocus,
+          onBlur,
+        },
+        options.provider
       )
 
-      // get final props which are
-      // (1) merged from context,
-      // (2) `attrs` chaining method, and from
-      // (3) passing them directly to component
-      const componentProps = {
-        ...ctxData,
-        ...calculatedAttrs,
-        ...props,
-      }
+      // calculate themes for all possible styling dimensions
+      // eslint-disable-next-line no-underscore-dangle
+      const __ROCKETSTYLE__ = useMemo(
+        () => useTheme<typeof theme>({ theme, options }),
+        [theme]
+      )
 
-      const styledProps = calculateStyledAttrs({
-        props: componentProps,
-        multiKeys: options.multiKeys,
-        dimensions,
-        useBooleans: options.useBooleans,
-      })
-
-      // final component state including pseudo state
-      const rocketstate = {
-        ...styledProps,
-        pseudo: pseudo.state,
-      }
-
-      // if (options.useBooleans) {
-      //   Object.values(styledProps).forEach((item) => {
-      //     if (Array.isArray(item)) {
-      //       item.forEach((item) => {
-      //         rocketstate[item] = true
-      //       })
-      //     } else {
-      //       rocketstate[item] = true
-      //     }
-      //   })
-      // }
-
-      // calculated final theme which will be passed to our styled component
-      // under $rocketstyle prop
-      const rocketstyle = calculateTheme({
-        props: styledProps,
+      const {
+        reservedPropNames,
         themes,
+        dimensions,
         baseTheme,
-      })
+      } = __ROCKETSTYLE__
 
-      const passProps = {
-        // this removes styling state from props and passes its state
-        // under rocketstate key only
-        ...omit(componentProps, reservedPropNames),
-        ...(options.provider ? pseudo.events : {}),
-        ref,
-        $rocketstyle: rocketstyle,
-        $rocketstate: rocketstate,
-        'data-rocketstyle': componentName,
+      // if onMount is provided (useful for development tooling or so)
+      // it will pass all available styling options in the callback
+      useEffect(() => {
+        const { multiKeys, dimensionKeys, dimensionValues } = options
+
+        if (onMount) {
+          onMount({
+            multiKeys,
+            dimensionKeys,
+            dimensionValues,
+            ...__ROCKETSTYLE__,
+          })
+        }
+      }, [theme])
+
+      type FinalElement = (ctxData?: Record<string, unknown>) => ReactNode
+
+      const finalElement: FinalElement = (ctxData = {}) => {
+        // first we need to calculate final props which are
+        // being returned by using `attr` chaining method
+        const calculatedAttrs = calculateChainOptions(
+          options.attrs,
+          props,
+          theme,
+          {
+            renderContent,
+          }
+        )
+
+        // get final props which are
+        // (1) merged from context,
+        // (2) `attrs` chaining method, and from
+        // (3) passing them directly to component
+        const componentProps = {
+          ...ctxData,
+          ...calculatedAttrs,
+          ...props,
+        }
+
+        const styledProps = calculateStyledAttrs({
+          props: componentProps,
+          multiKeys: options.multiKeys,
+          dimensions,
+          useBooleans: options.useBooleans,
+        })
+
+        // final component state including pseudo state
+        const rocketstate = {
+          ...styledProps,
+          pseudo: pseudo.state,
+        }
+
+        // if (options.useBooleans) {
+        //   Object.values(styledProps).forEach((item) => {
+        //     if (Array.isArray(item)) {
+        //       item.forEach((item) => {
+        //         rocketstate[item] = true
+        //       })
+        //     } else {
+        //       rocketstate[item] = true
+        //     }
+        //   })
+        // }
+
+        // calculated final theme which will be passed to our styled component
+        // under $rocketstyle prop
+        const rocketstyle = calculateTheme({
+          props: styledProps,
+          themes,
+          baseTheme,
+        })
+
+        const passProps = {
+          // this removes styling state from props and passes its state
+          // under rocketstate key only
+          ...omit(componentProps, reservedPropNames),
+          ...(options.provider ? pseudo.events : {}),
+          ref,
+          $rocketstyle: rocketstyle,
+          $rocketstate: rocketstate,
+          'data-rocketstyle': componentName,
+        }
+
+        const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
+
+        if (options.provider) {
+          return (
+            <Context.Provider value={rocketstate}>
+              {renderedComponent}
+            </Context.Provider>
+          )
+        }
+
+        return renderedComponent
       }
 
-      const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
-
-      if (options.provider) {
+      if (options.consumer) {
         return (
-          <Context.Provider value={rocketstate}>
-            {renderedComponent}
-          </Context.Provider>
+          <Context.Consumer>
+            {(value) => finalElement(options.consumer(value))}
+          </Context.Consumer>
         )
       }
 
-      return renderedComponent
+      return finalElement()
     }
+  )
 
-    if (options.consumer) {
-      return (
-        <Context.Consumer>
-          {(value) => finalElement(options.consumer(value))}
-        </Context.Consumer>
-      )
-    }
-
-    return finalElement()
-  })
-
+  EnhancedComponent.IS_ROCKETSTYLE = true
+  EnhancedComponent.displayName = componentName
   let ExtendedComponent = EnhancedComponent
 
   const composeFuncs = Object.values(options.compose || {})
   if (composeFuncs.length > 0) {
-    ExtendedComponent = compose(composeFuncs)(ExtendedComponent)
+    ExtendedComponent = compose(...composeFuncs)(ExtendedComponent)
   }
 
   // ------------------------------------------------------
@@ -303,10 +300,10 @@ const styleComponent: StyleComponent<ComponentType> = (options) => {
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
-    return cloneAndEnhance<typeof options.component>(result, options)
+    return cloneAndEnhance(result, options)
   }
 
-  return ExtendedComponent
+  return ExtendedComponent as RocketComponent
 }
 
 export default styleComponent

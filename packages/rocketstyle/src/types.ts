@@ -12,11 +12,11 @@ export type ExtractProps<
   ? TProps
   : TComponentOrTProps
 
-type ExtractDimensionKey<T extends DimensionValue> = T extends DimensionValueObj
-  ? T['propName']
-  : T
+export type ExtractDimensionKey<
+  T extends DimensionValue
+> = T extends DimensionValueObj ? T['propName'] : T
 
-type ExtractDimensionMulti<
+export type ExtractDimensionMulti<
   T extends DimensionValue
 > = T extends DimensionValueObj ? true : false
 
@@ -37,17 +37,21 @@ export type DimensionValueObj = {
   multi?: boolean
 }
 
+export type MultiKeys<T extends Dimensions = Dimensions> = Partial<
+  Record<ExtractDimensionKey<T[keyof T]>, true>
+>
 export type TDKP = Record<
   ExtractDimensionKey<Dimensions[keyof Dimensions]>,
-  Record<string, boolean | never>
+  Record<string, boolean | never> | unknown
 >
 
 export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
 
 type Css = typeof config.css
 export type Style = ReturnType<typeof config.css>
+export type OptionStyles = Array<(css: Css) => ReturnType<typeof css>>
 export type Dimensions = Record<string, DimensionValue>
-export type ElementType = ComponentType
+export type ElementType = ComponentType<unknown>
 
 // --------------------------------------------------------
 // rocketstyle data object
@@ -74,13 +78,13 @@ export type Styles = <T>({
 // --------------------------------------------------------
 export type PseudoState = {
   hover: boolean
-  active: boolean
+  focus: boolean
   pressed: boolean
 }
 
 export type ConsumerCb = ({
   hover,
-  active,
+  focus,
   pressed,
 }: PseudoState) => Record<string, string | boolean>
 
@@ -193,20 +197,23 @@ type ExtendDimensionTypes<
  */
 export type RocketComponent<
   // attrs
-  A extends TObj | unknown,
+  A extends TObj = DefaultProps,
   // original component props
-  OA extends TObj | unknown,
+  OA extends TObj = DefaultProps,
   // theme
-  T extends TObj | unknown,
+  T extends TObj | unknown = unknown,
   // custom theme properties
-  CT extends TObj | unknown,
+  CT extends TObj | unknown = unknown,
   // dimensions
-  D extends Dimensions,
+  D extends Dimensions = Dimensions,
   // use booleans
-  UB extends boolean,
+  UB extends boolean = boolean,
   // CONFIG
-  DKP extends TDKP | unknown
+  DKP extends TDKP = TDKP
 > = ForwardRefExoticComponent<A> & {
+  IS_ROCKETSTYLE: true
+  displayName: string
+} & {
   // CONFIG chaining method
   // --------------------------------------------------------
   config: (
@@ -272,8 +279,6 @@ export type RocketComponent<
           DKPTypes<K, D, P, DKP>
         >
       : RocketComponent<A, OA, T, CT, D, UB, DKP>
-  } & {
-    displayName: never
   }
 
 // --------------------------------------------------------
@@ -295,40 +300,47 @@ type DefaultPseudoProps = Partial<{
 // --------------------------------------------------------
 // STYLE COMPONENT data shape
 // --------------------------------------------------------
-export type Configuration<C, D extends Dimensions> = {
-  component: C
-  name: string
-  attrs: unknown
-  theme: unknown
-  styles: unknown
-  compose: unknown
-  dimensions: D
-  useBooleans: boolean
-  provider: boolean
-  consumer: unknown
-  dimensionKeys: Array<keyof D>
-  dimensionValues: Array<ValueOf<D>>
-  multiKeys: Record<string, boolean>
-}
+type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
+
+export type Configuration<
+  C = ElementType,
+  D extends Dimensions = Dimensions
+> = Partial<
+  {
+    // read only / not mutated anymore
+    useBooleans: boolean
+    dimensions: D
+    dimensionKeys: Array<keyof D>
+    dimensionValues: Array<ValueOf<D>>
+    multiKeys: MultiKeys
+
+    // or Options
+    component: C
+    name: string
+    provider: boolean
+    consumer: ConsumerCb
+    DEBUG: boolean
+
+    // array chaining options
+    attrs: Array<OptionFunc>
+    theme: Array<OptionFunc>
+    styles: OptionStyles
+    compose: Record<string, TFn>
+  } & Record<ExtractDimensionKey<D[keyof D]>, unknown>
+>
+// {
+//     [K in ]: Array<unknown>
+//   }
+// >
 
 export type StyleComponent<
-  C extends ElementType,
-  T extends Record<string, unknown> | unknown,
-  CT extends ReturnType<typeof config.css> | unknown,
-  D extends Dimensions,
-  UB extends boolean
+  C extends ElementType = ElementType,
+  T extends Record<string, unknown> | unknown = unknown,
+  CT extends ReturnType<typeof config.css> | unknown = unknown,
+  D extends Dimensions = Dimensions,
+  UB extends boolean = boolean
 > = (
-  props: Pick<
-    Configuration<C, D>,
-    | 'name'
-    | 'component'
-    | 'useBooleans'
-    | 'styles'
-    | 'dimensions'
-    | 'dimensionKeys'
-    | 'dimensionValues'
-    | 'multiKeys'
-  >
+  props: Configuration<C, D>
 ) => RocketComponent<
   DefaultProps<C, D>,
   DefaultProps<C, D>,
@@ -336,10 +348,13 @@ export type StyleComponent<
   CT,
   D,
   UB,
-  unknown
+  Record<string, unknown>
 >
 
-type DefaultProps<C, D extends Dimensions> = ExtractProps<C> &
+type DefaultProps<
+  C = ElementType,
+  D extends Dimensions = Dimensions
+> = ExtractProps<C> &
   DefaultPseudoProps &
   OnMountCB<
     Pick<

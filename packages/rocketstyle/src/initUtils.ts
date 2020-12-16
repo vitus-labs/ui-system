@@ -1,4 +1,4 @@
-import { Dimensions, DimensionValue, DimensionValueObj } from '~/types'
+import { Dimensions, DimensionValue, MultiKeys } from '~/types'
 
 // --------------------------------------------------------
 // simple object getters
@@ -9,7 +9,6 @@ export const getKeys: GetKeys = (obj) => Object.keys(obj)
 type GetValues = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T
 ) => T[K][]
-
 export const getValues: GetValues = (obj) => Object.values(obj) as any
 
 // --------------------------------------------------------
@@ -32,15 +31,7 @@ export const getDimensionsValues: GetDimensionsValues = (obj) =>
 // --------------------------------------------------------
 // get multiple dimensions map
 // --------------------------------------------------------
-type ReturnKeyName<T extends DimensionValue> = T extends DimensionValueObj
-  ? T['propName']
-  : T extends string
-  ? T
-  : T
-
-type GetMultipleDimensions = <T extends Dimensions>(
-  obj: T
-) => Partial<Record<ReturnKeyName<T[keyof T]>, true>>
+type GetMultipleDimensions = <T extends Dimensions>(obj: T) => MultiKeys<T>
 
 export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
   getValues(obj).reduce((accumulator, value: DimensionValue) => {
