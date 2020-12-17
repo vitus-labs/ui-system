@@ -47,11 +47,13 @@ export type TDKP = Record<
 
 export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
 
-type Css = typeof config.css
-export type Style = ReturnType<typeof config.css>
+export type Css = typeof config.css
+export type Style = ReturnType<Css>
 export type OptionStyles = Array<(css: Css) => ReturnType<typeof css>>
 export type Dimensions = Record<string, DimensionValue>
-export type ElementType = ComponentType<unknown>
+export type ElementType<T extends TObj | unknown = unknown> =
+  | ComponentType<T>
+  | ForwardRefExoticComponent<T>
 
 // --------------------------------------------------------
 // rocketstyle data object
@@ -83,17 +85,17 @@ export type PseudoState = {
 }
 
 export type ConsumerCb = ({
-  hover,
-  focus,
-  pressed,
-}: PseudoState) => Record<string, string | boolean>
+  pseudo,
+}: {
+  pseudo?: PseudoState
+}) => Record<string, string | boolean>
 
 export type ConfigAttrs = {
   provider: boolean
   consumer: ConsumerCb
   DEBUG: boolean
   name: string
-  component: ComponentType
+  component: ElementType
 }
 
 export type ConfigCB = ({
@@ -107,7 +109,7 @@ export type ConfigCB = ({
 // ATTRS chaining types
 // --------------------------------------------------------
 export type AttrsCb<A, P, T> = (
-  props: Partial<A>,
+  props: Partial<A & P>,
   theme: T,
   helpers: { createElement: typeof renderContent }
 ) => Partial<A & P>
@@ -252,7 +254,9 @@ export type RocketComponent<
   // --------------------------------------------------------
 } & {
     [I in keyof D]: <
-      P extends DimensionCb<T, CT> | Record<string, Partial<CT>>,
+      P extends
+        | DimensionCb<T, CT>
+        | Record<string, Partial<CT> | boolean | null | undefined>,
       K extends DimensionValue = D[I]
     >(
       param: P
@@ -352,20 +356,22 @@ export type StyleComponent<
 >
 
 type DefaultProps<
-  C = ElementType,
+  C extends ElementType = ElementType,
   D extends Dimensions = Dimensions
-> = ExtractProps<C> &
-  DefaultPseudoProps &
-  OnMountCB<
-    Pick<
-      Configuration<C, D>,
-      | 'name'
-      | 'component'
-      | 'useBooleans'
-      | 'styles'
-      | 'dimensions'
-      | 'dimensionKeys'
-      | 'dimensionValues'
-      | 'multiKeys'
+> = Partial<
+  ExtractProps<C> &
+    DefaultPseudoProps &
+    OnMountCB<
+      Pick<
+        Configuration<C, D>,
+        | 'name'
+        | 'component'
+        | 'useBooleans'
+        | 'styles'
+        | 'dimensions'
+        | 'dimensionKeys'
+        | 'dimensionValues'
+        | 'multiKeys'
+      >
     >
-  >
+>

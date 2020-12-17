@@ -152,7 +152,7 @@ export const calculateStyledAttrs = ({
 type CalculateTheme = <
   P extends Record<string, string>,
   T extends Record<string, unknown>,
-  B extends Record<string, string | number | Record<string, unknown>>
+  B extends Record<string, unknown>
 >({
   props,
   themes,
@@ -161,7 +161,7 @@ type CalculateTheme = <
   props: P
   themes: T
   baseTheme: B
-}) => B & Record<string, string | number | Record<string, unknown>>
+}) => B & Record<string, unknown>
 
 export const calculateTheme: CalculateTheme = ({
   props,
