@@ -4,7 +4,7 @@ export default element
   .config({
     name: 'base/form/Form',
   })
-  .attrs({
+  .attrs<{ noValidate?: boolean }>({
     tag: 'form',
     block: true,
     contentDirection: 'rows',

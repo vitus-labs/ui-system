@@ -23,20 +23,13 @@ export default text
     fontWeight: t.fontWeight.base,
   }))
   .sizes((t) => ({
-    default: {
-      fontSize: [
-        t.fontSize.sm,
-        t.fontSize.base,
-        t.fontSize.sm,
-        t.fontSize.base,
-      ],
-      lineHeight: [
-        t.lineHeight.sm,
-        t.lineHeight.base,
-        t.lineHeight.sm,
-        t.lineHeight.base,
-      ],
-    },
+    fontSize: [t.fontSize.sm, t.fontSize.base, t.fontSize.sm, t.fontSize.base],
+    lineHeight: [
+      t.lineHeight.sm,
+      t.lineHeight.base,
+      t.lineHeight.sm,
+      t.lineHeight.base,
+    ],
     sm: createSize(t.fontSize.xs, t.lineHeight.sm),
     md: createSize(t.fontSize.sm, t.lineHeight.xl),
   }))

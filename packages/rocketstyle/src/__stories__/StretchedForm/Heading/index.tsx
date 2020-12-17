@@ -1,12 +1,7 @@
 import text from '../Text'
 
-const createSize = (fontSize, fontWeight) => ({
-  fontSize,
-  fontWeight,
-})
-
 export default text
-  .config({ name: 'base/Heading' })
+  .config({ name: 'StretchedForm/Heading' })
   .attrs({ tag: 'h1' })
   .theme((t) => ({
     marginBottom: t.spacing.sm,
@@ -27,5 +22,8 @@ export default text
         md: t.fontSize.xl,
       },
     },
-    h3: createSize(t.fontSize.base, t.fontWeight.semibold),
+    h3: {
+      fontSize: t.fontSize.base,
+      fontWeight: t.fontWeight.semibold,
+    },
   }))

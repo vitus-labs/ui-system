@@ -5,7 +5,7 @@ export default element
   .attrs({
     tag: 'div',
     contentDirection: 'rows',
-    contentAlignX: 'stretch',
+    contentAlignX: 'block',
   })
   .theme((t) => ({
     marginBottom: t.spacing.lg,

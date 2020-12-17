@@ -2,16 +2,10 @@ import { element } from '../../base'
 
 export default element
   .config({ name: 'base/form/Input' })
-  .attrs({
+  .attrs<{ type?: string }>({
     tag: 'input',
     type: 'text',
   })
-  .styles(
-    (css) => css`
-      border: none;
-      outline: none;
-    `
-  )
   .theme((t) => ({
     color: 'inherit',
     fontWeight: 'inherit',
@@ -22,3 +16,9 @@ export default element
     height: '36px',
     width: '100%',
   }))
+  .styles(
+    (css) => css`
+      border: none;
+      outline: none;
+    `
+  )

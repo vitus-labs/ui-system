@@ -12,17 +12,7 @@ const theme = {
 
 type ThemeType = Parameters<typeof styles>[0]['theme']
 
-const defaultDimensions = {
-  states: 'state',
-  sizes: 'size',
-  variants: 'variant',
-  multiple: { propName: 'multiple', multi: true },
-} as const
-
-const Test = rocketstyle<typeof theme, ThemeType>()({
-  useBooleans: true,
-  dimensions: defaultDimensions,
-})({
+const Test = rocketstyle<typeof theme, ThemeType>()()({
   component: Element,
   name: 'Hello',
 })
