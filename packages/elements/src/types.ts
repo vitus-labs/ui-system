@@ -1,9 +1,29 @@
 import type { ComponentType } from 'react'
+import { config } from '@vitus-labs/core'
 
-type isEmpty = null | undefined
-type ContentAlignX = 'left' | 'center' | 'right' | isEmpty
-type ContentAlignY = 'top' | 'center' | 'bottom' | isEmpty
-type ContentDirection =
+export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
+export type Css = CssCallback | string | ReturnType<typeof config.css>
+
+export type isEmpty = null | undefined
+export type ContentAlignX =
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'spaceBetween'
+  | 'spaceAround'
+  | 'block'
+  | isEmpty
+
+export type ContentAlignY =
+  | 'top'
+  | 'center'
+  | 'bottom'
+  | 'spaceBetween'
+  | 'spaceAround'
+  | 'block'
+  | isEmpty
+
+export type ContentDirection =
   | 'inline'
   | 'rows'
   | 'reverseInline'
