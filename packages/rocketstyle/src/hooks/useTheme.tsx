@@ -60,7 +60,7 @@ const useTheme: UseTheme = ({ theme, options }) => {
   const __ROCKETSTYLE__ = {
     dimensions: keysMap,
     reservedPropNames: keywords,
-    baseTheme: calculateChainOptions(options.theme, [theme, config.css]),
+    baseTheme: calculateChainOptions(options.theme, theme, config.css),
     themes,
   }
 

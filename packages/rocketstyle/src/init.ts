@@ -17,15 +17,15 @@ const defaultDimensions = {
   },
 } as const
 
-type Rocketstyle = <T = unknown, CT = unknown>() => <
+export type Rocketstyle = <T = any, CT = any>() => <
   D extends Dimensions = typeof defaultDimensions,
   UB extends boolean = true
 >({
   dimensions,
   useBooleans,
-}: {
+}?: {
   dimensions?: D
-  useBooleans: UB
+  useBooleans?: UB
 }) => <C extends ElementType>({
   name,
   component,
@@ -38,7 +38,7 @@ const rocketstyle: Rocketstyle = () => ({
   dimensions = defaultDimensions,
   useBooleans = true,
   // @ts-ignore
-}) => ({ name, component }) => {
+} = {}) => ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode
   // --------------------------------------------------------
