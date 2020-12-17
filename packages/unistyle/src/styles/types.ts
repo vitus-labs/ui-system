@@ -190,7 +190,7 @@ export type Theme = Partial<{
   backgroundPosition: any
   backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
   backgroundSize: 'auto' | value | 'cover' | 'contain' | defaults
-  borderRadius: string
+  borderRadius: value | defaults
   borderRadiusTopLeft: value | defaults
   borderRadiusLeft: value | defaults
   borderRadiusTop: value | defaults

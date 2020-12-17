@@ -40,7 +40,7 @@ const DIRECTION: DIRECTION_TYPE = __NATIVE__
       reverseRows: 'reverse-column',
     }
 
-type AlignContentProps = ({
+export type AlignContentProps = ({
   direction,
   alignX,
   alignY,

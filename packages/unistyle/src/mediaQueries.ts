@@ -1,4 +1,4 @@
-import { set } from '@vitus-labs/core'
+import { set, isEmpty } from '@vitus-labs/core'
 
 // --------------------------------------------------------
 // sort breakpoints
@@ -139,9 +139,14 @@ export const makeItResponsive: MakeItResponsive = ({
   styles,
 }) => ({ theme, ...props }) => {
   const internalTheme = customTheme || props[key]
+
+  // if no theme is defined, return empty objct
+  if (isEmpty(internalTheme)) return ''
+
   const { rootSize, breakpoints, __VITUS_LABS__ } = theme
-  const renderStyles = (theme: object): ReturnType<typeof styles> =>
-    styles({ theme, css, rootSize })
+  const renderStyles = (
+    theme: Record<string, unknown>
+  ): ReturnType<typeof styles> => styles({ theme, css, rootSize })
 
   // if there are no breakpoints, return just standard css
   if (!breakpoints || breakpoints.length === 0 || !__VITUS_LABS__) {
