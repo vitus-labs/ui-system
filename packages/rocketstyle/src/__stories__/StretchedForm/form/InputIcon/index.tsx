@@ -1,7 +1,7 @@
 import { element } from '../../base'
 
 export default element
-  .attrs({
+  .attrs<{ htmlFor?: string; name?: string }>({
     tag: 'label',
   })
   .theme({

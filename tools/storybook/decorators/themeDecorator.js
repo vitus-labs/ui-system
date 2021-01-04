@@ -1,5 +1,4 @@
-import { createElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 
-export default theme => story =>
-  createElement(ThemeProvider, { theme, children: story() })
+export default theme => Story =>
+  <ThemeProvider theme={theme}><Story /></ThemeProvider>

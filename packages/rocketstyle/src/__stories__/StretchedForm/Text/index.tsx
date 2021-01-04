@@ -21,8 +21,6 @@ export default text
     color: t.color.gray900,
     marginBottom: t.spacing.lg,
     fontWeight: t.fontWeight.base,
-  }))
-  .sizes((t) => ({
     fontSize: [t.fontSize.sm, t.fontSize.base, t.fontSize.sm, t.fontSize.base],
     lineHeight: [
       t.lineHeight.sm,
@@ -30,6 +28,8 @@ export default text
       t.lineHeight.sm,
       t.lineHeight.base,
     ],
+  }))
+  .sizes((t) => ({
     sm: createSize(t.fontSize.xs, t.lineHeight.sm),
     md: createSize(t.fontSize.sm, t.lineHeight.xl),
   }))

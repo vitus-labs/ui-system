@@ -2,7 +2,15 @@ import { element } from '../../base'
 
 export default element
   .config({ name: 'base/form/Input' })
-  .attrs<{ type?: string }>({
+  .attrs<{
+    type?: string
+    name?: string
+    id?: string
+    placeholder?: string
+    disabled: boolean
+    readOnly: boolean
+    required: boolean
+  }>({
     tag: 'input',
     type: 'text',
   })

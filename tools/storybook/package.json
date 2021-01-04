@@ -4,12 +4,9 @@
   "private": true,
   "main": "./index.js",
   "module": "./index.js",
-  "files": [
-    "config"
-  ],
   "bin": {
-    "vl_run-stories": "bin/run-dev.js",
-    "vl_build-stories": "bin/run-static.js"
+    "vl_stories": "bin/run-stories.js",
+    "vl_stories-build": "bin/run-stories-build.js"
   },
   "peerDependencies": {
     "react": "*",
@@ -25,6 +22,8 @@
     "@storybook/addons": "^6.0.26",
     "@storybook/react": "^6.0.26",
     "@storybook/theming": "^6.0.26",
-    "babel-loader": "*"
+    "babel-loader": "8.2.2",
+    "find-up": "^5.0.0",
+    "lodash.merge": "^4.6.2"
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import FormGroup from '../FormGroup'
 import InputGroup from '../InputGroup'
 import FormText from '../FormText'
@@ -30,9 +30,24 @@ const renderPseudoContent = ({ beforeContent, icon, identifier }) => {
   return null
 }
 
-const __id = +new Date()
+const createdId = +new Date()
 
-export default ({
+type Props = Partial<{
+  icon: string
+  label: string
+  id: string
+  placeholder: string
+  name: string
+  input: Record<string, unknown>
+  type: string
+  beforeContent: any
+  readOnly: boolean
+  disabled: boolean
+  required: boolean
+  meta: Record<string, unknown>
+}>
+
+const component: FC<Props> = ({
   icon,
   beforeContent,
   id,
@@ -45,9 +60,8 @@ export default ({
   disabled,
   required,
   meta,
-  // ...props
 }) => {
-  const identifier = id || `${input.name}-${__id}`
+  const identifier = id || `${input.name}-${createdId}`
   const { touched, error } = meta
 
   return (
@@ -77,3 +91,5 @@ export default ({
     </FormGroup>
   )
 }
+
+export default component

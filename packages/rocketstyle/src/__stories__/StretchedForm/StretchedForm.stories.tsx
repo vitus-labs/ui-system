@@ -10,8 +10,8 @@ export default {
 
 export const formStretched = () => (
   <Form contentAlignX="block">
-    <TextInput label="Username" input={{ name: 'username' }} meta={{}} />
-    <TextInput label="Password" input={{ name: 'password' }} meta={{}} />
+    <TextInput label="Username" input={{ name: 'username' }} />
+    <TextInput label="Password" input={{ name: 'password' }} />
     <Submit label="Submit" />
   </Form>
 )

@@ -6,8 +6,15 @@ import theme from './theme'
 type TTheme = typeof theme
 type TStyles = Parameters<typeof styles>[0]['theme']
 
+type ResponsiveStyles<T extends Record<string, unknown>> = Record<
+  keyof T,
+  T[keyof T] | Record<string, T[keyof T]> | Array<T[keyof T]>
+>
+
+type FinalStyles = ResponsiveStyles<TStyles>
+
 type Theme = Partial<
-  TStyles & { hover: TStyles; active: TStyles; focus: TStyles }
+  FinalStyles & { hover: FinalStyles; active: FinalStyles; focus: FinalStyles }
 >
 
 type CssProps = Partial<{

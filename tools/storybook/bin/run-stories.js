@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 const storybook = require('@storybook/react/standalone')
+const CONFIG = require('../src/config')
 
 storybook({
-  mode: 'static',
+  mode: 'dev',
+  port: CONFIG.port,
   configDir: `${__dirname}/../config`,
-  outputDir: `${process.cwd()}/docs`,
 })

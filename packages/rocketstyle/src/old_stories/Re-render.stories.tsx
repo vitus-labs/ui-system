@@ -1,18 +1,19 @@
 import React from 'react'
-import rocketstyle from '../'
+import rocketstyle from '..'
 import { Element, Overlay } from '@vitus-labs/elements'
 
-const Wrapper = rocketstyle()({ name: 'Wrapper', component: Element })
-const Button = rocketstyle()({ name: 'Button', component: Element }).config({
+const Wrapper = rocketstyle()()({ name: 'Wrapper', component: Element })
+const Button = rocketstyle()()({ name: 'Button', component: Element }).config({
   provider: true,
 })
-const Icon = rocketstyle()({ name: 'Icon', component: Element }).config({
+const Icon = rocketstyle()()({ name: 'Icon', component: Element }).config({
   consumer: (props) => {
     console.log(props)
+    return {}
   },
 })
-const Menu = rocketstyle()({ name: 'Menu', component: Element })
-const Box = rocketstyle()({ name: 'Box', component: Element })
+const Menu = rocketstyle()()({ name: 'Menu', component: Element })
+const Box = rocketstyle()()({ name: 'Box', component: Element })
 
 const Component = ({ openOn, closeOn, children, data, icon, ...props }) => {
   return (

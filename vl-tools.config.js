@@ -7,4 +7,7 @@ module.exports = {
       unistyle: '@vitus-labs/unistyle',
     },
   },
+  stories: {
+    port: 7007
+  },
 }
