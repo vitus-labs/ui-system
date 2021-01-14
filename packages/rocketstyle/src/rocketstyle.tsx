@@ -123,7 +123,9 @@ const styleComponent: StyleComponent = (options) => {
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
+  // @ts-ignore
   const EnhancedComponent: RocketComponent = forwardRef(
+    // @ts-ignore
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
       const theme = useContext(config.context)
