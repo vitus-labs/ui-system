@@ -33,6 +33,7 @@
   "main": "lib/vitus-labs-rocketstyle.js",
   "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
   "module": "lib/vitus-labs-rocketstyle.module.js",
+  "typings": "lib/types/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -44,9 +45,7 @@
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info",
-    "docz:dev": "docz dev",
-    "docz:build": "docz build"
+    "cover": "coveralls < .coverage/lcov.info"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.1.0"
