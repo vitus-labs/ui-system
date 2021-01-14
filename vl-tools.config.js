@@ -6,6 +6,7 @@ module.exports = {
       core: '@vitus-labs/core',
       unistyle: '@vitus-labs/unistyle',
       hoistNonReactStatics: 'hoist-non-react-statics',
+      lodash: 'lodash',
     },
   },
   stories: {

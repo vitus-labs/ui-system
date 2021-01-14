@@ -2,17 +2,11 @@
   "npmClient": "yarn",
   "hoist": true,
   "useWorkspaces": true,
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.8.0-alpha.0",
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "ignored-file",
-        "*.md",
-        "tools/*"
-      ]
+      "ignoreChanges": ["ignored-file", "*.md", "tools/*", "examples/"]
     }
   }
 }
