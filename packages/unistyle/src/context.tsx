@@ -55,7 +55,7 @@ type VitusLabsContext = {
 type Theme = {
   rootSize: number
   breakpoints?: Record<string, number>
-  __VITUS_LABS__: never
+  __VITUS_LABS__?: never
 } & Record<string, unknown>
 
 type ProviderType = {
