@@ -1,4 +1,4 @@
-import { config, set } from '@vitus-labs/core'
+import { config, set, isEmpty } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
@@ -26,19 +26,28 @@ const calculateDimensionsMap = (theme, useBooleans) =>
     { keysMap: {}, keywords: [] }
   )
 
-const calculateDimensionThemes = (theme, options) =>
-  Object.entries(options.dimensions).reduce((accumulator, [key, value]) => {
-    const [, dimension] = isMultiKey(value)
+const calculateDimensionThemes = (theme, options) => {
+  if (isEmpty(options.dimensions)) return {}
 
-    // eslint-disable-next-line no-param-reassign
-    accumulator[dimension] = calculateChainOptions(
-      options[key],
-      theme,
-      config.css
-    )
+  return Object.entries(options.dimensions).reduce(
+    (accumulator, [key, value]) => {
+      const [, dimension] = isMultiKey(value)
+      const helper = options[key]
 
-    return accumulator
-  }, {})
+      if (Array.isArray(helper) && helper.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        accumulator[dimension] = calculateChainOptions(
+          helper,
+          theme,
+          config.css
+        )
+      }
+
+      return accumulator
+    },
+    {}
+  )
+}
 
 type UseTheme = <T extends Record<string, unknown>>({
   theme,

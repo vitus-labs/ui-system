@@ -144,12 +144,13 @@ export const makeItResponsive: MakeItResponsive = ({
   if (isEmpty(internalTheme)) return ''
 
   const { rootSize, breakpoints, __VITUS_LABS__ } = theme
+
   const renderStyles = (
     theme: Record<string, unknown>
   ): ReturnType<typeof styles> => styles({ theme, css, rootSize })
 
   // if there are no breakpoints, return just standard css
-  if (!breakpoints || breakpoints.length === 0 || !__VITUS_LABS__) {
+  if (isEmpty(breakpoints) || isEmpty(__VITUS_LABS__)) {
     return css`
       ${renderStyles(internalTheme)}
     `
