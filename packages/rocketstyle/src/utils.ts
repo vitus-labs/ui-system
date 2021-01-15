@@ -1,4 +1,4 @@
-import { config } from '@vitus-labs/core'
+import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 // --------------------------------------------------------
 // chain options
@@ -17,19 +17,18 @@ export const chainOptions = (opts, defaultOpts = []) => {
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options: Array<OptionFunc<A>>,
-  ...args: Array<A>
+  options: Array<OptionFunc<A>> | undefined | null,
+  args: Array<A>
 ) => ReturnType<OptionFunc<A>>
 
-export const calculateChainOptions: CalculateChainOptions = (
-  options,
-  ...args
-) => {
+export const calculateChainOptions: CalculateChainOptions = (options, args) => {
   let result = {}
 
-  options.forEach((item) => {
-    result = { ...result, ...item(...args) }
-  })
+  if (!isEmpty(options)) {
+    options.forEach((item) => {
+      result = { ...result, ...item(...args) }
+    })
+  }
 
   return result
 }

@@ -187,14 +187,13 @@ const styleComponent: StyleComponent = (options) => {
       const finalElement: FinalElement = (ctxData = {}) => {
         // first we need to calculate final props which are
         // being returned by using `attr` chaining method
-        const calculatedAttrs = calculateChainOptions(
-          options.attrs,
+        const calculatedAttrs = calculateChainOptions(options.attrs, [
           props,
           theme,
           {
             renderContent,
-          }
-        )
+          },
+        ])
 
         // get final props which are
         // (1) merged from context,

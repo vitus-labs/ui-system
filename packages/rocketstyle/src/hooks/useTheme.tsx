@@ -36,11 +36,10 @@ const calculateDimensionThemes = (theme, options) => {
 
       if (Array.isArray(helper) && helper.length > 0) {
         // eslint-disable-next-line no-param-reassign
-        accumulator[dimension] = calculateChainOptions(
-          helper,
+        accumulator[dimension] = calculateChainOptions(helper, [
           theme,
-          config.css
-        )
+          config.css,
+        ])
       }
 
       return accumulator
@@ -69,7 +68,7 @@ const useTheme: UseTheme = ({ theme, options }) => {
   const __ROCKETSTYLE__ = {
     dimensions: keysMap,
     reservedPropNames: keywords,
-    baseTheme: calculateChainOptions(options.theme, theme, config.css),
+    baseTheme: calculateChainOptions(options.theme, [theme, config.css]),
     themes,
   }
 
