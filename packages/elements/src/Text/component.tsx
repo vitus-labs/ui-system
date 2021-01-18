@@ -1,5 +1,4 @@
 import React from 'react'
-import { config } from '@vitus-labs/core'
 import type { ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import Styled from './styled'
@@ -18,18 +17,16 @@ const Element: React.FC<Props> & { isText: boolean } = ({
   tag,
   ...props
 }) => {
-  const result = (as = undefined) => (
+  const renderContent = (as = undefined) => (
     <Styled as={as} {...props}>
       {children || label}
     </Styled>
   )
 
-  if (config.isWeb) {
-    const finalTag = paragraph ? 'p' : tag
-    return result(finalTag)
-  }
+  // eslint-disable-next-line no-nested-ternary
+  const finalTag = __WEB__ ? (paragraph ? 'p' : tag) : undefined
 
-  return result()
+  return renderContent(finalTag)
 }
 
 Element.displayName = 'vitus-labs/elements/Text'
