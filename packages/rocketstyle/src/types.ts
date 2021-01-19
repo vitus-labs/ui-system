@@ -250,6 +250,12 @@ export type RocketComponent<
   // --------------------------------------------------------
   styles: (param: StylesCb) => RocketComponent<A, OA, T, CT, D, UB, DKP>
 
+  // COMPOSE chaining method
+  // --------------------------------------------------------
+  compose: (
+    param: Record<string, unknown>
+  ) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+
   // Dynamic dimensions chaining method (set dynamically from configuration)
   // --------------------------------------------------------
 } & {
