@@ -12,6 +12,7 @@
   "main": "lib/vitus-labs-coolgrid.js",
   "umd:main": "lib/vitus-labs-coolgrid.umd.js",
   "module": "lib/vitus-labs-coolgrid.module.js",
+  "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-coolgrid.js": "./lib/vitus-labs-coolgrid.js",
     "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.module.js"
@@ -40,19 +41,13 @@
     "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
   "scripts": {
-    "dev": "yarn vl_run-stories",
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
     "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook -o docs/storybook",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
-    "clean": "rm -rf lib",
-    "lint": "yarn lint:css && yarn lint:js",
-    "lint:css": "stylelint './src/**/*.js*'",
-    "lint:js": "eslint src",
-    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",

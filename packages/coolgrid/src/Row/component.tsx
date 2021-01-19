@@ -1,45 +1,42 @@
-// @ts-nocheck
-import React, { useContext, useState } from 'react'
-import { config, omit } from '@vitus-labs/core'
-import {
-  extendedCss,
-  sortBreakpoints,
-  optimizeTheme,
-  pickThemeProps,
-} from '@vitus-labs/unistyle'
-import { merge, createGridContext } from '../utils'
-import { ROW_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
-import ContainerContext from '../context/ContainerContext'
-import RowContext from '../context/RowContext'
+import React, { FC, ReactNode, ComponentType, useContext } from 'react'
+import { omit } from '@vitus-labs/core'
+import { extendedCss } from '@vitus-labs/unistyle'
+import { CONTEXT_KEYS } from '~/constants'
+import useGridContext from '~/useContext'
+import { ContainerContext, RowContext } from '~/context'
+import type { Css, ConfigurationProps } from '~/types'
 import Styled from './styled'
 
-const Element = ({ children, component, css, ...props }) => {
-  const theme = useContext(config.context)
+type Props = Partial<
+  {
+    children: ReactNode
+    component: ComponentType
+    css: Css
+  } & ConfigurationProps
+>
 
-  const [width, setWidth] = useState(0)
-  const { coolgrid, rowCss, rowComponent, ...ctx } = useContext(
-    ContainerContext
-  )
+type ElementType<
+  P extends Record<string, unknown> = Record<string, unknown>
+> = FC<P & Props>
 
-  const gridContext = createGridContext(props, ctx, theme)
-  const breakpoints = sortBreakpoints(gridContext.breakpoints)
-  const keywords = [...breakpoints, ...RESERVED_KEYS]
-
-  const ctxTheme = { ...coolgrid, ...pickThemeProps(props, keywords) }
-
-  // creates responsive params
-  const normalizedTheme = optimizeTheme({
-    breakpoints,
-    keywords,
-    props: ctxTheme,
-  })
+const Element: ElementType = ({ children, component, css, ...props }) => {
+  const parentCtx = useContext(ContainerContext)
+  const {
+    columns,
+    gap,
+    gutter,
+    rowComponent,
+    rowCss,
+    ...ctx
+  } = useGridContext({ ...parentCtx, ...props })
 
   const finalProps = {
-    ...omit(props, RESERVED_KEYS),
+    ...omit(props, CONTEXT_KEYS),
     as: component || rowComponent,
-    coolgrid: {
-      ...normalizedTheme,
-      ...gridContext,
+    $coolgrid: {
+      columns,
+      gap,
+      gutter,
       extendCss: extendedCss(css || rowCss),
     },
   }
@@ -54,13 +51,7 @@ const Element = ({ children, component, css, ...props }) => {
 
   return (
     <Styled {...finalProps}>
-      <RowContext.Provider
-        value={{
-          ...gridContext,
-          ...merge(props, ctx, RESERVED_KEYS),
-          coolgrid: { RNparentWidth: width, ...ctxTheme },
-        }}
-      >
+      <RowContext.Provider value={{ ...ctx, columns, gap, gutter }}>
         {children}
       </RowContext.Provider>
     </Styled>

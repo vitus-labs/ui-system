@@ -1,47 +1,46 @@
-// @ts-nocheck
-import React, { useContext } from 'react'
-import { config, omit } from '@vitus-labs/core'
-import {
-  extendedCss,
-  sortBreakpoints,
-  pickThemeProps,
-} from '@vitus-labs/unistyle'
-import { merge, createGridContext } from '../utils'
-import {
-  CONTAINER_RESERVED_KEYS as RESERVED_KEYS,
-  BASE_RESERVED_KEYS,
-} from '../constants'
-import Context from '../context/ContainerContext'
+import React, { ReactNode, FC, ComponentType } from 'react'
+import { omit } from '@vitus-labs/core'
+import { extendedCss } from '@vitus-labs/unistyle'
+import { CONTEXT_KEYS } from '~/constants'
+import Context from '~/context/ContainerContext'
+import useGridContext from '~/useContext'
+import type { Css, ConfigurationProps, ValueType } from '~/types'
 import Styled from './styled'
 
-const Element = ({ children, width, component, css, ...props }) => {
-  const theme = useContext(config.context)
+type Props = Partial<{
+  children: ReactNode
+  width: ValueType
+  component: ComponentType
+  columns: number
+  css: Css
+  rowCss: Css
+  colCss: Css
+}> &
+  ConfigurationProps
 
-  const gridContext = createGridContext(props, {}, theme)
-  const breakpoints = sortBreakpoints(gridContext.breakpoints)
-  const keywords = [...breakpoints, ...RESERVED_KEYS]
+type ElementType<
+  P extends Record<string, unknown> = Record<string, unknown>
+> = FC<P & Props>
 
-  const ctxTheme = pickThemeProps(props, keywords)
+const Element: ElementType = ({
+  children,
+  component,
+  css,
+  width,
+  ...props
+}) => {
+  const { containerWidth, ...ctx } = useGridContext(props)
 
   return (
     <Styled
-      {...omit(props, [...RESERVED_KEYS, ...BASE_RESERVED_KEYS])}
+      {...omit(props, [...CONTEXT_KEYS])}
       as={component}
-      coolgrid={{
-        ...gridContext,
-        width: width || theme.grid.container,
+      $coolgrid={{
+        width: width || containerWidth,
         extendCss: extendedCss(css),
       }}
     >
-      <Context.Provider
-        value={{
-          ...gridContext,
-          ...merge(props, {}, RESERVED_KEYS),
-          coolgrid: ctxTheme,
-        }}
-      >
-        {children}
-      </Context.Provider>
+      <Context.Provider value={ctx}>{children}</Context.Provider>
     </Styled>
   )
 }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
 import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
 
@@ -20,9 +19,7 @@ export default config.styled(config.component)`
   flex-direction: column;
   margin-right: auto;
   margin-left: auto;
+  overflow-x: hidden;
 
-  ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize },
-    })};
+  ${makeItResponsive({ key: '$coolgrid', styles, css: config.css })};
 `

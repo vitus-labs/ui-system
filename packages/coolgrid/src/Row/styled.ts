@@ -1,29 +1,34 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
 import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import { hasValue } from '~/utils'
 
-const styles = ({ theme: t, css, rootSize }) => {
-  let vertical = t.gap / 2
-  const horizontal = -1 * vertical
-
-  if (t.gutter === 0) vertical *= -1
-  else if (t.gutter) vertical = t.gutter
+const spacingStyles = ({ gap, gutter }, { rootSize }) => {
+  if (!hasValue(gap)) return ''
 
   const value = (param) => normalizeUnit({ param, rootSize })
 
-  return css`
-    ${(vertical || horizontal) &&
-    css`
-      margin: ${value(vertical)} ${value(horizontal)};
-    `};
+  const spacing = gap / 2
+  const negativeSpacing = spacing * -1
+  const spacingX = negativeSpacing
+  const spacingY = hasValue(gutter) ? negativeSpacing : spacing
 
-    ${t.extendCss};
+  return config.css`
+    margin: ${value(spacingY)} ${value(spacingX)};
+  `
+}
+
+const styles = ({ theme, css, rootSize }) => {
+  const { gap, gutter, extendCss } = theme
+
+  return css`
+    ${spacingStyles({ gap, gutter }, { rootSize })};
+    ${extendCss};
   `
 }
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
@@ -33,9 +38,7 @@ export default config.styled(config.component)`
   flex-wrap: wrap;
   align-self: stretch;
   flex-direction: row;
+  overflow-x: hidden;
 
-  ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize },
-    })};
+  ${makeItResponsive({ key: '$coolgrid', styles, css: config.css })};
 `

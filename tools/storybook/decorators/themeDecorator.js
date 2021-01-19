@@ -1,4 +1,8 @@
-import { ThemeProvider } from 'styled-components'
+import React from 'react'
+import { Provider } from '@vitus-labs/unistyle'
 
-export default theme => Story =>
-  <ThemeProvider theme={theme}><Story /></ThemeProvider>
+export default (theme) => (Story) => (
+  <Provider theme={theme}>
+    <Story />
+  </Provider>
+)

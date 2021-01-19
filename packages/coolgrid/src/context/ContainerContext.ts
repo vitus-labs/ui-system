@@ -1,12 +1,4 @@
-// @ts-nocheck
 import { createContext } from 'react'
-
-interface Context {
-  breakpoints?: object
-  columns?: number
-  coolgrid?: object
-  rowCss?: object
-  rowComponent?: React.ReactNode
-}
+import type { Context } from '~/types'
 
 export default createContext<Context>({})
