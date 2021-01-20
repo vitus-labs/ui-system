@@ -58,12 +58,18 @@ const styles = ({ theme, css, rootSize }) => {
   const renderStyles = isVisible(size)
 
   return css`
-    ${renderStyles &&
-    css`
-      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
-      ${gapStyles(gap, rootSize)};
-      ${paddingStyles(padding, rootSize)};
-    `};
+    ${renderStyles
+      ? css`
+          left: initial;
+          position: relative;
+          ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
+          ${gapStyles(gap, rootSize)};
+          ${paddingStyles(padding, rootSize)};
+        `
+      : css`
+          left: -9999px;
+          position: fixed;
+        `};
 
     ${extendCss};
   `
@@ -84,5 +90,10 @@ export default config.styled(config.component)`
   flex-direction: column;
   justify-content: stretch;
 
-  ${makeItResponsive({ key: '$coolgrid', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

@@ -40,5 +40,10 @@ export default config.styled(config.component)`
   flex-direction: row;
   overflow-x: hidden;
 
-  ${makeItResponsive({ key: '$coolgrid', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

@@ -7,30 +7,6 @@ import { RowContext } from '~/context'
 import type { Css, ConfigurationProps } from '~/types'
 import Styled from './styled'
 
-// const KEYWORDS = ['columns', 'gap', 'gutter']
-// const omitKeywords = __WEB__ ? KEYWORDS : [...KEYWORDS, 'RNparentWidth']
-
-// const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
-//   let foundBp = false
-//   let hidden = false
-//   const reversed = sortedBreakpoints.slice().reverse()
-
-//   for (let i = 0; i < sortedBreakpoints.length; i += 1) {
-//     const item = reversed[i]
-
-//     if (item === currentBreakpoint) {
-//       foundBp = true
-//     }
-
-//     if (foundBp && Number.isFinite(size[item])) {
-//       hidden = size[item] === 0 || false
-//       break
-//     }
-//   }
-
-//   return hidden
-// }
-
 type Props = Partial<{
   children: ReactNode
   component: ComponentType
@@ -53,18 +29,6 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
     ...parentCtx,
     ...props,
   })
-
-  // hide column when size=0 for a breakpoint and up
-  // if (normalizedTheme.size) {
-  //   if (
-  //     isHidden({
-  //       sortedBreakpoints: breakpoints,
-  //       size: normalizedTheme.size,
-  //       currentBreakpoint: vitusLabsCtx.getCurrentBreakpoint(ctx.breakpoints),
-  //     })
-  //   )
-  //     return null
-  // }
 
   return (
     <Styled

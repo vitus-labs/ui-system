@@ -21,5 +21,10 @@ export default config.styled(config.component)`
   margin-left: auto;
   overflow-x: hidden;
 
-  ${makeItResponsive({ key: '$coolgrid', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

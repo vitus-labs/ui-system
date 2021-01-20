@@ -41,14 +41,6 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
     },
   }
 
-  // react native helper to calculate column width
-  // if (config.isNative) {
-  //   finalProps.onLayout = (event) => {
-  //     const { width } = event.nativeEvent.layout
-  //     setWidth(width)
-  //   }
-  // }
-
   return (
     <Styled {...finalProps}>
       <RowContext.Provider value={{ ...ctx, columns, gap, gutter }}>

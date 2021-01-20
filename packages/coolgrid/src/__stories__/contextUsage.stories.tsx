@@ -21,7 +21,7 @@ export default {
 }
 
 export const defineGapAndSizeOnContainer = () => (
-  <Container gap={{ xs: 20, md: 30 }} size={4} padding={40} colCss={columnCss}>
+  <Container gap={{ xs: 20, lg: 30 }} size={4} padding={40} colCss={columnCss}>
     <Row>
       <Col size={0}>gap-10</Col>
       <Col>gap-10</Col>
