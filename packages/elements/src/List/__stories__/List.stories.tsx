@@ -52,15 +52,11 @@ export const listUsingWrappComponent = () => {
 
 export const dataAsAnArrayOfStrings = () => {
   const data = ['a', 'b', null, undefined, 'c', 'd']
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        {name} {surname}
-      </span>
-    )
+  const Item = ({ label, ...props }) => {
+    return <span {...props}>{label}</span>
   }
 
-  return <List data={data} component={Item} />
+  return <List data={data} component={Item} valueName="label" />
 }
 
 export const dataAsAnArrayOfObjects = () => {
