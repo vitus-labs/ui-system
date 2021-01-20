@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/elements",
-  "version": "0.8.0-alpha.6",
+  "version": "0.8.0-alpha.12",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.8.0-alpha.3",
-    "@vitus-labs/rocketstyle": "^0.8.0-alpha.6",
+    "@vitus-labs/rocketstyle": "^0.8.0-alpha.12",
     "@vitus-labs/tools-babel": "0.3.0",
     "@vitus-labs/tools-rollup": "0.3.0",
     "@vitus-labs/tools-storybook": "^0.8.0-alpha.6",
