@@ -1,4 +1,5 @@
 import { set, isEmpty } from '@vitus-labs/core'
+import { normalizeTheme } from './normalizeTheme'
 
 // --------------------------------------------------------
 // sort breakpoints
@@ -79,6 +80,8 @@ type TransformTheme = ({
 export const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
   const result = {}
 
+  if (isEmpty(theme) || !breakpoints) return result
+
   // can be one of following types
   // { fontSize: 12 }
   // { fontSize: { xs: 12, md: 15 }}
@@ -125,11 +128,13 @@ type MakeItResponsive = ({
   key,
   css,
   styles,
+  normalize,
 }: {
   theme?: CustomTheme
   key?: string
   css: any
   styles: any
+  normalize?: boolean
 }) => ({ theme }: { theme?: Theme }) => any
 
 export const makeItResponsive: MakeItResponsive = ({
@@ -137,6 +142,7 @@ export const makeItResponsive: MakeItResponsive = ({
   key = '',
   css,
   styles,
+  normalize = false,
 }) => ({ theme, ...props }) => {
   const internalTheme = customTheme || props[key]
 
@@ -158,8 +164,14 @@ export const makeItResponsive: MakeItResponsive = ({
 
   const { media, sortedBreakpoints } = __VITUS_LABS__
 
+  let helperTheme = internalTheme
+
+  if (normalize) {
+    helperTheme = normalizeTheme(sortedBreakpoints)(internalTheme)
+  }
+
   const transformedTheme = transformTheme({
-    theme: internalTheme,
+    theme: helperTheme,
     breakpoints: sortedBreakpoints,
   })
 
