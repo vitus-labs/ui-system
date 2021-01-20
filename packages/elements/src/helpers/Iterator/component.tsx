@@ -80,11 +80,7 @@ const Component: React.FC<Props> & Static = (props: Props) => {
       }
 
       if (Wrapper) {
-        return (
-          <Wrapper key={key} {...finalProps}>
-            {renderedElement(item, finalProps)}
-          </Wrapper>
-        )
+        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
       }
 
       return renderContent(item, {
@@ -133,11 +129,7 @@ const Component: React.FC<Props> & Static = (props: Props) => {
       }
 
       if (Wrapper) {
-        return (
-          <Wrapper key={key} {...finalProps}>
-            {renderedElement(item, finalProps)}
-          </Wrapper>
-        )
+        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
       }
 
       return renderedElement(item, { key, ...finalProps })

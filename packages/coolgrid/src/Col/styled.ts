@@ -16,12 +16,6 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
 
   const hasGap = hasValue(gap)
 
-  console.log('size', size)
-  console.log('columns', columns)
-  console.log('width', width)
-  console.log('gap', gap)
-  console.log('hasGap', hasGap)
-
   // eslint-disable-next-line no-nested-ternary
   const value = __WEB__
     ? hasGap
@@ -30,8 +24,6 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
     : hasGap
     ? width - gap
     : width
-
-  console.log('value', value)
 
   return config.css`
       flex-grow: 0;
