@@ -16,6 +16,8 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
 
   const hasGap = hasValue(gap)
 
+  console.log('size', size)
+  console.log('columns', columns)
   console.log('width', width)
   console.log('gap', gap)
   console.log('hasGap', hasGap)
