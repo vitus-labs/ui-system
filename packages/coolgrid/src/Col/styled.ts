@@ -57,6 +57,8 @@ const styles = ({ theme, css, rootSize }) => {
   const { size, columns, gap, padding, extendCss, RNparentWidth } = theme
   const renderStyles = isVisible(size)
 
+  console.log(theme)
+
   return css`
     ${renderStyles
       ? css`
