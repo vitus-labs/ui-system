@@ -85,7 +85,7 @@ const Component = forwardRef<any, Props>(
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 
-    const SUB_TAG = __WEB__ && tag ? calculateSubTag(tag) : undefined
+    const SUB_TAG = __WEB__ && tag && calculateSubTag(tag) ? 'span' : undefined
 
     // --------------------------------------------------------
     // direction & alignX calculations
