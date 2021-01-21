@@ -67,6 +67,7 @@ export default config.styled(config.component)`
 
   display: flex;
   align-self: stretch;
+  flex-wrap: wrap;
 
   ${({ $contentType }) =>
     $contentType === 'content' &&

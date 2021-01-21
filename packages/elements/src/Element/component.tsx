@@ -85,12 +85,7 @@ const Component = forwardRef<any, Props>(
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 
-    let SUB_TAG
-    if (__WEB__) {
-      if (tag) {
-        SUB_TAG = calculateSubTag(tag)
-      }
-    }
+    const SUB_TAG = __WEB__ && tag ? calculateSubTag(tag) : undefined
 
     // --------------------------------------------------------
     // direction & alignX calculations
@@ -123,7 +118,7 @@ const Component = forwardRef<any, Props>(
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}
       >
-        {beforeContent && (
+        {!isSimple && (
           <Content
             tag={SUB_TAG}
             contentType="before"
@@ -139,7 +134,7 @@ const Component = forwardRef<any, Props>(
           </Content>
         )}
 
-        {beforeContent || afterContent ? (
+        {!isSimple ? (
           <Content
             tag={SUB_TAG}
             contentType="content"
@@ -156,7 +151,7 @@ const Component = forwardRef<any, Props>(
           renderContent(CHILDREN)
         )}
 
-        {afterContent && (
+        {!isSimple && (
           <Content
             tag={SUB_TAG}
             contentType="after"

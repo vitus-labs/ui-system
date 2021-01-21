@@ -5,6 +5,7 @@ import {
   AlignY,
   ResponsiveBooltype,
   Responsive,
+  Css,
 } from '~/types'
 import Styled from './styled'
 
@@ -18,7 +19,7 @@ type Props = {
   alignX: AlignX
   alignY: AlignY
   equalCols: ResponsiveBooltype
-  extendCss: any
+  extendCss: Css
 }
 type Reference = Ref<HTMLElement>
 

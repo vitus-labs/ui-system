@@ -4,11 +4,12 @@ import {
   cloneElement,
   Children,
   ReactNode,
+  ComponentType,
 } from 'react'
 import isEmpty from './isEmpty'
 
 type RenderContent = (
-  content?: ReactNode,
+  content?: ReactNode | ComponentType,
   attachProps?: Record<string, any>
 ) => ReactNode
 

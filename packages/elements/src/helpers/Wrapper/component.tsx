@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode } from 'react'
-import { Direction, AlignX, AlignY, ResponsiveBooltype } from '~/types'
+import { Direction, AlignX, AlignY, ResponsiveBooltype, Css } from '~/types'
 import { isWebFixNeeded } from './utils'
 import Styled from './styled'
 
@@ -13,7 +13,7 @@ type Props = {
   alignX: AlignX
   alignY: AlignY
   equalCols: ResponsiveBooltype
-  extendCss: any
+  extendCss: Css
 }
 
 const Component = forwardRef<Reference, Partial<Props>>(
@@ -34,7 +34,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
-            'data-vb-element': 'Element',
+            'data-element': 'Element',
           }
         : {}
 
@@ -45,10 +45,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
       as: tag,
     }
 
-    let needsFix = false
-    if (__WEB__) {
-      needsFix = isWebFixNeeded(tag)
-    }
+    const needsFix = __WEB__ ? isWebFixNeeded(tag) : false
 
     if (!needsFix || __NATIVE__) {
       return (
