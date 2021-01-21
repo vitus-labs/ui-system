@@ -249,6 +249,8 @@ const styleComponent: StyleComponent = (options) => {
           'data-rocketstyle': componentName,
         }
 
+        console.log(passProps)
+
         const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
 
         if (options.provider) {
