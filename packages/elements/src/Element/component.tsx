@@ -118,7 +118,7 @@ const Component = forwardRef<any, Props>(
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}
       >
-        {!isSimple && (
+        {beforeContent && (
           <Content
             tag={SUB_TAG}
             contentType="before"
@@ -134,7 +134,9 @@ const Component = forwardRef<any, Props>(
           </Content>
         )}
 
-        {!isSimple ? (
+        {isSimple ? (
+          renderContent(CHILDREN)
+        ) : (
           <Content
             tag={SUB_TAG}
             contentType="content"
@@ -147,11 +149,9 @@ const Component = forwardRef<any, Props>(
           >
             {renderContent(CHILDREN)}
           </Content>
-        ) : (
-          renderContent(CHILDREN)
         )}
 
-        {!isSimple && (
+        {beforeContent && (
           <Content
             tag={SUB_TAG}
             contentType="after"
