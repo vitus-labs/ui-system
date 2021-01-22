@@ -3,9 +3,12 @@ import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
 const isMultiKey = (value) => {
-  if (Array.isArray(value)) return [true, value[0]]
+  if (typeof value === 'object') return [true, value?.propName]
   return [false, value]
 }
+
+const isValidKey = (value) =>
+  value !== undefined && value !== null && value !== false
 
 const calculateDimensionsMap = (theme, useBooleans) =>
   Object.entries(theme).reduce(
@@ -13,12 +16,14 @@ const calculateDimensionsMap = (theme, useBooleans) =>
       const { keysMap, keywords } = accumulator
       keywords.push(key)
 
-      Object.keys(value).forEach((item) => {
+      Object.entries(value).forEach(([itemKey, itemValue]) => {
+        if (!isValidKey(itemValue)) return
+
         if (useBooleans) {
-          keywords.push(item)
+          keywords.push(itemKey)
         }
 
-        set(keysMap, [key, item], true)
+        set(keysMap, [key, itemKey], true)
       })
 
       return accumulator
@@ -32,6 +37,7 @@ const calculateDimensionThemes = (theme, options) => {
   return Object.entries(options.dimensions).reduce(
     (accumulator, [key, value]) => {
       const [, dimension] = isMultiKey(value)
+
       const helper = options[key]
 
       if (Array.isArray(helper) && helper.length > 0) {

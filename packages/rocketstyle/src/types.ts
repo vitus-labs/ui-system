@@ -140,10 +140,15 @@ export type StylesCb = (css: Css) => ReturnType<Css>
 
 // DIMENSIONS chaining types
 // --------------------------------------------------------
+export type DimensionObj<CT> = Record<
+  string,
+  Partial<CT> | boolean | null | undefined
+>
+
 export type DimensionCb<T, CT> = (
   theme: T,
   css: Css
-) => Record<string, Partial<CT>>
+) => Record<string, Partial<CT> | boolean | undefined | null>
 
 export type DimensionReturn<P, A> = P extends TObj ? A & P : A
 
@@ -260,9 +265,7 @@ export type RocketComponent<
   // --------------------------------------------------------
 } & {
     [I in keyof D]: <
-      P extends
-        | DimensionCb<T, CT>
-        | Record<string, Partial<CT> | boolean | null | undefined>,
+      P extends DimensionCb<T, CT> | DimensionObj<CT>,
       K extends DimensionValue = D[I]
     >(
       param: P
@@ -277,7 +280,7 @@ export type RocketComponent<
           UB,
           DKPTypes<K, D, P, DKP>
         >
-      : P extends Record<string, Partial<CT>>
+      : P extends DimensionObj<CT>
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
             Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,

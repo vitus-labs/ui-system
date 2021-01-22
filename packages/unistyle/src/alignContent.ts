@@ -26,18 +26,18 @@ type DIRECTION_TYPE = {
   reverseRows: string
 }
 
-const DIRECTION: DIRECTION_TYPE = __NATIVE__
+const DIRECTION: DIRECTION_TYPE = __WEB__
   ? {
-      inline: 'row',
-      reverseInline: 'row-reverse',
-      rows: 'column',
-      reverseRows: 'column-reverse',
-    }
-  : {
       inline: 'row',
       reverseInline: 'reverse-row',
       rows: 'column',
       reverseRows: 'reverse-column',
+    }
+  : {
+      inline: 'row',
+      reverseInline: 'row-reverse',
+      rows: 'column',
+      reverseRows: 'column-reverse',
     }
 
 export type AlignContentProps = ({
@@ -57,7 +57,7 @@ const alignContent: AlignContentProps = (attrs) => {
     return undefined
   }
 
-  const isReverted = ['inline', 'inlineReverse'].includes(direction)
+  const isReverted = ['inline', 'reverseInline'].includes(direction)
   const dir = DIRECTION[direction]
   const aX = ALIGN_X[alignX]
   const aY = ALIGN_Y[alignY]

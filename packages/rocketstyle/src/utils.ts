@@ -1,3 +1,4 @@
+import merge from 'lodash.merge'
 import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 // --------------------------------------------------------
@@ -176,16 +177,10 @@ export const calculateTheme: CalculateTheme = ({
 
       if (Array.isArray(value)) {
         value.forEach((item) => {
-          finalTheme = {
-            ...finalTheme,
-            ...keyTheme[item],
-          }
+          finalTheme = merge(finalTheme, keyTheme[item])
         })
       } else {
-        finalTheme = {
-          ...finalTheme,
-          ...keyTheme[value],
-        }
+        finalTheme = merge(finalTheme, keyTheme[value])
       }
     }
   )

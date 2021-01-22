@@ -111,12 +111,13 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // --------------------------------------------------------
 const styleComponent: StyleComponent = (options) => {
   const { component, styles } = options
+  const { styled } = config
 
   const componentName =
     options.name || options.component.displayName || options.component.name
 
   // create styled component with all options.styles if available
-  const STYLED_COMPONENT = config.styled(component)`
+  const STYLED_COMPONENT = styled(component)`
     ${calculateStyles(styles, config.css)}
   `
 
@@ -248,8 +249,6 @@ const styleComponent: StyleComponent = (options) => {
           $rocketstate: rocketstate,
           'data-rocketstyle': componentName,
         }
-
-        console.log(passProps)
 
         const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
 
