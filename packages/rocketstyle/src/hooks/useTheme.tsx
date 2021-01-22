@@ -1,9 +1,9 @@
-import { config, set, isEmpty } from '@vitus-labs/core'
+import { config, set, get, isEmpty } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
 const isMultiKey = (value) => {
-  if (typeof value === 'object') return [true, value?.propName]
+  if (typeof value === 'object') return [true, get(value, 'propName')]
   return [false, value]
 }
 
