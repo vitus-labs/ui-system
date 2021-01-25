@@ -36,6 +36,11 @@ export const Button = rocketstyle()()({ name: 'Button', component: Element })
     },
     example: true,
   })
+  .states({
+    primary: {
+      color: 'white',
+    },
+  })
   .styles(
     (css) => css<{ $rocketstyle: any }>`
       border: 1px solid transparent;
@@ -69,22 +74,25 @@ export const Button = rocketstyle()()({ name: 'Button', component: Element })
 // Button with provider enabled with consumer component
 // --------------------------------------------------------
 export const ProviderButton = Button.config({
+  name: 'ButtonProvider',
   provider: true,
+  component: Button,
 })
 
 export const ButtonConsumer = rocketstyle()()({
-  name: 'Button',
+  name: 'ButtonConsumer',
   component: Element,
 })
-  .config({
-    consumer: ({ pseudo }) => {
-      return { state: pseudo.hover ? 'primary' : null }
-    },
-  })
   .states({
     primary: { color: '#0d6efd', bgColor: 'white' },
     secondary: { color: 'green' },
     danger: { color: 'pink' },
+  })
+  .config({
+    consumer: (ctx) =>
+      ctx<typeof ProviderButton>(({ pseudo }) => ({
+        state: pseudo.hover ? 'primary' : null,
+      })),
   })
   .styles(
     (css) => css<{ $rocketstyle: any }>`

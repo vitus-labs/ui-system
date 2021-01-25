@@ -117,9 +117,11 @@ const styleComponent: StyleComponent = (options) => {
     options.name || options.component.displayName || options.component.name
 
   // create styled component with all options.styles if available
-  const STYLED_COMPONENT = styled(component)`
-    ${calculateStyles(styles, config.css)}
-  `
+  const STYLED_COMPONENT = component.IS_ROCKETSTYLE
+    ? component
+    : styled(component)`
+        ${calculateStyles(styles, config.css)}
+      `
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
@@ -188,13 +190,17 @@ const styleComponent: StyleComponent = (options) => {
       const finalElement: FinalElement = (ctxData = {}) => {
         // first we need to calculate final props which are
         // being returned by using `attr` chaining method
-        const calculatedAttrs = calculateChainOptions(options.attrs, [
-          props,
-          theme,
-          {
-            renderContent,
-          },
-        ])
+        const calculatedAttrs = calculateChainOptions(
+          options.attrs,
+          [
+            props,
+            theme,
+            {
+              renderContent,
+            },
+          ],
+          false
+        )
 
         // get final props which are
         // (1) merged from context,
@@ -216,7 +222,10 @@ const styleComponent: StyleComponent = (options) => {
         // final component state including pseudo state
         const rocketstate = {
           ...styledProps,
-          pseudo: pseudo.state,
+        }
+
+        if (options.provider) {
+          rocketstate.pseudo = pseudo.state
         }
 
         // if (options.useBooleans) {
@@ -242,7 +251,7 @@ const styleComponent: StyleComponent = (options) => {
         const passProps = {
           // this removes styling state from props and passes its state
           // under rocketstate key only
-          ...omit(componentProps, reservedPropNames),
+          ...omit(componentProps, [...reservedPropNames, 'pseudo']),
           ...(options.provider ? pseudo.events : {}),
           ref,
           $rocketstyle: rocketstyle,
@@ -266,7 +275,7 @@ const styleComponent: StyleComponent = (options) => {
       if (options.consumer) {
         return (
           <Context.Consumer>
-            {(value) => finalElement(options.consumer(value))}
+            {(value) => finalElement(options.consumer((cb) => cb(value)))}
           </Context.Consumer>
         )
       }

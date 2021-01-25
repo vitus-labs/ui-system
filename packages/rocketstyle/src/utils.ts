@@ -19,15 +19,22 @@ export const chainOptions = (opts, defaultOpts = []) => {
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
   options: Array<OptionFunc<A>> | undefined | null,
-  args: Array<A>
+  args: Array<A>,
+  deepMerge?: boolean
 ) => ReturnType<OptionFunc<A>>
 
-export const calculateChainOptions: CalculateChainOptions = (options, args) => {
+export const calculateChainOptions: CalculateChainOptions = (
+  options,
+  args,
+  deepMerge = true
+) => {
   let result = {}
 
   if (!isEmpty(options)) {
     options.forEach((item) => {
-      result = { ...result, ...item(...args) }
+      result = deepMerge
+        ? merge(result, item(...args))
+        : { ...result, ...item(...args) }
     })
   }
 

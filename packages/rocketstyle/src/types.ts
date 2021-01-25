@@ -8,7 +8,7 @@ type ValueOf<T> = T[keyof T]
 
 export type ExtractProps<
   TComponentOrTProps
-> = TComponentOrTProps extends ComponentType<infer TProps>
+> = TComponentOrTProps extends ElementType<infer TProps>
   ? TProps
   : TComponentOrTProps
 
@@ -51,9 +51,10 @@ export type Css = typeof config.css
 export type Style = ReturnType<Css>
 export type OptionStyles = Array<(css: Css) => ReturnType<typeof css>>
 export type Dimensions = Record<string, DimensionValue>
-export type ElementType<T extends TObj | unknown = unknown> =
+export type ElementType<T extends TObj | unknown = unknown> = (
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
+) & { IS_ROCKETSTYLE?: true }
 
 // --------------------------------------------------------
 // rocketstyle data object
@@ -64,6 +65,19 @@ export type __ROCKETSTYLE__ = {
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }
+
+export type RocketComponentType = ElementType & {
+  IS_ROCKETSTYLE: true
+  $$rocketstyle: Record<string, unknown>
+}
+
+export type RocketProviderState<
+  T extends RocketComponentType | TObj
+> = T extends RocketComponentType
+  ? {
+      [J in keyof T['$$rocketstyle']]: keyof T['$$rocketstyle'][J]
+    } & { pseudo: PseudoState }
+  : T
 
 export type Styles = <T>({
   theme,
@@ -84,27 +98,37 @@ export type PseudoState = {
   pressed: boolean
 }
 
-export type ConsumerCb = ({
-  pseudo,
-}: {
-  pseudo?: PseudoState
-}) => Record<string, string | boolean>
+type RESULT<T extends RocketComponentType, DKP> = (
+  props: RocketProviderState<T>
+) => DKP extends TDKP
+  ? Partial<
+      {
+        [J in keyof DKP]: keyof DKP[J]
+      } &
+        PseudoState & { pseudo: Partial<PseudoState> }
+    >
+  : TObj
 
-export type ConfigAttrs = {
-  provider: boolean
-  consumer: ConsumerCb
-  DEBUG: boolean
+type ConsumerCtxCb<DKP> = <T extends RocketComponentType>(
+  attrs: RESULT<T, DKP>
+) => ReturnType<RESULT<T, DKP>>
+
+export type ConsumerCb<DKP = TDKP> = (
+  ctx: ConsumerCtxCb<DKP>
+) => ReturnType<ConsumerCtxCb<DKP>>
+
+export type ConfigComponentAttrs<
+  C extends ElementType | undefined,
+  A extends TObj
+> = C extends undefined ? A : ExtractProps<C>
+
+export type ConfigAttrs<C, DKP> = Partial<{
   name: string
-  component: ElementType
-}
-
-export type ConfigCB = ({
-  provider,
-  consumer,
-  DEBUG,
-  name,
-  component,
-}: Partial<ConfigAttrs>) => Record<string, unknown>
+  component: C
+  provider: boolean
+  consumer: ConsumerCb<DKP>
+  DEBUG: boolean
+}>
 
 // ATTRS chaining types
 // --------------------------------------------------------
@@ -215,7 +239,7 @@ export type RocketComponent<
   D extends Dimensions = Dimensions,
   // use booleans
   UB extends boolean = boolean,
-  // CONFIG
+  // dimension key props
   DKP extends TDKP = TDKP
 > = ForwardRefExoticComponent<A> & {
   IS_ROCKETSTYLE: true
@@ -223,9 +247,22 @@ export type RocketComponent<
 } & {
   // CONFIG chaining method
   // --------------------------------------------------------
-  config: (
-    params: Partial<ConfigAttrs>
-  ) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+  // {
+  //   provider: true,
+  //   consumer: () => {},
+  //   component: Eement,
+  //   DEBUG: true,
+  //   name: 'aaaa'
+  // }
+  config: <NC extends ElementType>({
+    name,
+    component,
+    provider,
+    consumer,
+    DEBUG,
+  }: ConfigAttrs<NC, DKP>) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+
+  $$rocketstyle: DKP
 
   // ATTRS chaining method
   // --------------------------------------------------------
@@ -341,10 +378,6 @@ export type Configuration<
     compose: Record<string, TFn>
   } & Record<ExtractDimensionKey<D[keyof D]>, unknown>
 >
-// {
-//     [K in ]: Array<unknown>
-//   }
-// >
 
 export type StyleComponent<
   C extends ElementType = ElementType,
