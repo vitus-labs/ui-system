@@ -76,7 +76,6 @@ export const Button = rocketstyle()()({ name: 'Button', component: Element })
 export const ProviderButton = Button.config({
   name: 'ButtonProvider',
   provider: true,
-  component: Button,
 })
 
 export const ButtonConsumer = rocketstyle()()({

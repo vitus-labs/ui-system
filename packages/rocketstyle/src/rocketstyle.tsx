@@ -92,16 +92,6 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
     ),
   })
 
-// const ReturnConsumer = ({ children }) => {
-//   const ctx = useContext(Context)
-
-//   return children(ctx)
-// }
-
-// const ReturnProvider = ({ children, value }) => (
-//   <Context.Provider value={value}>{children}</Context.Provider>
-// )
-
 // --------------------------------------------------------
 // styleComponent
 // helper function which allows function chaining

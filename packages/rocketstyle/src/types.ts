@@ -118,9 +118,9 @@ export type ConsumerCb<DKP = TDKP> = (
 ) => ReturnType<ConsumerCtxCb<DKP>>
 
 export type ConfigComponentAttrs<
-  C extends ElementType | undefined,
-  A extends TObj
-> = C extends undefined ? A : ExtractProps<C>
+  C extends ElementType,
+  A extends TObj = DefaultProps
+> = C extends ElementType ? ExtractProps<C> : A
 
 export type ConfigAttrs<C, DKP> = Partial<{
   name: string
@@ -214,6 +214,38 @@ type ExtendDimensionTypes<
   ? DimensionBoolProps<K, DKP> & DimensionKeyProps<K, DKP>
   : DimensionKeyProps<K, DKP>
 
+type RocketstyleDimensionTypesHelper<DKP extends TDKP> = Partial<
+  {
+    [I in keyof DKP]: keyof DKP[I]
+  }
+>
+
+type RocketstyleDimensionTypesObj<
+  D extends Dimensions,
+  DKP extends TDKP
+> = Partial<
+  {
+    [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
+      ? Array<keyof DKP[I]>
+      : keyof DKP[I]
+  }
+>
+
+type RocketstyleDimensionTypesBool<DKP extends TDKP> = Partial<
+  Record<
+    RocketstyleDimensionTypesHelper<DKP>[keyof RocketstyleDimensionTypesHelper<DKP>],
+    boolean
+  >
+>
+
+type RocketstyleDimensionTypes<
+  D extends Dimensions,
+  DKP extends TDKP,
+  UB extends boolean
+> = UB extends true
+  ? RocketstyleDimensionTypesObj<D, DKP> & RocketstyleDimensionTypesBool<DKP>
+  : RocketstyleDimensionTypesObj<D, DKP>
+
 // --------------------------------------------------------
 // THIS IS WHERE ALL THE MAGIC HAPPENS
 // --------------------------------------------------------
@@ -254,13 +286,23 @@ export type RocketComponent<
   //   DEBUG: true,
   //   name: 'aaaa'
   // }
-  config: <NC extends ElementType>({
+  config: <NC>({
     name,
-    component,
+    component: NC,
     provider,
     consumer,
     DEBUG,
-  }: ConfigAttrs<NC, DKP>) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+  }: ConfigAttrs<NC, DKP>) => RocketComponent<
+    NC extends ElementType
+      ? DefaultProps<NC, D> & RocketstyleDimensionTypes<D, DKP, UB>
+      : A,
+    NC extends ElementType ? DefaultProps<NC, D> : OA,
+    T,
+    CT,
+    D,
+    UB,
+    DKP
+  >
 
   $$rocketstyle: DKP
 
