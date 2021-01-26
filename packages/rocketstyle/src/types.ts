@@ -310,9 +310,7 @@ export type RocketComponent<
   // --------------------------------------------------------
   attrs: <P extends AttrsCb<A, unknown, T> | Partial<A> | TObj>(
     param: AttrsParam<P, A, T>
-  ) => P extends AttrsCb<A, unknown, T>
-    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
-    : P extends Partial<A>
+  ) => P extends AttrsCb<A, unknown, T> | Partial<A>
     ? RocketComponent<A, OA, T, CT, D, UB, DKP>
     : P extends TObj
     ? RocketComponent<A & P, OA & P, T, CT, D, UB, DKP>
@@ -322,9 +320,7 @@ export type RocketComponent<
   // --------------------------------------------------------
   theme: <P extends ThemeCb<T, CT> | Partial<CT> | TObj>(
     param: ThemeParam<P, T, CT>
-  ) => P extends ThemeCb<T, CT>
-    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
-    : P extends Partial<CT>
+  ) => P extends ThemeCb<T, CT> | Partial<CT>
     ? RocketComponent<A, OA, T, CT, D, UB, DKP>
     : P extends TObj
     ? RocketComponent<A, OA, T, CT & P, D, UB, DKP>
@@ -348,18 +344,7 @@ export type RocketComponent<
       K extends DimensionValue = D[I]
     >(
       param: P
-    ) => P extends DimensionCb<T, CT>
-      ? RocketComponent<
-          Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
-            Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
-          OA,
-          T,
-          CT,
-          D,
-          UB,
-          DKPTypes<K, D, P, DKP>
-        >
-      : P extends DimensionObj<CT>
+    ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
           Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
             Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
