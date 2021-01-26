@@ -210,7 +210,7 @@ const styleComponent: StyleComponent = (options) => {
         })
 
         // final component state including pseudo state
-        const rocketstate = {
+        const rocketstate: Record<string, unknown> = {
           ...styledProps,
         }
 
@@ -265,6 +265,7 @@ const styleComponent: StyleComponent = (options) => {
       if (options.consumer) {
         return (
           <Context.Consumer>
+            {/* @ts-ignore */}
             {(value) => finalElement(options.consumer((cb) => cb(value)))}
           </Context.Consumer>
         )
@@ -298,6 +299,7 @@ const styleComponent: StyleComponent = (options) => {
   ExtendedComponent.IS_ROCKETSTYLE = true
   ExtendedComponent.displayName = componentName
   // ------------------------------------------------------
+  // @ts-ignore
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 

@@ -286,7 +286,7 @@ export type RocketComponent<
   //   DEBUG: true,
   //   name: 'aaaa'
   // }
-  config: <NC>({
+  config: <NC extends ElementType | unknown = unknown>({
     name,
     component: NC,
     provider,
