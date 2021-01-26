@@ -1,16 +1,14 @@
 import { config } from '@vitus-labs/core'
 import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
-import { hasValue } from '~/utils'
+import { hasValue, isNumber } from '~/utils'
 
 const spacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!hasValue(gap)) return ''
 
   const value = (param) => normalizeUnit({ param, rootSize })
 
-  const spacing = gap / 2
-  const negativeSpacing = spacing * -1
-  const spacingX = negativeSpacing
-  const spacingY = hasValue(gutter) ? negativeSpacing : spacing
+  const spacingX = (gap / 2) * -1
+  const spacingY = isNumber(gutter) ? gutter - gap / 2 : gap / 2
 
   return config.css`
     margin: ${value(spacingY)} ${value(spacingX)};
@@ -38,7 +36,7 @@ export default config.styled(config.component)`
   flex-wrap: wrap;
   align-self: stretch;
   flex-direction: row;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 
   ${makeItResponsive({
     key: '$coolgrid',
