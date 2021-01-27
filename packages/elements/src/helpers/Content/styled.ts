@@ -31,31 +31,35 @@ const calculateGap = ({ direction, type, value, css }) => {
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles = ({ css, theme: t, rootSize }) => css`
-  ${alignContent({
-    direction: t.direction,
-    alignX: t.alignX,
-    alignY: t.alignY,
-  })};
+const styles = ({ css, theme: t, rootSize }) => {
+  console.log('content')
+  console.log(t)
+  return css`
+    ${alignContent({
+      direction: t.direction,
+      alignX: t.alignX,
+      alignY: t.alignY,
+    })};
 
-  ${t.equalCols &&
-  css`
-    flex: 1;
-  `};
+    ${t.equalCols &&
+    css`
+      flex: 1;
+    `};
 
-  ${t.gap &&
-  css`
-    ${({ $contentType }) =>
-      calculateGap({
-        direction: t.parentDirection,
-        type: $contentType,
-        value: value(rootSize, [t.gap]),
-        css,
-      })}
-  `};
+    ${t.gap &&
+    css`
+      ${({ $contentType }) =>
+        calculateGap({
+          direction: t.parentDirection,
+          type: $contentType,
+          value: value(rootSize, [t.gap]),
+          css,
+        })}
+    `};
 
-  ${t.extendCss && extendedCss(t.extendCss)};
-`
+    ${t.extendCss && extendedCss(t.extendCss)};
+  `
+}
 
 export default config.styled(config.component)`
   ${
@@ -75,5 +79,10 @@ export default config.styled(config.component)`
     flex: 1;
   `};
 
-  ${makeItResponsive({ key: '$element', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$element',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

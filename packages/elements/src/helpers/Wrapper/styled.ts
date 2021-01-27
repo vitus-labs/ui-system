@@ -7,39 +7,43 @@ import {
 
 const isValue = (val) => val !== null && val !== undefined
 
-const styles = ({ css, theme: t }) => css`
-  ${__WEB__ &&
-  css`
-    display: ${({ $needsFix }) => {
-      if ($needsFix) return ''
-      return t.block ? 'flex' : 'inline-flex'
-    }};
-  `};
+const styles = ({ css, theme: t }) => {
+  console.log('wrapper')
+  console.log(t)
+  return css`
+    ${__WEB__ &&
+    css`
+      display: ${({ $needsFix }) => {
+        if ($needsFix) return ''
+        return t.block ? 'flex' : 'inline-flex'
+      }};
+    `};
 
-  ${__WEB__ &&
-  isValue(t.block) &&
-  css`
-    ${({ $needsFix }) =>
-      $needsFix &&
-      css`
-        width: ${t.block ? '100%' : 'initial'};
-      `}
-  `};
+    ${__WEB__ &&
+    isValue(t.block) &&
+    css`
+      ${({ $needsFix }) =>
+        $needsFix &&
+        css`
+          width: ${t.block ? '100%' : 'initial'};
+        `}
+    `};
 
-  ${__NATIVE__ &&
-  t.block &&
-  css`
-    align-self: stretch;
-  `};
+    ${__NATIVE__ &&
+    t.block &&
+    css`
+      align-self: stretch;
+    `};
 
-  ${alignContent({
-    direction: t.direction,
-    alignX: t.alignX,
-    alignY: t.alignY,
-  })};
+    ${alignContent({
+      direction: t.direction,
+      alignX: t.alignX,
+      alignY: t.alignY,
+    })};
 
-  ${t.extendCss && extendedCss(t.extendCss)};
-`
+    ${t.extendCss && extendedCss(t.extendCss)};
+  `
+}
 
 export default config.styled(config.component)`
   position: relative;
@@ -73,5 +77,10 @@ export default config.styled(config.component)`
     height: 100%;
   `};
 
-  ${makeItResponsive({ key: '$element', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$element',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `
