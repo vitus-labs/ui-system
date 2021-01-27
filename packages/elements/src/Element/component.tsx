@@ -88,14 +88,13 @@ const Component = forwardRef<any, Props>(
     const SUB_TAG = __WEB__ && tag && calculateSubTag(tag) ? 'span' : undefined
 
     // --------------------------------------------------------
-    // direction & alignX calculations
+    // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    let wrapperDirection: typeof direction
-    let wrapperAlignX: typeof alignX = alignX
-    let wrapperAlignY: typeof alignY = alignY
+    const calculateDirection = () => {
+      let wrapperDirection: typeof direction
+      let wrapperAlignX: typeof alignX = alignX
+      let wrapperAlignY: typeof alignY = alignY
 
-    const calculateDirection = useCallback(() => {
-      console.log('call!!!')
       if (isSimple) {
         if (contentDirection) wrapperDirection = contentDirection
         if (contentAlignX) wrapperAlignX = contentAlignX
@@ -107,20 +106,17 @@ const Component = forwardRef<any, Props>(
       } else {
         wrapperDirection = defaultDirection
       }
-    }, [
-      isSimple,
-      direction,
-      contentDirection,
-      contentAlignX,
-      contentAlignY,
-      vertical,
-    ])
 
-    calculateDirection()
+      return { wrapperDirection, wrapperAlignX, wrapperAlignY }
+    }
 
-    console.log('Element')
-    console.log('wrapperDirection', wrapperDirection)
-    console.log('contentDirection', contentDirection)
+    const {
+      wrapperDirection,
+      wrapperAlignX,
+      wrapperAlignY,
+    } = calculateDirection()
+
+    console.log(calculateDirection())
 
     return (
       <Wrapper
