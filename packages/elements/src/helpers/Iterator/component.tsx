@@ -57,6 +57,8 @@ const Component: FC<Props> & Static = (props: Props) => {
     // @ts-ignore
     data,
     wrapComponent: Wrapper,
+    // @ts-ignore
+    wrapProps,
     extendProps,
     itemProps,
   } = props
@@ -87,18 +89,27 @@ const Component: FC<Props> & Static = (props: Props) => {
             })
           : {}
 
-      const finalProps = {
+      const finalItemProps = {
         ...(extendProps ? extendedProps : {}),
         ...(itemProps ? injectItemProps({}, extendedProps) : {}),
       }
 
+      const finalWrapProps = {
+        ...(extendProps ? extendedProps : {}),
+        ...(wrapProps ? injectItemProps({}, extendedProps) : {}),
+      }
+
       if (Wrapper) {
-        return <Wrapper key={key}>{renderedElement(item, finalProps)}</Wrapper>
+        return (
+          <Wrapper key={key} {...finalWrapProps}>
+            {renderedElement(item, finalItemProps)}
+          </Wrapper>
+        )
       }
 
       return renderContent(item, {
         key: i,
-        ...finalProps,
+        ...finalItemProps,
       })
     })
   }
@@ -132,8 +143,7 @@ const Component: FC<Props> & Static = (props: Props) => {
             })
           : {}
 
-      const finalProps = {
-        key,
+      const finalItemProps = {
         ...(extendProps ? extendedProps : {}),
         ...(itemProps
           ? injectItemProps({ [valueName]: item }, extendedProps)
@@ -141,13 +151,22 @@ const Component: FC<Props> & Static = (props: Props) => {
         [keyName]: item,
       }
 
+      const finalWrapProps = {
+        ...(extendProps ? extendedProps : {}),
+        ...(wrapProps
+          ? injectItemProps({ [valueName]: item }, extendedProps)
+          : {}),
+      }
+
       if (Wrapper) {
         return (
-          <Wrapper key={key}>{renderedElement(component, finalProps)}</Wrapper>
+          <Wrapper key={key} {...finalWrapProps}>
+            {renderedElement(component, finalItemProps)}
+          </Wrapper>
         )
       }
 
-      return renderedElement(component, { key, ...finalProps })
+      return renderedElement(component, { key, ...finalItemProps })
     })
   }
 
@@ -181,21 +200,26 @@ const Component: FC<Props> & Static = (props: Props) => {
             })
           : {}
 
-      const finalProps = {
+      const finalItemProps = {
         ...(extendProps ? extendedProps : {}),
         ...(itemProps ? injectItemProps(item, extendedProps) : {}),
         ...restItem,
       }
 
+      const finalWrapProps = {
+        ...(extendProps ? extendedProps : {}),
+        ...(wrapProps ? injectItemProps(item, extendedProps) : {}),
+      }
+
       if (Wrapper) {
         return (
-          <Wrapper key={key} {...finalProps}>
-            {renderedElement(renderItem, finalProps)}
+          <Wrapper key={key} {...finalWrapProps}>
+            {renderedElement(renderItem, finalItemProps)}
           </Wrapper>
         )
       }
 
-      return renderedElement(renderItem, { key, ...finalProps })
+      return renderedElement(renderItem, { key, ...finalItemProps })
     })
   }
 

@@ -1,6 +1,12 @@
-import type { ComponentType, ReactText, ReactNode } from 'react'
+import type {
+  ComponentType,
+  ForwardRefExoticComponent,
+  ReactText,
+  ReactNode,
+} from 'react'
 
 export type KeyType = ReactText
+export type ElementType = ComponentType | ForwardRefExoticComponent<unknown>
 
 export type ExtendedProps = {
   index: number
@@ -11,8 +17,7 @@ export type ExtendedProps = {
   position: number
 }
 
-type ArrayObjectData = Partial<{ component: ComponentType }> &
-  Record<string, any>
+type ArrayObjectData = Partial<{ component: ElementType }> & Record<string, any>
 
 type ItemIdType = ArrayObjectData & {
   id?: KeyType
@@ -29,9 +34,15 @@ type ItemItemIdType = ArrayObjectData & {
 export type DataArrayObject = ItemIdType | ItemKeyType | ItemItemIdType
 
 type BaseProps = Partial<{
-  wrapComponent: ComponentType
+  wrapComponent: ElementType
   extendProps: boolean
   itemProps:
+    | Record<string, any>
+    | ((
+        key: string | number,
+        extendedProps: ExtendedProps
+      ) => Record<string, any>)
+  wrapProps:
     | Record<string, any>
     | ((
         key: string | number,
