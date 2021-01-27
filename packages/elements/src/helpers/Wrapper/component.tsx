@@ -31,9 +31,6 @@ const Component = forwardRef<Reference, Partial<Props>>(
     },
     ref
   ) => {
-    console.log('Wrapper')
-    console.log(direction)
-
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
