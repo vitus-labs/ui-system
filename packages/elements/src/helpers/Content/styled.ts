@@ -12,11 +12,6 @@ import {
 const calculateGap = ({ direction, type, value, css }) => {
   if (!direction || !type) return undefined
 
-  console.log('content')
-  console.log('content - direction', direction)
-  console.log('content - type', type)
-  console.log('content - value', value)
-
   const data = {
     inline: {
       before: 'margin-right',
@@ -27,8 +22,6 @@ const calculateGap = ({ direction, type, value, css }) => {
       after: 'margin-top',
     },
   }
-
-  console.log(data[direction][type], value)
 
   return css`
     ${data[direction][type]}: ${value};

@@ -116,8 +116,6 @@ const Component = forwardRef<any, Props>(
       wrapperAlignY,
     } = calculateDirection()
 
-    console.log(calculateDirection())
-
     return (
       <Wrapper
         {...props}
