@@ -95,6 +95,7 @@ const Component = forwardRef<any, Props>(
     let wrapperAlignY: typeof alignY = alignY
 
     const calculateDirection = useCallback(() => {
+      console.log('call!!!')
       if (isSimple) {
         if (contentDirection) wrapperDirection = contentDirection
         if (contentAlignX) wrapperAlignX = contentAlignX
@@ -106,7 +107,14 @@ const Component = forwardRef<any, Props>(
       } else {
         wrapperDirection = defaultDirection
       }
-    }, [isSimple, direction, vertical])
+    }, [
+      isSimple,
+      direction,
+      contentDirection,
+      contentAlignX,
+      contentAlignY,
+      vertical,
+    ])
 
     calculateDirection()
 
