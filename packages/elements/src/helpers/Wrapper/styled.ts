@@ -7,10 +7,8 @@ import {
 
 const isValue = (val) => val !== null && val !== undefined
 
-const styles = ({ css, theme: t }) => {
-  console.log('wrapper')
-  console.log(t)
-  return css`
+const styles = ({ css, theme: t }) =>
+  css`
     ${__WEB__ &&
     css`
       display: ${({ $needsFix }) => {
@@ -43,7 +41,6 @@ const styles = ({ css, theme: t }) => {
 
     ${t.extendCss && extendedCss(t.extendCss)};
   `
-}
 
 export default config.styled(config.component)`
   position: relative;

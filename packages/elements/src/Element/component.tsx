@@ -110,6 +110,10 @@ const Component = forwardRef<any, Props>(
 
     calculateDirection()
 
+    console.log('Element')
+    console.log('wrapperDirection', wrapperDirection)
+    console.log('contentDirection', contentDirection)
+
     return (
       <Wrapper
         {...props}
@@ -151,7 +155,7 @@ const Component = forwardRef<any, Props>(
           </Content>
         )}
 
-        {beforeContent && (
+        {afterContent && (
           <Content
             tag={SUB_TAG}
             contentType="after"

@@ -12,6 +12,11 @@ import {
 const calculateGap = ({ direction, type, value, css }) => {
   if (!direction || !type) return undefined
 
+  console.log('content')
+  console.log('content - direction', direction)
+  console.log('content - type', type)
+  console.log('content - value', value)
+
   const data = {
     inline: {
       before: 'margin-right',
@@ -23,6 +28,8 @@ const calculateGap = ({ direction, type, value, css }) => {
     },
   }
 
+  console.log(data[direction][type], value)
+
   return css`
     ${data[direction][type]}: ${value};
   `
@@ -31,35 +38,31 @@ const calculateGap = ({ direction, type, value, css }) => {
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles = ({ css, theme: t, rootSize }) => {
-  console.log('content')
-  console.log(t)
-  return css`
-    ${alignContent({
-      direction: t.direction,
-      alignX: t.alignX,
-      alignY: t.alignY,
-    })};
+const styles = ({ css, theme: t, rootSize }) => css`
+  ${alignContent({
+    direction: t.direction,
+    alignX: t.alignX,
+    alignY: t.alignY,
+  })};
 
-    ${t.equalCols &&
-    css`
-      flex: 1;
-    `};
+  ${t.equalCols &&
+  css`
+    flex: 1;
+  `};
 
-    ${t.gap &&
-    css`
-      ${({ $contentType }) =>
-        calculateGap({
-          direction: t.parentDirection,
-          type: $contentType,
-          value: value(rootSize, [t.gap]),
-          css,
-        })}
-    `};
+  ${t.gap &&
+  css`
+    ${({ $contentType }) =>
+      calculateGap({
+        direction: t.parentDirection,
+        type: $contentType,
+        value: value(rootSize, [t.gap]),
+        css,
+      })}
+  `};
 
-    ${t.extendCss && extendedCss(t.extendCss)};
-  `
-}
+  ${t.extendCss && extendedCss(t.extendCss)};
+`
 
 export default config.styled(config.component)`
   ${
