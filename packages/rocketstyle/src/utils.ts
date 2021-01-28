@@ -30,13 +30,13 @@ export const calculateChainOptions: CalculateChainOptions = (
 ) => {
   let result = {}
 
-  if (!isEmpty(options)) {
-    options.forEach((item) => {
-      result = deepMerge
-        ? merge(result, item(...args))
-        : { ...result, ...item(...args) }
-    })
-  }
+  if (isEmpty(options)) return result
+
+  options.forEach((item) => {
+    result = deepMerge
+      ? merge(result, item(...args))
+      : { ...result, ...item(...args) }
+  })
 
   return result
 }
@@ -157,7 +157,7 @@ export const calculateStyledAttrs = ({
 // generate theme
 // --------------------------------------------------------
 type CalculateTheme = <
-  P extends Record<string, string>,
+  P extends Record<string, unknown>,
   T extends Record<string, unknown>,
   B extends Record<string, unknown>
 >({

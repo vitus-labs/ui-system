@@ -6,9 +6,7 @@ import React, {
   useEffect,
   useMemo,
   useContext,
-  ReactNode,
 } from 'react'
-
 import {
   chainOptions,
   calculateChainOptions,
@@ -113,6 +111,45 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
+  const ProviderComponent = ({
+    onMouseEnter,
+    onMouseLeave,
+    onMouseUp,
+    onMouseDown,
+    onFocus,
+    onBlur,
+    $rocketstate,
+    ...props
+  }) => {
+    // pseudo hook to detect states hover / pressed / focus
+    const pseudo = usePseudoState(
+      {
+        onMouseEnter,
+        onMouseLeave,
+        onMouseUp,
+        onMouseDown,
+        onFocus,
+        onBlur,
+      },
+      options.provider
+    )
+
+    const updatedState = { ...$rocketstate, pseudo: pseudo.state }
+
+    return (
+      <Context.Provider value={updatedState}>
+        <STYLED_COMPONENT
+          {...props}
+          {...pseudo.events}
+          // @ts-ignore
+          $rocketstate={updatedState}
+        />
+      </Context.Provider>
+    )
+  }
+
+  const FinalComponent = options.provider ? ProviderComponent : STYLED_COMPONENT
+
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
@@ -122,29 +159,7 @@ const styleComponent: StyleComponent = (options) => {
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
       const theme = useContext(config.context)
-
-      // desctructure events used for pseudo state detection
-      const {
-        onMouseEnter,
-        onMouseLeave,
-        onMouseUp,
-        onMouseDown,
-        onFocus,
-        onBlur,
-      } = props
-
-      // pseudo hook to detect states hover / pressed / focus
-      const pseudo = usePseudoState(
-        {
-          onMouseEnter,
-          onMouseLeave,
-          onMouseUp,
-          onMouseDown,
-          onFocus,
-          onBlur,
-        },
-        options.provider
-      )
+      const rocketstyleCtx = options.consumer ? useContext(Context) : {}
 
       // calculate themes for all possible styling dimensions
       // eslint-disable-next-line no-underscore-dangle
@@ -175,103 +190,72 @@ const styleComponent: StyleComponent = (options) => {
         }
       }, [theme])
 
-      type FinalElement = (ctxData?: Record<string, unknown>) => ReactNode
+      // first we need to calculate final props which are
+      // being returned by using `attr` chaining method
+      const calculatedAttrs = useMemo(
+        () =>
+          calculateChainOptions(
+            options.attrs,
+            [
+              props,
+              theme,
+              {
+                renderContent,
+              },
+            ],
+            false
+          ),
+        [theme, props]
+      )
 
-      const finalElement: FinalElement = (ctxData = {}) => {
-        // first we need to calculate final props which are
-        // being returned by using `attr` chaining method
-        const calculatedAttrs = calculateChainOptions(
-          options.attrs,
-          [
-            props,
-            theme,
-            {
-              renderContent,
-            },
-          ],
-          false
-        )
-
-        // get final props which are
-        // (1) merged from context,
-        // (2) `attrs` chaining method, and from
-        // (3) passing them directly to component
-        const componentProps = {
-          ...ctxData,
-          ...calculatedAttrs,
-          ...props,
-        }
-
-        const styledProps = calculateStyledAttrs({
-          props: componentProps,
-          multiKeys: options.multiKeys,
-          dimensions,
-          useBooleans: options.useBooleans,
-        })
-
-        // final component state including pseudo state
-        const rocketstate: Record<string, unknown> = {
-          ...styledProps,
-        }
-
-        if (options.provider) {
-          rocketstate.pseudo = pseudo.state
-        }
-
-        // if (options.useBooleans) {
-        //   Object.values(styledProps).forEach((item) => {
-        //     if (Array.isArray(item)) {
-        //       item.forEach((item) => {
-        //         rocketstate[item] = true
-        //       })
-        //     } else {
-        //       rocketstate[item] = true
-        //     }
-        //   })
-        // }
-
-        // calculated final theme which will be passed to our styled component
-        // under $rocketstyle prop
-        const rocketstyle = calculateTheme({
-          props: styledProps,
-          themes,
-          baseTheme,
-        })
-
-        const passProps = {
-          // this removes styling state from props and passes its state
-          // under rocketstate key only
-          ...omit(componentProps, [...reservedPropNames, 'pseudo']),
-          ...(options.provider ? pseudo.events : {}),
-          ref,
-          $rocketstyle: rocketstyle,
-          $rocketstate: rocketstate,
-          'data-rocketstyle': componentName,
-        }
-
-        const renderedComponent = renderContent(STYLED_COMPONENT, passProps)
-
-        if (options.provider) {
-          return (
-            <Context.Provider value={rocketstate}>
-              {renderedComponent}
-            </Context.Provider>
-          )
-        }
-
-        return renderedComponent
+      // get final props which are
+      // (1) merged from context,
+      // (2) `attrs` chaining method, and from
+      // (3) passing them directly to component
+      const mergeProps = {
+        ...(options.consumer
+          ? // @ts-ignore
+            options.consumer((cb) => cb(rocketstyleCtx))
+          : {}),
+        ...calculatedAttrs,
+        ...props,
       }
 
-      if (options.consumer) {
-        return (
-          <Context.Consumer>
-            {/* @ts-ignore */}
-            {(value) => finalElement(options.consumer((cb) => cb(value)))}
-          </Context.Consumer>
-        )
+      // final component state including pseudo state
+      const rocketstate: Record<string, unknown> = useMemo(
+        () =>
+          calculateStyledAttrs({
+            props: mergeProps,
+            multiKeys: options.multiKeys,
+            dimensions,
+            useBooleans: options.useBooleans,
+          }),
+        [mergeProps, __ROCKETSTYLE__]
+      )
+
+      // calculated final theme which will be passed to our styled component
+      // under $rocketstyle prop
+      const rocketstyle = useMemo(
+        () =>
+          calculateTheme({
+            props: rocketstate,
+            themes,
+            baseTheme,
+          }),
+        [rocketstate, __ROCKETSTYLE__]
+      )
+
+      const passProps = {
+        // this removes styling state from props and passes its state
+        // under rocketstate key only
+        ...omit(mergeProps, [...reservedPropNames, 'pseudo']),
+        ref,
+        $rocketstyle: rocketstyle,
+        $rocketstate: rocketstate,
+        'data-rocketstyle': componentName,
       }
 
-      return finalElement()
+      return <FinalComponent {...passProps} />
     }
   )
 
