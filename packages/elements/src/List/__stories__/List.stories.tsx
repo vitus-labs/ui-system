@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import Element from '~/Element'
 import List, { withActiveState } from '~/List'
 
@@ -114,8 +114,8 @@ export const ItemPropsAsAFunction = () => {
 }
 
 export const renderCustomComponentInItem = () => {
-  const CustomComponent = () => <span>I&apos;m custom component</span>
-  const Item = ({ name, surname, ...props }) => {
+  const CustomComponent: FC = () => <span>I&apos;m custom component</span>
+  const Item: FC = ({ name, surname, ...props }) => {
     return (
       <span {...props}>
         {name} {surname}
@@ -194,7 +194,7 @@ export const withMultipleActiveState = () => {
   const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
   const itemProps = (props) => {
     return {
-      onClick: () => {},
+      onClick: () => ({}),
       surname: 'hello',
     }
   }

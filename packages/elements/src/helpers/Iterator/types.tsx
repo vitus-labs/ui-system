@@ -6,7 +6,9 @@ import type {
 } from 'react'
 
 export type KeyType = ReactText
-export type ElementType = ComponentType | ForwardRefExoticComponent<unknown>
+export type ElementType<
+  T extends Record<string, unknown> | unknown = unknown
+> = ComponentType<T> | ForwardRefExoticComponent<T>
 
 export type ExtendedProps = {
   index: number
@@ -17,7 +19,9 @@ export type ExtendedProps = {
   position: number
 }
 
-type ArrayObjectData = Partial<{ component: ElementType }> & Record<string, any>
+type ArrayObjectData = Partial<
+  { component: ElementType } & Record<string, unknown>
+>
 
 type ItemIdType = ArrayObjectData & {
   id?: KeyType
@@ -31,23 +35,27 @@ type ItemItemIdType = ArrayObjectData & {
   itemId?: KeyType
 }
 
-export type DataArrayObject = ItemIdType | ItemKeyType | ItemItemIdType
+export type DataArrayObject =
+  | ItemIdType
+  | ItemKeyType
+  | ItemItemIdType
+  | ArrayObjectData
 
 type BaseProps = Partial<{
   wrapComponent: ElementType
   extendProps: boolean
   itemProps:
-    | Record<string, any>
+    | Record<string, unknown>
     | ((
         key: string | number,
         extendedProps: ExtendedProps
-      ) => Record<string, any>)
+      ) => Record<string, unknown>)
   wrapProps:
-    | Record<string, any>
+    | Record<string, unknown>
     | ((
         key: string | number,
         extendedProps: ExtendedProps
-      ) => Record<string, any>)
+      ) => Record<string, unknown>)
 }>
 
 type ChildrenType = BaseProps & {
@@ -55,16 +63,18 @@ type ChildrenType = BaseProps & {
 }
 
 type DataSimpleArrayType = BaseProps & {
-  component: ReactNode
+  component: ElementType
   data: Array<string | number>
   itemKey?: (item: string | number, index: number) => string | number
   valueName: string
 }
 
 type DataObjectArrayType = BaseProps & {
-  component: ReactNode
+  component: ElementType
   data: Array<DataArrayObject>
-  itemKey?: string | ((item: object, index: number) => string | number)
+  itemKey?:
+    | string
+    | ((item: Record<string, unknown>, index: number) => string | number)
 }
 
 export type Props = ChildrenType | DataSimpleArrayType | DataObjectArrayType

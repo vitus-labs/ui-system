@@ -10,8 +10,6 @@ export const Button = rocketstyle()({
   } as const,
 })({ name: 'List', component: List })
   .attrs({
-    tag: 'button',
-    label: 'This is a label',
     rootElement: true,
   })
   .theme({

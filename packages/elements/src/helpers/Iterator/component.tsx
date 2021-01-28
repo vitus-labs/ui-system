@@ -10,6 +10,7 @@ const RESERVED_PROPS = [
   'itemKey',
   'valueName',
   'itemProps',
+  'wrapProps',
   'extendProps',
 ]
 
@@ -70,6 +71,11 @@ const Component: FC<Props> & Static = (props: Props) => {
       ? (props, extendedProps) => itemProps(props, extendedProps)
       : () => itemProps
 
+  const injectWrapItemProps =
+    typeof wrapProps === 'function'
+      ? (props, extendedProps) => wrapProps(props, extendedProps)
+      : () => itemProps
+
   // --------------------------------------------------------
   // render children
   // --------------------------------------------------------
@@ -96,7 +102,7 @@ const Component: FC<Props> & Static = (props: Props) => {
 
       const finalWrapProps = {
         ...(extendProps ? extendedProps : {}),
-        ...(wrapProps ? injectItemProps({}, extendedProps) : {}),
+        ...(wrapProps ? injectWrapItemProps({}, extendedProps) : {}),
       }
 
       if (Wrapper) {
@@ -154,7 +160,7 @@ const Component: FC<Props> & Static = (props: Props) => {
       const finalWrapProps = {
         ...(extendProps ? extendedProps : {}),
         ...(wrapProps
-          ? injectItemProps({ [valueName]: item }, extendedProps)
+          ? injectWrapItemProps({ [valueName]: item }, extendedProps)
           : {}),
       }
 
@@ -208,7 +214,7 @@ const Component: FC<Props> & Static = (props: Props) => {
 
       const finalWrapProps = {
         ...(extendProps ? extendedProps : {}),
-        ...(wrapProps ? injectItemProps(item, extendedProps) : {}),
+        ...(wrapProps ? injectWrapItemProps(item, extendedProps) : {}),
       }
 
       if (Wrapper) {

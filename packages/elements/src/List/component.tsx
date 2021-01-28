@@ -7,6 +7,8 @@ import { ExtractProps } from '~/types'
 type DefaultProps = ExtractProps<typeof Iterator> &
   ExtractProps<typeof Element> & {
     rootElement?: boolean
+    label: never
+    content: never
   }
 
 type WithoutRoot = ExtractProps<typeof Iterator> & {
