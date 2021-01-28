@@ -43,7 +43,6 @@ export type DataArrayObject =
 
 type BaseProps = Partial<{
   wrapComponent: ElementType
-  extendProps: boolean
   itemProps:
     | Record<string, unknown>
     | ((

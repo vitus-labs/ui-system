@@ -11,7 +11,6 @@ const RESERVED_PROPS = [
   'valueName',
   'itemProps',
   'wrapProps',
-  'extendProps',
 ]
 
 type AttachItemProps = ({
@@ -60,7 +59,6 @@ const Component: FC<Props> & Static = (props: Props) => {
     wrapComponent: Wrapper,
     // @ts-ignore
     wrapProps,
-    extendProps,
     itemProps,
   } = props
 
@@ -83,27 +81,19 @@ const Component: FC<Props> & Static = (props: Props) => {
     const { length } = children
 
     // if no props extension is required, just return children
-    if (!extendProps && !itemProps && !Wrapper) return children
+    if (!itemProps && !Wrapper) return children
 
     return Children.map(children, (item, i) => {
       const key = i
-      const extendedProps =
-        extendProps || !isEmpty(itemProps)
-          ? attachItemProps({
-              i,
-              length,
-            })
-          : {}
+      const extendedProps = attachItemProps({
+        i,
+        length,
+      })
 
-      const finalItemProps = {
-        ...(extendProps ? extendedProps : {}),
-        ...(itemProps ? injectItemProps({}, extendedProps) : {}),
-      }
-
-      const finalWrapProps = {
-        ...(extendProps ? extendedProps : {}),
-        ...(wrapProps ? injectWrapItemProps({}, extendedProps) : {}),
-      }
+      const finalItemProps = itemProps ? injectItemProps({}, extendedProps) : {}
+      const finalWrapProps = wrapProps
+        ? injectWrapItemProps({}, extendedProps)
+        : {}
 
       if (Wrapper) {
         return (
@@ -141,28 +131,21 @@ const Component: FC<Props> & Static = (props: Props) => {
     return renderData.map((item, i) => {
       const key = getKey(item, i)
       const keyName = valueName || 'children'
-      const extendedProps =
-        extendProps || !isEmpty(itemProps)
-          ? attachItemProps({
-              i,
-              length,
-            })
-          : {}
+      const extendedProps = attachItemProps({
+        i,
+        length,
+      })
 
       const finalItemProps = {
-        ...(extendProps ? extendedProps : {}),
         ...(itemProps
           ? injectItemProps({ [valueName]: item }, extendedProps)
           : {}),
         [keyName]: item,
       }
 
-      const finalWrapProps = {
-        ...(extendProps ? extendedProps : {}),
-        ...(wrapProps
-          ? injectWrapItemProps({ [valueName]: item }, extendedProps)
-          : {}),
-      }
+      const finalWrapProps = wrapProps
+        ? injectWrapItemProps({ [valueName]: item }, extendedProps)
+        : {}
 
       if (Wrapper) {
         return (
@@ -198,24 +181,19 @@ const Component: FC<Props> & Static = (props: Props) => {
       const { component: itemComponent, ...restItem } = item as DataArrayObject
       const renderItem = itemComponent || component
       const key = getKey(restItem, i)
-      const extendedProps =
-        extendProps || !isEmpty(itemProps)
-          ? attachItemProps({
-              i,
-              length,
-            })
-          : {}
+      const extendedProps = attachItemProps({
+        i,
+        length,
+      })
 
       const finalItemProps = {
-        ...(extendProps ? extendedProps : {}),
         ...(itemProps ? injectItemProps(item, extendedProps) : {}),
         ...restItem,
       }
 
-      const finalWrapProps = {
-        ...(extendProps ? extendedProps : {}),
-        ...(wrapProps ? injectWrapItemProps(item, extendedProps) : {}),
-      }
+      const finalWrapProps = wrapProps
+        ? injectWrapItemProps(item, extendedProps)
+        : {}
 
       if (Wrapper) {
         return (
