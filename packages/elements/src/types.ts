@@ -57,6 +57,8 @@ export type Responsive =
   | Array<string | number>
   | Record<string, number | string>
 
+export type ExtendCss = Css | Array<Css> | Record<string, Css>
+
 export type ExtractProps<
   TComponentOrTProps
 > = TComponentOrTProps extends ComponentType<infer TProps>

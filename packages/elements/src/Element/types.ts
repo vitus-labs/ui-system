@@ -6,7 +6,7 @@ import type {
   Direction,
   ResponsiveBooltype,
   Responsive,
-  Css,
+  ExtendCss,
 } from '~/types'
 
 export type Props = Partial<{
@@ -34,8 +34,8 @@ export type Props = Partial<{
   beforeContentAlignY: AlignY
   afterContentAlignY: AlignY
   dangerouslySetInnerHTML: any
-  css: Css
-  contentCss: Css
-  beforeContentCss: Css
-  afterContentCss: Css
+  css: ExtendCss
+  contentCss: ExtendCss
+  beforeContentCss: ExtendCss
+  afterContentCss: ExtendCss
 }>
