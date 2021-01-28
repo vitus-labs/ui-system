@@ -4,7 +4,7 @@ import rocketstyle from '~/index'
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-export const Button = rocketstyle()()({ name: 'Button', component: Element })
+const Button = rocketstyle()()({ name: 'Button', component: Element })
   .attrs({
     tag: 'button',
     label: 'This is a label',

@@ -1,14 +1,14 @@
-import { List } from '@vitus-labs/elements'
+import { List as list } from '@vitus-labs/elements'
 import rocketstyle from '~/index'
 
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-export const Button = rocketstyle()({
+export default rocketstyle()({
   dimensions: {
     gaps: 'gap',
   } as const,
-})({ name: 'List', component: List })
+})({ name: 'List', component: list })
   .attrs({
     rootElement: true,
   })
@@ -57,39 +57,3 @@ export const Button = rocketstyle()({
       `};
     `
   )
-
-// --------------------------------------------------------
-// Button with provider enabled with consumer component
-// --------------------------------------------------------
-export const ProviderButton = Button.config({
-  provider: true,
-})
-
-export const ButtonConsumer = rocketstyle()()({
-  name: 'Button',
-  component: List,
-})
-  .config({
-    consumer: ({ pseudo }) => {
-      return { state: pseudo.hover ? 'primary' : null }
-    },
-  })
-  .states({
-    primary: { color: '#0d6efd', bgColor: 'white' },
-    secondary: { color: 'green' },
-    danger: { color: 'pink' },
-  })
-  .styles(
-    (css) => css<{ $rocketstyle: any }>`
-      transition: all 0.15s ease-in-out;
-      padding: 4px;
-      border-radius: 0.25rem;
-
-      ${({ $rocketstyle: t }) => css`
-        color: ${t.color};
-        background-color: ${t.bgColor};
-      `}
-    `
-  )
-
-export default Button

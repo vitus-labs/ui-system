@@ -72,7 +72,7 @@ const Component: FC<Props> & Static = (props: Props) => {
   const injectWrapItemProps =
     typeof wrapProps === 'function'
       ? (props, extendedProps) => wrapProps(props, extendedProps)
-      : () => itemProps
+      : () => wrapProps
 
   // --------------------------------------------------------
   // render children
@@ -138,13 +138,13 @@ const Component: FC<Props> & Static = (props: Props) => {
 
       const finalItemProps = {
         ...(itemProps
-          ? injectItemProps({ [valueName]: item }, extendedProps)
+          ? injectItemProps({ [keyName]: item }, extendedProps)
           : {}),
         [keyName]: item,
       }
 
       const finalWrapProps = wrapProps
-        ? injectWrapItemProps({ [valueName]: item }, extendedProps)
+        ? injectWrapItemProps({ [keyName]: item }, extendedProps)
         : {}
 
       if (Wrapper) {
@@ -160,7 +160,7 @@ const Component: FC<Props> & Static = (props: Props) => {
   }
 
   // --------------------------------------------------------
-  // render array of strings or numbers
+  // render array of objects
   // --------------------------------------------------------
   const renderComplexArray = (data) => {
     const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects

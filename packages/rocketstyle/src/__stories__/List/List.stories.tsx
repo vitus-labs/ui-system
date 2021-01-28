@@ -1,5 +1,5 @@
 import React from 'react'
-import List, { ProviderButton, ButtonConsumer } from './List'
+import List from './List'
 
 export default {
   component: List,
@@ -10,13 +10,5 @@ export const button = () => (
   <>
     <List />
     <List primary />
-  </>
-)
-
-export const childrenStyling = () => (
-  <>
-    <ProviderButton>
-      <ButtonConsumer>inner text component</ButtonConsumer>
-    </ProviderButton>
   </>
 )

@@ -5,10 +5,12 @@ import type {
   ReactNode,
 } from 'react'
 
-export type KeyType = ReactText
-export type ElementType<
-  T extends Record<string, unknown> | unknown = unknown
-> = ComponentType<T> | ForwardRefExoticComponent<T>
+export type MaybeNull = undefined | null
+export type TObj = Record<string, unknown>
+export type SimpleValue = ReactText
+export type ElementType<T extends Record<string, unknown> | unknown = any> =
+  | ComponentType<T>
+  | ForwardRefExoticComponent<T>
 
 export type ExtendedProps = {
   index: number
@@ -19,61 +21,69 @@ export type ExtendedProps = {
   position: number
 }
 
-type ArrayObjectData = Partial<
+type BaseObjectData = Partial<
   { component: ElementType } & Record<string, unknown>
 >
+type ItemIdType = { id?: SimpleValue }
+type ItemKeyType = { key?: SimpleValue }
+type ItemItemIdType = { itemId?: SimpleValue }
 
-type ItemIdType = ArrayObjectData & {
-  id?: KeyType
-}
-
-type ItemKeyType = ArrayObjectData & {
-  key?: KeyType
-}
-
-type ItemItemIdType = ArrayObjectData & {
-  itemId?: KeyType
-}
-
-export type DataArrayObject =
-  | ItemIdType
-  | ItemKeyType
-  | ItemItemIdType
-  | ArrayObjectData
+export type DataArrayObject = (ItemIdType | ItemKeyType | ItemItemIdType) &
+  BaseObjectData
 
 type BaseProps = Partial<{
   wrapComponent: ElementType
-  itemProps:
-    | Record<string, unknown>
-    | ((
-        key: string | number,
-        extendedProps: ExtendedProps
-      ) => Record<string, unknown>)
-  wrapProps:
-    | Record<string, unknown>
-    | ((
-        key: string | number,
-        extendedProps: ExtendedProps
-      ) => Record<string, unknown>)
 }>
 
-type ChildrenType = BaseProps & {
+// --------------------------------------------------------
+// Children type
+// --------------------------------------------------------
+type ChildrenTypeCallback =
+  | ((itemProps: Record<string, never>, extendedProps: ExtendedProps) => TObj)
+  | TObj
+
+type ChildrenType = {
   children: ReactNode
+  itemProps?: ChildrenTypeCallback
+  wrapProps?: ChildrenTypeCallback
 }
 
-type DataSimpleArrayType = BaseProps & {
-  component: ElementType
-  data: Array<string | number>
-  itemKey?: (item: string | number, index: number) => string | number
+// --------------------------------------------------------
+// Simple array type
+// --------------------------------------------------------
+type SimpleArrayTypeCallback =
+  | ((
+      itemProps: Record<string, SimpleValue>,
+      extendedProps: ExtendedProps
+    ) => TObj)
+  | TObj
+
+type DataSimpleArrayType = {
+  data: Array<SimpleValue | MaybeNull>
   valueName: string
-}
-
-type DataObjectArrayType = BaseProps & {
   component: ElementType
-  data: Array<DataArrayObject>
-  itemKey?:
-    | string
-    | ((item: Record<string, unknown>, index: number) => string | number)
+  itemKey?: (item: SimpleValue, index: number) => SimpleValue
+  itemProps?: SimpleArrayTypeCallback
+  wrapProps?: SimpleArrayTypeCallback
 }
 
-export type Props = ChildrenType | DataSimpleArrayType | DataObjectArrayType
+// --------------------------------------------------------
+// Object array type
+// --------------------------------------------------------
+type ObjectArrayTypeCallback =
+  | ((itemProps: DataArrayObject, extendedProps: ExtendedProps) => TObj)
+  | TObj
+
+type DataObjectArrayType = {
+  data: Array<DataArrayObject | MaybeNull>
+  component: ElementType
+  valueName?: never
+  itemKey?:
+    | keyof DataArrayObject
+    | ((item: Omit<DataArrayObject, 'component'>, index: number) => SimpleValue)
+  itemProps?: ObjectArrayTypeCallback
+  wrapProps?: ObjectArrayTypeCallback
+}
+
+export type Props = (DataObjectArrayType | DataSimpleArrayType | ChildrenType) &
+  BaseProps
