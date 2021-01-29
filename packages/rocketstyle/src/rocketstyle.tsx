@@ -111,18 +111,8 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const ProviderComponent = ({
-    onMouseEnter,
-    onMouseLeave,
-    onMouseUp,
-    onMouseDown,
-    onFocus,
-    onBlur,
-    $rocketstate,
-    ...props
-  }) => {
-    // pseudo hook to detect states hover / pressed / focus
-    const pseudo = usePseudoState(
+  const ProviderComponent = forwardRef<any, any>(
+    (
       {
         onMouseEnter,
         onMouseLeave,
@@ -130,23 +120,38 @@ const styleComponent: StyleComponent = (options) => {
         onMouseDown,
         onFocus,
         onBlur,
+        $rocketstate,
+        ...props
       },
-      options.provider
-    )
+      ref
+    ) => {
+      // pseudo hook to detect states hover / pressed / focus
+      const pseudo = usePseudoState(
+        {
+          onMouseEnter,
+          onMouseLeave,
+          onMouseUp,
+          onMouseDown,
+          onFocus,
+          onBlur,
+        },
+        options.provider
+      )
 
-    const updatedState = { ...$rocketstate, pseudo: pseudo.state }
+      const updatedState = { ...$rocketstate, pseudo: pseudo.state }
 
-    return (
-      <Context.Provider value={updatedState}>
-        <STYLED_COMPONENT
-          {...props}
-          {...pseudo.events}
-          // @ts-ignore
-          $rocketstate={updatedState}
-        />
-      </Context.Provider>
-    )
-  }
+      return (
+        <Context.Provider value={updatedState}>
+          <STYLED_COMPONENT
+            {...props}
+            {...pseudo.events}
+            ref={ref}
+            $rocketstate={updatedState}
+          />
+        </Context.Provider>
+      )
+    }
+  )
 
   const FinalComponent = options.provider ? ProviderComponent : STYLED_COMPONENT
 
@@ -155,7 +160,6 @@ const styleComponent: StyleComponent = (options) => {
   // --------------------------------------------------------
   // @ts-ignore
   const EnhancedComponent: RocketComponent = forwardRef(
-    // @ts-ignore
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
       const theme = useContext(config.context)
