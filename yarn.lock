@@ -3559,10 +3559,10 @@
     "@babel/preset-react" "^7.12.10"
     "@babel/preset-typescript" "^7.10.4"
 
-"@vitus-labs/tools-lint@0.3.2-alpha.0":
-  version "0.3.2-alpha.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-lint/-/tools-lint-0.3.2-alpha.0.tgz#d7d44f8e588a0be6c3191006f16981af42f2d869"
-  integrity sha512-Eef1yaY66MeIFVh+eueEII139Pm6aDdyJHhZZCk6bC8DGsiLInwIv+VRDTa/zD7Dza7q6CumJY01pw4eEFYxqQ==
+"@vitus-labs/tools-lint@0.3.2-alpha.12":
+  version "0.3.2-alpha.12"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-lint/-/tools-lint-0.3.2-alpha.12.tgz#f8c734c30f7c704bfbc7262cecfa0d812e724e41"
+  integrity sha512-4cKSE4kYdD1/eKWVl5sfxBgSMUjZXW/48V/X/JsMz570txhm+OzEfNh+UnmoDsRUl2VRfr6L1IcIXTylTMJh5A==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^4.14.1"
     "@typescript-eslint/parser" "^4.14.1"
