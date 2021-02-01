@@ -1,5 +1,11 @@
 import React, { forwardRef, ReactNode } from 'react'
-import { Direction, AlignX, AlignY, ResponsiveBooltype, Css } from '~/types'
+import {
+  Direction,
+  AlignX,
+  AlignY,
+  ResponsiveBooltype,
+  ExtendCss,
+} from '~/types'
 import { isWebFixNeeded } from './utils'
 import Styled from './styled'
 
@@ -13,7 +19,7 @@ type Props = {
   alignX: AlignX
   alignY: AlignY
   equalCols: ResponsiveBooltype
-  extendCss: Css
+  extendCss: ExtendCss
 }
 
 const Component = forwardRef<Reference, Partial<Props>>(

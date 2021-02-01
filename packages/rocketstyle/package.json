@@ -58,8 +58,8 @@
   "devDependencies": {
     "@vitus-labs/core": "^0.8.0-alpha.14",
     "@vitus-labs/elements": "^0.8.0-alpha.32",
-    "@vitus-labs/tools-babel": "0.3.0",
-    "@vitus-labs/tools-rollup": "0.3.0",
+    "@vitus-labs/tools-babel": "0.3.1",
+    "@vitus-labs/tools-rollup": "0.3.2-alpha.10",
     "@vitus-labs/tools-storybook": "^0.8.0-alpha.6",
     "@vitus-labs/tools-typescript": "0.3.0",
     "@vitus-labs/unistyle": "^0.8.0-alpha.16"
