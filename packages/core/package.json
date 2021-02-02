@@ -41,10 +41,9 @@
     "storybook:build": "build-storybook -c tools/storybook -o docs/",
     "docs:dev": "docz dev",
     "docs:build": "docz build",
-    "lint": "yarn lint:css && yarn lint:js",
-    "lint:css": "stylelint './src/**/*.js*'",
-    "lint:js": "eslint src",
-    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
@@ -59,7 +58,8 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
-    "@vitus-labs/tools-rollup": "0.3.2-alpha.10",
-    "@vitus-labs/tools-typescript": "0.3.0"
+    "@vitus-labs/tools-babel": "0.4.3",
+    "@vitus-labs/tools-rollup": "0.4.3",
+    "@vitus-labs/tools-typescript": "0.4.3"
   }
 }

@@ -41,9 +41,9 @@
     "prepublish": "yarn build",
     "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
-    "docs:dev": "docz dev",
-    "docs:build": "docz build",
-    "lint": "yarn lint:css && yarn lint:js",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
@@ -57,8 +57,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "0.3.1",
-    "@vitus-labs/tools-rollup": "0.3.2-alpha.10",
-    "@vitus-labs/tools-typescript": "0.3.0"
+    "@vitus-labs/tools-babel": "0.4.3",
+    "@vitus-labs/tools-rollup": "0.4.3",
+    "@vitus-labs/tools-typescript": "0.4.3"
   }
 }
