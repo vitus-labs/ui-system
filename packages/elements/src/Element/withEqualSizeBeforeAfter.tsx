@@ -1,15 +1,25 @@
-import React, { useEffect, createRef, ReactNode } from 'react'
+/* eslint-disable no-param-reassign */
+import React, { useEffect, createRef, ReactElement } from 'react'
 import { get } from '@vitus-labs/core'
 import type { ExtractProps } from '~/types'
 
-const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
+const isNumber = (a: unknown, b: unknown) =>
+  Number.isInteger(a) && Number.isInteger(b)
 
 const types = {
   height: 'offsetHeight',
   width: 'offsetWidth',
 }
 
-const calculate = ({ beforeContent, afterContent }) => (
+type Calculate = ({
+  beforeContent,
+  afterContent,
+}: {
+  beforeContent: HTMLElement
+  afterContent: HTMLElement
+}) => (type: 'height' | 'width') => void
+
+const calculate: Calculate = ({ beforeContent, afterContent }) => (
   type: keyof typeof types
 ) => {
   const beforeContentSize = get(beforeContent, types[type])
@@ -33,10 +43,10 @@ type Props = Partial<{
   beforeContent?: React.ReactNode
 }>
 
-const withEqualBeforeAfter = <T extends {}>(
+const withEqualBeforeAfter = <T extends Record<string, unknown>>(
   WrappedComponent: React.ComponentType<T>
 ): {
-  (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
+  (props: T & Props & ExtractProps<typeof WrappedComponent>): ReactElement
   displayName?: string
 } => {
   type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>

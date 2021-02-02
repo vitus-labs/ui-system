@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef, ReactNode } from 'react'
+import type { StyledComponentPropsWithRef } from 'styled-components'
 import {
   Direction,
   AlignX,
@@ -9,11 +11,11 @@ import {
 import { isWebFixNeeded } from './utils'
 import Styled from './styled'
 
-type Reference = any
+type Reference = unknown
 
 type Props = {
   children: ReactNode
-  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  tag: StyledComponentPropsWithRef<any>
   block: ResponsiveBooltype
   direction: Direction
   alignX: AlignX

@@ -12,6 +12,7 @@ const defaultDirection = 'inline'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Component = forwardRef<any, Props>(
   (
     {

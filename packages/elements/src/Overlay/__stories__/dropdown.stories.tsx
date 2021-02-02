@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react'
 import { config } from '@vitus-labs/core'
 import Element, { withEqualSizeBeforeAfter } from '../../Element'
@@ -8,13 +9,13 @@ export default {
   title: Overlay.displayName,
 }
 
-const Button = ({ innerRef, children, ...props }: any) => (
-  <button ref={innerRef} {...props}>
+const Button = ({ innerRef, children, ...props }) => (
+  <button type="button" ref={innerRef} {...props}>
     {children || 'Click on me'}
   </button>
 )
 
-const Box = ({ innerRef, ...props }: any) => (
+const Box = ({ innerRef, ...props }) => (
   <div ref={innerRef} {...props}>
     some content here
   </div>
@@ -67,53 +68,40 @@ const ScrollX = config.styled.div`
 
 const EqualElement = withEqualSizeBeforeAfter(Element)
 
-export const exampleDropdown = () => {
-  return (
-    <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
-      <Menu />
-    </Overlay>
-  )
-}
+export const exampleDropdown = () => (
+  <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
+    <Menu />
+  </Overlay>
+)
 
-export const exampleDropdownOnHover = () => {
-  return (
-    <Overlay
-      refName="innerRef"
-      openOn="hover"
-      closeOn="hover"
-      trigger={Trigger}
-    >
-      <Menu />
-    </Overlay>
-  )
-}
+export const exampleDropdownOnHover = () => (
+  <Overlay refName="innerRef" openOn="hover" closeOn="hover" trigger={Trigger}>
+    <Menu />
+  </Overlay>
+)
 
-export const exampleDropdownOnTriggerClick = () => {
-  return (
-    <Overlay
-      refName="innerRef"
-      openOn="click"
-      closeOn="triggerClick"
-      trigger={Trigger}
-    >
-      <Menu />
-    </Overlay>
-  )
-}
+export const exampleDropdownOnTriggerClick = () => (
+  <Overlay
+    refName="innerRef"
+    openOn="click"
+    closeOn="triggerClick"
+    trigger={Trigger}
+  >
+    <Menu />
+  </Overlay>
+)
 
 export const exampleDropdownManual = () => {
-  const ManualTrigger = (props) => {
-    return (
-      <Trigger
-        {...props}
-        onClick={(e) => {
-          if (e.detail === 2) props.showContent(e)
-        }}
-      >
-        double click on me
-      </Trigger>
-    )
-  }
+  const ManualTrigger = (props) => (
+    <Trigger
+      {...props}
+      onClick={(e) => {
+        if (e.detail === 2) props.showContent(e)
+      }}
+    >
+      double click on me
+    </Trigger>
+  )
 
   return (
     <Overlay

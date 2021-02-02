@@ -46,18 +46,12 @@ type Static = {
 
 const Component: FC<Props> & Static = (props: Props) => {
   const {
-    // @ts-ignore
     itemKey,
-    // @ts-ignore
     valueName,
-    // @ts-ignore
     children,
-    // @ts-ignore
     component,
-    // @ts-ignore
     data,
     wrapComponent: Wrapper,
-    // @ts-ignore
     wrapProps,
     itemProps,
   } = props

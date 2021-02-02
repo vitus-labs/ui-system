@@ -4,6 +4,7 @@ import { ExtractProps } from '~/types'
 const RESERVED_KEYS = ['type', 'activeItems', 'itemProps', 'activeItemRequired']
 
 type Key = string | number
+type MultipleMap = Map<Key, boolean>
 
 type ItemPropsData = {
   key: Key
@@ -18,12 +19,15 @@ type Props = {
   type?: 'single' | 'multi'
   activeItemRequired?: boolean
   activeItems?: Key | Array<string | number>
-  itemProps?: Record<string, any> | (() => Record<string, any>)
+  itemProps?:
+    | Record<string, unknown>
+    | ((props: Record<string, unknown>) => Record<string, unknown>)
 }
 
-const Component = <T extends {}>(
+const Component = <T extends Record<string, unknown>>(
   WrappedComponent: React.ComponentType<T>
 ): {
+  // eslint-disable-next-line no-undef
   (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
   displayName?: string
 } => {
@@ -41,13 +45,17 @@ const Component = <T extends {}>(
       ...rest
     } = props
 
-    const initActiveItems = () => {
+    type InitActiveItems = () => Key | MultipleMap
+    const initActiveItems: InitActiveItems = () => {
       if (type === 'single') {
         if (Array.isArray(activeItems)) {
+          // eslint-disable-next-line no-console
           console.warn(
             'Iterator is type of single. activeItems cannot be an array.'
           )
-        } else return activeItems
+        } else {
+          return activeItems
+        }
       } else if (type === 'multi') {
         const activeItemsHelper = Array.isArray(activeItems)
           ? activeItems
@@ -55,6 +63,8 @@ const Component = <T extends {}>(
 
         return new Map(activeItemsHelper.map((id) => [id, true]))
       }
+
+      return undefined
     }
 
     const [innerActiveItems, setActiveItems] = useState(initActiveItems())
@@ -63,20 +73,22 @@ const Component = <T extends {}>(
       let result = 0
 
       data.forEach((value) => {
-        if (value) result = result + 1
+        if (value) result += 1
       })
 
       return result
     }
 
-    const updateItemState = (key: Key, status?: boolean, toggle?: boolean) => {
+    const updateItemState = (key: Key) => {
       if (type === 'single') {
-        setActiveItems((prevState) =>
-          activeItemRequired ? key : prevState === key ? undefined : key
-        )
-      } else if (type === 'multi') {
         setActiveItems((prevState) => {
-          // @ts-ignore
+          if (activeItemRequired) return key
+          if (prevState === key) return undefined
+
+          return key
+        })
+      } else if (type === 'multi') {
+        setActiveItems((prevState: MultipleMap) => {
           // TODO: add conditional type to fix this
           const activeItems = new Map(prevState)
 
@@ -107,30 +119,28 @@ const Component = <T extends {}>(
     }
 
     const setItemActive = (key: Key) => {
-      updateItemState(key, true)
+      updateItemState(key)
     }
 
     const unsetItemActive = (key: Key) => {
-      updateItemState(key, false)
+      updateItemState(key)
     }
 
     const toggleItemActive = (key: Key) => {
-      updateItemState(key, false, true)
+      updateItemState(key)
     }
 
-    const setAllItemsActive = () => {
-      updateAllItemsState(true)
-    }
+    // const setAllItemsActive = () => {
+    //   updateAllItemsState(true)
+    // }
 
     const unsetAllItemsActive = () => {
       updateAllItemsState(false)
     }
 
     const isItemActive = (key: Key): boolean => {
-      if (type === 'single') return innerActiveItems === key
-      // @ts-ignore
-      // TODO: add conditional type to fix this
-      if (type === 'multi') return innerActiveItems.get(key)
+      if (type === 'single') return (innerActiveItems as Key) === key
+      if (type === 'multi') return (innerActiveItems as MultipleMap).get(key)
       return false
     }
 
@@ -142,8 +152,6 @@ const Component = <T extends {}>(
       const { key } = props
 
       const defaultItemProps =
-        // @ts-ignore
-        // TODO: add conditional type to fix this
         typeof itemProps === 'object' ? itemProps : itemProps(props)
 
       const result = {
@@ -161,9 +169,12 @@ const Component = <T extends {}>(
 
     useEffect(() => {
       if (type === 'single' && Array.isArray(activeItems)) {
-        console.error(
-          'When type=`single` activeItems must be a single value, not an array'
-        )
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.error(
+            'When type=`single` activeItems must be a single value, not an array'
+          )
+        }
       }
     }, [type, activeItems])
 

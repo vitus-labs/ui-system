@@ -5,9 +5,16 @@ import rocketstyle from '~/index'
 // basic Button compoenent
 // --------------------------------------------------------
 const Button = rocketstyle()()({ name: 'Button', component: Element })
-  .attrs({
+  .attrs<{ href?: string }>(({ href }) => ({
     tag: 'button',
-    label: 'This is a label',
+    label: href,
+  }))
+  .attrs(({ href }) => ({
+    tag: 'button',
+    label: href,
+  }))
+  .attrs<{ anything?: string }>({
+    tag: 'button',
   })
   .theme({
     bgColor: '#0d6efd',
@@ -38,6 +45,9 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
   })
   .states({
     primary: {
+      color: 'white',
+    },
+    secondary: {
       color: 'white',
     },
   })

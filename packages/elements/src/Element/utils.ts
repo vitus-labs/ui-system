@@ -15,6 +15,7 @@ type TransformVerticalProp = <
   : T
 
 export const transformVerticalProp: TransformVerticalProp = (vertical) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (vertical == null) return undefined as any
 
   const verticalType = typeof vertical

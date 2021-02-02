@@ -12,7 +12,7 @@ export const button = () => (
       data={['a']}
       valueName="label"
       itemProps={(itemProps, extend) => ({ itemProps, ...extend })}
-      // primary
+      primary
     />
     <List />
   </>

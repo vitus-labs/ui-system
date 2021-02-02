@@ -4,24 +4,16 @@ import Element from '~/Element'
 import Iterator from '~/helpers/Iterator'
 import { ExtractProps } from '~/types'
 
-type DefaultProps = ExtractProps<typeof Iterator> &
-  ExtractProps<typeof Element> & {
-    rootElement?: boolean
-    label: never
-    content: never
-  }
+type Props = Partial<
+  ExtractProps<typeof Iterator> &
+    ExtractProps<typeof Element> & {
+      rootElement?: boolean
+      label: never
+      content: never
+    }
+>
 
-type WithoutRoot = ExtractProps<typeof Iterator> & {
-  rootElement?: false
-}
-
-type WithRoot = DefaultProps & {
-  rootElement?: true
-}
-
-type Props = DefaultProps | WithRoot | WithoutRoot
-
-const Component = forwardRef<any, Props>(
+const Component = forwardRef<unknown, Props>(
   ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 

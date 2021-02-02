@@ -1,17 +1,19 @@
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
 const parseJSON = (object) => {
   let result = {}
   try {
     result = JSON.parse(object)
-  } catch (e) {}
+  } catch (e) {
+    // don't show error
+  }
 
   return result
 }
 
 type Props = {
-  children: ReactNode
+  children: Parameters<typeof renderContent>[0]
   className?: string | string[]
   style?: Record<string, unknown>
 }

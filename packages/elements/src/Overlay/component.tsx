@@ -1,12 +1,12 @@
-import React, { useRef, useState, useEffect, useContext } from 'react'
+import React, { FC, useRef, useState, useEffect, useContext } from 'react'
 import { config, renderContent, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 
-interface Props {
+export type Props = {
   children: React.ReactNode
   trigger: React.ReactNode
-  DOMLocation?: any
+  DOMLocation?: HTMLElement
   refName?: string
   isOpen?: boolean
   openOn?: 'click' | 'hover' | 'manual'
@@ -29,7 +29,7 @@ type OverlayPosition = {
   right?: number | string
 }
 
-const component = ({
+const component: FC<Props> = ({
   children,
   trigger,
   DOMLocation,
@@ -45,7 +45,7 @@ const component = ({
   offsetX = 0,
   offsetY = 0,
   throttleDelay = 200,
-}: Props) => {
+}) => {
   const { rootSize } = useContext(config.context)
   const [visible, setVisible] = useState(isOpen)
   const triggerRef = useRef<HTMLElement>()

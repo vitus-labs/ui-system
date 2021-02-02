@@ -189,30 +189,30 @@ type DKPTypes<
     : { [J in keyof DKP[I]]: boolean }
 }
 
-type DimensionBoolProps<
-  K extends DimensionValue,
-  DKP extends TDKP
-> = DKP[ExtractDimensionKey<K>]
+// type DimensionBoolProps<
+//   K extends DimensionValue,
+//   DKP extends TDKP
+// > = DKP[ExtractDimensionKey<K>]
 
-type ExtractDimensionKeyValues<
-  K extends DimensionValue,
-  DKP extends TDKP
-> = keyof DimensionBoolProps<K, DKP>
+// type ExtractDimensionKeyValues<
+//   K extends DimensionValue,
+//   DKP extends TDKP
+// > = keyof DimensionBoolProps<K, DKP>
 
-type DimensionKeyProps<K extends DimensionValue, DKP extends TDKP> = Record<
-  ExtractDimensionKey<K>,
-  ExtractDimensionMulti<K> extends true
-    ? Array<ExtractDimensionKeyValues<K, DKP>>
-    : ExtractDimensionKeyValues<K, DKP>
->
+// type DimensionKeyProps<K extends DimensionValue, DKP extends TDKP> = Record<
+//   ExtractDimensionKey<K>,
+//   ExtractDimensionMulti<K> extends true
+//     ? Array<ExtractDimensionKeyValues<K, DKP>>
+//     : ExtractDimensionKeyValues<K, DKP>
+// >
 
-type ExtendDimensionTypes<
-  K extends DimensionValue,
-  DKP extends TDKP,
-  UB extends boolean
-> = UB extends true
-  ? DimensionBoolProps<K, DKP> & DimensionKeyProps<K, DKP>
-  : DimensionKeyProps<K, DKP>
+// type ExtendDimensionTypes<
+//   K extends DimensionValue,
+//   DKP extends TDKP,
+//   UB extends boolean
+// > = UB extends true
+//   ? DimensionBoolProps<K, DKP> & DimensionKeyProps<K, DKP>
+//   : DimensionKeyProps<K, DKP>
 
 type RocketstyleDimensionTypesHelper<DKP extends TDKP> = Partial<
   {
@@ -310,7 +310,9 @@ export type RocketComponent<
   // --------------------------------------------------------
   attrs: <P extends AttrsCb<A, unknown, T> | Partial<A> | TObj>(
     param: AttrsParam<P, A, T>
-  ) => P extends AttrsCb<A, unknown, T> | Partial<A>
+  ) => P extends AttrsCb<A, unknown, T>
+    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    : P extends Partial<A>
     ? RocketComponent<A, OA, T, CT, D, UB, DKP>
     : P extends TObj
     ? RocketComponent<A & P, OA & P, T, CT, D, UB, DKP>
@@ -346,8 +348,10 @@ export type RocketComponent<
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
-          Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
-            Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
+          OA &
+            Partial<RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>>,
+          // Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
+          //   Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
           OA,
           T,
           CT,

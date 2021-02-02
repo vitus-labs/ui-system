@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import type { ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'

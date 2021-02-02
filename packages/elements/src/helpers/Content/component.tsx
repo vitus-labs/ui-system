@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef, ReactNode, Ref } from 'react'
+import type { StyledComponentPropsWithRef } from 'styled-components'
 import {
   Direction,
   AlignX,
@@ -14,7 +16,7 @@ type Props = {
   gap: Responsive
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
-  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  tag: StyledComponentPropsWithRef<any>
   direction: Direction
   alignX: AlignX
   alignY: AlignY

@@ -21,9 +21,7 @@ const extendCss = config.css`
   }
 `
 
-const beforeContent = ({ hover, ...props }) => {
-  return <span>{hover ? 'normal' : 'hover'}</span>
-}
+const beforeContent = ({ hover }) => <span>{hover ? 'normal' : 'hover'}</span>
 
 export const Example = () => (
   <Element css={extendCss} beforeContent={beforeContent} afterContent="right">
@@ -50,8 +48,6 @@ export const dangerouslySetInner = () => {
       tag="span"
       css={extendCss}
       dangerouslySetInnerHTML={createMarkup()}
-    >
-      child
-    </Element>
+    />
   )
 }
