@@ -58,7 +58,7 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "0.3.1",
+    "@types/lodash": "^4.14.168",
     "@vitus-labs/tools-rollup": "0.3.2-alpha.10",
     "@vitus-labs/tools-typescript": "0.3.0"
   }
