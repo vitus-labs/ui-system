@@ -3,10 +3,10 @@ import { set, get, pick } from '@vitus-labs/core'
 // ------------------------------------------
 // pickTheme props
 // ------------------------------------------
-type PickThemeProps = <T extends Record<string, any>>(
+type PickThemeProps = <T extends Record<string, unknown>>(
   props: T,
   keywords: Array<keyof T>
-) => any
+) => ReturnType<typeof pick>
 const pickThemeProps: PickThemeProps = (props, keywords) =>
   pick(props, keywords)
 
@@ -91,7 +91,17 @@ const optimizeTheme = ({ theme, breakpoints }) => {
   return result
 }
 
-const normalizeTheme = ({ props, keywords, breakpoints }) => {
+type NormalizeTheme = ({
+  props,
+  keywords,
+  breakpoints,
+}: {
+  props: Record<string, unknown>
+  keywords: Array<string>
+  breakpoints: Array<string>
+}) => Record<string, unknown>
+
+const normalizeTheme: NormalizeTheme = ({ props, keywords, breakpoints }) => {
   const theme = calculateTheme({ props, keywords, breakpoints })
   const result = {}
 
@@ -111,7 +121,11 @@ const normalizeTheme = ({ props, keywords, breakpoints }) => {
   return result
 }
 
-const groupByBreakpoint = (props) => {
+type GroupByBreakpoint = (
+  props: Record<string, unknown>
+) => Record<string, unknown>
+
+const groupByBreakpoint: GroupByBreakpoint = (props) => {
   const result = {}
 
   Object.keys(props).forEach((attr) => {
@@ -123,15 +137,27 @@ const groupByBreakpoint = (props) => {
   return result
 }
 
-const isAnyComplexType = (props: object) => {
-  return Object.values(props).some(
+type IsAnyComplexType = (props: Record<string, unknown>) => boolean
+
+const isAnyComplexType: IsAnyComplexType = (props) =>
+  Object.values(props).some(
     (item) => typeof item === 'object' || Array.isArray(item)
   )
-}
 
-export { pickThemeProps, normalizeTheme, groupByBreakpoint }
-
-export default ({ props, keywords, breakpoints }) => {
+type NormalizeAndOptimizeTheme = ({
+  props,
+  keywords,
+  breakpoints,
+}: {
+  props: Record<string, unknown>
+  keywords: Array<string>
+  breakpoints: Array<string>
+}) => Record<string, unknown>
+const normalizeAndOptimizeTheme: NormalizeAndOptimizeTheme = ({
+  props,
+  keywords,
+  breakpoints,
+}) => {
   if (!breakpoints || breakpoints.length === 0) {
     return pick(props, keywords)
   }
@@ -159,3 +185,6 @@ export default ({ props, keywords, breakpoints }) => {
 
   return optimizedTheme
 }
+
+export { pickThemeProps, normalizeTheme, groupByBreakpoint }
+export default normalizeAndOptimizeTheme

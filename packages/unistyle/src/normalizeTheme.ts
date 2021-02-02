@@ -2,7 +2,12 @@
 // --------------------------------------------------------
 // HELPERS
 // --------------------------------------------------------
-const assignToBreakbointKey = (breakpoints) => (value) => {
+type AssignToBreakbointKey = (
+  breakpoints: Array<string>
+) => (value: unknown) => Record<string, unknown>
+const assignToBreakbointKey: AssignToBreakbointKey = (breakpoints) => (
+  value
+) => {
   const result = {}
 
   breakpoints.forEach((item, i) => {
@@ -28,11 +33,12 @@ const handleArrayCb = (arr) => (value, i) => {
 //   breakpoint: Array<string>,
 //   result: Record<string, unknown>
 // ) => Record<string, unknown>
-const handleObjectCb = (obj) => (bp, i, bps, res) => {
-  return obj[bp] || res[bps[i - 1]]
-}
+const handleObjectCb = (obj) => (bp, i, bps, res) => obj[bp] || res[bps[i - 1]]
 
-export const normalizeTheme = (breakpoints) => (props) => {
+type NormalizeTheme = (
+  breakpoints: Array<string>
+) => (props: Record<string, unknown>) => Record<string, unknown>
+export const normalizeTheme: NormalizeTheme = (breakpoints) => (props) => {
   const getBpValues = assignToBreakbointKey(breakpoints)
   const result = {}
 

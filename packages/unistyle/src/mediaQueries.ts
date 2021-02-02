@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { set, isEmpty } from '@vitus-labs/core'
 import { normalizeTheme } from './normalizeTheme'
 
@@ -74,7 +75,7 @@ type TransformTheme = ({
   theme,
   breakpoints,
 }: {
-  theme: object
+  theme: Record<string, unknown>
   breakpoints: Array<string>
 }) => any
 export const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
@@ -113,7 +114,10 @@ export const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
 // --------------------------------------------------------
 // make it responsive
 // --------------------------------------------------------
-type CustomTheme = Record<string, object | number | string | boolean>
+type CustomTheme = Record<
+  string,
+  Record<string, unknown> | number | string | boolean
+>
 type Theme = {
   rootSize: number
   breakpoints?: Record<string, number>

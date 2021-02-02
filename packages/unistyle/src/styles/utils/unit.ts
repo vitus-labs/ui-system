@@ -1,6 +1,9 @@
-import { config } from '@vitus-labs/core'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ReactText } from 'react'
 
-export const stripUnit = (value, unitReturn) => {
+type StripUnit = (value: ReactText, unitReturn?: boolean) => any
+
+export const stripUnit: StripUnit = (value, unitReturn) => {
   const cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/
   if (typeof value !== 'string') return unitReturn ? [value, undefined] : value
   const matchedValue = value.match(cssRegex)
@@ -14,10 +17,20 @@ export const stripUnit = (value, unitReturn) => {
   return value
 }
 
-export const normalizeUnit = ({
+type NormalizeUnit = ({
+  param,
+  rootSize,
+  outputUnit,
+}: {
+  param: any
+  rootSize?: number
+  outputUnit?: 'px' | 'rem' | '%' | string
+}) => string | number
+
+export const normalizeUnit: NormalizeUnit = ({
   param,
   rootSize = 16,
-  outputUnit = config.isWeb ? 'rem' : 'px',
+  outputUnit = __WEB__ ? 'rem' : 'px',
 }) => {
   if (!param && param !== 0) return null
 
@@ -36,10 +49,16 @@ export const normalizeUnit = ({
   return `${value}${outputUnit}`
 }
 
-export const getValueOf = (...values) =>
+type GetValueOf = (...values: Array<unknown>) => number | string | unknown
+export const getValueOf: GetValueOf = (...values) =>
   values.find((value) => typeof value !== 'undefined' && value !== null)
 
-export const value = (rootSize, values, outputUnit?: string) => {
+type Value = (
+  rootSize: number,
+  values: Array<unknown>,
+  outputUnit?: 'px' | 'rem' | '%' | string
+) => string | number
+export const value: Value = (rootSize, values, outputUnit?: string) => {
   const param = getValueOf(...values)
 
   if (Array.isArray(param)) {

@@ -145,7 +145,7 @@ export type Theme = Partial<{
     | 'none'
     | 'initial'
     | 'inherit'
-  objectPosition: any
+  objectPosition: unknown
   order: number | defaults
   resize: 'none' | 'both' | 'horizontal' | 'vertical' | defaults
   fontFamily: string
@@ -187,7 +187,7 @@ export type Theme = Partial<{
   backgroundImg: string | 'none' | defaults
   backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
   backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
-  backgroundPosition: any
+  backgroundPosition: unknown
   backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
   backgroundSize: 'auto' | value | 'cover' | 'contain' | defaults
   borderRadius: value | defaults
@@ -227,7 +227,7 @@ export type Theme = Partial<{
   borderColorRight: borderColor
   outline: string
   transition: string
-  keyframe: any
+  keyframe: unknown
   animation: string
   zIndex: number
   boxShadow: string
