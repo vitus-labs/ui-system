@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
@@ -91,7 +91,7 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    const calculateDirection = () => {
+    const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
       let wrapperDirection: typeof direction
       let wrapperAlignX: typeof alignX = alignX
       let wrapperAlignY: typeof alignY = alignY
@@ -109,13 +109,16 @@ const Component = forwardRef<any, Props>(
       }
 
       return { wrapperDirection, wrapperAlignX, wrapperAlignY }
-    }
-
-    const {
-      wrapperDirection,
-      wrapperAlignX,
-      wrapperAlignY,
-    } = calculateDirection()
+    }, [
+      isSimple,
+      contentDirection,
+      direction,
+      vertical,
+      alignX,
+      alignY,
+      contentAlignY,
+      contentAlignX,
+    ])
 
     return (
       <Wrapper
