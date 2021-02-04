@@ -24,7 +24,7 @@ type ElementType<
 
 const Element: ElementType = ({ children, component, css, ...props }) => {
   const parentCtx = useContext(RowContext)
-  const { colCss, colComponent, ...ctx } = useGridContext({
+  const { colCss, colComponent, columns, gap, size, padding } = useGridContext({
     ...parentCtx,
     ...props,
   })
@@ -34,7 +34,10 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
       {...omit(props, CONTEXT_KEYS)}
       as={component || colComponent}
       $coolgrid={{
-        ...ctx,
+        columns,
+        gap,
+        size,
+        padding,
         extendCss: css || colCss,
       }}
     >

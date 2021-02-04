@@ -46,7 +46,14 @@ const handleValueCb = (value) => () => value
 type NormalizeTheme = (
   breakpoints: Array<string>
 ) => (props: Record<string, unknown>) => Record<string, unknown>
+
 export const normalizeTheme: NormalizeTheme = (breakpoints) => (props) => {
+  const shouldNormalize = Object.values(props).some(
+    (item) => typeof item === 'object' || Array.isArray(item)
+  )
+
+  if (!shouldNormalize) return props
+
   const getBpValues = assignToBreakbointKey(breakpoints)
   const result = {}
 
