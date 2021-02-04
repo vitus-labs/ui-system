@@ -10,7 +10,7 @@ export default {
 
 export const inlineElement = () => (
   <Provider theme={breakpoints}>
-    <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
+    <Wrapper beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
     <Wrapper
