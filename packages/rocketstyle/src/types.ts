@@ -56,7 +56,8 @@ export type ElementType<T extends TObj | unknown = any> = (
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
   | VFC<T>
-) & { IS_ROCKETSTYLE?: true }
+) &
+  Partial<{ IS_ROCKETSTYLE: true }>
 
 // --------------------------------------------------------
 // rocketstyle data object

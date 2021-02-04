@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react'
+import React, { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {

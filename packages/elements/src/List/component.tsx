@@ -1,12 +1,11 @@
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
-import Element from '~/Element'
-import Iterator from '~/helpers/Iterator'
-import { ExtractProps } from '~/types'
+import Element, { Props as ElementProps } from '~/Element'
+import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
 
 type Props = Partial<
-  ExtractProps<typeof Iterator> &
-    ExtractProps<typeof Element> & {
+  IteratorProps &
+    ElementProps & {
       rootElement?: boolean
       label: never
       content: never

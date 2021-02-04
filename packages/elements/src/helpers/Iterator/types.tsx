@@ -2,7 +2,6 @@
 import type {
   ComponentType,
   ForwardRefExoticComponent,
-  VFC,
   ReactText,
   ReactNodeArray,
 } from 'react'
@@ -10,10 +9,9 @@ import type {
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>
 export type SimpleValue = ReactText
-export type ElementType<T extends Record<string, unknown> | unknown = any> =
+export type ElementType<T extends Record<string, unknown> = any> =
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
-  | VFC<T>
 
 export type ExtendedProps = {
   index: number
