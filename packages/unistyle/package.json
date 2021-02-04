@@ -37,6 +37,9 @@
   "bugs": {
     "url": "https://github.com/vitus-labs/core/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vitus-labs/core.git"
