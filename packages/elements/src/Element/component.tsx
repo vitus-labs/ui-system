@@ -91,7 +91,7 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
+    const calculateDirection = () => {
       let wrapperDirection: typeof direction
       let wrapperAlignX: typeof alignX = alignX
       let wrapperAlignY: typeof alignY = alignY
@@ -109,16 +109,13 @@ const Component = forwardRef<any, Props>(
       }
 
       return { wrapperDirection, wrapperAlignX, wrapperAlignY }
-    }, [
-      isSimple,
-      contentDirection,
-      direction,
-      vertical,
-      alignX,
-      alignY,
-      contentAlignY,
-      contentAlignX,
-    ])
+    }
+
+    const {
+      wrapperDirection,
+      wrapperAlignX,
+      wrapperAlignY,
+    } = calculateDirection()
 
     return (
       <Wrapper
