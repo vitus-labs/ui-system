@@ -9,7 +9,7 @@ export default {
 export const button = () => (
   <>
     <Button />
-    <Button primary centered secondary state="primary" />
+    <Button secondary state="secondary" multiple={['centered']} />
   </>
 )
 

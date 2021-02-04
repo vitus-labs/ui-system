@@ -1,4 +1,4 @@
-import { ComponentType, ForwardRefExoticComponent } from 'react'
+import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 
 // --------------------------------------------------------
@@ -54,6 +54,7 @@ export type Dimensions = Record<string, DimensionValue>
 export type ElementType<T extends TObj | unknown = unknown> = (
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
+  | VFC<T>
 ) & { IS_ROCKETSTYLE?: true }
 
 // --------------------------------------------------------
@@ -132,19 +133,19 @@ export type ConfigAttrs<C, DKP> = Partial<{
 
 // ATTRS chaining types
 // --------------------------------------------------------
-export type AttrsCb<A, P, T> = (
-  props: Partial<A & P>,
+export type AttrsCb<A, T> = (
+  props: Partial<A>,
   theme: T,
   helpers: { createElement: typeof renderContent }
-) => Partial<A & P>
+) => { [I in keyof typeof props]: typeof props[I] }
 
-export type AttrsParam<P, A, T> = P extends AttrsCb<A, unknown, T>
-  ? AttrsCb<A, unknown, T>
+export type AttrsParam<P, A, T> = P extends AttrsCb<A, T>
+  ? AttrsCb<A, T>
   : P extends Partial<A>
   ? Partial<A>
   : P extends TObj
-  ? AttrsCb<A, P, T> | Partial<A & P>
-  : unknown
+  ? Partial<A & P> | AttrsCb<A & P, T>
+  : Partial<A>
 
 // THEME chaining types
 // --------------------------------------------------------
@@ -154,7 +155,7 @@ export type ThemeParam<P, T, CT> = P extends ThemeCb<T, CT>
   ? Partial<CT>
   : P extends TObj
   ? ThemeCb<T, CT & P> | Partial<CT & P>
-  : unknown
+  : Partial<CT>
 
 export type ThemeCb<T, CT> = (theme: T, css: Css) => Partial<CT>
 
@@ -188,31 +189,6 @@ type DKPTypes<
     ? { [J in keyof DKP[I] | keyof ReturnParam<P>]: boolean }
     : { [J in keyof DKP[I]]: boolean }
 }
-
-// type DimensionBoolProps<
-//   K extends DimensionValue,
-//   DKP extends TDKP
-// > = DKP[ExtractDimensionKey<K>]
-
-// type ExtractDimensionKeyValues<
-//   K extends DimensionValue,
-//   DKP extends TDKP
-// > = keyof DimensionBoolProps<K, DKP>
-
-// type DimensionKeyProps<K extends DimensionValue, DKP extends TDKP> = Record<
-//   ExtractDimensionKey<K>,
-//   ExtractDimensionMulti<K> extends true
-//     ? Array<ExtractDimensionKeyValues<K, DKP>>
-//     : ExtractDimensionKeyValues<K, DKP>
-// >
-
-// type ExtendDimensionTypes<
-//   K extends DimensionValue,
-//   DKP extends TDKP,
-//   UB extends boolean
-// > = UB extends true
-//   ? DimensionBoolProps<K, DKP> & DimensionKeyProps<K, DKP>
-//   : DimensionKeyProps<K, DKP>
 
 type RocketstyleDimensionTypesHelper<DKP extends TDKP> = Partial<
   {
@@ -262,7 +238,9 @@ export type RocketComponent<
   // attrs
   A extends TObj = DefaultProps,
   // original component props
-  OA extends TObj = DefaultProps,
+  OA extends TObj | unknown = Record<string, never>,
+  // original component props
+  EA extends TObj = Record<string, never>,
   // theme
   T extends TObj | unknown = unknown,
   // custom theme properties
@@ -297,6 +275,7 @@ export type RocketComponent<
       ? DefaultProps<NC, D> & RocketstyleDimensionTypes<D, DKP, UB>
       : A,
     NC extends ElementType ? DefaultProps<NC, D> : OA,
+    EA,
     T,
     CT,
     D,
@@ -308,35 +287,33 @@ export type RocketComponent<
 
   // ATTRS chaining method
   // --------------------------------------------------------
-  attrs: <P extends AttrsCb<A, unknown, T> | Partial<A> | TObj>(
+  attrs: <P extends AttrsCb<A, T> | TObj>(
     param: AttrsParam<P, A, T>
-  ) => P extends AttrsCb<A, unknown, T>
-    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
-    : P extends Partial<A>
-    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+  ) => P extends AttrsCb<A, T> | Partial<A>
+    ? RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
     : P extends TObj
-    ? RocketComponent<A & P, OA & P, T, CT, D, UB, DKP>
-    : RocketComponent<A, OA, T, CT, D, UB, DKP>
+    ? RocketComponent<A & P, OA, EA & P, T, CT, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // THEME chaining method
   // --------------------------------------------------------
-  theme: <P extends ThemeCb<T, CT> | Partial<CT> | TObj>(
+  theme: <P extends ThemeCb<T, CT> | TObj>(
     param: ThemeParam<P, T, CT>
   ) => P extends ThemeCb<T, CT> | Partial<CT>
-    ? RocketComponent<A, OA, T, CT, D, UB, DKP>
+    ? RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
     : P extends TObj
-    ? RocketComponent<A, OA, T, CT & P, D, UB, DKP>
-    : RocketComponent<A, OA, T, CT, D, UB, DKP>
+    ? RocketComponent<A, OA, EA, T, CT & P, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
-  styles: (param: StylesCb) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+  styles: (param: StylesCb) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // COMPOSE chaining method
   // --------------------------------------------------------
   compose: (
     param: Record<string, unknown>
-  ) => RocketComponent<A, OA, T, CT, D, UB, DKP>
+  ) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // Dynamic dimensions chaining method (set dynamically from configuration)
   // --------------------------------------------------------
@@ -349,17 +326,17 @@ export type RocketComponent<
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
           OA &
+            EA &
             Partial<RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>>,
-          // Omit<A, keyof ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>> &
-          //   Partial<ExtendDimensionTypes<K, DKPTypes<K, D, P, DKP>, UB>>,
           OA,
+          EA,
           T,
           CT,
           D,
           UB,
           DKPTypes<K, D, P, DKP>
         >
-      : RocketComponent<A, OA, T, CT, D, UB, DKP>
+      : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
   }
 
 // --------------------------------------------------------
@@ -419,7 +396,11 @@ export type StyleComponent<
 > = (
   props: Configuration<C, D>
 ) => RocketComponent<
-  DefaultProps<C, D>,
+  // extract component props + add default rocketstyle props
+  ExtractProps<C> & DefaultProps<C, D>,
+  // keep original component props
+  ExtractProps<C>,
+  // set default extending props
   DefaultProps<C, D>,
   T,
   CT,
@@ -432,8 +413,7 @@ type DefaultProps<
   C extends ElementType = ElementType,
   D extends Dimensions = Dimensions
 > = Partial<
-  ExtractProps<C> &
-    DefaultPseudoProps &
+  DefaultPseudoProps &
     OnMountCB<
       Pick<
         Configuration<C, D>,

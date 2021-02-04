@@ -5,16 +5,27 @@ import rocketstyle from '~/index'
 // basic Button compoenent
 // --------------------------------------------------------
 const Button = rocketstyle()()({ name: 'Button', component: Element })
-  .attrs<{ href?: string }>(({ href }) => ({
+  .attrs<{ href?: string }>({
+    tag: 'button',
+    label: 'something',
+  })
+  .attrs<{ something?: boolean }>(({ href, content }) => ({
     tag: 'button',
     label: href,
+    contentAlignX: 'block',
+    content,
   }))
-  .attrs(({ href }) => ({
+  .attrs(({ href, content }) => ({
     tag: 'button',
     label: href,
+    contentAlignX: 'block',
+    content,
   }))
-  .attrs<{ anything?: string }>({
+  .attrs({
     tag: 'button',
+    alignX: 'center',
+    contentDirection: 'reverseInline',
+    href: '',
   })
   .theme({
     bgColor: '#0d6efd',
