@@ -3,13 +3,13 @@ import { omit } from '@vitus-labs/core'
 import { CONTEXT_KEYS } from '~/constants'
 import useGridContext from '~/useContext'
 import { RowContext } from '~/context'
-import type { Css, ConfigurationProps } from '~/types'
+import type { ExtendCss, ConfigurationProps } from '~/types'
 import Styled from './styled'
 
 type Props = Partial<{
   children: ReactNode
   component: ComponentType
-  css: Css
+  css: ExtendCss
 }> &
   ConfigurationProps &
   Partial<{

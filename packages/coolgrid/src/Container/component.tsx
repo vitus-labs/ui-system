@@ -3,7 +3,7 @@ import { omit } from '@vitus-labs/core'
 import { CONTEXT_KEYS } from '~/constants'
 import Context from '~/context/ContainerContext'
 import useGridContext from '~/useContext'
-import type { Css, ConfigurationProps, ValueType } from '~/types'
+import type { ExtendCss, ConfigurationProps, ValueType } from '~/types'
 import Styled from './styled'
 
 type Props = Partial<{
@@ -11,9 +11,9 @@ type Props = Partial<{
   width: ValueType
   component: ComponentType
   columns: number
-  css: Css
-  rowCss: Css
-  colCss: Css
+  css: ExtendCss
+  rowCss: ExtendCss
+  colCss: ExtendCss
 }> &
   ConfigurationProps
 

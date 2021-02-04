@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { config, get } from '@vitus-labs/core'
 import { pickThemeProps } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
-import { Obj, Value, Context } from '~/types'
+import { Obj, ValueType, Context } from '~/types'
 
 // ------------------------------------------
 // create grid settings
@@ -11,19 +11,17 @@ type GetGridContext = (
   props: Obj,
   theme: Obj
 ) => {
-  columns?: number
-  containerWidth?: Value | Array<Value> | Record<string, Value>
+  columns?: ValueType
+  containerWidth?: ValueType
 }
 
 export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
-  columns:
-    get(props, 'columns') ||
+  columns: (get(props, 'columns') ||
     get(theme, 'grid.columns') ||
-    get(theme, 'coolgrid.columns'),
-  containerWidth:
-    get(props, 'width') ||
+    get(theme, 'coolgrid.columns')) as ValueType,
+  containerWidth: (get(props, 'width') ||
     get(theme, 'grid.container') ||
-    get(theme, 'coolgrid.container'),
+    get(theme, 'coolgrid.container')) as ValueType,
 })
 
 type UseGridContext = (props: Obj) => Context
