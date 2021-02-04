@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   ComponentType,
   ForwardRefExoticComponent,
@@ -9,9 +10,10 @@ import type {
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>
 export type SimpleValue = ReactText
-export type ElementType<
-  T extends Record<string, unknown> | unknown = unknown
-> = ComponentType<T> | ForwardRefExoticComponent<T> | VFC<T>
+export type ElementType<T extends Record<string, unknown> | unknown = any> =
+  | ComponentType<T>
+  | ForwardRefExoticComponent<T>
+  | VFC<T>
 
 export type ExtendedProps = {
   index: number
