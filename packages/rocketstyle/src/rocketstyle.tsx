@@ -291,6 +291,7 @@ const styleComponent: StyleComponent = (options) => {
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
+    // @ts-ignore
     return cloneAndEnhance(result, options)
   }
 
