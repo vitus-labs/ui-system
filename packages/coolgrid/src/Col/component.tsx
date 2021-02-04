@@ -1,6 +1,5 @@
 import React, { ComponentType, FC, ReactNode, useContext } from 'react'
 import { omit } from '@vitus-labs/core'
-import { extendedCss } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
 import useGridContext from '~/useContext'
 import { RowContext } from '~/context'
@@ -36,7 +35,7 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
       as={component || colComponent}
       $coolgrid={{
         ...ctx,
-        extendCss: extendedCss(css || colCss),
+        extendCss: css || colCss,
       }}
     >
       {children}

@@ -1,6 +1,5 @@
 import React, { ReactNode, FC, ComponentType } from 'react'
 import { omit } from '@vitus-labs/core'
-import { extendedCss } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
 import Context from '~/context/ContainerContext'
 import useGridContext from '~/useContext'
@@ -37,7 +36,7 @@ const Element: ElementType = ({
       as={component}
       $coolgrid={{
         width: width || containerWidth,
-        extendCss: extendedCss(css),
+        extendCss: css,
       }}
     >
       <Context.Provider value={ctx}>{children}</Context.Provider>

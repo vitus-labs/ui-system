@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { config } from '@vitus-labs/core'
 
 type value = 'auto' | 'inital' | 'inherit' | number | string
@@ -145,7 +146,7 @@ export type Theme = Partial<{
     | 'none'
     | 'initial'
     | 'inherit'
-  objectPosition: unknown
+  objectPosition: any
   order: number | defaults
   resize: 'none' | 'both' | 'horizontal' | 'vertical' | defaults
   fontFamily: string
@@ -187,7 +188,7 @@ export type Theme = Partial<{
   backgroundImg: string | 'none' | defaults
   backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
   backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
-  backgroundPosition: unknown
+  backgroundPosition: any
   backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
   backgroundSize: 'auto' | value | 'cover' | 'contain' | defaults
   borderRadius: value | defaults
@@ -227,7 +228,7 @@ export type Theme = Partial<{
   borderColorRight: borderColor
   outline: string
   transition: string
-  keyframe: unknown
+  keyframe: any
   animation: string
   zIndex: number
   boxShadow: string

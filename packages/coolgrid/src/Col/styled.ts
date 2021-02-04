@@ -1,5 +1,9 @@
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  normalizeUnit,
+  extendedCss,
+} from '@vitus-labs/unistyle'
 import { hasValue, isVisible } from '~/utils'
 
 const hasWidth = (size, columns) => hasValue(size) && hasValue(columns)
@@ -71,7 +75,7 @@ const styles = ({ theme, css, rootSize }) => {
           position: fixed;
         `};
 
-    ${extendCss};
+    ${extendedCss(extendCss)};
   `
 }
 

@@ -1,5 +1,9 @@
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  normalizeUnit,
+  extendedCss,
+} from '@vitus-labs/unistyle'
 import { hasValue, isNumber } from '~/utils'
 
 const spacingStyles = ({ gap, gutter }, { rootSize }) => {
@@ -20,7 +24,7 @@ const styles = ({ theme, css, rootSize }) => {
 
   return css`
     ${spacingStyles({ gap, gutter }, { rootSize })};
-    ${extendCss};
+    ${extendedCss(extendCss)};
   `
 }
 

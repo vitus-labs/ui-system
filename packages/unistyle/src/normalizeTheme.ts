@@ -4,15 +4,21 @@
 // --------------------------------------------------------
 type AssignToBreakbointKey = (
   breakpoints: Array<string>
-) => (value: unknown) => Record<string, unknown>
+) => (
+  value: (
+    breakpoint: string,
+    i: number,
+    breakpoints: Array<string>,
+    result: Record<string, unknown>
+  ) => void
+) => Record<string, unknown>
 const assignToBreakbointKey: AssignToBreakbointKey = (breakpoints) => (
   value
 ) => {
   const result = {}
 
   breakpoints.forEach((item, i) => {
-    result[item] =
-      typeof value === 'function' ? value(item, i, breakpoints, result) : value
+    result[item] = value(item, i, breakpoints, result)
   })
 
   return result
@@ -35,6 +41,8 @@ const handleArrayCb = (arr) => (value, i) => {
 // ) => Record<string, unknown>
 const handleObjectCb = (obj) => (bp, i, bps, res) => obj[bp] || res[bps[i - 1]]
 
+const handleValueCb = (value) => () => value
+
 type NormalizeTheme = (
   breakpoints: Array<string>
 ) => (props: Record<string, unknown>) => Record<string, unknown>
@@ -55,7 +63,7 @@ export const normalizeTheme: NormalizeTheme = (breakpoints) => (props) => {
     }
     // if any other value
     else {
-      result[key] = getBpValues(value)
+      result[key] = getBpValues(handleValueCb(value))
     }
   })
 

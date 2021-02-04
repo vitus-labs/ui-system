@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, ComponentType, useContext } from 'react'
 import { omit } from '@vitus-labs/core'
-import { extendedCss } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
 import useGridContext from '~/useContext'
 import { ContainerContext, RowContext } from '~/context'
@@ -37,7 +36,7 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
       columns,
       gap,
       gutter,
-      extendCss: extendedCss(css || rowCss),
+      extendCss: css || rowCss,
     },
   }
 
