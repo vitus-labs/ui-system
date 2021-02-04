@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 
@@ -51,7 +52,7 @@ export type Css = typeof config.css
 export type Style = ReturnType<Css>
 export type OptionStyles = Array<(css: Css) => ReturnType<typeof css>>
 export type Dimensions = Record<string, DimensionValue>
-export type ElementType<T extends TObj | unknown = unknown> = (
+export type ElementType<T extends TObj | unknown = any> = (
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
   | VFC<T>
