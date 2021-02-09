@@ -184,6 +184,7 @@ export type Theme = Partial<{
   listStyleImage: 'none' | string | defaults
   listStylePosition: string
   color: string
+  background: string
   backgroundColor: string | 'transparent' | defaults
   backgroundImg: string | 'none' | defaults
   backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
@@ -226,6 +227,8 @@ export type Theme = Partial<{
   borderColorBottom: borderColor
   borderColorLeft: borderColor
   borderColorRight: borderColor
+  clipPath: string
+  inset: string
   outline: string
   transition: string
   keyframe: any

@@ -105,6 +105,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => css`
 
   /* COLORS attributes */
   color: ${t.color};
+  background: ${t.background};
   background-color: ${t.backgroundColor};
   ${t.backgroundImg &&
   css`
@@ -182,6 +183,8 @@ const styles: Styles = ({ theme: t, css, rootSize }) => css`
   border-right-color: ${t.borderColorRight || t.borderColorX};
 
   /* OTHER ATTRIBUTES */
+  clip-path: ${t.clipPath};
+  inset: ${t.inset};
   outline: ${t.outline};
   transition: ${t.transition};
   animation: ${t.keyframe} ${t.animation};
