@@ -1,28 +1,23 @@
-import React, { ComponentType, FC, ReactNode, useContext } from 'react'
-import { omit } from '@vitus-labs/core'
-import { CONTEXT_KEYS } from '~/constants'
+import React, { useContext } from 'react'
+import { omitCtxKeys } from '~/utils'
 import useGridContext from '~/useContext'
 import { RowContext } from '~/context'
-import type { ExtendCss, ConfigurationProps } from '~/types'
+import type { ElementType } from '~/types'
 import Styled from './styled'
 
-type Props = Partial<{
-  children: ReactNode
-  component: ComponentType
-  css: ExtendCss
-}> &
-  ConfigurationProps &
-  Partial<{
-    columns: never
-    gap: never
-    gutter: never
-  }>
-
-type ElementType<
-  P extends Record<string, unknown> = Record<string, unknown>
-> = FC<P & Props>
-
-const Element: ElementType = ({ children, component, css, ...props }) => {
+const Element: ElementType<
+  [
+    'containerWidth',
+    'width',
+    'rowComponent',
+    'rowCss',
+    'colCss',
+    'colComponent',
+    'columns',
+    'gap',
+    'guter'
+  ]
+> = ({ children, component, css, ...props }) => {
   const parentCtx = useContext(RowContext)
   const { colCss, colComponent, columns, gap, size, padding } = useGridContext({
     ...parentCtx,
@@ -31,7 +26,7 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
 
   return (
     <Styled
-      {...omit(props, CONTEXT_KEYS)}
+      {...omitCtxKeys(props)}
       as={component || colComponent}
       $coolgrid={{
         columns,

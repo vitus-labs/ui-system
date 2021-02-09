@@ -1,24 +1,13 @@
-import React, { FC, ReactNode, ComponentType, useContext } from 'react'
-import { omit } from '@vitus-labs/core'
-import { CONTEXT_KEYS } from '~/constants'
+import React, { useContext } from 'react'
+import { omitCtxKeys } from '~/utils'
 import useGridContext from '~/useContext'
 import { ContainerContext, RowContext } from '~/context'
-import type { ExtendCss, ConfigurationProps } from '~/types'
+import type { ElementType } from '~/types'
 import Styled from './styled'
 
-type Props = Partial<
-  {
-    children: ReactNode
-    component: ComponentType
-    css: ExtendCss
-  } & ConfigurationProps
->
-
-type ElementType<
-  P extends Record<string, unknown> = Record<string, unknown>
-> = FC<P & Props>
-
-const Element: ElementType = ({ children, component, css, ...props }) => {
+const Element: ElementType<
+  ['containerWidth', 'width', 'rowComponent', 'rowCss']
+> = ({ children, component, css, contentAlignX: alignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
   const {
     columns,
@@ -26,13 +15,15 @@ const Element: ElementType = ({ children, component, css, ...props }) => {
     gutter,
     rowComponent,
     rowCss,
+    contentAlignX,
     ...ctx
   } = useGridContext({ ...parentCtx, ...props })
 
   const finalProps = {
-    ...omit(props, CONTEXT_KEYS),
+    ...omitCtxKeys(props),
     as: component || rowComponent,
     $coolgrid: {
+      contentAlignX: alignX || contentAlignX,
       columns,
       gap,
       gutter,

@@ -11,4 +11,5 @@ export const CONTEXT_KEYS = [
   'colComponent',
   'rowCss',
   'rowComponent',
+  'contentAlignX',
 ]

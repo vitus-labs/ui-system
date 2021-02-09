@@ -6,6 +6,16 @@ import {
 } from '@vitus-labs/unistyle'
 import { hasValue, isNumber } from '~/utils'
 
+type ContentAlignValuesKeys = keyof typeof contentAlignValues
+const contentAlignValues = {
+  left: 'flex-start',
+  right: 'flex-end',
+  center: 'center',
+  spaceAround: 'space-around',
+  spaceBetween: 'space-between',
+  spaceEvenly: 'space-evenly',
+}
+
 const spacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!hasValue(gap)) return ''
 
@@ -19,11 +29,20 @@ const spacingStyles = ({ gap, gutter }, { rootSize }) => {
   `
 }
 
+const contentAlign = (align: ContentAlignValuesKeys) => {
+  if (!align) return ''
+
+  return config.css`
+    justify-content: ${contentAlignValues[align]};
+  `
+}
+
 const styles = ({ theme, css, rootSize }) => {
-  const { gap, gutter, extendCss } = theme
+  const { gap, gutter, contentAlignX, extendCss } = theme
 
   return css`
     ${spacingStyles({ gap, gutter }, { rootSize })};
+    ${contentAlign(contentAlignX)};
     ${extendedCss(extendCss)};
   `
 }

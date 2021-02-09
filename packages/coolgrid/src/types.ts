@@ -1,9 +1,5 @@
-import { ReactText, ComponentType } from 'react'
+import { FC, ReactText, ComponentType, HTMLProps } from 'react'
 import { extendedCss } from '@vitus-labs/unistyle'
-
-// export type ElementType<
-//   P extends Record<string, unknown> = Record<string, unknown>
-// > = FC<P & Props>
 
 type CreateValueType<T> = T | Record<string, T> | Array<T>
 
@@ -14,6 +10,13 @@ export type ExtendCss = Css | Record<string, Css> | Array<Css>
 
 export type ValueType = CreateValueType<number>
 export type ContainerWidth = CreateValueType<Value>
+export type ContentAlignX =
+  | 'center'
+  | 'left'
+  | 'right'
+  | 'spaceAround'
+  | 'spaceBetween'
+  | 'spaceEvenly'
 
 export type ConfigurationProps = Partial<{
   size: ValueType
@@ -21,14 +24,25 @@ export type ConfigurationProps = Partial<{
   gap: ValueType
   gutter: ValueType
   columns: ValueType
-}>
-
-export type CtxCss = {
   colCss: ExtendCss
   rowCss: ExtendCss
   colComponent: ComponentType
   rowComponent: ComponentType
+  contentAlignX: ContentAlignX
   containerWidth: ValueType
-}
+  width: ValueType
+}>
 
-export type Context = Partial<ConfigurationProps & CtxCss>
+export type ComponentProps = ConfigurationProps &
+  Partial<{
+    component: ComponentType
+    css: ExtendCss
+  }>
+
+export type ElementType<O extends Array<string>> = FC<
+  Omit<HTMLProps<HTMLElement>, keyof ComponentProps> &
+    Omit<ComponentProps, O[number]> &
+    Record<string, unknown>
+>
+
+export type Context = Partial<ConfigurationProps>
