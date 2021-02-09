@@ -189,7 +189,7 @@ const Component: FC<Props> & Static = (props: Props) => {
         ? injectWrapItemProps(item, extendedProps)
         : {}
 
-      if (Wrapper) {
+      if (Wrapper && !itemComponent) {
         return (
           <Wrapper key={key} {...finalWrapProps}>
             {renderedElement(renderItem, finalItemProps)}
