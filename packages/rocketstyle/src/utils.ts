@@ -28,17 +28,11 @@ export const calculateChainOptions: CalculateChainOptions = (
   args,
   deepMerge = true
 ) => {
-  let result = {}
+  if (isEmpty(options)) return {}
 
-  if (isEmpty(options)) return result
+  const chain = deepMerge ? merge : (obj1, obj2) => ({ ...obj1, ...obj2 })
 
-  options.forEach((item) => {
-    result = deepMerge
-      ? merge(result, item(...args))
-      : { ...result, ...item(...args) }
-  })
-
-  return result
+  return options.reduce((acc, item) => chain(acc, item(...args)), {})
 }
 
 // --------------------------------------------------------

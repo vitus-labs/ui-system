@@ -8,8 +8,13 @@ export default {
 
 export const button = () => (
   <>
-    <Button />
-    <Button secondary state="secondary" multiple={['centered']} />
+    <Button label="Button" />
+    <Button
+      secondary
+      state="secondary"
+      multiple={['centered']}
+      label="Button"
+    />
   </>
 )
 

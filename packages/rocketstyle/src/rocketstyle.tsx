@@ -126,17 +126,14 @@ const styleComponent: StyleComponent = (options) => {
       ref
     ) => {
       // pseudo hook to detect states hover / pressed / focus
-      const pseudo = usePseudoState(
-        {
-          onMouseEnter,
-          onMouseLeave,
-          onMouseUp,
-          onMouseDown,
-          onFocus,
-          onBlur,
-        },
-        options.provider
-      )
+      const pseudo = usePseudoState({
+        onMouseEnter,
+        onMouseLeave,
+        onMouseUp,
+        onMouseDown,
+        onFocus,
+        onBlur,
+      })
 
       const updatedState = { ...$rocketstate, pseudo: pseudo.state }
 
@@ -196,20 +193,16 @@ const styleComponent: StyleComponent = (options) => {
 
       // first we need to calculate final props which are
       // being returned by using `attr` chaining method
-      const calculatedAttrs = useMemo(
-        () =>
-          calculateChainOptions(
-            options.attrs,
-            [
-              props,
-              theme,
-              {
-                renderContent,
-              },
-            ],
-            false
-          ),
-        [theme, props]
+      const calculatedAttrs = calculateChainOptions(
+        options.attrs,
+        [
+          props,
+          theme,
+          {
+            renderContent,
+          },
+        ],
+        false
       )
 
       // get final props which are
