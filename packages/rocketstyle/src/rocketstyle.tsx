@@ -1,5 +1,3 @@
-import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import React, {
   createContext,
   forwardRef,
@@ -7,6 +5,8 @@ import React, {
   useMemo,
   useContext,
 } from 'react'
+import hoistNonReactStatics from 'hoist-non-react-statics'
+import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
@@ -219,28 +219,20 @@ const styleComponent: StyleComponent = (options) => {
       }
 
       // final component state including pseudo state
-      const rocketstate: Record<string, unknown> = useMemo(
-        () =>
-          calculateStyledAttrs({
-            props: mergeProps,
-            multiKeys: options.multiKeys,
-            dimensions,
-            useBooleans: options.useBooleans,
-          }),
-        [mergeProps, __ROCKETSTYLE__]
-      )
+      const rocketstate: Record<string, unknown> = calculateStyledAttrs({
+        props: mergeProps,
+        multiKeys: options.multiKeys,
+        dimensions,
+        useBooleans: options.useBooleans,
+      })
 
       // calculated final theme which will be passed to our styled component
       // under $rocketstyle prop
-      const rocketstyle = useMemo(
-        () =>
-          calculateTheme({
-            props: rocketstate,
-            themes,
-            baseTheme,
-          }),
-        [rocketstate, __ROCKETSTYLE__]
-      )
+      const rocketstyle = calculateTheme({
+        props: rocketstate,
+        themes,
+        baseTheme,
+      })
 
       const passProps = {
         // this removes styling state from props and passes its state

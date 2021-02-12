@@ -171,7 +171,10 @@ export const makeItResponsive: MakeItResponsive = ({
   let helperTheme = internalTheme
 
   if (normalize) {
-    helperTheme = normalizeTheme(sortedBreakpoints)(internalTheme)
+    helperTheme = normalizeTheme({
+      theme: internalTheme,
+      breakpoints: sortedBreakpoints,
+    })
   }
 
   const transformedTheme = transformTheme({

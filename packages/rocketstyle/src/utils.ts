@@ -1,6 +1,7 @@
 import merge from 'lodash.merge'
 import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
+
 // --------------------------------------------------------
 // chain options
 // --------------------------------------------------------

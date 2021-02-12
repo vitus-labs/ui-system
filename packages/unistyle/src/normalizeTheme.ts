@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+
 // --------------------------------------------------------
 // HELPERS
 // --------------------------------------------------------
@@ -43,21 +44,26 @@ const handleObjectCb = (obj) => (bp, i, bps, res) => obj[bp] || res[bps[i - 1]]
 
 const handleValueCb = (value) => () => value
 
-type NormalizeTheme = (
-  breakpoints: Array<string>
-) => (props: Record<string, unknown>) => Record<string, unknown>
-
-export const normalizeTheme: NormalizeTheme = (breakpoints) => (props) => {
-  const shouldNormalize = Object.values(props).some(
+const shouldNormalize = (props) =>
+  Object.values(props).some(
     (item) => typeof item === 'object' || Array.isArray(item)
   )
 
-  if (!shouldNormalize) return props
+type NormalizeTheme = ({
+  theme,
+  breakpoints,
+}: {
+  theme: Record<string, unknown>
+  breakpoints: Array<string>
+}) => Record<string, unknown>
+
+export const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
+  if (!shouldNormalize(shouldNormalize)) return theme
 
   const getBpValues = assignToBreakbointKey(breakpoints)
   const result = {}
 
-  Object.entries(props).forEach(([key, value]) => {
+  Object.entries(theme).forEach(([key, value]) => {
     if (value == null) return
 
     // if it's an array

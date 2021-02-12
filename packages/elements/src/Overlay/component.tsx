@@ -239,10 +239,18 @@ const component: FC<Props> = ({
 
     // ADD POSITION STYLES TO CONTENT
     contentRef.current.style.position = overlayPosition.position
-    contentRef.current.style.top = value(rootSize, [overlayPosition.top])
-    contentRef.current.style.bottom = value(rootSize, [overlayPosition.bottom])
-    contentRef.current.style.left = value(rootSize, [overlayPosition.left])
-    contentRef.current.style.right = value(rootSize, [overlayPosition.right])
+    contentRef.current.style.top = value(rootSize, [
+      overlayPosition.top,
+    ]) as string
+    contentRef.current.style.bottom = value(rootSize, [
+      overlayPosition.bottom,
+    ]) as string
+    contentRef.current.style.left = value(rootSize, [
+      overlayPosition.left,
+    ]) as string
+    contentRef.current.style.right = value(rootSize, [
+      overlayPosition.right,
+    ]) as string
   }
 
   const handleDocumentClick = (e) => {
