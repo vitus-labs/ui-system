@@ -112,13 +112,17 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateStylingAttrs = ({ props, dimensions }) =>
-    calculateStyledAttrs({
+  const calculateStylingAttrs = ({ props, dimensions }) => {
+    console.log(props)
+    console.log(dimensions)
+
+    return calculateStyledAttrs({
       props,
       dimensions,
       multiKeys: options.multiKeys,
       useBooleans: options.useBooleans,
     })
+  }
 
   const ProviderComponent = forwardRef<any, any>(
     (
