@@ -14,6 +14,7 @@ import {
   calculateStyles,
   calculateStyledAttrs,
   calculateTheme,
+  pickStyledProps,
 } from './utils'
 import {
   RESERVED_OR_KEYS,
@@ -112,17 +113,16 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateStylingAttrs = ({ props, dimensions }) => {
-    console.log(props)
-    console.log(dimensions)
-
-    return calculateStyledAttrs({
-      props,
-      dimensions,
-      multiKeys: options.multiKeys,
-      useBooleans: options.useBooleans,
-    })
-  }
+  const calculateStylingAttrs = moize(
+    ({ props, dimensions }) =>
+      calculateStyledAttrs({
+        props,
+        dimensions,
+        multiKeys: options.multiKeys,
+        useBooleans: options.useBooleans,
+      }),
+    { isSerialized: true, maxSize: 20 }
+  )
 
   const ProviderComponent = forwardRef<any, any>(
     (
@@ -233,7 +233,7 @@ const styleComponent: StyleComponent = (options) => {
 
       // final component state including pseudo state
       const rocketstate: Record<string, unknown> = calculateStylingAttrs({
-        props: mergeProps,
+        props: pickStyledProps(mergeProps, reservedPropNames),
         dimensions,
       })
 
@@ -248,7 +248,7 @@ const styleComponent: StyleComponent = (options) => {
       const passProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, [...reservedPropNames, 'pseudo']),
+        ...omit(mergeProps, [...Object.keys(reservedPropNames), 'pseudo']),
         ref,
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,

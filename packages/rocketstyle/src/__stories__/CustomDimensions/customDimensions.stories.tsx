@@ -8,7 +8,7 @@ export default {
 
 export const customDimensions = () => (
   <>
-    <Button primary />
+    <Button secondary primary />
     <Button secondary />
     <Button color="primary" />
     <Button color="secondary" />

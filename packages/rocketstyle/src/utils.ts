@@ -3,6 +3,23 @@ import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
 // --------------------------------------------------------
+// pick styled props
+// --------------------------------------------------------
+type PickStyledProps = (
+  props: Record<string, unknown>,
+  keywords: Record<string, true>
+) => Partial<typeof props>
+export const pickStyledProps: PickStyledProps = (props, keywords) => {
+  const result = {}
+
+  Object.entries(props).forEach(([key, value]) => {
+    if (keywords[key]) result[key] = value
+  })
+
+  return result
+}
+
+// --------------------------------------------------------
 // chain options
 // --------------------------------------------------------
 export const chainOptions = (opts, defaultOpts = []) => {

@@ -64,7 +64,7 @@ export type ElementType<T extends TObj | unknown = any> = (
 // --------------------------------------------------------
 export type __ROCKETSTYLE__ = {
   dimensions: Record<string, string>
-  reservedPropNames: Array<string>
+  reservedPropNames: Record<string, true>
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }

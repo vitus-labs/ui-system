@@ -14,13 +14,13 @@ const calculateDimensionsMap = (theme, useBooleans) =>
   Object.entries(theme).reduce(
     (accumulator, [key, value]) => {
       const { keysMap, keywords } = accumulator
-      keywords.push(key)
+      keywords[key] = true
 
       Object.entries(value).forEach(([itemKey, itemValue]) => {
         if (!isValidKey(itemValue)) return
 
         if (useBooleans) {
-          keywords.push(itemKey)
+          keywords[itemKey] = true
         }
 
         set(keysMap, [key, itemKey], true)
@@ -28,7 +28,7 @@ const calculateDimensionsMap = (theme, useBooleans) =>
 
       return accumulator
     },
-    { keysMap: {}, keywords: [] }
+    { keysMap: {}, keywords: {} }
   )
 
 const calculateDimensionThemes = (theme, options) => {
