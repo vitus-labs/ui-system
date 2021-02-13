@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useContext,
 } from 'react'
+import moize from 'moize'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import {
@@ -110,6 +111,17 @@ const styleComponent: StyleComponent = (options) => {
     : styled(component)`
         ${calculateStyles(styles, config.css)}
       `
+
+  const calculateStylingAttrs = moize(
+    ({ props, dimensions }) =>
+      calculateStyledAttrs({
+        props,
+        dimensions,
+        multiKeys: options.multiKeys,
+        useBooleans: options.useBooleans,
+      }),
+    { maxSize: 50, isSerialized: true }
+  )
 
   const ProviderComponent = forwardRef<any, any>(
     (
@@ -219,11 +231,9 @@ const styleComponent: StyleComponent = (options) => {
       }
 
       // final component state including pseudo state
-      const rocketstate: Record<string, unknown> = calculateStyledAttrs({
+      const rocketstate: Record<string, unknown> = calculateStylingAttrs({
         props: mergeProps,
-        multiKeys: options.multiKeys,
         dimensions,
-        useBooleans: options.useBooleans,
       })
 
       // calculated final theme which will be passed to our styled component
