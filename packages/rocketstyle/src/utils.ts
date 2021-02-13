@@ -1,4 +1,5 @@
 import merge from 'lodash.merge'
+import moize from 'moize'
 import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
@@ -92,61 +93,66 @@ export const splitProps: SplitProps = (props, dimensions) => {
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
-export const calculateStyledAttrs = ({
-  props,
-  dimensions,
-  useBooleans,
-  multiKeys,
-}) => {
-  const result = {}
+export const calculateStyledAttrs = moize(
+  ({ props, dimensions, useBooleans, multiKeys }) => {
+    const result = {}
 
-  // (1) find dimension keys values & initialize
-  // object with possible options
-  Object.keys(dimensions).forEach((item) => {
-    const pickedProp = props[item]
-    const valueTypes = ['number', 'string']
+    console.log('calculate')
 
-    // if the property is mutli key, allow assign array as well
-    if (multiKeys[item] && Array.isArray(pickedProp)) {
-      result[item] = pickedProp
-    } else {
-      // assign when it's only a string or number otherwise it's considered
-      // as invalid param
-      result[item] = valueTypes.includes(typeof pickedProp)
-        ? pickedProp
-        : undefined
-    }
-  })
+    // (1) find dimension keys values & initialize
+    // object with possible options
+    Object.keys(dimensions).forEach((item) => {
+      const pickedProp = props[item]
+      const valueTypes = ['number', 'string']
 
-  // (2) if booleans are being used let's find the rest
-  if (useBooleans) {
-    Object.entries(result).forEach(([key, value]) => {
-      const isMultiKey = multiKeys[key]
-
-      // when value in result is not assigned yet
-      if (!value) {
-        let newDimensionValue
-        const keywords = Object.keys(dimensions[key])
-        const propsKeys = Object.keys(props)
-
-        if (isMultiKey) {
-          newDimensionValue = propsKeys.filter((key) => keywords.includes(key))
-        } else {
-          // reverse props to guarantee the last one will have
-          // a priority over previous ones
-          newDimensionValue = propsKeys.reverse().find((key) => {
-            if (keywords.includes(key) && props[key]) return key
-            return false
-          })
-        }
-
-        result[key] = newDimensionValue
+      // if the property is mutli key, allow assign array as well
+      if (multiKeys[item] && Array.isArray(pickedProp)) {
+        result[item] = pickedProp
+      } else {
+        // assign when it's only a string or number otherwise it's considered
+        // as invalid param
+        result[item] = valueTypes.includes(typeof pickedProp)
+          ? pickedProp
+          : undefined
       }
     })
-  }
 
-  return result
-}
+    // (2) if booleans are being used let's find the rest
+    if (useBooleans) {
+      Object.entries(result).forEach(([key, value]) => {
+        const isMultiKey = multiKeys[key]
+
+        // when value in result is not assigned yet
+        if (!value) {
+          let newDimensionValue
+          const keywords = Object.keys(dimensions[key])
+          const propsKeys = Object.keys(props)
+
+          if (isMultiKey) {
+            newDimensionValue = propsKeys.filter((key) =>
+              keywords.includes(key)
+            )
+          } else {
+            // reverse props to guarantee the last one will have
+            // a priority over previous ones
+            newDimensionValue = propsKeys.reverse().find((key) => {
+              if (keywords.includes(key) && props[key]) return key
+              return false
+            })
+          }
+
+          result[key] = newDimensionValue
+        }
+      })
+    }
+
+    return result
+  },
+  {
+    isSerialized: true,
+    maxSize: 100,
+  }
+)
 
 // --------------------------------------------------------
 // generate theme
