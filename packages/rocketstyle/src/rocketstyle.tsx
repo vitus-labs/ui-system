@@ -114,13 +114,15 @@ const styleComponent: StyleComponent = (options) => {
       `
 
   const calculateStylingAttrs = moize(
-    ({ props, dimensions }) =>
-      calculateStyledAttrs({
+    ({ props, dimensions }) => {
+      console.log('calculateStylingAttrs')
+      return calculateStyledAttrs({
         props,
         dimensions,
         multiKeys: options.multiKeys,
         useBooleans: options.useBooleans,
-      }),
+      })
+    },
     { isSerialized: true, maxSize: 20 }
   )
 

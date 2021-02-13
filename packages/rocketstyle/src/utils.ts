@@ -1,4 +1,5 @@
 import merge from 'lodash.merge'
+import moize from 'moize'
 import { config, isEmpty } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
@@ -181,27 +182,28 @@ type CalculateTheme = <
   baseTheme: B
 }) => B & Record<string, unknown>
 
-export const calculateTheme: CalculateTheme = ({
-  props,
-  themes,
-  baseTheme,
-}) => {
-  // generate final theme which will be passed to styled component
-  let finalTheme = { ...baseTheme }
+export const calculateTheme: CalculateTheme = moize(
+  ({ props, themes, baseTheme }) => {
+    // generate final theme which will be passed to styled component
+    let finalTheme = { ...baseTheme }
 
-  Object.entries(props).forEach(
-    ([key, value]: [string, string | Array<string>]) => {
-      const keyTheme = themes[key]
+    console.log('calculateTheme')
 
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          finalTheme = merge(finalTheme, keyTheme[item])
-        })
-      } else {
-        finalTheme = merge(finalTheme, keyTheme[value])
+    Object.entries(props).forEach(
+      ([key, value]: [string, string | Array<string>]) => {
+        const keyTheme = themes[key]
+
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            finalTheme = merge(finalTheme, keyTheme[item])
+          })
+        } else {
+          finalTheme = merge(finalTheme, keyTheme[value])
+        }
       }
-    }
-  )
+    )
 
-  return finalTheme
-}
+    return finalTheme
+  },
+  { isSerialized: true, maxSize: 1000 }
+)
