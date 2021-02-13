@@ -114,8 +114,6 @@ export const calculateStyledAttrs = moize(
   ({ props, dimensions, useBooleans, multiKeys }) => {
     const result = {}
 
-    console.log('calculateStyledAttrs')
-
     // (1) find dimension keys values & initialize
     // object with possible options
     Object.keys(dimensions).forEach((item) => {
