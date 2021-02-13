@@ -17,31 +17,19 @@ export default {
 export const definedColumnSizesOnEachColumnComponent = () => (
   <Container colCss={columnCss}>
     <Row gap={0}>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
-      <Col xs={12} md={4} lg={6}>
-        xs:12, md:4, lg:6
-      </Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
+      <Col size={{ xs: 12, md: 4, lg: 6 }}>xs:12, md:4, lg:6</Col>
     </Row>
   </Container>
 )
 
 export const definedColumnSizesOnRowComponent = () => (
   <Container colCss={columnCss}>
-    <Row gap={0} xs={12} md={4} lg={6}>
+    <Row gap={0} size={{ xs: 12, md: 4, lg: 6 }}>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
@@ -49,7 +37,7 @@ export const definedColumnSizesOnRowComponent = () => (
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
     </Row>
-    <Row gap={10} xs={12} md={4} lg={6}>
+    <Row gap={10} size={{ xs: 12, md: 4, lg: 6 }}>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
@@ -61,7 +49,7 @@ export const definedColumnSizesOnRowComponent = () => (
 )
 
 export const definedColumnSizesOnContainerComponent = () => (
-  <Container colCss={columnCss} xs={12} md={4} lg={6}>
+  <Container colCss={columnCss} size={{ xs: 12, md: 4, lg: 6 }}>
     <Row gap={0} xs={6}>
       <Col size={4}>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
@@ -70,7 +58,7 @@ export const definedColumnSizesOnContainerComponent = () => (
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
     </Row>
-    <Row gap={10} xs={12} md={4} lg={6}>
+    <Row gap={10} size={{ xs: 12, md: 4, lg: 6 }}>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
@@ -82,7 +70,7 @@ export const definedColumnSizesOnContainerComponent = () => (
 )
 
 export const overriding = () => (
-  <Container xs={12} md={4} lg={6} colCss={columnCss}>
+  <Container size={{ xs: 12, md: 4, lg: 6 }} colCss={columnCss}>
     <Row gap={0}>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
@@ -108,9 +96,7 @@ export const overriding = () => (
 
 export const responsivePaddings = () => (
   <Container
-    xs={12}
-    md={4}
-    lg={6}
+    size={{ xs: 12, md: 4, lg: 6 }}
     colCss={columnCss}
     padding={{ xs: 30, md: 10, lg: 60 }}
   >

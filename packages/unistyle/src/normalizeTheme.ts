@@ -58,7 +58,7 @@ type NormalizeTheme = ({
 }) => Record<string, unknown>
 
 export const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
-  if (!shouldNormalize(shouldNormalize)) return theme
+  if (!shouldNormalize(theme)) return theme
 
   const getBpValues = assignToBreakbointKey(breakpoints)
   const result = {}

@@ -7,7 +7,7 @@ import Styled from './styled'
 
 const Element: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
-> = ({ children, component, css, contentAlignX: alignX, ...props }) => {
+> = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
   const {
     columns,
@@ -23,7 +23,7 @@ const Element: ElementType<
     ...omitCtxKeys(props),
     as: component || rowComponent,
     $coolgrid: {
-      contentAlignX: alignX || contentAlignX,
+      contentAlignX: rowAlignX || contentAlignX,
       columns,
       gap,
       gutter,
