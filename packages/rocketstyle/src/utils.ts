@@ -100,8 +100,6 @@ export const calculateStyledAttrs = ({
 }) => {
   const result = {}
 
-  console.log('calculated')
-
   // (1) find dimension keys values & initialize
   // object with possible options
   Object.keys(dimensions).forEach((item) => {
