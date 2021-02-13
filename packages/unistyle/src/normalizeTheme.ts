@@ -84,5 +84,5 @@ export const normalizeTheme: NormalizeTheme = moize(
 
     return result
   },
-  { isSerialized: true, maxSize: 100 }
+  { isSerialized: true, maxSize: 800 }
 )

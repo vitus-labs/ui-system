@@ -114,7 +114,7 @@ export const transformTheme: TransformTheme = moize(
   },
   {
     isSerialized: true,
-    maxSize: 100,
+    maxSize: 800,
   }
 )
 
