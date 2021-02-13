@@ -112,16 +112,13 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateStylingAttrs = moize(
-    ({ props, dimensions }) =>
-      calculateStyledAttrs({
-        props,
-        dimensions,
-        multiKeys: options.multiKeys,
-        useBooleans: options.useBooleans,
-      }),
-    { maxSize: 50, isSerialized: true }
-  )
+  const calculateStylingAttrs = ({ props, dimensions }) =>
+    calculateStyledAttrs({
+      props,
+      dimensions,
+      multiKeys: options.multiKeys,
+      useBooleans: options.useBooleans,
+    })
 
   const ProviderComponent = forwardRef<any, any>(
     (
