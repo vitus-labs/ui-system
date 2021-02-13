@@ -8,6 +8,7 @@ module.exports = {
       hoistNonReactStatics: 'hoist-non-react-statics',
       lodash: 'lodash',
       merge: 'lodash.merge',
+      moize: 'moize',
     },
   },
   stories: {
