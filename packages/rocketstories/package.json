@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/rocketstories",
-  "version": "0.10.9-alpha.3",
+  "version": "0.10.9-alpha.4",
   "private": true,
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
@@ -59,12 +59,12 @@
     "react": ">= 16.7"
   },
   "devDependencies": {
-    "@vitus-labs/core": "^0.10.9-alpha.3",
-    "@vitus-labs/elements": "^0.10.9-alpha.3",
+    "@vitus-labs/core": "^0.10.9-alpha.4",
+    "@vitus-labs/elements": "^0.10.9-alpha.4",
     "@vitus-labs/tools-babel": "^0.6.0",
     "@vitus-labs/tools-rollup": "^0.6.0",
     "@vitus-labs/tools-storybook": "^0.6.0",
     "@vitus-labs/tools-typescript": "^0.6.0",
-    "@vitus-labs/unistyle": "^0.10.9-alpha.3"
+    "@vitus-labs/unistyle": "^0.10.9-alpha.4"
   }
 }
