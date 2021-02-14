@@ -20,8 +20,10 @@ export const button = () => (
 
 export const childrenStyling = () => (
   <>
-    <ProviderButton>
-      <ButtonConsumer>inner text component</ButtonConsumer>
+    <ProviderButton gap={16} beforeContent="icon" afterContent="icon">
+      <ButtonConsumer gap={16} beforeContent="icon" afterContent="icon">
+        inner text component
+      </ButtonConsumer>
     </ProviderButton>
   </>
 )
