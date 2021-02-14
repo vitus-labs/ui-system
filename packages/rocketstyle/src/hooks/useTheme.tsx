@@ -37,6 +37,7 @@ const calculateDimensionsMap = memoize(
   },
   {
     isSerialized: true,
+    maxArgs: 1,
     maxSize: 500,
   }
 )

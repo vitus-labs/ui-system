@@ -209,6 +209,7 @@ const styles: Styles = memoize(
   {
     isSerialized: true,
     maxSize: 500,
+    maxArgs: 1,
     transformArgs: (args) => {
       const { theme, rootSize } = args[0]
       return [{ theme, rootSize }]

@@ -84,5 +84,5 @@ export const normalizeTheme: NormalizeTheme = memoize(
 
     return result
   },
-  { isSerialized: true, maxSize: 800 }
+  { isSerialized: true, maxArgs: 1, maxSize: 800 }
 )
