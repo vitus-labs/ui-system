@@ -15,31 +15,28 @@ const isMultiKey = moize(
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
-const calculateDimensionsMap = moize(
-  ({ theme, useBooleans }) => {
-    console.log('calculateDimensionsMap')
-    return Object.entries(theme).reduce(
-      (accumulator, [key, value]) => {
-        const { keysMap, keywords } = accumulator
-        keywords[key] = true
+const calculateDimensionsMap = ({ theme, useBooleans }) => {
+  console.log('calculateDimensionsMap')
+  return Object.entries(theme).reduce(
+    (accumulator, [key, value]) => {
+      const { keysMap, keywords } = accumulator
+      keywords[key] = true
 
-        Object.entries(value).forEach(([itemKey, itemValue]) => {
-          if (!isValidKey(itemValue)) return
+      Object.entries(value).forEach(([itemKey, itemValue]) => {
+        if (!isValidKey(itemValue)) return
 
-          if (useBooleans) {
-            keywords[itemKey] = true
-          }
+        if (useBooleans) {
+          keywords[itemKey] = true
+        }
 
-          set(keysMap, [key, itemKey], true)
-        })
+        set(keysMap, [key, itemKey], true)
+      })
 
-        return accumulator
-      },
-      { keysMap: {}, keywords: {} }
-    )
-  },
-  { maxSize: 100, isSerialized: true }
-)
+      return accumulator
+    },
+    { keysMap: {}, keywords: {} }
+  )
+}
 
 const calculateDimensionThemes = (theme, options) => {
   console.log('calculateDimensionThemes')
