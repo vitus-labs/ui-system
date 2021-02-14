@@ -1,44 +1,48 @@
+import moize from 'moize'
 import { config, set, get, isEmpty } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
-const isMultiKey = (value) => {
-  if (typeof value === 'object') return [true, get(value, 'propName')]
-  return [false, value]
-}
+const isMultiKey = moize(
+  (value) => {
+    console.log('isMultikey')
+    if (typeof value === 'object') return [true, get(value, 'propName')]
+    return [false, value]
+  },
+  { maxSize: 10, maxArgs: 1 }
+)
 
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
-const calculateDimensionsMap = (theme, useBooleans) => {
-  console.log('calculateDimensionsMap')
-  console.log(theme)
-  console.log(useBooleans)
-  return Object.entries(theme).reduce(
-    (accumulator, [key, value]) => {
-      const { keysMap, keywords } = accumulator
-      keywords[key] = true
+const calculateDimensionsMap = moize(
+  ({ theme, useBooleans }) => {
+    console.log('calculateDimensionsMap')
+    return Object.entries(theme).reduce(
+      (accumulator, [key, value]) => {
+        const { keysMap, keywords } = accumulator
+        keywords[key] = true
 
-      Object.entries(value).forEach(([itemKey, itemValue]) => {
-        if (!isValidKey(itemValue)) return
+        Object.entries(value).forEach(([itemKey, itemValue]) => {
+          if (!isValidKey(itemValue)) return
 
-        if (useBooleans) {
-          keywords[itemKey] = true
-        }
+          if (useBooleans) {
+            keywords[itemKey] = true
+          }
 
-        set(keysMap, [key, itemKey], true)
-      })
+          set(keysMap, [key, itemKey], true)
+        })
 
-      return accumulator
-    },
-    { keysMap: {}, keywords: {} }
-  )
-}
+        return accumulator
+      },
+      { keysMap: {}, keywords: {} }
+    )
+  },
+  { maxSize: 100, isSerialized: true }
+)
 
 const calculateDimensionThemes = (theme, options) => {
   console.log('calculateDimensionThemes')
-  console.log(theme)
-  console.log(options)
 
   if (isEmpty(options.dimensions)) return {}
 
@@ -72,10 +76,10 @@ type UseTheme = <T extends Record<string, unknown>>({
 
 const useTheme: UseTheme = ({ theme, options }) => {
   const themes = calculateDimensionThemes(theme, options)
-  const { keysMap, keywords } = calculateDimensionsMap(
+  const { keysMap, keywords } = calculateDimensionsMap({
     themes,
-    options.useBooleans
-  )
+    useBooleans: options.useBooleans,
+  })
 
   // define empty objects so they can be reassigned later
   // eslint-disable-next-line no-underscore-dangle
