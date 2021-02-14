@@ -15,9 +15,9 @@ const isMultiKey = moize(
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
-const calculateDimensionsMap = ({ theme, useBooleans }) => {
+const calculateDimensionsMap = ({ themes, useBooleans }) => {
   console.log('calculateDimensionsMap')
-  return Object.entries(theme).reduce(
+  return Object.entries(themes).reduce(
     (accumulator, [key, value]) => {
       const { keysMap, keywords } = accumulator
       keywords[key] = true
