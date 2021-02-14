@@ -1,5 +1,4 @@
-import moize from 'moize'
-import { config } from '@vitus-labs/core'
+import { config, memoize } from '@vitus-labs/core'
 import { value } from './utils/unit'
 import type { Theme } from './types'
 
@@ -13,7 +12,7 @@ type Styles = ({
   rootSize: number
 }) => ReturnType<typeof css>
 
-const styles: Styles = moize(
+const styles: Styles = memoize(
   ({ theme: t, css, rootSize }) => css`
     ${config.isWeb &&
     t.hideEmpty &&

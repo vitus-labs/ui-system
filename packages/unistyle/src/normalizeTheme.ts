@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import moize from 'moize'
+import { memoize } from '@vitus-labs/core'
 
 // --------------------------------------------------------
 // HELPERS
@@ -58,7 +58,7 @@ type NormalizeTheme = ({
   breakpoints: Array<string>
 }) => Record<string, unknown>
 
-export const normalizeTheme: NormalizeTheme = moize(
+export const normalizeTheme: NormalizeTheme = memoize(
   ({ theme, breakpoints }) => {
     if (!shouldNormalize(theme)) return theme
 

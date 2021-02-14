@@ -61,13 +61,11 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^3.1.0",
-    "lodash.merge": "^4.6.2",
-    "moize": "^6.0.0"
+    "hoist-non-react-statics": "^3.1.0"
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 16.7"
+    "react": ">= 16.8"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.10.9-alpha.21",

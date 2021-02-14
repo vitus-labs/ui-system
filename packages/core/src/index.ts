@@ -1,4 +1,5 @@
-import { omit, pick, set, get, throttle, difference } from 'lodash'
+import { omit, pick, set, get, throttle, difference, merge } from 'lodash'
+import memoize from 'moize'
 import compose from './compose'
 import isEmpty from './isEmpty'
 import renderContent from './renderContent'
@@ -15,4 +16,6 @@ export {
   set,
   get,
   throttle,
+  merge,
+  memoize,
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import moize from 'moize'
+import { memoize } from '@vitus-labs/core'
 import { ReactText } from 'react'
 
 type StripUnit = (value: ReactText, unitReturn?: boolean) => any
@@ -28,7 +28,7 @@ type NormalizeUnit = ({
   outputUnit?: 'px' | 'rem' | '%' | string
 }) => string | number
 
-export const normalizeUnit: NormalizeUnit = moize(
+export const normalizeUnit: NormalizeUnit = memoize(
   ({ param, rootSize = 16, outputUnit = __WEB__ ? 'rem' : 'px' }) => {
     if (!param && param !== 0) return null
 

@@ -53,11 +53,12 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
-    "react": ">= 16.7",
-    "styled-components": ">= 4"
+    "react": ">= 16.8",
+    "styled-components": ">= 5"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "moize": "^6.0.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",

@@ -46,16 +46,13 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 16.7",
-    "styled-components": ">= 4"
+    "react": ">= 16.8",
+    "styled-components": ">= 5"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.10.9-alpha.21",
     "@vitus-labs/tools-babel": "0.6.0",
     "@vitus-labs/tools-rollup": "0.6.0",
     "@vitus-labs/tools-typescript": "0.6.0"
-  },
-  "dependencies": {
-    "moize": "^6.0.0"
   }
 }

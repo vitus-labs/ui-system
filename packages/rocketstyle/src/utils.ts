@@ -1,6 +1,4 @@
-import merge from 'lodash.merge'
-import moize from 'moize'
-import { config, isEmpty } from '@vitus-labs/core'
+import { config, isEmpty, memoize, merge } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
 // --------------------------------------------------------
@@ -110,7 +108,7 @@ export const splitProps: SplitProps = (props, dimensions) => {
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
-export const calculateStyledAttrs = moize(
+export const calculateStyledAttrs = memoize(
   ({ props, dimensions, useBooleans, multiKeys }) => {
     const result = {}
 
@@ -182,7 +180,7 @@ type CalculateTheme = <
   baseTheme: B
 }) => B & Record<string, unknown>
 
-export const calculateTheme: CalculateTheme = moize(
+export const calculateTheme: CalculateTheme = memoize(
   ({ props, themes, baseTheme }) => {
     // generate final theme which will be passed to styled component
     let finalTheme = { ...baseTheme }

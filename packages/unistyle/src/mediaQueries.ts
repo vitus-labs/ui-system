@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import moize from 'moize'
-import { set, isEmpty } from '@vitus-labs/core'
+import { set, isEmpty, memoize } from '@vitus-labs/core'
 import { normalizeTheme } from './normalizeTheme'
 
 // --------------------------------------------------------
@@ -79,7 +78,7 @@ type TransformTheme = ({
   theme: Record<string, unknown>
   breakpoints: Array<string>
 }) => any
-export const transformTheme: TransformTheme = moize(
+export const transformTheme: TransformTheme = memoize(
   ({ theme, breakpoints }) => {
     const result = {}
 

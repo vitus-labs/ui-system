@@ -58,7 +58,7 @@
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 16.7"
+    "react": ">= 16.8"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.10.9-alpha.21",
