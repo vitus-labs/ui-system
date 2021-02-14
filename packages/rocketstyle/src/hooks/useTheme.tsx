@@ -10,8 +10,11 @@ const isMultiKey = (value) => {
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
-const calculateDimensionsMap = (theme, useBooleans) =>
-  Object.entries(theme).reduce(
+const calculateDimensionsMap = (theme, useBooleans) => {
+  console.log('calculateDimensionsMap')
+  console.log(theme)
+  console.log(useBooleans)
+  return Object.entries(theme).reduce(
     (accumulator, [key, value]) => {
       const { keysMap, keywords } = accumulator
       keywords[key] = true
@@ -30,8 +33,13 @@ const calculateDimensionsMap = (theme, useBooleans) =>
     },
     { keysMap: {}, keywords: {} }
   )
+}
 
 const calculateDimensionThemes = (theme, options) => {
+  console.log('calculateDimensionThemes')
+  console.log(theme)
+  console.log(options)
+
   if (isEmpty(options.dimensions)) return {}
 
   return Object.entries(options.dimensions).reduce(
