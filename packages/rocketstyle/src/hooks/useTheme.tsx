@@ -5,11 +5,10 @@ import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
 const isMultiKey = moize(
   (value) => {
-    console.log('isMultikey')
     if (typeof value === 'object') return [true, get(value, 'propName')]
     return [false, value]
   },
-  { maxSize: 10, maxArgs: 1 }
+  { maxSize: 15, maxArgs: 1 }
 )
 
 const isValidKey = (value) =>
@@ -39,8 +38,6 @@ const calculateDimensionsMap = ({ themes, useBooleans }) => {
 }
 
 const calculateDimensionThemes = (theme, options) => {
-  console.log('calculateDimensionThemes')
-
   if (isEmpty(options.dimensions)) return {}
 
   return Object.entries(options.dimensions).reduce(
