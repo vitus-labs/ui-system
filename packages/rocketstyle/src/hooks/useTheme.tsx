@@ -17,7 +17,6 @@ const isValidKey = (value) =>
 const calculateDimensionsMap = moize(
   ({ themes, useBooleans }) => {
     const result = { keysMap: {}, keywords: {} }
-    console.log('calculateDimensionsMap')
     if (isEmpty(themes)) return result
 
     return Object.entries(themes).reduce((accumulator, [key, value]) => {
