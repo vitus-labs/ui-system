@@ -23,5 +23,5 @@ export default [
   'required',
   'reversed',
   'selected',
-  'typeMustMatch'
+  'typeMustMatch',
 ]

@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useContext,
 } from 'react'
-import moize from 'moize'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import {
@@ -113,16 +112,13 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateStylingAttrs = moize(
-    ({ props, dimensions }) =>
-      calculateStyledAttrs({
-        props,
-        dimensions,
-        multiKeys: options.multiKeys,
-        useBooleans: options.useBooleans,
-      }),
-    { isSerialized: true, maxSize: 20 }
-  )
+  const calculateStylingAttrs = ({ props, dimensions }) =>
+    calculateStyledAttrs({
+      props,
+      dimensions,
+      multiKeys: options.multiKeys,
+      useBooleans: options.useBooleans,
+    })
 
   const ProviderComponent = forwardRef<any, any>(
     (
@@ -252,7 +248,11 @@ const styleComponent: StyleComponent = (options) => {
         ref,
         $rocketstyle: rocketstyle,
         $rocketstate: rocketstate,
-        'data-rocketstyle': componentName,
+      }
+
+      // all the development stuff injected
+      if (process.env.NODE_ENV !== 'production') {
+        passProps['data-rocketstyle'] = componentName
       }
 
       return <FinalComponent {...passProps} />

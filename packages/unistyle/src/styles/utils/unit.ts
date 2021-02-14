@@ -58,31 +58,28 @@ type Value = (
   values: Array<unknown>,
   outputUnit?: 'px' | 'rem' | '%' | string
 ) => string | number
-export const value: Value = moize(
-  (rootSize, values, outputUnit?: string) => {
-    const param = getValueOf(...values)
+export const value: Value = (rootSize, values, outputUnit?: string) => {
+  const param = getValueOf(...values)
 
-    if (Array.isArray(param)) {
-      return param
-        .reduce(
-          (acc, item) =>
-            acc.push(
-              normalizeUnit({
-                param: item,
-                rootSize,
-                outputUnit,
-              })
-            ),
-          []
-        )
-        .join(' ')
-    }
+  if (Array.isArray(param)) {
+    return param
+      .reduce(
+        (acc, item) =>
+          acc.push(
+            normalizeUnit({
+              param: item,
+              rootSize,
+              outputUnit,
+            })
+          ),
+        []
+      )
+      .join(' ')
+  }
 
-    return normalizeUnit({
-      param,
-      rootSize,
-      outputUnit,
-    })
-  },
-  { maxSize: 40 }
-)
+  return normalizeUnit({
+    param,
+    rootSize,
+    outputUnit,
+  })
+}
