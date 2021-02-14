@@ -15,7 +15,7 @@ const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
 const calculateDimensionsMap = ({ themes, useBooleans }) => {
-  console.log('calculateDimensionsMap')
+  console.log(themes)
   return Object.entries(themes).reduce(
     (accumulator, [key, value]) => {
       const { keysMap, keywords } = accumulator
