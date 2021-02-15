@@ -22,6 +22,7 @@ type Props = {
   alignY: AlignY
   equalCols: ResponsiveBooltype
   extendCss: ExtendCss
+  dangerouslySetInnerHTML: any
 }
 
 const Component = forwardRef<Reference, Partial<Props>>(
@@ -52,8 +53,9 @@ const Component = forwardRef<Reference, Partial<Props>>(
       ref,
       as: tag,
     }
-
-    const needsFix = __WEB__ ? isWebFixNeeded(tag) : false
+    const needsFix = __WEB__
+      ? !props.dangerouslySetInnerHTML && tag && isWebFixNeeded(tag)
+      : false
 
     if (!needsFix || __NATIVE__) {
       return (
