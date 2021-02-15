@@ -5,7 +5,7 @@ import { normalizeTheme } from './normalizeTheme'
 // --------------------------------------------------------
 // sort breakpoints
 // --------------------------------------------------------
-type SortBreakpoints = <T extends Record<string, any>>(
+export type SortBreakpoints = <T extends Record<string, any>>(
   breakpoints: T
 ) => Array<keyof T>
 export const sortBreakpoints: SortBreakpoints = (breakpoints) => {
@@ -19,7 +19,7 @@ export const sortBreakpoints: SortBreakpoints = (breakpoints) => {
 // --------------------------------------------------------
 // create media queries
 // --------------------------------------------------------
-type CreateMediaQueries = <
+export type CreateMediaQueries = <
   B,
   R extends number,
   C extends (...args: any) => any
@@ -71,7 +71,7 @@ const removeUnexpectedKeys = (obj, keys) => {
 // --------------------------------------------------------
 // transform theme
 // --------------------------------------------------------
-type TransformTheme = ({
+export type TransformTheme = ({
   theme,
   breakpoints,
 }: {
@@ -134,7 +134,7 @@ type Theme = {
   }
 } & CustomTheme
 
-type MakeItResponsive = ({
+export type MakeItResponsive = ({
   theme,
   key,
   css,

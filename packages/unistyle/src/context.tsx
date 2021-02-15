@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react'
+import React, { ReactNode, FC, createContext, useContext } from 'react'
 import { config, isEmpty } from '@vitus-labs/core'
 import { sortBreakpoints, createMediaQueries } from './mediaQueries'
 
@@ -60,14 +60,39 @@ type Theme = {
 
 type ProviderType = {
   theme: Theme
+  variant: 'light' | 'dark'
+  inversed?: boolean
   children: ReactNode
 }
 
-const Provider: FC<ProviderType> = ({ theme, children }) => {
+type TContext = Partial<{
+  theme: {
+    rootSize: number
+    breakpoints?: Record<string, number>
+  } & Record<string, unknown>
+  variant: 'light' | 'dark'
+  inversed?: boolean
+  utils: Record<string, unknown>
+}>
+
+const Context = createContext<TContext>({})
+
+const Provider: FC<ProviderType> = ({ theme, variant, children, inversed }) => {
+  const { variant: ctxVariant, ...ctx } = useContext(Context)
+
+  if (inversed) {
+    const inversedTheme = ctxVariant === 'dark' ? 'light' : 'dark'
+    return (
+      <Context.Provider value={{ ...ctx, variant: inversedTheme }}>
+        <StyledProvider value={ctx.theme}>{children}</StyledProvider>
+      </Context.Provider>
+    )
+  }
+
   // eslint-disable-next-line no-underscore-dangle
   const __VITUS_LABS__: VitusLabsContext = {}
 
-  const { breakpoints, rootSize } = theme
+  const { breakpoints, rootSize } = ctx.theme || theme
 
   if (!isEmpty(breakpoints)) {
     __VITUS_LABS__.sortedBreakpoints = sortBreakpoints(breakpoints)
@@ -83,7 +108,11 @@ const Provider: FC<ProviderType> = ({ theme, children }) => {
     __VITUS_LABS__,
   }
 
-  return <StyledProvider value={result}>{children}</StyledProvider>
+  return (
+    <Context.Provider value={{ theme, utils: __VITUS_LABS__, variant }}>
+      <StyledProvider value={result}>{children}</StyledProvider>
+    </Context.Provider>
+  )
 }
 
 // eslint-disable-next-line import/prefer-default-export

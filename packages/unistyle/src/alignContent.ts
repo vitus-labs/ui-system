@@ -40,14 +40,18 @@ const DIRECTION: DIRECTION_TYPE = __WEB__
       reverseRows: 'column-reverse',
     }
 
+export type AlignContentDirection = keyof DIRECTION_TYPE
+export type AlignContentAlignX = keyof typeof ALIGN_X
+export type AlignContentAlignY = keyof typeof ALIGN_Y
+
 export type AlignContentProps = ({
   direction,
   alignX,
   alignY,
 }: {
-  direction: keyof DIRECTION_TYPE
-  alignX: keyof typeof ALIGN_X
-  alignY: keyof typeof ALIGN_Y
+  direction: AlignContentDirection
+  alignX: AlignContentAlignX
+  alignY: AlignContentAlignY
 }) => ReturnType<typeof config.css>
 
 const alignContent: AlignContentProps = (attrs) => {
@@ -59,13 +63,13 @@ const alignContent: AlignContentProps = (attrs) => {
 
   const isReverted = ['inline', 'reverseInline'].includes(direction)
   const dir = DIRECTION[direction]
-  const aX = ALIGN_X[alignX]
-  const aY = ALIGN_Y[alignY]
+  const x = ALIGN_X[alignX]
+  const y = ALIGN_Y[alignY]
 
   return config.css`
     flex-direction: ${dir};
-    align-items: ${isReverted ? aY : aX};
-    justify-content: ${isReverted ? aX : aY};
+    align-items: ${isReverted ? y : x};
+    justify-content: ${isReverted ? x : y};
   `
 }
 

@@ -3,7 +3,7 @@ import { set, get, pick } from '@vitus-labs/core'
 // ------------------------------------------
 // pickTheme props
 // ------------------------------------------
-type PickThemeProps = <T extends Record<string, unknown>>(
+export type PickThemeProps = <T extends Record<string, unknown>>(
   props: T,
   keywords: Array<keyof T>
 ) => ReturnType<typeof pick>
