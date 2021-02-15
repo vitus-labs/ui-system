@@ -67,8 +67,8 @@ const styles = ({ theme, css, rootSize }) => {
           left: initial;
           position: relative;
           ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
-          ${gapStyles(gap, rootSize)};
-          ${paddingStyles(padding, rootSize)};
+          ${size !== 0 && gapStyles(gap, rootSize)};
+          ${size !== 0 && paddingStyles(padding, rootSize)};
         `
       : css`
           left: -9999px;
