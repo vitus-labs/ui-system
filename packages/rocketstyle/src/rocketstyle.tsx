@@ -218,7 +218,7 @@ const styleComponent: StyleComponent = (options) => {
       // (1) merged from context,
       // (2) `attrs` chaining method, and from
       // (3) passing them directly to component
-      const mergeProps = {
+      const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
         ...(options.consumer
           ? // @ts-ignore
             options.consumer((cb) => cb(rocketstyleCtx))
@@ -244,10 +244,10 @@ const styleComponent: StyleComponent = (options) => {
       const passProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, [...Object.keys(reservedPropNames), 'pseudo']),
+        ...omit(mergeProps, Object.keys(reservedPropNames)),
         ref,
         $rocketstyle: rocketstyle,
-        $rocketstate: rocketstate,
+        $rocketstate: { ...rocketstate, pseudo },
       }
 
       // all the development stuff injected
