@@ -12,13 +12,14 @@ const parseJSON = (object) => {
   return result
 }
 
-type Props = {
+export type Props = {
   children: Parameters<typeof renderContent>[0]
   className?: string | string[]
   style?: Record<string, unknown>
 }
 
 const Element = forwardRef<any, Props>(
+  // @ts-ignore
   ({ children, className, style }, ref) => {
     const passProps = parseJSON(
       JSON.stringify({

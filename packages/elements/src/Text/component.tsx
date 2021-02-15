@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import Styled from './styled'
 
-type Props = Partial<{
+export type Props = Partial<{
   paragraph: boolean
   label: ReactNode
   children: ReactNode

@@ -3,7 +3,7 @@ import { pick, omit } from '@vitus-labs/core'
 import Element, { Props as ElementProps } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
 
-type Props = Partial<
+export type Props = Partial<
   IteratorProps &
     ElementProps & {
       rootElement?: boolean

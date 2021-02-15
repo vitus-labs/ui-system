@@ -1,7 +1,7 @@
 import { useState, useEffect, FC, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 
-interface Props {
+export type Props = {
   position?: HTMLElement
   children: ReactNode
   tag?: string
