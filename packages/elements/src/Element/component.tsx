@@ -86,7 +86,7 @@ const Component = forwardRef<any, Props>(
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 
-    const isInline = __WEB__ && tag && isInlineElement(tag)
+    const isInline = __WEB__ ? isInlineElement(tag) : false
     const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
 
     // --------------------------------------------------------
