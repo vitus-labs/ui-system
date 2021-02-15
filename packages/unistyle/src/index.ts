@@ -1,35 +1,28 @@
-import alignContent from './alignContent'
-import breakpoints from './breakpoints'
+import alignContent, {
+  AlignContentAlignX,
+  AlignContentAlignY,
+  AlignContentDirection,
+} from './alignContent'
+import breakpoints, { Breakpoints } from './breakpoints'
 import { Provider } from './context'
-import extendedCss from './extendedCss'
+import extendedCss, { ExtendedCss } from './extendedCss'
 import {
   makeItResponsive,
   sortBreakpoints,
   createMediaQueries,
   transformTheme,
-} from './mediaQueries'
-import optimizeTheme, {
-  pickThemeProps,
-  normalizeTheme,
-  groupByBreakpoint,
-} from './optimizeTheme'
-import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
-
-// types
-import type {
-  AlignContentAlignX,
-  AlignContentAlignY,
-  AlignContentDirection,
-} from './alignContent'
-import type { Breakpoints } from './breakpoints'
-import type { ExtendedCss } from './extendedCss'
-import type {
   SortBreakpoints,
   CreateMediaQueries,
   TransformTheme,
   MakeItResponsive,
 } from './mediaQueries'
-import type { PickThemeProps } from './optimizeTheme'
+import optimizeTheme, {
+  pickThemeProps,
+  normalizeTheme,
+  groupByBreakpoint,
+  PickThemeProps,
+} from './optimizeTheme'
+import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 
 export type {
   AlignContentAlignX,
