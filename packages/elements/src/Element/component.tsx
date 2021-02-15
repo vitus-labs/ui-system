@@ -3,7 +3,7 @@ import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
   transformVerticalProp,
-  calculateSubTag,
+  isInlineElement,
   getShouldBeEmpty,
 } from './utils'
 import type { Props } from './types'
@@ -86,7 +86,8 @@ const Component = forwardRef<any, Props>(
     const isSimple = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 
-    const SUB_TAG = __WEB__ && tag && calculateSubTag(tag) ? 'span' : undefined
+    const isInline = __WEB__ && tag && isInlineElement(tag)
+    const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
 
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
@@ -121,6 +122,7 @@ const Component = forwardRef<any, Props>(
       <Wrapper
         {...props}
         {...WRAPPER_PROPS}
+        isInline={isInline}
         direction={wrapperDirection}
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}

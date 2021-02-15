@@ -17,6 +17,7 @@ type Props = {
   children: ReactNode
   tag: StyledComponentPropsWithRef<any>
   block: ResponsiveBooltype
+  isInline: boolean
   direction: Direction
   alignX: AlignX
   alignY: AlignY
@@ -36,6 +37,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
       alignX,
       alignY,
       equalCols,
+      isInline,
       ...props
     },
     ref
@@ -85,7 +87,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
         }}
       >
         <Styled
-          as="span"
+          as={isInline ? 'span' : 'div'}
           $isInner
           $element={{
             direction,
