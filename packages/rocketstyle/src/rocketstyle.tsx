@@ -120,6 +120,13 @@ const styleComponent: StyleComponent = (options) => {
       useBooleans: options.useBooleans,
     })
 
+  const calculateTheming = ({ rocketstate, themes, baseTheme }) =>
+    calculateTheme({
+      props: rocketstate,
+      themes,
+      baseTheme,
+    })
+
   const ProviderComponent = forwardRef<any, any>(
     (
       {
@@ -185,6 +192,11 @@ const styleComponent: StyleComponent = (options) => {
         baseTheme,
       } = __ROCKETSTYLE__
 
+      const RESERVED_PROPS_KEYS = useMemo(
+        () => Object.keys(reservedPropNames),
+        [reservedPropNames]
+      )
+
       // if onMount is provided (useful for development tooling or so)
       // it will pass all available styling options in the callback
       useEffect(() => {
@@ -235,8 +247,8 @@ const styleComponent: StyleComponent = (options) => {
 
       // calculated final theme which will be passed to our styled component
       // under $rocketstyle prop
-      const rocketstyle = calculateTheme({
-        props: rocketstate,
+      const rocketstyle = calculateTheming({
+        rocketstate,
         themes,
         baseTheme,
       })
@@ -244,7 +256,7 @@ const styleComponent: StyleComponent = (options) => {
       const passProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, Object.keys(reservedPropNames)),
+        ...omit(mergeProps, RESERVED_PROPS_KEYS),
         ref,
         $rocketstyle: rocketstyle,
         $rocketstate: { ...rocketstate, pseudo },

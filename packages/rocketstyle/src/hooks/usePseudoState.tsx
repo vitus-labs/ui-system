@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import type { MouseAction, FocusAction } from '~/types'
 
 type Props = {
@@ -21,70 +21,51 @@ type UsePseudoState = ({
   onBlur,
 }: Partial<Props>) => { state: PseudoState; events: Props }
 
+const handleEvent = (e: Event) => {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
 const usePseudoState: UsePseudoState = (props) => {
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  const onMouseEnter = useCallback(
-    (e: MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setHover(true)
-      if (props.onMouseEnter) props.onMouseEnter(e)
-    },
-    [props.onMouseEnter]
-  )
+  const onMouseEnter = (e: MouseEvent) => {
+    handleEvent(e)
+    setHover(true)
+    if (props.onMouseEnter) props.onMouseEnter(e)
+  }
 
-  const onMouseLeave = useCallback(
-    (e: MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setHover(false)
-      if (props.onMouseLeave) props.onMouseLeave(e)
-    },
-    [props.onMouseLeave]
-  )
+  const onMouseLeave = (e: MouseEvent) => {
+    handleEvent(e)
+    setHover(false)
+    if (props.onMouseLeave) props.onMouseLeave(e)
+  }
 
-  const onMouseDown = useCallback(
-    (e: MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setPressed(true)
-      if (props.onMouseDown) props.onMouseDown(e)
-    },
-    [props.onMouseDown]
-  )
+  const onMouseDown = (e: MouseEvent) => {
+    handleEvent(e)
+    setPressed(true)
+    if (props.onMouseDown) props.onMouseDown(e)
+  }
 
-  const onMouseUp = useCallback(
-    (e: MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setPressed(false)
-      if (props.onMouseUp) props.onMouseUp(e)
-    },
-    [props.onMouseUp]
-  )
+  const onMouseUp = (e: MouseEvent) => {
+    handleEvent(e)
+    setPressed(false)
+    if (props.onMouseUp) props.onMouseUp(e)
+  }
 
-  const onFocus = useCallback(
-    (e: FocusEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setFocus(true)
-      if (props.onFocus) props.onFocus(e)
-    },
-    [props.onFocus]
-  )
+  const onFocus = (e: FocusEvent) => {
+    handleEvent(e)
+    setFocus(true)
+    if (props.onFocus) props.onFocus(e)
+  }
 
-  const onBlur = useCallback(
-    (e: FocusEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setFocus(false)
-      if (props.onBlur) props.onBlur(e)
-    },
-    [props.onBlur]
-  )
+  const onBlur = (e: FocusEvent) => {
+    handleEvent(e)
+    setFocus(false)
+    if (props.onBlur) props.onBlur(e)
+  }
 
   return {
     state: {

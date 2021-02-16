@@ -45,11 +45,12 @@ export const calculateChainOptions: CalculateChainOptions = (
   args,
   deepMerge = true
 ) => {
-  if (isEmpty(options)) return {}
+  const result = {}
+  if (isEmpty(options)) return result
 
-  const chain = deepMerge ? merge : (obj1, obj2) => ({ ...obj1, ...obj2 })
+  const chain = deepMerge ? merge : (obj1, obj2) => Object.assign(obj1, obj2)
 
-  return options.reduce((acc, item) => chain(acc, item(...args)), {})
+  return options.reduce((acc, item) => chain(acc, item(...args)), result)
 }
 
 // --------------------------------------------------------
@@ -121,17 +122,20 @@ export const calculateStyledAttrs = memoize(
       // if the property is mutli key, allow assign array as well
       if (multiKeys[item] && Array.isArray(pickedProp)) {
         result[item] = pickedProp
+      }
+      // assign when it's only a string or number otherwise it's considered
+      // as invalid param
+      else if (valueTypes.includes(typeof pickedProp)) {
+        result[item] = pickedProp
       } else {
-        // assign when it's only a string or number otherwise it's considered
-        // as invalid param
-        result[item] = valueTypes.includes(typeof pickedProp)
-          ? pickedProp
-          : undefined
+        result[item] = undefined
       }
     })
 
     // (2) if booleans are being used let's find the rest
     if (useBooleans) {
+      const propsKeys = Object.keys(props).reverse()
+
       Object.entries(result).forEach(([key, value]) => {
         const isMultiKey = multiKeys[key]
 
@@ -139,7 +143,6 @@ export const calculateStyledAttrs = memoize(
         if (!value) {
           let newDimensionValue
           const keywords = Object.keys(dimensions[key])
-          const propsKeys = Object.keys(props)
 
           if (isMultiKey) {
             newDimensionValue = propsKeys.filter((key) =>
@@ -148,7 +151,7 @@ export const calculateStyledAttrs = memoize(
           } else {
             // reverse props to guarantee the last one will have
             // a priority over previous ones
-            newDimensionValue = propsKeys.reverse().find((key) => {
+            newDimensionValue = propsKeys.find((key) => {
               if (keywords.includes(key) && props[key]) return key
               return false
             })
@@ -201,9 +204,5 @@ export const calculateTheme: CalculateTheme = memoize(
 
     return finalTheme
   },
-  {
-    isSerialized: true,
-    maxArgs: 1,
-    maxSize: 1000,
-  }
+  { isSerialized: true, maxSize: 1000 }
 )

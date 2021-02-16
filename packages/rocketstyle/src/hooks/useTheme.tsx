@@ -2,13 +2,10 @@ import { config, set, get, isEmpty, memoize } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
-const isMultiKey = memoize(
-  (value) => {
-    if (typeof value === 'object') return [true, get(value, 'propName')]
-    return [false, value]
-  },
-  { maxSize: 15, maxArgs: 1 }
-)
+const isMultiKey = (value) => {
+  if (typeof value === 'object') return [true, get(value, 'propName')]
+  return [false, value]
+}
 
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
@@ -43,7 +40,9 @@ const calculateDimensionsMap = memoize(
 )
 
 const calculateDimensionThemes = (theme, options) => {
-  if (isEmpty(options.dimensions)) return {}
+  const result = {}
+
+  if (isEmpty(options.dimensions)) return result
 
   return Object.entries(options.dimensions).reduce(
     (accumulator, [key, value]) => {
@@ -61,7 +60,7 @@ const calculateDimensionThemes = (theme, options) => {
 
       return accumulator
     },
-    {}
+    result
   )
 }
 
