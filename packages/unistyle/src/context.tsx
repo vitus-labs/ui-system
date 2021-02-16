@@ -70,12 +70,12 @@ type TContext = Partial<{
     rootSize: number
     breakpoints?: Record<string, number>
   } & Record<string, unknown>
-  variant: 'light' | 'dark'
+  variant?: 'light' | 'dark'
   inversed?: boolean
   utils: Record<string, unknown>
 }>
 
-const Context = createContext<TContext>({})
+export const Context = createContext<TContext>({})
 
 const Provider: FC<ProviderType> = ({ theme, variant, children, inversed }) => {
   const { variant: ctxVariant, ...ctx } = useContext(Context)

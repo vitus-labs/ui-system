@@ -4,7 +4,7 @@ import alignContent, {
   AlignContentDirection,
 } from './alignContent'
 import breakpoints, { Breakpoints } from './breakpoints'
-import { Provider } from './context'
+import { Provider, Context } from './context'
 import extendedCss, { ExtendedCss } from './extendedCss'
 import {
   makeItResponsive,
@@ -41,6 +41,7 @@ export {
   alignContent,
   breakpoints,
   Provider,
+  Context,
   extendedCss,
   makeItResponsive,
   sortBreakpoints,
