@@ -26,7 +26,7 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
 
 type UseGridContext = (props: Obj) => Context
 const useGridContext: UseGridContext = (props) => {
-  const theme = useContext(context)
+  const { theme } = useContext(context)
   const ctxProps = pickThemeProps(props, CONTEXT_KEYS)
   const gridContext = getGridContext(ctxProps, theme as Record<string, unknown>)
 
