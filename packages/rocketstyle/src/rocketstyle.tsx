@@ -185,7 +185,7 @@ const styleComponent: StyleComponent = (options) => {
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
-      const { theme, variant = 'light', isDark, isLight } = useContext(context)
+      const { theme, variant, isDark, isLight } = useContext(context)
       const rocketstyleCtx = options.consumer ? useContext(Context) : {}
 
       // calculate themes for all possible styling dimensions
@@ -193,7 +193,7 @@ const styleComponent: StyleComponent = (options) => {
       const __ROCKETSTYLE__ = useMemo(
         () =>
           useTheme<typeof theme>({
-            theme: { ...theme, isDark },
+            theme,
             options,
             cb: themeVariantCb,
           }),
@@ -244,10 +244,10 @@ const styleComponent: StyleComponent = (options) => {
         props,
         theme,
         {
+          renderContent,
           variant,
           isDark,
           isLight,
-          renderContent,
         },
       ])
 

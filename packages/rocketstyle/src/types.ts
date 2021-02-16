@@ -159,7 +159,13 @@ export type ThemeParam<P, T, CT> = P extends ThemeCb<T, CT>
   ? ThemeCb<T, CT & P> | Partial<CT & P>
   : Partial<CT>
 
-export type ThemeCb<T, CT> = (theme: T, css: Css) => Partial<CT>
+export type ThemeVariant = <A, B>(light: A, dark: B) => A | B
+
+export type ThemeCb<T, CT> = (
+  theme: T,
+  css: Css,
+  mode: ThemeVariant
+) => Partial<CT>
 
 // STYLE chaining types
 // --------------------------------------------------------
@@ -174,7 +180,8 @@ export type DimensionObj<CT> = Record<
 
 export type DimensionCb<T, CT> = (
   theme: T,
-  css: Css
+  css: Css,
+  mode: ThemeVariant
 ) => Record<string, Partial<CT> | boolean | undefined | null>
 
 export type DimensionReturn<P, A> = P extends TObj ? A & P : A
