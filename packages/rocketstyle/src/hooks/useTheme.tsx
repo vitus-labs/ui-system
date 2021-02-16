@@ -39,7 +39,7 @@ const calculateDimensionsMap = memoize(
   }
 )
 
-const calculateDimensionThemes = (theme, options) => {
+const calculateDimensionThemes = (theme, options, cb) => {
   const result = {}
 
   if (isEmpty(options.dimensions)) return result
@@ -55,6 +55,7 @@ const calculateDimensionThemes = (theme, options) => {
         accumulator[dimension] = calculateChainOptions(helper, [
           theme,
           config.css,
+          cb,
         ])
       }
 
@@ -67,13 +68,15 @@ const calculateDimensionThemes = (theme, options) => {
 type UseTheme = <T extends Record<string, unknown>>({
   theme,
   options,
+  cb,
 }: {
   theme: T
   options: Configuration
+  cb: any
 }) => __ROCKETSTYLE__
 
-const useTheme: UseTheme = ({ theme, options }) => {
-  const themes = calculateDimensionThemes(theme, options)
+const useTheme: UseTheme = ({ theme, options, cb }) => {
+  const themes = calculateDimensionThemes(theme, options, cb)
   const { keysMap, keywords } = calculateDimensionsMap({
     themes,
     useBooleans: options.useBooleans,
@@ -84,7 +87,7 @@ const useTheme: UseTheme = ({ theme, options }) => {
   const __ROCKETSTYLE__ = {
     dimensions: keysMap,
     reservedPropNames: keywords,
-    baseTheme: calculateChainOptions(options.theme, [theme, config.css]),
+    baseTheme: calculateChainOptions(options.theme, [theme, config.css, cb]),
     themes,
   }
 

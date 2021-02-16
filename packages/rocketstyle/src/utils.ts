@@ -206,3 +206,35 @@ export const calculateTheme: CalculateTheme = memoize(
   },
   { isSerialized: true, maxSize: 1000 }
 )
+
+// --------------------------------------------------------
+// generate theme
+// --------------------------------------------------------
+type CalculateThemeVariant = (
+  themes: Record<string, any>,
+  variant: 'light' | 'dark',
+  cb: any
+) => Partial<{
+  baseTheme: Record<string, unknown>
+  themes: Record<string, unknown>
+}>
+export const calculateThemeVariant: CalculateThemeVariant = (
+  themes,
+  variant,
+  cb
+) => {
+  const callback = cb().toString()
+
+  const result = {}
+  Object.entries(themes).forEach(([key, value]) => {
+    if (typeof value === 'object') {
+      result[key] = calculateThemeVariant(value, variant, cb)
+    } else if (typeof value === 'function' && value.toString() === callback) {
+      result[key] = value(variant)
+    } else {
+      result[key] = value
+    }
+  })
+
+  return result
+}

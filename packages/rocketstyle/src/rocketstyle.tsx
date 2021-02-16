@@ -4,9 +4,17 @@ import React, {
   useEffect,
   useMemo,
   useContext,
+  useCallback,
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
+import {
+  config,
+  omit,
+  pick,
+  compose,
+  renderContent,
+  memoize,
+} from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
@@ -14,6 +22,7 @@ import {
   calculateStyledAttrs,
   calculateTheme,
   pickStyledProps,
+  calculateThemeVariant,
 } from './utils'
 import {
   RESERVED_OR_KEYS,
@@ -128,6 +137,16 @@ const styleComponent: StyleComponent = (options) => {
       baseTheme,
     })
 
+  const calculateChainingAttrs = memoize(
+    (params) => calculateChainOptions(options.attrs, params, false),
+    { isSerialized: true, maxSize: 20 }
+  )
+
+  const themeVariantCb = (...params) => (test) => {
+    if (test === 'light') return params[0]
+    return params[1]
+  }
+
   const ProviderComponent = forwardRef<any, any>(
     (
       {
@@ -176,22 +195,38 @@ const styleComponent: StyleComponent = (options) => {
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
-      const { theme } = useContext(context)
+      const { theme, variant = 'light', isDark, isLight } = useContext(context)
       const rocketstyleCtx = options.consumer ? useContext(Context) : {}
 
       // calculate themes for all possible styling dimensions
       // eslint-disable-next-line no-underscore-dangle
       const __ROCKETSTYLE__ = useMemo(
-        () => useTheme<typeof theme>({ theme, options }),
+        () =>
+          useTheme<typeof theme>({
+            theme: { ...theme, isDark },
+            options,
+            cb: themeVariantCb,
+          }),
         [theme]
       )
 
       const {
         reservedPropNames,
-        themes,
+        themes: rocketThemes,
         dimensions,
-        baseTheme,
+        baseTheme: rocketBaseThemes,
       } = __ROCKETSTYLE__
+
+      const { baseTheme, themes } = useMemo(
+        () =>
+          calculateThemeVariant(
+            { themes: rocketThemes, baseTheme: rocketBaseThemes },
+            variant,
+            themeVariantCb
+          ),
+
+        [variant]
+      )
 
       const RESERVED_PROPS_KEYS = useMemo(
         () => Object.keys(reservedPropNames),
@@ -211,21 +246,20 @@ const styleComponent: StyleComponent = (options) => {
             ...__ROCKETSTYLE__,
           })
         }
-      }, [theme])
+      }, [theme, variant])
 
       // first we need to calculate final props which are
       // being returned by using `attr` chaining method
-      const calculatedAttrs = calculateChainOptions(
-        options.attrs,
-        [
-          props,
-          theme,
-          {
-            renderContent,
-          },
-        ],
-        false
-      )
+      const calculatedAttrs = calculateChainingAttrs([
+        props,
+        theme,
+        {
+          variant,
+          isDark,
+          isLight,
+          renderContent,
+        },
+      ])
 
       // get final props which are
       // (1) merged from context,
