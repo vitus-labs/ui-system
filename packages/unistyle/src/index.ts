@@ -4,7 +4,7 @@ import alignContent, {
   AlignContentDirection,
 } from './alignContent'
 import breakpoints, { Breakpoints } from './breakpoints'
-import { Provider, Context } from './context'
+import Provider, { context, TProvider } from './context'
 import extendedCss, { ExtendedCss } from './extendedCss'
 import {
   makeItResponsive,
@@ -25,6 +25,7 @@ import optimizeTheme, {
 import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 
 export type {
+  TProvider,
   AlignContentAlignX,
   AlignContentAlignY,
   AlignContentDirection,
@@ -41,7 +42,7 @@ export {
   alignContent,
   breakpoints,
   Provider,
-  Context,
+  context,
   extendedCss,
   makeItResponsive,
   sortBreakpoints,

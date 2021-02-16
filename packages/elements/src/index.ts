@@ -1,4 +1,4 @@
-import { Content, Wrapper } from '~/helpers'
+import { Provider } from '@vitus-labs/unistyle'
 import Element, {
   Props as ElementProps,
   withEqualSizeBeforeAfter,
@@ -11,8 +11,6 @@ import Text, { Props as TextProps } from '~/Text'
 export type { ElementProps, ListProps, OverlayProps, PortalProps, TextProps }
 
 export {
-  Content,
-  Wrapper,
   Element,
   withEqualSizeBeforeAfter,
   withActiveState,
@@ -20,4 +18,5 @@ export {
   Overlay,
   Portal,
   Text,
+  Provider,
 }

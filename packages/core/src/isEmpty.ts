@@ -1,4 +1,4 @@
-type IsEmpty = (
+export type IsEmpty = (
   param: Record<string | number, any> | null | undefined
 ) => boolean
 

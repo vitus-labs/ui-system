@@ -22,6 +22,7 @@ import {
 } from './constants'
 import useTheme from './hooks/useTheme'
 import usePseudoState from './hooks/usePseudoState'
+import { context } from './context'
 import type {
   RocketComponent,
   StyleComponent,
@@ -175,7 +176,7 @@ const styleComponent: StyleComponent = (options) => {
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
-      const theme = useContext(config.context)
+      const { theme } = useContext(context)
       const rocketstyleCtx = options.consumer ? useContext(Context) : {}
 
       // calculate themes for all possible styling dimensions

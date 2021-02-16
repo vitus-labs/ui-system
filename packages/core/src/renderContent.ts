@@ -8,7 +8,7 @@ import {
 } from 'react'
 import isEmpty from './isEmpty'
 
-type RenderContent = (
+export type RenderContent = (
   content?: ReactNode | ComponentType,
   attachProps?: Record<string, any>
 ) => ReactNode
