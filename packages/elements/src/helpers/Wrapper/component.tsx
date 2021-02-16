@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { forwardRef, ReactNode } from 'react'
+import React, { memo, forwardRef, ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import {
   Direction,
@@ -103,4 +103,4 @@ const Component = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Component
+export default memo(Component)
