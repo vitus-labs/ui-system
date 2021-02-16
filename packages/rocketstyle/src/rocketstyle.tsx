@@ -176,8 +176,11 @@ const styleComponent: StyleComponent = (options) => {
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
       // general theme passed in context
-      const { theme } = useContext(context)
+      const { theme, ...restCtx } = useContext(context)
       const rocketstyleCtx = options.consumer ? useContext(Context) : {}
+
+      console.log(theme)
+      console.log(restCtx)
 
       // calculate themes for all possible styling dimensions
       // eslint-disable-next-line no-underscore-dangle
