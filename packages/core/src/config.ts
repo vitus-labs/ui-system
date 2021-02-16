@@ -8,8 +8,8 @@ interface Internal {
   styled: typeof styled
   styledContext: Context<Record<string, any>>
   context: Context<Record<string, any>>
-  component: 'div'
-  textComponent: 'span'
+  component: any
+  textComponent: any
 }
 
 const internal: Internal = Object.freeze({
