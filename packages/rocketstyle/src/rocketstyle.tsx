@@ -4,17 +4,9 @@ import React, {
   useEffect,
   useMemo,
   useContext,
-  useCallback,
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import {
-  config,
-  omit,
-  pick,
-  compose,
-  renderContent,
-  memoize,
-} from '@vitus-labs/core'
+import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import {
   chainOptions,
   calculateChainOptions,
@@ -137,10 +129,8 @@ const styleComponent: StyleComponent = (options) => {
       baseTheme,
     })
 
-  const calculateChainingAttrs = memoize(
-    (params) => calculateChainOptions(options.attrs, params, false),
-    { isSerialized: true, maxSize: 20 }
-  )
+  const calculateChainingAttrs = (params) =>
+    calculateChainOptions(options.attrs, params, false)
 
   const themeVariantCb = (...params) => (test) => {
     if (test === 'light') return params[0]
