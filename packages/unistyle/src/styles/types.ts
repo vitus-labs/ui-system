@@ -106,7 +106,7 @@ export type Theme = Partial<{
   clearFix: boolean
   fullScreen: boolean
   resetAll: defaults | 'unset' | 'revert'
-  display: 'inline' | 'block' | 'inline-block' | 'flex' | 'inline-flex'
+  display: 'inline' | 'block' | 'inline-block' | 'flex' | 'inline-flex' | 'none'
   position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky'
   boxSizing: 'content-box' | 'border-box' | defaults
   top: value
