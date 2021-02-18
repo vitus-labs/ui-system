@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
+import { ComponentType, ForwardRefExoticComponent } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 
 // --------------------------------------------------------
@@ -55,9 +55,8 @@ export type Dimensions = Record<string, DimensionValue>
 export type ElementType<T extends TObj | unknown = any> = (
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
-  | VFC<T>
 ) &
-  Partial<{ IS_ROCKETSTYLE: true }>
+  Partial<{ [x: string]: any }>
 
 // --------------------------------------------------------
 // rocketstyle data object
@@ -140,15 +139,20 @@ export type ConfigAttrs<C, DKP> = Partial<{
 export type AttrsCb<A, T> = (
   props: Partial<A>,
   theme: T,
-  helpers: { createElement: typeof renderContent }
-) => { [I in keyof typeof props]: typeof props[I] }
+  helpers: {
+    variant?: 'light' | 'dark'
+    isDark?: boolean
+    isLight?: boolean
+    createElement: typeof renderContent
+  }
+) => Partial<A>
 
 export type AttrsParam<P, A, T> = P extends AttrsCb<A, T>
   ? AttrsCb<A, T>
   : P extends Partial<A>
   ? Partial<A>
   : P extends TObj
-  ? Partial<A & P> | AttrsCb<A & P, T>
+  ? AttrsCb<A & Partial<P>, T> | Partial<A & P>
   : Partial<A>
 
 // THEME chaining types
@@ -250,7 +254,7 @@ export type RocketComponent<
   A extends TObj = DefaultProps,
   // original component props
   OA extends TObj | unknown = Record<string, never>,
-  // original component props
+  // extended component props
   EA extends TObj = Record<string, never>,
   // theme
   T extends TObj | unknown = unknown,
@@ -285,9 +289,11 @@ export type RocketComponent<
     passProps,
   }: ConfigAttrs<NC, DKP>) => RocketComponent<
     NC extends ElementType
-      ? DefaultProps<NC, D> & RocketstyleDimensionTypes<D, DKP, UB>
+      ? Omit<OA, keyof EA | keyof RocketstyleDimensionTypes<D, DKP, UB>> &
+          EA &
+          RocketstyleDimensionTypes<D, DKP, UB>
       : A,
-    NC extends ElementType ? DefaultProps<NC, D> : OA,
+    NC extends ElementType ? ExtractProps<NC> : OA,
     EA,
     T,
     CT,
@@ -338,7 +344,11 @@ export type RocketComponent<
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
-          OA &
+          Omit<
+            OA,
+            | keyof EA
+            | keyof RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>
+          > &
             EA &
             Partial<RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>>,
           OA,
@@ -412,7 +422,7 @@ export type StyleComponent<
   props: Configuration<C, D>
 ) => RocketComponent<
   // extract component props + add default rocketstyle props
-  ExtractProps<C> & DefaultProps<C, D>,
+  Omit<ExtractProps<C>, keyof DefaultProps<C, D>> & DefaultProps<C, D>,
   // keep original component props
   ExtractProps<C>,
   // set default extending props
@@ -421,7 +431,7 @@ export type StyleComponent<
   CT,
   D,
   UB,
-  Record<string, unknown>
+  RocketstyleDimensionTypes<D, unknown, UB>
 >
 
 type DefaultProps<

@@ -61,14 +61,21 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
       margin: 3,
     },
   }))
+  .gaps({
+    lg: {
+      padding: 3,
+      margin: 3,
+    },
+  })
 
 const Component = (props) => (
   <Test
     contentAlignX="right"
     direction="inline"
     beforeContent
-    afterContentAlignX
+    afterContentAlignX="block"
     beforeContentDirection="inline"
+    gap="lg"
     {...props}
   />
 )

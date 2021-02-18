@@ -213,6 +213,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
 export const ProviderButton = Button.config({
   name: 'ButtonProvider',
   provider: true,
+  component: Element,
 })
 
 export const ButtonConsumer = rocketstyle()()({
