@@ -23,19 +23,21 @@ const Provider: FC<TProvider> = ({
   provider: RocketstyleProvider = CoreProvider,
 }) => {
   if (inversed) {
-    const { variant: ctxVariant, ...ctx } = useContext(context)
+    const { provider: InnerProvider, variant: ctxVariant, ...ctx } = useContext(
+      context
+    )
     const isDark = ctxVariant === 'dark'
     const inversedTheme = isDark ? 'light' : 'dark'
 
     return (
-      <RocketstyleProvider
+      <InnerProvider
         variant={inversedTheme}
         isDark={isDark}
         isLight={!isDark}
         {...ctx}
       >
         {children}
-      </RocketstyleProvider>
+      </InnerProvider>
     )
   }
 
@@ -47,6 +49,7 @@ const Provider: FC<TProvider> = ({
       isDark={isDark}
       isLight={!isDark}
       theme={theme}
+      provider={RocketstyleProvider}
     >
       {children}
     </RocketstyleProvider>

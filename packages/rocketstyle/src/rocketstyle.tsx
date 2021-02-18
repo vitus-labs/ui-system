@@ -7,6 +7,8 @@ import React, {
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
+import { context } from './context'
+import { useTheme, usePseudoState } from './hooks'
 import {
   chainOptions,
   calculateChainOptions,
@@ -21,9 +23,6 @@ import {
   RESERVED_CLONED_KEYS,
   RESERVED_STATIC_KEYS,
 } from './constants'
-import useTheme from './hooks/useTheme'
-import usePseudoState from './hooks/usePseudoState'
-import { context } from './context'
 import type {
   RocketComponent,
   StyleComponent,
@@ -39,17 +38,24 @@ type TContext = Partial<
 
 const Context = createContext<TContext>({})
 
+const inversedMode = {
+  dark: 'light',
+  light: 'dark',
+}
+
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
 // --------------------------------------------------------
-const orOptions = (keys, opts, defaultOpts) => {
-  const result = {}
-  keys.forEach((item) => {
-    result[item] = opts[item] || defaultOpts[item]
-  })
-
-  return result
-}
+type OrOptions = (
+  keys: Readonly<Array<string>>,
+  opts: Record<string, unknown>,
+  defaultOpts: Record<string, unknown>
+) => Record<string, unknown>
+const orOptions: OrOptions = (keys, opts, defaultOpts) =>
+  keys.reduce(
+    (acc, item) => ({ ...acc, item: opts[item] || defaultOpts[item] }),
+    {}
+  )
 
 const chainReservedOptions = (keys, opts, defaultOpts) => {
   const result = {}
@@ -184,11 +190,26 @@ const styleComponent: StyleComponent = (options) => {
   // @ts-ignore
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
-      // general theme passed in context
-      const { theme, variant, isDark, isLight } = useContext(context)
+      // --------------------------------------------------
+      // hover - focus - pressed state passed via context from parent component
+      // --------------------------------------------------
       const rocketstyleCtx = options.consumer ? useContext(Context) : {}
 
+      // --------------------------------------------------
+      // general theme and theme mode dark / light passed in context
+      // --------------------------------------------------
+      const { theme, variant: ctxVariant, isDark: ctxDark } = useContext(
+        context
+      )
+
+      const variant = options.inversed ? inversedMode[ctxVariant] : ctxVariant
+      const isDark = options.inversed ? !ctxDark : ctxDark
+      const isLight = !isDark
+
+      // --------------------------------------------------
       // calculate themes for all possible styling dimensions
+      // .theme(...) + defined dimensions like .states(...), .sizes(...)
+      // --------------------------------------------------
       // eslint-disable-next-line no-underscore-dangle
       const __ROCKETSTYLE__ = useMemo(
         () =>
@@ -197,6 +218,7 @@ const styleComponent: StyleComponent = (options) => {
             options,
             cb: themeVariantCb,
           }),
+        // recalculate this only when theme changes
         [theme]
       )
 
@@ -214,17 +236,25 @@ const styleComponent: StyleComponent = (options) => {
             variant,
             themeVariantCb
           ),
-
+        // recalculate this only when theme mode changes dark / light
         [variant]
       )
 
-      const RESERVED_PROPS_KEYS = useMemo(
+      // --------------------------------------------------
+      // calculate reserved Keys defined in dimensions as styling keys
+      // there is no need to calculate this each time - keys are based on
+      // dimensions definitions
+      // --------------------------------------------------
+      const RESERVED_STYLING_PROPS_KEYS = useMemo(
         () => Object.keys(reservedPropNames),
-        [reservedPropNames]
+        []
       )
 
+      // --------------------------------------------------
+      // onMount hook
       // if onMount is provided (useful for development tooling or so)
       // it will pass all available styling options in the callback
+      // --------------------------------------------------
       useEffect(() => {
         const { multiKeys, dimensionKeys, dimensionValues } = options
 
@@ -238,8 +268,11 @@ const styleComponent: StyleComponent = (options) => {
         }
       }, [theme, variant])
 
+      // --------------------------------------------------
+      // .attrs(...)
       // first we need to calculate final props which are
       // being returned by using `attr` chaining method
+      // --------------------------------------------------
       const calculatedAttrs = calculateChainingAttrs([
         props,
         theme,
@@ -251,37 +284,55 @@ const styleComponent: StyleComponent = (options) => {
         },
       ])
 
-      // get final props which are
-      // (1) merged from context,
+      // --------------------------------------------------
+      // get final props which are (latest has the highest priority):
+      // (1) merged styling from context,
       // (2) `attrs` chaining method, and from
       // (3) passing them directly to component
+      // --------------------------------------------------
       const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
         ...(options.consumer
-          ? // @ts-ignore
-            options.consumer((cb) => cb(rocketstyleCtx))
+          ? options.consumer((cb) => cb(rocketstyleCtx as any))
           : {}),
         ...calculatedAttrs,
         ...props,
       }
 
-      // final component state including pseudo state
+      // --------------------------------------------------
+      // rocketstate
+      // calculate final component state including pseudo state
+      // passed as $rocketstate prop
+      // --------------------------------------------------
       const rocketstate: Record<string, unknown> = calculateStylingAttrs({
         props: pickStyledProps(mergeProps, reservedPropNames),
         dimensions,
       })
 
-      // calculated final theme which will be passed to our styled component
-      // under $rocketstyle prop
+      // --------------------------------------------------
+      // rocketstyle
+      // calculated (based on styling props) final theme which will be passed
+      // to our styled component
+      // passed as $rocketstyle prop
+      // --------------------------------------------------
       const rocketstyle = calculateTheming({
         rocketstate,
         themes,
         baseTheme,
       })
 
-      const passProps = {
+      // --------------------------------------------------
+      // final props
+      // final props passed to WrappedComponent
+      // excluding: styling props
+      // including: $rocketstyle, $rocketstate
+      // --------------------------------------------------
+
+      const finalProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, RESERVED_PROPS_KEYS),
+        ...omit(mergeProps, RESERVED_STYLING_PROPS_KEYS),
+        // if enforced to pass styling props, we pass them directly
+        ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
         ref,
         $rocketstyle: rocketstyle,
         $rocketstate: { ...rocketstate, pseudo },
@@ -289,10 +340,10 @@ const styleComponent: StyleComponent = (options) => {
 
       // all the development stuff injected
       if (process.env.NODE_ENV !== 'production') {
-        passProps['data-rocketstyle'] = componentName
+        finalProps['data-rocketstyle'] = componentName
       }
 
-      return <FinalComponent {...passProps} />
+      return <FinalComponent {...finalProps} />
     }
   )
 
@@ -320,12 +371,11 @@ const styleComponent: StyleComponent = (options) => {
   ExtendedComponent.IS_ROCKETSTYLE = true
   ExtendedComponent.displayName = componentName
   // ------------------------------------------------------
-  // @ts-ignore
+
   ExtendedComponent.config = (opts = {}) => {
     const result = pick(opts, RESERVED_OR_KEYS)
 
-    // @ts-ignore
-    return cloneAndEnhance(result, options)
+    return cloneAndEnhance(result as any, options) as any
   }
 
   return ExtendedComponent as RocketComponent

@@ -101,7 +101,7 @@ export type PseudoState = {
   pressed: boolean
 }
 
-type RESULT<T extends RocketComponentType, DKP> = (
+type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
   props: RocketProviderState<T>
 ) => DKP extends TDKP
   ? Partial<
@@ -113,8 +113,8 @@ type RESULT<T extends RocketComponentType, DKP> = (
   : TObj
 
 type ConsumerCtxCb<DKP> = <T extends RocketComponentType>(
-  attrs: RESULT<T, DKP>
-) => ReturnType<RESULT<T, DKP>>
+  attrs: ConsumerCtxCBValue<T, DKP>
+) => ReturnType<ConsumerCtxCBValue<T, DKP>>
 
 export type ConsumerCb<DKP = TDKP> = (
   ctx: ConsumerCtxCb<DKP>
@@ -131,6 +131,8 @@ export type ConfigAttrs<C, DKP> = Partial<{
   provider: boolean
   consumer: ConsumerCb<DKP>
   DEBUG: boolean
+  inversed: boolean
+  passProps: Array<string>
 }>
 
 // ATTRS chaining types
@@ -279,6 +281,8 @@ export type RocketComponent<
     provider,
     consumer,
     DEBUG,
+    inversed,
+    passProps,
   }: ConfigAttrs<NC, DKP>) => RocketComponent<
     NC extends ElementType
       ? DefaultProps<NC, D> & RocketstyleDimensionTypes<D, DKP, UB>
@@ -387,6 +391,8 @@ export type Configuration<
     provider: boolean
     consumer: ConsumerCb
     DEBUG: boolean
+    inversed: boolean
+    passProps: Array<string>
 
     // array chaining options
     attrs: Array<OptionFunc>

@@ -4,7 +4,8 @@ export const RESERVED_OR_KEYS = [
   'DEBUG',
   'name',
   'component',
-  'passBoolProps',
+  'inversed',
+  'passProps',
 ] as const
 
 export const RESERVED_CLONED_KEYS = ['theme', 'attrs', 'styles'] as const
