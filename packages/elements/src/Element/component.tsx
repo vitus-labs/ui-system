@@ -139,7 +139,7 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {beforeContent}
+            {renderContent(beforeContent)}
           </Content>
         )}
 
@@ -172,7 +172,7 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {afterContent}
+            {renderContent(afterContent)}
           </Content>
         )}
       </Wrapper>
