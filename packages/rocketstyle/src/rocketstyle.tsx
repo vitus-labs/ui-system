@@ -53,18 +53,18 @@ type OrOptions = (
 ) => Record<string, unknown>
 const orOptions: OrOptions = (keys, opts, defaultOpts) =>
   keys.reduce(
-    (acc, item) => ({ ...acc, item: opts[item] || defaultOpts[item] }),
+    (acc, item) => ({ ...acc, [item]: opts[item] || defaultOpts[item] }),
     {}
   )
 
-const chainReservedOptions = (keys, opts, defaultOpts) => {
-  const result = {}
-  keys.forEach((item) => {
-    result[item] = chainOptions(opts[item], defaultOpts[item])
-  })
-
-  return result
-}
+const chainReservedOptions = (keys, opts, defaultOpts) =>
+  keys.reduce(
+    (acc, item) => ({
+      ...acc,
+      [item]: chainOptions(opts[item], defaultOpts[item]),
+    }),
+    {}
+  )
 
 // --------------------------------------------------------
 // helpers for create statics on class
@@ -138,8 +138,8 @@ const styleComponent: StyleComponent = (options) => {
   const calculateChainingAttrs = (params) =>
     calculateChainOptions(options.attrs, params, false)
 
-  const themeVariantCb = (...params) => (test) => {
-    if (test === 'light') return params[0]
+  const themeVariantCb = (...params) => (mode) => {
+    if (!mode || mode === 'light') return params[0]
     return params[1]
   }
 
@@ -198,11 +198,9 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
       // --------------------------------------------------
-      const { theme, variant: ctxVariant, isDark: ctxDark } = useContext(
-        context
-      )
+      const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context)
 
-      const variant = options.inversed ? inversedMode[ctxVariant] : ctxVariant
+      const mode = options.inversed ? inversedMode[ctxMode] : ctxMode
       const isDark = options.inversed ? !ctxDark : ctxDark
       const isLight = !isDark
 
@@ -233,11 +231,11 @@ const styleComponent: StyleComponent = (options) => {
         () =>
           calculateThemeVariant(
             { themes: rocketThemes, baseTheme: rocketBaseThemes },
-            variant,
+            mode,
             themeVariantCb
           ),
         // recalculate this only when theme mode changes dark / light
-        [variant]
+        [mode]
       )
 
       // --------------------------------------------------
@@ -266,7 +264,7 @@ const styleComponent: StyleComponent = (options) => {
             ...__ROCKETSTYLE__,
           })
         }
-      }, [theme, variant])
+      }, [theme, mode])
 
       // --------------------------------------------------
       // .attrs(...)
@@ -278,7 +276,7 @@ const styleComponent: StyleComponent = (options) => {
         theme,
         {
           renderContent,
-          variant,
+          mode,
           isDark,
           isLight,
         },

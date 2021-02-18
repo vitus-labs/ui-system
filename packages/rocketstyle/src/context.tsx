@@ -9,7 +9,7 @@ type Theme = {
 
 export type TProvider = {
   theme: Theme
-  variant: 'light' | 'dark'
+  mode: 'light' | 'dark'
   inversed?: boolean
   children: ReactNode
   provider: ComponentType<any>
@@ -17,21 +17,21 @@ export type TProvider = {
 
 const Provider: FC<TProvider> = ({
   theme,
-  variant,
+  mode,
   children,
   inversed,
   provider: RocketstyleProvider = CoreProvider,
 }) => {
   if (inversed) {
-    const { provider: InnerProvider, variant: ctxVariant, ...ctx } = useContext(
+    const { provider: InnerProvider, mode: ctxMode, ...ctx } = useContext(
       context
     )
-    const isDark = ctxVariant === 'dark'
+    const isDark = ctxMode === 'dark'
     const inversedTheme = isDark ? 'light' : 'dark'
 
     return (
       <InnerProvider
-        variant={inversedTheme}
+        mode={inversedTheme}
         isDark={isDark}
         isLight={!isDark}
         {...ctx}
@@ -41,11 +41,11 @@ const Provider: FC<TProvider> = ({
     )
   }
 
-  const isDark = variant === 'dark'
+  const isDark = mode === 'dark'
 
   return (
     <RocketstyleProvider
-      variant={variant}
+      mode={mode}
       isDark={isDark}
       isLight={!isDark}
       theme={theme}
