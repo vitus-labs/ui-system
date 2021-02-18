@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react'
+import React, { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
@@ -118,14 +118,6 @@ const Component = forwardRef<any, Props>(
       wrapperAlignY,
     } = calculateDirection()
 
-    const memoBeforeContent = useMemo(() => renderContent(beforeContent), [
-      beforeContent,
-    ])
-
-    const memoAfterContent = useMemo(() => renderContent(afterContent), [
-      afterContent,
-    ])
-
     return (
       <Wrapper
         {...props}
@@ -147,7 +139,7 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {memoBeforeContent}
+            {beforeContent}
           </Content>
         )}
 
@@ -180,7 +172,7 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {memoAfterContent}
+            {afterContent}
           </Content>
         )}
       </Wrapper>
