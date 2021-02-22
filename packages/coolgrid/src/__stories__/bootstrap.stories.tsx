@@ -175,20 +175,14 @@ export const mixAndMatch = () => (
 export const hiddenForChoosenBreakpoints = () => (
   <Container colCss={colCss}>
     <Row>
-      <Col size={6} xs={0} sm={9} md={0}>
+      <Col size={{ xs: 0, sm: 9, md: 0 }}>
         xs-hidden, col-6 col-sm-9, md-hidden
       </Col>
-      <Col size={6} sm={3}>
-        col-6 col-sm-3
-      </Col>
+      <Col size={{ xs: 6, sm: 3 }}>col-6 col-sm-3</Col>
     </Row>
     <Row>
-      <Col size={7} lg={8}>
-        col-7 col-lg-8
-      </Col>
-      <Col size={5} lg={4}>
-        col-5 col-lg-4
-      </Col>
+      <Col size={{ xs: 7, lg: 8 }}>col-7 col-lg-8</Col>
+      <Col size={{ xs: 5, lg: 4 }}>col-5 col-lg-4</Col>
     </Row>
   </Container>
 )

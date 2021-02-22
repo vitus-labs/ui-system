@@ -37,23 +37,13 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
     `
 }
 
-const gapStyles = (value, rootSize) => {
+const spacingStyles = (type, value, rootSize) => {
   if (!hasValue(value)) {
     return ''
   }
 
   return config.css`
-    margin: ${normalizeUnit({ param: value / 2, rootSize })};
-    `
-}
-
-const paddingStyles = (value, rootSize) => {
-  if (!hasValue(value)) {
-    return ''
-  }
-
-  return config.css`
-    padding: ${normalizeUnit({ param: value, rootSize })};
+    ${type}: ${normalizeUnit({ param: value / 2, rootSize })};
     `
 }
 
@@ -61,21 +51,21 @@ const styles = ({ theme, css, rootSize }) => {
   const { size, columns, gap, padding, extendCss, RNparentWidth } = theme
   const renderStyles = isVisible(size)
 
-  return css`
-    ${renderStyles
-      ? css`
-          left: initial;
-          position: relative;
-          ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
-          ${size !== 0 && gapStyles(gap, rootSize)};
-          ${size !== 0 && paddingStyles(padding, rootSize)};
-        `
-      : css`
-          left: -9999px;
-          position: fixed;
-        `};
+  if (renderStyles)
+    return css`
+      left: initial;
+      position: relative;
+      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
+      ${spacingStyles('margin', gap, rootSize)};
+      ${spacingStyles('padding', padding, rootSize)};
+      ${extendedCss(extendCss)};
+    `
 
-    ${extendedCss(extendCss)};
+  return css`
+    left: -9999px;
+    position: fixed;
+    margin: 0;
+    padding: 0;
   `
 }
 

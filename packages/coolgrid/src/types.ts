@@ -29,8 +29,8 @@ export type ConfigurationProps = Partial<{
   colComponent: ComponentType
   rowComponent: ComponentType
   contentAlignX: ContentAlignX
-  containerWidth: ValueType
-  width: ValueType
+  containerWidth: ContainerWidth
+  width: ContainerWidth
 }>
 
 export type ComponentProps = ConfigurationProps &
