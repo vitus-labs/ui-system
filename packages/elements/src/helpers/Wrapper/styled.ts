@@ -5,7 +5,7 @@ import {
   makeItResponsive,
 } from '@vitus-labs/unistyle'
 
-const styles = ({ css, theme: t }) =>
+const styles = ({ theme: t, css }) =>
   css`
     ${__WEB__ &&
     css`
@@ -15,16 +15,22 @@ const styles = ({ css, theme: t }) =>
       }};
     `};
 
+    ${({ $needsFix }) =>
+      $needsFix &&
+      css`
+        width: 100%;
+      `};
+
     ${__WEB__ &&
     t.block &&
     css`
-      align-self: stretch;
+      width: 100%;
+    `};
 
-      ${({ $needsFix }) =>
-        $needsFix &&
-        css`
-          width: 100%;
-        `};
+    ${__WEB__ &&
+    t.contentAlignY === 'block' &&
+    css`
+      height: 100%;
     `};
 
     ${__NATIVE__ &&
