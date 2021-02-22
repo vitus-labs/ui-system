@@ -18,7 +18,7 @@ const styles = ({ css, theme: t }) =>
     ${__WEB__ &&
     t.block &&
     css`
-      flex: 1;
+      align-self: stretch;
 
       ${({ $needsFix }) =>
         $needsFix &&
