@@ -113,6 +113,7 @@ export const transformTheme: TransformTheme = memoize(
   },
   {
     isSerialized: true,
+    isDeepEqual: true,
     maxArgs: 1,
     maxSize: 800,
   }

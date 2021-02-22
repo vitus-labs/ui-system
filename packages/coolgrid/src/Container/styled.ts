@@ -12,7 +12,7 @@ const styles = ({ theme: t, css, rootSize }) => css`
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `

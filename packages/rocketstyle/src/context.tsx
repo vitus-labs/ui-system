@@ -8,11 +8,11 @@ type Theme = {
 } & Record<string, unknown>
 
 export type TProvider = {
-  theme: Theme
-  mode: 'light' | 'dark'
-  inversed?: boolean
   children: ReactNode
-  provider: ComponentType<any>
+  theme?: Theme
+  mode?: 'light' | 'dark'
+  inversed?: boolean
+  provider?: ComponentType<any>
 }
 
 const Provider: FC<TProvider> = ({

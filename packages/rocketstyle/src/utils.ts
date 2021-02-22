@@ -164,7 +164,7 @@ export const calculateStyledAttrs = memoize(
 
     return result
   },
-  { isSerialized: true, maxArgs: 1, maxSize: 800 }
+  { isSerialized: true, isDeepEqual: true, maxArgs: 1, maxSize: 800 }
 )
 // --------------------------------------------------------
 // generate theme
@@ -204,7 +204,7 @@ export const calculateTheme: CalculateTheme = memoize(
 
     return finalTheme
   },
-  { isSerialized: true, maxSize: 1000 }
+  { isSerialized: true, isDeepEqual: true, maxSize: 1000 }
 )
 
 // --------------------------------------------------------

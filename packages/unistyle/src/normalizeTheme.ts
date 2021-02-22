@@ -41,7 +41,13 @@ const handleArrayCb = (arr) => (value, i) => {
 //   breakpoint: Array<string>,
 //   result: Record<string, unknown>
 // ) => Record<string, unknown>
-const handleObjectCb = (obj) => (bp, i, bps, res) => obj[bp] || res[bps[i - 1]]
+const handleObjectCb = (obj) => (bp, i, bps, res) => {
+  const currentValue = obj[bp]
+  const previousValue = res[bps[i - 1]]
+  // check for non-nullable values
+  if (currentValue != null) return currentValue
+  return previousValue
+}
 
 const handleValueCb = (value) => () => value
 
@@ -84,5 +90,5 @@ export const normalizeTheme: NormalizeTheme = memoize(
 
     return result
   },
-  { isSerialized: true, maxArgs: 1, maxSize: 800 }
+  { isSerialized: true, isDeepEqual: true, maxArgs: 1, maxSize: 800 }
 )
