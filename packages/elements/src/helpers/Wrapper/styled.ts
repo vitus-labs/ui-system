@@ -5,8 +5,6 @@ import {
   makeItResponsive,
 } from '@vitus-labs/unistyle'
 
-const isValue = (val) => val !== null && val !== undefined
-
 const styles = ({ css, theme: t }) =>
   css`
     ${__WEB__ &&
@@ -18,13 +16,15 @@ const styles = ({ css, theme: t }) =>
     `};
 
     ${__WEB__ &&
-    isValue(t.block) &&
+    t.block &&
     css`
+      flex: 1;
+
       ${({ $needsFix }) =>
         $needsFix &&
         css`
-          width: ${t.block ? '100%' : 'initial'};
-        `}
+          width: 100%;
+        `};
     `};
 
     ${__NATIVE__ &&
