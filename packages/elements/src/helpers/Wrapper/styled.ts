@@ -24,19 +24,13 @@ const styles = ({ theme: t, css }) =>
     ${__WEB__ &&
     t.block &&
     css`
-      width: 100%;
+      flex: 1;
     `};
 
     ${__WEB__ &&
     t.contentAlignY === 'block' &&
     css`
       height: 100%;
-    `};
-
-    ${__NATIVE__ &&
-    t.block &&
-    css`
-      align-self: stretch;
     `};
 
     ${alignContent({
