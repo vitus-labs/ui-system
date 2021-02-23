@@ -2,13 +2,20 @@ import { useState, useEffect } from 'react'
 import { throttle } from '@vitus-labs/core'
 
 type UseWindowSize = (
-  throttleDelay: number
-) => { width: number; height: number }
+  throttleDelay?: number,
+  defaultValues?: Partial<{
+    width: number
+    height: number
+  }>
+) => { width: number | undefined; height: number | undefined }
 
-const useWindowSize: UseWindowSize = (throttleDelay = 200) => {
+const useWindowSize: UseWindowSize = (
+  throttleDelay = 200,
+  { width = undefined, height = undefined } = {}
+) => {
   const getSize = () => ({
-    width: __CLIENT__ ? window.innerWidth : undefined,
-    height: __CLIENT__ ? window.innerHeight : undefined,
+    width: __CLIENT__ ? window.innerWidth : width,
+    height: __CLIENT__ ? window.innerHeight : height,
   })
 
   const [windowSize, setWindowSize] = useState(getSize)
