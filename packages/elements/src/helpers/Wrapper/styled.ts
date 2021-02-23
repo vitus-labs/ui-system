@@ -15,18 +15,6 @@ const styles = ({ theme: t, css }) =>
       }};
     `};
 
-    ${({ $needsFix }) =>
-      $needsFix &&
-      css`
-        width: 100%;
-      `};
-
-    ${__WEB__ &&
-    t.block &&
-    css`
-      flex: 1;
-    `};
-
     ${__WEB__ &&
     t.contentAlignY === 'block' &&
     css`
@@ -42,29 +30,24 @@ const styles = ({ theme: t, css }) =>
     ${t.extendCss && extendedCss(t.extendCss)};
   `
 
+const platformStyles = __WEB__
+  ? config.css`
+    box-sizing: border-box;
+  `
+  : config.css`
+    display: flex;
+  `
+
 export default config.styled(config.component)`
   position: relative;
-
-  ${
-    __WEB__ &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
-
-  ${
-    __NATIVE__ &&
-    config.css`
-      display: flex;
-    `
-  };
+  ${platformStyles};
 
    ${({ $needsFix }) =>
      $needsFix &&
      config.css`
-    display: flex;
-    flex-direction: column;
-  `};
+      display: flex;
+      flex-direction: column;
+    `};
 
   ${({ $isInner }) =>
     $isInner &&
