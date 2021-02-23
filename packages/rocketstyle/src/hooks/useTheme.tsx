@@ -1,4 +1,4 @@
-import { config, set, get, isEmpty } from '@vitus-labs/core'
+import { config, set, get, isEmpty, memoize } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
@@ -10,27 +10,35 @@ const isMultiKey = (value) => {
 const isValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
-const calculateDimensionsMap = ({ themes, useBooleans }) => {
-  const result = { keysMap: {}, keywords: {} }
-  if (isEmpty(themes)) return result
+const calculateDimensionsMap = memoize(
+  ({ themes, useBooleans }) => {
+    const result = { keysMap: {}, keywords: {} }
+    if (isEmpty(themes)) return result
 
-  return Object.entries(themes).reduce((accumulator, [key, value]) => {
-    const { keysMap, keywords } = accumulator
-    keywords[key] = true
+    return Object.entries(themes).reduce((accumulator, [key, value]) => {
+      const { keysMap, keywords } = accumulator
+      keywords[key] = true
 
-    Object.entries(value).forEach(([itemKey, itemValue]) => {
-      if (!isValidKey(itemValue)) return
+      Object.entries(value).forEach(([itemKey, itemValue]) => {
+        if (!isValidKey(itemValue)) return
 
-      if (useBooleans) {
-        keywords[itemKey] = true
-      }
+        if (useBooleans) {
+          keywords[itemKey] = true
+        }
 
-      set(keysMap, [key, itemKey], true)
-    })
+        set(keysMap, [key, itemKey], true)
+      })
 
-    return accumulator
-  }, result)
-}
+      return accumulator
+    }, result)
+  },
+  {
+    isSerialized: true,
+    isDeepEqual: true,
+    maxArgs: 1,
+    maxSize: 500,
+  }
+)
 
 const calculateDimensionThemes = (theme, options, cb) => {
   const result = {}

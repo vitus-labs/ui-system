@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { memoize } from '@vitus-labs/core'
 import { ReactText } from 'react'
 
 type StripUnit = (value: ReactText, unitReturn?: boolean) => any
@@ -27,27 +28,26 @@ type NormalizeUnit = ({
   outputUnit?: 'px' | 'rem' | '%' | string
 }) => string | number
 
-export const normalizeUnit: NormalizeUnit = ({
-  param,
-  rootSize = 16,
-  outputUnit = __WEB__ ? 'rem' : 'px',
-}) => {
-  if (!param && param !== 0) return null
+export const normalizeUnit: NormalizeUnit = memoize(
+  ({ param, rootSize = 16, outputUnit = __WEB__ ? 'rem' : 'px' }) => {
+    if (!param && param !== 0) return null
 
-  const [value, unit] = stripUnit(param, true)
-  if (!value && value !== 0) return null
-  if (value === 0 || typeof value === 'string') return param // zero should be unitless
+    const [value, unit] = stripUnit(param, true)
+    if (!value && value !== 0) return null
+    if (value === 0 || typeof value === 'string') return param // zero should be unitless
 
-  if (rootSize && !Number.isNaN(value)) {
-    if (!unit && outputUnit === 'px') return `${value}${outputUnit}`
-    if (!unit) return `${value / rootSize}rem`
-    if (unit === 'px' && outputUnit === 'rem') return `${value / rootSize}rem`
-  }
+    if (rootSize && !Number.isNaN(value)) {
+      if (!unit && outputUnit === 'px') return `${value}${outputUnit}`
+      if (!unit) return `${value / rootSize}rem`
+      if (unit === 'px' && outputUnit === 'rem') return `${value / rootSize}rem`
+    }
 
-  if (unit) return param
+    if (unit) return param
 
-  return `${value}${outputUnit}`
-}
+    return `${value}${outputUnit}`
+  },
+  { maxSize: 100, maxArgs: 1, isDeepEqual: true, isSerialized: true }
+)
 
 type GetValueOf = (...values: Array<unknown>) => number | string | unknown
 export const getValueOf: GetValueOf = (...values) =>
