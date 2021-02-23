@@ -22,7 +22,7 @@ import optimizeTheme, {
   groupByBreakpoint,
   PickThemeProps,
 } from './optimizeTheme'
-import useWindowResize from './useWindowSize'
+import useWindowResize, { UseWindowSize } from './useWindowSize'
 import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 
 export type {
@@ -37,6 +37,7 @@ export type {
   TransformTheme,
   MakeItResponsive,
   PickThemeProps,
+  UseWindowSize,
 }
 
 export {
