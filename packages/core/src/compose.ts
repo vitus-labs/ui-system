@@ -13,11 +13,11 @@ type PickLastInTuple<T extends any[]> = T extends [
   argn: infer L
 ]
   ? L
-  : never
+  : any
 type FirstFnParameterType<T extends any[]> = Parameters<PickLastInTuple<T>>[any]
 type LastFnReturnType<T extends any[]> = ReturnType<T[0]>
 
-const compose = <T extends Array<ArityOneFn>>(...fns: T) => (
+const compose = <T extends ArityOneFn[]>(...fns: T) => (
   p: FirstFnParameterType<T>
 ): LastFnReturnType<T> => fns.reduceRight((acc: any, cur: any) => cur(acc), p)
 

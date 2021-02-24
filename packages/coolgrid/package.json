@@ -14,7 +14,7 @@
   "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-coolgrid.js": "./lib/vitus-labs-coolgrid.js",
-    "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.browser.js"
+    "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.module.js"
   },
   "unpkg": "lib/vitus-labs-coolgrid.umd.min.js",
   "jsnext:main": "lib/vitus-labs-coolgrid.module.js",
@@ -62,10 +62,10 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.10.9-alpha.50",
-    "@vitus-labs/tools-babel": "^0.6.0",
-    "@vitus-labs/tools-rollup": "^0.6.0",
-    "@vitus-labs/tools-storybook": "^0.6.0",
-    "@vitus-labs/tools-typescript": "^0.6.0",
+    "@vitus-labs/tools-babel": "^0.6.4",
+    "@vitus-labs/tools-rollup": "^0.6.4",
+    "@vitus-labs/tools-storybook": "^0.6.3",
+    "@vitus-labs/tools-typescript": "^0.6.4",
     "@vitus-labs/unistyle": "^0.10.9-alpha.50"
   }
 }
