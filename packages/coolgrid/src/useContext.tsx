@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext } from 'react'
 import { get } from '@vitus-labs/core'
 import { pickThemeProps, context } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
@@ -24,23 +24,13 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
     get(theme, 'coolgrid.container')) as ValueType,
 })
 
-const getContext = (props, theme) => {
+type UseGridContext = (props: Obj) => Context
+const useGridContext: UseGridContext = (props) => {
+  const { theme } = useContext(context)
   const ctxProps = pickThemeProps(props, CONTEXT_KEYS)
   const gridContext = getGridContext(ctxProps, theme as Record<string, unknown>)
 
   return { ...gridContext, ...ctxProps }
-}
-
-type UseGridContext = (props: Obj) => Context
-const useGridContext: UseGridContext = (props) => {
-  const { theme } = useContext(context)
-  const [ctx, setCtx] = useState(getContext(props, theme))
-
-  useEffect(() => {
-    setCtx(getContext(props, theme))
-  }, [theme, props])
-
-  return ctx
 }
 
 export default useGridContext
