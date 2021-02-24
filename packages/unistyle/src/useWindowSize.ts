@@ -8,8 +8,8 @@ export type UseWindowSize = (
     height: number
   }>
 ) => {
-  width?: number
-  height?: number
+  width: number
+  height: number
 }
 
 const useWindowSize: UseWindowSize = (
