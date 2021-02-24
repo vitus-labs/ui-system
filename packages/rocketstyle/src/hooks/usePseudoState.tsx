@@ -40,6 +40,7 @@ const usePseudoState: UsePseudoState = (props) => {
   const onMouseLeave = (e: MouseEvent) => {
     handleEvent(e)
     setHover(false)
+    setPressed(false)
     if (props.onMouseLeave) props.onMouseLeave(e)
   }
 
