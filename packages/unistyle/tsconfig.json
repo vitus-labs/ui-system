@@ -9,9 +9,8 @@
     "lib"
   ],
   "compilerOptions": {
-    "types": [
-      "@vitus-labs/tools-rollup"
-    ],
+    "incremental": false,
+    "types": ["@vitus-labs/tools-rollup"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",

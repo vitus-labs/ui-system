@@ -3,6 +3,7 @@
   "include": ["src"],
   "exclude": ["node_modules", "__stories__", "lib"],
   "compilerOptions": {
+    "incremental": false,
     "types": ["@vitus-labs/tools-rollup"],
     "rootDir": "src",
     "outDir": "lib",
