@@ -7,11 +7,14 @@ export type UseWindowSize = (
     width: number
     height: number
   }>
-) => { width: number | undefined; height: number | undefined }
+) => {
+  width?: number
+  height?: number
+}
 
 const useWindowSize: UseWindowSize = (
   throttleDelay = 200,
-  { width = undefined, height = undefined } = {}
+  { width = 0, height = 0 } = {}
 ) => {
   const getSize = () => ({
     width: __CLIENT__ ? window.innerWidth : width,

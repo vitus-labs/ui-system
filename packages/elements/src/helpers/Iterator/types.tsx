@@ -37,9 +37,9 @@ export type DataArrayObject = Partial<{
 // --------------------------------------------------------
 // Children type
 // --------------------------------------------------------
-type ChildrenTypeCallback =
-  | ((itemProps: Record<string, never>, extendedProps: ExtendedProps) => TObj)
-  | TObj
+// export type ChildrenTypeCallback =
+//   | ((itemProps: Record<string, never>, extendedProps: ExtendedProps) => TObj)
+//   | TObj
 
 // type ChildrenType = {
 //   children: ReactNode
@@ -50,12 +50,12 @@ type ChildrenTypeCallback =
 // --------------------------------------------------------
 // Simple array type
 // --------------------------------------------------------
-type SimpleArrayTypeCallback =
-  | ((
-      itemProps: Record<string, SimpleValue>,
-      extendedProps: ExtendedProps
-    ) => TObj)
-  | TObj
+// export type SimpleArrayTypeCallback =
+//   | ((
+//       itemProps: Record<string, SimpleValue>,
+//       extendedProps: ExtendedProps
+//     ) => TObj)
+//   | TObj
 
 // type DataSimpleArrayType = {
 //   data: Array<SimpleValue | MaybeNull>
@@ -69,9 +69,9 @@ type SimpleArrayTypeCallback =
 // --------------------------------------------------------
 // Object array type
 // --------------------------------------------------------
-type ObjectArrayTypeCallback =
-  | ((itemProps: DataArrayObject, extendedProps: ExtendedProps) => TObj)
-  | TObj
+// export type ObjectArrayTypeCallback =
+//   | ((itemProps: DataArrayObject, extendedProps: ExtendedProps) => TObj)
+//   | TObj
 
 // type DataObjectArrayType = {
 //   data: Array<DataArrayObject | MaybeNull>
@@ -84,20 +84,24 @@ type ObjectArrayTypeCallback =
 //   wrapProps?: ObjectArrayTypeCallback
 // }
 
+export type PropsCallback =
+  | TObj
+  | ((
+      itemProps:
+        | Record<string, never>
+        | Record<string, SimpleValue>
+        | DataArrayObject,
+      extendedProps: ExtendedProps
+    ) => TObj)
+
 export type Props = Partial<{
   children: ReactNodeArray
   data: Array<SimpleValue | DataArrayObject | MaybeNull>
   component: ElementType
   valueName: string
   wrapComponent: ElementType
-  itemProps:
-    | ChildrenTypeCallback
-    | SimpleArrayTypeCallback
-    | ObjectArrayTypeCallback
-  wrapProps?:
-    | ChildrenTypeCallback
-    | SimpleArrayTypeCallback
-    | ObjectArrayTypeCallback
+  itemProps: PropsCallback
+  wrapProps?: PropsCallback
   itemKey?:
     | keyof DataArrayObject
     | ((
