@@ -4,7 +4,7 @@ import {
   normalizeUnit,
   extendedCss,
 } from '@vitus-labs/unistyle'
-import { hasValue, isNumber } from '~/utils'
+import { isNumber } from '~/utils'
 
 type ContentAlignValuesKeys = keyof typeof contentAlignValues
 const contentAlignValues = {
@@ -17,7 +17,7 @@ const contentAlignValues = {
 }
 
 const spacingStyles = ({ gap, gutter }, { rootSize }) => {
-  if (!hasValue(gap)) return ''
+  if (!isNumber(gap)) return ''
 
   const value = (param) => normalizeUnit({ param, rootSize })
 
@@ -59,7 +59,6 @@ export default config.styled(config.component)`
   flex-wrap: wrap;
   align-self: stretch;
   flex-direction: row;
-  /* overflow-x: hidden; */
 
   ${makeItResponsive({
     key: '$coolgrid',

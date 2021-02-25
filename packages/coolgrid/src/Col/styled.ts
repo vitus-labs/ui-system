@@ -4,7 +4,7 @@ import {
   normalizeUnit,
   extendedCss,
 } from '@vitus-labs/unistyle'
-import { hasValue, isVisible } from '~/utils'
+import { hasValue, isVisible, isNumber } from '~/utils'
 
 const hasWidth = (size, columns) => hasValue(size) && hasValue(columns)
 
@@ -38,7 +38,7 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
 }
 
 const spacingStyles = (type, value, rootSize) => {
-  if (!hasValue(value)) {
+  if (!isNumber(value)) {
     return ''
   }
 
