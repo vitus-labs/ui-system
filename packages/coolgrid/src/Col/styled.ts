@@ -84,28 +84,10 @@ export default config.styled(config.component)`
   flex-direction: column;
   justify-content: stretch;
 
-  ${(props) => {
-    console.log(props)
-    console.log(
-      makeItResponsive({
-        key: '$coolgrid',
-        styles,
-        css: config.css,
-        normalize: true,
-      })(props)
-    )
-    return makeItResponsive({
-      key: '$coolgrid',
-      styles,
-      css: config.css,
-      normalize: true,
-    })(props)
-  }}
-
-  /* ${makeItResponsive({
+  ${makeItResponsive({
     key: '$coolgrid',
     styles,
     css: config.css,
     normalize: true,
-  })}; */
+  })};
 `
