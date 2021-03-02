@@ -7,17 +7,17 @@ const MAP_SHARED = {
   block: 'stretch',
 }
 
-const ALIGN_X = {
+export const ALIGN_X = {
   left: 'flex-start',
   right: 'flex-end',
   ...MAP_SHARED,
-}
+} as const
 
-const ALIGN_Y = {
+export const ALIGN_Y = {
   top: 'flex-start',
   bottom: 'flex-end',
   ...MAP_SHARED,
-}
+} as const
 
 type DIRECTION_TYPE = {
   inline: string
@@ -26,7 +26,7 @@ type DIRECTION_TYPE = {
   reverseRows: string
 }
 
-const DIRECTION: DIRECTION_TYPE = __WEB__
+export const DIRECTION: DIRECTION_TYPE = __WEB__
   ? {
       inline: 'row',
       reverseInline: 'reverse-row',
@@ -40,18 +40,18 @@ const DIRECTION: DIRECTION_TYPE = __WEB__
       reverseRows: 'column-reverse',
     }
 
-export type AlignContentDirection = keyof DIRECTION_TYPE
-export type AlignContentAlignX = keyof typeof ALIGN_X
-export type AlignContentAlignY = keyof typeof ALIGN_Y
+export type AlignContentDirectionKeys = keyof DIRECTION_TYPE
+export type AlignContentAlignXKeys = keyof typeof ALIGN_X
+export type AlignContentAlignYKeys = keyof typeof ALIGN_Y
 
 export type AlignContentProps = ({
   direction,
   alignX,
   alignY,
 }: {
-  direction: AlignContentDirection
-  alignX: AlignContentAlignX
-  alignY: AlignContentAlignY
+  direction: AlignContentDirectionKeys
+  alignX: AlignContentAlignXKeys
+  alignY: AlignContentAlignYKeys
 }) => ReturnType<typeof config.css>
 
 const alignContent: AlignContentProps = (attrs) => {

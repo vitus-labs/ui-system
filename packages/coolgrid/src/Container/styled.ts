@@ -3,9 +3,15 @@ import {
   makeItResponsive,
   normalizeUnit,
   extendedCss,
+  StylesCb,
 } from '@vitus-labs/unistyle'
+import { StyledTypes } from '~/types'
 
-const styles = ({ theme: t, css, rootSize }) => css`
+const styles: StylesCb<Pick<StyledTypes, 'width' | 'extendCss'>> = ({
+  theme: t,
+  css,
+  rootSize,
+}) => css`
   max-width: ${normalizeUnit({ param: t.width, rootSize })};
   ${extendedCss(t.extendCss)};
 `

@@ -127,6 +127,18 @@ type Theme = {
   }
 } & CustomTheme
 
+export type StylesCb<T = Partial<Record<string, any>>> = ({
+  theme,
+  css,
+  rootSize,
+  globalTheme,
+}: Partial<{
+  theme: T
+  css: (...args: any) => any
+  rootSize: number
+  globalTheme: Partial<Record<string, any>>
+}>) => ReturnType<typeof css> | string
+
 export type MakeItResponsive = ({
   theme,
   key,
@@ -137,7 +149,7 @@ export type MakeItResponsive = ({
   theme?: CustomTheme
   key?: string
   css: any
-  styles: any
+  styles: StylesCb
   normalize?: boolean
 }) => ({ theme }: { theme?: Theme }) => any
 
@@ -147,17 +159,18 @@ export const makeItResponsive: MakeItResponsive = ({
   css,
   styles,
   normalize = false,
-}) => ({ theme, ...props }) => {
+}) => ({ theme = {}, ...props }) => {
   const internalTheme = customTheme || props[key]
 
   // if no theme is defined, return empty objct
   if (isEmpty(internalTheme)) return ''
 
-  const { rootSize, breakpoints, __VITUS_LABS__ } = theme
+  const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } = theme
 
   const renderStyles = (
     theme: Record<string, unknown>
-  ): ReturnType<typeof styles> => styles({ theme, css, rootSize })
+  ): ReturnType<typeof styles> =>
+    styles({ theme, css, rootSize, globalTheme: restTheme })
 
   // if there are no breakpoints, return just standard css
   if (isEmpty(breakpoints) || isEmpty(__VITUS_LABS__)) {

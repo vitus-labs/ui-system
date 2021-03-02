@@ -1,7 +1,10 @@
 import alignContent, {
-  AlignContentAlignX,
-  AlignContentAlignY,
-  AlignContentDirection,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
+  ALIGN_X as alignContentAlignX,
+  ALIGN_Y as alignContentAlignY,
+  DIRECTION as alignContentDirection,
 } from './alignContent'
 import breakpoints, { Breakpoints } from './breakpoints'
 import Provider, { context, TProvider } from './context'
@@ -15,6 +18,7 @@ import {
   CreateMediaQueries,
   TransformTheme,
   MakeItResponsive,
+  StylesCb,
 } from './mediaQueries'
 import optimizeTheme, {
   pickThemeProps,
@@ -27,21 +31,25 @@ import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
 
 export type {
   TProvider,
-  AlignContentAlignX,
-  AlignContentAlignY,
-  AlignContentDirection,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
   Breakpoints,
   ExtendedCss,
   SortBreakpoints,
   CreateMediaQueries,
   TransformTheme,
   MakeItResponsive,
+  StylesCb,
   PickThemeProps,
   UseWindowSize,
 }
 
 export {
   alignContent,
+  alignContentAlignX,
+  alignContentAlignY,
+  alignContentDirection,
   breakpoints,
   Provider,
   context,

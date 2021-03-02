@@ -3,12 +3,25 @@ import {
   makeItResponsive,
   normalizeUnit,
   extendedCss,
+  StylesCb,
 } from '@vitus-labs/unistyle'
 import { hasValue, isVisible, isNumber } from '~/utils'
+import { CssOutput, StyledTypes } from '~/types'
 
-const hasWidth = (size, columns) => hasValue(size) && hasValue(columns)
+type HasWidth = (size?: number, columns?: number) => boolean
 
-const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
+const hasWidth: HasWidth = (size, columns) =>
+  hasValue(size) && hasValue(columns)
+
+type WidthStyles = (
+  props: Pick<StyledTypes, 'size' | 'columns' | 'gap' | 'RNparentWidth'>,
+  defaults: { rootSize?: number }
+) => CssOutput
+
+const widthStyles: WidthStyles = (
+  { size, columns, gap, RNparentWidth },
+  { rootSize }
+) => {
   if (!hasWidth(size, columns)) {
     return ''
   }
@@ -37,7 +50,12 @@ const widthStyles = ({ size, columns, gap, RNparentWidth }, { rootSize }) => {
     `
 }
 
-const spacingStyles = (type, value, rootSize) => {
+type SpacingStyles = (
+  type: 'margin' | 'padding',
+  value: number,
+  rootSize?: number
+) => CssOutput
+const spacingStyles: SpacingStyles = (type, value, rootSize) => {
   if (!isNumber(value)) {
     return ''
   }
@@ -47,7 +65,7 @@ const spacingStyles = (type, value, rootSize) => {
     `
 }
 
-const styles = ({ theme, css, rootSize }) => {
+const styles: StylesCb<StyledTypes> = ({ theme, css, rootSize }) => {
   const { size, columns, gap, padding, extendCss, RNparentWidth } = theme
   const renderStyles = isVisible(size)
 

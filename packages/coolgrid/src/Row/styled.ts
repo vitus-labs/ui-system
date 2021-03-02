@@ -3,20 +3,18 @@ import {
   makeItResponsive,
   normalizeUnit,
   extendedCss,
+  alignContentAlignX,
+  StylesCb,
 } from '@vitus-labs/unistyle'
 import { isNumber } from '~/utils'
+import { CssOutput, StyledTypes } from '~/types'
 
-type ContentAlignValuesKeys = keyof typeof contentAlignValues
-const contentAlignValues = {
-  left: 'flex-start',
-  right: 'flex-end',
-  center: 'center',
-  spaceAround: 'space-around',
-  spaceBetween: 'space-between',
-  spaceEvenly: 'space-evenly',
-}
+type SpacingStyles = (
+  props: Pick<StyledTypes, 'gap' | 'gutter'>,
+  { rootSize }: { rootSize?: number }
+) => CssOutput
 
-const spacingStyles = ({ gap, gutter }, { rootSize }) => {
+const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!isNumber(gap)) return ''
 
   const value = (param) => normalizeUnit({ param, rootSize })
@@ -29,15 +27,17 @@ const spacingStyles = ({ gap, gutter }, { rootSize }) => {
   `
 }
 
-const contentAlign = (align: ContentAlignValuesKeys) => {
+const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   if (!align) return ''
 
   return config.css`
-    justify-content: ${contentAlignValues[align]};
+    justify-content: ${alignContentAlignX[align]};
   `
 }
 
-const styles = ({ theme, css, rootSize }) => {
+const styles: StylesCb<
+  Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extendCss'>
+> = ({ theme, css, rootSize }) => {
   const { gap, gutter, contentAlignX, extendCss } = theme
 
   return css`
