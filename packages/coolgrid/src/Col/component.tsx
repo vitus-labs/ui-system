@@ -24,6 +24,12 @@ const Element: ElementType<
     ...props,
   })
 
+  console.log('column')
+  console.log('size', size)
+  console.log('gap', gap)
+  console.log('padding', padding)
+  console.log('columns', columns)
+
   return (
     <Styled
       {...omitCtxKeys(props)}

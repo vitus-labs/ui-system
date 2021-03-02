@@ -14,6 +14,9 @@ const Element: ElementType<['containerWidth']> = ({
 }) => {
   const { containerWidth, ...ctx } = useGridContext(props)
 
+  console.log('row')
+  console.log(ctx)
+
   return (
     <Styled
       {...omitCtxKeys(props)}
