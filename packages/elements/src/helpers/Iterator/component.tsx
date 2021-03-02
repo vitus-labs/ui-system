@@ -44,7 +44,7 @@ type Static = {
   RESERVED_PROPS: typeof RESERVED_PROPS
 }
 
-const Component: FC<Props> & Static = (props: Props) => {
+const component: FC<Props> & Static = (props: Props) => {
   const {
     itemKey,
     valueName,
@@ -241,8 +241,8 @@ const Component: FC<Props> & Static = (props: Props) => {
   return renderItems()
 }
 
-Component.isIterator = true
-Component.RESERVED_PROPS = RESERVED_PROPS
-Component.displayName = 'vitus-labs/elements/Iterator'
+component.isIterator = true
+component.RESERVED_PROPS = RESERVED_PROPS
+component.displayName = 'vitus-labs/elements/Iterator'
 
-export default Component
+export default component

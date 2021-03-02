@@ -331,7 +331,7 @@ const component: FC<Props> = ({
         ...(passHandlers ? { showContent, hideContent } : {}),
       })}
 
-      {visible && (
+      {__BROWSER__ && visible && (
         <Portal position={DOMLocation}>
           {renderContent(children, {
             [contentRefName || refName]: contentRef,

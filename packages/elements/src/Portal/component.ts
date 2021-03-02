@@ -12,9 +12,13 @@ const component: FC<Props> = ({
   tag = 'div',
   children,
 }: Props) => {
-  const [element] = useState(document.createElement(tag))
+  const [element] = useState(
+    __BROWSER__ ? document.createElement(tag) : undefined
+  )
 
   useEffect(() => {
+    if (__SERVER__) return undefined
+
     position.appendChild(element)
 
     return () => {

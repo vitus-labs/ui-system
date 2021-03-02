@@ -26,7 +26,7 @@ type Props = {
   dangerouslySetInnerHTML: any
 }
 
-const Component = forwardRef<Reference, Partial<Props>>(
+const component = forwardRef<Reference, Partial<Props>>(
   (
     {
       children,
@@ -103,4 +103,4 @@ const Component = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Component
+export default component

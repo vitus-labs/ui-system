@@ -14,7 +14,7 @@
   "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-elements.js": "./lib/vitus-labs-elements.js",
-    "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.module.js"
+    "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.browser.js"
   },
   "unpkg": "lib/vitus-labs-elements.umd.min.js",
   "jsnext:main": "lib/vitus-labs-elements.module.js",

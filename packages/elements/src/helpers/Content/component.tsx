@@ -25,7 +25,7 @@ type Props = {
 }
 type Reference = Ref<HTMLElement>
 
-const Component = forwardRef<Reference, Partial<Props>>(
+const component = forwardRef<Reference, Partial<Props>>(
   (
     {
       contentType,
@@ -69,4 +69,4 @@ const Component = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default memo(Component)
+export default memo(component)
