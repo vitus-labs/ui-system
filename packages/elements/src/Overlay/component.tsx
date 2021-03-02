@@ -8,6 +8,8 @@ export type Props = {
   trigger: React.ReactNode
   DOMLocation?: HTMLElement
   refName?: string
+  triggerRefName?: string
+  contentRefName?: string
   isOpen?: boolean
   openOn?: 'click' | 'hover' | 'manual'
   closeOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
@@ -34,6 +36,8 @@ const component: FC<Props> = ({
   trigger,
   DOMLocation,
   refName = 'ref',
+  triggerRefName,
+  contentRefName,
   isOpen = false,
   openOn = 'click', // click | hover
   closeOn = 'click', // click | triggerClick | hover | manual
@@ -48,6 +52,9 @@ const component: FC<Props> = ({
 }) => {
   const { rootSize } = useContext(config.context)
   const [visible, setVisible] = useState(isOpen)
+  const [innerAlign, setInnerAlign] = useState(align)
+  const [innerAlignX, setInnerAlignX] = useState(alignX)
+  const [innerAlignY, setInnerAlignY] = useState(alignY)
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
@@ -142,31 +149,43 @@ const component: FC<Props> = ({
           triggerDimensions.right + offsetX - contentDimensions.width
 
         if (align === 'top') {
-          overlayPosition.top = positionTop >= 0 ? positionTop : positionBottom
+          const isTop = positionTop >= 0
+
+          setInnerAlign(isTop ? 'top' : 'bottom')
+          overlayPosition.top = isTop ? positionTop : positionBottom
         } else {
-          overlayPosition.top =
+          const isBottom =
             positionBottom + contentDimensions.height <= window.innerHeight
-              ? positionBottom
-              : positionTop
+
+          setInnerAlign(isBottom ? 'bottom' : 'top')
+          overlayPosition.top = isBottom ? positionBottom : positionTop
         }
 
         switch (alignX) {
-          case 'right':
-            overlayPosition.left =
-              positionRight >= 0 ? positionRight : positionLeft
+          case 'right': {
+            const isRight = positionRight >= 0
+
+            setInnerAlignX(isRight ? 'right' : 'left')
+            overlayPosition.left = isRight ? positionRight : positionLeft
+
             break
-          case 'center':
+          }
+          case 'center': {
             overlayPosition.left =
               triggerDimensions.left +
               (triggerDimensions.right - triggerDimensions.left) / 2 -
               contentDimensions.width / 2
             break
+          }
           case 'left':
-          default:
-            overlayPosition.left =
+          default: {
+            const isLeft =
               positionLeft + contentDimensions.width <= window.innerWidth
-                ? positionLeft
-                : positionRight
+
+            setInnerAlignX(isLeft ? 'left' : 'right')
+            overlayPosition.left = isLeft ? positionLeft : positionRight
+            break
+          }
         }
       } else if (align === 'left' || align === 'right') {
         const positionLeft =
@@ -178,22 +197,27 @@ const component: FC<Props> = ({
           triggerDimensions.bottom - offsetY - contentDimensions.height
 
         if (align === 'left') {
-          overlayPosition.left =
-            positionLeft >= 0 ? positionLeft : positionRight
+          const isLeft = positionLeft >= 0
+
+          setInnerAlign(isLeft ? 'left' : 'right')
+          overlayPosition.left = isLeft ? positionLeft : positionRight
         } else {
-          overlayPosition.left =
+          const isRight =
             positionRight + contentDimensions.width <= window.innerWidth
-              ? positionRight
-              : positionLeft
+
+          setInnerAlign(isRight ? 'right' : 'left')
+          overlayPosition.left = isRight ? positionRight : positionLeft
         }
 
         switch (alignY) {
-          case 'top':
-            overlayPosition.top =
+          case 'top': {
+            const isTop =
               positionTop + contentDimensions.height <= window.innerHeight
-                ? positionTop
-                : positionBottom
+
+            setInnerAlignY(isTop ? 'top' : 'bottom')
+            overlayPosition.top = isTop ? positionTop : positionBottom
             break
+          }
           case 'center':
             overlayPosition.top =
               triggerDimensions.top -
@@ -202,9 +226,12 @@ const component: FC<Props> = ({
               contentDimensions.height / 2
             break
           case 'bottom':
-          default:
-            overlayPosition.top =
-              positionBottom >= 0 ? positionBottom : positionTop
+          default: {
+            const isBottom = positionBottom >= 0
+
+            setInnerAlignY(isBottom ? 'bottom' : 'top')
+            overlayPosition.top = isBottom ? positionBottom : positionTop
+          }
         }
       }
     } else if (type === 'modal') {
@@ -299,7 +326,7 @@ const component: FC<Props> = ({
   return (
     <>
       {renderContent(trigger, {
-        [refName]: triggerRef,
+        [triggerRefName || refName]: triggerRef,
         active: visible,
         ...(passHandlers ? { showContent, hideContent } : {}),
       })}
@@ -307,8 +334,11 @@ const component: FC<Props> = ({
       {visible && (
         <Portal position={DOMLocation}>
           {renderContent(children, {
-            [refName]: contentRef,
+            [contentRefName || refName]: contentRef,
             active: visible,
+            align: innerAlign,
+            alignX: innerAlignX,
+            alignY: innerAlignY,
             ...(passHandlers ? { showContent, hideContent } : {}),
           })}
         </Portal>
