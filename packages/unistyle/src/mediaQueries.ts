@@ -168,7 +168,7 @@ export const makeItResponsive: MakeItResponsive = ({
 
   const { media, sortedBreakpoints } = __VITUS_LABS__
 
-  if (customTheme.size || customTheme.columns) {
+  if (internalTheme.size || internalTheme.columns) {
     console.log('__VITUS_LABS__')
     console.log(__VITUS_LABS__)
   }
@@ -187,7 +187,7 @@ export const makeItResponsive: MakeItResponsive = ({
     breakpoints: sortedBreakpoints,
   })
 
-  if (customTheme.size || customTheme.columns) {
+  if (internalTheme.size || internalTheme.columns) {
     console.log('transformedTheme')
     console.log(transformedTheme)
   }
