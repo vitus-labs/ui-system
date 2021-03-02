@@ -12,14 +12,19 @@ const Element: ElementType<['containerWidth']> = ({
   width,
   ...props
 }) => {
-  const { containerWidth, ...ctx } = useGridContext(props)
+  const { containerWidth = {}, ...ctx } = useGridContext(props)
+
+  let finalWidth = containerWidth
+  if (width) {
+    finalWidth = typeof width === 'function' ? width(containerWidth) : width
+  }
 
   return (
     <Styled
       {...omitCtxKeys(props)}
       as={component}
       $coolgrid={{
-        width: width || containerWidth,
+        width: finalWidth,
         extendCss: css,
       }}
     >

@@ -10,6 +10,7 @@ export type ExtendCss = Css | Record<string, Css> | Array<Css>
 
 export type ValueType = CreateValueType<number>
 export type ContainerWidth = CreateValueType<Value>
+
 export type ContentAlignX =
   | 'center'
   | 'left'
@@ -30,7 +31,7 @@ export type ConfigurationProps = Partial<{
   rowComponent: ComponentType
   contentAlignX: ContentAlignX
   containerWidth: ContainerWidth
-  width: ContainerWidth
+  width: ContainerWidth | ((widths: ContainerWidth) => ContainerWidth)
 }>
 
 export type ComponentProps = ConfigurationProps &
@@ -39,10 +40,14 @@ export type ComponentProps = ConfigurationProps &
     css: ExtendCss
   }>
 
+// export type ElementType<O extends Array<string>> = FC<
+//   Omit<HTMLProps<HTMLElement>, keyof ComponentProps> &
+//     Omit<ComponentProps, O[number]> &
+//     Record<string, unknown>
+// >
+
 export type ElementType<O extends Array<string>> = FC<
-  Omit<HTMLProps<HTMLElement>, keyof ComponentProps> &
-    Omit<ComponentProps, O[number]> &
-    Record<string, unknown>
+  Omit<ComponentProps, O[number]> & Record<string, unknown>
 >
 
 export type Context = Partial<ConfigurationProps>
