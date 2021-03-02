@@ -168,9 +168,13 @@ export const makeItResponsive: MakeItResponsive = ({
 
   const { media, sortedBreakpoints } = __VITUS_LABS__
 
+  console.log('__VITUS_LABS__')
+  console.log(__VITUS_LABS__)
+
   let helperTheme = internalTheme
 
   if (normalize) {
+    console.log('normalizing ...')
     helperTheme = normalizeTheme({
       theme: internalTheme,
       breakpoints: sortedBreakpoints,
@@ -181,6 +185,9 @@ export const makeItResponsive: MakeItResponsive = ({
     theme: helperTheme,
     breakpoints: sortedBreakpoints,
   })
+
+  console.log('transformedTheme')
+  console.log(transformedTheme)
 
   // this breakpoint will not be rendered within media query
   const firstBreakpoint = sortedBreakpoints[0]

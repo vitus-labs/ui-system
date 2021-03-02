@@ -19,10 +19,6 @@ const Element: ElementType<
     ...ctx
   } = useGridContext({ ...parentCtx, ...props })
 
-  console.log('row')
-  console.log('gutter', gutter)
-  console.log('gap', gap)
-
   const finalProps = {
     ...omitCtxKeys(props),
     as: component || rowComponent,
