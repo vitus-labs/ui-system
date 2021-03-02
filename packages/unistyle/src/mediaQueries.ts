@@ -168,11 +168,6 @@ export const makeItResponsive: MakeItResponsive = ({
 
   const { media, sortedBreakpoints } = __VITUS_LABS__
 
-  if (internalTheme.size || internalTheme.columns) {
-    console.log('__VITUS_LABS__')
-    console.log(__VITUS_LABS__)
-  }
-
   let helperTheme = internalTheme
 
   if (normalize) {
@@ -187,7 +182,7 @@ export const makeItResponsive: MakeItResponsive = ({
     breakpoints: sortedBreakpoints,
   })
 
-  if (internalTheme.size || internalTheme.columns) {
+  if (internalTheme.columns) {
     console.log('transformedTheme')
     console.log(transformedTheme)
   }
@@ -198,9 +193,14 @@ export const makeItResponsive: MakeItResponsive = ({
   return sortedBreakpoints.map((item) => {
     const breakpointTheme = transformedTheme[item]
 
-    if (!breakpointTheme) return undefined
+    if (!breakpointTheme) return ''
 
     const result = renderStyles(transformedTheme[item])
+
+    if (internalTheme.columns) {
+      console.log('result')
+      console.log(result)
+    }
 
     // first breakpoint is rendered without media queries
     if (item === firstBreakpoint) {

@@ -43,7 +43,7 @@ const spacingStyles = (type, value, rootSize) => {
   }
 
   return config.css`
-    ${type}: ${normalizeUnit({ param: value / 2, rootSize })};
+      ${type}: ${normalizeUnit({ param: value / 2, rootSize })};
     `
 }
 
