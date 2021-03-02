@@ -182,11 +182,6 @@ export const makeItResponsive: MakeItResponsive = ({
     breakpoints: sortedBreakpoints,
   })
 
-  if (internalTheme.columns) {
-    console.log('transformedTheme')
-    console.log(transformedTheme)
-  }
-
   // this breakpoint will not be rendered within media query
   const firstBreakpoint = sortedBreakpoints[0]
 
@@ -196,11 +191,6 @@ export const makeItResponsive: MakeItResponsive = ({
     if (!breakpointTheme) return ''
 
     const result = renderStyles(transformedTheme[item])
-
-    if (internalTheme.columns) {
-      console.log('result')
-      console.log(result)
-    }
 
     // first breakpoint is rendered without media queries
     if (item === firstBreakpoint) {
