@@ -130,7 +130,7 @@ type Theme = {
   }
 } & CustomTheme
 
-export type StylesCb<T = Partial<Record<string, any>>> = ({
+export type StylesCb<T extends Partial<Record<string, any>> = any> = ({
   theme,
   css,
   rootSize,

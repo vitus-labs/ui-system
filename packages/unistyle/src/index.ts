@@ -27,7 +27,13 @@ import optimizeTheme, {
   PickThemeProps,
 } from './optimizeTheme'
 import useWindowResize, { UseWindowSize } from './useWindowSize'
-import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
+import styles, {
+  stripUnit,
+  normalizeUnit,
+  value,
+  getValueOf,
+  StylesTheme,
+} from './styles'
 
 export type {
   TProvider,
@@ -43,6 +49,7 @@ export type {
   StylesCb,
   PickThemeProps,
   UseWindowSize,
+  StylesTheme,
 }
 
 export {
