@@ -80,7 +80,7 @@ const useTheme: UseTheme = ({ theme, options, cb }) => {
   const __ROCKETSTYLE__ = {
     dimensions: keysMap,
     reservedPropNames: keywords,
-    baseTheme: calculateChainOptions(options.theme, [theme, config.css, cb]),
+    baseTheme: calculateChainOptions(options.theme, [theme, cb, config.css]),
     themes,
   }
 
