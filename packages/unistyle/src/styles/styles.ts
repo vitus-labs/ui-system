@@ -1,4 +1,3 @@
-import { config } from '@vitus-labs/core'
 import { value } from './utils/unit'
 import type { Theme } from './types'
 
@@ -8,7 +7,7 @@ type Styles = ({
   rootSize,
 }: {
   theme: Theme
-  css: typeof config.css
+  css: (...args: any) => any
   rootSize: number
 }) => ReturnType<typeof css>
 
