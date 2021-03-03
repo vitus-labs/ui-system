@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { set, isEmpty, memoize } from '@vitus-labs/core'
 import { normalizeTheme } from './normalizeTheme'
+import { Css } from '~/types'
 
 // --------------------------------------------------------
 // sort breakpoints
@@ -137,9 +138,9 @@ export type StylesCb<T extends Partial<Record<string, any>> = any> = ({
   globalTheme,
 }: {
   theme: T
-  css?: (...args: any) => any
-  rootSize?: number
-  globalTheme?: Partial<Record<string, any>>
+  css: Css
+  rootSize: number
+  globalTheme: Partial<Record<string, any>>
 }) => ReturnType<typeof css> | string
 
 export type MakeItResponsive = ({

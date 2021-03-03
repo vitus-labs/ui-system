@@ -1,5 +1,6 @@
 import { value } from './utils/unit'
 import type { Theme } from './types'
+import type { Css } from '~/types'
 
 type Styles = ({
   theme,
@@ -7,7 +8,7 @@ type Styles = ({
   rootSize,
 }: {
   theme: Theme
-  css: (...args: any) => any
+  css: Css
   rootSize?: number
 }) => ReturnType<typeof css>
 
