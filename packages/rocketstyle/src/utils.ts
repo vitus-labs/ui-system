@@ -1,4 +1,8 @@
+import hash from 'object-hash'
 import { config, isEmpty, merge } from '@vitus-labs/core'
+import CacheFuncs from '~/cache/funcs'
+import CacheResult from '~/cache/dimensions'
+import CacheMode from '~/cache/mode'
 import type { OptionStyles } from '~/types'
 
 // --------------------------------------------------------
@@ -34,23 +38,22 @@ export const chainOptions = (opts, defaultOpts = []) => {
 // combine values
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
-type CalculateChainOptions = <A>(
+type CalculateAttrsChainOptions = <A>(
   options: Array<OptionFunc<A>> | undefined | null,
-  args: Array<A>,
-  deepMerge?: boolean
+  args: Array<A>
 ) => ReturnType<OptionFunc<A>>
 
-export const calculateChainOptions: CalculateChainOptions = (
+export const calculateAttrsChainOptions: CalculateAttrsChainOptions = (
   options,
-  args,
-  deepMerge = true
+  args
 ) => {
   const result = {}
   if (isEmpty(options)) return result
 
-  const chain = deepMerge ? merge : (obj1, obj2) => Object.assign(obj1, obj2)
-
-  return options.reduce((acc, item) => chain(acc, item(...args)), result)
+  return options.reduce(
+    (acc, item) => Object.assign(acc, item(...args)),
+    result
+  )
 }
 
 // --------------------------------------------------------
@@ -224,11 +227,17 @@ export const calculateThemeVariant: CalculateThemeVariant = (
   variant,
   cb
 ) => {
+  const id = hash.sha1({ variant, themes })
+
+  const cache = CacheMode.get(id)
+  if (cache) return cache
+
   const callback = cb().toString()
 
   const result = {}
   Object.entries(themes).forEach(([key, value]) => {
     if (typeof value === 'object') {
+      // recursive
       result[key] = calculateThemeVariant(value, variant, cb)
     } else if (typeof value === 'function' && value.toString() === callback) {
       result[key] = value(variant)
@@ -236,6 +245,8 @@ export const calculateThemeVariant: CalculateThemeVariant = (
       result[key] = value
     }
   })
+
+  CacheMode.set(id, result)
 
   return result
 }

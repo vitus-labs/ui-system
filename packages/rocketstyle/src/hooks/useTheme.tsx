@@ -1,6 +1,34 @@
-import { config, set, get, isEmpty } from '@vitus-labs/core'
-import { calculateChainOptions } from '../utils'
+import { config, set, get, isEmpty, merge } from '@vitus-labs/core'
+import CacheFuncs from '~/cache/funcs'
+import CacheResult from '~/cache/dimensions'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
+
+// --------------------------------------------------------
+// combine values
+// --------------------------------------------------------
+type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
+type CalculateChainOptions = <A>(
+  options: Array<OptionFunc<A>> | undefined | null,
+  args: Array<A>,
+  deepMerge?: boolean
+) => ReturnType<OptionFunc<A>>
+
+export const calculateChainOptions: CalculateChainOptions = (options, args) => {
+  const result = {}
+  if (isEmpty(options)) return result
+
+  return options.reduce((acc, item) => {
+    const cached = CacheResult.get(item)
+    if (cached) {
+      return cached
+    }
+
+    const result = CacheFuncs.get(item)(...args)
+    CacheResult.set(item, result)
+
+    return merge(acc, result)
+  }, result)
+}
 
 const isMultiKey = (value) => {
   if (typeof value === 'object') return [true, get(value, 'propName')]
@@ -69,6 +97,8 @@ type UseTheme = <T extends Record<string, unknown>>({
 }) => __ROCKETSTYLE__
 
 const useTheme: UseTheme = ({ theme, options, cb }) => {
+  CacheResult.clear()
+
   const themes = calculateDimensionThemes(theme, options, cb)
   const { keysMap, keywords } = calculateDimensionsMap({
     themes,
