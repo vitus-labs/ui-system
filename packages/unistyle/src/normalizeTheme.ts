@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { memoize } from '@vitus-labs/core'
 
 // --------------------------------------------------------
 // HELPERS
@@ -63,28 +64,31 @@ type NormalizeTheme = ({
   breakpoints: Array<string>
 }) => Record<string, unknown>
 
-export const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
-  if (!shouldNormalize(theme)) return theme
+export const normalizeTheme: NormalizeTheme = memoize(
+  ({ theme, breakpoints }) => {
+    if (!shouldNormalize(theme)) return theme
 
-  const getBpValues = assignToBreakbointKey(breakpoints)
-  const result = {}
+    const getBpValues = assignToBreakbointKey(breakpoints)
+    const result = {}
 
-  Object.entries(theme).forEach(([key, value]) => {
-    if (value == null) return
+    Object.entries(theme).forEach(([key, value]) => {
+      if (value == null) return
 
-    // if it's an array
-    if (Array.isArray(value)) {
-      result[key] = getBpValues(handleArrayCb(value))
-    }
-    // if it's an object
-    else if (typeof value === 'object') {
-      result[key] = getBpValues(handleObjectCb(value))
-    }
-    // if any other value
-    else {
-      result[key] = getBpValues(handleValueCb(value))
-    }
-  })
+      // if it's an array
+      if (Array.isArray(value)) {
+        result[key] = getBpValues(handleArrayCb(value))
+      }
+      // if it's an object
+      else if (typeof value === 'object') {
+        result[key] = getBpValues(handleObjectCb(value))
+      }
+      // if any other value
+      else {
+        result[key] = getBpValues(handleValueCb(value))
+      }
+    })
 
-  return result
-}
+    return result
+  },
+  { isDeepEqual: true, maxSize: 3000 }
+)
