@@ -236,5 +236,5 @@ export const calculateThemeVariant: CalculateThemeVariant = memoize(
 
     return result
   },
-  { isDeepEqual: true, maxSize: 3000 }
+  { maxSize: 3000, maxArgs: 2 }
 )
