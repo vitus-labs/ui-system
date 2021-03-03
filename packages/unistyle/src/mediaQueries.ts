@@ -78,38 +78,41 @@ export type TransformTheme = ({
   theme: Record<string, unknown>
   breakpoints: Array<string>
 }) => any
-export const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
-  const result = {}
+export const transformTheme: TransformTheme = memoize(
+  ({ theme, breakpoints }) => {
+    const result = {}
 
-  if (isEmpty(theme) || !breakpoints) return result
+    if (isEmpty(theme) || !breakpoints) return result
 
-  // can be one of following types
-  // { fontSize: 12 }
-  // { fontSize: { xs: 12, md: 15 }}
-  // { fontSize: [12, 15] }
-  Object.entries(theme).forEach(([key, value]) => {
-    // array
-    if (Array.isArray(value) && value.length > 0) {
-      value.forEach((child, i) => {
-        const indexBreakpoint = breakpoints[i]
-        set(result, [indexBreakpoint, key], child)
-      })
-    }
-    // object
-    else if (typeof value === 'object') {
-      Object.entries(value).forEach(([childKey, childValue]) => {
-        set(result, [childKey, key], childValue)
-      })
-    }
-    // normal value
-    else if (value != null) {
-      const firstBreakpoint = breakpoints[0]
-      set(result, [firstBreakpoint, key], value)
-    }
-  })
+    // can be one of following types
+    // { fontSize: 12 }
+    // { fontSize: { xs: 12, md: 15 }}
+    // { fontSize: [12, 15] }
+    Object.entries(theme).forEach(([key, value]) => {
+      // array
+      if (Array.isArray(value) && value.length > 0) {
+        value.forEach((child, i) => {
+          const indexBreakpoint = breakpoints[i]
+          set(result, [indexBreakpoint, key], child)
+        })
+      }
+      // object
+      else if (typeof value === 'object') {
+        Object.entries(value).forEach(([childKey, childValue]) => {
+          set(result, [childKey, key], childValue)
+        })
+      }
+      // normal value
+      else if (value != null) {
+        const firstBreakpoint = breakpoints[0]
+        set(result, [firstBreakpoint, key], value)
+      }
+    })
 
-  return removeUnexpectedKeys(result, breakpoints)
-}
+    return removeUnexpectedKeys(result, breakpoints)
+  },
+  { isDeepEqual: true, maxSize: 3000 }
+)
 
 // --------------------------------------------------------
 // make it responsive

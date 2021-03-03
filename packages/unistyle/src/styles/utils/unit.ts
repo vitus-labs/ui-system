@@ -46,7 +46,7 @@ export const normalizeUnit: NormalizeUnit = memoize(
 
     return `${value}${outputUnit}`
   },
-  { isSerialized: true, maxSize: 100 }
+  { isDeepEqual: true, maxSize: 1000 }
 )
 
 type GetValueOf = (...values: Array<unknown>) => number | string | unknown
