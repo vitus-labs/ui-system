@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react'
+import React, { useMemo, ReactNode, FC } from 'react'
 import { config, isEmpty, Provider as CoreProvider } from '@vitus-labs/core'
 import { sortBreakpoints, createMediaQueries } from './mediaQueries'
 
@@ -27,12 +27,19 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
   const { breakpoints, rootSize } = theme
 
   if (!isEmpty(breakpoints)) {
-    __VITUS_LABS__.sortedBreakpoints = sortBreakpoints(breakpoints)
-    __VITUS_LABS__.media = createMediaQueries({
-      breakpoints,
-      css: config.css,
-      rootSize,
-    })
+    __VITUS_LABS__.sortedBreakpoints = useMemo(
+      () => sortBreakpoints(breakpoints),
+      [breakpoints]
+    )
+    __VITUS_LABS__.media = useMemo(
+      () =>
+        createMediaQueries({
+          breakpoints,
+          css: config.css,
+          rootSize,
+        }),
+      [breakpoints, rootSize]
+    )
   }
 
   const result = {

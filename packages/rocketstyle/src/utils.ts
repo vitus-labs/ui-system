@@ -1,4 +1,4 @@
-import { config, isEmpty, merge } from '@vitus-labs/core'
+import { config, isEmpty, merge, memoize } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
 // --------------------------------------------------------
@@ -109,63 +109,64 @@ export const splitProps: SplitProps = (props, dimensions) => {
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
-export const calculateStyledAttrs = ({
-  props,
-  dimensions,
-  useBooleans,
-  multiKeys,
-}) => {
-  const result = {}
+export const calculateStyledAttrs = memoize(
+  ({ props, dimensions, useBooleans, multiKeys }) => {
+    const result = {}
 
-  // (1) find dimension keys values & initialize
-  // object with possible options
-  Object.keys(dimensions).forEach((item) => {
-    const pickedProp = props[item]
-    const valueTypes = ['number', 'string']
+    // (1) find dimension keys values & initialize
+    // object with possible options
+    Object.keys(dimensions).forEach((item) => {
+      const pickedProp = props[item]
+      const valueTypes = ['number', 'string']
 
-    // if the property is mutli key, allow assign array as well
-    if (multiKeys[item] && Array.isArray(pickedProp)) {
-      result[item] = pickedProp
-    }
-    // assign when it's only a string or number otherwise it's considered
-    // as invalid param
-    else if (valueTypes.includes(typeof pickedProp)) {
-      result[item] = pickedProp
-    } else {
-      result[item] = undefined
-    }
-  })
-
-  // (2) if booleans are being used let's find the rest
-  if (useBooleans) {
-    const propsKeys = Object.keys(props).reverse()
-
-    Object.entries(result).forEach(([key, value]) => {
-      const isMultiKey = multiKeys[key]
-
-      // when value in result is not assigned yet
-      if (!value) {
-        let newDimensionValue
-        const keywords = Object.keys(dimensions[key])
-
-        if (isMultiKey) {
-          newDimensionValue = propsKeys.filter((key) => keywords.includes(key))
-        } else {
-          // reverse props to guarantee the last one will have
-          // a priority over previous ones
-          newDimensionValue = propsKeys.find((key) => {
-            if (keywords.includes(key) && props[key]) return key
-            return false
-          })
-        }
-
-        result[key] = newDimensionValue
+      // if the property is mutli key, allow assign array as well
+      if (multiKeys[item] && Array.isArray(pickedProp)) {
+        result[item] = pickedProp
+      }
+      // assign when it's only a string or number otherwise it's considered
+      // as invalid param
+      else if (valueTypes.includes(typeof pickedProp)) {
+        result[item] = pickedProp
+      } else {
+        result[item] = undefined
       }
     })
-  }
 
-  return result
-}
+    // (2) if booleans are being used let's find the rest
+    if (useBooleans) {
+      const propsKeys = Object.keys(props).reverse()
+
+      Object.entries(result).forEach(([key, value]) => {
+        const isMultiKey = multiKeys[key]
+
+        // when value in result is not assigned yet
+        if (!value) {
+          let newDimensionValue
+          const keywords = Object.keys(dimensions[key])
+
+          if (isMultiKey) {
+            newDimensionValue = propsKeys.filter((key) =>
+              keywords.includes(key)
+            )
+          } else {
+            // reverse props to guarantee the last one will have
+            // a priority over previous ones
+            newDimensionValue = propsKeys.find((key) => {
+              if (keywords.includes(key) && props[key]) return key
+              return false
+            })
+          }
+
+          result[key] = newDimensionValue
+        }
+      })
+    }
+
+    return result
+  },
+  { isDeepEqual: true, maxSize: 3000 }
+)
+
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
@@ -183,30 +184,29 @@ type CalculateTheme = <
   baseTheme: B
 }) => B & Record<string, unknown>
 
-export const calculateTheme: CalculateTheme = ({
-  props,
-  themes,
-  baseTheme,
-}) => {
-  // generate final theme which will be passed to styled component
-  let finalTheme = { ...baseTheme }
+export const calculateTheme: CalculateTheme = memoize(
+  ({ props, themes, baseTheme }) => {
+    // generate final theme which will be passed to styled component
+    let finalTheme = { ...baseTheme }
 
-  Object.entries(props).forEach(
-    ([key, value]: [string, string | Array<string>]) => {
-      const keyTheme = themes[key]
+    Object.entries(props).forEach(
+      ([key, value]: [string, string | Array<string>]) => {
+        const keyTheme = themes[key]
 
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          finalTheme = merge(finalTheme, keyTheme[item])
-        })
-      } else {
-        finalTheme = merge(finalTheme, keyTheme[value])
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            finalTheme = merge(finalTheme, keyTheme[item])
+          })
+        } else {
+          finalTheme = merge(finalTheme, keyTheme[value])
+        }
       }
-    }
-  )
+    )
 
-  return finalTheme
-}
+    return finalTheme
+  },
+  { isDeepEqual: true, maxSize: 3000 }
+)
 
 // --------------------------------------------------------
 // generate theme
@@ -219,23 +219,22 @@ type CalculateThemeVariant = (
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }>
-export const calculateThemeVariant: CalculateThemeVariant = (
-  themes,
-  variant,
-  cb
-) => {
-  const callback = cb().toString()
+export const calculateThemeVariant: CalculateThemeVariant = memoize(
+  (themes, variant, cb) => {
+    const callback = cb().toString()
 
-  const result = {}
-  Object.entries(themes).forEach(([key, value]) => {
-    if (typeof value === 'object') {
-      result[key] = calculateThemeVariant(value, variant, cb)
-    } else if (typeof value === 'function' && value.toString() === callback) {
-      result[key] = value(variant)
-    } else {
-      result[key] = value
-    }
-  })
+    const result = {}
+    Object.entries(themes).forEach(([key, value]) => {
+      if (typeof value === 'object') {
+        result[key] = calculateThemeVariant(value, variant, cb)
+      } else if (typeof value === 'function' && value.toString() === callback) {
+        result[key] = value(variant)
+      } else {
+        result[key] = value
+      }
+    })
 
-  return result
-}
+    return result
+  },
+  { isDeepEqual: true, maxSize: 3000 }
+)
