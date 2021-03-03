@@ -2,6 +2,20 @@ import { config, set, get, isEmpty } from '@vitus-labs/core'
 import { calculateChainOptions } from '../utils'
 import type { Configuration, __ROCKETSTYLE__ } from '~/types'
 
+// --------------------------------------------------------
+// remove empty values
+// --------------------------------------------------------
+const removeEmptyValues = (obj) =>
+  Object.entries(obj)
+    .filter(([, v]) => v != null)
+    .reduce(
+      (acc, [k, v]) => ({
+        ...acc,
+        [k]: typeof v === 'object' ? removeEmptyValues(v) : v,
+      }),
+      {}
+    )
+
 const isMultiKey = (value) => {
   if (typeof value === 'object') return [true, get(value, 'propName')]
   return [false, value]
@@ -80,8 +94,10 @@ const useTheme: UseTheme = ({ theme, options, cb }) => {
   const __ROCKETSTYLE__ = {
     dimensions: keysMap,
     reservedPropNames: keywords,
-    baseTheme: calculateChainOptions(options.theme, [theme, cb, config.css]),
-    themes,
+    baseTheme: removeEmptyValues(
+      calculateChainOptions(options.theme, [theme, cb, config.css])
+    ),
+    themes: removeEmptyValues(themes),
   }
 
   return __ROCKETSTYLE__

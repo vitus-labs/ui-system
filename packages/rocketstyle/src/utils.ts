@@ -2,20 +2,6 @@ import { config, isEmpty, merge } from '@vitus-labs/core'
 import type { OptionStyles } from '~/types'
 
 // --------------------------------------------------------
-// remove empty values
-// --------------------------------------------------------
-const removeEmptyValues = (obj) =>
-  Object.entries(obj)
-    .filter(([, v]) => v != null)
-    .reduce(
-      (acc, [k, v]) => ({
-        ...acc,
-        [k]: v === Object(v) ? removeEmptyValues(v) : v,
-      }),
-      {}
-    )
-
-// --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
 type PickStyledProps = (
@@ -64,12 +50,7 @@ export const calculateChainOptions: CalculateChainOptions = (
 
   const chain = deepMerge ? merge : (obj1, obj2) => Object.assign(obj1, obj2)
 
-  const helper = options.reduce(
-    (acc, item) => chain(acc, item(...args)),
-    result
-  )
-
-  return removeEmptyValues(helper)
+  return options.reduce((acc, item) => chain(acc, item(...args)), result)
 }
 
 // --------------------------------------------------------
