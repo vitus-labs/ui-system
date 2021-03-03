@@ -224,13 +224,13 @@ const styleComponent: StyleComponent = (options) => {
         reservedPropNames,
         themes: rocketThemes,
         dimensions,
-        baseTheme: rocketBaseThemes,
+        baseTheme: rocketBaseTheme,
       } = __ROCKETSTYLE__
 
       const { baseTheme, themes } = useMemo(
         () =>
           calculateThemeVariant(
-            { themes: rocketThemes, baseTheme: rocketBaseThemes },
+            { themes: rocketThemes, baseTheme: rocketBaseTheme },
             mode,
             themeVariantCb
           ),
