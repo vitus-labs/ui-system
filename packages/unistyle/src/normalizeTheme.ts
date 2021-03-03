@@ -90,5 +90,5 @@ export const normalizeTheme: NormalizeTheme = memoize(
 
     return result
   },
-  { isDeepEqual: true, maxSize: 3000 }
+  { isDeepEqual: true, maxSize: 4000 }
 )

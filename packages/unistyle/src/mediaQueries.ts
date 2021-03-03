@@ -111,7 +111,7 @@ export const transformTheme: TransformTheme = memoize(
 
     return removeUnexpectedKeys(result, breakpoints)
   },
-  { isDeepEqual: true, maxSize: 3000 }
+  { isDeepEqual: true, maxSize: 4000 }
 )
 
 // --------------------------------------------------------
