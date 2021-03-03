@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { memo, forwardRef, ReactNode, Ref } from 'react'
+import React, { memo, VFC, ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import {
   Direction,
@@ -23,50 +23,43 @@ type Props = {
   equalCols: ResponsiveBooltype
   extendCss: ExtendCss
 }
-type Reference = Ref<HTMLElement>
 
-const component = forwardRef<Reference, Partial<Props>>(
-  (
-    {
-      contentType,
-      tag,
-      parentDirection,
-      direction,
-      alignX,
-      alignY,
-      equalCols,
-      gap,
-      extendCss,
-      ...props
-    },
-    ref
-  ) => {
-    const debugProps =
-      process.env.NODE_ENV !== 'production'
-        ? {
-            'data-vl-element': contentType,
-          }
-        : {}
+const component: VFC<Partial<Props>> = ({
+  contentType,
+  tag,
+  parentDirection,
+  direction,
+  alignX,
+  alignY,
+  equalCols,
+  gap,
+  extendCss,
+  ...props
+}) => {
+  const debugProps =
+    process.env.NODE_ENV !== 'production'
+      ? {
+          'data-vl-element': contentType,
+        }
+      : {}
 
-    return (
-      <Styled
-        ref={ref}
-        as={tag}
-        $contentType={contentType}
-        $element={{
-          parentDirection,
-          direction,
-          alignX,
-          alignY,
-          equalCols,
-          gap,
-          extendCss,
-        }}
-        {...debugProps}
-        {...props}
-      />
-    )
-  }
-)
+  return (
+    <Styled
+      as={tag}
+      $contentType={contentType}
+      $element={{
+        parentDirection,
+        direction,
+        alignX,
+        alignY,
+        equalCols,
+        gap,
+        extendCss,
+      }}
+      {...debugProps}
+      {...props}
+    />
+  )
+}
 
 export default memo(component)
