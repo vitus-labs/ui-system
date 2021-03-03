@@ -47,8 +47,8 @@ const calculateDimensionThemes = (theme, options, cb) => {
         // eslint-disable-next-line no-param-reassign
         accumulator[dimension] = calculateChainOptions(helper, [
           theme,
-          config.css,
           cb,
+          config.css,
         ])
       }
 
