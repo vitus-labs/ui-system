@@ -8,7 +8,7 @@ type Styles = ({
 }: {
   theme: Theme
   css: (...args: any) => any
-  rootSize: number
+  rootSize?: number
 }) => ReturnType<typeof css>
 
 const styles: Styles = ({ theme: t, css, rootSize }) => css`

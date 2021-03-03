@@ -135,12 +135,12 @@ export type StylesCb<T extends Partial<Record<string, any>> = any> = ({
   css,
   rootSize,
   globalTheme,
-}: Partial<{
+}: {
   theme: T
-  css: (...args: any) => any
-  rootSize: number
-  globalTheme: Partial<Record<string, any>>
-}>) => ReturnType<typeof css> | string
+  css?: (...args: any) => any
+  rootSize?: number
+  globalTheme?: Partial<Record<string, any>>
+}) => ReturnType<typeof css> | string
 
 export type MakeItResponsive = ({
   theme,
