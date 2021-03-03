@@ -6,13 +6,12 @@ import React, {
   useContext,
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { nanoid } from 'nanoid'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import { context } from './context'
 import { useTheme, usePseudoState } from './hooks'
 import {
   chainOptions,
-  calculateAttrsChainOptions,
+  calculateChainOptions,
   calculateStyles,
   calculateStyledAttrs,
   calculateTheme,
@@ -24,8 +23,6 @@ import {
   RESERVED_CLONED_KEYS,
   RESERVED_STATIC_KEYS,
 } from './constants'
-import CacheFuncs from '~/cache/funcs'
-import CacheResults from '~/cache/dimensions'
 import type {
   RocketComponent,
   StyleComponent,
@@ -75,7 +72,7 @@ const chainReservedOptions = (keys, opts, defaultOpts) =>
 const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
   dimensionKeys.forEach((item) => {
     // eslint-disable-next-line no-param-reassign
-    context[item] = (props) => func({ [item]: props }, opts, item)
+    context[item] = (props) => func({ [item]: props }, opts)
   })
 }
 
@@ -87,39 +84,20 @@ const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
 // --------------------------------------------------------
 type CloneAndEnhance = <A extends Configuration, B extends Configuration>(
   opts: A,
-  defaultOpts: B,
-  key?: string
+  defaultOpts: B
 ) => ReturnType<typeof styleComponent>
 
-const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts, key) => {
-  if ([...defaultOpts.dimensionKeys, 'theme'].includes(key)) {
-    const id = nanoid()
-    const value = opts[key]
-    const result = typeof value === 'function' ? value : () => value
-
-    CacheFuncs.set(id, result)
-
-    if (defaultOpts[key]) {
-      return styleComponent({
-        ...defaultOpts,
-        // @ts-ignore
-        ...{ [key]: [...defaultOpts[key], id] },
-      })
-    }
-
-    return styleComponent({
-      ...defaultOpts,
-      ...{ [key]: [id] },
-    })
-  }
-
-  return styleComponent({
+const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
+  styleComponent({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
     ...orOptions(RESERVED_OR_KEYS, opts, defaultOpts),
-    ...chainReservedOptions(['attrs', 'styles'], opts, defaultOpts),
+    ...chainReservedOptions(
+      [...defaultOpts.dimensionKeys, ...RESERVED_CLONED_KEYS],
+      opts,
+      defaultOpts
+    ),
   })
-}
 
 // --------------------------------------------------------
 // styleComponent
@@ -158,7 +136,7 @@ const styleComponent: StyleComponent = (options) => {
     })
 
   const calculateChainingAttrs = (params) =>
-    calculateAttrsChainOptions(options.attrs, params)
+    calculateChainOptions(options.attrs, params, false)
 
   const themeVariantCb = (...params) => (mode) => {
     if (!mode || mode === 'light') return params[0]
