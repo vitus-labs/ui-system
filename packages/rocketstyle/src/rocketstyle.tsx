@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, {
   createContext,
   forwardRef,
@@ -7,28 +8,33 @@ import React, {
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
-import { context } from './context'
-import { useTheme, usePseudoState } from './hooks'
+import { context } from '~/context'
+import { useTheme, usePseudoState } from '~/hooks'
 import {
-  chainOptions,
-  calculateChainOptions,
-  calculateStyles,
-  calculateStyledAttrs,
   calculateTheme,
-  pickStyledProps,
   calculateThemeVariant,
-} from './utils'
+  themeModeCb,
+} from '~/utils/theme'
+import { calculateStyles } from '~/utils/styles'
+import { chainOptions } from '~/utils/collection'
 import {
-  RESERVED_OR_KEYS,
-  RESERVED_CLONED_KEYS,
-  RESERVED_STATIC_KEYS,
-} from './constants'
+  pickStyledProps,
+  calculateChainOptions,
+  calculateStylingAttrs,
+} from '~/utils/attrs'
+import {
+  CONFIG_KEYS,
+  THEME_MODES_INVERSED,
+  STYLING_KEYS,
+  STATIC_KEYS,
+} from '~/constants'
+
 import type {
   RocketComponent,
   StyleComponent,
   Configuration,
   PseudoState,
-} from './types'
+} from '~/types'
 
 type TContext = Partial<
   {
@@ -36,12 +42,7 @@ type TContext = Partial<
   } & Record<string, unknown>
 >
 
-const Context = createContext<TContext>({})
-
-const inversedMode = {
-  dark: 'light',
-  light: 'dark',
-}
+const LocalContext = createContext<TContext>({})
 
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
@@ -91,9 +92,9 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
   styleComponent({
     ...defaultOpts,
     compose: { ...defaultOpts.compose, ...opts.compose },
-    ...orOptions(RESERVED_OR_KEYS, opts, defaultOpts),
+    ...orOptions(CONFIG_KEYS, opts, defaultOpts),
     ...chainReservedOptions(
-      [...defaultOpts.dimensionKeys, ...RESERVED_CLONED_KEYS],
+      [...defaultOpts.dimensionKeys, ...STYLING_KEYS],
       opts,
       defaultOpts
     ),
@@ -110,6 +111,12 @@ const styleComponent: StyleComponent = (options) => {
   const { component, styles } = options
   const { styled } = config
 
+  const _calculateChainOptions = calculateChainOptions(options.attrs)
+  const _calculateStylingAttrs = calculateStylingAttrs({
+    multiKeys: options.multiKeys,
+    useBooleans: options.useBooleans,
+  })
+
   const componentName =
     options.name || options.component.displayName || options.component.name
 
@@ -120,28 +127,12 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateStylingAttrs = ({ props, dimensions }) =>
-    calculateStyledAttrs({
-      props,
-      dimensions,
-      multiKeys: options.multiKeys,
-      useBooleans: options.useBooleans,
-    })
-
   const calculateTheming = ({ rocketstate, themes, baseTheme }) =>
     calculateTheme({
       props: rocketstate,
       themes,
       baseTheme,
     })
-
-  const calculateChainingAttrs = (params) =>
-    calculateChainOptions(options.attrs, params, false)
-
-  const themeVariantCb = (...params) => (mode) => {
-    if (!mode || mode === 'light') return params[0]
-    return params[1]
-  }
 
   const ProviderComponent = forwardRef<any, any>(
     (
@@ -170,14 +161,14 @@ const styleComponent: StyleComponent = (options) => {
       const updatedState = { ...$rocketstate, pseudo: pseudo.state }
 
       return (
-        <Context.Provider value={updatedState}>
+        <LocalContext.Provider value={updatedState}>
           <STYLED_COMPONENT
             {...props}
             {...pseudo.events}
             ref={ref}
             $rocketstate={updatedState}
           />
-        </Context.Provider>
+        </LocalContext.Provider>
       )
     }
   )
@@ -193,14 +184,14 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       // hover - focus - pressed state passed via context from parent component
       // --------------------------------------------------
-      const rocketstyleCtx = options.consumer ? useContext(Context) : {}
+      const rocketstyleCtx = options.consumer ? useContext(LocalContext) : {}
 
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
       // --------------------------------------------------
       const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context)
 
-      const mode = options.inversed ? inversedMode[ctxMode] : ctxMode
+      const mode = options.inversed ? THEME_MODES_INVERSED[ctxMode] : ctxMode
       const isDark = options.inversed ? !ctxDark : ctxDark
       const isLight = !isDark
 
@@ -208,13 +199,12 @@ const styleComponent: StyleComponent = (options) => {
       // calculate themes for all possible styling dimensions
       // .theme(...) + defined dimensions like .states(...), .sizes(...)
       // --------------------------------------------------
-      // eslint-disable-next-line no-underscore-dangle
       const __ROCKETSTYLE__ = useMemo(
         () =>
           useTheme<typeof theme>({
             theme,
             options,
-            cb: themeVariantCb,
+            cb: themeModeCb,
           }),
         // recalculate this only when theme changes
         [theme]
@@ -231,8 +221,7 @@ const styleComponent: StyleComponent = (options) => {
         () =>
           calculateThemeVariant(
             { themes: rocketThemes, baseTheme: rocketBaseTheme },
-            mode,
-            themeVariantCb
+            mode
           ),
         // recalculate this only when theme mode changes dark / light
         [mode]
@@ -271,7 +260,7 @@ const styleComponent: StyleComponent = (options) => {
       // first we need to calculate final props which are
       // being returned by using `attr` chaining method
       // --------------------------------------------------
-      const calculatedAttrs = calculateChainingAttrs([
+      const calculatedAttrs = _calculateChainOptions([
         props,
         theme,
         {
@@ -290,7 +279,7 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
         ...(options.consumer
-          ? options.consumer((cb) => cb(rocketstyleCtx as any))
+          ? options.consumer((callback) => callback(rocketstyleCtx as any))
           : {}),
         ...calculatedAttrs,
         ...props,
@@ -301,7 +290,7 @@ const styleComponent: StyleComponent = (options) => {
       // calculate final component state including pseudo state
       // passed as $rocketstate prop
       // --------------------------------------------------
-      const rocketstate: Record<string, unknown> = calculateStylingAttrs({
+      const rocketstate: Record<string, unknown> = _calculateStylingAttrs({
         props: pickStyledProps(mergeProps, reservedPropNames),
         dimensions,
       })
@@ -361,7 +350,7 @@ const styleComponent: StyleComponent = (options) => {
   hoistNonReactStatics(ExtendedComponent, options.component)
   createStaticsEnhancers({
     context: ExtendedComponent,
-    dimensionKeys: [...options.dimensionKeys, ...RESERVED_STATIC_KEYS],
+    dimensionKeys: [...options.dimensionKeys, ...STATIC_KEYS],
     func: cloneAndEnhance,
     opts: options,
   })
@@ -371,7 +360,7 @@ const styleComponent: StyleComponent = (options) => {
   // ------------------------------------------------------
 
   ExtendedComponent.config = (opts = {}) => {
-    const result = pick(opts, RESERVED_OR_KEYS)
+    const result = pick(opts, CONFIG_KEYS)
 
     return cloneAndEnhance(result as any, options) as any
   }

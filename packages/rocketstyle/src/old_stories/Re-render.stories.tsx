@@ -43,8 +43,6 @@ const Component = ({ openOn, closeOn, children, data, icon, ...props }) => {
   )
 }
 
-// console.log(Button)
-
 storiesOf('ROCKETSTYLE | Element', module).add('Re-render', () => {
   return (
     <>

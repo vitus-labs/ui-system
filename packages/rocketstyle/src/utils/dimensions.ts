@@ -1,4 +1,44 @@
+import { get, isEmpty, set } from '@vitus-labs/core'
 import { Dimensions, DimensionValue, MultiKeys } from '~/types'
+
+// --------------------------------------------------------
+// is value milti key
+// --------------------------------------------------------
+export const isValidKey = (value) =>
+  value !== undefined && value !== null && value !== false
+
+// --------------------------------------------------------
+// is value milti key
+// --------------------------------------------------------
+export const isMultiKey = (value) => {
+  if (typeof value === 'object') return [true, get(value, 'propName')]
+  return [false, value]
+}
+
+// --------------------------------------------------------
+// calculate dimensions map
+// --------------------------------------------------------
+export const calculateDimensionsMap = ({ themes, useBooleans }) => {
+  const result = { keysMap: {}, keywords: {} }
+  if (isEmpty(themes)) return result
+
+  return Object.entries(themes).reduce((accumulator, [key, value]) => {
+    const { keysMap, keywords } = accumulator
+    keywords[key] = true
+
+    Object.entries(value).forEach(([itemKey, itemValue]) => {
+      if (!isValidKey(itemValue)) return
+
+      if (useBooleans) {
+        keywords[itemKey] = true
+      }
+
+      set(keysMap, [key, itemKey], true)
+    })
+
+    return accumulator
+  }, result)
+}
 
 // --------------------------------------------------------
 // simple object getters

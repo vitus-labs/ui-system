@@ -4,7 +4,7 @@ import {
   getKeys,
   getMultipleDimensions,
   getDimensionsValues,
-} from './initUtils'
+} from '~/utils/dimensions'
 import { Dimensions, StyleComponent, ElementType } from './types'
 
 const defaultDimensions = {
