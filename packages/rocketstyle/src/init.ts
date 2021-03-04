@@ -5,6 +5,7 @@ import {
   getMultipleDimensions,
   getDimensionsValues,
 } from '~/utils/dimensions'
+import { ALL_RESERVED_KEYS } from '~/constants'
 import { Dimensions, StyleComponent, ElementType } from './types'
 
 const defaultDimensions = {
@@ -47,6 +48,7 @@ const rocketstyle: Rocketstyle = () => ({
       component: string
       name: string
       dimensions: string
+      invalidDimensions: string
     }>
 
     const errors: Errors = {}
@@ -58,8 +60,19 @@ const rocketstyle: Rocketstyle = () => ({
       errors.name = 'Parameter `name` is missing in params!'
     }
 
-    if (!dimensions) {
+    if (isEmpty(dimensions)) {
       errors.dimensions = 'Parameter `dimensions` is missing in params!'
+    } else {
+      const definedDimensions = getKeys(dimensions)
+      const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
+        //@ts-ignore
+        definedDimensions.includes(item)
+      )
+
+      if (invalidDimension) {
+        errors.invalidDimensions = `Some of your \`dimensions\` is invalid and uses reserved static keys which are
+          ${defaultDimensions.toString()}`
+      }
     }
 
     if (!isEmpty(errors)) {

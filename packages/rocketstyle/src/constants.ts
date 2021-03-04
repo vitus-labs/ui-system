@@ -20,3 +20,9 @@ export const CONFIG_KEYS = [
 
 export const STYLING_KEYS = ['theme', 'attrs', 'styles'] as const
 export const STATIC_KEYS = [...STYLING_KEYS, 'compose'] as const
+
+export const ALL_RESERVED_KEYS = [
+  ...Object.keys(THEME_MODES),
+  ...CONFIG_KEYS,
+  ...STATIC_KEYS,
+] as const
