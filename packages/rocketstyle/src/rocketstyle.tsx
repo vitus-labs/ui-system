@@ -178,7 +178,7 @@ const styleComponent: StyleComponent = (options) => {
   // --------------------------------------------------------
   let FinalComponent = RenderComponent
 
-  const composeFuncs = Object.values(options.compose || {})
+  const composeFuncs = Object.values(options.compose || {}).reverse()
   if (composeFuncs.length > 0) {
     FinalComponent = compose(...composeFuncs)(FinalComponent)
   }
