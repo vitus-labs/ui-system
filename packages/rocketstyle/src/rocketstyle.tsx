@@ -127,13 +127,6 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const calculateTheming = ({ rocketstate, themes, baseTheme }) =>
-    calculateTheme({
-      props: rocketstate,
-      themes,
-      baseTheme,
-    })
-
   const ProviderComponent = forwardRef<any, any>(
     (
       {
@@ -173,7 +166,22 @@ const styleComponent: StyleComponent = (options) => {
     }
   )
 
-  const FinalComponent = options.provider ? ProviderComponent : STYLED_COMPONENT
+  // --------------------------------------------------------
+  // final component to be rendered
+  // --------------------------------------------------------
+  const RenderComponent = options.provider
+    ? ProviderComponent
+    : STYLED_COMPONENT
+
+  // --------------------------------------------------------
+  // final component to be rendered wrapped by hoc(s)
+  // --------------------------------------------------------
+  let FinalComponent = RenderComponent
+
+  const composeFuncs = Object.values(options.compose || {})
+  if (composeFuncs.length > 0) {
+    FinalComponent = compose(...composeFuncs)(FinalComponent)
+  }
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
@@ -301,7 +309,7 @@ const styleComponent: StyleComponent = (options) => {
       // to our styled component
       // passed as $rocketstyle prop
       // --------------------------------------------------
-      const rocketstyle = calculateTheming({
+      const rocketstyle = calculateTheme({
         rocketstate,
         themes,
         baseTheme,
@@ -336,36 +344,30 @@ const styleComponent: StyleComponent = (options) => {
 
   EnhancedComponent.IS_ROCKETSTYLE = true
   EnhancedComponent.displayName = componentName
-  let ExtendedComponent = EnhancedComponent
-
-  const composeFuncs = Object.values(options.compose || {})
-  if (composeFuncs.length > 0) {
-    ExtendedComponent = compose(...composeFuncs)(ExtendedComponent)
-  }
 
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  hoistNonReactStatics(ExtendedComponent, options.component)
+  hoistNonReactStatics(EnhancedComponent, options.component)
   createStaticsEnhancers({
-    context: ExtendedComponent,
+    context: EnhancedComponent,
     dimensionKeys: [...options.dimensionKeys, ...STATIC_KEYS],
     func: cloneAndEnhance,
     opts: options,
   })
   // ------------------------------------------------------
-  ExtendedComponent.IS_ROCKETSTYLE = true
-  ExtendedComponent.displayName = componentName
+  EnhancedComponent.IS_ROCKETSTYLE = true
+  EnhancedComponent.displayName = componentName
   // ------------------------------------------------------
 
-  ExtendedComponent.config = (opts = {}) => {
+  EnhancedComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS)
 
     return cloneAndEnhance(result as any, options) as any
   }
 
-  return ExtendedComponent as RocketComponent
+  return EnhancedComponent as RocketComponent
 }
 
 export default styleComponent

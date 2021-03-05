@@ -70,24 +70,24 @@ type CalculateTheme = <
   T extends Record<string, unknown>,
   B extends Record<string, unknown>
 >({
-  props,
+  rocketstate,
   themes,
   baseTheme,
 }: {
-  props: P
+  rocketstate: P
   themes: T
   baseTheme: B
 }) => B & Record<string, unknown>
 
 export const calculateTheme: CalculateTheme = ({
-  props,
+  rocketstate,
   themes,
   baseTheme,
 }) => {
   // generate final theme which will be passed to styled component
   let finalTheme = { ...baseTheme }
 
-  Object.entries(props).forEach(
+  Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | Array<string>]) => {
       const keyTheme = themes[key]
 
