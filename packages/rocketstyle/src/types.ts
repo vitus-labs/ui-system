@@ -168,7 +168,7 @@ export type ConfigAttrs<C, DKP> = Partial<{
 // ATTRS chaining types
 // --------------------------------------------------------
 export type AttrsCb<A, T> = (
-  props: A,
+  props: Partial<A>,
   theme: T,
   helpers: {
     variant?: 'light' | 'dark'
@@ -176,7 +176,7 @@ export type AttrsCb<A, T> = (
     isLight?: boolean
     createElement: typeof renderContent
   }
-) => { [I in keyof A]?: A[I] }
+) => Partial<A>
 
 // THEME chaining types
 // --------------------------------------------------------
@@ -330,7 +330,7 @@ export type RocketComponent<
 
   // THEME chaining method
   // --------------------------------------------------------
-  theme: <P extends TObj = {}>(
+  theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
       ? Partial<Spread<[CT, P]>> | ThemeCb<T, Spread<[CT, P]>>
       : Partial<CT> | ThemeCb<T, CT>
