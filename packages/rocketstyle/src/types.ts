@@ -297,12 +297,10 @@ export type RocketComponent<
     passProps,
   }: ConfigAttrs<NC, DKP>) => RocketComponent<
     NC extends ElementType
-      ? MergeTypes<[ExtractProps<NC>, EA]> &
+      ? MergeTypes<[ExtractProps<NC>, DefaultProps]> &
           RocketstyleDimensionTypes<D, DKP, UB>
       : A,
-    NC extends ElementType
-      ? Omit<ExtractProps<NC>, ExtractDimensionAttrsKeys<D>>
-      : OA,
+    NC extends ElementType ? ExtractProps<NC> : OA,
     EA,
     T,
     CT,
@@ -321,7 +319,7 @@ export type RocketComponent<
       : Partial<A> | AttrsCb<A, T>
   ) => P extends TObj
     ? RocketComponent<
-        MergeTypes<[A, P, RocketstyleDimensionTypes<D, DKP, UB>]>,
+        MergeTypes<[OA, EA, P, RocketstyleDimensionTypes<D, DKP, UB>]>,
         OA,
         MergeTypes<[EA, P]>,
         T,
@@ -336,10 +334,10 @@ export type RocketComponent<
   // --------------------------------------------------------
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
-      ? Partial<Spread<[CT, P]>> | ThemeCb<T, Spread<[CT, P]>>
+      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<T, MergeTypes<[CT, P]>>
       : Partial<CT> | ThemeCb<T, CT>
   ) => P extends TObj
-    ? RocketComponent<A, OA, EA, T, Spread<[CT, P]>, D, UB, DKP>
+    ? RocketComponent<A, OA, EA, T, MergeTypes<[CT, P]>, D, UB, DKP>
     : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // STYLES chaining method
