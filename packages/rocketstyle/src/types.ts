@@ -238,9 +238,12 @@ type RocketstyleDimensionTypes<
   UB extends boolean
 > = UB extends true
   ? Partial<
-      RocketstyleDimensionTypesObj<D, DKP> & RocketstyleDimensionTypesBool<DKP>
+      ExtractNullableDimensionKeys<
+        RocketstyleDimensionTypesObj<D, DKP> &
+          RocketstyleDimensionTypesBool<DKP>
+      >
     >
-  : Partial<RocketstyleDimensionTypesObj<D, DKP>>
+  : Partial<ExtractNullableDimensionKeys<RocketstyleDimensionTypesObj<D, DKP>>>
 
 // --------------------------------------------------------
 // THIS IS WHERE ALL THE MAGIC HAPPENS
@@ -362,7 +365,7 @@ export type RocketComponent<
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
-          Spread<
+          MergeTypes<
             [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, RT, DKP>, UB>]
           >,
           OA,
@@ -436,9 +439,9 @@ export type StyleComponent<
   props: Configuration<C, D>
 ) => RocketComponent<
   // extract component props + add default rocketstyle props
-  Spread<[ExtractProps<C>, DefaultProps<C, D>]>,
+  MergeTypes<[ExtractProps<C>, DefaultProps<C, D>]>,
   // keep original component props + extract dimension props
-  Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>,
+  ExtractProps<C>,
   // set default extending props
   DefaultProps<C, D>,
   T,
