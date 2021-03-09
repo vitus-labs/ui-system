@@ -136,7 +136,7 @@ type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
 ) => DKP extends TDKP
   ? Partial<
       {
-        [J in keyof DKP]: keyof DKP[J] | undefined
+        [J in keyof DKP]: keyof DKP[J]
       } &
         PseudoState & { pseudo: Partial<PseudoState> }
     >
@@ -363,7 +363,7 @@ export type RocketComponent<
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
           Spread<
-            [A, RocketstyleDimensionTypes<D, DKPTypes<K, D, RT, DKP>, UB>]
+            [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, RT, DKP>, UB>]
           >,
           OA,
           EA,
