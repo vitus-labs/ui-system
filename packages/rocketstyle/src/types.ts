@@ -332,7 +332,7 @@ export type RocketComponent<
   // --------------------------------------------------------
   theme: <P extends TObj = {}>(
     param: P extends TObj
-      ? Partial<Spread<[CT, P]>> | ThemeCb<Spread<[T, P]>, CT>
+      ? Partial<Spread<[CT, P]>> | ThemeCb<T, Spread<[CT, P]>>
       : Partial<CT> | ThemeCb<T, CT>
   ) => P extends TObj
     ? RocketComponent<A, OA, EA, T, Spread<[CT, P]>, D, UB, DKP>
