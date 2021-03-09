@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentType, ForwardRefExoticComponent } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
@@ -7,6 +8,58 @@ import { config, renderContent } from '@vitus-labs/core'
 // --------------------------------------------------------
 type ValueOf<T> = T[keyof T]
 
+type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
+type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }
+
+type ExtractNullableKeys<T> = {
+  [P in keyof T as T[P] extends false ? never : P]: T[P]
+}
+
+// merge types
+// type OptionalPropertyNames<T> = {
+//   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? K : never
+// }[keyof T]
+
+// type SpreadProperties<L, R, K extends keyof L & keyof R> = {
+//   [P in K]: L[P] | Exclude<R[P], undefined>
+// }
+
+// type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+
+// type SpreadTwo<L, R> = Id<
+//   Pick<L, Exclude<keyof L, keyof R>> &
+//     Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
+//     Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
+//     SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
+// >
+
+// type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
+//   ? SpreadTwo<L, Spread<R>>
+//   : unknown
+
+// merge types
+// type OptionalPropertyNames<T> = {
+//   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? K : never
+// }[keyof T]
+
+// type SpreadProperties<L, R, K extends keyof L & keyof R> = {
+//   [P in K]: L[P] | Exclude<R[P], undefined>
+// }
+
+type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+
+type SpreadTwo<L, R> = Id<
+  Pick<L, Exclude<keyof L, keyof R>> & R
+  // Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
+  // Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
+  // SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
+>
+
+type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
+  ? SpreadTwo<L, Spread<R>>
+  : unknown
+
+// extract props fron component
 export type ExtractProps<
   TComponentOrTProps
 > = TComponentOrTProps extends ElementType<infer TProps>
@@ -105,7 +158,7 @@ type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
 ) => DKP extends TDKP
   ? Partial<
       {
-        [J in keyof DKP]: keyof DKP[J]
+        [J in keyof DKP]: keyof DKP[J] | undefined
       } &
         PseudoState & { pseudo: Partial<PseudoState> }
     >
@@ -146,14 +199,6 @@ export type AttrsCb<A, T> = (
     createElement: typeof renderContent
   }
 ) => Partial<A>
-
-export type AttrsParam<P, A, T> = P extends AttrsCb<A, T>
-  ? AttrsCb<A, T>
-  : P extends Partial<A>
-  ? Partial<A>
-  : P extends TObj
-  ? AttrsCb<A & Partial<P>, T> | Partial<A & P>
-  : Partial<A>
 
 // THEME chaining types
 // --------------------------------------------------------
@@ -198,32 +243,29 @@ type DKPTypes<
   DKP extends TDKP
 > = {
   [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
-    ? { [J in keyof DKP[I] | keyof ReturnParam<P>]: boolean }
-    : { [J in keyof DKP[I]]: boolean }
+    ? ExtractNullableKeys<Spread<[DKP[I], NullableKeys<ReturnParam<P>>]>>
+    : // {
+      //   [J in keyof NullableKeys<ReturnParam<P>>]: NullableKeys<
+      //     ReturnParam<P>[J]
+      //   > extends false | null | undefined
+      //     ? undefined
+      //     : true
+      // }
+      DKP[I]
 }
 
-type RocketstyleDimensionTypesHelper<DKP extends TDKP> = Partial<
-  {
-    [I in keyof DKP]: keyof DKP[I]
-  }
->
+type RocketstyleDimensionTypesHelper<DKP extends TDKP> = {
+  [I in keyof DKP]: keyof DKP[I]
+}
 
-type RocketstyleDimensionTypesObj<
-  D extends Dimensions,
-  DKP extends TDKP
-> = Partial<
-  {
-    [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
-      ? Array<keyof DKP[I]>
-      : keyof DKP[I]
-  }
->
+type RocketstyleDimensionTypesObj<D extends Dimensions, DKP extends TDKP> = {
+  [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
+    ? Array<keyof DKP[I]>
+    : keyof DKP[I]
+}
 
 type RocketstyleDimensionTypesBool<DKP extends TDKP> = Partial<
-  Record<
-    RocketstyleDimensionTypesHelper<DKP>[keyof RocketstyleDimensionTypesHelper<DKP>],
-    boolean
-  >
+  Record<ValueOf<RocketstyleDimensionTypesHelper<DKP>>, boolean>
 >
 
 type RocketstyleDimensionTypes<
@@ -231,8 +273,10 @@ type RocketstyleDimensionTypes<
   DKP extends TDKP,
   UB extends boolean
 > = UB extends true
-  ? RocketstyleDimensionTypesObj<D, DKP> & RocketstyleDimensionTypesBool<DKP>
-  : RocketstyleDimensionTypesObj<D, DKP>
+  ? Partial<
+      RocketstyleDimensionTypesObj<D, DKP> & RocketstyleDimensionTypesBool<DKP>
+    >
+  : Partial<RocketstyleDimensionTypesObj<D, DKP>>
 
 // --------------------------------------------------------
 // THIS IS WHERE ALL THE MAGIC HAPPENS
@@ -250,9 +294,9 @@ export type RocketComponent<
   // attrs
   A extends TObj = DefaultProps,
   // original component props
-  OA extends TObj | unknown = Record<string, never>,
+  OA extends TObj = {},
   // extended component props
-  EA extends TObj = Record<string, never>,
+  EA extends TObj = {},
   // theme
   T extends TObj | unknown = unknown,
   // custom theme properties
@@ -286,9 +330,7 @@ export type RocketComponent<
     passProps,
   }: ConfigAttrs<NC, DKP>) => RocketComponent<
     NC extends ElementType
-      ? Omit<OA, keyof EA | keyof RocketstyleDimensionTypes<D, DKP, UB>> &
-          EA &
-          RocketstyleDimensionTypes<D, DKP, UB>
+      ? Spread<[OA, EA]> & RocketstyleDimensionTypes<D, DKP, UB>
       : A,
     NC extends ElementType ? ExtractProps<NC> : OA,
     EA,
@@ -303,23 +345,24 @@ export type RocketComponent<
 
   // ATTRS chaining method
   // --------------------------------------------------------
-  attrs: <P extends AttrsCb<A, T> | TObj>(
-    param: AttrsParam<P, A, T>
-  ) => P extends AttrsCb<A, T> | Partial<A>
-    ? RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
-    : P extends TObj
-    ? RocketComponent<A & P, OA, EA & P, T, CT, D, UB, DKP>
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  attrs: <P extends TObj = {}>(
+    param: AttrsCb<Spread<[A, P | {}]>, T> | Partial<Spread<[A, P]>>
+  ) => RocketComponent<
+    Spread<[OA, EA, P]> & RocketstyleDimensionTypes<D, DKP, UB>,
+    OA,
+    Spread<[EA, P]>,
+    T,
+    CT,
+    D,
+    UB,
+    DKP
+  >
 
   // THEME chaining method
   // --------------------------------------------------------
-  theme: <P extends ThemeCb<T, CT> | TObj>(
-    param: ThemeParam<P, T, CT>
-  ) => P extends ThemeCb<T, CT> | Partial<CT>
-    ? RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
-    : P extends TObj
-    ? RocketComponent<A, OA, EA, T, CT & P, D, UB, DKP>
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  theme: <P extends TObj = {}>(
+    param: ThemeCb<Spread<[T, P | {}]>, CT> | Partial<Spread<[CT, P]>>
+  ) => RocketComponent<A, OA, EA, T, Spread<[CT, P]>, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
@@ -341,13 +384,9 @@ export type RocketComponent<
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
-          Omit<
-            OA,
-            | keyof EA
-            | keyof RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>
-          > &
-            EA &
-            Partial<RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>>,
+          Spread<
+            [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>]
+          >,
           OA,
           EA,
           T,
@@ -428,7 +467,7 @@ export type StyleComponent<
   CT,
   D,
   UB,
-  RocketstyleDimensionTypes<D, unknown, UB>
+  {}
 >
 
 type DefaultProps<

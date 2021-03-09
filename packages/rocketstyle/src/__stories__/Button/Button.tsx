@@ -10,15 +10,17 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
     tag: 'button',
     label: 'something',
   })
-  .attrs<{ something?: boolean }>(({ href, content }) => ({
+  .attrs<{ something?: boolean }>(({ content }) => ({
     tag: 'button',
-    label: href,
+    // label: true,
     contentAlignX: 'block',
     content,
+    contentDirection: 'inline',
+    something: true,
   }))
-  .attrs(({ href, content }) => ({
+  .attrs(({ content }) => ({
     tag: 'button',
-    label: href,
+    // label: true,
     contentAlignX: 'block',
     content,
   }))
@@ -70,6 +72,15 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
       color: 'white',
     },
   })
+  .states({
+    secondary: null,
+  })
+  .states({
+    tertiary: { hello: true },
+  })
+  .attrs(({ state }) => ({
+    state,
+  }))
   .styles(
     (css) => css<any>`
       ${({
@@ -227,8 +238,8 @@ export const ButtonConsumer = rocketstyle()()({
   })
   .config({
     consumer: (ctx) =>
-      ctx<typeof ProviderButton>(({ pseudo }) => ({
-        state: pseudo.hover ? 'primary' : null,
+      ctx<typeof ProviderButton>(({ pseudo, ...props }) => ({
+        state: pseudo.hover ? 'primary' : undefined,
       })),
   })
   .styles(

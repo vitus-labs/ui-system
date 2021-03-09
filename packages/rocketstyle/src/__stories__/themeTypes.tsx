@@ -37,7 +37,7 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
     width: '',
     size: '',
   })
-  .theme<{ test: boolean }>((t, css) => ({
+  .theme<{ test: boolean }>((t, v, css) => ({
     fontFamily: '',
     color: 'black',
     height: t.fontSize.a,
