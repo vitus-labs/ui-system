@@ -26,6 +26,7 @@ export const calculateDimensionsMap = ({ themes, useBooleans }) => {
     const { keysMap, keywords } = accumulator
     keywords[key] = true
 
+    // @ts-ignore
     Object.entries(value).forEach(([itemKey, itemValue]) => {
       if (!isValidKey(itemValue)) return
 

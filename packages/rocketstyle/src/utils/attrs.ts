@@ -8,7 +8,7 @@ type PickStyledProps = (
   keywords: Record<string, true>
 ) => Partial<typeof props>
 export const pickStyledProps: PickStyledProps = (props, keywords) => {
-  const result = {}
+  const result = {} as any
 
   Object.entries(props).forEach(([key, value]) => {
     if (keywords[key]) result[key] = value
@@ -31,6 +31,7 @@ export const calculateChainOptions: CalculateChainOptions = (options) => (
   const result = {}
   if (isEmpty(options)) return result
 
+  // @ts-ignore
   return options.reduce(
     (acc, item) => Object.assign(acc, item(...args)),
     result

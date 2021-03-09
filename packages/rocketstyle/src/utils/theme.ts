@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { config, isEmpty, merge } from '@vitus-labs/core'
 import { removeAllEmptyValues, removeNullableValues } from './collection'
 import { isMultiKey } from './dimensions'

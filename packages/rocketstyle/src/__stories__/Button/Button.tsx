@@ -16,7 +16,6 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
     contentAlignX: 'block',
     content,
     contentDirection: 'inline',
-    something: true,
   }))
   .attrs(({ content }) => ({
     tag: 'button',
@@ -53,6 +52,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
         backgroundColor: '#5c636a',
       },
     },
+    ale: null,
   })
   .multiple({
     centered: {
@@ -78,9 +78,6 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
   .states({
     tertiary: { hello: true },
   })
-  .attrs(({ state }) => ({
-    state,
-  }))
   .styles(
     (css) => css<any>`
       ${({

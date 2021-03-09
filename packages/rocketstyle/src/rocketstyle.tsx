@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-underscore-dangle */
 import React, {
   createContext,
@@ -186,7 +187,6 @@ const styleComponent: StyleComponent = (options) => {
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
-  // @ts-ignore
   const EnhancedComponent: RocketComponent = forwardRef(
     ({ onMount, ...props }, ref) => {
       // --------------------------------------------------

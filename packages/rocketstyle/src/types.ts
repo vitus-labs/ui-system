@@ -11,41 +11,15 @@ type ValueOf<T> = T[keyof T]
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
 type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }
 
-type ExtractNullableKeys<T> = {
+type ExtractNullableDimensionKeys<T> = {
   [P in keyof T as T[P] extends false ? never : P]: T[P]
 }
 
-// merge types
-// type OptionalPropertyNames<T> = {
-//   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? K : never
-// }[keyof T]
-
-// type SpreadProperties<L, R, K extends keyof L & keyof R> = {
-//   [P in K]: L[P] | Exclude<R[P], undefined>
-// }
-
-// type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
-
-// type SpreadTwo<L, R> = Id<
-//   Pick<L, Exclude<keyof L, keyof R>> &
-//     Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
-//     Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
-//     SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
-// >
-
-// type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
-//   ? SpreadTwo<L, Spread<R>>
-//   : unknown
+type ExtractNullableKeys<T> = {
+  [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
+}
 
 // merge types
-// type OptionalPropertyNames<T> = {
-//   [K in keyof T]-?: {} extends { [P in K]: T[K] } ? K : never
-// }[keyof T]
-
-// type SpreadProperties<L, R, K extends keyof L & keyof R> = {
-//   [P in K]: L[P] | Exclude<R[P], undefined>
-// }
-
 type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 
 type SpreadTwo<L, R> = Id<
@@ -58,6 +32,8 @@ type SpreadTwo<L, R> = Id<
 type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
   ? SpreadTwo<L, Spread<R>>
   : unknown
+
+type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<Spread<A>>
 
 // extract props fron component
 export type ExtractProps<
@@ -74,7 +50,9 @@ export type ExtractDimensionMulti<
   T extends DimensionValue
 > = T extends DimensionValueObj ? true : false
 
-// type AtLeastOne<T> = { [K in keyof T]: Pick<T, K> }[keyof T]
+export type ExtractDimensionAttrsKeys<D extends Dimensions> = {
+  [I in keyof D]: ExtractDimensionKey<D[I]>
+}[keyof D]
 
 // --------------------------------------------------------
 // primitive props
@@ -96,7 +74,7 @@ export type MultiKeys<T extends Dimensions = Dimensions> = Partial<
 >
 export type TDKP = Record<
   ExtractDimensionKey<Dimensions[keyof Dimensions]>,
-  Record<string, boolean | never> | unknown
+  Record<string, boolean | never | Record<string, boolean>> | unknown
 >
 
 export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
@@ -190,7 +168,7 @@ export type ConfigAttrs<C, DKP> = Partial<{
 // ATTRS chaining types
 // --------------------------------------------------------
 export type AttrsCb<A, T> = (
-  props: Partial<A>,
+  props: A,
   theme: T,
   helpers: {
     variant?: 'light' | 'dark'
@@ -198,18 +176,10 @@ export type AttrsCb<A, T> = (
     isLight?: boolean
     createElement: typeof renderContent
   }
-) => Partial<A>
+) => { [I in keyof A]?: A[I] }
 
 // THEME chaining types
 // --------------------------------------------------------
-export type ThemeParam<P, T, CT> = P extends ThemeCb<T, CT>
-  ? ThemeCb<T, CT>
-  : P extends Partial<CT>
-  ? Partial<CT>
-  : P extends TObj
-  ? ThemeCb<T, CT & P> | Partial<CT & P>
-  : Partial<CT>
-
 export type ThemeVariant = <A, B>(light: A, dark: B) => A | B
 
 export type ThemeCb<T, CT> = (
@@ -224,13 +194,14 @@ export type StylesCb = (css: Css) => ReturnType<Css>
 
 // DIMENSIONS chaining types
 // --------------------------------------------------------
-export type DimensionObj<CT> = Record<string, Partial<CT> | boolean | null>
+export type DimensionResult<CT> = Record<string, boolean | null | Partial<CT>>
+export type DimensionObj<CT> = DimensionResult<CT>
 
 export type DimensionCb<T, CT> = (
   theme: T,
   mode: ThemeVariant,
   css: Css
-) => Record<string, Partial<CT> | boolean | null>
+) => DimensionResult<CT>
 
 export type DimensionReturn<P, A> = P extends TObj ? A & P : A
 
@@ -239,19 +210,12 @@ type ReturnParam<P extends TFn | TObj> = P extends TFn ? ReturnType<P> : P
 type DKPTypes<
   K extends DimensionValue,
   D extends Dimensions,
-  P extends TFn | TObj,
+  P extends ReturnParam<TFn | TObj>,
   DKP extends TDKP
 > = {
   [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
-    ? ExtractNullableKeys<Spread<[DKP[I], NullableKeys<ReturnParam<P>>]>>
-    : // {
-      //   [J in keyof NullableKeys<ReturnParam<P>>]: NullableKeys<
-      //     ReturnParam<P>[J]
-      //   > extends false | null | undefined
-      //     ? undefined
-      //     : true
-      // }
-      DKP[I]
+    ? ExtractNullableDimensionKeys<Spread<[DKP[I], NullableKeys<P>]>>
+    : DKP[I]
 }
 
 type RocketstyleDimensionTypesHelper<DKP extends TDKP> = {
@@ -332,7 +296,9 @@ export type RocketComponent<
     NC extends ElementType
       ? Spread<[OA, EA]> & RocketstyleDimensionTypes<D, DKP, UB>
       : A,
-    NC extends ElementType ? ExtractProps<NC> : OA,
+    NC extends ElementType
+      ? Omit<ExtractProps<NC>, ExtractDimensionAttrsKeys<D>>
+      : OA,
     EA,
     T,
     CT,
@@ -345,24 +311,32 @@ export type RocketComponent<
 
   // ATTRS chaining method
   // --------------------------------------------------------
-  attrs: <P extends TObj = {}>(
-    param: AttrsCb<Spread<[A, P | {}]>, T> | Partial<Spread<[A, P]>>
-  ) => RocketComponent<
-    Spread<[OA, EA, P]> & RocketstyleDimensionTypes<D, DKP, UB>,
-    OA,
-    Spread<[EA, P]>,
-    T,
-    CT,
-    D,
-    UB,
-    DKP
-  >
+  attrs: <P extends TObj | unknown = unknown>(
+    param: P extends TObj
+      ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, T>
+      : Partial<A> | AttrsCb<A, T>
+  ) => P extends TObj
+    ? RocketComponent<
+        MergeTypes<[A, P, RocketstyleDimensionTypes<D, DKP, UB>]>,
+        OA,
+        MergeTypes<[EA, P]>,
+        T,
+        CT,
+        D,
+        UB,
+        DKP
+      >
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // THEME chaining method
   // --------------------------------------------------------
   theme: <P extends TObj = {}>(
-    param: ThemeCb<Spread<[T, P | {}]>, CT> | Partial<Spread<[CT, P]>>
-  ) => RocketComponent<A, OA, EA, T, Spread<[CT, P]>, D, UB, DKP>
+    param: P extends TObj
+      ? Partial<Spread<[CT, P]>> | ThemeCb<Spread<[T, P]>, CT>
+      : Partial<CT> | ThemeCb<T, CT>
+  ) => P extends TObj
+    ? RocketComponent<A, OA, EA, T, Spread<[CT, P]>, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
@@ -378,14 +352,17 @@ export type RocketComponent<
   // --------------------------------------------------------
 } & {
     [I in keyof D]: <
-      P extends DimensionCb<T, CT> | DimensionObj<CT>,
-      K extends DimensionValue = D[I]
+      K extends DimensionValue = D[I],
+      P extends DimensionCb<T, CT> | DimensionObj<CT> =
+        | DimensionCb<T, CT>
+        | DimensionObj<CT>,
+      RT = ReturnParam<P>
     >(
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
           Spread<
-            [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>]
+            [A, RocketstyleDimensionTypes<D, DKPTypes<K, D, RT, DKP>, UB>]
           >,
           OA,
           EA,
@@ -445,7 +422,7 @@ export type Configuration<
     theme: Array<OptionFunc>
     styles: OptionStyles
     compose: Record<string, TFn>
-  } & Record<ExtractDimensionKey<D[keyof D]>, unknown>
+  } & Record<ExtractDimensionKey<D[keyof D]>, any>
 >
 
 export type StyleComponent<
@@ -458,9 +435,9 @@ export type StyleComponent<
   props: Configuration<C, D>
 ) => RocketComponent<
   // extract component props + add default rocketstyle props
-  Omit<ExtractProps<C>, keyof DefaultProps<C, D>> & DefaultProps<C, D>,
-  // keep original component props
-  ExtractProps<C>,
+  Spread<[ExtractProps<C>, DefaultProps<C, D>]>,
+  // keep original component props + extract dimension props
+  Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>,
   // set default extending props
   DefaultProps<C, D>,
   T,
