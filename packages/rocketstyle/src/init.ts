@@ -65,8 +65,7 @@ const rocketstyle: Rocketstyle = () => ({
     } else {
       const definedDimensions = getKeys(dimensions)
       const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
-        //@ts-ignore
-        definedDimensions.includes(item)
+        definedDimensions.includes(item as any)
       )
 
       if (invalidDimension) {

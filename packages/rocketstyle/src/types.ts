@@ -294,7 +294,8 @@ export type RocketComponent<
     passProps,
   }: ConfigAttrs<NC, DKP>) => RocketComponent<
     NC extends ElementType
-      ? Spread<[OA, EA]> & RocketstyleDimensionTypes<D, DKP, UB>
+      ? MergeTypes<[ExtractProps<NC>, EA]> &
+          RocketstyleDimensionTypes<D, DKP, UB>
       : A,
     NC extends ElementType
       ? Omit<ExtractProps<NC>, ExtractDimensionAttrsKeys<D>>

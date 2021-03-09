@@ -1,10 +1,14 @@
-// @ts-nocheck
 /* eslint-disable import/prefer-default-export */
 
 // --------------------------------------------------------
 // chain options
 // --------------------------------------------------------
-export const chainOptions = (opts, defaultOpts = []) => {
+type ChanOptions = (
+  opts: Record<string, unknown> | ((...args: any) => any),
+  defaultOpts: any[]
+) => any[]
+
+export const chainOptions: ChanOptions = (opts, defaultOpts = []) => {
   const result = [...defaultOpts]
 
   if (typeof opts === 'function') result.push(opts)

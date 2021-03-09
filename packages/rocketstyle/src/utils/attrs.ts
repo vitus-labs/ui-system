@@ -22,7 +22,7 @@ export const pickStyledProps: PickStyledProps = (props, keywords) => {
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options: Array<OptionFunc<A>> | undefined | null
+  options: Array<OptionFunc<A>>
 ) => (args: Array<A>) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions = (options) => (
@@ -31,7 +31,6 @@ export const calculateChainOptions: CalculateChainOptions = (options) => (
   const result = {}
   if (isEmpty(options)) return result
 
-  // @ts-ignore
   return options.reduce(
     (acc, item) => Object.assign(acc, item(...args)),
     result
@@ -41,10 +40,23 @@ export const calculateChainOptions: CalculateChainOptions = (options) => (
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
-export const calculateStylingAttrs = ({ useBooleans, multiKeys }) => ({
+type CalculateStylingAttrs = ({
+  useBooleans,
+  multiKeys,
+}: {
+  useBooleans: boolean
+  multiKeys: Record<string, boolean>
+}) => ({
   props,
   dimensions,
-}) => {
+}: {
+  props: Record<string, unknown>
+  dimensions: Record<string, unknown>
+}) => any
+export const calculateStylingAttrs: CalculateStylingAttrs = ({
+  useBooleans,
+  multiKeys,
+}) => ({ props, dimensions }) => {
   const result = {}
 
   // (1) find dimension keys values & initialize
@@ -76,7 +88,7 @@ export const calculateStylingAttrs = ({ useBooleans, multiKeys }) => ({
       // when value in result is not assigned yet
       if (!value) {
         let newDimensionValue
-        const keywords = Object.keys(dimensions[key])
+        const keywords = Object.keys(dimensions[key] as any)
 
         if (isMultiKey) {
           newDimensionValue = propsKeys.filter((key) => keywords.includes(key))

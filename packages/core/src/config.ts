@@ -6,8 +6,8 @@ const context = createContext<any>({})
 interface Internal {
   css: typeof css
   styled: typeof styled
-  styledContext: Context<Record<string, any>>
-  context: Context<Record<string, any>>
+  styledContext: Context<Partial<Record<string, unknown>>>
+  context: Context<Partial<Record<string, unknown>>>
   component: any
   textComponent: any
 }

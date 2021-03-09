@@ -1,4 +1,4 @@
-import { Element } from '@vitus-labs/elements'
+import { Element, Text } from '@vitus-labs/elements'
 import rocketstyle from '~/init'
 
 export default rocketstyle()({
@@ -6,7 +6,7 @@ export default rocketstyle()({
     colors: 'color',
   } as const,
   useBooleans: true,
-})({ name: 'Button', component: Element })
+})({ name: 'Button', component: Text })
   .attrs({
     tag: 'button',
     label: 'This is a label',
@@ -33,6 +33,9 @@ export default rocketstyle()({
       hover: {
         bgColor: '#5c636a',
       },
+    },
+    paragraph: {
+      bgColor: 'a',
     },
   })
   .styles(

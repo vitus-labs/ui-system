@@ -23,11 +23,16 @@ const Provider: FC<TProvider> = ({
   provider: RocketstyleProvider = CoreProvider,
 }) => {
   if (inversed) {
-    const { provider: InnerProvider, mode: ctxMode, ...ctx } = useContext(
-      context
-    )
+    const {
+      provider: InnerProvider,
+      mode: ctxMode,
+      ...ctx
+    } = useContext<TProvider>(context as any)
+
     const isDark = ctxMode === 'dark'
     const inversedTheme = isDark ? 'light' : 'dark'
+
+    if (!InnerProvider) return <>{children}</>
 
     return (
       <InnerProvider
