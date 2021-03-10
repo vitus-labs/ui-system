@@ -295,19 +295,24 @@ export type RocketComponent<
     DEBUG,
     inversed,
     passProps,
-  }: ConfigAttrs<NC, DKP>) => RocketComponent<
-    NC extends ElementType
-      ? MergeTypes<[ExtractProps<NC>, DefaultProps]> &
-          RocketstyleDimensionTypes<D, DKP, UB>
-      : A,
-    NC extends ElementType ? ExtractProps<NC> : OA,
-    EA,
-    T,
-    CT,
-    D,
-    UB,
-    DKP
-  >
+  }: ConfigAttrs<NC, DKP>) => NC extends ElementType
+    ? RocketComponent<
+        MergeTypes<
+          [
+            ExtractProps<NC>,
+            DefaultProps,
+            RocketstyleDimensionTypes<D, DKP, UB>
+          ]
+        >,
+        ExtractProps<NC>,
+        EA,
+        T,
+        CT,
+        D,
+        UB,
+        DKP
+      >
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   $$rocketstyle: DKP
 
@@ -437,7 +442,9 @@ export type StyleComponent<
   props: Configuration<C, D>
 ) => RocketComponent<
   // extract component props + add default rocketstyle props
-  MergeTypes<[ExtractProps<C>, DefaultProps<C, D>]>,
+  MergeTypes<
+    [Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>, DefaultProps<C, D>]
+  >,
   // keep original component props + extract dimension props
   ExtractProps<C>,
   // set default extending props
