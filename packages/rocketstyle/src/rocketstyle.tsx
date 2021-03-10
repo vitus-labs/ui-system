@@ -1,16 +1,11 @@
 // @ts-nocheck
 /* eslint-disable no-underscore-dangle */
-import React, {
-  createContext,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useContext,
-} from 'react'
+import React, { forwardRef, useEffect, useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import { context } from '~/context'
-import { useTheme, usePseudoState } from '~/hooks'
+import { useTheme } from '~/hooks'
+import { localContext, hocForwardRef, createProvider } from '~/internal'
 import {
   calculateTheme,
   calculateThemeVariant,
@@ -30,20 +25,7 @@ import {
   STATIC_KEYS,
 } from '~/constants'
 
-import type {
-  RocketComponent,
-  StyleComponent,
-  Configuration,
-  PseudoState,
-} from '~/types'
-
-type TContext = Partial<
-  {
-    pseudo: PseudoState
-  } & Record<string, unknown>
->
-
-const LocalContext = createContext<TContext>({})
+import type { RocketComponent, StyleComponent, Configuration } from '~/types'
 
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
@@ -128,50 +110,11 @@ const styleComponent: StyleComponent = (options) => {
         ${calculateStyles(styles, config.css)}
       `
 
-  const ProviderComponent = forwardRef<any, any>(
-    (
-      {
-        onMouseEnter,
-        onMouseLeave,
-        onMouseUp,
-        onMouseDown,
-        onFocus,
-        onBlur,
-        $rocketstate,
-        ...props
-      },
-      ref
-    ) => {
-      // pseudo hook to detect states hover / pressed / focus
-      const pseudo = usePseudoState({
-        onMouseEnter,
-        onMouseLeave,
-        onMouseUp,
-        onMouseDown,
-        onFocus,
-        onBlur,
-      })
-
-      const updatedState = { ...$rocketstate, pseudo: pseudo.state }
-
-      return (
-        <LocalContext.Provider value={updatedState}>
-          <STYLED_COMPONENT
-            {...props}
-            {...pseudo.events}
-            ref={ref}
-            $rocketstate={updatedState}
-          />
-        </LocalContext.Provider>
-      )
-    }
-  )
-
   // --------------------------------------------------------
   // final component to be rendered
   // --------------------------------------------------------
   const RenderComponent = options.provider
-    ? ProviderComponent
+    ? createProvider(STYLED_COMPONENT)
     : STYLED_COMPONENT
 
   // --------------------------------------------------------
@@ -179,9 +122,13 @@ const styleComponent: StyleComponent = (options) => {
   // --------------------------------------------------------
   let FinalComponent = RenderComponent
 
-  const composeFuncs = Object.values(options.compose || {}).reverse()
-  if (composeFuncs.length > 0) {
-    FinalComponent = compose(...composeFuncs)(FinalComponent)
+  const composeFuncs = Object.values(options.compose || {})
+    .filter((item) => typeof item === 'function')
+    .reverse()
+
+  const HAS_COMPOSE = composeFuncs.length > 0
+  if (HAS_COMPOSE) {
+    FinalComponent = compose(...composeFuncs, hocForwardRef)(FinalComponent)
   }
 
   // --------------------------------------------------------
@@ -192,7 +139,7 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       // hover - focus - pressed state passed via context from parent component
       // --------------------------------------------------
-      const rocketstyleCtx = options.consumer ? useContext(LocalContext) : {}
+      const rocketstyleCtx = options.consumer ? useContext(localContext) : {}
 
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
@@ -321,14 +268,13 @@ const styleComponent: StyleComponent = (options) => {
       // excluding: styling props
       // including: $rocketstyle, $rocketstate
       // --------------------------------------------------
-
       const finalProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
         ...omit(mergeProps, RESERVED_STYLING_PROPS_KEYS),
         // if enforced to pass styling props, we pass them directly
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-        ref,
+        [HAS_COMPOSE ? '$rocketForwardRef' : 'ref']: ref,
         $rocketstyle: rocketstyle,
         $rocketstate: { ...rocketstate, pseudo },
       }

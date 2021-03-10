@@ -192,6 +192,10 @@ export type ThemeCb<CT, T> = (
 // --------------------------------------------------------
 export type StylesCb = (css: Css) => ReturnType<Css>
 
+// COMPOSE chaining types
+// --------------------------------------------------------
+export type ComposeGenericHoc = (wrappedComponent: ElementType) => ElementType
+
 // DIMENSIONS chaining types
 // --------------------------------------------------------
 export type DimensionResult<CT> = Record<string, boolean | null | Partial<CT>>
@@ -354,7 +358,7 @@ export type RocketComponent<
   // COMPOSE chaining method
   // --------------------------------------------------------
   compose: (
-    param: Record<string, unknown>
+    param: Record<string, ComposeGenericHoc | null | undefined | false>
   ) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
 
   // Dynamic dimensions chaining method (set dynamically from configuration)

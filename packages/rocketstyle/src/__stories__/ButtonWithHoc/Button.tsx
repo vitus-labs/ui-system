@@ -3,10 +3,19 @@ import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/index'
 
+const hoc = (WrapperComponent) => {
+  const Enhanced = (props) => <WrapperComponent {...props} />
+
+  return Enhanced
+}
+
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-const Button = rocketstyle()()({ name: 'Button', component: Element })
+export default rocketstyle()()({ name: 'Button', component: Element })
+  .compose({
+    wrappedByHoc: hoc,
+  })
   .attrs<{ href?: string }>({
     tag: 'button',
     label: 'something',
@@ -53,41 +62,6 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
         backgroundColor: '#5c636a',
       },
     },
-    ale: null,
-  })
-  .multiple({
-    centered: {
-      textAlign: 'center',
-
-      hover: {
-        textAlign: 'left',
-      },
-    },
-    example: true,
-  })
-  .states({
-    primary: {
-      color: 'white',
-    },
-    secondary: {
-      color: 'white',
-    },
-  })
-  .states({
-    secondary: null,
-  })
-  .states({
-    tertiary: { hello: true },
-  })
-  .multiple({
-    a: {
-      textAlign: 'center',
-
-      hover: {
-        textAlign: 'left',
-      },
-    },
-    xy: true,
   })
   .styles(
     (css) => css<any>`
@@ -225,50 +199,3 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
 //     `};
 //   `
 // )
-
-// --------------------------------------------------------
-// Button with provider enabled with consumer component
-// --------------------------------------------------------
-export const ProviderButton = Button.config({
-  name: 'ButtonProvider',
-  provider: true,
-  component: Element,
-})
-
-export const ButtonConsumer = rocketstyle()()({
-  name: 'ButtonConsumer',
-  component: Element,
-})
-  .states({
-    primary: { color: '#0d6efd', bgColor: 'white' },
-    secondary: { color: 'green' },
-    danger: { color: 'pink' },
-  })
-  .config({
-    consumer: (ctx) =>
-      ctx<typeof ProviderButton>(({ pseudo, ...props }) => ({
-        state: pseudo.hover ? 'primary' : undefined,
-      })),
-  })
-  .styles(
-    (css) => css<{ $rocketstyle: any }>`
-      transition: all 0.15s ease-in-out;
-      padding: 4px;
-      border-radius: 0.25rem;
-
-      ${({ $rocketstyle: t }) => css`
-        color: ${t.color};
-        background-color: ${t.bgColor};
-      `}
-    `
-  )
-
-const newComponent = (props) => <Button {...props} />
-
-export const ButtonWithRocketstyle = Button.config({
-  name: 'ButtonProvider',
-  provider: true,
-  component: newComponent,
-})
-
-export default Button
