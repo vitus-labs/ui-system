@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, VFC } from 'react'
 import { config } from '@vitus-labs/core'
 
 type ExtractNullableKeys<T> = {
@@ -17,6 +17,12 @@ type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
 export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
   Spread<A>
 >
+
+export type SimpleHoc<P extends Record<string, unknown>> = <
+  T extends ComponentType<any>
+>(
+  WrappedComponent: T
+) => VFC<MergeTypes<[P, ExtractProps<T>]>>
 
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 export type Css = CssCallback | string | ReturnType<typeof config.css>

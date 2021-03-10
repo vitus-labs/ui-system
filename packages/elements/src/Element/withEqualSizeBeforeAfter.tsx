@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-import React, { createRef, VFC, ComponentType } from 'react'
+import React, { createRef } from 'react'
 import { get } from '@vitus-labs/core'
-import type { ExtractProps, MergeTypes } from '~/types'
+import type { SimpleHoc } from '~/types'
 
 const isNumber = (a: unknown, b: unknown) =>
   Number.isInteger(a) && Number.isInteger(b)
@@ -43,11 +43,7 @@ type Props = Partial<{
   beforeContent?: React.ReactNode
 }>
 
-type WithEqualBeforeAfter = <T extends ComponentType<any>>(
-  WrappedComponent: T
-) => VFC<MergeTypes<[Props, ExtractProps<T>]>>
-
-const withEqualBeforeAfter: WithEqualBeforeAfter = (WrappedComponent) => {
+const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 

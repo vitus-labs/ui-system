@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ExtractProps } from '~/types'
+import { SimpleHoc } from '~/types'
 
 const RESERVED_KEYS = [
   'type',
@@ -29,19 +29,11 @@ type Props = {
     | ((props: Record<string, unknown>) => Record<string, unknown>)
 }
 
-const Component = <T extends Record<string, unknown>>(
-  WrappedComponent: React.ComponentType<T>
-): {
-  // eslint-disable-next-line no-undef
-  (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
-  displayName?: string
-} => {
-  type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>
-
+const Component: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props: EnhancedProps) => {
+  const Enhanced = (props) => {
     const {
       type = 'single',
       activeItemRequired,
@@ -183,12 +175,7 @@ const Component = <T extends Record<string, unknown>>(
       }
     }, [type, activeItems])
 
-    return (
-      <WrappedComponent
-        {...(rest as EnhancedProps)}
-        itemProps={attachItemProps}
-      />
-    )
+    return <WrappedComponent {...rest} itemProps={attachItemProps} />
   }
   Enhanced.RESERVED_KEYS = RESERVED_KEYS
   Enhanced.displayName = `vitus-labs/elements/List/withActiveState(${displayName})`
