@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ComponentType, ForwardRefExoticComponent } from 'react'
+import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
 import { config, renderContent } from '@vitus-labs/core'
 
 // --------------------------------------------------------
 // utility types
 // --------------------------------------------------------
 type ValueOf<T> = T[keyof T]
+
+export type SimpleHoc<P extends Record<string, unknown> = {}> = <
+  T extends ComponentType<any>
+>(
+  WrappedComponent: T
+) => VFC<MergeTypes<[P, ExtractProps<T>]>>
 
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
 type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }

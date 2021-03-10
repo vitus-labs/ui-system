@@ -1,8 +1,8 @@
-import React, { ComponentType } from 'react'
+import React from 'react'
+import { SimpleHoc } from '~/types'
 
-type HocForwartRef = <T>(Component: ComponentType) => ComponentType<T>
-const hocForwardRef: HocForwartRef = (Component) => {
-  const Enhanced = ({ $rocketForwardRef, ...props }) => (
+const hocForwardRef: SimpleHoc = (Component) => {
+  const Enhanced = ({ $rocketForwardRef, ...props }: any) => (
     <Component {...props} ref={$rocketForwardRef} />
   )
 
