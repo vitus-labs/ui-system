@@ -182,7 +182,7 @@ export type AttrsCb<A, T> = (
 // --------------------------------------------------------
 export type ThemeVariant = <A, B>(light: A, dark: B) => A | B
 
-export type ThemeCb<T, CT> = (
+export type ThemeCb<CT, T> = (
   theme: T,
   mode: ThemeVariant,
   css: Css
@@ -210,11 +210,13 @@ type ReturnParam<P extends TFn | TObj> = P extends TFn ? ReturnType<P> : P
 type DKPTypes<
   K extends DimensionValue,
   D extends Dimensions,
-  P extends ReturnParam<TFn | TObj>,
+  P extends TFn | TObj,
   DKP extends TDKP
 > = {
   [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
-    ? ExtractNullableDimensionKeys<Spread<[DKP[I], NullableKeys<P>]>>
+    ? ExtractNullableDimensionKeys<
+        Spread<[DKP[I], NullableKeys<ReturnParam<P>>]>
+      >
     : DKP[I]
 }
 
@@ -339,8 +341,8 @@ export type RocketComponent<
   // --------------------------------------------------------
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
-      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<T, MergeTypes<[CT, P]>>
-      : Partial<CT> | ThemeCb<T, CT>
+      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<MergeTypes<[CT, P]>, T>
+      : Partial<CT> | ThemeCb<CT, T>
   ) => P extends TObj
     ? RocketComponent<A, OA, EA, T, MergeTypes<[CT, P]>, D, UB, DKP>
     : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
@@ -362,14 +364,13 @@ export type RocketComponent<
       K extends DimensionValue = D[I],
       P extends DimensionCb<T, CT> | DimensionObj<CT> =
         | DimensionCb<T, CT>
-        | DimensionObj<CT>,
-      RT = ReturnParam<P>
+        | DimensionObj<CT>
     >(
       param: P
     ) => P extends DimensionCb<T, CT> | DimensionObj<CT>
       ? RocketComponent<
           MergeTypes<
-            [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, RT, DKP>, UB>]
+            [OA, EA, RocketstyleDimensionTypes<D, DKPTypes<K, D, P, DKP>, UB>]
           >,
           OA,
           EA,

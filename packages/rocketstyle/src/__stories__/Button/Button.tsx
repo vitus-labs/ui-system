@@ -78,6 +78,16 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
   .states({
     tertiary: { hello: true },
   })
+  .multiple({
+    a: {
+      textAlign: 'center',
+
+      hover: {
+        textAlign: 'left',
+      },
+    },
+    xy: true,
+  })
   .styles(
     (css) => css<any>`
       ${({
