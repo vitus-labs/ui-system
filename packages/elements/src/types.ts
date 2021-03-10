@@ -1,6 +1,23 @@
 import type { ComponentType } from 'react'
 import { config } from '@vitus-labs/core'
 
+type ExtractNullableKeys<T> = {
+  [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
+}
+
+// merge types
+type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+
+type SpreadTwo<L, R> = Id<Pick<L, Exclude<keyof L, keyof R>> & R>
+
+type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
+  ? SpreadTwo<L, Spread<R>>
+  : unknown
+
+export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
+  Spread<A>
+>
+
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 export type Css = CssCallback | string | ReturnType<typeof config.css>
 

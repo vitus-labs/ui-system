@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-import React, { useEffect, createRef, ReactElement } from 'react'
+import React, { createRef, VFC, ComponentType } from 'react'
 import { get } from '@vitus-labs/core'
-import type { ExtractProps } from '~/types'
+import type { ExtractProps, MergeTypes } from '~/types'
 
 const isNumber = (a: unknown, b: unknown) =>
   Number.isInteger(a) && Number.isInteger(b)
@@ -43,18 +43,15 @@ type Props = Partial<{
   beforeContent?: React.ReactNode
 }>
 
-const withEqualBeforeAfter = <T extends Record<string, unknown>>(
-  WrappedComponent: React.ComponentType<T>
-): {
-  (props: T & Props & ExtractProps<typeof WrappedComponent>): ReactElement
-  displayName?: string
-} => {
-  type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>
+type WithEqualBeforeAfter = <T extends ComponentType<any>>(
+  WrappedComponent: T
+) => VFC<MergeTypes<[Props, ExtractProps<T>]>>
 
+const withEqualBeforeAfter: WithEqualBeforeAfter = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props: EnhancedProps) => {
+  const Enhanced = (props) => {
     const {
       equalBeforeAfter,
       vertical,
@@ -73,13 +70,11 @@ const withEqualBeforeAfter = <T extends Record<string, unknown>>(
       else updateElement('width')
     }
 
-    useEffect(() => {
-      calculateSize()
-    }, [equalBeforeAfter, beforeContent, afterContent])
+    if (equalBeforeAfter) calculateSize()
 
     return (
       <WrappedComponent
-        {...(rest as EnhancedProps)}
+        {...rest}
         afterContent={afterContent}
         beforeContent={beforeContent}
         ref={elementRef}

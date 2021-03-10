@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { ExtractProps } from '~/types'
 
-const RESERVED_KEYS = ['type', 'activeItems', 'itemProps', 'activeItemRequired']
+const RESERVED_KEYS = [
+  'type',
+  'activeItems',
+  'itemProps',
+  'activeItemRequired',
+] as const
 
 type Key = string | number
 type MultipleMap = Map<Key, boolean>
