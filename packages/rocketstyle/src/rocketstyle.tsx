@@ -276,7 +276,13 @@ const styleComponent: StyleComponent = (options) => {
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
         [HAS_COMPOSE ? '$rocketForwardRef' : 'ref']: ref,
         $rocketstyle: rocketstyle,
-        $rocketstate: { ...rocketstate, pseudo },
+        $rocketstate: {
+          ...rocketstate,
+          pseudo: {
+            ...pseudo,
+            ...pick(props, ['active', 'hover', 'pressed', 'focus']),
+          },
+        },
       }
 
       // all the development stuff injected
