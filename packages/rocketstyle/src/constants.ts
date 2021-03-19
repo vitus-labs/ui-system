@@ -1,3 +1,5 @@
+export const PSEUDO_KEYS = ['hover', 'active', 'focus', 'pressed'] as const
+
 export const THEME_MODES = {
   light: true,
   dark: true,

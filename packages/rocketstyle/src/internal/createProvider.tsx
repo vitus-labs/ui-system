@@ -27,7 +27,10 @@ const RocketStyleProviderComponent = (WrappedComponent) =>
         onBlur,
       })
 
-      const updatedState = { ...$rocketstate, pseudo: pseudo.state }
+      const updatedState = {
+        ...$rocketstate,
+        pseudo: { ...$rocketstate.pseudo, ...pseudo.state },
+      }
 
       return (
         <LocalContext.Provider value={updatedState}>

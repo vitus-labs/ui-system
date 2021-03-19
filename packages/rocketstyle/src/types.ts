@@ -407,6 +407,10 @@ type DefaultPseudoProps = Partial<{
   onMouseUp: MouseAction
   onFocus: FocusAction
   onBlur: FocusAction
+  active: boolean
+  hover: boolean
+  focus: boolean
+  pressed: boolean
 }>
 
 // --------------------------------------------------------

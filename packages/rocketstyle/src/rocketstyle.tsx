@@ -19,6 +19,7 @@ import {
   calculateStylingAttrs,
 } from '~/utils/attrs'
 import {
+  PSEUDO_KEYS,
   CONFIG_KEYS,
   THEME_MODES_INVERSED,
   STYLING_KEYS,
@@ -251,6 +252,16 @@ const styleComponent: StyleComponent = (options) => {
       })
 
       // --------------------------------------------------
+      // pseudo state
+      // calculate final component pseudo state including pseudo state
+      // from props and override by pseudo props from context
+      // --------------------------------------------------
+      const finalPseudo = {
+        ...pick(props, PSEUDO_KEYS),
+        ...pseudo,
+      }
+
+      // --------------------------------------------------
       // rocketstyle
       // calculated (based on styling props) final theme which will be passed
       // to our styled component
@@ -271,17 +282,14 @@ const styleComponent: StyleComponent = (options) => {
       const finalProps = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, RESERVED_STYLING_PROPS_KEYS),
+        ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
         // if enforced to pass styling props, we pass them directly
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
         [HAS_COMPOSE ? '$rocketForwardRef' : 'ref']: ref,
         $rocketstyle: rocketstyle,
         $rocketstate: {
           ...rocketstate,
-          pseudo: {
-            ...pseudo,
-            ...pick(props, ['active', 'hover', 'pressed', 'focus']),
-          },
+          pseudo: finalPseudo,
         },
       }
 
