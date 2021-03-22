@@ -281,7 +281,7 @@ const styleComponent: StyleComponent = (options) => {
         ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
         // if enforced to pass styling props, we pass them directly
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-        [HAS_COMPOSE ? '$rocketForwardRef' : 'ref']: ref,
+        ref,
         $rocketstyle: rocketstyle,
         $rocketstate: {
           ...rocketstate,
@@ -310,10 +310,11 @@ const styleComponent: StyleComponent = (options) => {
 
   if (HAS_COMPOSE) {
     FinalComponent = compose(
-      calculateAttrsHoc(options),
       ...composeFuncs,
-      hocForwardRef
+      calculateAttrsHoc(options)
     )(EnhancedComponent)
+  } else {
+    FinalComponent = compose(calculateAttrsHoc(options))(EnhancedComponent)
   }
 
   hoistNonReactStatics(FinalComponent, options.component)
