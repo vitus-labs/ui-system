@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import React, { forwardRef, useEffect, useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
+import { config, omit, pick, compose } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
 import {
   localContext,
@@ -19,7 +19,7 @@ import { calculateStyles } from '~/utils/styles'
 import { chainOptions } from '~/utils/collection'
 import {
   pickStyledProps,
-  calculateChainOptions,
+  // calculateChainOptions,
   calculateStylingAttrs,
 } from '~/utils/attrs'
 import {
@@ -98,7 +98,7 @@ const styleComponent: StyleComponent = (options) => {
   const { component, styles } = options
   const { styled } = config
 
-  const _calculateChainOptions = calculateChainOptions(options.attrs)
+  // const _calculateChainOptions = calculateChainOptions(options.attrs)
   const _calculateStylingAttrs = calculateStylingAttrs({
     multiKeys: options.multiKeys,
     useBooleans: options.useBooleans,
@@ -143,7 +143,7 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
       // --------------------------------------------------
-      const { theme, mode, isDark, isLight } = useThemeOptions({
+      const { theme, mode } = useThemeOptions({
         inversed: options.inversed,
       })
 
@@ -212,16 +212,16 @@ const styleComponent: StyleComponent = (options) => {
       // first we need to calculate final props which are
       // being returned by using `attr` chaining method
       // --------------------------------------------------
-      const calculatedAttrs = _calculateChainOptions([
-        props,
-        theme,
-        {
-          renderContent,
-          mode,
-          isDark,
-          isLight,
-        },
-      ])
+      // const calculatedAttrs = _calculateChainOptions([
+      //   props,
+      //   theme,
+      //   {
+      //     renderContent,
+      //     mode,
+      //     isDark,
+      //     isLight,
+      //   },
+      // ])
 
       // --------------------------------------------------
       // get final props which are (latest has the highest priority):
@@ -233,7 +233,7 @@ const styleComponent: StyleComponent = (options) => {
         ...(options.consumer
           ? options.consumer((callback) => callback(rocketstyleCtx as any))
           : {}),
-        ...calculatedAttrs,
+        // ...calculatedAttrs,
         ...props,
       }
 
@@ -310,9 +310,9 @@ const styleComponent: StyleComponent = (options) => {
 
   if (HAS_COMPOSE) {
     FinalComponent = compose(
+      calculateAttrsHoc(options),
       ...composeFuncs,
-      hocForwardRef,
-      calculateAttrsHoc(options)
+      hocForwardRef
     )(EnhancedComponent)
   }
 
