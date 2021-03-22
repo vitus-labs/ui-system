@@ -169,6 +169,7 @@ export type ConfigAttrs<C, DKP> = Partial<{
   DEBUG: boolean
   inversed: boolean
   passProps: Array<string>
+  styled: boolean
 }>
 
 // ATTRS chaining types
@@ -424,6 +425,7 @@ export type Configuration<
 > = Partial<
   {
     // read only / not mutated anymore
+    styled: boolean
     useBooleans: boolean
     dimensions: D
     dimensionKeys: Array<keyof D>

@@ -18,6 +18,7 @@ export const CONFIG_KEYS = [
   'component',
   'inversed',
   'passProps',
+  'styled',
 ] as const
 
 export const STYLING_KEYS = ['theme', 'attrs', 'styles'] as const

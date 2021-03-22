@@ -1,6 +1,5 @@
-import calculateAttrsHoc from './calculateAttrsHoc'
+import rocketstyleHoc from './rocketstyleHoc'
 import createProvider from './createProvider'
-import hocForwardRef from './forwardRef'
 import localContext from './localContext'
 
-export { calculateAttrsHoc, createProvider, hocForwardRef, localContext }
+export { rocketstyleHoc, createProvider, localContext }

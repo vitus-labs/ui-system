@@ -3,10 +3,19 @@ import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/index'
 
+const example = (WrappedComponent) => (props) => {
+  const x = 'a'
+
+  // console.log(props)
+
+  return <WrappedComponent {...props} />
+}
+
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
 const Button = rocketstyle()()({ name: 'Button', component: Element })
+  .compose({ example })
   .attrs<{ href?: string }>({
     tag: 'button',
     label: 'something',

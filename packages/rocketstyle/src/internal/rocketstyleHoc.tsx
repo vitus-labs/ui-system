@@ -5,7 +5,7 @@ import { renderContent } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
 import { useThemeOptions } from '~/hooks'
 
-const RocketStyleAttrs = ({ inversed, attrs }) => {
+const RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------
   // .attrs(...)
   // first we need to calculate final props which are
@@ -30,10 +30,16 @@ const RocketStyleAttrs = ({ inversed, attrs }) => {
         },
       ])
 
-      return <WrappedComponent ref={ref} {...calculatedAttrs} {...props} />
+      return (
+        <WrappedComponent
+          $rocketstyleRef={ref}
+          {...calculatedAttrs}
+          {...props}
+        />
+      )
     })
 
   return Enhanced
 }
 
-export default RocketStyleAttrs
+export default RocketStyleHOC
