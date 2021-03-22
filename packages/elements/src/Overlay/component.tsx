@@ -138,8 +138,8 @@ const component: FC<Props> = ({
       position,
     }
 
-    if (type === 'dropdown' || type === 'tooltip' || type === 'popover') {
-      if (align === 'top' || align === 'bottom') {
+    if (['dropdown', 'tooltip', 'popover'].includes(type)) {
+      if (['top', 'bottom'].includes(align)) {
         const positionTop =
           triggerDimensions.top - offsetY - contentDimensions.height
         const positionBottom = triggerDimensions.bottom + offsetY
@@ -187,7 +187,7 @@ const component: FC<Props> = ({
             break
           }
         }
-      } else if (align === 'left' || align === 'right') {
+      } else if (['left', 'right'].includes(align)) {
         const positionLeft =
           triggerDimensions.left - offsetX - contentDimensions.width
         const positionRight = triggerDimensions.right + offsetX

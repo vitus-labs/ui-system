@@ -3,9 +3,13 @@
 import React, { forwardRef, useEffect, useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
-import { context } from '~/context'
-import { useTheme } from '~/hooks'
-import { localContext, hocForwardRef, createProvider } from '~/internal'
+import { useTheme, useThemeOptions } from '~/hooks'
+import {
+  localContext,
+  hocForwardRef,
+  createProvider,
+  calculateAttrsHoc,
+} from '~/internal'
 import {
   calculateTheme,
   calculateThemeVariant,
@@ -21,7 +25,6 @@ import {
 import {
   PSEUDO_KEYS,
   CONFIG_KEYS,
-  THEME_MODES_INVERSED,
   STYLING_KEYS,
   STATIC_KEYS,
 } from '~/constants'
@@ -119,18 +122,13 @@ const styleComponent: StyleComponent = (options) => {
     : STYLED_COMPONENT
 
   // --------------------------------------------------------
-  // final component to be rendered wrapped by hoc(s)
+  // hocs
   // --------------------------------------------------------
-  let FinalComponent = RenderComponent
-
   const composeFuncs = Object.values(options.compose || {})
     .filter((item) => typeof item === 'function')
     .reverse()
 
   const HAS_COMPOSE = composeFuncs.length > 0
-  if (HAS_COMPOSE) {
-    FinalComponent = compose(...composeFuncs, hocForwardRef)(FinalComponent)
-  }
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
@@ -145,11 +143,9 @@ const styleComponent: StyleComponent = (options) => {
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
       // --------------------------------------------------
-      const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context)
-
-      const mode = options.inversed ? THEME_MODES_INVERSED[ctxMode] : ctxMode
-      const isDark = options.inversed ? !ctxDark : ctxDark
-      const isLight = !isDark
+      const { theme, mode, isDark, isLight } = useThemeOptions({
+        inversed: options.inversed,
+      })
 
       // --------------------------------------------------
       // calculate themes for all possible styling dimensions
@@ -298,7 +294,7 @@ const styleComponent: StyleComponent = (options) => {
         finalProps['data-rocketstyle'] = componentName
       }
 
-      return <FinalComponent {...finalProps} />
+      return <RenderComponent {...finalProps} />
     }
   )
 
@@ -309,25 +305,36 @@ const styleComponent: StyleComponent = (options) => {
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  hoistNonReactStatics(EnhancedComponent, options.component)
+
+  let FinalComponent = EnhancedComponent
+
+  if (HAS_COMPOSE) {
+    FinalComponent = compose(
+      ...composeFuncs,
+      hocForwardRef,
+      calculateAttrsHoc(options)
+    )(EnhancedComponent)
+  }
+
+  hoistNonReactStatics(FinalComponent, options.component)
   createStaticsEnhancers({
-    context: EnhancedComponent,
+    context: FinalComponent,
     dimensionKeys: [...options.dimensionKeys, ...STATIC_KEYS],
     func: cloneAndEnhance,
     opts: options,
   })
   // ------------------------------------------------------
-  EnhancedComponent.IS_ROCKETSTYLE = true
-  EnhancedComponent.displayName = componentName
+  FinalComponent.IS_ROCKETSTYLE = true
+  FinalComponent.displayName = componentName
   // ------------------------------------------------------
 
-  EnhancedComponent.config = (opts = {}) => {
+  FinalComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS)
 
     return cloneAndEnhance(result as any, options) as any
   }
 
-  return EnhancedComponent as RocketComponent
+  return FinalComponent as RocketComponent
 }
 
 export default styleComponent

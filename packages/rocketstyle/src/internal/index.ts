@@ -1,5 +1,6 @@
+import calculateAttrsHoc from './calculateAttrsHoc'
 import createProvider from './createProvider'
 import hocForwardRef from './forwardRef'
 import localContext from './localContext'
 
-export { createProvider, hocForwardRef, localContext }
+export { calculateAttrsHoc, createProvider, hocForwardRef, localContext }
