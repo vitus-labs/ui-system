@@ -6,7 +6,7 @@ import { config, omit, pick, compose } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
 import {
   localContext,
-  hocForwardRef,
+  // hocForwardRef,
   createProvider,
   calculateAttrsHoc,
 } from '~/internal'
