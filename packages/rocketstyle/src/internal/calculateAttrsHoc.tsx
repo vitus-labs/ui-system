@@ -30,7 +30,7 @@ const RocketStyleAttrs = ({ inversed, attrs }) => {
         },
       ])
 
-      return <WrappedComponent ref={ref} {...calculatedAttrs} />
+      return <WrappedComponent ref={ref} {...calculatedAttrs} {...props} />
     })
 
   return Enhanced

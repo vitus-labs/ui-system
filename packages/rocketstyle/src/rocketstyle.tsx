@@ -298,9 +298,6 @@ const styleComponent: StyleComponent = (options) => {
     }
   )
 
-  EnhancedComponent.IS_ROCKETSTYLE = true
-  EnhancedComponent.displayName = componentName
-
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
@@ -310,12 +307,15 @@ const styleComponent: StyleComponent = (options) => {
 
   if (HAS_COMPOSE) {
     FinalComponent = compose(
-      ...composeFuncs,
-      calculateAttrsHoc(options)
+      calculateAttrsHoc(options),
+      ...composeFuncs
     )(EnhancedComponent)
   } else {
-    FinalComponent = compose(calculateAttrsHoc(options))(EnhancedComponent)
+    FinalComponent = calculateAttrsHoc(options)(EnhancedComponent)
   }
+
+  FinalComponent.IS_ROCKETSTYLE = true
+  FinalComponent.displayName = componentName
 
   hoistNonReactStatics(FinalComponent, options.component)
   createStaticsEnhancers({
