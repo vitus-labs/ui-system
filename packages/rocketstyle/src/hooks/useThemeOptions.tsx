@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useContext } from 'react'
 import { context } from '~/context'
 import { THEME_MODES_INVERSED } from '~/constants'

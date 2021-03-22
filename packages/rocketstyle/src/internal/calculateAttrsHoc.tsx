@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-underscore-dangle */
 import React, { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
