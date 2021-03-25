@@ -12,7 +12,7 @@ export type UseWindowResize = (
   height: number
 }
 
-const useWindowSize: UseWindowResize = (
+const useWindowResize: UseWindowResize = (
   throttleDelay = 200,
   { width = 0, height = 0 } = {}
 ) => {
@@ -37,4 +37,4 @@ const useWindowSize: UseWindowResize = (
   return windowSize
 }
 
-export default useWindowSize
+export default useWindowResize
