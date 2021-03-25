@@ -1,3 +1,3 @@
 import type { ElementType } from './utils'
 
-export type GenericHoc = (wrappedComponent: ElementType) => ElementType
+export type GenericHoc = (component: ElementType) => ElementType

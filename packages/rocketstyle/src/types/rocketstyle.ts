@@ -6,7 +6,7 @@ import {
   DimensionCallbackParam,
   ExtractDimensionProps,
   TDKP,
-  DKPTypes,
+  DimensionProps,
 } from './dimensions'
 import { StylesCb } from './styles'
 import { ConfigAttrs } from './config'
@@ -14,10 +14,6 @@ import { AttrsCb } from './attrs'
 import { ThemeCb } from './theme'
 import { GenericHoc } from './hoc'
 import { DefaultProps } from './configuration'
-
-// --------------------------------------------------------
-// rocketstyle data object
-// --------------------------------------------------------
 
 // --------------------------------------------------------
 // THIS IS WHERE ALL THE MAGIC HAPPENS
@@ -73,7 +69,7 @@ export type RocketComponent<
     DEBUG,
     inversed,
     passProps,
-  }: ConfigAttrs<NC, DKP>) => NC extends ElementType
+  }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
     ? RocketComponent<
         MergeTypes<
           [ExtractProps<NC>, DefaultProps, ExtractDimensionProps<D, DKP, UB>]
@@ -138,7 +134,7 @@ export type RocketComponent<
     ) => P extends DimensionCallbackParam<T, CT>
       ? RocketComponent<
           MergeTypes<
-            [OA, EA, ExtractDimensionProps<D, DKPTypes<K, D, P, DKP>, UB>]
+            [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
           >,
           OA,
           EA,
@@ -146,7 +142,7 @@ export type RocketComponent<
           CT,
           D,
           UB,
-          DKPTypes<K, D, P, DKP>
+          DimensionProps<K, D, P, DKP>
         >
       : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
   }

@@ -1,7 +1,6 @@
-import type { ElementType, ExtractProps, TObj } from './utils'
-import type { TDKP } from './dimensions'
+import type { ElementType, TObj } from './utils'
+import type { TDKP, DimensionBooleanAttrs } from './dimensions'
 import type { PseudoState } from './pseudo'
-import type { DefaultProps } from './configuration'
 
 // --------------------------------------------------------
 // CONFIG
@@ -25,8 +24,7 @@ type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
   ? Partial<
       {
         [J in keyof DKP]: keyof DKP[J]
-      } &
-        PseudoState & { pseudo: Partial<PseudoState> }
+      } & { pseudo: Partial<PseudoState> }
     >
   : TObj
 
@@ -38,18 +36,17 @@ export type ConsumerCb<DKP = TDKP> = (
   ctx: ConsumerCtxCb<DKP>
 ) => ReturnType<ConsumerCtxCb<DKP>>
 
-export type ConfigComponentAttrs<
-  C extends ElementType,
-  A extends TObj = DefaultProps
-> = C extends ElementType ? ExtractProps<C> : A
-
-export type ConfigAttrs<C, DKP> = Partial<{
+export type ConfigAttrs<
+  C extends ElementType | unknown,
+  DKP extends TDKP,
+  UB extends boolean
+> = Partial<{
   name: string
   component: C
   provider: boolean
   consumer: ConsumerCb<DKP>
   DEBUG: boolean
   inversed: boolean
-  passProps: Array<string>
+  passProps: UB extends true ? Array<keyof DimensionBooleanAttrs<DKP>> : never
   styled: boolean
 }>

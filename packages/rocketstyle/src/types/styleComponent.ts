@@ -1,8 +1,8 @@
-import type { MergeTypes, ExtractProps, ElementType } from '~/types/utils'
-import type { Dimensions, ExtractDimensionAttrsKeys } from '~/types/dimensions'
-import type { OptionStyles } from '~/types/styles'
-import type { DefaultProps, Configuration } from '~/types/configuration'
-import type { RocketComponent } from '~/types/rocketstyle'
+import type { MergeTypes, ExtractProps, ElementType } from './utils'
+import type { Dimensions, ExtractDimensionAttrsKeys } from './dimensions'
+import type { OptionStyles } from './styles'
+import type { DefaultProps, Configuration } from './configuration'
+import type { RocketComponent } from './rocketstyle'
 
 export type StyleComponent<
   C extends ElementType = ElementType,

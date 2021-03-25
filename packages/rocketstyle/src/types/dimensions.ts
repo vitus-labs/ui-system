@@ -58,7 +58,7 @@ export type TDKP = Record<
   Record<string, boolean | never | Record<string, boolean>> | unknown
 >
 
-export type DKPTypes<
+export type DimensionProps<
   K extends DimensionValue,
   D extends Dimensions,
   P extends CallBackParam,
@@ -71,18 +71,18 @@ export type DKPTypes<
     : DKP[I]
 }
 
-type RocketstyleDimensionTypesHelper<DKP extends TDKP> = {
+type DimensionTypesHelper<DKP extends TDKP> = {
   [I in keyof DKP]: keyof DKP[I]
 }
 
-type RocketstyleDimensionTypesObj<D extends Dimensions, DKP extends TDKP> = {
+export type DimensionObjAttrs<D extends Dimensions, DKP extends TDKP> = {
   [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
     ? Array<keyof DKP[I]>
     : keyof DKP[I]
 }
 
-type RocketstyleDimensionTypesBool<DKP extends TDKP> = Partial<
-  Record<ValueOf<RocketstyleDimensionTypesHelper<DKP>>, boolean>
+export type DimensionBooleanAttrs<DKP extends TDKP> = Partial<
+  Record<ValueOf<DimensionTypesHelper<DKP>>, boolean>
 >
 
 export type ExtractDimensionProps<
@@ -92,8 +92,7 @@ export type ExtractDimensionProps<
 > = UB extends true
   ? Partial<
       ExtractNullableDimensionKeys<
-        RocketstyleDimensionTypesObj<D, DKP> &
-          RocketstyleDimensionTypesBool<DKP>
+        DimensionObjAttrs<D, DKP> & DimensionBooleanAttrs<DKP>
       >
     >
-  : Partial<ExtractNullableDimensionKeys<RocketstyleDimensionTypesObj<D, DKP>>>
+  : Partial<ExtractNullableDimensionKeys<DimensionObjAttrs<D, DKP>>>
