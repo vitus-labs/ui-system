@@ -27,7 +27,6 @@ export default config.styled(config.component)`
   flex-direction: column;
   margin-right: auto;
   margin-left: auto;
-  /* overflow-x: hidden; */
 
   ${makeItResponsive({
     key: '$coolgrid',

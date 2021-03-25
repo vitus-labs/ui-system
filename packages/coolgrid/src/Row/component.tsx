@@ -27,7 +27,7 @@ const Element: ElementType<
       columns,
       gap,
       gutter,
-      extendCss: css || rowCss,
+      extraStyles: css || rowCss,
     },
   }
 
