@@ -33,7 +33,9 @@ export type ConfigurationProps = Partial<{
   rowComponent: ComponentType
   contentAlignX: ContentAlignX
   containerWidth: ContainerWidth
-  width: ContainerWidth | ((widths: ContainerWidth) => ContainerWidth)
+  width:
+    | ContainerWidth
+    | ((widths: Record<string, ReactText>) => Record<string, ReactText>)
 }>
 
 export type ComponentProps = ConfigurationProps &

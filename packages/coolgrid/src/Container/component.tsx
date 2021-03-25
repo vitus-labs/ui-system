@@ -16,6 +16,7 @@ const Element: ElementType<['containerWidth']> = ({
 
   let finalWidth = containerWidth
   if (width) {
+    // @ts-ignore
     finalWidth = typeof width === 'function' ? width(containerWidth) : width
   }
 

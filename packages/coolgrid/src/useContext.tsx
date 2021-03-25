@@ -22,7 +22,7 @@ type GetGridContext = (
   theme: Obj
 ) => {
   columns?: ValueType
-  containerWidth?: ValueType
+  containerWidth?: Record<string, number>
 }
 
 export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
@@ -31,7 +31,7 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
     get(theme, 'coolgrid.columns')) as ValueType,
   containerWidth: (get(props, 'width') ||
     get(theme, 'grid.container') ||
-    get(theme, 'coolgrid.container')) as ValueType,
+    get(theme, 'coolgrid.container')) as Record<string, number>,
 })
 
 type UseGridContext = (props: Obj) => Context
