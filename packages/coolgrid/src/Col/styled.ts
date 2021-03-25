@@ -2,8 +2,8 @@ import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
   normalizeUnit,
-  extendedCss,
-  StylesCb,
+  extendCss,
+  MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
 import { hasValue, isVisible, isNumber } from '~/utils'
 import { CssOutput, StyledTypes } from '~/types'
@@ -65,19 +65,24 @@ const spacingStyles: SpacingStyles = (type, value, rootSize) => {
     `
 }
 
-const styles: StylesCb<StyledTypes> = ({ theme, css, rootSize }) => {
-  const { size, columns, gap, padding, extendCss, RNparentWidth } = theme
+const styles: MakeItResponsiveStyles<StyledTypes> = ({
+  theme,
+  css,
+  rootSize,
+}) => {
+  const { size, columns, gap, padding, extraStyles, RNparentWidth } = theme
   const renderStyles = isVisible(size)
 
-  if (renderStyles)
+  if (renderStyles) {
     return css`
       left: initial;
       position: relative;
-      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })}
-      ${spacingStyles('margin', gap, rootSize)};
+      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })};
       ${spacingStyles('padding', padding, rootSize)};
-      ${extendedCss(extendCss)};
+      ${spacingStyles('margin', gap, rootSize)};
+      ${extendCss(extraStyles)};
     `
+  }
 
   return css`
     left: -9999px;

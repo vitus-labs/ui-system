@@ -1,8 +1,18 @@
 import { useContext } from 'react'
-import { get } from '@vitus-labs/core'
-import { pickThemeProps, context } from '@vitus-labs/unistyle'
+import { get, pick } from '@vitus-labs/core'
+import { context } from '@vitus-labs/unistyle'
 import { CONTEXT_KEYS } from '~/constants'
 import { Obj, ValueType, Context } from '~/types'
+
+// ------------------------------------------
+// pickTheme props
+// ------------------------------------------
+export type PickThemeProps = <T extends Record<string, unknown>>(
+  props: T,
+  keywords: Array<keyof T>
+) => ReturnType<typeof pick>
+const pickThemeProps: PickThemeProps = (props, keywords) =>
+  pick(props, keywords)
 
 // ------------------------------------------
 // create grid settings

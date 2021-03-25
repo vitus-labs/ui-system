@@ -2,18 +2,16 @@ import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
   normalizeUnit,
-  extendedCss,
-  StylesCb,
+  extendCss,
+  MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
 import { StyledTypes } from '~/types'
 
-const styles: StylesCb<Pick<StyledTypes, 'width' | 'extendCss'>> = ({
-  theme: t,
-  css,
-  rootSize,
-}) => css`
+const styles: MakeItResponsiveStyles<
+  Pick<StyledTypes, 'width' | 'extraStyles'>
+> = ({ theme: t, css, rootSize }) => css`
   max-width: ${normalizeUnit({ param: t.width, rootSize })};
-  ${extendedCss(t.extendCss)};
+  ${extendCss(t.extraStyles)};
 `
 
 export default config.styled(config.component)`

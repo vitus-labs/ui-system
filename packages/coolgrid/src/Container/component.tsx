@@ -25,7 +25,7 @@ const Element: ElementType<['containerWidth']> = ({
       as={component}
       $coolgrid={{
         width: finalWidth,
-        extendCss: css,
+        extraStyles: css,
       }}
     >
       <Context.Provider value={ctx}>{children}</Context.Provider>

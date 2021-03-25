@@ -2,9 +2,9 @@ import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
   normalizeUnit,
-  extendedCss,
-  alignContentAlignX,
-  StylesCb,
+  extendCss,
+  ALIGN_CONTENT_MAP_X,
+  MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
 import { isNumber } from '~/utils'
 import { CssOutput, StyledTypes } from '~/types'
@@ -31,19 +31,19 @@ const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   if (!align) return ''
 
   return config.css`
-    justify-content: ${alignContentAlignX[align]};
+    justify-content: ${ALIGN_CONTENT_MAP_X[align]};
   `
 }
 
-const styles: StylesCb<
-  Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extendCss'>
+const styles: MakeItResponsiveStyles<
+  Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extraStyles'>
 > = ({ theme, css, rootSize }) => {
-  const { gap, gutter, contentAlignX, extendCss } = theme
+  const { gap, gutter, contentAlignX, extraStyles } = theme
 
   return css`
     ${spacingStyles({ gap, gutter }, { rootSize })};
     ${contentAlign(contentAlignX)};
-    ${extendedCss(extendCss)};
+    ${extendCss(extraStyles)};
   `
 }
 

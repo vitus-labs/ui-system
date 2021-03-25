@@ -1,14 +1,14 @@
 import { FC, ReactText, ComponentType } from 'react'
 import { config } from '@vitus-labs/core'
-import { extendedCss, AlignContentAlignXKeys } from '@vitus-labs/unistyle'
+import { extendCss, AlignContentAlignXKeys } from '@vitus-labs/unistyle'
 
 type CreateValueType<T> = T | Record<string, T> | Array<T>
 
 export type Obj = Record<string, unknown>
 export type Value = ReactText
-export type Css = Parameters<typeof extendedCss>[0]
-export type ExtendCss = Css | Record<string, Css> | Array<Css>
-export type CssOutput = ReturnType<typeof config.css> | string
+export type Css = Parameters<typeof extendCss>[0]
+export type ExtraStyles = Css | Record<string, Css> | Array<Css>
+export type CssOutput = ReturnType<typeof config.css> | string | any
 
 export type ValueType = CreateValueType<number>
 export type ContainerWidth = CreateValueType<Value>
@@ -27,21 +27,19 @@ export type ConfigurationProps = Partial<{
   gap: ValueType
   gutter: ValueType
   columns: ValueType
-  colCss: ExtendCss
-  rowCss: ExtendCss
+  colCss: ExtraStyles
+  rowCss: ExtraStyles
   colComponent: ComponentType
   rowComponent: ComponentType
   contentAlignX: ContentAlignX
   containerWidth: ContainerWidth
-  width:
-    | ContainerWidth
-    | ((widths: Record<string, Value>) => Record<string, Value>)
+  width: ContainerWidth | ((widths: ContainerWidth) => ContainerWidth)
 }>
 
 export type ComponentProps = ConfigurationProps &
   Partial<{
     component: ComponentType
-    css: ExtendCss
+    css: ExtraStyles
   }>
 
 export type StyledTypes = Partial<{
@@ -50,7 +48,7 @@ export type StyledTypes = Partial<{
   gap: number
   gutter: number
   columns: number
-  extendCss: Css
+  extraStyles: Css
   RNparentWidth: any
   contentAlignX: AlignContentAlignXKeys
   width: Value

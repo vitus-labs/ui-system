@@ -33,7 +33,7 @@ const Element: ElementType<
         gap,
         size,
         padding,
-        extendCss: css || colCss,
+        extraStyles: css || colCss,
       }}
     >
       {children}
