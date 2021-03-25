@@ -1,18 +1,22 @@
 /* eslint-disable no-underscore-dangle */
-import React, { forwardRef } from 'react'
+import React, {
+  forwardRef,
+  ForwardRefExoticComponent,
+  ComponentType,
+} from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
 import { useThemeOptions } from '~/hooks'
 
 import type { OptionFunc } from '~/types/configuration'
 
-type RocketStyleHOC = ({
+export type RocketStyleHOC = ({
   inversed,
   attrs,
 }: {
   inversed?: boolean
   attrs: Array<OptionFunc>
-}) => any
+}) => (WrappedComponent: ComponentType) => ForwardRefExoticComponent<any>
 
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------

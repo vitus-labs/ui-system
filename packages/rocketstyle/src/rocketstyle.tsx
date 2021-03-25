@@ -99,10 +99,10 @@ const styleComponent: StyleComponent = (options) => {
 
   // create styled component with all options.styles if available
   const STYLED_COMPONENT =
-    component.IS_ROCKETSTYLE || !options.styled === false
+    component.IS_ROCKETSTYLE || options.styled === false
       ? component
       : styled(component)`
-          ${calculateStyles(styles, config.css)}
+          ${calculateStyles(styles, config.css)};
         `
 
   // --------------------------------------------------------
@@ -233,6 +233,8 @@ const styleComponent: StyleComponent = (options) => {
       ...pseudo,
     }
 
+    const finalRocketstate = { ...rocketstate, pseudo: finalPseudo }
+
     // --------------------------------------------------
     // rocketstyle
     // calculated (based on styling props) final theme which will be passed
@@ -260,10 +262,7 @@ const styleComponent: StyleComponent = (options) => {
       ref: $rocketstyleRef,
       // state props passed to styled component only, therefore the `$` symbol
       $rocketstyle: rocketstyle,
-      $rocketstate: {
-        ...rocketstate,
-        pseudo: finalPseudo,
-      },
+      $rocketstate: finalRocketstate,
     }
 
     // all the development stuff injected
