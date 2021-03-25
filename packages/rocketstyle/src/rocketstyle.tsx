@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'

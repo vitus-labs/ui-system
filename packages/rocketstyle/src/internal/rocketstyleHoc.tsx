@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { forwardRef, ForwardRefExoticComponent } from 'react'
+import React, { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
 import { useThemeOptions } from '~/hooks'
@@ -12,7 +12,7 @@ type RocketStyleHOC = ({
 }: {
   inversed?: boolean
   attrs: Array<OptionFunc>
-}) => ForwardRefExoticComponent<any>
+}) => any
 
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------
