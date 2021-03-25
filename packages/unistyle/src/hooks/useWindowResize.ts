@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { throttle } from '@vitus-labs/core'
 
-export type UseWindowSize = (
+export type UseWindowResize = (
   throttleDelay?: number,
   defaultValues?: Partial<{
     width: number
@@ -12,7 +12,7 @@ export type UseWindowSize = (
   height: number
 }
 
-const useWindowSize: UseWindowSize = (
+const useWindowSize: UseWindowResize = (
   throttleDelay = 200,
   { width = 0, height = 0 } = {}
 ) => {

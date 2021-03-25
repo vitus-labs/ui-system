@@ -1,5 +1,5 @@
-import useWindowSize, { UseWindowSize } from './useWindowSize'
+import useWindowResize, { UseWindowResize } from './useWindowResize'
 
-export type { UseWindowSize }
+export type { UseWindowResize }
 
-export { useWindowSize }
+export { useWindowResize }
