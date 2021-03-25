@@ -131,12 +131,6 @@ export type Styles = <T>({
 // --------------------------------------------------------
 // ROCKET style chaining helpers
 // --------------------------------------------------------
-export type PseudoState = {
-  hover: boolean
-  focus: boolean
-  pressed: boolean
-}
-
 type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
   props: RocketProviderState<T>
 ) => DKP extends TDKP
@@ -401,18 +395,23 @@ type OnMountCB<T> = {
   onMount: (props: __ROCKETSTYLE__ & T) => void
 }
 
-type DefaultPseudoProps = Partial<{
+export type PseudoActions = {
   onMouseEnter: MouseAction
   onMouseLeave: MouseAction
   onMouseDown: MouseAction
   onMouseUp: MouseAction
   onFocus: FocusAction
   onBlur: FocusAction
+}
+
+export type PseudoState = {
   active: boolean
   hover: boolean
   focus: boolean
   pressed: boolean
-}>
+}
+
+export type DefaultPseudoProps = Partial<PseudoActions & PseudoState>
 
 // --------------------------------------------------------
 // STYLE COMPONENT data shape
@@ -422,32 +421,30 @@ type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
 export type Configuration<
   C = ElementType,
   D extends Dimensions = Dimensions
-> = Partial<
-  {
-    // read only / not mutated anymore
-    styled: boolean
-    useBooleans: boolean
-    dimensions: D
-    dimensionKeys: Array<keyof D>
-    dimensionValues: Array<ValueOf<D>>
-    multiKeys: MultiKeys
+> = {
+  // read only / not mutated anymore
+  useBooleans: boolean
+  dimensions: D
+  dimensionKeys: Array<keyof D>
+  dimensionValues: Array<ValueOf<D>>
+  multiKeys: MultiKeys
 
-    // or Options
-    component: C
-    name: string
-    provider: boolean
-    consumer: ConsumerCb
-    DEBUG: boolean
-    inversed: boolean
-    passProps: Array<string>
+  // or Options
+  component: C
+  name?: string
+  provider?: boolean
+  consumer?: ConsumerCb
+  DEBUG?: boolean
+  inversed?: boolean
+  passProps?: Array<string>
+  styled?: boolean
 
-    // array chaining options
-    attrs: Array<OptionFunc>
-    theme: Array<OptionFunc>
-    styles: OptionStyles
-    compose: Record<string, TFn>
-  } & Record<ExtractDimensionKey<D[keyof D]>, any>
->
+  // array chaining options
+  attrs: Array<OptionFunc>
+  theme: Array<OptionFunc>
+  styles: OptionStyles
+  compose: Record<string, TFn>
+} & Record<ExtractDimensionKey<D[keyof D]>, any>
 
 export type StyleComponent<
   C extends ElementType = ElementType,

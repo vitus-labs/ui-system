@@ -1,10 +1,11 @@
-// @ts-nocheck
 import { useContext } from 'react'
 import { context } from '~/context'
-import { THEME_MODES_INVERSED } from '~/constants'
+import { THEME_MODES_INVERSED } from '~/constants/reservedKeys'
 
 type UseThemeOptions = ({
-  inversed: boolean,
+  inversed,
+}: {
+  inversed?: boolean
 }) => {
   theme: Record<string, unknown>
   mode: 'light' | 'dark'
@@ -13,7 +14,7 @@ type UseThemeOptions = ({
 }
 
 const useThemeOptions: UseThemeOptions = ({ inversed }) => {
-  const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context)
+  const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context) as any
   const mode = inversed ? THEME_MODES_INVERSED[ctxMode] : ctxMode
   const isDark = inversed ? !ctxDark : ctxDark
   const isLight = !isDark

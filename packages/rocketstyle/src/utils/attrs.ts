@@ -1,4 +1,5 @@
 import { isEmpty } from '@vitus-labs/core'
+import { MultiKeys } from '~/types'
 
 // --------------------------------------------------------
 // pick styled props
@@ -45,7 +46,7 @@ type CalculateStylingAttrs = ({
   multiKeys,
 }: {
   useBooleans: boolean
-  multiKeys: Record<string, boolean>
+  multiKeys: MultiKeys
 }) => ({
   props,
   dimensions,

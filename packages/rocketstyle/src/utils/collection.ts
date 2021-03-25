@@ -4,7 +4,7 @@
 // chain options
 // --------------------------------------------------------
 type ChanOptions = (
-  opts: Record<string, unknown> | ((...args: any) => any),
+  opts: Record<string, unknown> | ((...args: any) => Record<string, unknown>),
   defaultOpts: any[]
 ) => any[]
 

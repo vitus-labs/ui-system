@@ -1,16 +1,7 @@
 import { useState } from 'react'
-import type { MouseAction, FocusAction } from '~/types'
+import type { PseudoActions, PseudoState } from '~/types'
 
-type Props = {
-  onMouseEnter: MouseAction
-  onMouseLeave: MouseAction
-  onMouseDown: MouseAction
-  onMouseUp: MouseAction
-  onFocus: FocusAction
-  onBlur: FocusAction
-}
-
-type PseudoState = { hover: boolean; focus: boolean; pressed: boolean }
+type State = Omit<PseudoState, 'active'>
 
 type UsePseudoState = ({
   onMouseEnter,
@@ -19,7 +10,7 @@ type UsePseudoState = ({
   onMouseUp,
   onFocus,
   onBlur,
-}: Partial<Props>) => { state: PseudoState; events: Props }
+}: Partial<PseudoActions>) => { state: State; events: PseudoActions }
 
 const handleEvent = (e: Event) => {
   e.preventDefault()

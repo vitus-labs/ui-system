@@ -2,11 +2,12 @@
 import { config, isEmpty, merge } from '@vitus-labs/core'
 import { removeAllEmptyValues, removeNullableValues } from './collection'
 import { isMultiKey } from './dimensions'
+import { ThemeVariant } from '~/types'
 
 // --------------------------------------------------------
 // theme mode callback
 // --------------------------------------------------------
-export const themeModeCb = (...params) => (mode) => {
+export const themeModeCb: ThemeVariant = (...params) => (mode) => {
   if (!mode || mode === 'light') return params[0]
   return params[1]
 }

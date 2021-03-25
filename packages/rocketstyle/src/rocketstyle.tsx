@@ -18,7 +18,7 @@ import {
   CONFIG_KEYS,
   STYLING_KEYS,
   STATIC_KEYS,
-} from '~/constants'
+} from '~/constants/reservedKeys'
 
 import type { RocketComponent, StyleComponent, Configuration } from '~/types'
 
@@ -30,6 +30,7 @@ type OrOptions = (
   opts: Record<string, unknown>,
   defaultOpts: Record<string, unknown>
 ) => Record<string, unknown>
+
 const orOptions: OrOptions = (keys, opts, defaultOpts) =>
   keys.reduce(
     (acc, item) => ({ ...acc, [item]: opts[item] || defaultOpts[item] }),
@@ -128,7 +129,7 @@ const styleComponent: StyleComponent = (options) => {
   // .attrs() chaining option is calculated in HOC and passed as props already
   const EnhancedComponent: RocketComponent = ({
     onMount,
-    $rocketstyleRef, // it's forwarded from HOC whcih is always on top of hocs
+    $rocketstyleRef, // it's forwarded from HOC which is always on top of hocs
     ...props
   }) => {
     // --------------------------------------------------
@@ -209,7 +210,7 @@ const styleComponent: StyleComponent = (options) => {
     // --------------------------------------------------
     const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
       ...(options.consumer
-        ? options.consumer((callback) => callback(rocketstyleCtx as any))
+        ? options.consumer((callback) => callback(rocketstyleCtx))
         : {}),
       ...props,
     }

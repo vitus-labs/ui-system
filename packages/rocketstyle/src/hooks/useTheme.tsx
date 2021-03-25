@@ -1,7 +1,7 @@
 import { config } from '@vitus-labs/core'
 import { calculateChainOptions, calculateDimensionThemes } from '~/utils/theme'
 import { calculateDimensionsMap } from '~/utils/dimensions'
-import type { Configuration, __ROCKETSTYLE__ } from '~/types'
+import type { Configuration, __ROCKETSTYLE__, ThemeVariant } from '~/types'
 
 type UseTheme = <T extends Record<string, unknown>>({
   theme,
@@ -10,7 +10,7 @@ type UseTheme = <T extends Record<string, unknown>>({
 }: {
   theme: T
   options: Configuration
-  cb: any
+  cb: ThemeVariant
 }) => __ROCKETSTYLE__
 
 const useTheme: UseTheme = ({ theme, options, cb }) => {
