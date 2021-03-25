@@ -11,7 +11,7 @@ export type StyleComponent<
   D extends Dimensions = Dimensions,
   UB extends boolean = boolean
 > = (
-  props: Configuration<C, D>
+  props: Partial<Configuration<C, D>>
 ) => RocketComponent<
   // extract component props + add default rocketstyle props
   MergeTypes<
