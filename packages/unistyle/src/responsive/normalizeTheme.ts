@@ -1,9 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { memoize } from '@vitus-labs/core'
 
-// --------------------------------------------------------
-// HELPERS
-// --------------------------------------------------------
 type AssignToBreakbointKey = (
   breakpoints: Array<string>
 ) => (
@@ -14,6 +11,7 @@ type AssignToBreakbointKey = (
     result: Record<string, unknown>
   ) => void
 ) => Record<string, unknown>
+
 const assignToBreakbointKey: AssignToBreakbointKey = (breakpoints) => (
   value
 ) => {
@@ -41,6 +39,7 @@ const handleArrayCb = (arr) => (value, i) => {
 //   breakpoint: Array<string>,
 //   result: Record<string, unknown>
 // ) => Record<string, unknown>
+
 const handleObjectCb = (obj) => (bp, i, bps, res) => {
   const currentValue = obj[bp]
   const previousValue = res[bps[i - 1]]
@@ -56,7 +55,7 @@ const shouldNormalize = (props) =>
     (item) => typeof item === 'object' || Array.isArray(item)
   )
 
-type NormalizeTheme = ({
+export type NormalizeTheme = ({
   theme,
   breakpoints,
 }: {
@@ -64,7 +63,7 @@ type NormalizeTheme = ({
   breakpoints: Array<string>
 }) => Record<string, unknown>
 
-export const normalizeTheme: NormalizeTheme = memoize(
+const normalizeTheme: NormalizeTheme = memoize(
   ({ theme, breakpoints }) => {
     if (!shouldNormalize(theme)) return theme
 
@@ -92,3 +91,5 @@ export const normalizeTheme: NormalizeTheme = memoize(
   },
   { isDeepEqual: true, maxSize: 4000 }
 )
+
+export default normalizeTheme

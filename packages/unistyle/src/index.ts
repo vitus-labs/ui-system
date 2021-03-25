@@ -1,78 +1,99 @@
-import alignContent, {
+import Provider, { context, TProvider } from './context'
+
+// --------------------------------------------------------
+// REACT HOOKS
+// --------------------------------------------------------
+import { useWindowSize, UseWindowSize } from '~/hooks'
+
+// --------------------------------------------------------
+// RESPONSIVE UTILITIES
+// --------------------------------------------------------
+import {
+  breakpoints,
+  createMediaQueries,
+  makeItResponsive,
+  normalizeTheme,
+  sortBreakpoints,
+  transformTheme,
+  Breakpoints,
+  CreateMediaQueries,
+  MakeItResponsive,
+  MakeItResponsiveStyles,
+  NormalizeTheme,
+  SortBreakpoints,
+  TransformTheme,
+} from '~/responsive'
+
+// --------------------------------------------------------
+// STYLES
+// --------------------------------------------------------
+import {
+  styles,
+  alignContent,
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  extendCss,
+  Styles,
+  StylesTheme,
+  AlignContent,
   AlignContentAlignXKeys,
   AlignContentAlignYKeys,
   AlignContentDirectionKeys,
-  ALIGN_X as alignContentAlignX,
-  ALIGN_Y as alignContentAlignY,
-  DIRECTION as alignContentDirection,
-} from './alignContent'
-import breakpoints, { Breakpoints } from './breakpoints'
-import Provider, { context, TProvider } from './context'
-import extendedCss, { ExtendedCss } from './extendedCss'
+  ExtendCss,
+} from './styles'
+
+// --------------------------------------------------------
+// UNITS UTILITIES
+// --------------------------------------------------------
 import {
-  makeItResponsive,
-  sortBreakpoints,
-  createMediaQueries,
-  transformTheme,
-  SortBreakpoints,
-  CreateMediaQueries,
-  TransformTheme,
-  MakeItResponsive,
-  StylesCb,
-} from './mediaQueries'
-import optimizeTheme, {
-  pickThemeProps,
-  normalizeTheme,
-  groupByBreakpoint,
-  PickThemeProps,
-} from './optimizeTheme'
-import useWindowResize, { UseWindowSize } from './useWindowSize'
-import styles, {
   stripUnit,
   normalizeUnit,
   value,
-  getValueOf,
-  StylesTheme,
-} from './styles'
+  StripUnit,
+  NormalizeUnit,
+  Value,
+} from '~/units'
 
 export type {
   TProvider,
+  Breakpoints,
+  UseWindowSize,
+  CreateMediaQueries,
+  MakeItResponsive,
+  MakeItResponsiveStyles,
+  NormalizeTheme,
+  SortBreakpoints,
+  TransformTheme,
+  Styles,
+  StylesTheme,
+  AlignContent,
   AlignContentAlignXKeys,
   AlignContentAlignYKeys,
   AlignContentDirectionKeys,
-  Breakpoints,
-  ExtendedCss,
-  SortBreakpoints,
-  CreateMediaQueries,
-  TransformTheme,
-  MakeItResponsive,
-  StylesCb,
-  PickThemeProps,
-  UseWindowSize,
-  StylesTheme,
+  ExtendCss,
+  StripUnit,
+  NormalizeUnit,
+  Value,
 }
 
 export {
-  alignContent,
-  alignContentAlignX,
-  alignContentAlignY,
-  alignContentDirection,
   breakpoints,
   Provider,
   context,
-  extendedCss,
+  useWindowSize,
   makeItResponsive,
   sortBreakpoints,
   createMediaQueries,
   transformTheme,
-  optimizeTheme,
-  pickThemeProps,
   normalizeTheme,
-  groupByBreakpoint,
-  useWindowResize,
   styles,
+  alignContent,
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  extendCss,
   stripUnit,
   normalizeUnit,
   value,
-  getValueOf,
 }

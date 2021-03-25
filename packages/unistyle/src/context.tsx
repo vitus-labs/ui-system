@@ -1,6 +1,6 @@
 import React, { useMemo, ReactNode, FC } from 'react'
 import { config, isEmpty, Provider as CoreProvider } from '@vitus-labs/core'
-import { sortBreakpoints, createMediaQueries } from './mediaQueries'
+import { sortBreakpoints, createMediaQueries } from '~/responsive'
 
 const { context } = config
 

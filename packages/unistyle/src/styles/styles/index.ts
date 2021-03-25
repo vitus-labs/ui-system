@@ -1,8 +1,10 @@
-import { value } from './utils/unit'
+import { value } from '~/units'
 import type { Theme } from './types'
 import type { Css } from '~/types'
 
-type Styles = ({
+export type { Theme as StylesTheme }
+
+export type Styles = ({
   theme,
   css,
   rootSize,
@@ -107,9 +109,9 @@ const styles: Styles = ({ theme: t, css, rootSize }) => css`
   color: ${t.color};
   background: ${t.background};
   background-color: ${t.backgroundColor};
-  ${t.backgroundImg &&
+  ${t.backgroundImage &&
   css`
-    background-image: url(${t.backgroundImg});
+    background-image: url(${t.backgroundImage});
   `};
   background-clip: ${t.backgroundClip};
   background-origin: ${t.backgroundOrigin};

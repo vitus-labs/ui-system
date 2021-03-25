@@ -1,32 +1,29 @@
 import { config, isEmpty } from '@vitus-labs/core'
 
-const MAP_SHARED = {
+export type AlignContentDirectionKeys = keyof typeof ALIGN_CONTENT_DIRECTION
+export type AlignContentAlignXKeys = keyof typeof ALIGN_CONTENT_MAP_X
+export type AlignContentAlignYKeys = keyof typeof ALIGN_CONTENT_MAP_Y
+
+const ALIGN_CONTENT_MAP_SHARED = {
   center: 'center',
   spaceBetween: 'space-between',
   spaceAround: 'space-around',
   block: 'stretch',
 }
 
-export const ALIGN_X = {
+export const ALIGN_CONTENT_MAP_X = {
   left: 'flex-start',
   right: 'flex-end',
-  ...MAP_SHARED,
+  ...ALIGN_CONTENT_MAP_SHARED,
 } as const
 
-export const ALIGN_Y = {
+export const ALIGN_CONTENT_MAP_Y = {
   top: 'flex-start',
   bottom: 'flex-end',
-  ...MAP_SHARED,
+  ...ALIGN_CONTENT_MAP_SHARED,
 } as const
 
-type DIRECTION_TYPE = {
-  inline: string
-  reverseInline: string
-  rows: string
-  reverseRows: string
-}
-
-export const DIRECTION: DIRECTION_TYPE = __WEB__
+export const ALIGN_CONTENT_DIRECTION = __WEB__
   ? {
       inline: 'row',
       reverseInline: 'reverse-row',
@@ -40,11 +37,7 @@ export const DIRECTION: DIRECTION_TYPE = __WEB__
       reverseRows: 'column-reverse',
     }
 
-export type AlignContentDirectionKeys = keyof DIRECTION_TYPE
-export type AlignContentAlignXKeys = keyof typeof ALIGN_X
-export type AlignContentAlignYKeys = keyof typeof ALIGN_Y
-
-export type AlignContentProps = ({
+export type AlignContent = ({
   direction,
   alignX,
   alignY,
@@ -54,7 +47,7 @@ export type AlignContentProps = ({
   alignY: AlignContentAlignYKeys
 }) => ReturnType<typeof config.css>
 
-const alignContent: AlignContentProps = (attrs) => {
+const alignContent: AlignContent = (attrs) => {
   const { direction, alignX, alignY } = attrs
 
   if (isEmpty(attrs) || !direction || !alignX || !alignY) {
@@ -62,9 +55,9 @@ const alignContent: AlignContentProps = (attrs) => {
   }
 
   const isReverted = ['inline', 'reverseInline'].includes(direction)
-  const dir = DIRECTION[direction]
-  const x = ALIGN_X[alignX]
-  const y = ALIGN_Y[alignY]
+  const dir = ALIGN_CONTENT_DIRECTION[direction]
+  const x = ALIGN_CONTENT_MAP_X[alignX]
+  const y = ALIGN_CONTENT_MAP_Y[alignY]
 
   return config.css`
     flex-direction: ${dir};

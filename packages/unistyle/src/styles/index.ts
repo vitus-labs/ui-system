@@ -1,9 +1,30 @@
-import styles from './styles'
-import { stripUnit, normalizeUnit, value, getValueOf } from './utils/unit'
-import type { Theme } from './types'
+import styles, { Styles, StylesTheme } from './styles'
+import alignContent, {
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  AlignContent,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
+} from './alignContent'
+import extendCss, { ExtendCss } from './extendCss'
 
-export type { Theme as StylesTheme }
+export type {
+  Styles,
+  StylesTheme,
+  AlignContent,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
+  ExtendCss,
+}
 
-export { stripUnit, normalizeUnit, value, getValueOf }
-
-export default styles
+export {
+  styles,
+  alignContent,
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  extendCss,
+}

@@ -186,7 +186,7 @@ export type Theme = Partial<{
   color: string
   background: string
   backgroundColor: string | 'transparent' | defaults
-  backgroundImg: string | 'none' | defaults
+  backgroundImage: string | 'none' | defaults
   backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
   backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
   backgroundPosition: any
