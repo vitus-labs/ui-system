@@ -6,17 +6,11 @@ import {
   getDimensionsValues,
 } from '~/utils/dimensions'
 import { ALL_RESERVED_KEYS } from '~/constants/reservedKeys'
-import { Dimensions, StyleComponent, ElementType } from './types'
+import defaultDimensions from '~/constants/defaultDimensions'
 
-const defaultDimensions = {
-  states: 'state',
-  sizes: 'size',
-  variants: 'variant',
-  multiple: {
-    propName: 'multiple',
-    multi: true,
-  },
-} as const
+import type { ElementType } from '~/types/utils'
+import type { Dimensions } from '~/types/dimensions'
+import type { StyleComponent } from '~/types/styleComponent'
 
 export type Rocketstyle = <T = any, CT = any>() => <
   D extends Dimensions = typeof defaultDimensions,

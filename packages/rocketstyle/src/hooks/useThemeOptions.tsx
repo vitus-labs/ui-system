@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { context } from '~/context'
 import { THEME_MODES_INVERSED } from '~/constants/reservedKeys'
+import { ThemeModeKeys } from '~/types/theme'
 
 type UseThemeOptions = ({
   inversed,
@@ -8,7 +9,7 @@ type UseThemeOptions = ({
   inversed?: boolean
 }) => {
   theme: Record<string, unknown>
-  mode: 'light' | 'dark'
+  mode: ThemeModeKeys
   isDark: boolean
   isLight: boolean
 }

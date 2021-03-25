@@ -1,15 +1,10 @@
-// @ts-nocheck
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
 import { localContext, createProvider, rocketstyleHoc } from '~/internal'
-import {
-  calculateTheme,
-  calculateThemeVariant,
-  themeModeCb,
-} from '~/utils/theme'
+import { calculateTheme, calculateThemeMode, themeModeCb } from '~/utils/theme'
 import { calculateStyles } from '~/utils/styles'
 import { chainOptions } from '~/utils/collection'
 import { pickStyledProps, calculateStylingAttrs } from '~/utils/attrs'
@@ -20,7 +15,9 @@ import {
   STATIC_KEYS,
 } from '~/constants/reservedKeys'
 
-import type { RocketComponent, StyleComponent, Configuration } from '~/types'
+import type { RocketComponent } from '~/types/rocketstyle'
+import type { Configuration } from '~/types/configuration'
+import type { StyleComponent } from '~/types/styleComponent'
 
 // --------------------------------------------------------
 // styledComponent helpers for chaining attributes
@@ -166,7 +163,7 @@ const styleComponent: StyleComponent = (options) => {
 
     const { baseTheme, themes } = useMemo(
       () =>
-        calculateThemeVariant(
+        calculateThemeMode(
           { themes: rocketThemes, baseTheme: rocketBaseTheme },
           mode
         ),

@@ -1,5 +1,5 @@
 import { get, isEmpty, set } from '@vitus-labs/core'
-import { Dimensions, DimensionValue, MultiKeys } from '~/types'
+import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // is value milti key

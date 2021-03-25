@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { PseudoState } from '~/types'
+import type { PseudoState } from '~/types/pseudo'
 
 type TContext = Partial<
   {

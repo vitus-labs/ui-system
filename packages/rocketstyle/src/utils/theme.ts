@@ -2,12 +2,12 @@
 import { config, isEmpty, merge } from '@vitus-labs/core'
 import { removeAllEmptyValues, removeNullableValues } from './collection'
 import { isMultiKey } from './dimensions'
-import { ThemeVariant } from '~/types'
+import { ThemeMode } from '~/types/theme'
 
 // --------------------------------------------------------
 // theme mode callback
 // --------------------------------------------------------
-export const themeModeCb: ThemeVariant = (...params) => (mode) => {
+export const themeModeCb: ThemeMode = (...params) => (mode) => {
   if (!mode || mode === 'light') return params[0]
   return params[1]
 }
@@ -109,23 +109,20 @@ export const calculateTheme: CalculateTheme = ({
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-type CalculateThemeVariant = (
+type CalculateThemeMode = (
   themes: Record<string, any>,
   variant: 'light' | 'dark'
 ) => Partial<{
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }>
-export const calculateThemeVariant: CalculateThemeVariant = (
-  themes,
-  variant
-) => {
+export const calculateThemeMode: CalculateThemeMode = (themes, variant) => {
   const callback = themeModeCb().toString()
 
   const result = {}
   Object.entries(themes).forEach(([key, value]) => {
     if (typeof value === 'object') {
-      result[key] = calculateThemeVariant(value, variant)
+      result[key] = calculateThemeMode(value, variant)
     } else if (typeof value === 'function' && value.toString() === callback) {
       result[key] = value(variant)
     } else {

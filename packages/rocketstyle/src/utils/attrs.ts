@@ -1,5 +1,5 @@
 import { isEmpty } from '@vitus-labs/core'
-import { MultiKeys } from '~/types'
+import { MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // pick styled props

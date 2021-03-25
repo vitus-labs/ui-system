@@ -1,10 +1,20 @@
 /* eslint-disable no-underscore-dangle */
-import React, { forwardRef } from 'react'
+import React, { forwardRef, ForwardRefExoticComponent } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
 import { useThemeOptions } from '~/hooks'
 
-const RocketStyleHOC = ({ inversed, attrs }) => {
+import type { OptionFunc } from '~/types/configuration'
+
+type RocketStyleHOC = ({
+  inversed,
+  attrs,
+}: {
+  inversed?: boolean
+  attrs: Array<OptionFunc>
+}) => ForwardRefExoticComponent<any>
+
+const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------
   // .attrs(...)
   // first we need to calculate final props which are
@@ -41,4 +51,4 @@ const RocketStyleHOC = ({ inversed, attrs }) => {
   return Enhanced
 }
 
-export default RocketStyleHOC
+export default rocketStyleHOC

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { PseudoActions, PseudoState } from '~/types'
+import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
 type State = Omit<PseudoState, 'active'>
 
