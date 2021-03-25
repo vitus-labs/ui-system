@@ -65,7 +65,7 @@ const component = forwardRef<Reference, Partial<Props>>(
           {...COMMON_PROPS}
           $element={{
             block,
-            extendCss,
+            extraStyles: extendCss,
             direction,
             alignX,
             alignY,
@@ -83,7 +83,7 @@ const component = forwardRef<Reference, Partial<Props>>(
         $needsFix
         $element={{
           block,
-          extendCss,
+          extraStyles: extendCss,
         }}
       >
         <Styled

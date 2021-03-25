@@ -2,7 +2,7 @@ import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
   alignContent,
-  extendedCss,
+  extendCss,
   value,
 } from '@vitus-labs/unistyle'
 
@@ -23,8 +23,10 @@ const calculateGap = ({ direction, type, value, css }) => {
     },
   }
 
+  const finalStyles = `${data[direction][type]}: ${value};`
+
   return css`
-    ${data[direction][type]}: ${value};
+    ${finalStyles};
   `
 }
 
@@ -54,7 +56,7 @@ const styles = ({ css, theme: t, rootSize }) => css`
       })}
   `};
 
-  ${t.extendCss && extendedCss(t.extendCss)};
+  ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
 export default config.styled(config.component)`

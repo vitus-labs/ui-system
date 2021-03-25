@@ -3,12 +3,14 @@ import React from 'react'
 import type { ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import Styled from './styled'
+import type { ExtendCss } from '~/types'
 
 export type Props = Partial<{
   paragraph: boolean
   label: ReactNode
   children: ReactNode
   tag: StyledComponentPropsWithRef<any>
+  extendCss: ExtendCss
 }>
 
 const Element: React.FC<Props> & { isText: boolean } = ({
@@ -16,10 +18,11 @@ const Element: React.FC<Props> & { isText: boolean } = ({
   label,
   children,
   tag,
+  extendCss,
   ...props
 }) => {
   const renderContent = (as = undefined) => (
-    <Styled as={as} {...props}>
+    <Styled as={as} $text={{ extraStyles: extendCss }} {...props}>
       {children || label}
     </Styled>
   )

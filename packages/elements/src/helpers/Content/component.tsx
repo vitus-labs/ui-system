@@ -54,7 +54,7 @@ const component: VFC<Partial<Props>> = ({
         alignY,
         equalCols,
         gap,
-        extendCss,
+        extraStyles: extendCss,
       }}
       {...debugProps}
       {...props}

@@ -1,9 +1,5 @@
 import { config } from '@vitus-labs/core'
-import {
-  alignContent,
-  extendedCss,
-  makeItResponsive,
-} from '@vitus-labs/unistyle'
+import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 
 const styles = ({ theme: t, css }) =>
   css`
@@ -27,7 +23,7 @@ const styles = ({ theme: t, css }) =>
       alignY: t.alignY,
     })};
 
-    ${t.extendCss && extendedCss(t.extendCss)};
+    ${t.extraStyles && extendCss(t.extraStyles)};
   `
 
 const platformStyles = __WEB__
