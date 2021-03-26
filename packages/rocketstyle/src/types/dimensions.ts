@@ -1,3 +1,4 @@
+import defaultDimensions from '~/constants/defaultDimensions'
 import {
   CallBackParam,
   Spread,
@@ -8,6 +9,8 @@ import {
 } from './utils'
 import { ThemeMode } from './theme'
 import { Css } from './styles'
+
+export type DefaultDimensions = typeof defaultDimensions
 
 export type ExtractNullableDimensionKeys<T> = {
   [P in keyof T as T[P] extends false ? never : P]: T[P]

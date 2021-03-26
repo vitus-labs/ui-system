@@ -4,7 +4,7 @@ import type { StylesCbArray, Css } from '~/types/styles'
 // --------------------------------------------------------
 // calculate styles
 // --------------------------------------------------------
-type CalculateStyles = <S extends StylesCbArray, C extends Css>(
+type CalculateStyles = <S extends StylesCbArray | undefined, C extends Css>(
   styles: S,
   css: C
 ) => Array<ReturnType<StylesCbArray[number]>>

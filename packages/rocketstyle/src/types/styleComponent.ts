@@ -1,14 +1,18 @@
 import type { MergeTypes, ExtractProps, ElementType } from './utils'
-import type { Dimensions, ExtractDimensionAttrsKeys } from './dimensions'
+import type {
+  Dimensions,
+  DefaultDimensions,
+  ExtractDimensionAttrsKeys,
+} from './dimensions'
 import type { OptionStyles } from './styles'
 import type { DefaultProps, Configuration } from './configuration'
 import type { RocketComponent } from './rocketstyle'
 
 export type StyleComponent<
-  C extends ElementType = ElementType,
+  C extends ElementType,
   T extends Record<string, unknown> | unknown = unknown,
   CT extends OptionStyles | unknown = unknown,
-  D extends Dimensions = Dimensions,
+  D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
 > = (
   props: Partial<Configuration<C, D>>

@@ -23,7 +23,7 @@ export const pickStyledProps: PickStyledProps = (props, keywords) => {
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options: Array<OptionFunc<A>>
+  options?: Array<OptionFunc<A>>
 ) => (args: Array<A>) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions = (options) => (
@@ -32,6 +32,7 @@ export const calculateChainOptions: CalculateChainOptions = (options) => (
   const result = {}
   if (isEmpty(options)) return result
 
+  // @ts-ignore
   return options.reduce(
     (acc, item) => Object.assign(acc, item(...args)),
     result
@@ -45,8 +46,8 @@ type CalculateStylingAttrs = ({
   useBooleans,
   multiKeys,
 }: {
-  useBooleans: boolean
-  multiKeys: MultiKeys
+  useBooleans?: boolean
+  multiKeys?: MultiKeys
 }) => ({
   props,
   dimensions,
@@ -67,7 +68,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs = ({
     const valueTypes = ['number', 'string']
 
     // if the property is mutli key, allow assign array as well
-    if (multiKeys[item] && Array.isArray(pickedProp)) {
+    if (multiKeys && multiKeys[item] && Array.isArray(pickedProp)) {
       result[item] = pickedProp
     }
     // assign when it's only a string or number otherwise it's considered
@@ -84,6 +85,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs = ({
     const propsKeys = Object.keys(props).reverse()
 
     Object.entries(result).forEach(([key, value]) => {
+      // @ts-ignore
       const isMultiKey = multiKeys[key]
 
       // when value in result is not assigned yet

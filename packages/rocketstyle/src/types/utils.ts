@@ -5,11 +5,9 @@ export type TFn = (...args: any) => any
 export type CallBackParam = TObj | TFn
 export type DisplayName = string
 
-export type ElementType<T extends TObj | unknown = any> = (
+export type ElementType<T extends TObj | unknown = any> =
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
-) &
-  Partial<{ [x: string]: any }>
 
 export type ValueOf<T> = T[keyof T]
 

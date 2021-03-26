@@ -15,7 +15,7 @@ export type RocketStyleHOC = ({
   attrs,
 }: {
   inversed?: boolean
-  attrs: Array<OptionFunc>
+  attrs?: Array<OptionFunc>
 }) => (WrappedComponent: ComponentType) => ForwardRefExoticComponent<any>
 
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {

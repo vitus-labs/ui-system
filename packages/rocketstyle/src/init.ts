@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
 import styleComponent from './rocketstyle'
 import {
@@ -7,13 +8,12 @@ import {
 } from '~/utils/dimensions'
 import { ALL_RESERVED_KEYS } from '~/constants/reservedKeys'
 import defaultDimensions from '~/constants/defaultDimensions'
-
 import type { ElementType } from '~/types/utils'
-import type { Dimensions } from '~/types/dimensions'
+import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
 import type { StyleComponent } from '~/types/styleComponent'
 
 export type Rocketstyle = <T = any, CT = any>() => <
-  D extends Dimensions = typeof defaultDimensions,
+  D extends Dimensions = DefaultDimensions,
   UB extends boolean = true
 >({
   dimensions,
@@ -32,7 +32,6 @@ export type Rocketstyle = <T = any, CT = any>() => <
 const rocketstyle: Rocketstyle = () => ({
   dimensions = defaultDimensions,
   useBooleans = true,
-  // @ts-ignore
 } = {}) => ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode

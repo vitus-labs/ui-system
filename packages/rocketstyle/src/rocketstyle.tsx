@@ -84,7 +84,7 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const styleComponent: StyleComponent = (options) => {
+const styleComponent: StyleComponent<any> = (options) => {
   const { component, styles } = options
   const { styled } = config
 
