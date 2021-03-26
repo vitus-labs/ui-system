@@ -1,59 +1,105 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  normalizeUnit,
+  extendCss,
+  MakeItResponsiveStyles,
+} from '@vitus-labs/unistyle'
+import { hasValue, isVisible, isNumber } from '~/utils'
+import { CssOutput, StyledTypes } from '~/types'
 
-const isNumber = (number) => Number.isFinite(number)
+type HasWidth = (size?: number, columns?: number) => boolean
 
-const styles = ({ theme, css, rootSize }) => {
-  const t = {}
+const hasWidth: HasWidth = (size, columns) =>
+  hasValue(size) && hasValue(columns)
 
-  t.padding = theme.padding
-  t.margin = theme.gap / 2
+type WidthStyles = (
+  props: Pick<StyledTypes, 'size' | 'columns' | 'gap' | 'RNparentWidth'>,
+  defaults: { rootSize?: number }
+) => CssOutput
 
-  if (config.isWeb) {
-    const width = (theme.size / theme.columns) * 100
-
-    if (isNumber(width)) {
-      t.flex = 0
-      t.width = theme.gap ? `calc(${width}% - ${theme.gap}px)` : `${width}%`
-    }
+const widthStyles: WidthStyles = (
+  { size, columns, gap, RNparentWidth },
+  { rootSize }
+) => {
+  if (!hasWidth(size, columns)) {
+    return ''
   }
 
-  if (config.isNative) {
-    const width = (theme.RNparentWidth / theme.columns) * theme.size
+  // calculate % of width
+  const width = __WEB__
+    ? (size / columns) * 100
+    : (RNparentWidth / columns) * size
 
-    if (isNumber(width)) {
-      t.flex = 0
-      t.width = theme.gap ? width - theme.gap : width
-    }
+  const hasGap = hasValue(gap)
+
+  // eslint-disable-next-line no-nested-ternary
+  const value = __WEB__
+    ? hasGap
+      ? `calc(${width}% - ${gap}px)`
+      : `${width}%`
+    : hasGap
+    ? width - gap
+    : width
+
+  return config.css`
+      flex-grow: 0;
+      flex-shrink: 0;
+      max-width: ${normalizeUnit({ param: value, rootSize })};
+      flex-basis: ${normalizeUnit({ param: value, rootSize })};
+    `
+}
+
+type SpacingStyles = (
+  type: 'margin' | 'padding',
+  value: number,
+  rootSize?: number
+) => CssOutput
+const spacingStyles: SpacingStyles = (type, value, rootSize) => {
+  if (!isNumber(value)) {
+    return ''
+  }
+
+  const finalStyle = `${type}: ${normalizeUnit({
+    param: value / 2,
+    rootSize,
+  })}`
+
+  return config.css`
+      ${finalStyle};
+    `
+}
+
+const styles: MakeItResponsiveStyles<StyledTypes> = ({
+  theme,
+  css,
+  rootSize,
+}) => {
+  const { size, columns, gap, padding, extraStyles, RNparentWidth } = theme
+  const renderStyles = isVisible(size)
+
+  if (renderStyles) {
+    return css`
+      left: initial;
+      position: relative;
+      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })};
+      ${spacingStyles('padding', padding, rootSize)};
+      ${spacingStyles('margin', gap, rootSize)};
+      ${extendCss(extraStyles)};
+    `
   }
 
   return css`
-    ${t.width &&
-    css`
-      max-width: ${normalizeUnit({ param: t.width, rootSize })};
-      flex-grow: ${t.flex};
-      flex-shrink: ${t.flex};
-      flex-basis: ${normalizeUnit({ param: t.width, rootSize })};
-    `};
-
-    ${isNumber(t.margin) &&
-    css`
-      margin: ${normalizeUnit({ param: t.margin, rootSize })};
-    `};
-
-    ${isNumber(t.padding) &&
-    css`
-      padding: ${normalizeUnit({ param: t.padding, rootSize })};
-    `};
-
-    ${theme.extendCss};
+    left: -9999px;
+    position: fixed;
+    margin: 0;
+    padding: 0;
   `
 }
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
@@ -66,8 +112,10 @@ export default config.styled(config.component)`
   flex-direction: column;
   justify-content: stretch;
 
-  ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize },
-    })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

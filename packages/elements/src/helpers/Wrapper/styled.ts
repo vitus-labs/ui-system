@@ -1,72 +1,49 @@
 import { config } from '@vitus-labs/core'
-import {
-  alignContent,
-  extendedCss,
-  makeItResponsive,
-} from '@vitus-labs/unistyle'
+import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 
-const isValue = (val) => val !== null && val !== undefined
-
-const styles = ({ css, theme: t }) => css`
-  ${config.isWeb &&
+const styles = ({ theme: t, css }) =>
   css`
-    display: ${({ $needsFix }) => {
-      if ($needsFix) return ''
-      return t.block ? 'flex' : 'inline-flex'
-    }};
-  `};
+    ${__WEB__ &&
+    css`
+      display: ${({ $needsFix }) => {
+        if ($needsFix) return ''
+        return t.block ? 'flex' : 'inline-flex'
+      }};
+    `};
 
-  ${config.isWeb &&
-  isValue(t.block) &&
-  css`
-    ${({ $needsFix }) =>
-      $needsFix &&
-      css`
-        width: ${t.block ? '100%' : 'initial'};
-      `}
-  `};
+    ${__WEB__ &&
+    t.contentAlignY === 'block' &&
+    css`
+      height: 100%;
+    `};
 
-  ${config.isNative &&
-  t.block &&
-  css`
-    align-self: stretch;
-  `};
+    ${alignContent({
+      direction: t.direction,
+      alignX: t.alignX,
+      alignY: t.alignY,
+    })};
 
-  ${t.direction &&
-  t.alignX &&
-  t.alignY &&
-  alignContent({
-    direction: t.direction,
-    alignX: t.alignX,
-    alignY: t.alignY,
-  })};
+    ${t.extraStyles && extendCss(t.extraStyles)};
+  `
 
-  ${t.extendCss && extendedCss(t.extendCss)};
-`
+const platformStyles = __WEB__
+  ? config.css`
+    box-sizing: border-box;
+  `
+  : config.css`
+    display: flex;
+  `
 
 export default config.styled(config.component)`
   position: relative;
-
-  ${
-    !config.isNative &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
-
-  ${
-    config.isNative &&
-    config.css`
-      display: flex;
-    `
-  };
+  ${platformStyles};
 
    ${({ $needsFix }) =>
      $needsFix &&
      config.css`
-    display: flex;
-    flex-direction: column;
-  `};
+      display: flex;
+      flex-direction: column;
+    `};
 
   ${({ $isInner }) =>
     $isInner &&
@@ -76,5 +53,10 @@ export default config.styled(config.component)`
     height: 100%;
   `};
 
-  ${makeItResponsive({ key: '$element', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$element',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

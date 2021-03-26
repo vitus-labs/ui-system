@@ -1,4 +1,5 @@
 import React from 'react'
+import { Provider, breakpoints } from '@vitus-labs/unistyle'
 import Element from '~/Element'
 import { Wrapper, Inner } from './components'
 
@@ -8,11 +9,8 @@ export default {
 }
 
 export const inlineElement = () => (
-  <>
-    <Wrapper block={false} beforeContent={Inner} afterContent={Inner}>
-      <Inner />
-    </Wrapper>
-    <Wrapper block beforeContent={Inner} afterContent={Inner}>
+  <Provider theme={breakpoints}>
+    <Wrapper beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
     <Wrapper
@@ -105,5 +103,5 @@ export const inlineElement = () => (
     >
       <Inner />
     </Wrapper>
-  </>
+  </Provider>
 )

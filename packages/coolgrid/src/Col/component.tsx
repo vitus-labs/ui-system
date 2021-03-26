@@ -1,81 +1,39 @@
-// @ts-nocheck
 import React, { useContext } from 'react'
-import { omit } from '@vitus-labs/core'
-import {
-  vitusContext,
-  extendedCss,
-  sortBreakpoints,
-  optimizeTheme,
-  pickThemeProps,
-} from '@vitus-labs/unistyle'
-import { COLUMN_RESERVED_KEYS as RESERVED_KEYS } from '../constants'
-import RowContext from '../context/RowContext'
+import { omitCtxKeys } from '~/utils'
+import useGridContext from '~/useContext'
+import { RowContext } from '~/context'
+import type { ElementType } from '~/types'
 import Styled from './styled'
 
-const isHidden = ({ sortedBreakpoints, size, currentBreakpoint }) => {
-  let foundBp = false
-  let hidden = false
-  const reversed = sortedBreakpoints.slice().reverse()
-
-  for (let i = 0; i < sortedBreakpoints.length; i += 1) {
-    const item = reversed[i]
-
-    if (item === currentBreakpoint) {
-      foundBp = true
-    }
-
-    if (foundBp && Number.isFinite(size[item])) {
-      hidden = size[item] === 0 || false
-      break
-    }
-  }
-
-  return hidden
-}
-
-const Element = ({ children, component, css, ...rest }) => {
-  const vitusLabsCtx = vitusContext()
-  const { coolgrid, colCss, colComponent, ...ctx } = useContext(RowContext)
-
-  const breakpoints = sortBreakpoints(ctx.breakpoints)
-  const omitKeywords = ['columns', 'gap', 'gutter', 'RNparentWidth']
-  const keywords = [...breakpoints, ...RESERVED_KEYS, ...omitKeywords]
-  // delete gap, and some other props which can be passed only
-  // via context from Container or Row
-  const props = omit(rest, omitKeywords)
-
-  const normalizedTheme = optimizeTheme({
-    breakpoints,
-    keywords,
-    props: {
-      ...coolgrid,
-      ...pickThemeProps(rest, keywords),
-      columns: ctx.columns,
-    },
+const Element: ElementType<
+  [
+    'containerWidth',
+    'width',
+    'rowComponent',
+    'rowCss',
+    'colCss',
+    'colComponent',
+    'columns',
+    'gap',
+    'gutter'
+  ]
+> = ({ children, component, css, ...props }) => {
+  const parentCtx = useContext(RowContext)
+  const { colCss, colComponent, columns, gap, size, padding } = useGridContext({
+    ...parentCtx,
+    ...props,
   })
-
-  // hide column when size=0 for a breakpoint and up
-  if (normalizedTheme.size) {
-    if (
-      isHidden({
-        sortedBreakpoints: breakpoints,
-        size: normalizedTheme.size,
-        currentBreakpoint: vitusLabsCtx.getCurrentBreakpoint(ctx.breakpoints),
-      })
-    )
-      return null
-  }
 
   return (
     <Styled
-      {...omit(props, RESERVED_KEYS)}
+      {...omitCtxKeys(props)}
       as={component || colComponent}
-      coolgrid={{
-        // @ts-ignore
-        RNparentWidth: coolgrid.RNparentWidth,
-        ...ctx,
-        ...normalizedTheme,
-        extendCss: extendedCss(css || colCss),
+      $coolgrid={{
+        columns,
+        gap,
+        size,
+        padding,
+        extraStyles: css || colCss,
       }}
     >
       {children}

@@ -1,15 +1,22 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  normalizeUnit,
+  extendCss,
+  MakeItResponsiveStyles,
+} from '@vitus-labs/unistyle'
+import { StyledTypes } from '~/types'
 
-const styles = ({ theme: t, css, rootSize }) => css`
+const styles: MakeItResponsiveStyles<
+  Pick<StyledTypes, 'width' | 'extraStyles'>
+> = ({ theme: t, css, rootSize }) => css`
   max-width: ${normalizeUnit({ param: t.width, rootSize })};
-  ${t.extendCss};
+  ${extendCss(t.extraStyles)};
 `
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
@@ -21,8 +28,10 @@ export default config.styled(config.component)`
   margin-right: auto;
   margin-left: auto;
 
-  ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize },
-    })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

@@ -1,29 +1,55 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, normalizeUnit } from '@vitus-labs/unistyle'
+import {
+  makeItResponsive,
+  normalizeUnit,
+  extendCss,
+  ALIGN_CONTENT_MAP_X,
+  MakeItResponsiveStyles,
+} from '@vitus-labs/unistyle'
+import { isNumber } from '~/utils'
+import { CssOutput, StyledTypes } from '~/types'
 
-const styles = ({ theme: t, css, rootSize }) => {
-  let vertical = t.gap / 2
-  const horizontal = -1 * vertical
+type SpacingStyles = (
+  props: Pick<StyledTypes, 'gap' | 'gutter'>,
+  { rootSize }: { rootSize?: number }
+) => CssOutput
 
-  if (t.gutter === 0) vertical *= -1
-  else if (t.gutter) vertical = t.gutter
+const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
+  if (!isNumber(gap)) return ''
 
   const value = (param) => normalizeUnit({ param, rootSize })
 
-  return css`
-    ${(vertical || horizontal) &&
-    css`
-      margin: ${value(vertical)} ${value(horizontal)};
-    `};
+  const spacingX = (gap / 2) * -1
+  const spacingY = isNumber(gutter) ? gutter - gap / 2 : gap / 2
 
-    ${t.extendCss};
+  return config.css`
+    margin: ${value(spacingY)} ${value(spacingX)};
+  `
+}
+
+const contentAlign = (align?: StyledTypes['contentAlignX']) => {
+  if (!align) return ''
+
+  return config.css`
+    justify-content: ${ALIGN_CONTENT_MAP_X[align]};
+  `
+}
+
+const styles: MakeItResponsiveStyles<
+  Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extraStyles'>
+> = ({ theme, css, rootSize }) => {
+  const { gap, gutter, contentAlignX, extraStyles } = theme
+
+  return css`
+    ${spacingStyles({ gap, gutter }, { rootSize })};
+    ${contentAlign(contentAlignX)};
+    ${extendCss(extraStyles)};
   `
 }
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
@@ -34,8 +60,10 @@ export default config.styled(config.component)`
   align-self: stretch;
   flex-direction: row;
 
-  ${({ coolgrid: { breakpoints, rootSize, ...rest } }) =>
-    makeItResponsive({ theme: rest, styles, css: config.css })({
-      theme: { breakpoints, rootSize },
-    })};
+  ${makeItResponsive({
+    key: '$coolgrid',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

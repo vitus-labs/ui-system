@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/elements",
-  "version": "0.9.4",
+  "version": "0.10.9-alpha.109",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -14,11 +14,11 @@
   "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-elements.js": "./lib/vitus-labs-elements.js",
-    "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.module.js"
+    "./lib/vitus-labs-elements.module.js": "./lib/vitus-labs-elements.browser.js"
   },
   "unpkg": "lib/vitus-labs-elements.umd.min.js",
   "jsnext:main": "lib/vitus-labs-elements.module.js",
-  "react-native": "lib/vitus-labs-elements.module.js",
+  "react-native": "lib/vitus-labs-elements.native.js",
   "files": [
     "lib/"
   ],
@@ -28,6 +28,9 @@
     "react",
     "reusable"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vitus-labs/vitus-labs"
@@ -36,11 +39,12 @@
     "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
   "scripts": {
-    "dev": "yarn vl_run-stories",
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn rollup -c",
-    "docs:dev": "docz dev",
-    "docs:build": "docz build",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
     "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
@@ -50,16 +54,16 @@
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 16.7",
-    "react-dom": ">= 16.7"
+    "react": ">= 16.8",
+    "react-dom": ">= 16.8"
   },
   "devDependencies": {
-    "@vitus-labs/core": "*",
-    "@vitus-labs/rocketstyle": "*",
-    "@vitus-labs/tools-docz": "*",
-    "@vitus-labs/tools-jest": "*",
-    "@vitus-labs/tools-rollup": "*",
-    "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/unistyle": "*"
+    "@vitus-labs/core": "^0.10.9-alpha.109",
+    "@vitus-labs/rocketstyle": "^0.10.9-alpha.109",
+    "@vitus-labs/tools-babel": "^0.6.4",
+    "@vitus-labs/tools-rollup": "^0.6.4",
+    "@vitus-labs/tools-storybook": "^0.6.3",
+    "@vitus-labs/tools-typescript": "^0.6.4",
+    "@vitus-labs/unistyle": "^0.10.9-alpha.109"
   }
 }

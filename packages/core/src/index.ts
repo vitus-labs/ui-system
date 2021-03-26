@@ -1,19 +1,28 @@
-import { omit, pick, set, get, throttle, difference } from 'lodash'
+import { omit, pick, set, get, throttle, difference, merge } from 'lodash'
+import memoize from 'moize'
+import config from './config'
 import compose from './compose'
-import isEmpty from './isEmpty'
-import renderContent from './renderContent'
-import config, { init } from './config'
+import isEmpty, { IsEmpty } from './isEmpty'
+import renderContent, { RenderContent } from './renderContent'
+import Provider from './context'
+
+const { context } = config
+
+export type { IsEmpty, RenderContent }
 
 export {
   config,
-  init,
+  context,
+  Provider,
   compose,
-  renderContent,
   isEmpty,
+  renderContent,
   difference,
   omit,
   pick,
   set,
   get,
   throttle,
+  merge,
+  memoize,
 }

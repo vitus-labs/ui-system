@@ -3,32 +3,31 @@ import { darken } from 'polished'
 import { link as element } from '../base'
 
 const createState = (bgColor, color) => ({
-  base: {
-    bgColor,
-    borderColor: bgColor,
-    color
-  },
+  bgColor,
+  borderColor: bgColor,
+  color,
+
   hover: {
     bgColor: darken(0.1, bgColor),
     borderColor: bgColor,
-    color
+    color,
   },
   active: {
     bgColor: darken(0.15, bgColor),
     borderColor: bgColor,
-    color
-  }
+    color,
+  },
 })
 
 const createSize = (height, fontSize) => ({
   height: `${height}px`,
-  fontSize: `${fontSize}px`
+  fontSize: `${fontSize}px`,
 })
 
 export default element
   .config({ name: 'base/Button' })
   .styles(
-    css => css`
+    (css) => css`
       outline: none;
       cursor: pointer;
       white-space: nowrap;
@@ -37,15 +36,15 @@ export default element
   .attrs({
     useDefaultOutline: true,
     useDefaultHover: true,
-    contentAlignX: 'center'
+    contentAlignX: 'center',
   })
-  .theme(t => ({
+  .theme((t) => ({
     borderStyle: 'solid',
     borderWidth: t.borderWidth.base,
     borderRadius: t.borderRadius.base,
     transition: t.transition.base,
     marginX: 0,
-    marginY: t.spacing.base
+    marginY: t.spacing.base,
   }))
   .multiple({ outline: true })
   .sizes({
@@ -53,9 +52,9 @@ export default element
     sm: createSize(32, 14),
     md: createSize(38, 15),
     lg: createSize(48, 16),
-    xl: createSize(54, 22)
+    xl: createSize(54, 22),
   })
-  .states(t => ({
+  .states((t) => ({
     base: createState(t.color.primary, t.color.white),
     primary: createState(t.color.primary, t.color.white),
     light: createState(t.color.light, t.color.gray900),
@@ -64,21 +63,20 @@ export default element
     google: createState(t.color.google, t.color.white),
     facebook: createState(t.color.facebook, t.color.white),
     link: {
-      base: {
-        bgColor: t.color.transparent,
-        borderColor: t.color.transparent,
-        color: t.color.gray900,
-        fontWeight: t.fontWeight.bolder
-      },
+      bgColor: t.color.transparent,
+      borderColor: t.color.transparent,
+      color: t.color.gray900,
+      fontWeight: t.fontWeight.bolder,
+
       hover: {
         bgColor: 'rgba(0,0,0,0.04)',
         borderColor: t.color.transparent,
-        color: t.color.gray900
+        color: t.color.gray900,
       },
       active: {
         bgColor: t.color.transparent,
         borderColor: t.color.transparent,
-        color: t.color.gray900
-      }
-    }
+        color: t.color.gray900,
+      },
+    },
   }))

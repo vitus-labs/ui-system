@@ -5,18 +5,21 @@ const parseJSON = (object) => {
   let result = {}
   try {
     result = JSON.parse(object)
-  } catch (e) {}
+  } catch (e) {
+    // don't show error
+  }
 
   return result
 }
 
-interface Props {
-  children: React.ReactNode
+export type Props = {
+  children: Parameters<typeof renderContent>[0]
   className?: string | string[]
-  style?: object
+  style?: Record<string, unknown>
 }
 
 const Element = forwardRef<any, Props>(
+  // @ts-ignore
   ({ children, className, style }, ref) => {
     const passProps = parseJSON(
       JSON.stringify({

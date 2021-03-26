@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { config } from '@vitus-labs/core'
 import type { ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import Styled from './styled'
+import type { ExtendCss } from '~/types'
 
-type Props = Partial<{
+export type Props = Partial<{
   paragraph: boolean
   label: ReactNode
   children: ReactNode
   tag: StyledComponentPropsWithRef<any>
+  extendCss: ExtendCss
 }>
 
 const Element: React.FC<Props> & { isText: boolean } = ({
@@ -16,20 +18,19 @@ const Element: React.FC<Props> & { isText: boolean } = ({
   label,
   children,
   tag,
+  extendCss,
   ...props
 }) => {
-  const result = (as = undefined) => (
-    <Styled as={as} {...props}>
+  const renderContent = (as = undefined) => (
+    <Styled as={as} $text={{ extraStyles: extendCss }} {...props}>
       {children || label}
     </Styled>
   )
 
-  if (config.isWeb) {
-    const finalTag = paragraph ? 'p' : tag
-    return result(finalTag)
-  }
+  // eslint-disable-next-line no-nested-ternary
+  const finalTag = __WEB__ ? (paragraph ? 'p' : tag) : undefined
 
-  return result()
+  return renderContent(finalTag)
 }
 
 Element.displayName = 'vitus-labs/elements/Text'

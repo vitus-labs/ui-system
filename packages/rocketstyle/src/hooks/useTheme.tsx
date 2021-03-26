@@ -1,57 +1,35 @@
-// @ts-nocheck
 import { config } from '@vitus-labs/core'
-import { calculateChainOptions } from '../utils'
+import { calculateChainOptions, calculateDimensionThemes } from '~/utils/theme'
+import { calculateDimensionsMap } from '~/utils/dimensions'
+import type { Configuration, __ROCKETSTYLE__ } from '~/types/configuration'
+import type { ThemeMode } from '~/types/theme'
 
-// --------------------------------------------------------
-// helpers
-// --------------------------------------------------------
-const generateKeys = (context, theme, config) => {
-  config.dimensionKeys.forEach((item) => {
-    context[item] = Object.keys(theme[item])
+type UseTheme = <T extends Record<string, unknown>>({
+  theme,
+  options,
+  cb,
+}: {
+  theme: T
+  options: Configuration
+  cb: ThemeMode
+}) => __ROCKETSTYLE__
+
+const useTheme: UseTheme = ({ theme, options, cb }) => {
+  const themes = calculateDimensionThemes(theme, options, cb)
+  const { keysMap, keywords } = calculateDimensionsMap({
+    themes,
+    useBooleans: options.useBooleans,
   })
-}
 
-const generateThemes = (context, theme, options) => {
-  options.dimensionKeys.forEach((item) => {
-    context[item] = calculateChainOptions(options[item], theme, config.css)
-  })
-}
-
-const useTheme = ({ theme, options }) => {
-  // define empty objects so they can be reassigned later
+  // eslint-disable-next-line no-underscore-dangle
   const __ROCKETSTYLE__ = {
-    keys: {},
-    themes: {},
+    dimensions: keysMap,
+    reservedPropNames: keywords,
+    baseTheme: calculateChainOptions(options.theme, [theme, cb, config.css]),
+    themes,
   }
 
-  __ROCKETSTYLE__.themes.base = calculateChainOptions(
-    options.theme,
-    theme,
-    config.css
-  )
-
-  generateThemes(__ROCKETSTYLE__.themes, theme, options)
-  generateKeys(__ROCKETSTYLE__.keys, __ROCKETSTYLE__.themes, options)
-
-  __ROCKETSTYLE__.rocketConfig = {}
-  __ROCKETSTYLE__.rocketConfig.dimensions = options.dimensions
-  __ROCKETSTYLE__.rocketConfig.useBooleans = options.useBooleans
-
-  __ROCKETSTYLE__.KEYWORDS = []
-
-  options.dimensionKeys.forEach((item) => {
-    __ROCKETSTYLE__.KEYWORDS = [
-      ...__ROCKETSTYLE__.KEYWORDS,
-      ...__ROCKETSTYLE__.keys[item],
-    ]
-  })
-
-  __ROCKETSTYLE__.KEYWORDS = [
-    ...__ROCKETSTYLE__.KEYWORDS,
-    ...options.dimensionValues,
-  ]
-
-  return { __ROCKETSTYLE__ }
+  return __ROCKETSTYLE__
 }
 
 export default useTheme

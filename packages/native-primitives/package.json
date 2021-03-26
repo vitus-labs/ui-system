@@ -1,6 +1,7 @@
 {
   "name": "@vitus-labs/native-primitives",
-  "version": "0.7.3",
+  "version": "0.10.9-alpha.109",
+  "private": true,
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -38,10 +39,11 @@
   },
   "scripts": {
     "prepublish": "yarn build",
-    "build": "rm -rf lib && yarn rollup -c",
-    "docs:dev": "docz dev",
-    "docs:build": "docz build",
-    "lint": "yarn lint:css && yarn lint:js",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
@@ -55,6 +57,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rollup": "*"
+    "@vitus-labs/tools-babel": "0.6.4",
+    "@vitus-labs/tools-rollup": "0.6.4",
+    "@vitus-labs/tools-typescript": "0.6.4"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/coolgrid",
-  "version": "0.7.7",
+  "version": "0.10.9-alpha.109",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -11,6 +11,7 @@
   "main": "lib/vitus-labs-coolgrid.js",
   "umd:main": "lib/vitus-labs-coolgrid.umd.js",
   "module": "lib/vitus-labs-coolgrid.module.js",
+  "typings": "lib/types/index.d.ts",
   "browser": {
     "./lib/vitus-labs-coolgrid.js": "./lib/vitus-labs-coolgrid.js",
     "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.module.js"
@@ -31,6 +32,9 @@
     "extensible",
     "coolgrid"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vitus-labs/vitus-labs"
@@ -39,18 +43,13 @@
     "url": "https://github.com/vitus-labs/vitus-labs/issues"
   },
   "scripts": {
-    "dev": "yarn vl_run-stories",
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
-    "build": "yarn clean && yarn rollup -c",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook -o docs/storybook",
-    "docs:dev": "docz dev",
-    "docs:build": "docz build",
-    "clean": "rm -rf lib",
-    "lint": "yarn lint:css && yarn lint:js",
-    "lint:css": "stylelint './src/**/*.js*'",
-    "lint:js": "eslint src",
-    "lint:ts": "tslint -p ./tsconfig.json \"./src/**/*.ts*\"",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
@@ -59,13 +58,14 @@
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 16.7"
+    "react": ">= 16.8"
   },
   "devDependencies": {
-    "@vitus-labs/core": "*",
-    "@vitus-labs/tools-docz": "*",
-    "@vitus-labs/tools-rollup": "*",
-    "@vitus-labs/tools-storybook": "*",
-    "@vitus-labs/unistyle": "*"
+    "@vitus-labs/core": "^0.10.9-alpha.109",
+    "@vitus-labs/tools-babel": "^0.6.4",
+    "@vitus-labs/tools-rollup": "^0.6.4",
+    "@vitus-labs/tools-storybook": "^0.6.3",
+    "@vitus-labs/tools-typescript": "^0.6.4",
+    "@vitus-labs/unistyle": "^0.10.9-alpha.109"
   }
 }

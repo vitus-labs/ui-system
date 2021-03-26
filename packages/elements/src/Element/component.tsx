@@ -1,21 +1,25 @@
 import React, { forwardRef, useMemo } from 'react'
-import { config, renderContent } from '@vitus-labs/core'
+import { renderContent } from '@vitus-labs/core'
 import { Wrapper, Content } from '~/helpers'
 import {
   transformVerticalProp,
-  calculateSubTag,
+  isInlineElement,
   getShouldBeEmpty,
 } from './utils'
-import { AlignX, AlignY, Direction } from '~/types'
 import type { Props } from './types'
 
+const defaultDirection = 'inline'
+const defaultAlignX = 'left'
+const defaultAlignY = 'center'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Component = forwardRef<any, Props>(
   (
     {
       innerRef,
       tag,
-      // @ts-ignore
       label,
+      content,
       children,
       beforeContent,
       afterContent,
@@ -25,26 +29,26 @@ const Component = forwardRef<any, Props>(
       gap,
 
       vertical,
-      direction = 'inline',
-      alignX = 'left',
-      alignY = 'center',
+      direction,
+      alignX = defaultAlignX,
+      alignY = defaultAlignY,
 
       css,
       contentCss,
       beforeContentCss,
       afterContentCss,
 
-      contentDirection = 'inline',
-      contentAlignX = 'left',
-      contentAlignY = 'center',
+      contentDirection = defaultDirection,
+      contentAlignX = defaultAlignX,
+      contentAlignY = defaultAlignY,
 
-      beforeContentDirection = 'inline',
-      beforeContentAlignX = 'left',
-      beforeContentAlignY = 'center',
+      beforeContentDirection = defaultDirection,
+      beforeContentAlignX = defaultAlignX,
+      beforeContentAlignY = defaultAlignY,
 
-      afterContentDirection = 'inline',
-      afterContentAlignX = 'left',
-      afterContentAlignY = 'center',
+      afterContentDirection = defaultDirection,
+      afterContentAlignX = defaultAlignX,
+      afterContentAlignY = defaultAlignY,
 
       ...props
     },
@@ -53,11 +57,9 @@ const Component = forwardRef<any, Props>(
     // --------------------------------------------------------
     // check if should render only single element
     // --------------------------------------------------------
-    const shouldBeEmpty = useMemo(
-      () =>
-        getShouldBeEmpty(tag, config.isWeb) || props.dangerouslySetInnerHTML,
-      [tag, props.dangerouslySetInnerHTML]
-    )
+    const shouldBeEmpty =
+      !!props.dangerouslySetInnerHTML ||
+      (__WEB__ && tag && getShouldBeEmpty(tag))
 
     // --------------------------------------------------------
     // common wrapper props
@@ -82,28 +84,53 @@ const Component = forwardRef<any, Props>(
     // if not single element, calculate values
     // --------------------------------------------------------
     const isSimple = !beforeContent && !afterContent
-    const CHILDREN = children || label
-    const SUB_TAG = useMemo(() => calculateSubTag(tag, config.isWeb), [tag])
+    const CHILDREN = children || content || label
+
+    const isInline = __WEB__ ? isInlineElement(tag) : false
+    const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
 
     // --------------------------------------------------------
-    // direction & alignX calculations
+    // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    let wrapperDirection: Direction = direction
-    let wrapperAlignX: AlignX = alignX
-    let wrapperAlignY: AlignY = alignY
+    const calculateDirection = () => {
+      let wrapperDirection: typeof direction
+      let wrapperAlignX: typeof alignX = alignX
+      let wrapperAlignY: typeof alignY = alignY
 
-    if (isSimple) {
-      if (contentDirection) wrapperDirection = contentDirection
-      if (contentAlignX) wrapperAlignX = contentAlignX
-      if (contentAlignY) wrapperAlignY = contentAlignY
+      if (isSimple) {
+        if (contentDirection) wrapperDirection = contentDirection
+        if (contentAlignX) wrapperAlignX = contentAlignX
+        if (contentAlignY) wrapperAlignY = contentAlignY
+      } else if (direction) {
+        wrapperDirection = direction
+      } else if (vertical !== undefined && vertical !== null) {
+        wrapperDirection = transformVerticalProp(vertical)
+      } else {
+        wrapperDirection = defaultDirection
+      }
+
+      return { wrapperDirection, wrapperAlignX, wrapperAlignY }
     }
 
-    if (vertical) wrapperDirection = transformVerticalProp(vertical)
+    const {
+      wrapperDirection,
+      wrapperAlignX,
+      wrapperAlignY,
+    } = calculateDirection()
+
+    const beforeContentRender = useMemo(() => renderContent(beforeContent), [
+      beforeContent,
+    ])
+
+    const afterContentRender = useMemo(() => renderContent(afterContent), [
+      afterContent,
+    ])
 
     return (
       <Wrapper
         {...props}
         {...WRAPPER_PROPS}
+        isInline={isInline}
         direction={wrapperDirection}
         alignX={wrapperAlignX}
         alignY={wrapperAlignY}
@@ -120,11 +147,13 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {renderContent(beforeContent)}
+            {beforeContentRender}
           </Content>
         )}
 
-        {beforeContent || afterContent ? (
+        {isSimple ? (
+          renderContent(CHILDREN)
+        ) : (
           <Content
             tag={SUB_TAG}
             contentType="content"
@@ -134,12 +163,9 @@ const Component = forwardRef<any, Props>(
             alignX={contentAlignX}
             alignY={contentAlignY}
             equalCols={equalCols}
-            isContent
           >
             {renderContent(CHILDREN)}
           </Content>
-        ) : (
-          renderContent(CHILDREN)
         )}
 
         {afterContent && (
@@ -154,7 +180,7 @@ const Component = forwardRef<any, Props>(
             equalCols={equalCols}
             gap={gap}
           >
-            {renderContent(afterContent)}
+            {renderContent(afterContentRender)}
           </Content>
         )}
       </Wrapper>

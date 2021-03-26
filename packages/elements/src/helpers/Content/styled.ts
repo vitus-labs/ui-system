@@ -2,43 +2,39 @@ import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
   alignContent,
-  extendedCss,
+  extendCss,
   value,
 } from '@vitus-labs/unistyle'
 
+// --------------------------------------------------------
+// calculate spacing between before / content / after
+// --------------------------------------------------------
 const calculateGap = ({ direction, type, value, css }) => {
-  if (direction === 'inline') {
-    if (type === 'before')
-      return css`
-        margin-right: ${value};
-      `
+  if (!direction || !type) return undefined
 
-    if (type === 'after')
-      return css`
-        margin-left: ${value};
-      `
+  const data = {
+    inline: {
+      before: 'margin-right',
+      after: 'margin-left',
+    },
+    rows: {
+      before: 'margin-bottom',
+      after: 'margin-top',
+    },
   }
 
-  if (direction === 'rows') {
-    if (type === 'before')
-      return css`
-        margin-bottom: ${value};
-      `
+  const finalStyles = `${data[direction][type]}: ${value};`
 
-    if (type === 'after')
-      return css`
-        margin-top: ${value};
-      `
-  }
-
-  return ''
+  return css`
+    ${finalStyles};
+  `
 }
 
+// --------------------------------------------------------
+// calculations of styles to be rendered
+// --------------------------------------------------------
 const styles = ({ css, theme: t, rootSize }) => css`
-  ${t.direction &&
-  t.alignX &&
-  t.alignY &&
-  alignContent({
+  ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,
@@ -51,21 +47,21 @@ const styles = ({ css, theme: t, rootSize }) => css`
 
   ${t.gap &&
   css`
-    ${({ contentType }) =>
+    ${({ $contentType }) =>
       calculateGap({
         direction: t.parentDirection,
-        type: contentType,
+        type: $contentType,
         value: value(rootSize, [t.gap]),
         css,
       })}
   `};
 
-  ${t.extendCss && extendedCss(t.extendCss)};
+  ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
 export default config.styled(config.component)`
   ${
-    config.isWeb &&
+    __WEB__ &&
     config.css`
       box-sizing: border-box;
     `
@@ -73,12 +69,18 @@ export default config.styled(config.component)`
 
   display: flex;
   align-self: stretch;
+  flex-wrap: wrap;
 
-  ${({ isContent }) =>
-    isContent &&
+  ${({ $contentType }) =>
+    $contentType === 'content' &&
     config.css`
     flex: 1;
   `};
 
-  ${makeItResponsive({ key: '$element', styles, css: config.css })};
+  ${makeItResponsive({
+    key: '$element',
+    styles,
+    css: config.css,
+    normalize: true,
+  })};
 `

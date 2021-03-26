@@ -1,3 +1,4 @@
+import React from 'react'
 import Container from '../Container'
 import Row from '../Row'
 import Col from '../Col'
@@ -14,84 +15,84 @@ const columnCss1 = (css) => css`
   padding: 20px;
 `
 
-storiesOf('COOLGRID | Context usage', module)
-  .add('Define gap and size on Container', () => {
-    return (
-      <Container gap={10} size={4} colCss={columnCss}>
-        <Row>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-        </Row>
-        <Row>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-        </Row>
-      </Container>
-    )
-  })
-  .add('Define gap and size on Rows', () => {
-    return (
-      <Container colCss={columnCss}>
-        <Row gap={10} size={4}>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-        </Row>
-        <Row gap={20} size={3}>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-        </Row>
-      </Container>
-    )
-  })
-  .add('Different Col styles', () => {
-    return (
-      <Container colCss={columnCss}>
-        <Row>
-          <Col>gap-0</Col>
-          <Col>gap-0</Col>
-          <Col>gap-0</Col>
-          <Col>gap-0</Col>
-          <Col>gap-0</Col>
-        </Row>
-        <Row gap={10} colCss={columnCss1}>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-          <Col>gap-10</Col>
-        </Row>
-        <Row gap={20}>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-          <Col>gap-20</Col>
-        </Row>
-        <Row gap={20} colCss={columnCss1}>
-          <Col>gap-30</Col>
-          <Col>gap-30</Col>
-          <Col>gap-30</Col>
-          <Col>gap-30</Col>
-          <Col>gap-30</Col>
-        </Row>
-        <Row gap={40}>
-          <Col>gap-40</Col>
-          <Col>gap-40</Col>
-          <Col>gap-40</Col>
-          <Col>gap-40</Col>
-          <Col>gap-40</Col>
-        </Row>
-      </Container>
-    )
-  })
+export default {
+  component: Container,
+  title: 'Context usage',
+}
+
+export const defineGapAndSizeOnContainer = () => (
+  <Container gap={{ xs: 20, lg: 30 }} size={4} padding={40} colCss={columnCss}>
+    <Row>
+      <Col size={0}>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+    </Row>
+    <Row>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+    </Row>
+  </Container>
+)
+
+export const defineGapAndSizeOnRows = () => (
+  <Container colCss={columnCss}>
+    <Row gap={10} size={4}>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+    </Row>
+    <Row gap={20} size={3}>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+    </Row>
+  </Container>
+)
+
+export const differentColStyles = () => (
+  <Container colCss={columnCss}>
+    <Row>
+      <Col>gap-0</Col>
+      <Col>gap-0</Col>
+      <Col>gap-0</Col>
+      <Col>gap-0</Col>
+      <Col>gap-0</Col>
+    </Row>
+    <Row gap={10} colCss={columnCss1}>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+      <Col>gap-10</Col>
+    </Row>
+    <Row gap={20}>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+      <Col>gap-20</Col>
+    </Row>
+    <Row gap={30} colCss={columnCss1}>
+      <Col>gap-30</Col>
+      <Col>gap-30</Col>
+      <Col>gap-30</Col>
+      <Col>gap-30</Col>
+      <Col>gap-30</Col>
+    </Row>
+    <Row gap={40}>
+      <Col>gap-40</Col>
+      <Col>gap-40</Col>
+      <Col>gap-40</Col>
+      <Col>gap-40</Col>
+      <Col>gap-40</Col>
+    </Row>
+  </Container>
+)

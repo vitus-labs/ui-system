@@ -1,10 +1,19 @@
-import { createElement, isValidElement, cloneElement, Children } from 'react'
+import {
+  createElement,
+  isValidElement,
+  cloneElement,
+  Children,
+  ReactNode,
+  ComponentType,
+} from 'react'
 import isEmpty from './isEmpty'
 
-const renderContent: (
-  content?: React.ReactElement,
+export type RenderContent = (
+  content?: ReactNode | ComponentType,
   attachProps?: Record<string, any>
-) => React.ReactElement = (content, attachProps = {}) => {
+) => ReactNode
+
+const renderContent: RenderContent = (content, attachProps = {}) => {
   if (!content) return null
 
   if (Array.isArray(content)) {
@@ -12,6 +21,7 @@ const renderContent: (
   }
 
   if (typeof content === 'function') {
+    // @ts-ignore
     return createElement(content, attachProps)
   }
 
@@ -23,9 +33,10 @@ const renderContent: (
     return cloneElement(Children.only(content), attachProps)
   }
 
-  if (typeof content === 'object') {
+  if (typeof content === 'object' && !isEmpty(content)) {
     // FIXME: quick fix for rendering invalid elements
     // no idea of what is going on here yet
+    // @ts-ignore
     return createElement(content, attachProps)
   }
 

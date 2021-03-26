@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import Element from '~/Element'
 import { Wrapper, Inner } from './components'
 

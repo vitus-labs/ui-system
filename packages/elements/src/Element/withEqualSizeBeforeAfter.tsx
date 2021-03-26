@@ -1,15 +1,25 @@
-import React, { useEffect, createRef, ReactNode } from 'react'
+/* eslint-disable no-param-reassign */
+import React, { createRef } from 'react'
 import { get } from '@vitus-labs/core'
-import { ExtractProps } from '~/types'
+import type { SimpleHoc } from '~/types'
 
-const isNumber = (a: any, b: any) => Number.isInteger(a) && Number.isInteger(b)
+const isNumber = (a: unknown, b: unknown) =>
+  Number.isInteger(a) && Number.isInteger(b)
 
 const types = {
   height: 'offsetHeight',
   width: 'offsetWidth',
 }
 
-const calculate = ({ beforeContent, afterContent }) => (
+type Calculate = ({
+  beforeContent,
+  afterContent,
+}: {
+  beforeContent: HTMLElement
+  afterContent: HTMLElement
+}) => (type: 'height' | 'width') => void
+
+const calculate: Calculate = ({ beforeContent, afterContent }) => (
   type: keyof typeof types
 ) => {
   const beforeContentSize = get(beforeContent, types[type])
@@ -33,18 +43,11 @@ type Props = Partial<{
   beforeContent?: React.ReactNode
 }>
 
-const withEqualBeforeAfter = <T extends {}>(
-  WrappedComponent: React.ComponentType<T>
-): {
-  (props: T & Props & ExtractProps<typeof WrappedComponent>): JSX.Element
-  displayName?: string
-} => {
-  type EnhancedProps = T & Props & ExtractProps<typeof WrappedComponent>
-
+const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props: EnhancedProps) => {
+  const Enhanced = (props) => {
     const {
       equalBeforeAfter,
       vertical,
@@ -63,13 +66,11 @@ const withEqualBeforeAfter = <T extends {}>(
       else updateElement('width')
     }
 
-    useEffect(() => {
-      calculateSize()
-    }, [equalBeforeAfter, beforeContent, afterContent])
+    if (equalBeforeAfter) calculateSize()
 
     return (
       <WrappedComponent
-        {...(rest as EnhancedProps)}
+        {...rest}
         afterContent={afterContent}
         beforeContent={beforeContent}
         ref={elementRef}

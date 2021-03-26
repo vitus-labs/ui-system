@@ -21,19 +21,16 @@ const RightContent = config.styled.span`
   line-height: 1;
   transition: all 0.15s ease-in-out;
 
-  ${({ hover }) => {
-    return (
-      hover &&
-      config.css`
+  ${({ hover }) =>
+    hover &&
+    config.css`
         &:hover {
           background-color: black;
         };
-      `
-    )
-  }};
+      `};
 `
 
-const Button = rocketstyle()({ name: 'Button', component: Element })
+const Button = rocketstyle()()({ name: 'Button', component: Element })
   .attrs({
     primary: true,
     tag: 'button',

@@ -1,101 +1,65 @@
-import React, { forwardRef, useMemo, ReactNode, Ref } from 'react'
-import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { memo, VFC, ReactNode } from 'react'
+import type { StyledComponentPropsWithRef } from 'styled-components'
 import {
   Direction,
   AlignX,
   AlignY,
   ResponsiveBooltype,
   Responsive,
+  ExtendCss,
 } from '~/types'
 import Styled from './styled'
-
-const KEYWORDS = [
-  'parentDirection',
-  'direction',
-  'alignX',
-  'alignY',
-  'equalCols',
-  'gap',
-  'extendCss',
-]
 
 type Props = {
   parentDirection: Direction
   gap: Responsive
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
-  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  tag: StyledComponentPropsWithRef<any>
   direction: Direction
   alignX: AlignX
   alignY: AlignY
   equalCols: ResponsiveBooltype
-  extendCss: any
-  isContent?: boolean
+  extendCss: ExtendCss
 }
-type Reference = Ref<HTMLElement>
 
-const Component = forwardRef<Reference, Partial<Props>>(
-  (
-    {
-      tag,
-      parentDirection,
-      direction,
-      alignX,
-      alignY,
-      equalCols,
-      gap,
-      extendCss,
-      ...props
-    },
-    ref
-  ) => {
-    const stylingProps = {
-      parentDirection,
-      direction,
-      alignX,
-      alignY,
-      equalCols,
-      gap,
-      extendCss,
-    }
+const component: VFC<Partial<Props>> = ({
+  contentType,
+  tag,
+  parentDirection,
+  direction,
+  alignX,
+  alignY,
+  equalCols,
+  gap,
+  extendCss,
+  ...props
+}) => {
+  const debugProps =
+    process.env.NODE_ENV !== 'production'
+      ? {
+          'data-vl-element': contentType,
+        }
+      : {}
 
-    const debugProps =
-      process.env.NODE_ENV !== 'production'
-        ? {
-            'data-vl-element': props.contentType,
-          }
-        : {}
-
-    const { sortedBreakpoints } = vitusContext()
-    const normalizedTheme = useMemo(
-      () =>
-        optimizeTheme({
-          breakpoints: sortedBreakpoints,
-          keywords: KEYWORDS,
-          props: stylingProps,
-        }),
-      [
-        sortedBreakpoints,
+  return (
+    <Styled
+      as={tag}
+      $contentType={contentType}
+      $element={{
         parentDirection,
         direction,
         alignX,
         alignY,
         equalCols,
         gap,
-        extendCss,
-      ]
-    )
+        extraStyles: extendCss,
+      }}
+      {...debugProps}
+      {...props}
+    />
+  )
+}
 
-    return (
-      <Styled
-        ref={ref}
-        as={tag}
-        $element={normalizedTheme}
-        {...debugProps}
-        {...props}
-      />
-    )
-  }
-)
-
-export default Component
+export default memo(component)

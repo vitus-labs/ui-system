@@ -1,35 +1,99 @@
-import alignContent from './alignContent'
-import breakpoints from './breakpoints'
-import vitusContext from './context'
-import extendedCss from './extendedCss'
-import makeItResponsive, {
-  sortBreakpoints,
+import Provider, { context, TProvider } from './context'
+
+// --------------------------------------------------------
+// REACT HOOKS
+// --------------------------------------------------------
+import { useWindowResize, UseWindowResize } from '~/hooks'
+
+// --------------------------------------------------------
+// RESPONSIVE UTILITIES
+// --------------------------------------------------------
+import {
+  breakpoints,
   createMediaQueries,
-  transformTheme,
-} from './mediaQueries'
-import optimizeTheme, {
-  pickThemeProps,
+  makeItResponsive,
   normalizeTheme,
-  groupByBreakpoint,
-} from './optimizeTheme'
-import styles, { stripUnit, normalizeUnit, value, getValueOf } from './styles'
+  sortBreakpoints,
+  transformTheme,
+  Breakpoints,
+  CreateMediaQueries,
+  MakeItResponsive,
+  MakeItResponsiveStyles,
+  NormalizeTheme,
+  SortBreakpoints,
+  TransformTheme,
+} from '~/responsive'
+
+// --------------------------------------------------------
+// STYLES
+// --------------------------------------------------------
+import {
+  styles,
+  alignContent,
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  extendCss,
+  Styles,
+  StylesTheme,
+  AlignContent,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
+  ExtendCss,
+} from './styles'
+
+// --------------------------------------------------------
+// UNITS UTILITIES
+// --------------------------------------------------------
+import {
+  stripUnit,
+  normalizeUnit,
+  value,
+  StripUnit,
+  NormalizeUnit,
+  Value,
+} from '~/units'
+
+export type {
+  TProvider,
+  Breakpoints,
+  UseWindowResize,
+  CreateMediaQueries,
+  MakeItResponsive,
+  MakeItResponsiveStyles,
+  NormalizeTheme,
+  SortBreakpoints,
+  TransformTheme,
+  Styles,
+  StylesTheme,
+  AlignContent,
+  AlignContentAlignXKeys,
+  AlignContentAlignYKeys,
+  AlignContentDirectionKeys,
+  ExtendCss,
+  StripUnit,
+  NormalizeUnit,
+  Value,
+}
 
 export {
-  alignContent,
   breakpoints,
-  vitusContext,
-  extendedCss,
+  Provider,
+  context,
+  useWindowResize,
   makeItResponsive,
   sortBreakpoints,
   createMediaQueries,
   transformTheme,
-  optimizeTheme,
-  pickThemeProps,
   normalizeTheme,
-  groupByBreakpoint,
   styles,
+  alignContent,
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  extendCss,
   stripUnit,
   normalizeUnit,
   value,
-  getValueOf,
 }

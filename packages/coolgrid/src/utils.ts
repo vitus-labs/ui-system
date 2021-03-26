@@ -1,31 +1,16 @@
-import { pick, get } from '@vitus-labs/core'
+import { omit } from '@vitus-labs/core'
+import { CONTEXT_KEYS } from '~/constants'
 
-// ------------------------------------------
-// create grid settings
-// ------------------------------------------
-export const createGridContext = (props = {}, ctx = {}, theme = {}) => ({
-  breakpoints:
-    get(props, 'breakpoints') ||
-    get(ctx, 'breakpoints') ||
-    get(theme, 'breakpoints') ||
-    get(theme, 'grid.breakpoints'),
-  rootSize:
-    get(props, 'rootSize') ||
-    get(ctx, 'rootSize') ||
-    get(theme, 'rootSize') ||
-    get(theme, 'grid.rootSize'),
-  columns:
-    get(props, 'columns') || get(ctx, 'columns') || get(theme, 'grid.columns'),
-})
+type BoolFunc = (value: unknown) => boolean
 
-// ------------------------------------------
-// merging utility
-// ------------------------------------------
-export const merge = (props = {}, ctx = {}, reservedKeys) => {
-  if (!reservedKeys) return { ...ctx, ...props }
+export const isNumber: BoolFunc = (value) => Number.isFinite(value)
+export const hasValue: BoolFunc = (value) => isNumber(value) && value > 0
+export const isVisible: BoolFunc = (value) =>
+  (isNumber(value) && value !== 0) || value === undefined
 
-  return {
-    ...pick(ctx, reservedKeys),
-    ...pick(props, reservedKeys),
-  }
-}
+type HasWidth = (size: unknown, columns: unknown) => boolean
+export const hasWidth: HasWidth = (size, columns) =>
+  !!(hasValue(size) && hasValue(columns))
+
+type OmitCtxKeys = (props?: Record<string, unknown>) => ReturnType<typeof omit>
+export const omitCtxKeys: OmitCtxKeys = (props) => omit(props, CONTEXT_KEYS)

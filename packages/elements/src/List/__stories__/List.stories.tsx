@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import React, { FC } from 'react'
 import Element from '~/Element'
 import List, { withActiveState } from '~/List'
 
@@ -52,15 +53,9 @@ export const listUsingWrappComponent = () => {
 
 export const dataAsAnArrayOfStrings = () => {
   const data = ['a', 'b', null, undefined, 'c', 'd']
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        {name} {surname}
-      </span>
-    )
-  }
+  const Item = ({ label, ...props }) => <span {...props}>{label}</span>
 
-  return <List data={data} component={Item} />
+  return <List data={data} component={Item} valueName="label" />
 }
 
 export const dataAsAnArrayOfObjects = () => {
@@ -74,13 +69,11 @@ export const dataAsAnArrayOfObjects = () => {
     { name: 'd' },
   ]
 
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        {name} - {surname}
-      </span>
-    )
-  }
+  const Item = ({ name, surname, ...props }) => (
+    <span {...props}>
+      {name} - {surname}
+    </span>
+  )
 
   return <List data={data} component={Item} />
 }
@@ -90,13 +83,11 @@ export const ItemPropsAsAnObject = () => {
   const itemProps = {
     surname: 'hello',
   }
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        | {name} - {surname} |
-      </span>
-    )
-  }
+  const Item = ({ name, surname, ...props }) => (
+    <span {...props}>
+      | {name} - {surname} |
+    </span>
+  )
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }
@@ -106,26 +97,23 @@ export const ItemPropsAsAFunction = () => {
   const itemProps = () => ({
     surname: 'hello',
   })
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        {name} - {surname}
-      </span>
-    )
-  }
+  const Item = ({ name, surname, ...props }) => (
+    <span {...props}>
+      {name} - {surname}
+    </span>
+  )
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }
 
 export const renderCustomComponentInItem = () => {
-  const CustomComponent = () => <span>I&apos;m custom component</span>
-  const Item = ({ name, surname, ...props }) => {
-    return (
-      <span {...props}>
-        {name} {surname}
-      </span>
-    )
-  }
+  const CustomComponent: FC = () => <span>I&apos;m custom component</span>
+  const Item: FC = ({ name, surname, ...props }) => (
+    <span {...props}>
+      {name} {surname}
+    </span>
+  )
+
   const data = [
     { name: 'a' },
     { component: CustomComponent },
@@ -168,19 +156,18 @@ export const withSingleActiveState = () => {
     surname,
     handleItemActive,
     ...props
-  }) => {
-    return (
-      <button
-        {...props}
-        onClick={(e) => {
-          onClick(e)
-          handleItemActive()
-        }}
-      >
-        {name} {surname} {active ? 'yes' : 'no'}
-      </button>
-    )
-  }
+  }) => (
+    <button
+      type="button"
+      {...props}
+      onClick={(e) => {
+        onClick(e)
+        handleItemActive()
+      }}
+    >
+      {name} {surname} {active ? 'yes' : 'no'}
+    </button>
+  )
 
   return (
     <ActiveList
@@ -196,26 +183,23 @@ export const withSingleActiveState = () => {
 
 export const withMultipleActiveState = () => {
   const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
-  const itemProps = (props) => {
-    return {
-      onClick: () => {},
-      surname: 'hello',
-    }
-  }
+  const itemProps = () => ({
+    onClick: () => ({}),
+    surname: 'hello',
+  })
 
-  const Item = ({ onClick, active, name, surname, ...props }) => {
-    return (
-      <button
-        {...props}
-        onClick={(e) => {
-          onClick(e)
-          props.handleItemActive()
-        }}
-      >
-        {name} {surname} {active ? 'yes' : 'no'}
-      </button>
-    )
-  }
+  const Item = ({ onClick, active, name, surname, ...props }) => (
+    <button
+      type="button"
+      {...props}
+      onClick={(e) => {
+        onClick(e)
+        props.handleItemActive()
+      }}
+    >
+      {name} {surname} {active ? 'yes' : 'no'}
+    </button>
+  )
 
   return (
     <ActiveList

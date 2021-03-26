@@ -1,38 +1,49 @@
 import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
 
-export const transformVerticalProp = (vertical) => {
-  if (typeof vertical === 'boolean') {
+type Value<T = unknown> = T extends true ? 'rows' : 'inline'
+
+type TransformVerticalProp = <
+  T extends boolean | Record<string, boolean> | Array<boolean>
+>(
+  vertical: T
+) => T extends boolean
+  ? Value<T>
+  : T extends Record<string, boolean>
+  ? Record<keyof T, Value<T[keyof T]>>
+  : T extends Array<boolean>
+  ? Array<Value<T[number]>>
+  : T
+
+export const transformVerticalProp: TransformVerticalProp = (vertical) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (vertical == null) return undefined as any
+
+  const verticalType = typeof vertical
+
+  // vertical is a boolean value
+  if (verticalType === 'boolean') {
     return vertical ? 'rows' : 'inline'
   }
 
-  if (typeof vertical === 'object') {
-    const result = {}
-    Object.keys(vertical).forEach((item) => {
-      result[item] = vertical[item] ? 'rows' : 'inline'
-    })
-
-    return result
-  }
-
   if (Array.isArray(vertical)) {
-    return vertical.map((item) => (vertical ? 'rows' : 'inline'))
+    return (vertical as Array<boolean>).map((item) =>
+      item ? 'rows' : 'inline'
+    )
+  }
+
+  if (verticalType === 'object') {
+    return Object.keys(vertical).reduce((accumulator, item) => {
+      // eslint-disable-next-line no-param-reassign
+      accumulator[item] = vertical[item] ? 'rows' : 'inline'
+      return accumulator
+    }, {} as Record<string, 'rows' | 'inline'>)
   }
 
   return undefined
 }
 
-export const calculateSubTag = (tag, isWeb) => {
-  if (isWeb) {
-    return INLINE_ELEMENTS.includes(tag) ? 'span' : 'div'
-  }
+type GetValue = (tag: string) => boolean | undefined
 
-  return undefined
-}
+export const isInlineElement: GetValue = (tag) => INLINE_ELEMENTS[tag]
 
-export const getShouldBeEmpty = (tag, isWeb) => {
-  if (isWeb) {
-    return EMPTY_ELEMENTS.includes(tag)
-  }
-
-  return undefined
-}
+export const getShouldBeEmpty: GetValue = (tag) => EMPTY_ELEMENTS[tag]

@@ -1,68 +1,24 @@
-import { Context } from 'react'
+import { Context, createContext } from 'react'
 import styled, { css, ThemeContext } from 'styled-components'
 
+const context = createContext<any>({})
+
 interface Internal {
-  css: import('styled-components').ThemedCssFunction<object>
-  styled: import('styled-components').ThemedStyledInterface<
-    import('styled-components').DefaultTheme
-  >
-  context: Context<any>
-  platform: 'web' | 'native'
+  css: typeof css
+  styled: typeof styled
+  styledContext: Context<Partial<Record<string, unknown>>>
+  context: Context<Partial<Record<string, unknown>>>
+  component: any
+  textComponent: any
 }
 
-const internal: Internal & { [key: string]: any } = {
+const internal: Internal = Object.freeze({
   css,
   styled,
-  context: ThemeContext,
-  platform: 'web',
+  styledContext: ThemeContext,
+  context,
   component: 'div',
   textComponent: 'span',
-}
+})
 
-const init = ({ platform, component, textComponent }) => {
-  internal.platform = platform
-  internal.component = component
-  internal.textComponent = textComponent
-}
-
-// interface Config {
-//   readonly platform: 'web' | 'native'
-//   readonly isWeb: boolean
-//   readonly isNative: boolean
-//   readonly context: Context<any>
-//   readonly styled: ThemedStyledInterface<DefaultTheme>
-//   readonly css: ThemedCssFunction<object>
-//   readonly withTheme: BaseWithThemeFnInterface<object>
-//   readonly component: string
-//   readonly textComponent: string
-// }
-
-const config = {
-  get platform() {
-    return internal.platform
-  },
-  get isWeb() {
-    return internal.platform === 'web'
-  },
-  get isNative() {
-    return internal.platform !== 'web'
-  },
-  get context() {
-    return internal.context
-  },
-  get styled() {
-    return internal.styled
-  },
-  get css() {
-    return internal.css
-  },
-  get component() {
-    return internal.component
-  },
-  get textComponent() {
-    return internal.textComponent
-  },
-}
-
-export { init }
-export default config
+export default internal

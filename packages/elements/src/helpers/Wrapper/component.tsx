@@ -1,28 +1,32 @@
-import React, { forwardRef, useMemo, ReactNode } from 'react'
-import { config, pick } from '@vitus-labs/core'
-import { vitusContext, optimizeTheme } from '@vitus-labs/unistyle'
-import { Direction, AlignX, AlignY, ResponsiveBooltype } from '~/types'
-import { isFixNeeded } from './utils'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { forwardRef, ReactNode } from 'react'
+import type { StyledComponentPropsWithRef } from 'styled-components'
+import {
+  Direction,
+  AlignX,
+  AlignY,
+  ResponsiveBooltype,
+  ExtendCss,
+} from '~/types'
+import { isWebFixNeeded } from './utils'
 import Styled from './styled'
 
-const KEYWORDS_WRAPPER = ['block', 'extendCss']
-const KEYWORDS_INNER = ['direction', 'alignX', 'alignY', 'equalCols']
-const KEYWORDS = [...KEYWORDS_WRAPPER, ...KEYWORDS_INNER]
-
-type Reference = any
+type Reference = unknown
 
 type Props = {
   children: ReactNode
-  tag: import('styled-components').StyledComponentPropsWithRef<any>
+  tag: StyledComponentPropsWithRef<any>
   block: ResponsiveBooltype
+  isInline: boolean
   direction: Direction
   alignX: AlignX
   alignY: AlignY
   equalCols: ResponsiveBooltype
-  extendCss: any
+  extendCss: ExtendCss
+  dangerouslySetInnerHTML: any
 }
 
-const Component = forwardRef<Reference, Partial<Props>>(
+const component = forwardRef<Reference, Partial<Props>>(
   (
     {
       children,
@@ -33,47 +37,17 @@ const Component = forwardRef<Reference, Partial<Props>>(
       alignX,
       alignY,
       equalCols,
+      isInline,
       ...props
     },
     ref
   ) => {
-    const needsFix = useMemo(() => isFixNeeded(tag, config.isWeb), [tag])
-
-    const stylingProps = {
-      block,
-      extendCss,
-      direction,
-      alignX,
-      alignY,
-      equalCols,
-    }
-
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
-            'data-vb-element': 'Element',
+            'data-element': 'Element',
           }
         : {}
-
-    const { sortedBreakpoints } = vitusContext()
-
-    const normalizedTheme = useMemo(
-      () =>
-        optimizeTheme({
-          breakpoints: sortedBreakpoints,
-          keywords: KEYWORDS,
-          props: stylingProps,
-        }),
-      [
-        sortedBreakpoints,
-        block,
-        extendCss,
-        direction,
-        alignX,
-        alignY,
-        equalCols,
-      ]
-    )
 
     const COMMON_PROPS = {
       ...props,
@@ -81,10 +55,23 @@ const Component = forwardRef<Reference, Partial<Props>>(
       ref,
       as: tag,
     }
+    const needsFix = __WEB__
+      ? !props.dangerouslySetInnerHTML && tag && isWebFixNeeded(tag)
+      : false
 
-    if (!needsFix || config.isNative) {
+    if (!needsFix || __NATIVE__) {
       return (
-        <Styled {...COMMON_PROPS} $element={normalizedTheme}>
+        <Styled
+          {...COMMON_PROPS}
+          $element={{
+            block,
+            extraStyles: extendCss,
+            direction,
+            alignX,
+            alignY,
+            equalCols,
+          }}
+        >
           {children}
         </Styled>
       )
@@ -94,12 +81,20 @@ const Component = forwardRef<Reference, Partial<Props>>(
       <Styled
         {...COMMON_PROPS}
         $needsFix
-        $element={pick(normalizedTheme, KEYWORDS_WRAPPER)}
+        $element={{
+          block,
+          extraStyles: extendCss,
+        }}
       >
         <Styled
-          as="span"
+          as={isInline ? 'span' : 'div'}
           $isInner
-          $element={pick(normalizedTheme, KEYWORDS_INNER)}
+          $element={{
+            direction,
+            alignX,
+            alignY,
+            equalCols,
+          }}
         >
           {children}
         </Styled>
@@ -108,4 +103,4 @@ const Component = forwardRef<Reference, Partial<Props>>(
   }
 )
 
-export default Component
+export default component

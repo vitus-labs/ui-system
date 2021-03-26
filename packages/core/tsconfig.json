@@ -1,8 +1,23 @@
 {
-  "extends": "@vitus-labs/tools-typescript/config",
-  "include": ["src"],
-  "exclude": ["node_modules", ".next", ".storybook", "lib", "__stories__"],
+  "extends": "@vitus-labs/tools-typescript/lib",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "__stories__",
+    "lib"
+  ],
   "compilerOptions": {
-    "baseUrl": "."
+    "strictNullChecks": true,
+    "types": ["@vitus-labs/tools-rollup"],
+    "rootDir": "src",
+    "outDir": "lib",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    }
   }
 }
