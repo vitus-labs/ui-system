@@ -1,7 +1,7 @@
 import React from 'react'
 import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
-import rocketstyle from '..'
+import rocketstyle from '@vitus-labs/rocketstyle'
 
 const LeftContent = config.styled.span`
   margin-right: 10px;
@@ -19,19 +19,16 @@ const RightContent = config.styled.span`
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
-  ${({ hover }) => {
-    return (
-      hover &&
-      config.css`
+  ${({ hover }) =>
+    hover &&
+    config.css`
         &:hover {
           background-color: black;
         };
-      `
-    )
-  }};
+      `};
 `
 
-export const Button = rocketstyle()({ name: 'Button', component: Element })
+export const Button = rocketstyle()()({ name: 'Button', component: Element })
   .attrs({
     tag: 'button',
     label: 'This is a label',
@@ -41,6 +38,11 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
   .theme({
     bgColor: '#007bff',
     color: '#fff',
+  })
+  .states({
+    primary: { bgColor: 'black' },
+    secondary: { bgColor: 'blue' },
+    tertiary: { bgColor: 'papayawhip' },
   })
   .styles(
     (css) => css`
@@ -72,23 +74,18 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
       `};
     `
   )
-  .multiple({
-    active: true,
-  })
 
 const ExtendedButtonA = (props) => <Button {...props} />
 
 const ExampleComponent = (props) => <span {...props} />
 
-export const ElementExample = rocketstyle()({
+export const ElementExample = rocketstyle()()({
   name: 'Button',
   component: ExampleComponent,
 })
-  .config({
-    consumer: ({ pseudo }) => {
-      return { state: pseudo.hover ? 'primary' : null }
-    },
-  })
+  // .config({
+  //   consumer: ctx => ({ pseudo }) => ({ state: pseudo.hover ? 'primary' : null }),
+  // })
   .states({
     primary: { color: 'blue' },
     secondary: { color: 'green' },
@@ -98,7 +95,7 @@ export const ElementExample = rocketstyle()({
     (css) => css`
       ${({ $rocketstyle: t }) => css`
         color: ${t.color};
-      `}
+      `};
     `
   )
 

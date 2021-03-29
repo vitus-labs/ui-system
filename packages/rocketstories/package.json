@@ -38,32 +38,34 @@
     "lib/"
   ],
   "scripts": {
-    "dev": "yarn vl_run-stories",
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
-    "build:pkg": "yarn rollup -c",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
     "lint:css": "stylelint src/*.ts src/*.tsx",
     "lint:ts": "eslint src/*",
     "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info",
-    "docz:dev": "docz dev",
-    "docz:build": "docz build"
+    "cover": "coveralls < .coverage/lcov.info"
   },
   "dependencies": {
+    "@vitus-labs/elements": "^0.11.0",
     "hoist-non-react-statics": "^3.1.0"
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
+    "@vitus-labs/rocketsyle": "^0.11.0",
     "react": ">= 16.7"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.11.0",
     "@vitus-labs/elements": "^0.11.0",
+    "@vitus-labs/rocketstyle": "^0.11.0",
     "@vitus-labs/tools-babel": "^0.6.4",
     "@vitus-labs/tools-rollup": "^0.6.4",
-    "@vitus-labs/tools-storybook": "^0.6.3",
+    "@vitus-labs/tools-storybook": "0.11.0",
     "@vitus-labs/tools-typescript": "^0.6.4",
     "@vitus-labs/unistyle": "^0.11.0"
   }
