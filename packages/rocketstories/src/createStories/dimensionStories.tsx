@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { createElement } from 'react'
 import generateKnobs from '~/utils/knobs'
-import { createJSXCode, createJSXCodeArray } from '~/utils/code'
+import { createJSXCodeArray } from '~/utils/code'
 import { capitalize } from '~/utils/string'
 import theme from '~/utils/theme'
 

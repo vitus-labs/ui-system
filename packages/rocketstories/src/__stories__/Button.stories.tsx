@@ -1,9 +1,8 @@
-// @ts-nocheck
 import React from 'react'
 import rocketstories from '~/makeStories'
 import Button, { HoistedButton, ElementExample } from './Button'
 
-const test = rocketstories(Button).attrs({
+const stories = rocketstories(Button).attrs({
   label: 'Hello',
   testPropsA: {
     type: 'select',
@@ -36,11 +35,13 @@ const test = rocketstories(Button).attrs({
   arrayProp: ['a', null, undefined, { a: 1 }],
 })
 
-export default test.main()
+export default stories.main()
 
-export const Example = test.mainStory()
+export const Example = stories.mainStory()
 
-export const States = test.makeStories('state', true)
+export const States = stories.makeStories('state')
+
+export const Sizes = stories.makeStories('size')
 
 export const button = () => (
   <>

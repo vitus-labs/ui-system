@@ -8,14 +8,32 @@ export const rocketstories = (component) => {
     throw Error('Component is not valid Rocketstyle component')
   }
 
-  return somethingCool({
+  return createRocketstories({
     component,
     name: component.displayName || component.name,
     attrs: {},
   })
 }
 
-export const somethingCool = (options = {}, defaultOptions = { attrs: {} }) => {
+// type CreateRocketStories = <
+//   A extends Record<string, unknown>,
+//   B extends Record<string, unknown>
+// >(
+//   options: A,
+//   defaultOptions: B
+// ) => {
+//   attrs: <T extends Record<string, unknown>>(
+//     params: T
+//   ) => CreateRocketStories<{ attrs: T }, B>
+//   main: () => Record<string, unknown>
+//   mainStory: () => ReturnType<typeof mainStory>
+//   makeStories: () => ReturnType<typeof dimensionStories>
+// }
+
+export const createRocketstories = (
+  options = {},
+  defaultOptions = { attrs: {} }
+) => {
   const result = {
     ...defaultOptions,
     name: options?.component
@@ -26,12 +44,18 @@ export const somethingCool = (options = {}, defaultOptions = { attrs: {} }) => {
   }
 
   return {
-    attrs: (attrs) => somethingCool({ attrs }, result),
+    attrs: (attrs) => createRocketstories({ attrs }, result),
+
+    // create object for `export default` in stories
     main: () => ({
       component: result.component,
       title: result.name,
     }),
+
+    // generate main story
     mainStory: () => mainStory(result),
+
+    // generate stories of defined dimension
     makeStories: (dimension, uniqIDs = false) =>
       dimensionStories({
         ...result,

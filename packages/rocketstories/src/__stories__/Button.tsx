@@ -44,6 +44,14 @@ export const Button = rocketstyle()()({ name: 'Button', component: Element })
     secondary: { bgColor: 'blue' },
     tertiary: { bgColor: 'papayawhip' },
   })
+  .sizes({
+    small: {
+      size: 12,
+    },
+    medium: { size: 14 },
+    large: { size: 14 },
+    xLarge: { size: 14 },
+  })
   .styles(
     (css) => css`
       border: 1px solid transparent;
