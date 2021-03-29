@@ -126,7 +126,6 @@ const styleComponent: StyleComponent<any> = (options) => {
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
   const EnhancedComponent: RocketComponent = ({
-    onMount,
     $rocketstyleRef, // it's forwarded from HOC which is always on top of hocs
     ...props
   }) => {
@@ -181,24 +180,6 @@ const styleComponent: StyleComponent<any> = (options) => {
       () => Object.keys(reservedPropNames),
       []
     )
-
-    // --------------------------------------------------
-    // onMount hook
-    // if onMount is provided (useful for development tooling or so)
-    // it will pass all available styling options in the callback
-    // --------------------------------------------------
-    useEffect(() => {
-      const { multiKeys, dimensionKeys, dimensionValues } = options
-
-      if (onMount) {
-        onMount({
-          multiKeys,
-          dimensionKeys,
-          dimensionValues,
-          ...__ROCKETSTYLE__,
-        })
-      }
-    }, [theme, mode])
 
     // --------------------------------------------------
     // get final props which are (latest has the highest priority):
@@ -288,6 +269,7 @@ const styleComponent: StyleComponent<any> = (options) => {
     func: cloneAndEnhance,
     opts: options,
   })
+
   // ------------------------------------------------------
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
@@ -297,6 +279,16 @@ const styleComponent: StyleComponent<any> = (options) => {
     const result = pick(opts, CONFIG_KEYS)
 
     return cloneAndEnhance(result as any, options) as any
+  }
+
+  RocketComponent.getStaticDimensions = (theme) => {
+    const themes = useTheme({ theme, options, cb: themeModeCb })
+
+    return {
+      dimensions: themes.dimensions,
+      useBooleans: options.useBooleans,
+      multiKeys: options.multiKeys,
+    }
   }
 
   return RocketComponent as RocketComponent
