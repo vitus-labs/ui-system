@@ -27,7 +27,7 @@ const stories = rocketstories(Button).attrs({
   //   b: null,
   //   c: undefined,
   // },
-  arrayProp: ['a', null, undefined, { a: 1 }],
+  // arrayProp: ['a', null, undefined, { a: 1 }],
 })
 
 export default stories.main()

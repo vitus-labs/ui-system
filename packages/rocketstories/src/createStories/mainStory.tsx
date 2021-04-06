@@ -1,4 +1,5 @@
-import React, { createElement } from 'react'
+import React, { ComponentType, createElement, VFC } from 'react'
+// import { RocketComponentType } from '@vitus-labs/rocketstyle'
 import ROCKET_PROPS from '~/constants/defaultRocketProps'
 import { createJSXCode } from '~/utils/code'
 import {
@@ -31,9 +32,20 @@ const createJSX = (name, dimensions, params, booleanDimensions) => {
   return result
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const mainStory = ({ name, component, attrs }) => {
+type MainStory = ({
+  name,
+  component,
+  attrs,
+}: {
+  name: string
+  component: ComponentType
+  attrs: Record<string, unknown>
+}) => VFC & { args: any; argTypes: any; parameters: any }
+
+const mainStory: MainStory = ({ name, component, attrs }) => {
+  // @ts-ignore
   const statics = component.getStaticDimensions(theme)
+  // @ts-ignore
   const defaultProps = component.getDefaultProps(attrs, theme, 'light')
   const { useBooleans, multiKeys, dimensions } = statics
 

@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { createElement } from 'react'
+import React, { ComponentType, createElement, VFC } from 'react'
 import { createJSXCodeArray } from '~/utils/code'
 import ROCKET_PROPS from '~/constants/defaultRocketProps'
 import {
@@ -12,9 +11,27 @@ import {
 import { transformDimensionsToControls } from '~/utils/dimensions'
 import theme from '~/utils/theme'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const makeDimensionStories = ({ name, component, dimension, attrs = {} }) => {
+type MakeDimensionStories = ({
+  name,
+  component,
+  dimension,
+  attrs,
+}: {
+  name: string
+  component: ComponentType
+  dimension: string
+  attrs: Record<string, unknown>
+}) => VFC & { args: any; argTypes: any; parameters: any }
+
+const makeDimensionStories: MakeDimensionStories = ({
+  name,
+  component,
+  dimension,
+  attrs = {},
+}) => {
+  // @ts-ignore
   const statics = component.getStaticDimensions(theme)
+  // @ts-ignore
   const defaultProps = component.getDefaultProps(attrs, theme, 'light')
   const { dimensions, useBooleans, multiKeys } = statics
 

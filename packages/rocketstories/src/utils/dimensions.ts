@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable import/prefer-default-export */
 export const transformDimensionsToControls = ({ dimensions, multiKeys }) =>
   Object.entries(dimensions).reduce((acc, [key, value], i) => {

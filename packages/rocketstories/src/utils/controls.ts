@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { isColor } from '~/utils/string'
 
 const CONTROL_TYPES = {

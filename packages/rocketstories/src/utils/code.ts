@@ -1,3 +1,4 @@
+// @ts-nocheck
 const parseProps = (props) =>
   Object.entries(props).reduce((acc, [key, value]) => {
     const valueType = typeof value

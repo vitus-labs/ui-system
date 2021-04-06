@@ -1,3 +1,13 @@
+import type { ComponentType } from 'react'
+
+export type Element = ComponentType
+export type RocketComponent = ComponentType & { IS_ROCKETSTYLE: true }
+export type Configuration = {
+  attrs: Record<string, unknown>
+  name: string
+  component: Element
+}
+
 type Tag = {
   type: 'tag'
   value: string
