@@ -34,6 +34,7 @@
   "main": "lib/vitus-labs-rocketstories.js",
   "umd:main": "lib/vitus-labs-rocketstories.umd.js",
   "module": "lib/vitus-labs-rocketstories.module.js",
+  "typings": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -63,10 +64,10 @@
     "@vitus-labs/core": "^0.11.0",
     "@vitus-labs/elements": "^0.11.0",
     "@vitus-labs/rocketstyle": "^0.11.0",
-    "@vitus-labs/tools-babel": "^0.6.4",
-    "@vitus-labs/tools-rollup": "^0.6.4",
-    "@vitus-labs/tools-storybook": "0.11.0",
-    "@vitus-labs/tools-typescript": "^0.6.4",
+    "@vitus-labs/tools-babel": "^0.8.0",
+    "@vitus-labs/tools-rollup": "^0.8.0",
+    "@vitus-labs/tools-storybook": "^0.8.0",
+    "@vitus-labs/tools-typescript": "^0.8.0",
     "@vitus-labs/unistyle": "^0.11.0"
   }
 }

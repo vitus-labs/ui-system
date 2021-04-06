@@ -3,11 +3,18 @@ import rocketstories from '~/makeStories'
 import Button, { HoistedButton, ElementExample } from './Button'
 
 const stories = rocketstories(Button).attrs({
-  label: 'Hello',
+  tag: {
+    type: 'tag',
+    options: ['a', 'button', 'span'],
+  },
+  label: {
+    type: 'text',
+    // value: 'Hello world',
+  },
   testPropsA: {
-    type: 'select',
-    defaultValue: 'yellow',
-    data: {
+    type: 'multiSelect',
+    value: 'yellow',
+    options: {
       Red: 'red',
       Blue: 'blue',
       Yellow: 'yellow',
@@ -15,24 +22,24 @@ const stories = rocketstories(Button).attrs({
       None: null,
     },
   },
-  testProps: {
-    type: 'select',
-    defaultValue: 'yellow',
-    data: {
-      Red: 'red',
-      Blue: 'blue',
-      Yellow: 'yellow',
-      Rainbow: ['red', 'orange', 'etc'],
-      None: null,
-    },
-  },
-  objectProp: {
-    test: 'a',
-    value: 0,
-    b: null,
-    c: undefined,
-  },
-  arrayProp: ['a', null, undefined, { a: 1 }],
+  // testProps: {
+  //   type: 'select',
+  //   defaultValue: 'yellow',
+  //   data: {
+  //     Red: 'red',
+  //     Blue: 'blue',
+  //     Yellow: 'yellow',
+  //     Rainbow: ['red', 'orange', 'etc'],
+  //     None: null,
+  //   },
+  // },
+  // objectProp: {
+  //   test: 'a',
+  //   value: 0,
+  //   b: null,
+  //   c: undefined,
+  // },
+  // arrayProp: ['a', null, undefined, { a: 1 }],
 })
 
 export default stories.main()

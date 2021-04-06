@@ -1,31 +1,35 @@
 // @ts-nocheck
 import React, { createElement } from 'react'
-import generateKnobs from '~/utils/knobs'
 import { createJSXCodeArray } from '~/utils/code'
-import { capitalize } from '~/utils/string'
+import ROCKET_PROPS from '~/constants/defaultRocketProps'
+import {
+  transformToControls,
+  filterControls,
+  filterDefaultProps,
+  disableDimensionControls,
+  mergeOptions,
+} from '~/utils/controls'
+import { transformDimensionsToControls } from '~/utils/dimensions'
 import theme from '~/utils/theme'
 
-const makeDimensionStories = ({
-  name,
-  component,
-  dimension,
-  attrs = {},
-  uniqIDs,
-}) => {
-  const { dimensions, useBooleans, multiKeys } = component.getStaticDimensions(
-    theme
-  )
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const makeDimensionStories = ({ name, component, dimension, attrs = {} }) => {
+  const statics = component.getStaticDimensions(theme)
+  const defaultProps = component.getDefaultProps(attrs, theme, 'light')
+  const { dimensions, useBooleans, multiKeys } = statics
+  const currentDimension = dimensions[dimension]
+  const isMultiKey = !!multiKeys[dimension]
+  const transformedProps = transformDimensionsToControls(statics)
 
-  const Enhanced = () => {
-    if (!dimensions[dimension]) return null
-
-    const isMultiKey = !!multiKeys[dimension]
+  const Enhanced = (props) => {
+    // TODO: add info that nothing to render is here
+    if (!currentDimension) return null
 
     return (
       <>
-        {Object.keys(dimensions[dimension]).map((item) =>
+        {Object.keys(currentDimension).map((item) =>
           createElement(component, {
-            ...generateKnobs(attrs, uniqIDs ? capitalize(item) : null),
+            ...props,
             [dimension]: isMultiKey ? [item] : item,
           })
         )}
@@ -33,14 +37,31 @@ const makeDimensionStories = ({
     )
   }
 
+  const controlAttrs = transformToControls(
+    mergeOptions({
+      defaultProps,
+      attrs: { ...transformedProps, ...ROCKET_PROPS, ...attrs },
+    })
+  )
+  const arg = filterDefaultProps(controlAttrs)
+
+  Enhanced.args = arg
+  Enhanced.argTypes = {
+    ...filterControls(controlAttrs),
+    ...disableDimensionControls(dimension, dimensions),
+  }
+
   Enhanced.parameters = {
     docs: {
+      // description: {
+      //   story: 'some story **markdown**',
+      // },
       source: {
         code: createJSXCodeArray(
           name,
-          attrs,
+          arg,
           dimension,
-          dimensions[dimension],
+          currentDimension,
           useBooleans
         ),
       },

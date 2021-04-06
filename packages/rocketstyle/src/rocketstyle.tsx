@@ -1,14 +1,18 @@
 // @ts-nocheck
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useMemo, useContext } from 'react'
+import React, { useMemo, useContext } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose } from '@vitus-labs/core'
+import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
 import { localContext, createProvider, rocketstyleHoc } from '~/internal'
 import { calculateTheme, calculateThemeMode, themeModeCb } from '~/utils/theme'
 import { calculateStyles } from '~/utils/styles'
 import { chainOptions } from '~/utils/collection'
-import { pickStyledProps, calculateStylingAttrs } from '~/utils/attrs'
+import {
+  pickStyledProps,
+  calculateStylingAttrs,
+  calculateChainOptions,
+} from '~/utils/attrs'
 import {
   PSEUDO_KEYS,
   CONFIG_KEYS,
@@ -289,6 +293,21 @@ const styleComponent: StyleComponent<any> = (options) => {
       useBooleans: options.useBooleans,
       multiKeys: options.multiKeys,
     }
+  }
+
+  RocketComponent.getDefaultProps = (props, theme, mode) => {
+    const result = calculateChainOptions(options.attrs)([
+      props,
+      theme,
+      {
+        renderContent,
+        mode,
+        isDark: mode === 'light',
+        isLight: mode === 'dark',
+      },
+    ])
+
+    return result
   }
 
   return RocketComponent as RocketComponent

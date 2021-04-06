@@ -50,17 +50,21 @@ export const createRocketstories = (
     main: () => ({
       component: result.component,
       title: result.name,
+      // argTypes: {
+      //   label: { control: 'text' },
+      //   borderWidth: { control: { type: 'number', min: 0, max: 10 } },
+      // },
     }),
 
     // generate main story
     mainStory: () => mainStory(result),
 
     // generate stories of defined dimension
-    makeStories: (dimension, uniqIDs = false) =>
+    makeStories: (dimension, separatedKnobs = false) =>
       dimensionStories({
         ...result,
         dimension,
-        uniqIDs,
+        separatedKnobs,
       }),
   }
 }

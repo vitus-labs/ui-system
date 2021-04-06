@@ -1,8 +1,15 @@
 import React, { createElement } from 'react'
-import generateKnobs from '~/utils/knobs'
+import ROCKET_PROPS from '~/constants/defaultRocketProps'
 import { createJSXCode } from '~/utils/code'
 import {
-  transformDimensionsToKnobs,
+  transformToControls,
+  filterControls,
+  filterDefaultProps,
+  disableDimensionControls,
+  mergeOptions,
+} from '~/utils/controls'
+import {
+  transformDimensionsToControls,
   extractDefaultBooleanProps,
 } from '~/utils/dimensions'
 import theme from '~/utils/theme'
@@ -24,43 +31,43 @@ const createJSX = (name, dimensions, params, booleanDimensions) => {
   return result
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const mainStory = ({ name, component, attrs }) => {
   const statics = component.getStaticDimensions(theme)
-  const { useBooleans, multiKeys } = statics
+  const defaultProps = component.getDefaultProps(attrs, theme, 'light')
+  const { useBooleans, multiKeys, dimensions } = statics
+  const transformedProps = transformDimensionsToControls(statics)
 
-  const transformedProps = transformDimensionsToKnobs(statics)
+  const defaultBooleanProps = extractDefaultBooleanProps(dimensions, multiKeys)
 
-  const defaultBooleanProps = extractDefaultBooleanProps(
-    transformedProps,
-    multiKeys
+  const Enhanced = (props = {}) => (
+    <>
+      {createElement(component, { ...props })}
+
+      {useBooleans &&
+        createElement(component, {
+          ...props,
+        })}
+    </>
   )
 
-  const Enhanced = () => {
-    if (useBooleans)
-      return (
-        <>
-          {createElement(
-            component,
-            generateKnobs(
-              {
-                ...transformedProps,
-                ...attrs,
-              },
-              'Main'
-            )
-          )}
+  const controlAttrs = transformToControls(
+    mergeOptions({
+      defaultProps,
+      attrs: { ...transformedProps, ...ROCKET_PROPS, ...attrs },
+    })
+  )
 
-          {createElement(component, generateKnobs(attrs, 'UseBooleans'))}
-        </>
-      )
+  const arg = filterDefaultProps(controlAttrs)
 
-    return createElement(component, generateKnobs(attrs, 'Main'))
-  }
+  console.log(arg)
 
+  Enhanced.args = arg
+  Enhanced.argTypes = filterControls(attrs)
   Enhanced.parameters = {
     docs: {
       source: {
-        code: createJSX(name, transformedProps, attrs, defaultBooleanProps),
+        code: createJSX(name, transformedProps, arg, defaultBooleanProps),
       },
     },
   }

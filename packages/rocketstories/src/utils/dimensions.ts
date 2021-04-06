@@ -1,14 +1,15 @@
 /* eslint-disable import/prefer-default-export */
-export const transformDimensionsToKnobs = ({ dimensions, multiKeys }) =>
+export const transformDimensionsToControls = ({ dimensions, multiKeys }) =>
   Object.entries(dimensions).reduce((acc, [key, value], i) => {
     const valueKeys = Object.keys(value)
+    const res = valueKeys.reduce((acc, item) => ({ ...acc, [item]: item }), {})
 
     const isMultiKey = !!multiKeys[key]
 
     acc[key] = {
-      type: isMultiKey ? 'multi-select' : 'select',
-      data: valueKeys,
-      defaultValue: valueKeys[0],
+      type: isMultiKey ? 'dimensionMultiSelect' : 'dimensionSelect',
+      value: isMultiKey ? undefined : valueKeys[0],
+      options: { '----': undefined, ...res },
     }
 
     return acc
@@ -17,7 +18,7 @@ export const transformDimensionsToKnobs = ({ dimensions, multiKeys }) =>
 export const extractDefaultBooleanProps = (dimensions, multiKeys) =>
   Object.entries(dimensions).reduce((acc, [key, value], i) => {
     if (!multiKeys[key]) {
-      const propName = value.data[0]
+      const propName = Object.keys(value)[0]
 
       acc[propName] = true
     }

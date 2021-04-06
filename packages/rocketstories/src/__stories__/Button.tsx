@@ -52,6 +52,12 @@ export const Button = rocketstyle()()({ name: 'Button', component: Element })
     large: { size: 14 },
     xLarge: { size: 14 },
   })
+  .multiple({
+    example: true,
+    centered: {},
+    left: {},
+    right: {},
+  })
   .styles(
     (css) => css`
       border: 1px solid transparent;

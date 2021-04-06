@@ -11,7 +11,7 @@
   "main": "lib/vitus-labs-core.js",
   "umd:main": "lib/vitus-labs-core.umd.js",
   "module": "lib/vitus-labs-core.module.js",
-  "typings": "lib/types/index.d.ts",
+  "typings": "lib/index.d.ts",
   "browser": {
     "./lib/vitus-labs-core.js": "./lib/vitus-labs-core.js",
     "./lib/vitus-labs-core.module.js": "./lib/vitus-labs-core.module.js"
@@ -62,8 +62,8 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
-    "@vitus-labs/tools-babel": "0.6.4",
-    "@vitus-labs/tools-rollup": "0.6.4",
-    "@vitus-labs/tools-typescript": "0.6.4"
+    "@vitus-labs/tools-babel": "^0.8.0",
+    "@vitus-labs/tools-rollup": "^0.8.0",
+    "@vitus-labs/tools-typescript": "^0.8.0"
   }
 }
