@@ -36,38 +36,41 @@ const mainStory = ({ name, component, attrs }) => {
   const statics = component.getStaticDimensions(theme)
   const defaultProps = component.getDefaultProps(attrs, theme, 'light')
   const { useBooleans, multiKeys, dimensions } = statics
-  const transformedProps = transformDimensionsToControls(statics)
 
-  const defaultBooleanProps = extractDefaultBooleanProps(dimensions, multiKeys)
+  const dimensionControls = transformDimensionsToControls(statics)
 
-  const Enhanced = (props = {}) => (
+  const Enhanced = (props) => (
     <>
-      {createElement(component, { ...props })}
+      {createElement(component, props)}
 
-      {useBooleans &&
-        createElement(component, {
-          ...props,
-        })}
+      {useBooleans && createElement(component, props)}
     </>
   )
 
   const controlAttrs = transformToControls(
     mergeOptions({
       defaultProps,
-      attrs: { ...transformedProps, ...ROCKET_PROPS, ...attrs },
+      attrs: { ...dimensionControls, ...ROCKET_PROPS, ...attrs },
     })
   )
 
-  const arg = filterDefaultProps(controlAttrs)
+  const defaultPropsValues = filterDefaultProps(controlAttrs)
+  const defaultBooleanProps = extractDefaultBooleanProps(dimensions, multiKeys)
 
-  console.log(arg)
-
-  Enhanced.args = arg
-  Enhanced.argTypes = filterControls(attrs)
+  Enhanced.args = defaultPropsValues
+  Enhanced.argTypes = {
+    ...filterControls(controlAttrs),
+    ...disableDimensionControls(dimensions),
+  }
   Enhanced.parameters = {
     docs: {
       source: {
-        code: createJSX(name, transformedProps, arg, defaultBooleanProps),
+        code: createJSX(
+          name,
+          dimensionControls,
+          defaultPropsValues,
+          defaultBooleanProps
+        ),
       },
     },
   }

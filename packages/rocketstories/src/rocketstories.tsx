@@ -3,7 +3,7 @@ import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import mainStory from '~/createStories/mainStory'
 import dimensionStories from '~/createStories/dimensionStories'
 
-export const rocketstories = (component) => {
+const rocketstories = (component) => {
   if (!isRocketComponent(component)) {
     throw Error('Component is not valid Rocketstyle component')
   }
@@ -30,10 +30,7 @@ export const rocketstories = (component) => {
 //   makeStories: () => ReturnType<typeof dimensionStories>
 // }
 
-export const createRocketstories = (
-  options = {},
-  defaultOptions = { attrs: {} }
-) => {
+const createRocketstories = (options = {}, defaultOptions = { attrs: {} }) => {
   const result = {
     ...defaultOptions,
     name: options?.component

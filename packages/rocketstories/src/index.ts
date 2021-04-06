@@ -1,3 +1,3 @@
-import component from './component'
+import rocketstories from './rocketstories'
 
-export default component
+export default rocketstories

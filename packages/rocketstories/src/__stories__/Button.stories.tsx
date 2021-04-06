@@ -1,6 +1,6 @@
 import React from 'react'
-import rocketstories from '~/makeStories'
-import Button, { HoistedButton, ElementExample } from './Button'
+import rocketstories from '~/rocketstories'
+import { Button, HoistedButton, ElementExample } from './Button'
 
 const stories = rocketstories(Button).attrs({
   tag: {
@@ -9,23 +9,11 @@ const stories = rocketstories(Button).attrs({
   },
   label: {
     type: 'text',
-    // value: 'Hello world',
   },
-  testPropsA: {
-    type: 'multiSelect',
-    value: 'yellow',
-    options: {
-      Red: 'red',
-      Blue: 'blue',
-      Yellow: 'yellow',
-      Rainbow: ['red', 'orange', 'etc'],
-      None: null,
-    },
-  },
-  // testProps: {
-  //   type: 'select',
-  //   defaultValue: 'yellow',
-  //   data: {
+  // testPropsA: {
+  //   type: 'multiSelect',
+  //   value: 'yellow',
+  //   options: {
   //     Red: 'red',
   //     Blue: 'blue',
   //     Yellow: 'yellow',
@@ -39,7 +27,7 @@ const stories = rocketstories(Button).attrs({
   //   b: null,
   //   c: undefined,
   // },
-  // arrayProp: ['a', null, undefined, { a: 1 }],
+  arrayProp: ['a', null, undefined, { a: 1 }],
 })
 
 export default stories.main()

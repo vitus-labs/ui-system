@@ -1,14 +1,15 @@
 import { isColor } from '~/utils/string'
 
 const CONTROL_TYPES = {
-  html: 'HTML Semantics',
-  boolean: 'Booleans',
   values: 'Simple values',
+  html: 'HTML Semantics',
+  dimensions: 'Dimensions',
+  pseudo: 'Pseudo',
+  boolean: 'Booleans',
   options: 'Options',
   dateTime: 'Date & Time',
-  pseudo: 'Pseudo',
   events: 'Events',
-  dimensions: 'Dimensions',
+  data: 'Data',
 }
 
 const CONTROLS_MAP = {
@@ -49,8 +50,18 @@ const CONTROLS_MAP = {
     },
   }),
   range: () => {},
-  object: () => {},
-  array: () => {},
+  object: ({ options }) => ({
+    control: { type: 'object', options },
+    table: {
+      category: CONTROL_TYPES.data,
+    },
+  }),
+  array: ({ options }) => ({
+    control: { type: 'array', options },
+    table: {
+      category: CONTROL_TYPES.data,
+    },
+  }),
   radio: ({ options }) => ({
     control: { type: 'radio', options },
     table: {
@@ -85,7 +96,7 @@ const CONTROLS_MAP = {
     control: { type: 'select', options },
     table: {
       category: CONTROL_TYPES.html,
-      description: 'HTML Ta',
+      description: 'HTML Tag',
     },
   }),
   multiSelect: ({ options }) => ({
@@ -209,15 +220,15 @@ export const disableControl = (name) => ({
 })
 
 type DisableDimensionControls = (
-  name: string,
-  dimensions: Record<string, boolean>
+  dimensions: Record<string, boolean>,
+  name?: string
 ) => any
 
 export const disableDimensionControls: DisableDimensionControls = (
-  name,
-  dimensions
+  dimensions,
+  dimensionName
 ) => {
-  const result = disableControl(name)
+  const result = dimensionName ? disableControl(dimensionName) : {}
 
   const dimensionKeys = Object.values(dimensions)
 
@@ -228,12 +239,4 @@ export const disableDimensionControls: DisableDimensionControls = (
 
     return acc
   }, result)
-
-  // return Object.keys(dimensions).reduce(
-  //   (acc, value) => ({
-  //     ...acc,
-  //     ...disableControl(value),
-  //   }),
-  //   result
-  // )
 }

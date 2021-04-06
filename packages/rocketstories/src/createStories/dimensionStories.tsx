@@ -17,9 +17,10 @@ const makeDimensionStories = ({ name, component, dimension, attrs = {} }) => {
   const statics = component.getStaticDimensions(theme)
   const defaultProps = component.getDefaultProps(attrs, theme, 'light')
   const { dimensions, useBooleans, multiKeys } = statics
+
   const currentDimension = dimensions[dimension]
   const isMultiKey = !!multiKeys[dimension]
-  const transformedProps = transformDimensionsToControls(statics)
+  const dimensionControls = transformDimensionsToControls(statics)
 
   const Enhanced = (props) => {
     // TODO: add info that nothing to render is here
@@ -40,15 +41,15 @@ const makeDimensionStories = ({ name, component, dimension, attrs = {} }) => {
   const controlAttrs = transformToControls(
     mergeOptions({
       defaultProps,
-      attrs: { ...transformedProps, ...ROCKET_PROPS, ...attrs },
+      attrs: { ...dimensionControls, ...ROCKET_PROPS, ...attrs },
     })
   )
-  const arg = filterDefaultProps(controlAttrs)
+  const args = filterDefaultProps(controlAttrs)
 
-  Enhanced.args = arg
+  Enhanced.args = args
   Enhanced.argTypes = {
     ...filterControls(controlAttrs),
-    ...disableDimensionControls(dimension, dimensions),
+    ...disableDimensionControls(dimensions, dimension),
   }
 
   Enhanced.parameters = {
@@ -59,7 +60,7 @@ const makeDimensionStories = ({ name, component, dimension, attrs = {} }) => {
       source: {
         code: createJSXCodeArray(
           name,
-          arg,
+          args,
           dimension,
           currentDimension,
           useBooleans
