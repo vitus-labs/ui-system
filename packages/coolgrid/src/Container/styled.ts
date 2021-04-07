@@ -1,7 +1,7 @@
 import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
-  normalizeUnit,
+  value,
   extendCss,
   MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
@@ -10,7 +10,7 @@ import { StyledTypes } from '~/types'
 const styles: MakeItResponsiveStyles<
   Pick<StyledTypes, 'width' | 'extraStyles'>
 > = ({ theme: t, css, rootSize }) => css`
-  max-width: ${normalizeUnit({ param: t.width, rootSize })};
+  max-width: ${value([t.width], rootSize)};
   ${extendCss(t.extraStyles)};
 `
 

@@ -46,7 +46,12 @@ const TAGS = [
   'form',
   'frame',
   'frameset',
-  'h1> - h6',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
   'head',
   'header',
   'hr',
@@ -118,6 +123,6 @@ const TAGS = [
   'wbr',
 ] as const
 
-export type Tags = typeof TAGS[number]
+export type HTMLTags = typeof TAGS[number]
 
 export default TAGS

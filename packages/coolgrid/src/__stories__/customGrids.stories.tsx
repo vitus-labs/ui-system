@@ -24,7 +24,7 @@ export const FiveColumnGrid = () => (
       <Col />
     </Row>
 
-    <Row gap={120} gutter={0}>
+    <Row gap={80} gutter={0}>
       <Col size={3}>xs-3</Col>
       <Col size={2}>xs-2</Col>
       <Col size={1}>xs-1</Col>

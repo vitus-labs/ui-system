@@ -55,6 +55,7 @@ const component = forwardRef<Reference, Partial<Props>>(
       ref,
       as: tag,
     }
+
     const needsFix = __WEB__
       ? !props.dangerouslySetInnerHTML && tag && isWebFixNeeded(tag)
       : false
@@ -65,11 +66,11 @@ const component = forwardRef<Reference, Partial<Props>>(
           {...COMMON_PROPS}
           $element={{
             block,
-            extraStyles: extendCss,
             direction,
             alignX,
             alignY,
             equalCols,
+            extraStyles: extendCss,
           }}
         >
           {children}

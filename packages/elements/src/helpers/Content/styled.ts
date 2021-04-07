@@ -51,7 +51,7 @@ const styles = ({ css, theme: t, rootSize }) => css`
       calculateGap({
         direction: t.parentDirection,
         type: $contentType,
-        value: value(rootSize, [t.gap]),
+        value: value([t.gap], rootSize),
         css,
       })}
   `};

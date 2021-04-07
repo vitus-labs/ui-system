@@ -4,11 +4,26 @@ import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 const styles = ({ theme: t, css }) =>
   css`
     ${__WEB__ &&
+    t.contentAlignY === 'block' &&
     css`
-      display: ${({ $needsFix }) => {
-        if ($needsFix) return ''
-        return t.block ? 'flex' : 'inline-flex'
-      }};
+      height: 100%;
+    `};
+
+    ${__WEB__ &&
+    css`
+      ${({ $isInner }) =>
+        !$isInner &&
+        css`
+          display: ${t.block ? 'flex' : 'inline-flex'};
+        `};
+
+      ${({ $needsFix }) =>
+        $needsFix &&
+        t.block &&
+        css`
+          flex-direction: column;
+          width: 100%;
+        `};
     `};
 
     ${__WEB__ &&
@@ -38,16 +53,10 @@ export default config.styled(config.component)`
   position: relative;
   ${platformStyles};
 
-   ${({ $needsFix }) =>
-     $needsFix &&
-     config.css`
-      display: flex;
-      flex-direction: column;
-    `};
-
   ${({ $isInner }) =>
     $isInner &&
     config.css`
+    display: flex;
     flex: 1;
     width: 100%;
     height: 100%;

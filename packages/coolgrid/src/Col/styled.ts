@@ -1,7 +1,7 @@
 import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
-  normalizeUnit,
+  value,
   extendCss,
   MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
@@ -34,7 +34,7 @@ const widthStyles: WidthStyles = (
   const hasGap = hasValue(gap)
 
   // eslint-disable-next-line no-nested-ternary
-  const value = __WEB__
+  const val = __WEB__
     ? hasGap
       ? `calc(${width}% - ${gap}px)`
       : `${width}%`
@@ -45,25 +45,22 @@ const widthStyles: WidthStyles = (
   return config.css`
       flex-grow: 0;
       flex-shrink: 0;
-      max-width: ${normalizeUnit({ param: value, rootSize })};
-      flex-basis: ${normalizeUnit({ param: value, rootSize })};
+      max-width: ${value([val], rootSize)};
+      flex-basis: ${value([val], rootSize)};
     `
 }
 
 type SpacingStyles = (
   type: 'margin' | 'padding',
-  value: number,
+  param: number,
   rootSize?: number
 ) => CssOutput
-const spacingStyles: SpacingStyles = (type, value, rootSize) => {
-  if (!isNumber(value)) {
+const spacingStyles: SpacingStyles = (type, param, rootSize) => {
+  if (!isNumber(param)) {
     return ''
   }
 
-  const finalStyle = `${type}: ${normalizeUnit({
-    param: value / 2,
-    rootSize,
-  })}`
+  const finalStyle = `${type}: ${value([param / 2], rootSize)}`
 
   return config.css`
       ${finalStyle};
