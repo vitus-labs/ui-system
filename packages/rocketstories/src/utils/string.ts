@@ -1,8 +1,19 @@
-export const capitalize = (value) =>
+// --------------------------------------------------------
+// capitalize
+// --------------------------------------------------------
+type Capitalize = (value: string) => string
+
+export const capitalize: Capitalize = (value) =>
   value.charAt(0).toUpperCase() + value.slice(1)
 
-export const isColor = (strColor) => {
+// --------------------------------------------------------
+// capitalize
+// --------------------------------------------------------
+type IsColor = (value: string) => boolean
+
+export const isColor: IsColor = (value) => {
   const s = new Option().style
-  s.color = strColor
-  return s.color == strColor
+  s.color = value
+  // eslint-disable-next-line eqeqeq
+  return s.color == value
 }

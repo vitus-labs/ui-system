@@ -1,134 +1,19 @@
-// @ts-nocheck
 import { isColor } from '~/utils/string'
+import CONTROLS_MAP from '~/constants/controlTypes'
 
-const CONTROL_TYPES = {
-  values: 'Simple values',
-  html: 'HTML Semantics',
-  dimensions: 'Dimensions',
-  pseudo: 'Pseudo',
-  boolean: 'Booleans',
-  options: 'Options',
-  dateTime: 'Date & Time',
-  events: 'Events',
-  data: 'Data',
-}
+import type { PartialControls, Controls, Control, Obj } from '~/types'
 
-const CONTROLS_MAP = {
-  boolean: () => ({
-    control: { type: 'boolean' },
-    table: {
-      category: CONTROL_TYPES.boolean,
-    },
-  }),
-  pseudo: () => ({
-    control: { type: 'boolean' },
-    table: {
-      category: CONTROL_TYPES.pseudo,
-    },
-  }),
-  pseudoAction: () => ({
-    control: { type: 'action' },
-    table: {
-      category: CONTROL_TYPES.pseudo,
-    },
-  }),
-  dimensionSelect: ({ options }) => ({
-    control: { type: 'select', options },
-    table: {
-      category: CONTROL_TYPES.dimensions,
-    },
-  }),
-  dimensionMultiSelect: ({ options }) => ({
-    control: { type: 'multi-select', options },
-    table: {
-      category: CONTROL_TYPES.dimensions,
-    },
-  }),
-  number: ({ options }) => ({
-    control: { type: 'number', options },
-    table: {
-      category: CONTROL_TYPES.values,
-    },
-  }),
-  range: () => {},
-  object: ({ options }) => ({
-    control: { type: 'object', options },
-    table: {
-      category: CONTROL_TYPES.data,
-    },
-  }),
-  array: ({ options }) => ({
-    control: { type: 'array', options },
-    table: {
-      category: CONTROL_TYPES.data,
-    },
-  }),
-  radio: ({ options }) => ({
-    control: { type: 'radio', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  inlineRadio: ({ options }) => ({
-    control: { type: 'inline-radio', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  check: ({ options }) => ({
-    control: { type: 'check', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  inlineCheck: ({ options }) => ({
-    control: { type: 'inline-check', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  select: ({ options }) => ({
-    control: { type: 'select', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  tag: ({ options }) => ({
-    control: { type: 'select', options },
-    table: {
-      category: CONTROL_TYPES.html,
-      description: 'HTML Tag',
-    },
-  }),
-  multiSelect: ({ options }) => ({
-    control: { type: 'multi-select', options },
-    table: {
-      category: CONTROL_TYPES.options,
-    },
-  }),
-  text: () => ({
-    control: { type: 'text' },
-    table: {
-      category: CONTROL_TYPES.values,
-    },
-  }),
-  color: () => ({
-    control: { type: 'color' },
-    table: {
-      category: CONTROL_TYPES.values,
-    },
-  }),
-  date: () => ({
-    control: { type: 'date' },
-    table: {
-      category: CONTROL_TYPES.dateTime,
-    },
-  }),
-} as const
+// --------------------------------------------------------
+// isContorl
+// --------------------------------------------------------
+type IsControl = (param: any) => boolean
 
-export const isControl = (param) =>
+export const isControl: IsControl = (param) =>
   typeof param === 'object' && param !== null && !!CONTROLS_MAP[param.type]
 
+// --------------------------------------------------------
+// getControlType
+// --------------------------------------------------------
 type GetControlType = (value: any) => keyof typeof CONTROLS_MAP
 
 const getControlType: GetControlType = (value) => {
@@ -156,11 +41,22 @@ const getControlType: GetControlType = (value) => {
   return primitiveType
 }
 
-export const mergeOptions = ({ defaultProps, attrs }) => {
+// --------------------------------------------------------
+// mergeOptions
+// --------------------------------------------------------
+type MergeOptions = ({
+  defaultProps,
+  attrs,
+}: {
+  defaultProps: Record<string, unknown>
+  attrs: PartialControls | Obj
+}) => Record<string, unknown>
+
+export const mergeOptions: MergeOptions = ({ defaultProps, attrs }) => {
   const result = { ...defaultProps }
 
   return Object.entries(attrs).reduce((acc, [key, value]) => {
-    if (defaultProps[key] && typeof value === 'object')
+    if (defaultProps[key] && typeof value === 'object' && value !== null)
       return {
         ...acc,
         [key]: { ...value, value: value?.value || defaultProps[key] },
@@ -170,7 +66,12 @@ export const mergeOptions = ({ defaultProps, attrs }) => {
   }, result)
 }
 
-export const transformToControls = (props) =>
+// --------------------------------------------------------
+// transformToControls
+// --------------------------------------------------------
+type TransformToControls = (props: Record<string, unknown>) => Controls
+
+export const transformToControls: TransformToControls = (props) =>
   Object.entries(props).reduce((acc, [key, value]) => {
     if (isControl(value)) return { ...acc, [key]: value }
 
@@ -190,15 +91,10 @@ export const transformToControls = (props) =>
     return acc
   }, {})
 
-type PropItem = {
-  type: keyof typeof CONTROLS_MAP
-  value: any
-  options: any
-}
-
-type FilterDefaultProps = (
-  props: Record<string, PropItem>
-) => Record<string, PropItem['value']>
+// --------------------------------------------------------
+// filterDefaultProps
+// --------------------------------------------------------
+type FilterDefaultProps = (props: Controls) => Record<string, Control['value']>
 
 export const filterDefaultProps: FilterDefaultProps = (props = {}) =>
   Object.entries(props).reduce(
@@ -206,20 +102,33 @@ export const filterDefaultProps: FilterDefaultProps = (props = {}) =>
     {}
   )
 
-type FilterControls = <T extends Record<string, PropItem>>(
-  props?: T
-) => Record<keyof T, PropItem['value']> | Record<string, unknown>
+// --------------------------------------------------------
+// filterControls
+// --------------------------------------------------------
+type FilterControls = <T extends Controls>(
+  props: T
+) => Record<keyof T, Control['value']> | Record<string, unknown>
 
-export const filterControls: FilterControls = (props = {}) =>
+export const filterControls: FilterControls = (props) =>
   Object.entries(props).reduce(
     (acc, [key, value]) => ({ ...acc, [key]: CONTROLS_MAP[value.type](value) }),
     {}
   )
 
-export const disableControl = (name) => ({
+// --------------------------------------------------------
+// disableControl
+// --------------------------------------------------------
+type DisableControl = (
+  name: string
+) => Record<string, { table: { disable: true } }>
+
+export const disableControl: DisableControl = (name) => ({
   [name]: { table: { disable: true } },
 })
 
+// --------------------------------------------------------
+// disableDimensionControls
+// --------------------------------------------------------
 type DisableDimensionControls = (
   dimensions: Record<string, boolean>,
   name?: string
@@ -230,11 +139,11 @@ export const disableDimensionControls: DisableDimensionControls = (
   dimensionName
 ) => {
   const result = dimensionName ? disableControl(dimensionName) : {}
-
   const dimensionKeys = Object.values(dimensions)
 
   return dimensionKeys.reduce((acc, value) => {
     Object.keys(value).forEach((item) => {
+      // eslint-disable-next-line no-param-reassign
       acc = { ...acc, ...disableControl(item) }
     })
 

@@ -67,7 +67,10 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
   )
 
   const defaultPropsValues = filterDefaultProps(controlAttrs)
-  const defaultBooleanProps = extractDefaultBooleanProps(dimensions, multiKeys)
+  const defaultBooleanProps = extractDefaultBooleanProps({
+    dimensions,
+    multiKeys,
+  })
 
   Enhanced.args = defaultPropsValues
   Enhanced.argTypes = {

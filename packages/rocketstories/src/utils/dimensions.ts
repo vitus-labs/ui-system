@@ -1,27 +1,54 @@
-// @ts-nocheck
-/* eslint-disable import/prefer-default-export */
-export const transformDimensionsToControls = ({ dimensions, multiKeys }) =>
-  Object.entries(dimensions).reduce((acc, [key, value], i) => {
+import type { Controls } from '~/types'
+// --------------------------------------------------------
+// transformDimensionsToControls
+// --------------------------------------------------------
+type TransformDimensionsToControls = ({
+  dimensions,
+  multiKeys,
+}: {
+  dimensions: Record<string, any>
+  multiKeys: Record<string, true>
+}) => Controls
+
+export const transformDimensionsToControls: TransformDimensionsToControls = ({
+  dimensions,
+  multiKeys,
+}) =>
+  Object.entries(dimensions).reduce((acc, [key, value]) => {
     const valueKeys = Object.keys(value)
     const res = valueKeys.reduce((acc, item) => ({ ...acc, [item]: item }), {})
 
     const isMultiKey = !!multiKeys[key]
 
-    acc[key] = {
+    const newValue = {
       type: isMultiKey ? 'dimensionMultiSelect' : 'dimensionSelect',
       value: isMultiKey ? undefined : valueKeys[0],
       options: { '----': undefined, ...res },
     }
 
-    return acc
+    return { ...acc, [key]: newValue }
   }, {})
 
-export const extractDefaultBooleanProps = (dimensions, multiKeys) =>
+// --------------------------------------------------------
+// extractDefaultBooleanProps
+// --------------------------------------------------------
+type ExtractDefaultBooleanProps = ({
+  dimensions,
+  multiKeys,
+}: {
+  dimensions: Record<string, any>
+  multiKeys: Record<string, true>
+}) => Record<string, any>
+
+export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
+  dimensions,
+  multiKeys,
+}) =>
   Object.entries(dimensions).reduce((acc, [key, value], i) => {
     if (!multiKeys[key]) {
       const propName = Object.keys(value)[0]
 
-      acc[propName] = true
+      return { ...acc, [propName]: true }
     }
 
     return acc

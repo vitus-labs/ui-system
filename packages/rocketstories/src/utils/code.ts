@@ -1,29 +1,54 @@
-// @ts-nocheck
-const parseProps = (props) =>
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-param-reassign */
+import type { Control, SimpleValue, Obj } from '~/types'
+
+// --------------------------------------------------------
+// parseProps
+// --------------------------------------------------------
+type ObjValue = Control
+
+type ParseProps = <
+  T extends Record<string, SimpleValue | Array<SimpleValue> | ObjValue>
+>(
+  props: T
+) => Record<keyof T, unknown>
+
+const parseProps: ParseProps = (props) =>
   Object.entries(props).reduce((acc, [key, value]) => {
+    if (value === null) return acc
+
     const valueType = typeof value
 
     if (['string', 'number', 'boolean', 'bigint'].includes(valueType)) {
-      acc[key] = value
-    } else if (Array.isArray(value)) {
-      acc[key] = value
-    } else if (valueType === 'object') {
-      const type = value?.type
-      const data = value?.data
-      const defaultValue = value?.defaultValue
+      return { ...acc, [key]: value }
+    }
+
+    if (Array.isArray(value)) {
+      return { ...acc, [key]: value }
+    }
+
+    if (valueType === 'object') {
+      const type = (value as ObjValue)?.type
+      const options = (value as ObjValue)?.options
+      const defaultValue = (value as ObjValue)?.value
 
       // if has custom knobs configuration
-      if (type && data && defaultValue) {
-        acc[key] = defaultValue || data
-      } else {
-        acc[key] = value
+      if (type && options && defaultValue) {
+        return { ...acc, [key]: defaultValue || options }
       }
+
+      return { ...acc, [key]: value }
     }
 
     return acc
-  }, {})
+  }, {} as any)
 
-const stringifyArray = (props: any[]) => {
+// --------------------------------------------------------
+// stringifyArray
+// --------------------------------------------------------
+type StringifyArray = (props: Array<unknown>) => string
+
+const stringifyArray: StringifyArray = (props) => {
   let result = '['
 
   const arrayLength = props.length
@@ -33,7 +58,7 @@ const stringifyArray = (props: any[]) => {
       // TODO: parse arrays
       acc += `${stringifyArray(value)}`
     } else if (typeof value === 'object' && value !== null) {
-      acc += `${stringifyObject(value)}`
+      acc += `${stringifyObject(value as Record<string, any>)}`
     } else {
       acc += `${value}`
     }
@@ -51,7 +76,12 @@ const stringifyArray = (props: any[]) => {
   return result
 }
 
-const stringifyObject = (props) => {
+// --------------------------------------------------------
+// stringifyObject
+// --------------------------------------------------------
+type StringifyObject = (props: Obj) => string
+
+const stringifyObject: StringifyObject = (props) => {
   let result = '{ '
 
   const propsArray = Object.entries(props)
@@ -79,11 +109,14 @@ const stringifyObject = (props) => {
   return result
 }
 
-export const stringifyProps = (props) => {
+// --------------------------------------------------------
+// stringifyObject
+// --------------------------------------------------------
+type StringifyProps = (props: Obj) => string
+
+export const stringifyProps: StringifyProps = (props) => {
   const parsedProps = parseProps(props)
-
   const arrayProps = Object.entries(parsedProps)
-
   const arrayLength = arrayProps.length
 
   return arrayProps.reduce((acc, [key, value], i) => {
@@ -98,8 +131,8 @@ export const stringifyProps = (props) => {
       acc += `${key}="${value}"`
     } else if (Array.isArray(value)) {
       acc += `${key}={${stringifyArray(value)}}`
-    } else if (typeof value === 'object') {
-      acc += `${key}={${stringifyObject(value)}}`
+    } else if (typeof value === 'object' && value !== null) {
+      acc += `${key}={${stringifyObject(value as Record<string, any>)}}`
     }
 
     if (arrayLength !== i + 1) {
@@ -110,7 +143,12 @@ export const stringifyProps = (props) => {
   }, '')
 }
 
-export const createJSXCode = (name, props) => {
+// --------------------------------------------------------
+// createJSXCode
+// --------------------------------------------------------
+type CreateJSXCode = (name: string, props: Obj) => string
+
+export const createJSXCode: CreateJSXCode = (name, props) => {
   let result = `<${name} `
 
   result += stringifyProps(props)
@@ -120,7 +158,19 @@ export const createJSXCode = (name, props) => {
   return result
 }
 
-export const createJSXCodeArray = (
+// --------------------------------------------------------
+// createJSXCodeArray
+// --------------------------------------------------------
+
+type CreateJSXCodeArray = (
+  name: string,
+  props: Obj,
+  dimensionName: string,
+  dimensions: Obj,
+  useBooleans: boolean
+) => string
+
+export const createJSXCodeArray: CreateJSXCodeArray = (
   name,
   props,
   dimensionName,
