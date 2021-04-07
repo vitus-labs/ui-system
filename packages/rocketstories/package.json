@@ -1,7 +1,6 @@
 {
   "name": "@vitus-labs/rocketstories",
   "version": "0.11.0",
-  "private": true,
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
