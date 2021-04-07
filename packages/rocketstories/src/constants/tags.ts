@@ -1,4 +1,4 @@
-export default [
+const TAGS = [
   'a',
   'abbr',
   'acronym',
@@ -117,3 +117,7 @@ export default [
   'video',
   'wbr',
 ] as const
+
+export type Tags = typeof TAGS[number]
+
+export default TAGS

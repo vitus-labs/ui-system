@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import type { ControlKeys } from '~/constants/controlTypes'
+import type { Tags } from '~/constants/tags'
 
 export type Element = ComponentType
 export type RocketComponent = ComponentType & { IS_ROCKETSTYLE: true }
@@ -21,26 +22,61 @@ export type Controls = Record<string, Control>
 
 export type PartialControls = Record<string, Partial<Control>>
 
-type Tag = {
+type CTag = {
   type: 'tag'
-  value: string
-  options: Array<string>
+  value?: Tags
+  options?: Array<Tags>
 }
 
-type Bool = {
+type CBool = {
   type: 'boolean'
-  value: boolean
+  value?: boolean
+  options: never
 }
 
-type Text = {
-  type: 'text'
+type CText = {
+  type: 'text' | 'color'
   value: string
+  options: never
 }
 
-type Object = {
-  type: 'object'
-  value: Record<string, unknown>
+type CNumber = {
+  type: 'number'
+  value?: number
+  options: never
+}
+
+type CSelect = {
+  type: 'select'
+  value?: Record<string, unknown>
   options: Array<Record<string, unknown>>
 }
 
-export type Attrs = Tag | Bool | Text | Object
+type CObject = {
+  type: 'object'
+  value?: Record<string, unknown>
+  options: Record<string, unknown>
+}
+
+type CArray = {
+  type: 'array'
+  value?: Array<any>
+  options: Array<any>
+}
+
+type CCheck = {
+  type: 'radio' | 'inline-radio' | 'check' | 'inline-check'
+  value?: string | number
+  options?: Array<any>
+}
+
+export type AttrsControlsValue =
+  | CCheck
+  | CTag
+  | CBool
+  | CText
+  | CObject
+  | CSelect
+  | CNumber
+  | CObject
+  | CArray
