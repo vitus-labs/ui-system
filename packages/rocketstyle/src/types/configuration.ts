@@ -11,10 +11,6 @@ export type __ROCKETSTYLE__ = {
   themes: Record<string, unknown>
 }
 
-type OnMountCB<T> = {
-  onMount: (props: __ROCKETSTYLE__ & T) => void
-}
-
 export type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
 
 export type InitConfiguration<C, D> = {
@@ -48,19 +44,4 @@ export type Configuration<
 export type DefaultProps<
   C extends ElementType = ElementType,
   D extends Dimensions = Dimensions
-> = Partial<
-  PseudoProps &
-    OnMountCB<
-      Pick<
-        Configuration<C, D>,
-        | 'name'
-        | 'component'
-        | 'useBooleans'
-        | 'styles'
-        | 'dimensions'
-        | 'dimensionKeys'
-        | 'dimensionValues'
-        | 'multiKeys'
-      >
-    >
->
+> = Partial<PseudoProps>

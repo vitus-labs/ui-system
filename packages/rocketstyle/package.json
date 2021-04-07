@@ -36,7 +36,7 @@
   "main": "lib/vitus-labs-rocketstyle.js",
   "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
   "module": "lib/vitus-labs-rocketstyle.module.js",
-  "typings": "lib/types/index.d.ts",
+  "typings": "lib/index.d.ts",
   "browser": {
     "./lib/vitus-labs-rocketstyle.js": "./lib/vitus-labs-rocketstyle.js",
     "./lib/vitus-labs-rocketstyle.module.js": "./lib/vitus-labs-rocketstyle.module.js"
@@ -69,10 +69,10 @@
   "devDependencies": {
     "@vitus-labs/core": "^0.11.0",
     "@vitus-labs/elements": "^0.11.0",
-    "@vitus-labs/tools-babel": "^0.6.4",
-    "@vitus-labs/tools-rollup": "^0.6.4",
-    "@vitus-labs/tools-storybook": "^0.6.3",
-    "@vitus-labs/tools-typescript": "^0.6.4",
+    "@vitus-labs/tools-babel": "^0.8.0",
+    "@vitus-labs/tools-rollup": "^0.8.0",
+    "@vitus-labs/tools-storybook": "^0.8.0",
+    "@vitus-labs/tools-typescript": "^0.8.0",
     "@vitus-labs/unistyle": "^0.11.0"
   }
 }
