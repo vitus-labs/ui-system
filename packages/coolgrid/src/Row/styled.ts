@@ -1,7 +1,7 @@
 import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
-  normalizeUnit,
+  value,
   extendCss,
   ALIGN_CONTENT_MAP_X,
   MakeItResponsiveStyles,
@@ -17,13 +17,13 @@ type SpacingStyles = (
 const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!isNumber(gap)) return ''
 
-  const value = (param) => normalizeUnit({ param, rootSize })
+  const getValue = (param) => value([param], rootSize)
 
   const spacingX = (gap / 2) * -1
   const spacingY = isNumber(gutter) ? gutter - gap / 2 : gap / 2
 
   return config.css`
-    margin: ${value(spacingY)} ${value(spacingX)};
+    margin: ${getValue(spacingY)} ${getValue(spacingX)};
   `
 }
 

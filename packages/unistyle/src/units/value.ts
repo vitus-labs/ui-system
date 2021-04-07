@@ -5,11 +5,11 @@ const getValueOf: GetValueOf = (...values) =>
   values.find((value) => typeof value !== 'undefined' && value !== null)
 
 export type Value = (
-  rootSize: number,
   values: Array<unknown>,
+  rootSize: number,
   outputUnit?: 'px' | 'rem' | '%' | string
 ) => string | number
-const value: Value = (rootSize, values, outputUnit?: string) => {
+const value: Value = (values, rootSize, outputUnit) => {
   const param = getValueOf(...values)
 
   if (Array.isArray(param)) {
