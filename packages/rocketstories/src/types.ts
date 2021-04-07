@@ -11,7 +11,7 @@ export type Configuration = {
 }
 
 export type SimpleValue = string | number | boolean
-export type Obj = Record<string, string | number | boolean>
+export type Obj = Record<string, SimpleValue | Array<SimpleValue>>
 export type Control = {
   type: ControlKeys
   options: Array<unknown> | Record<string, unknown>

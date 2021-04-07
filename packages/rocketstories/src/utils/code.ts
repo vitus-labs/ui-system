@@ -59,6 +59,8 @@ const stringifyArray: StringifyArray = (props) => {
       acc += `${stringifyArray(value)}`
     } else if (typeof value === 'object' && value !== null) {
       acc += `${stringifyObject(value as Record<string, any>)}`
+    } else if (['number', 'string'].includes(typeof value)) {
+      acc += `"${value}"`
     } else {
       acc += `${value}`
     }
@@ -93,6 +95,8 @@ const stringifyObject: StringifyObject = (props) => {
       acc += `${key}: ${value}`
     } else if (typeof value === 'object' && value !== null) {
       acc += `${key}: ${stringifyObject(value)}`
+    } else if (['string'].includes(typeof value)) {
+      acc += `${key}: "${value}"`
     } else {
       acc += `${key}: ${value}`
     }
@@ -167,7 +171,8 @@ type CreateJSXCodeArray = (
   props: Obj,
   dimensionName: string,
   dimensions: Obj,
-  useBooleans: boolean
+  useBooleans: boolean,
+  isMultiKey: boolean
 ) => string
 
 export const createJSXCodeArray: CreateJSXCodeArray = (
@@ -175,12 +180,19 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   props,
   dimensionName,
   dimensions,
-  useBooleans
+  useBooleans,
+  isMultiKey
 ) => {
   let result = ''
 
+  const finalProps = { ...props }
+  delete finalProps[dimensionName]
+
   result += Object.keys(dimensions).reduce((acc, key) => {
-    acc += createJSXCode(name, { [dimensionName]: key, ...props })
+    acc += createJSXCode(name, {
+      [dimensionName]: isMultiKey ? [key] : key,
+      ...finalProps,
+    })
     acc += `\n`
     return acc
   }, '')
@@ -193,7 +205,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
     result += `\n`
 
     result += Object.keys(dimensions).reduce((acc, key) => {
-      acc += createJSXCode(name, { [key]: true, ...props })
+      acc += createJSXCode(name, { [key]: true, ...finalProps })
       acc += `\n`
       return acc
     }, '')

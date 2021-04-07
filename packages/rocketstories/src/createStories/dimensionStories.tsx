@@ -80,7 +80,8 @@ const makeDimensionStories: MakeDimensionStories = ({
           args,
           dimension,
           currentDimension,
-          useBooleans
+          useBooleans,
+          isMultiKey
         ),
       },
     },

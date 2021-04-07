@@ -27,7 +27,13 @@ const stories = rocketstories(Button).attrs({
   //   b: null,
   //   c: undefined,
   // },
-  // arrayProp: ['a', null, undefined, { a: 1 }],
+  // arrayProp: [
+  //   'a',
+  //   null,
+  //   undefined,
+  //   { a: 1 },
+  //   { b: 'hello', c: null, d: undefined },
+  // ],
 })
 
 export default stories.main()
@@ -37,6 +43,8 @@ export const Example = stories.mainStory()
 export const States = stories.makeStories('state')
 
 export const Sizes = stories.makeStories('size')
+
+export const Multiple = stories.makeStories('multiple')
 
 export const button = () => (
   <>
