@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
+import type { HTMLTags } from '@vitus-labs/core'
 import type { ControlKeys } from '~/constants/controlTypes'
-import type { Tags } from '~/constants/tags'
 
 export type Element = ComponentType
 export type RocketComponent = ComponentType & { IS_ROCKETSTYLE: true }
@@ -24,8 +24,8 @@ export type PartialControls = Record<string, Partial<Control>>
 
 type CTag = {
   type: 'tag'
-  value?: Tags
-  options?: Array<Tags>
+  value?: HTMLTags
+  options?: Array<HTMLTags>
 }
 
 type CBool = {

@@ -5,10 +5,11 @@ import compose from './compose'
 import isEmpty, { IsEmpty } from './isEmpty'
 import renderContent, { RenderContent } from './renderContent'
 import Provider from './context'
+import htmlTags, { HTMLTags } from '~/htmlTags'
 
 const { context } = config
 
-export type { IsEmpty, RenderContent }
+export type { IsEmpty, RenderContent, HTMLTags }
 
 export {
   config,
@@ -25,4 +26,5 @@ export {
   throttle,
   merge,
   memoize,
+  htmlTags,
 }

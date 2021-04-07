@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from 'react'
-import type { StyledComponentPropsWithRef } from 'styled-components'
+import type { HTMLTags } from '@vitus-labs/core'
 import type {
   AlignX,
   AlignY,
@@ -11,7 +11,7 @@ import type {
 } from '~/types'
 
 export type Props = Partial<{
-  tag: StyledComponentPropsWithRef<any>
+  tag: HTMLTags
   innerRef: any
   children: ReactNode
   content: ReactNode
