@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { forwardRef, ForwardRefExoticComponent } from 'react'
-import type { ReactNode } from 'react'
-import type { StyledComponentPropsWithRef } from 'styled-components'
+import React, { forwardRef, ReactNode, ForwardRefExoticComponent } from 'react'
+import type { HTMLTags } from '@vitus-labs/core'
 import Styled from './styled'
 import type { ExtendCss } from '~/types'
 
@@ -9,7 +8,7 @@ export type Props = Partial<{
   paragraph: boolean
   label: ReactNode
   children: ReactNode
-  tag: StyledComponentPropsWithRef<any>
+  tag: HTMLTags
   extendCss: ExtendCss
 }>
 
