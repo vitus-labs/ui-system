@@ -295,7 +295,7 @@ const styleComponent: StyleComponent<any> = (options) => {
     }
   }
 
-  RocketComponent.getDefaultProps = (props, theme, mode) => {
+  RocketComponent.getDefaultAttrs = (props, theme, mode) => {
     const result = calculateChainOptions(options.attrs)([
       props,
       theme,

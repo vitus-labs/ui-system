@@ -46,7 +46,7 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
   // @ts-ignore
   const statics = component.getStaticDimensions(theme)
   // @ts-ignore
-  const defaultProps = component.getDefaultProps(attrs, theme, 'light')
+  const defaultProps = component.getDefaultAttrs(attrs, theme, 'light')
   const { useBooleans, multiKeys, dimensions } = statics
 
   const dimensionControls = transformDimensionsToControls(statics)

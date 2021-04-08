@@ -32,7 +32,7 @@ const makeDimensionStories: MakeDimensionStories = ({
   // @ts-ignore
   const statics = component.getStaticDimensions(theme)
   // @ts-ignore
-  const defaultProps = component.getDefaultProps(attrs, theme, 'light')
+  const defaultProps = component.getDefaultAttrs(attrs, theme, 'light')
   const { dimensions, useBooleans, multiKeys } = statics
 
   const currentDimension = dimensions[dimension]
