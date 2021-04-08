@@ -156,11 +156,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     border-style: ${t.borderStyle};
     border-color: ${t.borderColor};
 
-    border-top-width: ${pxValue(
-      rootSize,
-      [t.borderWidthTop, t.borderWidthY],
-      'px'
-    )};
+    border-top-width: ${pxValue(t.borderWidthTop, t.borderWidthY)};
     border-top-style: ${t.borderStyleTop || t.borderStyleY};
     border-top-color: ${t.borderColorTop || t.borderColorY};
 
