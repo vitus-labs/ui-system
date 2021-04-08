@@ -1,6 +1,12 @@
 // @ts-nocheck
 /* eslint-disable no-underscore-dangle */
-import React, { useMemo, useContext } from 'react'
+import React, {
+  useMemo,
+  forwardRef,
+  useContext,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
@@ -129,134 +135,148 @@ const styleComponent: StyleComponent<any> = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: RocketComponent = ({
-    $rocketstyleRef, // it's forwarded from HOC which is always on top of hocs
-    ...props
-  }) => {
-    // --------------------------------------------------
-    // hover - focus - pressed state passed via context from parent component
-    // --------------------------------------------------
-    const rocketstyleCtx = options.consumer ? useContext(localContext) : {}
+  const EnhancedComponent: RocketComponent = forwardRef<any, any>(
+    (
+      {
+        $rocketstyleRef, // it's forwarded from HOC which is always on top of hocs
+        ...props
+      },
+      ref
+    ) => {
+      // --------------------------------------------------
+      // handle refs
+      // (1) one is passed from inner HOC - $rocketstyleRef
+      // (2) second one is used to be used directly (e.g. inside hocs)
+      // --------------------------------------------------
+      const internalRef = useRef()
+      useImperativeHandle($rocketstyleRef, () => internalRef.current)
+      useImperativeHandle(ref, () => internalRef.current)
 
-    // --------------------------------------------------
-    // general theme and theme mode dark / light passed in context
-    // --------------------------------------------------
-    const { theme, mode } = useThemeOptions(options)
+      // --------------------------------------------------
+      // hover - focus - pressed state passed via context from parent component
+      // --------------------------------------------------
+      const rocketstyleCtx = options.consumer ? useContext(localContext) : {}
 
-    // --------------------------------------------------
-    // calculate themes for all possible styling dimensions
-    // .theme(...) + defined dimensions like .states(...), .sizes(...)
-    // --------------------------------------------------
-    const __ROCKETSTYLE__ = useMemo(
-      () =>
-        useTheme<typeof theme>({
-          theme,
-          options,
-          cb: themeModeCb,
-        }),
-      // recalculate this only when theme changes
-      [theme]
-    )
+      // --------------------------------------------------
+      // general theme and theme mode dark / light passed in context
+      // --------------------------------------------------
+      const { theme, mode } = useThemeOptions(options)
 
-    const {
-      reservedPropNames,
-      themes: rocketThemes,
-      dimensions,
-      baseTheme: rocketBaseTheme,
-    } = __ROCKETSTYLE__
+      // --------------------------------------------------
+      // calculate themes for all possible styling dimensions
+      // .theme(...) + defined dimensions like .states(...), .sizes(...)
+      // --------------------------------------------------
+      const __ROCKETSTYLE__ = useMemo(
+        () =>
+          useTheme<typeof theme>({
+            theme,
+            options,
+            cb: themeModeCb,
+          }),
+        // recalculate this only when theme changes
+        [theme]
+      )
 
-    const { baseTheme, themes } = useMemo(
-      () =>
-        calculateThemeMode(
-          { themes: rocketThemes, baseTheme: rocketBaseTheme },
-          mode
-        ),
-      // recalculate this only when theme mode changes dark / light
-      [mode]
-    )
+      const {
+        reservedPropNames,
+        themes: rocketThemes,
+        dimensions,
+        baseTheme: rocketBaseTheme,
+      } = __ROCKETSTYLE__
 
-    // --------------------------------------------------
-    // calculate reserved Keys defined in dimensions as styling keys
-    // there is no need to calculate this each time - keys are based on
-    // dimensions definitions
-    // --------------------------------------------------
-    const RESERVED_STYLING_PROPS_KEYS = useMemo(
-      () => Object.keys(reservedPropNames),
-      []
-    )
+      const { baseTheme, themes } = useMemo(
+        () =>
+          calculateThemeMode(
+            { themes: rocketThemes, baseTheme: rocketBaseTheme },
+            mode
+          ),
+        // recalculate this only when theme mode changes dark / light
+        [mode]
+      )
 
-    // --------------------------------------------------
-    // get final props which are (latest has the highest priority):
-    // (1) merged styling from context,
-    // (2) `attrs` chaining method, and from
-    // (3) passing them directly to component
-    // --------------------------------------------------
-    const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
-      ...(options.consumer
-        ? options.consumer((callback) => callback(rocketstyleCtx))
-        : {}),
-      ...props,
+      // --------------------------------------------------
+      // calculate reserved Keys defined in dimensions as styling keys
+      // there is no need to calculate this each time - keys are based on
+      // dimensions definitions
+      // --------------------------------------------------
+      const RESERVED_STYLING_PROPS_KEYS = useMemo(
+        () => Object.keys(reservedPropNames),
+        []
+      )
+
+      // --------------------------------------------------
+      // get final props which are (latest has the highest priority):
+      // (1) merged styling from context,
+      // (2) `attrs` chaining method, and from
+      // (3) passing them directly to component
+      // --------------------------------------------------
+      const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
+        ...(options.consumer
+          ? options.consumer((callback) => callback(rocketstyleCtx))
+          : {}),
+        ...props,
+      }
+
+      // --------------------------------------------------
+      // rocketstate
+      // calculate final component state including pseudo state
+      // passed as $rocketstate prop
+      // --------------------------------------------------
+      const rocketstate: Record<string, unknown> = _calculateStylingAttrs({
+        props: pickStyledProps(mergeProps, reservedPropNames),
+        dimensions,
+      })
+
+      // --------------------------------------------------
+      // pseudo state
+      // calculate final component pseudo state including pseudo state
+      // from props and override by pseudo props from context
+      // --------------------------------------------------
+      const finalPseudo = {
+        ...pick(props, PSEUDO_KEYS),
+        ...pseudo,
+      }
+
+      const finalRocketstate = { ...rocketstate, pseudo: finalPseudo }
+
+      // --------------------------------------------------
+      // rocketstyle
+      // calculated (based on styling props) final theme which will be passed
+      // to our styled component
+      // passed as $rocketstyle prop
+      // --------------------------------------------------
+      const rocketstyle = calculateTheme({
+        rocketstate,
+        themes,
+        baseTheme,
+      })
+
+      // --------------------------------------------------
+      // final props
+      // final props passed to WrappedComponent
+      // excluding: styling props
+      // including: $rocketstyle, $rocketstate
+      // --------------------------------------------------
+      const finalProps = {
+        // this removes styling state from props and passes its state
+        // under rocketstate key only
+        ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
+        // if enforced to pass styling props, we pass them directly
+        ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
+        ref: internalRef,
+        // state props passed to styled component only, therefore the `$` symbol
+        $rocketstyle: rocketstyle,
+        $rocketstate: finalRocketstate,
+      }
+
+      // all the development stuff injected
+      if (process.env.NODE_ENV !== 'production') {
+        finalProps['data-rocketstyle'] = componentName
+      }
+
+      return <RenderComponent {...finalProps} />
     }
-
-    // --------------------------------------------------
-    // rocketstate
-    // calculate final component state including pseudo state
-    // passed as $rocketstate prop
-    // --------------------------------------------------
-    const rocketstate: Record<string, unknown> = _calculateStylingAttrs({
-      props: pickStyledProps(mergeProps, reservedPropNames),
-      dimensions,
-    })
-
-    // --------------------------------------------------
-    // pseudo state
-    // calculate final component pseudo state including pseudo state
-    // from props and override by pseudo props from context
-    // --------------------------------------------------
-    const finalPseudo = {
-      ...pick(props, PSEUDO_KEYS),
-      ...pseudo,
-    }
-
-    const finalRocketstate = { ...rocketstate, pseudo: finalPseudo }
-
-    // --------------------------------------------------
-    // rocketstyle
-    // calculated (based on styling props) final theme which will be passed
-    // to our styled component
-    // passed as $rocketstyle prop
-    // --------------------------------------------------
-    const rocketstyle = calculateTheme({
-      rocketstate,
-      themes,
-      baseTheme,
-    })
-
-    // --------------------------------------------------
-    // final props
-    // final props passed to WrappedComponent
-    // excluding: styling props
-    // including: $rocketstyle, $rocketstate
-    // --------------------------------------------------
-    const finalProps = {
-      // this removes styling state from props and passes its state
-      // under rocketstate key only
-      ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
-      // if enforced to pass styling props, we pass them directly
-      ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-      ref: $rocketstyleRef,
-      // state props passed to styled component only, therefore the `$` symbol
-      $rocketstyle: rocketstyle,
-      $rocketstate: finalRocketstate,
-    }
-
-    // all the development stuff injected
-    if (process.env.NODE_ENV !== 'production') {
-      finalProps['data-rocketstyle'] = componentName
-    }
-
-    return <RenderComponent {...finalProps} />
-  }
+  )
 
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods
