@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/index'
 
 const hoc = (WrapperComponent) => {
-  const Enhanced = (props) => <WrapperComponent {...props} />
+  const Enhanced = (props) => {
+    const a = useRef(null)
+
+    return <WrapperComponent {...props} ref={a} />
+  }
 
   return Enhanced
 }
