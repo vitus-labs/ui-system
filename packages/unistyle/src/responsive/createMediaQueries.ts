@@ -31,7 +31,7 @@ const createMediaQueries: CreateMediaQueries = ({
 
       result[key] = (...args: any[]) =>
         css`
-          @media (min-width: ${emSize}em) {
+          @media only screen and (min-width: ${emSize}em) {
             ${css(...args)};
           }
         `

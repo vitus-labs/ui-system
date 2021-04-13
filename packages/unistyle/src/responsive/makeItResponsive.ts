@@ -3,6 +3,7 @@ import createMediaQueries from './createMediaQueries'
 import sortBreakpoints from './sortBreakpoints'
 import normalizeTheme from './normalizeTheme'
 import transformTheme from './transformTheme'
+import optimizeTheme from './optimizeTheme'
 import type { Css } from '~/types'
 
 type CustomTheme = Record<
@@ -88,22 +89,17 @@ const makeItResponsive: MakeItResponsive = ({
     breakpoints: sortedBreakpoints,
   })
 
-  // this breakpoint will not be rendered within media query
-  const firstBreakpoint = sortedBreakpoints[0]
+  const optimizedTheme = optimizeTheme({
+    theme: transformedTheme,
+    breakpoints: sortedBreakpoints,
+  })
 
   return sortedBreakpoints.map((item) => {
-    const breakpointTheme = transformedTheme[item]
+    const breakpointTheme = optimizedTheme[item]
 
     if (!breakpointTheme) return ''
 
-    const result = renderStyles(transformedTheme[item])
-
-    // first breakpoint is rendered without media queries
-    if (item === firstBreakpoint) {
-      return css`
-        ${result}
-      `
-    }
+    const result = renderStyles(breakpointTheme)
 
     return media[item]`
         ${result};

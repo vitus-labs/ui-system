@@ -51,7 +51,7 @@ export const definedColumnSizesOnRowComponent = () => (
 export const definedColumnSizesOnContainerComponent = () => (
   <Container colCss={columnCss} size={{ xs: 12, md: 4, lg: 6 }}>
     <Row gap={0} xs={6}>
-      <Col size={4}>xs:12, md:4, lg:6</Col>
+      <Col size={4}>size:4</Col>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
       <Col>xs:12, md:4, lg:6</Col>
