@@ -67,7 +67,7 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-type CalculateTheme = <
+export type CalculateTheme = <
   P extends Record<string, unknown>,
   T extends Record<string, unknown>,
   B extends Record<string, unknown>
@@ -109,7 +109,7 @@ export const calculateTheme: CalculateTheme = ({
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-type CalculateThemeMode = (
+export type CalculateThemeMode = (
   themes: Record<string, any>,
   variant: 'light' | 'dark'
 ) => Partial<{

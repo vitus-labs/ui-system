@@ -10,7 +10,7 @@ import React, {
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
-import { localContext, createProvider, rocketstyleHoc } from '~/internal'
+import { localContext, createProvider, rocketstyleAttrsHoc } from '~/internal'
 import { calculateTheme, calculateThemeMode, themeModeCb } from '~/utils/theme'
 import { calculateStyles } from '~/utils/styles'
 import { chainOptions } from '~/utils/collection'
@@ -129,7 +129,7 @@ const styleComponent: StyleComponent<any> = (options) => {
     .filter((item) => typeof item === 'function')
     .reverse()
 
-  const hocsFuncs = [rocketstyleHoc(options), ...calculateHocsFuncs]
+  const hocsFuncs = [rocketstyleAttrsHoc(options), ...calculateHocsFuncs]
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
