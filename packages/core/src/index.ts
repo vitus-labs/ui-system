@@ -1,4 +1,4 @@
-import { omit, pick, set, get, throttle, difference, merge } from 'lodash'
+import { omit, pick, set, get, throttle, merge } from 'lodash'
 import memoize from 'moize'
 import config from './config'
 import compose from './compose'
@@ -18,7 +18,6 @@ export {
   compose,
   isEmpty,
   renderContent,
-  difference,
   omit,
   pick,
   set,

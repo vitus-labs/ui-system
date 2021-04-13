@@ -3730,7 +3730,7 @@
     "@babel/preset-react" "^7.12.10"
     "@babel/preset-typescript" "^7.10.4"
 
-"@vitus-labs/tools-lint@0.8.1":
+"@vitus-labs/tools-lint@^0.8.1":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@vitus-labs/tools-lint/-/tools-lint-0.8.1.tgz#014cb27d4b890ec078e744679a3e9ee6700ccc08"
   integrity sha512-zL/j+i5vqsoqDJcaLDjr/jpof70iW75eW+8cmCJdMMyvkKFhZFZyPXl/Jm46AoiWudpAoVJhsd6ZD4h9hzYTDw==
