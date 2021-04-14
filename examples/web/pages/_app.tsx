@@ -1,5 +1,6 @@
-import styled, { css, ThemeContext } from 'styled-components'
 // import styled, { css, ThemeContext } from 'styled-components'
+import { css, ThemeContext } from '@emotion/react'
+import styled from '@emotion/styled'
 import { init } from '@vitus-labs/core'
 
 init({ styled, css, context: ThemeContext })
