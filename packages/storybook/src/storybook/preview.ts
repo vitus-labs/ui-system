@@ -6,7 +6,6 @@ import * as d from '../decorators'
 if (__VITUS_LABS_STORIES__.styles === 'styled-components') {
   const styled = require('styled-components')
 
-  console.log('init config')
   init({
     styled: styled.default,
     css: styled.css,
