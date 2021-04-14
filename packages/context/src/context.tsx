@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
-import config from '~/config'
-import isEmpty from '~/isEmpty'
+import React, { createContext, FC } from 'react'
+import { config, isEmpty } from '@vitus-labs/core'
+
+const context = createContext<any>({})
 
 const StyledProvider = config.styledContext.Provider
-const VitusLabsProvider = config.context.Provider
+const VitusLabsProvider = context.Provider
 
 type Theme = Partial<
   {
@@ -27,5 +28,7 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
     </VitusLabsProvider>
   )
 }
+
+export { context }
 
 export default Provider

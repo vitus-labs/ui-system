@@ -1,5 +1,5 @@
 {
-  "name": "@vitus-labs/core",
+  "name": "@vitus-labs/context",
   "version": "0.13.4",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
@@ -7,24 +7,18 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "homepage": "https://vitus-labs.github.io/vitus-labs/core/",
-  "description": "Core and utility functions for vitus-labs packages",
-  "main": "lib/vitus-labs-core.js",
-  "umd:main": "lib/vitus-labs-core.umd.js",
-  "module": "lib/vitus-labs-core.module.js",
+  "description": "Global Vitus Labs context",
+  "main": "lib/vitus-labs-context.js",
+  "umd:main": "lib/vitus-labs-context.umd.js",
+  "module": "lib/vitus-labs-context.module.js",
   "typings": "lib/index.d.ts",
-  "browser": {
-    "./lib/vitus-labs-core.js": "./lib/vitus-labs-core.js",
-    "./lib/vitus-labs-core.module.js": "./lib/vitus-labs-core.browser.js"
-  },
-  "unpkg": "lib/vitus-labs-core.umd.min.js",
-  "jsnext:main": "lib/vitus-labs-core.module.js",
-  "react-native": "lib/vitus-labs-core.module.js",
+  "unpkg": "lib/vitus-labs-context.umd.min.js",
   "files": [
     "lib/"
   ],
   "keywords": [
     "vitus-labs",
-    "core"
+    "context"
   ],
   "publishConfig": {
     "access": "public"
@@ -53,19 +47,13 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
+    "@vitus-labs/core": "^0.13.4",
     "react": ">= 16.8"
   },
-  "dependencies": {
-    "lodash": "^4.17.15",
-    "moize": "^6.0.0"
-  },
   "devDependencies": {
-    "@emotion/react": "^11.1.5",
-    "@emotion/styled": "^11.3.0",
     "@types/lodash": "^4.14.168",
     "@vitus-labs/tools-babel": "^0.8.0",
     "@vitus-labs/tools-rollup": "^0.8.0",
-    "@vitus-labs/tools-typescript": "^0.8.0",
-    "styled-components": "^5.2.3"
+    "@vitus-labs/tools-typescript": "^0.8.0"
   }
 }

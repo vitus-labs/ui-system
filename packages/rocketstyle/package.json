@@ -63,7 +63,8 @@
     "hoist-non-react-statics": "^3.1.0"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "*",
+    "@vitus-labs/core": "^0.13.4",
+    "@vitus-labs/context": "^0.13.4",
     "react": ">= 16.8"
   },
   "devDependencies": {
