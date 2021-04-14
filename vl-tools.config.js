@@ -13,6 +13,7 @@ module.exports = {
     },
   },
   stories: {
+    styles: 'styled-components',
     font: 'https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap',
     decorators: {
       theme: {

@@ -63,17 +63,17 @@
     "hoist-non-react-statics": "^3.1.0"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "^0.13.4",
     "@vitus-labs/context": "^0.13.4",
+    "@vitus-labs/core": "^0.13.4",
     "react": ">= 16.8"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.13.4",
     "@vitus-labs/elements": "^0.13.4",
-    "@vitus-labs/tools-babel": "^0.8.0",
-    "@vitus-labs/tools-rollup": "^0.8.0",
-    "@vitus-labs/tools-storybook": "^0.8.0",
-    "@vitus-labs/tools-typescript": "^0.8.0",
+    "@vitus-labs/tools-babel": "^0.8.2-alpha.4",
+    "@vitus-labs/tools-rollup": "^0.8.2-alpha.4",
+    "@vitus-labs/tools-storybook": "^0.8.2-alpha.4",
+    "@vitus-labs/tools-typescript": "^0.8.2-alpha.4",
     "@vitus-labs/unistyle": "^0.13.4"
   }
 }

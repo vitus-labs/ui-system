@@ -1,9 +1,12 @@
+// @ts-nocheck
 import React, { createContext, FC } from 'react'
 import { config, isEmpty } from '@vitus-labs/core'
 
 const context = createContext<any>({})
 
-const StyledProvider = config.styledContext.Provider
+console.log('load context')
+
+const StyledProvider = config.styledContext
 const VitusLabsProvider = context.Provider
 
 type Theme = Partial<

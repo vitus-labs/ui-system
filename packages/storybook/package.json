@@ -1,0 +1,51 @@
+{
+  "name": "@vitus-labs/tools-storybook",
+  "version": "0.8.2-alpha.4",
+  "license": "MIT",
+  "types": "./lib/types",
+  "bin": {
+    "vl_stories": "bin/run-stories.js",
+    "vl_stories-build": "bin/run-stories-build.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf lib && tsc"
+  },
+  "peerDependencies": {
+    "@vitus-labs/unistyle": "*",
+    "react": "*",
+    "react-dom": "*",
+    "webpack": "*"
+  },
+  "dependencies": {
+    "@storybook/addon-a11y": "^6.1.21",
+    "@storybook/addon-actions": "^6.1.21",
+    "@storybook/addon-backgrounds": "^6.1.21",
+    "@storybook/addon-controls": "^6.1.21",
+    "@storybook/addon-docs": "^6.1.21",
+    "@storybook/addon-storyshots": "^6.1.21",
+    "@storybook/addon-toolbars": "^6.1.21",
+    "@storybook/addon-viewport": "^6.1.21",
+    "@storybook/addons": "^6.1.21",
+    "@storybook/react": "^6.1.21",
+    "@storybook/theming": "^6.1.21",
+    "babel-loader": "8.2.2",
+    "find-up": "^5.0.0",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.2",
+    "storybook-dark-mode": "^1.0.7",
+    "svg-inline-loader": "^0.8.2"
+  },
+  "devDependencies": {
+    "@vitus-labs/tools-babel": "0.8.2-alpha.4",
+    "@vitus-labs/tools-typescript": "0.8.2-alpha.4",
+    "@vitus-labs/unistyle": "0.11.0"
+  }
+}
