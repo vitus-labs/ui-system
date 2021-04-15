@@ -9,17 +9,19 @@ if (__VITUS_LABS_STORIES__.styles === 'styled-components') {
   init({
     styled: styled.default,
     css: styled.css,
-    context: styled.ThemeContext,
+    context: styled.ThemeProvider,
   })
 }
 
 if (__VITUS_LABS_STORIES__.styles === 'emotion') {
-  const styled = require('styled-components')
+  const styled = require('@emotion/styled')
+  const helper = require('@emotion/react')
+  const { ThemeProvider } = require('emotion-theming')
 
   init({
     styled: styled.default,
-    css: styled.css,
-    context: styled.ThemeContext,
+    css: helper.css,
+    context: ThemeProvider,
   })
 }
 

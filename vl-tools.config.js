@@ -9,7 +9,6 @@ module.exports = {
       moize: 'moize',
       core: '@vitus-labs/core',
       unistyle: '@vitus-labs/unistyle',
-      context: '@vitus-labs/context',
     },
   },
   stories: {

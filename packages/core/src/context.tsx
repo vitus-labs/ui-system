@@ -1,5 +1,7 @@
+// @ts-nocheck
 import React, { createContext, FC } from 'react'
-import { config, isEmpty } from '@vitus-labs/core'
+import config from '~/config'
+import isEmpty from '~/isEmpty'
 
 const context = createContext<any>({})
 const VitusLabsProvider = context.Provider
@@ -25,9 +27,7 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   if (StyledContext) {
     return (
       <VitusLabsProvider value={{ theme, ...props }}>
-        <StyledContext.Provider value={theme}>
-          {children}
-        </StyledContext.Provider>
+        <StyledContext theme={theme}>{children}</StyledContext>
       </VitusLabsProvider>
     )
   }

@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import { Context } from 'react'
 import type {
   ThemedCssFunction,
   StyledInterface,
   DefaultTheme,
+  ThemeProviderComponent,
 } from 'styled-components'
 
 const OPTIONS: Internal = {} as Internal
@@ -25,7 +25,7 @@ const init: any = ({
 interface Internal {
   css: ThemedCssFunction<DefaultTheme>
   styled: StyledInterface
-  styledContext: Context<Partial<Record<string, unknown>>>
+  styledContext: ThemeProviderComponent<any, any>
   component: any
   textComponent: any
 }

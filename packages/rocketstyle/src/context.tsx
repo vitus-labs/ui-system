@@ -1,5 +1,5 @@
 import React, { ReactNode, FC, useContext, ComponentType } from 'react'
-import { Provider as CoreProvider, context } from '@vitus-labs/context'
+import { Provider as CoreProvider, context } from '@vitus-labs/core'
 
 type Theme = {
   rootSize: number
