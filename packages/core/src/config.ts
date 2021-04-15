@@ -19,8 +19,8 @@ type Init = ({
   styled: any
   css: any
   context: any
-  component: ComponentType
-  textComponent: ComponentType
+  component?: ComponentType
+  textComponent?: ComponentType
 }) => void
 
 const init: Init = ({
