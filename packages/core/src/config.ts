@@ -6,6 +6,7 @@ import type {
   DefaultTheme,
   ThemeProviderComponent,
 } from 'styled-components'
+import type { HTMLTags } from '~/htmlTags'
 
 const OPTIONS: Internal = {} as Internal
 
@@ -19,8 +20,8 @@ type Init = ({
   styled: any
   css: any
   context: any
-  component?: ComponentType
-  textComponent?: ComponentType
+  component?: ComponentType | HTMLTags
+  textComponent?: ComponentType | HTMLTags
 }) => void
 
 const init: Init = ({
