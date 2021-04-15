@@ -1,5 +1,5 @@
 import React, { FC, useRef, useState, useEffect, useContext } from 'react'
-import { config, renderContent, throttle } from '@vitus-labs/core'
+import { renderContent, throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import Portal from '~/Portal'
 
@@ -50,7 +50,7 @@ const component: FC<Props> = ({
   offsetY = 0,
   throttleDelay = 200,
 }) => {
-  const { rootSize } = useContext(config.context) as { rootSize: number }
+  const { rootSize } = useContext(context) as { rootSize: number }
   const [visible, setVisible] = useState(isOpen)
   const [innerAlign, setInnerAlign] = useState(align)
   const [innerAlignX, setInnerAlignX] = useState(alignX)

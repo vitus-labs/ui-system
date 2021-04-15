@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+// @ts-nocheck
+import React, { createContext, FC } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 
-const StyledProvider = config.styledContext.Provider
-const VitusLabsProvider = config.context.Provider
+const context = createContext<any>({})
+const VitusLabsProvider = context.Provider
 
 type Theme = Partial<
   {
@@ -21,11 +22,23 @@ type ProviderType = Partial<
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   if (!theme || isEmpty(theme)) return <>{children}</>
 
+  const StyledContext = config.styledContext
+
+  if (StyledContext) {
+    return (
+      <VitusLabsProvider value={{ theme, ...props }}>
+        <StyledContext theme={theme}>{children}</StyledContext>
+      </VitusLabsProvider>
+    )
+  }
+
   return (
     <VitusLabsProvider value={{ theme, ...props }}>
-      <StyledProvider value={theme}>{children}</StyledProvider>
+      {children}
     </VitusLabsProvider>
   )
 }
+
+export { context }
 
 export default Provider

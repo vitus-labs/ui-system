@@ -21,8 +21,8 @@ const box = ({ innerRef, ...props }: any) => (
   </div>
 )
 
-const Trigger = rocketstyle()({ name: 'Button', component }).styles(
-  (css) => css`
+const Trigger = rocketstyle()()({ name: 'Button', component }).styles(
+  (css) => css<any>`
     background-color: #4caf50;
     border: none;
     color: #ffffff;
@@ -48,7 +48,7 @@ const Trigger = rocketstyle()({ name: 'Button', component }).styles(
 
 const EqualElement = withEqualWidthBeforeAfter(Element)
 
-const Menu = rocketstyle()({ name: 'Button', component: box }).styles(
+const Menu = rocketstyle()()({ name: 'Button', component: box }).styles(
   (css) => css`
     width: 300px;
     height: 300px;

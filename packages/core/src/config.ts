@@ -1,24 +1,68 @@
-import { Context, createContext } from 'react'
-import styled, { css, ThemeContext } from 'styled-components'
+/* eslint-disable no-underscore-dangle */
+import { ComponentType } from 'react'
+import type {
+  ThemedCssFunction,
+  StyledInterface,
+  DefaultTheme,
+  ThemeProviderComponent,
+} from 'styled-components'
+import type { HTMLTags } from '~/htmlTags'
 
-const context = createContext<any>({})
+const OPTIONS: Internal = {} as Internal
+
+type Init = ({
+  styled,
+  css,
+  context,
+  component,
+  textComponent,
+}: {
+  styled: any
+  css: any
+  context: any
+  component?: ComponentType | HTMLTags
+  textComponent?: ComponentType | HTMLTags
+}) => void
+
+const init: Init = ({
+  styled,
+  css,
+  context,
+  component = 'div',
+  textComponent = 'span',
+}) => {
+  OPTIONS.css = css
+  OPTIONS.styled = styled
+  OPTIONS.styledContext = context
+  OPTIONS.component = component
+  OPTIONS.textComponent = textComponent
+}
 
 interface Internal {
-  css: typeof css
-  styled: typeof styled
-  styledContext: Context<Partial<Record<string, unknown>>>
-  context: Context<Partial<Record<string, unknown>>>
+  css: ThemedCssFunction<DefaultTheme>
+  styled: StyledInterface
+  styledContext: ThemeProviderComponent<any, any>
   component: any
   textComponent: any
 }
 
 const internal: Internal = Object.freeze({
-  css,
-  styled,
-  styledContext: ThemeContext,
-  context,
-  component: 'div',
-  textComponent: 'span',
+  get css() {
+    return OPTIONS.css
+  },
+  get styled() {
+    return OPTIONS.styled
+  },
+  get styledContext() {
+    return OPTIONS.styledContext
+  },
+  get component() {
+    return OPTIONS.component
+  },
+  get textComponent() {
+    return OPTIONS.textComponent
+  },
 })
 
+export { init }
 export default internal

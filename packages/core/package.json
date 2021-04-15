@@ -53,17 +53,19 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
-    "react": ">= 16.8",
-    "styled-components": ">= 5"
+    "react": ">= 16.8"
   },
   "dependencies": {
     "lodash": "^4.17.15",
     "moize": "^6.0.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.3.0",
     "@types/lodash": "^4.14.168",
-    "@vitus-labs/tools-babel": "^0.8.0",
-    "@vitus-labs/tools-rollup": "^0.8.0",
-    "@vitus-labs/tools-typescript": "^0.8.0"
+    "@vitus-labs/tools-babel": "^0.8.1",
+    "@vitus-labs/tools-rollup": "^0.8.1",
+    "@vitus-labs/tools-typescript": "^0.8.1",
+    "styled-components": "^5.2.3"
   }
 }

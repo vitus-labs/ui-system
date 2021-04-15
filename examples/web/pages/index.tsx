@@ -1,3 +1,4 @@
 import React from 'react'
+import { Container, Row, Col } from '@vitus-labs/coolgrid'
 
-export default () => <div>hello</div>
+export default () => <Container>hello</Container>
