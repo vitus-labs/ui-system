@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import { ComponentType } from 'react'
 import type {
   ThemedCssFunction,
   StyledInterface,
@@ -8,7 +9,21 @@ import type {
 
 const OPTIONS: Internal = {} as Internal
 
-const init: any = ({
+type Init = ({
+  styled,
+  css,
+  context,
+  component,
+  textComponent,
+}: {
+  styled: any
+  css: any
+  context: any
+  component: ComponentType
+  textComponent: ComponentType
+}) => void
+
+const init: Init = ({
   styled,
   css,
   context,
