@@ -1,3 +1,4 @@
+import { get } from '@vitus-labs/core'
 import { isColor } from '~/utils/string'
 import CONTROLS_MAP from '~/constants/controlTypes'
 
@@ -32,7 +33,7 @@ const getControlType: GetControlType = (value) => {
   }
 
   if (primitiveType === 'object' && value !== null) {
-    const type = value?.type
+    const type = get(value, 'type')
     if (type) return type
 
     return primitiveType
@@ -59,7 +60,7 @@ export const mergeOptions: MergeOptions = ({ defaultProps, attrs }) => {
     if (defaultProps[key] && typeof value === 'object' && value !== null)
       return {
         ...acc,
-        [key]: { ...value, value: value?.value || defaultProps[key] },
+        [key]: { ...value, value: get(value, 'value') || defaultProps[key] },
       }
 
     return { ...acc, [key]: value }

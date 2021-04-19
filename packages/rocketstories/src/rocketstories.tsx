@@ -1,3 +1,4 @@
+import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import story from '~/createStories/story'
 import mainStory from '~/createStories/mainStory'
@@ -51,8 +52,9 @@ type CreateStories<C = Element> = (
 const createStories: CreateStories = (options, defaultOptions) => {
   const result = {
     ...defaultOptions,
-    name: options?.component
-      ? options.component.displayName
+    name: get(options, 'component')
+      ? // @ts-ignore
+        options.component.displayName
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
@@ -88,8 +90,9 @@ type CreateRocketStories<C = Element> = (
 const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
   const result = {
     ...defaultOptions,
-    name: options?.component
-      ? options.component.displayName
+    name: get(options, 'component')
+      ? // @ts-ignore
+        options.component.displayName
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },

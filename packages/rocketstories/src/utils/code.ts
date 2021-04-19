@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
+import { get } from '@vitus-labs/core'
 import type { Control, SimpleValue, Obj } from '~/types'
 
 // --------------------------------------------------------
@@ -28,9 +29,9 @@ const parseProps: ParseProps = (props) =>
     }
 
     if (valueType === 'object') {
-      const type = (value as ObjValue)?.type
-      const options = (value as ObjValue)?.options
-      const defaultValue = (value as ObjValue)?.value
+      const type = get(value, 'type')
+      const options = get(value, 'options')
+      const defaultValue = get(value, 'value')
 
       // if has custom knobs configuration
       if (type && options && defaultValue) {
