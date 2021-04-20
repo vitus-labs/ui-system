@@ -41,4 +41,4 @@ Component.displayName = name
 Component.pkgName = PKG_NAME
 Component.VITUS_LABS__COMPONENT = name
 
-export default Element
+export default Component
