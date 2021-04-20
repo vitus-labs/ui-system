@@ -40,4 +40,4 @@ Component.VITUS_LABS__COMPONENT = name
 
 Component.isText = true
 
-export default Element
+export default Component
