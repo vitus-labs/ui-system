@@ -1,6 +1,7 @@
 import React, { FC, useRef, useState, useEffect, useContext } from 'react'
 import { renderContent, throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
+import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 
 export type Props = {
@@ -31,7 +32,7 @@ type OverlayPosition = {
   right?: number | string
 }
 
-const component: FC<Props> = ({
+const Component: FC<Props> = ({
   children,
   trigger,
   DOMLocation,
@@ -351,6 +352,12 @@ const component: FC<Props> = ({
   )
 }
 
-component.displayName = 'vitus-labs/elements/Overlay'
+const name = `${PKG_NAME}/Ovelay`
 
-export default component
+Component.displayName = name
+//@ts-ignore
+Component.pkgName = PKG_NAME
+//@ts-ignore
+Component.VITUS_LABS__COMPONENT = name
+
+export default Component

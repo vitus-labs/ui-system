@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
+import { PKG_NAME } from '~/constants'
 import { omitCtxKeys } from '~/utils'
 import useGridContext from '~/useContext'
 import { ContainerContext, RowContext } from '~/context'
 import type { ElementType } from '~/types'
 import Styled from './styled'
 
-const Element: ElementType<
+const Component: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
 > = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
@@ -40,6 +41,10 @@ const Element: ElementType<
   )
 }
 
-Element.displayName = '@vitus-labs/coolgrid/Row'
+const name = `${PKG_NAME}/Row`
+
+Component.displayName = name
+Component.pkgName = PKG_NAME
+Component.VITUS_LABS__COMPONENT = name
 
 export default Element

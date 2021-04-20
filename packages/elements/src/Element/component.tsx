@@ -1,19 +1,24 @@
 import React, { forwardRef, useMemo } from 'react'
 import { renderContent } from '@vitus-labs/core'
+import { PKG_NAME } from '~/constants'
 import { Wrapper, Content } from '~/helpers'
 import {
   transformVerticalProp,
   isInlineElement,
   getShouldBeEmpty,
 } from './utils'
+
 import type { Props } from './types'
 
 const defaultDirection = 'inline'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Component = forwardRef<any, Props>(
+const Component = forwardRef<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any,
+  Props
+>(
   (
     {
       innerRef,
@@ -188,6 +193,12 @@ const Component = forwardRef<any, Props>(
   }
 )
 
-Component.displayName = 'vitus-labs/elements/Element'
+const name = `${PKG_NAME}/Element`
+
+Component.displayName = name
+// @ts-ignore
+Component.pkgName = PKG_NAME
+// @ts-ignore
+Component.VITUS_LABS__COMPONENT = name
 
 export default Component

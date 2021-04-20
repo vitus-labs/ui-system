@@ -1,11 +1,12 @@
 import React from 'react'
+import { PKG_NAME } from '~/constants'
 import { omitCtxKeys } from '~/utils'
 import Context from '~/context/ContainerContext'
 import useGridContext from '~/useContext'
 import type { ElementType } from '~/types'
 import Styled from './styled'
 
-const Element: ElementType<['containerWidth']> = ({
+const Component: ElementType<['containerWidth']> = ({
   children,
   component,
   css,
@@ -34,6 +35,10 @@ const Element: ElementType<['containerWidth']> = ({
   )
 }
 
-Element.displayName = '@vitus-labs/coolgrid/Container'
+const name = `${PKG_NAME}/Container`
+
+Component.displayName = name
+Component.pkgName = PKG_NAME
+Component.VITUS_LABS__COMPONENT = name
 
 export default Element

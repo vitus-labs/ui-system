@@ -64,6 +64,9 @@ export type StyledTypes = Partial<{
 
 export type ElementType<O extends Array<string>> = FC<
   Omit<ComponentProps, O[number]> & Record<string, unknown>
->
+> & {
+  pkgName: string
+  VITUS_LABS__COMPONENT: string
+}
 
 export type Context = Partial<ConfigurationProps>

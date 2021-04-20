@@ -1,5 +1,6 @@
 import { useState, useEffect, FC, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import { PKG_NAME } from '~/constants'
 
 export type Props = {
   position?: HTMLElement
@@ -7,7 +8,7 @@ export type Props = {
   tag?: string
 }
 
-const component: FC<Props> = ({
+const Component: FC<Props> = ({
   position = document.body,
   tag = 'div',
   children,
@@ -29,6 +30,12 @@ const component: FC<Props> = ({
   return ReactDOM.createPortal(children, element)
 }
 
-component.displayName = 'vitus-labs/elements/Portal'
+const name = `${PKG_NAME}/Portal`
 
-export default component
+Component.displayName = name
+//@ts-ignore
+Component.pkgName = PKG_NAME
+//@ts-ignore
+Component.VITUS_LABS__COMPONENT = name
+
+export default Component

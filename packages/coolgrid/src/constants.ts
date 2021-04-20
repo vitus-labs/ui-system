@@ -1,3 +1,5 @@
+export const PKG_NAME = '@vitus-labs/coolgrid'
+
 /* eslint-disable import/prefer-default-export */
 export const CONTEXT_KEYS = [
   // 'breakpoints',
