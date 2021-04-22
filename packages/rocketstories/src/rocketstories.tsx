@@ -1,14 +1,18 @@
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
-import story from '~/createStories/story'
-import mainStory from '~/createStories/mainStory'
-import dimensionStories from '~/createStories/dimensionStories'
-import type { Element, RocketComponent, Configuration } from '~/types'
+import { dimensionStory, mainStory, generalStory } from './stories'
+import Theme from './decorators/Theme'
+import type {
+  Element,
+  RocketComponent,
+  Configuration,
+  AttrsTypes,
+} from './types'
 
 // --------------------------------------------------------
 // rocketstories
 // --------------------------------------------------------
-type Rocketstories = <T extends Element | RocketComponent>(
+type Rocketstories = <T extends Element | RocketComponent = any>(
   component: T
 ) => T extends RocketComponent
   ? ReturnType<CreateRocketStories<T>>
@@ -44,17 +48,16 @@ type CreateStories<C = Element> = (
   options: Partial<Configuration>,
   defaultOptions: Configuration
 ) => {
-  attrs: (params: Record<string, unknown>) => ReturnType<CreateStories<C>>
-  main: () => { component: Element; title: string }
-  story: () => ReturnType<typeof story>
+  attrs: (params: AttrsTypes<C>) => ReturnType<CreateStories<C>>
+  config: () => { component: Element; title: string }
+  main: () => ReturnType<typeof generalStory>
 }
 
 const createStories: CreateStories = (options, defaultOptions) => {
   const result = {
     ...defaultOptions,
     name: get(options, 'component')
-      ? // @ts-ignore
-        options.component.displayName
+      ? get(options, 'component.displayName')
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
@@ -64,12 +67,13 @@ const createStories: CreateStories = (options, defaultOptions) => {
     attrs: (attrs) => createStories({ attrs }, result),
 
     // create object for `export default` in stories
-    main: () => ({
+    config: () => ({
       component: result.component,
       title: result.name as string,
+      decorators: [Theme],
     }),
 
-    story: () => story(result),
+    main: () => generalStory(result),
   }
 }
 
@@ -77,22 +81,25 @@ const createStories: CreateStories = (options, defaultOptions) => {
 // create rocket stories
 // --------------------------------------------------------
 
-type CreateRocketStories<C = Element> = (
-  options: Partial<Configuration>,
-  defaultOptions: Configuration
+type ExtractDimensions<C extends RocketComponent> = keyof C['$$rocketstyle']
+
+type CreateRocketStories<C extends RocketComponent = any> = (
+  options: Partial<Configuration<C>>,
+  defaultOptions: Configuration<C>
 ) => {
-  attrs: (params: Record<string, any>) => ReturnType<CreateRocketStories<C>>
-  main: () => { component: Element; title: string }
-  mainStory: () => ReturnType<typeof mainStory>
-  makeStories: (dimension: string) => ReturnType<typeof dimensionStories>
+  attrs: (params: AttrsTypes<C>) => ReturnType<CreateRocketStories<C>>
+  config: () => { component: Element; title: string }
+  main: () => ReturnType<typeof mainStory>
+  dimension: (
+    dimension: ExtractDimensions<C>
+  ) => ReturnType<typeof dimensionStory>
 }
 
 const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
   const result = {
     ...defaultOptions,
     name: get(options, 'component')
-      ? // @ts-ignore
-        options.component.displayName
+      ? get(options, 'component.displayName')
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
@@ -103,18 +110,20 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
       createRocketstories({ attrs }, result),
 
     // create object for `export default` in stories
-    main: () => ({
+    config: () => ({
       component: result.component,
       title: result.name,
+      decorators: [Theme],
     }),
 
     // generate main story
-    mainStory: () => mainStory(result),
+    main: () => mainStory(result as any),
 
     // generate stories of defined dimension
-    makeStories: (dimension) =>
-      dimensionStories({
+    dimension: (dimension) =>
+      dimensionStory({
         ...result,
+        // @ts-ignore
         dimension,
       }),
   }

@@ -1,34 +1,3 @@
-import type { Controls } from '~/types'
-// --------------------------------------------------------
-// transformDimensionsToControls
-// --------------------------------------------------------
-type TransformDimensionsToControls = ({
-  dimensions,
-  multiKeys,
-}: {
-  dimensions: Record<string, any>
-  multiKeys: Record<string, true>
-}) => Controls
-
-export const transformDimensionsToControls: TransformDimensionsToControls = ({
-  dimensions,
-  multiKeys,
-}) =>
-  Object.entries(dimensions).reduce((acc, [key, value]) => {
-    const valueKeys = Object.keys(value)
-    const res = valueKeys.reduce((acc, item) => ({ ...acc, [item]: item }), {})
-
-    const isMultiKey = !!multiKeys[key]
-
-    const newValue = {
-      type: isMultiKey ? 'dimensionMultiSelect' : 'dimensionSelect',
-      value: isMultiKey ? undefined : valueKeys[0],
-      options: { '----': undefined, ...res },
-    }
-
-    return { ...acc, [key]: newValue }
-  }, {})
-
 // --------------------------------------------------------
 // extractDefaultBooleanProps
 // --------------------------------------------------------

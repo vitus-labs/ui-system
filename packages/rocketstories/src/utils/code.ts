@@ -119,7 +119,7 @@ const stringifyObject: StringifyObject = (props) => {
 // --------------------------------------------------------
 type StringifyProps = (props: Obj) => string
 
-export const stringifyProps: StringifyProps = (props) => {
+const stringifyProps: StringifyProps = (props) => {
   const parsedProps = parseProps(props)
   const arrayProps = Object.entries(parsedProps)
   const arrayLength = arrayProps.length
@@ -148,13 +148,25 @@ export const stringifyProps: StringifyProps = (props) => {
   }, '')
 }
 
+const parseComponentName = (name) => {
+  const helper = name.split('/')
+
+  if (helper.length > 1) {
+    return helper[helper.length - 1]
+  }
+
+  return name
+}
+
 // --------------------------------------------------------
 // createJSXCode
 // --------------------------------------------------------
 type CreateJSXCode = (name: string, props: Obj) => string
 
 export const createJSXCode: CreateJSXCode = (name, props) => {
-  let result = `<${name} `
+  const componentName = parseComponentName(name)
+
+  let result = `<${componentName} `
 
   result += stringifyProps(props)
 
@@ -166,7 +178,6 @@ export const createJSXCode: CreateJSXCode = (name, props) => {
 // --------------------------------------------------------
 // createJSXCodeArray
 // --------------------------------------------------------
-
 type CreateJSXCodeArray = (
   name: string,
   props: Obj,
@@ -184,6 +195,8 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   useBooleans,
   isMultiKey
 ) => {
+  if (!dimensions) return `// nothing here`
+
   let result = ''
 
   const finalProps = { ...props }
@@ -210,6 +223,43 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
       acc += `\n`
       return acc
     }, '')
+  }
+
+  return result
+}
+
+// --------------------------------------------------------
+// createMainJSX
+// --------------------------------------------------------
+type CreateMainJSX = ({
+  name,
+  dimensions,
+  params,
+  booleanDimensions,
+}: {
+  name: string
+  dimensions: any
+  params: any
+  booleanDimensions: any
+}) => any
+
+export const createMainJSX: CreateMainJSX = ({
+  name,
+  dimensions,
+  params,
+  booleanDimensions,
+}) => {
+  let result = ''
+
+  result += createJSXCode(name, { ...dimensions, ...params })
+
+  if (booleanDimensions) {
+    result += `\n\n`
+    result += `// Or alternatively use boolean props (e.g. ${Object.keys(
+      booleanDimensions
+    )})`
+    result += `\n`
+    result += createJSXCode(name, { ...booleanDimensions, ...params })
   }
 
   return result
