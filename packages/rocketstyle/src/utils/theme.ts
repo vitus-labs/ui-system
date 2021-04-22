@@ -116,6 +116,7 @@ export type CalculateThemeMode = (
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }>
+
 export const calculateThemeMode: CalculateThemeMode = (themes, variant) => {
   const callback = themeModeCb().toString()
 

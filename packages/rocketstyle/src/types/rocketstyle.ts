@@ -11,7 +11,7 @@ import {
 import { StylesCb } from './styles'
 import { ConfigAttrs } from './config'
 import { AttrsCb } from './attrs'
-import { ThemeCb } from './theme'
+import { ThemeCb, ThemeModeKeys } from './theme'
 import { GenericHoc } from './hoc'
 import { DefaultProps } from './configuration'
 
@@ -145,4 +145,13 @@ export type RocketComponent<
           DimensionProps<K, D, P, DKP>
         >
       : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  } & {
+    getStaticDimensions: (
+      theme: TObj
+    ) => {
+      dimensions: TObj
+      useBooleans: boolean
+      multiKeys: TObj
+    }
+    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
   }
