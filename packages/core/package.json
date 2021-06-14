@@ -6,8 +6,6 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "homepage": "https://vitus-labs.github.io/vitus-labs/core/",
-  "description": "Core and utility functions for vitus-labs packages",
   "main": "lib/vitus-labs-core.js",
   "umd:main": "lib/vitus-labs-core.umd.js",
   "module": "lib/vitus-labs-core.module.js",
@@ -22,6 +20,8 @@
   "files": [
     "lib/"
   ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/core",
+  "description": "Core and utility functions for vitus-labs packages",
   "keywords": [
     "vitus-labs",
     "core"
@@ -31,19 +31,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitus-labs/vitus-labs"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
+    "dev": "yarn vl_stories",
     "prepublish": "yarn build",
     "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
-    "storybook": "start-storybook -p 6006 -c tools/storybook",
-    "storybook:build": "build-storybook -c tools/storybook -o docs/",
-    "docs:dev": "docz dev",
-    "docs:build": "docz build",
     "lint:css": "stylelint src/*.ts src/*.tsx",
     "lint:ts": "eslint src/*",
     "lint": "yarn lint:css && yarn lint:ts",

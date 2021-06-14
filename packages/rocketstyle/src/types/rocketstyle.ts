@@ -146,9 +146,7 @@ export type RocketComponent<
         >
       : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
   } & {
-    getStaticDimensions: (
-      theme: TObj
-    ) => {
+    getStaticDimensions: (theme: TObj) => {
       dimensions: TObj
       useBooleans: boolean
       multiKeys: TObj

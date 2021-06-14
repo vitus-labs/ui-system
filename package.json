@@ -5,7 +5,7 @@
   "description": "vitus-labs",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "license": "MIT",
-  "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
+  "homepage": "https://github.com/vitus-labs/ui-system#readme",
   "directories": {
     "example": "examples"
   },
@@ -30,22 +30,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitus-labs/vitus-labs.git"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "devDependencies": {
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
-    "@types/react": "^17.0.9",
-    "@types/react-dom": "^17.0.6",
-    "@types/styled-components": "^5.1.0",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.7",
+    "@types/styled-components": "^5.1.10",
     "@vitus-labs/tools-lint": "^0.9.4",
     "coveralls": "^3.0.4",
     "cpr": "^3.0.1",
     "lerna": "^4.0.0",
-    "prettier": "^2.3.0",
+    "prettier": "^2.3.1",
     "react": "^17.0.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^17.0.1",

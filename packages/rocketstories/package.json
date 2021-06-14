@@ -6,7 +6,14 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "homepage": "https://vitus-labs.github.io/rocketstyle/",
+  "main": "lib/vitus-labs-rocketstories.js",
+  "umd:main": "lib/vitus-labs-rocketstories.umd.js",
+  "module": "lib/vitus-labs-rocketstories.module.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/rocketstories",
   "description": "Rocketstyle is ultra powerful and extensible styling system for building React components blazingly fast, easily and make them easily extensible and reusable.",
   "keywords": [
     "rocketstyle",
@@ -23,22 +30,15 @@
     "reusability",
     "extensible"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vitus-labs/vitus-labs"
-  },
-  "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
-  },
-  "main": "lib/vitus-labs-rocketstories.js",
-  "umd:main": "lib/vitus-labs-rocketstories.umd.js",
-  "module": "lib/vitus-labs-rocketstories.module.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "lib/"
-  ],
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
     "dev": "yarn vl_stories",
@@ -53,14 +53,14 @@
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"
   },
-  "dependencies": {
-    "@vitus-labs/elements": "^0.14.8",
-    "hoist-non-react-statics": "^3.1.0"
-  },
   "peerDependencies": {
     "@vitus-labs/core": "^0.14.0",
     "@vitus-labs/rocketsyle": "^0.14.0",
     "react": ">= 16.7"
+  },
+  "dependencies": {
+    "@vitus-labs/elements": "^0.14.8",
+    "hoist-non-react-statics": "^3.1.0"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.14.8",

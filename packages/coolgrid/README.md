@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://vitus-labs.github.io/coolgrid/">
-    <img src="https://raw.githubusercontent.com/vitus-labs/vitus-labs/master/packages/coolgrid/logo.png" alt="Coolgrid" height="150" />
+  <a href="https://vitus-labs.com/docs/ui-system/coolgrid">
+    <img src="https://github.com/vitus-labs/ui-system/blob/master/packages/coolgrid/logo.png" alt="Coolgrid" height="150" />
   </a>
 </div>
 

@@ -1,13 +1,11 @@
 {
   "name": "@vitus-labs/unistyle",
   "version": "0.14.8",
-  "homepage": "https://github.com/vitus-labs/vitus-labs#readme",
-  "description": "Universal styles",
+  "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "license": "MIT",
   "main": "lib/vitus-labs-unistyle.js",
   "umd:main": "lib/vitus-labs-unistyle.umd.js",
   "module": "lib/vitus-labs-unistyle.module.js",
@@ -22,6 +20,8 @@
   "files": [
     "lib/"
   ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/unistyle",
+  "description": "Universal styles",
   "scripts": {
     "prepublish": "yarn build",
     "build": "yarn vl_build",
@@ -34,15 +34,15 @@
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"
   },
-  "bugs": {
-    "url": "https://github.com/vitus-labs/core/issues"
-  },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitus-labs/core.git"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "peerDependencies": {
     "@vitus-labs/core": "^0.13.4",

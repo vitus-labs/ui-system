@@ -6,8 +6,6 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "homepage": "https://vitus-labs.github.io/vitus-labs/elements/",
-  "description": "Most basic react reusable components",
   "main": "lib/vitus-labs-elements.js",
   "umd:main": "lib/vitus-labs-elements.umd.js",
   "module": "lib/vitus-labs-elements.module.js",
@@ -22,6 +20,8 @@
   "files": [
     "lib/"
   ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/elements",
+  "description": "Most basic react reusable components",
   "keywords": [
     "vitus-labs",
     "elements",
@@ -33,10 +33,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitus-labs/vitus-labs"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
     "dev": "yarn vl_stories",
