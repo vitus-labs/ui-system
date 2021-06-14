@@ -1,8 +1,10 @@
 <div align="center">
-  <a href="https://vitus-labs.github.io/elements/">
-    <img src="https://raw.githubusercontent.com/vitus-labs/ui-system/master/packages/elements/logo.png" alt="Elements" height="150" />
+  <a href="https://vitus-labs.com/docs/ui-system/elements">
+    <img src="https://github.com/vitus-labs/ui-system/blob/master/packages/elements/logo.png" alt="Elements" height="150" />
   </a>
 </div>
+
+
 
 # Getting Started
 
