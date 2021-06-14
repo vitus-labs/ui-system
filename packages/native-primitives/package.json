@@ -7,8 +7,6 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "homepage": "https://vitus-labs.github.io/vitus-labs/native-primitives/",
-  "description": "React native primitives",
   "main": "lib/vitus-labs-native-primitives.js",
   "umd:main": "lib/vitus-labs-native-primitives.umd.js",
   "module": "lib/vitus-labs-native-primitives.module.js",
@@ -22,6 +20,8 @@
   "files": [
     "lib/"
   ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/native-primitives",
+  "description": "React native primitives",
   "keywords": [
     "vitus-labs",
     "elements",
@@ -30,12 +30,15 @@
     "native",
     "universal"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitus-labs/vitus-labs"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
     "prepublish": "yarn build",

@@ -6,7 +6,20 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "homepage": "https://vitus-labs.github.io/rocketstyle/",
+  "main": "lib/vitus-labs-rocketstyle.js",
+  "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
+  "module": "lib/vitus-labs-rocketstyle.module.js",
+  "typings": "lib/index.d.ts",
+  "browser": {
+    "./lib/vitus-labs-rocketstyle.js": "./lib/vitus-labs-rocketstyle.js",
+    "./lib/vitus-labs-rocketstyle.module.js": "./lib/vitus-labs-rocketstyle.module.js"
+  },
+  "unpkg": "lib/vitus-labs-rocketstyle.umd.min.js",
+  "jsnext:main": "lib/vitus-labs-rocketstyle.module.js",
+  "files": [
+    "lib/"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/rocketstyle",
   "description": "Rocketstyle is ultra powerful and extensible styling system for building React components blazingly fast, easily and make them easily extensible and reusable.",
   "keywords": [
     "rocketstyle",
@@ -28,24 +41,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitus-labs/vitus-labs"
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
   },
   "bugs": {
-    "url": "https://github.com/vitus-labs/vitus-labs/issues"
+    "url": "https://github.com/vitus-labs/ui-system/issues"
   },
-  "main": "lib/vitus-labs-rocketstyle.js",
-  "umd:main": "lib/vitus-labs-rocketstyle.umd.js",
-  "module": "lib/vitus-labs-rocketstyle.module.js",
-  "typings": "lib/index.d.ts",
-  "browser": {
-    "./lib/vitus-labs-rocketstyle.js": "./lib/vitus-labs-rocketstyle.js",
-    "./lib/vitus-labs-rocketstyle.module.js": "./lib/vitus-labs-rocketstyle.module.js"
-  },
-  "unpkg": "lib/vitus-labs-rocketstyle.umd.min.js",
-  "jsnext:main": "lib/vitus-labs-rocketstyle.module.js",
-  "files": [
-    "lib/"
-  ],
   "scripts": {
     "dev": "yarn vl_stories",
     "prepublish": "yarn build",
@@ -59,12 +59,12 @@
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"
   },
-  "dependencies": {
-    "hoist-non-react-statics": "^3.1.0"
-  },
   "peerDependencies": {
     "@vitus-labs/core": "^0.13.4",
     "react": ">= 16.8"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.1.0"
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.14.8",
