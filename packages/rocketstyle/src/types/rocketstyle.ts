@@ -27,7 +27,7 @@ import { DefaultProps } from './configuration'
  * @param UB   Use booleans value
  * @param DKP  Dimensions key props.
  */
-export type RocketComponent<
+export type RocketComponentA<
   // attrs
   A extends TObj = DefaultProps,
   // original component props
@@ -153,3 +153,136 @@ export type RocketComponent<
     }
     getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
   }
+
+export type RocketComponent<
+  // attrs
+  A extends TObj = DefaultProps,
+  // original component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  OA extends TObj = {},
+  // extended component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  EA extends TObj = {},
+  // theme
+  T extends TObj | unknown = unknown,
+  // custom theme properties
+  CT extends TObj | unknown = unknown,
+  // dimensions
+  D extends Dimensions = Dimensions,
+  // use booleans
+  UB extends boolean = boolean,
+  // dimension key props
+  DKP extends TDKP = TDKP
+> = IRocketComponent<A, OA, EA, T, CT, D, UB, DKP> &
+  {
+    [I in keyof D]: <
+      K extends DimensionValue = D[I],
+      P extends DimensionCallbackParam<T, CT> = DimensionCallbackParam<T, CT>
+    >(
+      param: P
+    ) => P extends DimensionCallbackParam<T, CT>
+      ? RocketComponent<
+          MergeTypes<
+            [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
+          >,
+          OA,
+          EA,
+          T,
+          CT,
+          D,
+          UB,
+          DimensionProps<K, D, P, DKP>
+        >
+      : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  }
+
+export interface IRocketComponent<
+  // attrs
+  A extends TObj = DefaultProps,
+  // original component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  OA extends TObj = {},
+  // extended component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  EA extends TObj = {},
+  // theme
+  T extends TObj | unknown = unknown,
+  // custom theme properties
+  CT extends TObj | unknown = unknown,
+  // dimensions
+  D extends Dimensions = Dimensions,
+  // use booleans
+  UB extends boolean = boolean,
+  // dimension key props
+  DKP extends TDKP = TDKP
+> extends ForwardRefExoticComponent<A> {
+  config: <NC extends ElementType | unknown = unknown>({
+    name,
+    component: NC,
+    provider,
+    consumer,
+    DEBUG,
+    inversed,
+    passProps,
+  }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
+    ? RocketComponent<
+        MergeTypes<
+          [ExtractProps<NC>, DefaultProps, ExtractDimensionProps<D, DKP, UB>]
+        >,
+        ExtractProps<NC>,
+        EA,
+        T,
+        CT,
+        D,
+        UB,
+        DKP
+      >
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+
+  attrs: <P extends TObj | unknown = unknown>(
+    param: P extends TObj
+      ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, T>
+      : Partial<A> | AttrsCb<A, T>
+  ) => P extends TObj
+    ? RocketComponent<
+        MergeTypes<[OA, EA, P, ExtractDimensionProps<D, DKP, UB>]>,
+        OA,
+        MergeTypes<[EA, P]>,
+        T,
+        CT,
+        D,
+        UB,
+        DKP
+      >
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+
+  theme: <P extends TObj | unknown = unknown>(
+    param: P extends TObj
+      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<MergeTypes<[CT, P]>, T>
+      : Partial<CT> | ThemeCb<CT, T>
+  ) => P extends TObj
+    ? RocketComponent<A, OA, EA, T, MergeTypes<[CT, P]>, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+
+  styles: (param: StylesCb) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+
+  compose: (
+    param: Record<string, GenericHoc | null | undefined | false>
+  ) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+
+  getStaticDimensions: (theme: TObj) => {
+    dimensions: TObj
+    useBooleans: boolean
+    multiKeys: TObj
+  }
+
+  getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
+
+  readonly $$rocketstyle: DKP
+  readonly IS_ROCKETSTYLE: true
+  readonly displayName: string
+  name: never
+  length: never
+  arguments: never
+  defaultProps: never
+}
