@@ -281,8 +281,8 @@ export interface IRocketComponent<
   readonly $$rocketstyle: DKP
   readonly IS_ROCKETSTYLE: true
   readonly displayName: string
-  name: never
-  length: never
-  arguments: never
-  defaultProps: never
+  // name: never
+  // length: never
+  // arguments: never
+  // defaultProps: never
 }
