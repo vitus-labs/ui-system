@@ -1,4 +1,3 @@
-import { darken } from 'polished'
 import { link as element } from '../base'
 
 const createState = (backgroundColor, color) => ({
@@ -7,12 +6,12 @@ const createState = (backgroundColor, color) => ({
   color,
 
   hover: {
-    backgroundColor: darken(0.1, backgroundColor),
+    backgroundColor,
     borderColor: backgroundColor,
     color,
   },
   active: {
-    backgroundColor: darken(0.15, backgroundColor),
+    backgroundColor,
     borderColor: backgroundColor,
     color,
   },

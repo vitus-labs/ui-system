@@ -7,10 +7,12 @@ import { ThemeMode } from '~/types/theme'
 // --------------------------------------------------------
 // theme mode callback
 // --------------------------------------------------------
-export const themeModeCb: ThemeMode = (...params) => (mode) => {
-  if (!mode || mode === 'light') return params[0]
-  return params[1]
-}
+export const themeModeCb: ThemeMode =
+  (...params) =>
+  (mode) => {
+    if (!mode || mode === 'light') return params[0]
+    return params[1]
+  }
 
 // --------------------------------------------------------
 // calculate dimension themes

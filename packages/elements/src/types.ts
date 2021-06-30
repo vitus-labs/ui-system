@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ComponentType, VFC } from 'react'
 import { config } from '@vitus-labs/core'
 

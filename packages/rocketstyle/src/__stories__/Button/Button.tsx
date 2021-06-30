@@ -91,6 +91,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
     xy: true,
   })
   .styles(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (css) => css<any>`
       ${({
         href,
@@ -252,6 +253,7 @@ export const ButtonConsumer = rocketstyle()()({
       })),
   })
   .styles(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (css) => css<{ $rocketstyle: any }>`
       transition: all 0.15s ease-in-out;
       padding: 4px;

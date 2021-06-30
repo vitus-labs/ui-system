@@ -61,6 +61,6 @@ const Provider: FC<TProvider> = ({
   )
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export { context }
+
 export default Provider

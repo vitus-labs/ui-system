@@ -3,11 +3,7 @@ import { context } from '~/context'
 import { THEME_MODES_INVERSED } from '~/constants/reservedKeys'
 import { ThemeModeKeys } from '~/types/theme'
 
-type UseThemeOptions = ({
-  inversed,
-}: {
-  inversed?: boolean
-}) => {
+type UseThemeOptions = ({ inversed }: { inversed?: boolean }) => {
   theme: Record<string, unknown>
   mode: ThemeModeKeys
   isDark: boolean
