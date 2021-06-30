@@ -10,15 +10,8 @@ const Component: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
 > = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
-  const {
-    columns,
-    gap,
-    gutter,
-    rowComponent,
-    rowCss,
-    contentAlignX,
-    ...ctx
-  } = useGridContext({ ...parentCtx, ...props })
+  const { columns, gap, gutter, rowComponent, rowCss, contentAlignX, ...ctx } =
+    useGridContext({ ...parentCtx, ...props })
 
   const finalProps = {
     ...omitCtxKeys(props),

@@ -9,19 +9,19 @@ const requiredProps = {
     xs: {
       viewport: 0,
       container: 0,
-      size: 12
+      size: 12,
     },
     sm: {
       viewport: 576,
       container: 540,
-      size: 6
+      size: 6,
     },
     md: {
       viewport: 778,
       container: 720,
-      size: 3
-    }
-  }
+      size: 3,
+    },
+  },
 }
 
 describe(Component.displayName, () => {
@@ -51,18 +51,18 @@ describe(Component.displayName, () => {
 
     // SM query css
     expect(tree).toHaveStyleRule('max-width', '50%', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
     expect(tree).toHaveStyleRule('flex-basis', '50%', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
 
     // MD query css
     expect(tree).toHaveStyleRule('max-width', '25%', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
     expect(tree).toHaveStyleRule('flex-basis', '25%', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
   })
 
@@ -75,23 +75,23 @@ describe(Component.displayName, () => {
           container: 0,
           size: 12,
           gap: 10,
-          padding: 10
+          padding: 10,
         },
         sm: {
           viewport: 576,
           container: 540,
           size: 6,
           gap: 20,
-          padding: 20
+          padding: 20,
         },
         md: {
           viewport: 778,
           container: 720,
           size: 3,
           gap: 30,
-          padding: 35
-        }
-      }
+          padding: 35,
+        },
+      },
     }
     const tree = shallow(<Styled {...requiredProps} />)
     expect(tree).toMatchSnapshot()
@@ -106,30 +106,30 @@ describe(Component.displayName, () => {
 
     // SM query css
     expect(tree).toHaveStyleRule('max-width', 'calc(50% - 20px)', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
     expect(tree).toHaveStyleRule('flex-basis', 'calc(50% - 20px)', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
     expect(tree).toHaveStyleRule('margin', '10px', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
     expect(tree).toHaveStyleRule('padding', '20px', {
-      media: 'only screen and (min-width:576px)'
+      media: 'only screen and (min-width:576px)',
     })
 
     // MD query css
     expect(tree).toHaveStyleRule('max-width', 'calc(25% - 30px)', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
     expect(tree).toHaveStyleRule('flex-basis', 'calc(25% - 30px)', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
     expect(tree).toHaveStyleRule('margin', '15px', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
     expect(tree).toHaveStyleRule('padding', '35px', {
-      media: 'only screen and (min-width:778px)'
+      media: 'only screen and (min-width:778px)',
     })
   })
 })

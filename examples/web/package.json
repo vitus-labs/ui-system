@@ -8,7 +8,7 @@
     "dev": "next",
     "build:app": "next build",
     "start": "next start",
-    "lint": "src/*"
+    "lint": ""
   },
   "author": "",
   "license": "ISC",
