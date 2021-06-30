@@ -117,19 +117,18 @@ const Component = forwardRef<
       return { wrapperDirection, wrapperAlignX, wrapperAlignY }
     }
 
-    const {
-      wrapperDirection,
-      wrapperAlignX,
-      wrapperAlignY,
-    } = calculateDirection()
+    const { wrapperDirection, wrapperAlignX, wrapperAlignY } =
+      calculateDirection()
 
-    const beforeContentRender = useMemo(() => renderContent(beforeContent), [
-      beforeContent,
-    ])
+    const beforeContentRender = useMemo(
+      () => renderContent(beforeContent),
+      [beforeContent]
+    )
 
-    const afterContentRender = useMemo(() => renderContent(afterContent), [
-      afterContent,
-    ])
+    const afterContentRender = useMemo(
+      () => renderContent(afterContent),
+      [afterContent]
+    )
 
     return (
       <Wrapper
@@ -196,8 +195,10 @@ const Component = forwardRef<
 const name = `${PKG_NAME}/Element`
 
 Component.displayName = name
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Component.pkgName = PKG_NAME
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Component.VITUS_LABS__COMPONENT = name
 

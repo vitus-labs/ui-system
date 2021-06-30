@@ -19,22 +19,22 @@ type Calculate = ({
   afterContent: HTMLElement
 }) => (type: 'height' | 'width') => void
 
-const calculate: Calculate = ({ beforeContent, afterContent }) => (
-  type: keyof typeof types
-) => {
-  const beforeContentSize = get(beforeContent, types[type])
-  const afterContentSize = get(afterContent, types[type])
+const calculate: Calculate =
+  ({ beforeContent, afterContent }) =>
+  (type: keyof typeof types) => {
+    const beforeContentSize = get(beforeContent, types[type])
+    const afterContentSize = get(afterContent, types[type])
 
-  if (isNumber(beforeContentSize, afterContentSize)) {
-    if (beforeContentSize > afterContentSize) {
-      beforeContent.style[type] = `${beforeContentSize}px`
-      afterContent.style[type] = `${beforeContentSize}px`
-    } else {
-      beforeContent.style[type] = `${afterContentSize}px`
-      afterContent.style[type] = `${afterContentSize}px`
+    if (isNumber(beforeContentSize, afterContentSize)) {
+      if (beforeContentSize > afterContentSize) {
+        beforeContent.style[type] = `${beforeContentSize}px`
+        afterContent.style[type] = `${beforeContentSize}px`
+      } else {
+        beforeContent.style[type] = `${afterContentSize}px`
+        afterContent.style[type] = `${afterContentSize}px`
+      }
     }
   }
-}
 
 type Props = Partial<{
   equalBeforeAfter: boolean
@@ -48,13 +48,8 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
   const Enhanced = (props) => {
-    const {
-      equalBeforeAfter,
-      vertical,
-      afterContent,
-      beforeContent,
-      ...rest
-    } = props
+    const { equalBeforeAfter, vertical, afterContent, beforeContent, ...rest } =
+      props
     const elementRef = createRef<HTMLElement>()
 
     const calculateSize = () => {

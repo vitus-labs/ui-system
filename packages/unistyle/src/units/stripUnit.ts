@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactText } from 'react'
 
 type Value<V> = V extends string ? number : V

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'

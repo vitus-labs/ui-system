@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memoize } from '@vitus-labs/core'
 import stripUnit from './stripUnit'
 

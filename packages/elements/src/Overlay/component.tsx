@@ -355,9 +355,11 @@ const Component: FC<Props> = ({
 const name = `${PKG_NAME}/Ovelay`
 
 Component.displayName = name
-//@ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 Component.pkgName = PKG_NAME
-//@ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 Component.VITUS_LABS__COMPONENT = name
 
 export default Component
