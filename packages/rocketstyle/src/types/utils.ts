@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
 
 export type TObj = Record<string, unknown>
@@ -51,11 +52,10 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
 >
 
 // extract props fron component
-export type ExtractProps<
-  TComponentOrTProps
-> = TComponentOrTProps extends ElementType<infer TProps>
-  ? TProps
-  : TComponentOrTProps
+export type ExtractProps<TComponentOrTProps> =
+  TComponentOrTProps extends ElementType<infer TProps>
+    ? TProps
+    : TComponentOrTProps
 
 export type ReturnCbParam<P extends TFn | TObj> = P extends TFn
   ? ReturnType<P>

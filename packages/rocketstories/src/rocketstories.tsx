@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import { dimensionStory, mainStory, generalStory } from './stories'
@@ -18,6 +19,7 @@ type Rocketstories = <T extends Element | RocketComponent = any>(
   ? ReturnType<CreateRocketStories<T>>
   : ReturnType<CreateStories<T>>
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const rocketstories: Rocketstories = (component) => {
   if (!isRocketComponent(component)) {
@@ -123,6 +125,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     dimension: (dimension) =>
       dimensionStory({
         ...result,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         dimension,
       }),

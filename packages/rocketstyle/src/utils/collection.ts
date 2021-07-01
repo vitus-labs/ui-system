@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
 // --------------------------------------------------------
@@ -20,7 +21,8 @@ export const chainOptions: ChanOptions = (opts, defaultOpts = []) => {
 // --------------------------------------------------------
 // remove empty values
 // --------------------------------------------------------
-export const removeNullableValues = (obj) =>
+type RemoveNullableValues = (obj: Record<string, any>) => Record<string, any>
+export const removeNullableValues: RemoveNullableValues = (obj) =>
   Object.entries(obj)
     .filter(([, v]) => v != null && v !== false)
     .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
@@ -28,7 +30,8 @@ export const removeNullableValues = (obj) =>
 // --------------------------------------------------------
 // remove empty values recursively
 // --------------------------------------------------------
-export const removeAllEmptyValues = (obj) =>
+type RemoveAllEmptyValues = (obj: Record<string, any>) => Record<string, any>
+export const removeAllEmptyValues: RemoveAllEmptyValues = (obj) =>
   Object.entries(obj)
     .filter(([, v]) => v != null)
     .reduce(

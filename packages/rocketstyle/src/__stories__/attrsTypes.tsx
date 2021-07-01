@@ -99,12 +99,12 @@ const Test = rocketstyle<typeof theme, ThemeType>()()({
       some: 'a',
     },
   })
-  .multiple((t) => ({
+  .multiple({
     multiKey: null,
-  }))
-  .multiple((t) => ({
+  })
+  .multiple({
     another: null,
-  }))
+  })
   .theme({
     fontFamily: '',
     fontSize: 4,

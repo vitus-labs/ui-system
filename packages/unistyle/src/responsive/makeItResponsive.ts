@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty } from '@vitus-labs/core'
 import createMediaQueries from './createMediaQueries'
 import sortBreakpoints from './sortBreakpoints'
@@ -47,64 +48,60 @@ export type MakeItResponsive = ({
   normalize?: boolean
 }) => ({ theme }: { theme?: Theme }) => any
 
-const makeItResponsive: MakeItResponsive = ({
-  theme: customTheme,
-  key = '',
-  css,
-  styles,
-  normalize = false,
-}) => ({ theme = {}, ...props }) => {
-  const internalTheme = customTheme || props[key]
+const makeItResponsive: MakeItResponsive =
+  ({ theme: customTheme, key = '', css, styles, normalize = false }) =>
+  ({ theme = {}, ...props }) => {
+    const internalTheme = customTheme || props[key]
 
-  // if no theme is defined, return empty objct
-  if (isEmpty(internalTheme)) return ''
+    // if no theme is defined, return empty objct
+    if (isEmpty(internalTheme)) return ''
 
-  const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } = theme
+    const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } = theme
 
-  const renderStyles = (
-    theme: Record<string, unknown>
-  ): ReturnType<typeof styles> =>
-    styles({ theme, css, rootSize, globalTheme: restTheme })
+    const renderStyles = (
+      theme: Record<string, unknown>
+    ): ReturnType<typeof styles> =>
+      styles({ theme, css, rootSize, globalTheme: restTheme })
 
-  // if there are no breakpoints, return just standard css
-  if (isEmpty(breakpoints) || isEmpty(__VITUS_LABS__)) {
-    return css`
-      ${renderStyles(internalTheme)}
-    `
-  }
+    // if there are no breakpoints, return just standard css
+    if (isEmpty(breakpoints) || isEmpty(__VITUS_LABS__)) {
+      return css`
+        ${renderStyles(internalTheme)}
+      `
+    }
 
-  const { media, sortedBreakpoints } = __VITUS_LABS__
+    const { media, sortedBreakpoints } = __VITUS_LABS__
 
-  let helperTheme = internalTheme
+    let helperTheme = internalTheme
 
-  if (normalize) {
-    helperTheme = normalizeTheme({
-      theme: internalTheme,
+    if (normalize) {
+      helperTheme = normalizeTheme({
+        theme: internalTheme,
+        breakpoints: sortedBreakpoints,
+      })
+    }
+
+    const transformedTheme = transformTheme({
+      theme: helperTheme,
       breakpoints: sortedBreakpoints,
     })
-  }
 
-  const transformedTheme = transformTheme({
-    theme: helperTheme,
-    breakpoints: sortedBreakpoints,
-  })
+    const optimizedTheme = optimizeTheme({
+      theme: transformedTheme,
+      breakpoints: sortedBreakpoints,
+    })
 
-  const optimizedTheme = optimizeTheme({
-    theme: transformedTheme,
-    breakpoints: sortedBreakpoints,
-  })
+    return sortedBreakpoints.map((item) => {
+      const breakpointTheme = optimizedTheme[item]
 
-  return sortedBreakpoints.map((item) => {
-    const breakpointTheme = optimizedTheme[item]
+      if (!breakpointTheme) return ''
 
-    if (!breakpointTheme) return ''
+      const result = renderStyles(breakpointTheme)
 
-    const result = renderStyles(breakpointTheme)
-
-    return media[item]`
+      return media[item]`
         ${result};
       `
-  })
-}
+    })
+  }
 
 export default makeItResponsive

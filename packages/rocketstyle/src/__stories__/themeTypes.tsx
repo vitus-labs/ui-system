@@ -51,7 +51,7 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
       text-align: center;
     `,
   }))
-  .gaps((theme) => ({
+  .gaps({
     xs: {
       padding: 3,
       margin: 3,
@@ -60,7 +60,7 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
       padding: 3,
       margin: 3,
     },
-  }))
+  })
   .gaps({
     lg: {
       padding: 3,
@@ -79,3 +79,5 @@ const Component = (props) => (
     {...props}
   />
 )
+
+export default Component

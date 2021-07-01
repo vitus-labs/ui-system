@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // const compose = <R>(fn1: (a: R) => R, ...fns: Array<(a: R) => R>) =>
 //   fns.reduce((a, b) => (value) => a(b(value)), fn1)
 
@@ -9,6 +10,7 @@
 
 type ArityOneFn = (arg: any) => any
 type PickLastInTuple<T extends any[]> = T extends [
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ...rest: infer U,
   argn: infer L
 ]
@@ -17,8 +19,9 @@ type PickLastInTuple<T extends any[]> = T extends [
 type FirstFnParameterType<T extends any[]> = Parameters<PickLastInTuple<T>>[any]
 type LastFnReturnType<T extends any[]> = ReturnType<T[0]>
 
-const compose = <T extends ArityOneFn[]>(...fns: T) => (
-  p: FirstFnParameterType<T>
-): LastFnReturnType<T> => fns.reduceRight((acc: any, cur: any) => cur(acc), p)
+const compose =
+  <T extends ArityOneFn[]>(...fns: T) =>
+  (p: FirstFnParameterType<T>): LastFnReturnType<T> =>
+    fns.reduceRight((acc: any, cur: any) => cur(acc), p)
 
 export default compose

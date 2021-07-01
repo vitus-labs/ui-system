@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ComponentType, ExoticComponent, VFC } from 'react'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
-export type ExtractProps<
-  TComponentOrTProps
-> = TComponentOrTProps extends ComponentType<infer TProps>
-  ? TProps
-  : TComponentOrTProps
+export type ExtractProps<TComponentOrTProps> =
+  TComponentOrTProps extends ComponentType<infer TProps>
+    ? TProps
+    : TComponentOrTProps
 
 export type StoryComponent = VFC<any> & {
   args: any

@@ -1,16 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { get, isEmpty, set } from '@vitus-labs/core'
 import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // is value milti key
 // --------------------------------------------------------
-export const isValidKey = (value) =>
+type IsValidKey = (value: any) => boolean
+export const isValidKey: IsValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
 // --------------------------------------------------------
 // is value milti key
 // --------------------------------------------------------
-export const isMultiKey = (value) => {
+type IsMultiKey = (value: any) => [boolean, string]
+export const isMultiKey: IsMultiKey = (value) => {
   if (typeof value === 'object') return [true, get(value, 'propName')]
   return [false, value]
 }
@@ -18,7 +21,18 @@ export const isMultiKey = (value) => {
 // --------------------------------------------------------
 // calculate dimensions map
 // --------------------------------------------------------
-export const calculateDimensionsMap = ({ themes, useBooleans }) => {
+type CalculateDimensionsMap = ({
+  themes,
+  useBooleans,
+}: {
+  themes: Record<string, any>
+  useBooleans: boolean
+}) => { keysMap: Record<string, any>; keywords: Record<string, any> }
+
+export const calculateDimensionsMap: CalculateDimensionsMap = ({
+  themes,
+  useBooleans,
+}) => {
   const result = { keysMap: {}, keywords: {} }
   if (isEmpty(themes)) return result
 

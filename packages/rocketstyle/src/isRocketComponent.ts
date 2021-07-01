@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type IsRocketComponent = (component: any) => boolean
 
 const isRocketComponent: IsRocketComponent = (component) => {

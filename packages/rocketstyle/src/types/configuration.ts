@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFn, ElementType, ArrayOfValues, ArrayOfKeys } from './utils'
 import { Dimensions, MultiKeys, ExtractDimensionKey } from './dimensions'
 import { PseudoProps } from './pseudo'
@@ -42,6 +43,6 @@ export type Configuration<
 } & Record<ExtractDimensionKey<D[keyof D]>, any>
 
 export type DefaultProps<
-  C extends ElementType = ElementType,
-  D extends Dimensions = Dimensions
+  // C extends ElementType = ElementType,
+  // D extends Dimensions = Dimensions
 > = Partial<PseudoProps>

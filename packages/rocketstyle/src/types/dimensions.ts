@@ -16,13 +16,11 @@ export type ExtractNullableDimensionKeys<T> = {
   [P in keyof T as T[P] extends false ? never : P]: T[P]
 }
 
-export type ExtractDimensionKey<
-  T extends DimensionValue
-> = T extends DimensionValueObj ? T['propName'] : T
+export type ExtractDimensionKey<T extends DimensionValue> =
+  T extends DimensionValueObj ? T['propName'] : T
 
-export type ExtractDimensionMulti<
-  T extends DimensionValue
-> = T extends DimensionValueObj ? true : false
+export type ExtractDimensionMulti<T extends DimensionValue> =
+  T extends DimensionValueObj ? true : false
 
 export type ExtractDimensionAttrsKeys<D extends Dimensions> = {
   [I in keyof D]: ExtractDimensionKey<D[I]>

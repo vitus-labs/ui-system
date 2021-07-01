@@ -17,4 +17,4 @@ export default {
       xl: 1140,
     },
   },
-}
+} as const

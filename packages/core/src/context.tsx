@@ -1,4 +1,4 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, FC } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'

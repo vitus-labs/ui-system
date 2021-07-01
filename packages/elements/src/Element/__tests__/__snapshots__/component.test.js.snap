@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`vitus-labs/elements/Element Component renders correctly 1`] = `
-<ForwardRef
-  alignX="left"
-  alignY="center"
-  contentDirection="inline"
-/>
-`;

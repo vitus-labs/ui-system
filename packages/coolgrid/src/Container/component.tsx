@@ -17,6 +17,7 @@ const Component: ElementType<['containerWidth']> = ({
 
   let finalWidth = containerWidth
   if (width) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     finalWidth = typeof width === 'function' ? width(containerWidth) : width
   }

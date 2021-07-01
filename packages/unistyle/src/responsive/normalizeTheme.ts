@@ -12,17 +12,16 @@ type AssignToBreakbointKey = (
   ) => void
 ) => Record<string, unknown>
 
-const assignToBreakbointKey: AssignToBreakbointKey = (breakpoints) => (
-  value
-) => {
-  const result = {}
+const assignToBreakbointKey: AssignToBreakbointKey =
+  (breakpoints) => (value) => {
+    const result = {}
 
-  breakpoints.forEach((item, i) => {
-    result[item] = value(item, i, breakpoints, result)
-  })
+    breakpoints.forEach((item, i) => {
+      result[item] = value(item, i, breakpoints, result)
+    })
 
-  return result
-}
+    return result
+  }
 
 const handleArrayCb = (arr) => (value, i) => {
   const currentValue = arr[i]

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
 
@@ -19,6 +20,7 @@ export type Props = {
 }
 
 const Element = forwardRef<any, Props>(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   ({ children, className, style }, ref) => {
     const passProps = parseJSON(

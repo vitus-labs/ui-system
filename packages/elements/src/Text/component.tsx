@@ -33,8 +33,10 @@ const Component: ForwardRefExoticComponent<Props> & {
 const name = `${PKG_NAME}/Text`
 
 Component.displayName = name
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Component.pkgName = PKG_NAME
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Component.VITUS_LABS__COMPONENT = name
 
