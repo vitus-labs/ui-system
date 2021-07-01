@@ -54,8 +54,9 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "^0.14.0",
-    "@vitus-labs/rocketsyle": "^0.14.0",
+    "@vitus-labs/core": "^0.14.9",
+    "@vitus-labs/rocketsyle": "^0.14.9",
+    "@vitus-labs/unistyle": "^0.14.9",
     "react": ">= 16.7"
   },
   "dependencies": {
@@ -64,7 +65,6 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.14.9",
-    "@vitus-labs/elements": "^0.14.0",
     "@vitus-labs/rocketstyle": "^0.14.9",
     "@vitus-labs/tools-babel": "^0.10.2",
     "@vitus-labs/tools-rollup": "^0.10.2",

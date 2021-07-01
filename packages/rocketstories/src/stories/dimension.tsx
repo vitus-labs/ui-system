@@ -27,6 +27,7 @@ type MakeDimensionStories = ({
   attrs: Record<string, unknown>
 }) => StoryComponent
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const makeDimensionStories: MakeDimensionStories = ({
   name,

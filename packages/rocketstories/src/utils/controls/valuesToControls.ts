@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as CONTROLS from '~/controls'
 import type { Controls, RocketComponent } from '~/types'
 
