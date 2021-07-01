@@ -17,5 +17,5 @@ export {
   InputIcon,
   Label,
   TextInput,
-  Submit
+  Submit,
 }

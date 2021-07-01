@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
 
 export type TObj = Record<string, unknown>

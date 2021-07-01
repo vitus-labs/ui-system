@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty } from '@vitus-labs/core'
 import { MultiKeys } from '~/types/dimensions'
 
@@ -31,6 +32,7 @@ export const calculateChainOptions: CalculateChainOptions =
     const result = {}
     if (isEmpty(options)) return result
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return options.reduce(
       (acc, item) => Object.assign(acc, item(...args)),
@@ -83,6 +85,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       const propsKeys = Object.keys(props).reverse()
 
       Object.entries(result).forEach(([key, value]) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const isMultiKey = multiKeys[key]
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { config, isEmpty, merge } from '@vitus-labs/core'
 import { removeAllEmptyValues, removeNullableValues } from './collection'
@@ -17,7 +19,17 @@ export const themeModeCb: ThemeMode =
 // --------------------------------------------------------
 // calculate dimension themes
 // --------------------------------------------------------
-export const calculateDimensionThemes = (theme, options, cb) => {
+type CalculateDimensionThemes = (
+  theme: Record<string, any>,
+  options: Record<string, any>,
+  cb: any
+) => Record<string, any>
+
+export const calculateDimensionThemes: CalculateDimensionThemes = (
+  theme,
+  options,
+  cb
+) => {
   const result = {}
 
   if (isEmpty(options.dimensions)) return result

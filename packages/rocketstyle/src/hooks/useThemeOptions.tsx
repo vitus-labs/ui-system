@@ -11,6 +11,7 @@ type UseThemeOptions = ({ inversed }: { inversed?: boolean }) => {
 }
 
 const useThemeOptions: UseThemeOptions = ({ inversed }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { theme, mode: ctxMode, isDark: ctxDark } = useContext(context) as any
   const mode = inversed ? THEME_MODES_INVERSED[ctxMode] : ctxMode
   const isDark = inversed ? !ctxDark : ctxDark

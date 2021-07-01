@@ -39,6 +39,7 @@ export default rocketstyle()({
     },
   })
   .styles(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (css) => css<{ $rocketstyle: any }>`
       border: 1px solid transparent;
       height: 40px;

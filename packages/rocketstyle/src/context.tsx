@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, FC, useContext, ComponentType } from 'react'
 import { Provider as CoreProvider, context } from '@vitus-labs/core'
 

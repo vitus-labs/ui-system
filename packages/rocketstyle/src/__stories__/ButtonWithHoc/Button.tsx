@@ -68,6 +68,7 @@ export default rocketstyle()()({ name: 'Button', component: Element })
     },
   })
   .styles(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (css) => css<any>`
       ${({
         href,
