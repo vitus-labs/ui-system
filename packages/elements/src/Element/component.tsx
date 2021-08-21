@@ -14,7 +14,7 @@ const defaultDirection = 'inline'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
-const Component = forwardRef<
+const component = forwardRef<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any,
   Props
@@ -194,12 +194,12 @@ const Component = forwardRef<
 
 const name = `${PKG_NAME}/Element`
 
-Component.displayName = name
+component.displayName = name
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-Component.pkgName = PKG_NAME
+component.pkgName = PKG_NAME
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-Component.VITUS_LABS__COMPONENT = name
+component.VITUS_LABS__COMPONENT = name
 
-export default Component
+export default component

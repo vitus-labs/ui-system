@@ -20,6 +20,7 @@ type AttachItemProps = ({
   i: number
   length: number
 }) => ExtendedProps
+
 const attachItemProps: AttachItemProps = ({
   i,
   length,
