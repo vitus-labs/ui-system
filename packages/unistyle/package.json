@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.14.9",
-    "@vitus-labs/tools-babel": "^0.10.3",
-    "@vitus-labs/tools-rollup": "^0.10.3",
-    "@vitus-labs/tools-typescript": "^0.10.3"
+    "@vitus-labs/tools-babel": "^0.11.0",
+    "@vitus-labs/tools-rollup": "^0.11.0",
+    "@vitus-labs/tools-typescript": "^0.11.0"
   }
 }
