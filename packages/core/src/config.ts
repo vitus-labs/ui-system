@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-underscore-dangle */
 import { ComponentType } from 'react'
-import type {
+import styled, {
+  css,
+  ThemeProvider,
   ThemedCssFunction,
   StyledInterface,
   DefaultTheme,
@@ -9,7 +11,13 @@ import type {
 } from 'styled-components'
 import type { HTMLTags } from '~/htmlTags'
 
-const OPTIONS: Internal = {} as Internal
+const OPTIONS: Internal = {
+  styled,
+  css,
+  styledContext: ThemeProvider,
+  component: 'div',
+  textComponent: 'span',
+} as Internal
 
 type Init = ({
   styled,
