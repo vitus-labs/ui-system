@@ -83,7 +83,8 @@ export type Responsive =
 
 export type ExtendCss = Css | Array<Css> | Record<string, Css>
 
-export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends ComponentType<infer TProps>
-    ? TProps
-    : TComponentOrTProps
+export type ExtractProps<
+  TComponentOrTProps
+> = TComponentOrTProps extends ComponentType<infer TProps>
+  ? TProps
+  : TComponentOrTProps

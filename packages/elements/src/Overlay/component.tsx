@@ -1,12 +1,20 @@
-import React, { FC, useRef, useState, useEffect, useContext } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  ComponentType,
+  useRef,
+  useState,
+  useEffect,
+  useContext,
+} from 'react'
 import { renderContent, throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 
 export type Props = {
-  children: React.ReactNode
-  trigger: React.ReactNode
+  children: ReactNode | ComponentType
+  trigger: ReactNode | ComponentType
   DOMLocation?: HTMLElement
   refName?: string
   triggerRefName?: string

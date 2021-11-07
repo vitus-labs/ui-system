@@ -14,15 +14,17 @@ export type StyleComponent<
   CT extends OptionStyles | unknown = unknown,
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
-> = (props: Partial<Configuration<C, D>>) => RocketComponent<
+> = (
+  props: Partial<Configuration<C, D>>
+) => RocketComponent<
   // extract component props + add default rocketstyle props
   MergeTypes<
-    [Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>, DefaultProps<C, D>]
+    [Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>, DefaultProps]
   >,
   // keep original component props + extract dimension props
   ExtractProps<C>,
   // set default extending props
-  DefaultProps<C, D>,
+  DefaultProps,
   T,
   CT,
   D,

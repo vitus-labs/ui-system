@@ -11,7 +11,7 @@ const RESERVED_PROPS = [
   'valueName',
   'itemProps',
   'wrapProps',
-]
+] as const
 
 type AttachItemProps = ({
   i,

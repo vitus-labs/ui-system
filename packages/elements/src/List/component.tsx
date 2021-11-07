@@ -5,14 +5,18 @@ import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Element, { Props as ElementProps } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
+import type { MergeTypes } from '~/types'
 
-export type Props = Partial<
-  IteratorProps &
-    ElementProps & {
+export type Props = MergeTypes<
+  [
+    ElementProps,
+    IteratorProps,
+    {
       rootElement?: boolean
       label: never
       content: never
     }
+  ]
 >
 
 const Component = forwardRef<any, Props>(

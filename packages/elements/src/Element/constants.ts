@@ -29,7 +29,7 @@ export const RESERVED_PROPS = [
   'afterContentDirection',
   'afterContentAlignX',
   'afterContentAlignY',
-]
+] as const
 
 export const INLINE_ELEMENTS = {
   span: true,
