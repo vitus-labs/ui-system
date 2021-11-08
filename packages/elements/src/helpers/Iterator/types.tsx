@@ -97,7 +97,7 @@ export type PropsCallback =
     ) => TObj)
 
 export type Props = Partial<{
-  children: ReactNode | ReactNode[]
+  children: ReactNode[]
   data: Array<SimpleValue | DataArrayObject | MaybeNull>
   component: ElementType
   valueName: string
