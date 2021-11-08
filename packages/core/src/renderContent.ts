@@ -35,6 +35,7 @@ const renderContent: RenderContent = (content, attachProps = {}) => {
     return cloneElement(Children.only(content), attachProps)
   }
 
+  // @ts-ignore
   if (typeof content === 'object' && !isEmpty(content)) {
     // FIXME: quick fix for rendering invalid elements
     // no idea of what is going on here yet
