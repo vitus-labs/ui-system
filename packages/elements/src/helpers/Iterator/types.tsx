@@ -3,8 +3,9 @@ import type {
   ComponentType,
   ForwardRefExoticComponent,
   ReactText,
-  ReactNodeArray,
+  ReactNode,
 } from 'react'
+import { HTMLTags } from '@vitus-labs/core'
 
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>
@@ -12,6 +13,7 @@ export type SimpleValue = ReactText
 export type ElementType<T extends Record<string, unknown> = any> =
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
+  | HTMLTags
 
 export type ExtendedProps = {
   index: number
@@ -95,7 +97,7 @@ export type PropsCallback =
     ) => TObj)
 
 export type Props = Partial<{
-  children: ReactNodeArray
+  children: ReactNode | ReactNode[]
   data: Array<SimpleValue | DataArrayObject | MaybeNull>
   component: ElementType
   valueName: string
