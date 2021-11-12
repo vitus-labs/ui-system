@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Element, { Props as ElementProps } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
-import type { MergeTypes } from '~/types'
+import type { MergeTypes, VLForwardedComponent } from '~/types'
 
 export type Props = MergeTypes<
   [
@@ -19,7 +17,7 @@ export type Props = MergeTypes<
   ]
 >
 
-const Component = forwardRef<any, Props>(
+const Component: VLForwardedComponent<Props> = forwardRef(
   ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
@@ -33,12 +31,10 @@ const Component = forwardRef<any, Props>(
   }
 )
 
-const name = `${PKG_NAME}/List`
+const name = `${PKG_NAME}/List` as const
 
 Component.displayName = name
-// @ts-ignore
 Component.pkgName = PKG_NAME
-// @ts-ignore
 Component.VITUS_LABS__COMPONENT = name
 
 export default Component

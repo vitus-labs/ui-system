@@ -1,5 +1,4 @@
 import React, {
-  FC,
   ReactNode,
   ComponentType,
   useRef,
@@ -11,6 +10,7 @@ import { renderContent, throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
+import type { VLComponent } from '~/types'
 
 export type Props = {
   children: ReactNode | ComponentType
@@ -40,7 +40,7 @@ type OverlayPosition = {
   right?: number | string
 }
 
-const Component: FC<Props> = ({
+const Component: VLComponent<Props> = ({
   children,
   trigger,
   DOMLocation,
@@ -360,14 +360,10 @@ const Component: FC<Props> = ({
   )
 }
 
-const name = `${PKG_NAME}/Ovelay`
+const name = `${PKG_NAME}/Ovelay` as const
 
 Component.displayName = name
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 Component.pkgName = PKG_NAME
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 Component.VITUS_LABS__COMPONENT = name
 
 export default Component

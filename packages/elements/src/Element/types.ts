@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from 'react'
-import type { HTMLTags } from '@vitus-labs/core'
+import type { HTMLTags, renderContent } from '@vitus-labs/core'
 import type {
   AlignX,
   AlignY,
@@ -10,14 +10,16 @@ import type {
   ExtendCss,
 } from '~/types'
 
+type Content = Parameters<typeof renderContent>['0']
+
 export type Props = Partial<{
   tag: HTMLTags
   innerRef: any
-  children: ReactNode
-  content: ReactNode
-  label: ReactNode
-  beforeContent: ReactNode
-  afterContent: ReactNode
+  children: Content
+  content: Content
+  label: Content
+  beforeContent: Content
+  afterContent: Content
   block: ResponsiveBooltype
   equalCols: ResponsiveBooltype
   gap: Responsive

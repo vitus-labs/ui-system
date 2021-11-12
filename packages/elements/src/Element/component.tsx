@@ -2,6 +2,7 @@ import React, { forwardRef, useMemo } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import { Wrapper, Content } from '~/helpers'
+import type { VLForwardedComponent } from '~/types'
 import {
   transformVerticalProp,
   isInlineElement,
@@ -14,11 +15,7 @@ const defaultDirection = 'inline'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
-const component = forwardRef<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  any,
-  Props
->(
+const component: VLForwardedComponent<Props> = forwardRef(
   (
     {
       innerRef,
@@ -192,14 +189,10 @@ const component = forwardRef<
   }
 )
 
-const name = `${PKG_NAME}/Element`
+const name = `${PKG_NAME}/Element` as const
 
 component.displayName = name
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 component.pkgName = PKG_NAME
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 component.VITUS_LABS__COMPONENT = name
 
 export default component

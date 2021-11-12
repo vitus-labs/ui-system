@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ComponentType, VFC } from 'react'
+import type {
+  ComponentType,
+  VFC,
+  ForwardedRef,
+  PropsWithChildren,
+  ReactElement,
+} from 'react'
 import { config } from '@vitus-labs/core'
 
 type ExtractNullableKeys<T> = {
@@ -87,3 +93,32 @@ export type ExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps
     : TComponentOrTProps
+
+// export type HTMLTagProps<T extends HTMLTags> = JSX.IntrinsicElements[T];
+
+export type VLForwardedComponent<P = Record<string, unknown>> =
+  ForwardRefRenderFunction<any, P> & VLStatic
+
+export type VLComponent<P = Record<string, unknown>> = VFC<P> & VLStatic
+
+interface ForwardRefRenderFunction<T, P = Record<string, unknown>> {
+  (
+    props: PropsWithChildren<P & { ref?: ForwardedRef<T> }>,
+    ref: ForwardedRef<T>
+  ): ReactElement | null
+}
+
+export type VLStatic = {
+  /**
+   * React displayName
+   */
+  displayName?: string | undefined
+  /**
+   * package name
+   */
+  pkgName?: string
+  /**
+   * component name
+   */
+  VITUS_LABS__COMPONENT?: `@vitus-labs/${string}`
+}

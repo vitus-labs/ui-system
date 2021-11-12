@@ -1,29 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import {
-  createElement,
-  isValidElement,
-  cloneElement,
-  Children,
-  ReactNode,
-  ComponentType,
-} from 'react'
+import { createElement, isValidElement, cloneElement, Children } from 'react'
 import isEmpty from './isEmpty'
 
+type CreateTypes = Parameters<typeof createElement>[0]
+type CloneTypes = Parameters<typeof cloneElement>[0]
+
 export type RenderContent = (
-  content?: ReactNode | ComponentType,
+  content?: CreateTypes | CloneTypes,
   attachProps?: Record<string, any>
-) => ReactNode
+) => ReturnType<typeof createElement> | ReturnType<typeof cloneElement>
 
 const renderContent: RenderContent = (content, attachProps = {}) => {
-  if (!content) return null
+  if (!content) return null as any
+
+  if (typeof content === 'string') {
+    return content
+  }
 
   if (Array.isArray(content)) {
     return content
   }
 
   if (typeof content === 'function') {
-    // @ts-ignore
     return createElement(content, attachProps)
   }
 
@@ -35,11 +32,7 @@ const renderContent: RenderContent = (content, attachProps = {}) => {
     return cloneElement(Children.only(content), attachProps)
   }
 
-  // @ts-ignore
   if (typeof content === 'object' && !isEmpty(content)) {
-    // FIXME: quick fix for rendering invalid elements
-    // no idea of what is going on here yet
-    // @ts-ignore
     return createElement(content, attachProps)
   }
 

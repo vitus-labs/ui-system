@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo, VFC, ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
-import {
+import type {
   Direction,
   AlignX,
   AlignY,

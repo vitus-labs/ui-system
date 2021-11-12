@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { forwardRef, ReactNode, ForwardRefExoticComponent } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Styled from './styled'
-import type { ExtendCss } from '~/types'
+import type { ExtendCss, VLForwardedComponent } from '~/types'
 
 export type Props = Partial<{
   paragraph: boolean
@@ -13,9 +12,9 @@ export type Props = Partial<{
   extendCss: ExtendCss
 }>
 
-const Component: ForwardRefExoticComponent<Props> & {
+const component: VLForwardedComponent<Props> & {
   isText?: true
-} = forwardRef<any, Props>(
+} = forwardRef(
   ({ paragraph, label, children, tag, extendCss, ...props }, ref) => {
     const renderContent = (as = undefined) => (
       <Styled ref={ref} as={as} $text={{ extraStyles: extendCss }} {...props}>
@@ -30,16 +29,11 @@ const Component: ForwardRefExoticComponent<Props> & {
   }
 )
 
-const name = `${PKG_NAME}/Text`
+const name = `${PKG_NAME}/Text` as const
 
-Component.displayName = name
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-Component.pkgName = PKG_NAME
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-Component.VITUS_LABS__COMPONENT = name
+component.displayName = name
+component.pkgName = PKG_NAME
+component.VITUS_LABS__COMPONENT = name
+component.isText = true
 
-Component.isText = true
-
-export default Component
+export default component

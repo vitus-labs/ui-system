@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { forwardRef } from 'react'
 import { renderContent } from '@vitus-labs/core'
+import { PKG_NAME } from '~/constants'
+import { VLComponent } from '~/types'
 
 const parseJSON = (object) => {
   let result = {}
@@ -19,21 +19,21 @@ export type Props = {
   style?: Record<string, unknown>
 }
 
-const Element = forwardRef<any, Props>(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ({ children, className, style }, ref) => {
-    const passProps = parseJSON(
-      JSON.stringify({
-        className,
-        style,
-        ref,
-      })
-    )
+const component: VLComponent<Props> = ({ children, className, style }) => {
+  const passProps = parseJSON(
+    JSON.stringify({
+      className,
+      style,
+    })
+  )
 
-    return renderContent(children, passProps)
-  }
-)
+  return renderContent(children, passProps)
+}
 
-Element.displayName = 'vitus-labs/elements/Util'
-export default Element
+const name = `${PKG_NAME}/Element` as const
+
+component.displayName = name
+component.pkgName = PKG_NAME
+component.VITUS_LABS__COMPONENT = name
+
+export default component
