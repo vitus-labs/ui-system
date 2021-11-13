@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type IsEmpty = <T extends Record<string, unknown> | unknown[] | null>(
   param?: T
 ) => null | undefined extends T ? true : keyof T extends never ? true : false
