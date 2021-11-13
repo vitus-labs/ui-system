@@ -5,7 +5,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.15.3",
+  "version": "0.16.0-alpha.0",
   "command": {
     "publish": {
       "ignoreChanges": [
