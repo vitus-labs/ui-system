@@ -6,7 +6,7 @@ import type {
   PropsWithChildren,
   ReactElement,
 } from 'react'
-import { config } from '@vitus-labs/core'
+import { config, renderContent } from '@vitus-labs/core'
 
 type ExtractNullableKeys<T> = {
   [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
@@ -31,10 +31,15 @@ export type SimpleHoc<P extends Record<string, unknown>> = <
   WrappedComponent: T
 ) => VFC<MergeTypes<[P, ExtractProps<T>]>>
 
+export type InnerRef = ForwardedRef<any>
+
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 export type Css = CssCallback | string | ReturnType<typeof config.css>
 
 export type isEmpty = null | undefined
+
+export type Content = Parameters<typeof renderContent>['0']
+
 export type ContentAlignX =
   | 'left'
   | 'center'

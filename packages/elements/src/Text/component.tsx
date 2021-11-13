@@ -2,7 +2,7 @@ import React, { forwardRef, ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Styled from './styled'
-import type { ExtendCss, VLForwardedComponent } from '~/types'
+import type { VLForwardedComponent, ExtendCss } from '~/types'
 
 export type Props = Partial<{
   paragraph: boolean

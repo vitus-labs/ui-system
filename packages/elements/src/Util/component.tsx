@@ -1,6 +1,6 @@
 import { renderContent } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import { VLComponent } from '~/types'
+import type { VLComponent } from '~/types'
 
 const parseJSON = (object) => {
   let result = {}

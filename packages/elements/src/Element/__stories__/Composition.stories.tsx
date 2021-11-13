@@ -9,7 +9,7 @@ export default {
 
 const element = rocketstyle()()({ component: Element, name: 'base' }).styles(
   (css) => css`
-    ${({ $rocketstyle: t }) => css`
+    ${({ $rocketstyle: t }: any) => css`
       background-color: ${t.bgColor};
     `}
   `

@@ -1,20 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ReactNode } from 'react'
-import type { HTMLTags, renderContent } from '@vitus-labs/core'
+import type { HTMLTags } from '@vitus-labs/core'
 import type {
   AlignX,
   AlignY,
+  Content,
   Direction,
   ResponsiveBooltype,
   Responsive,
   ExtendCss,
+  InnerRef,
 } from '~/types'
-
-type Content = Parameters<typeof renderContent>['0']
 
 export type Props = Partial<{
   tag: HTMLTags
-  innerRef: any
+  innerRef: InnerRef
   children: Content
   content: Content
   label: Content

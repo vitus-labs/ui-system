@@ -98,7 +98,7 @@ const component: FC<Props> & Static = (props: Props) => {
         )
       }
 
-      return renderContent(item, {
+      return renderContent(item as any, {
         key: i,
         ...finalItemProps,
       })

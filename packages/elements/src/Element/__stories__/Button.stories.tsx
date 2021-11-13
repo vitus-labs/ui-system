@@ -21,7 +21,7 @@ const RightContent = config.styled.span`
   line-height: 1;
   transition: all 0.15s ease-in-out;
 
-  ${({ hover }) =>
+  ${({ hover }: any) =>
     hover &&
     config.css`
         &:hover {
@@ -32,7 +32,7 @@ const RightContent = config.styled.span`
 
 const Button = rocketstyle()()({ name: 'Button', component: Element })
   .attrs({
-    primary: true,
+    // primary: true,
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
@@ -54,7 +54,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
       transition: all 0.15s ease-in-out;
       cursor: pointer;
 
-      ${({ $rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }: any) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
         border-color: ${t.bgColor};
