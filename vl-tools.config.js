@@ -3,6 +3,7 @@ module.exports = {
     globals: {
       React: 'react',
       ReactDOM: 'react-dom',
+      ReactIs: 'react-is',
       hoistNonReactStatics: 'hoist-non-react-statics',
       lodash: 'lodash',
       merge: 'lodash.merge',
