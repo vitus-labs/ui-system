@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { config } from '@vitus-labs/core'
 
 type value = 'auto' | 'inital' | 'inherit' | number | string

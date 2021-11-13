@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty } from '@vitus-labs/core'
 import createMediaQueries from './createMediaQueries'
 import sortBreakpoints from './sortBreakpoints'

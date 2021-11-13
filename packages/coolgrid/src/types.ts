@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, ReactText, ComponentType } from 'react'
 import { config } from '@vitus-labs/core'
 import { extendCss, AlignContentAlignXKeys } from '@vitus-labs/unistyle'
