@@ -4638,10 +4638,10 @@
     "@typescript-eslint/types" "4.29.3"
     eslint-visitor-keys "^2.0.0"
 
-"@vitus-labs/tools-babel@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-babel/-/tools-babel-0.15.0.tgz#8a77bb0f96f0bffab128ed85feb5aff23f1e25cc"
-  integrity sha512-AZmS8/7fGnwSj5Zzxw1a420gfuAAixgLzOFzdq1MdRzbeERsQ0MSMGeSVfotgAmPSd+BRybozaayOJmZI2nrLQ==
+"@vitus-labs/tools-babel@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-babel/-/tools-babel-0.16.0.tgz#09d103639ff677e481ead0a3e6f21564e9200fcb"
+  integrity sha512-VqjLrdUKc5hD93Ve37M0bYDw4exwhUy/Aer9zZQblvAsQfoN9+QjCwukZhJTUBT/XHHaDrB/rE+8MINO9jiQXg==
   dependencies:
     "@babel/core" "^7.16.0"
     "@babel/plugin-proposal-class-properties" "^7.16.0"
@@ -4651,10 +4651,10 @@
     "@babel/preset-react" "^7.16.0"
     "@babel/preset-typescript" "^7.16.0"
 
-"@vitus-labs/tools-lint@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-lint/-/tools-lint-0.15.0.tgz#d3a6c3d6076b5e4da565e02dea83faa9f0d158aa"
-  integrity sha512-9hteF2QwBjeEnFmHTT+7Xl6NuL7j9xWHHZemmY80xdvXP4dTN5xzHO+riVEnjJf2EjQQbPTJVQA+C4rw2vs6ww==
+"@vitus-labs/tools-lint@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-lint/-/tools-lint-0.16.0.tgz#a0e31a48aa7340384ed16caf8acf198066ad6a28"
+  integrity sha512-EyKbC/0Kul1dSOvJ4WY4R3/qcY4qDk6X3rDe++iPKXcz2Ud0VUpQlls8qjrlV6wEo05Ikbgv8oYpqhQNBtknIw==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^4.29.3"
     "@typescript-eslint/parser" "^4.29.3"
@@ -4675,10 +4675,10 @@
     stylelint-config-styled-components "^0.1.1"
     stylelint-processor-styled-components "^1.10.0"
 
-"@vitus-labs/tools-rollup@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-rollup/-/tools-rollup-0.15.0.tgz#4b87d8091259fc32eb7def8cd037757513794540"
-  integrity sha512-0S/DXGRnfjJHJQUeDMOXUiAv+7UqfYQ8r1IJTPcU6xjgtIT9Ux/yhfhjHYGOHRpxi6SOA+mEfYFGZE4x+lriYQ==
+"@vitus-labs/tools-rollup@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-rollup/-/tools-rollup-0.16.0.tgz#9b891576db94fed770047c9cd27a90c94ca69c57"
+  integrity sha512-CCC6sbanCkDv0Tk2DZOopMgsIi3MTTEDOyp5fZHAC5E9oFelkFinM24874TfiaeQOACMiPyanBs2rmhy+gH36w==
   dependencies:
     "@rollup/plugin-node-resolve" "^13.0.6"
     "@rollup/plugin-replace" "^3.0.0"
@@ -4697,10 +4697,10 @@
     rollup-plugin-visualizer "^5.5.2"
     ttypescript "^1.5.12"
 
-"@vitus-labs/tools-storybook@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-storybook/-/tools-storybook-0.15.0.tgz#0b3cc974508d5ba7bce4f06763b8324461cf7885"
-  integrity sha512-xjSDPqoiRagC58eJWnDksP2cTMcCTmlf0QzKFVXIJGBvUxaAgfhqKxWbgER1F51Q1k9wYPCM8vBd4DaUCM5NdQ==
+"@vitus-labs/tools-storybook@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-storybook/-/tools-storybook-0.16.0.tgz#ba5186a3c1c53d521a67f6414081ccedd13f872c"
+  integrity sha512-fVfiAlIin9niJLfuixIl4I9Tusb397fqLLwTVo1hmzXQh/8Hu4EhYvjH0RL23jV2vvC+ZqtuG0+z+2LaoLtgww==
   dependencies:
     "@storybook/addon-a11y" "^6.3.12"
     "@storybook/addon-actions" "^6.3.12"
@@ -4720,10 +4720,10 @@
     storybook-dark-mode "^1.0.8"
     svg-inline-loader "^0.8.2"
 
-"@vitus-labs/tools-typescript@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-typescript/-/tools-typescript-0.15.0.tgz#2f5f743eecfafd741551831812da098a77222a70"
-  integrity sha512-GybzEzhz/4Uzjc7BRuHMAhBcoTGOV9OS9+l4POtdfvrdG8PR+shLrCssr+h0xOVkmaFVHvcG8WkzTTMpQUQSBQ==
+"@vitus-labs/tools-typescript@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@vitus-labs/tools-typescript/-/tools-typescript-0.16.0.tgz#141538b88a73ecd11ecfde6df1cd70f97eb3a7c7"
+  integrity sha512-z386R5R8Qycpi3kPBz3wn6bWOEzdznWeAC3sDVAR+2gj4KsiNhB/g99WsHKuh3ltDGRII4wG/NmZQIgWJVjNqQ==
   dependencies:
     typescript-styled-plugin "^0.18.1"
 
