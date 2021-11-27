@@ -100,7 +100,7 @@ type cursor =
   | 'zoom-out'
   | defaults
 
-export type Theme = Partial<{
+export type ITheme = Partial<{
   hideEmpty: boolean
   clearFix: boolean
   fullScreen: boolean
@@ -247,3 +247,7 @@ export type Theme = Partial<{
   writingDirection: 'ltr' | 'rtl' | defaults
   extendCss: ReturnType<typeof config.css> | string
 }>
+
+export type Theme = {
+  [I in keyof ITheme]: ITheme[I] | null
+}

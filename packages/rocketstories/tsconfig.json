@@ -9,7 +9,6 @@
     "lib"
   ],
   "compilerOptions": {
-    "strictNullChecks": true,
     "types": [
       "@vitus-labs/tools-rollup"
     ],
