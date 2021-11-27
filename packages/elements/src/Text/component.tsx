@@ -16,7 +16,8 @@ const component: VLForwardedComponent<Props> & {
   isText?: true
 } = forwardRef(
   ({ paragraph, label, children, tag, extendCss, ...props }, ref) => {
-    const renderContent = (as = undefined) => (
+    type RenderContent = (as?: any) => any
+    const renderContent: RenderContent = (as = undefined) => (
       <Styled ref={ref} as={as} $text={{ extraStyles: extendCss }} {...props}>
         {children || label}
       </Styled>

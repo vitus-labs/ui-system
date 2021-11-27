@@ -10,7 +10,7 @@ export type Props = {
 }
 
 const component: VLComponent<Props> = ({
-  position = document.body,
+  position = __BROWSER__ ? document.body : undefined,
   tag = 'div',
   children,
 }: Props) => {
@@ -18,15 +18,16 @@ const component: VLComponent<Props> = ({
     __BROWSER__ ? document.createElement(tag) : undefined
   )
 
+  if (!position || !element) return null
+
   useEffect(() => {
     if (__SERVER__) return undefined
-
     position.appendChild(element)
 
     return () => {
       position.removeChild(element)
     }
-  }, [tag, position])
+  }, [])
 
   return ReactDOM.createPortal(children, element)
 }

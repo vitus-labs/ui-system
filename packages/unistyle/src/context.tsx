@@ -31,7 +31,7 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
 
   if (!isEmpty(breakpoints)) {
     __VITUS_LABS__.sortedBreakpoints = useMemo(
-      () => sortBreakpoints(breakpoints),
+      () => sortBreakpoints(breakpoints!),
       [breakpoints]
     )
     __VITUS_LABS__.media = useMemo(

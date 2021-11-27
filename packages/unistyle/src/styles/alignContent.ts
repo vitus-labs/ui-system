@@ -45,13 +45,13 @@ export type AlignContent = ({
   direction: AlignContentDirectionKeys
   alignX: AlignContentAlignXKeys
   alignY: AlignContentAlignYKeys
-}) => ReturnType<typeof config.css>
+}) => ReturnType<typeof config.css> | null
 
 const alignContent: AlignContent = (attrs) => {
   const { direction, alignX, alignY } = attrs
 
   if (isEmpty(attrs) || !direction || !alignX || !alignY) {
-    return undefined
+    return null
   }
 
   const isReverted = ['inline', 'reverseInline'].includes(direction)

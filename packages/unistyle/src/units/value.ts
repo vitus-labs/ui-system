@@ -6,7 +6,7 @@ const getValueOf: GetValueOf = (...values) =>
 
 export type Value = (
   values: Array<unknown>,
-  rootSize: number,
+  rootSize?: number,
   outputUnit?: 'px' | 'rem' | '%' | string
 ) => string | number
 const value: Value = (values, rootSize, outputUnit) => {

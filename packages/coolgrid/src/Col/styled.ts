@@ -52,7 +52,7 @@ const widthStyles: WidthStyles = (
 
 type SpacingStyles = (
   type: 'margin' | 'padding',
-  param: number,
+  param?: number,
   rootSize?: number
 ) => CssOutput
 const spacingStyles: SpacingStyles = (type, param, rootSize) => {

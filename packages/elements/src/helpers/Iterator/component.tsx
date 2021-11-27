@@ -73,6 +73,8 @@ const component: FC<Props> & Static = (props: Props) => {
   // render children
   // --------------------------------------------------------
   const renderChildren = () => {
+    if (!children) return null
+
     const { length } = children
 
     // if no props extension is required, just return children

@@ -55,7 +55,8 @@ const makeItResponsive: MakeItResponsive =
     // if no theme is defined, return empty objct
     if (isEmpty(internalTheme)) return ''
 
-    const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } = theme
+    const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } =
+      theme as Theme
 
     const renderStyles = (
       theme: Record<string, unknown>
@@ -69,7 +70,7 @@ const makeItResponsive: MakeItResponsive =
       `
     }
 
-    const { media, sortedBreakpoints } = __VITUS_LABS__
+    const { media, sortedBreakpoints } = __VITUS_LABS__!
 
     let helperTheme = internalTheme
 
@@ -93,7 +94,7 @@ const makeItResponsive: MakeItResponsive =
     return sortedBreakpoints.map((item) => {
       const breakpointTheme = optimizedTheme[item]
 
-      if (!breakpointTheme) return ''
+      if (!breakpointTheme || !media) return ''
 
       const result = renderStyles(breakpointTheme)
 

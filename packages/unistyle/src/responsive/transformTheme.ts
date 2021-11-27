@@ -41,7 +41,7 @@ const transformTheme: TransformTheme = memoize(
         })
       }
       // object
-      else if (typeof value === 'object') {
+      else if (typeof value === 'object' && value !== null) {
         Object.entries(value).forEach(([childKey, childValue]) => {
           set(result, [childKey, key], childValue)
         })

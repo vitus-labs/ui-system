@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { SimpleHoc } from '~/types'
+import type { SimpleHoc } from '~/types'
 
 const RESERVED_KEYS = [
   'type',
@@ -42,7 +42,7 @@ const Component: SimpleHoc<Props> = (WrappedComponent) => {
       ...rest
     } = props
 
-    type InitActiveItems = () => Key | MultipleMap
+    type InitActiveItems = () => Key | MultipleMap | undefined
     const initActiveItems: InitActiveItems = () => {
       if (type === 'single') {
         if (Array.isArray(activeItems)) {
@@ -136,8 +136,11 @@ const Component: SimpleHoc<Props> = (WrappedComponent) => {
     }
 
     const isItemActive = (key: Key): boolean => {
-      if (type === 'single') return (innerActiveItems as Key) === key
-      if (type === 'multi') return (innerActiveItems as MultipleMap).get(key)
+      if (!innerActiveItems) return false
+      if (type === 'single') return innerActiveItems === key
+      if (type === 'multi' && innerActiveItems instanceof Map) {
+        return !!innerActiveItems.get(key)
+      }
       return false
     }
 

@@ -42,8 +42,10 @@ export const transformVerticalProp: TransformVerticalProp = (vertical) => {
   return undefined
 }
 
-type GetValue = (tag: string) => boolean | undefined
+type GetValue = (tag?: string) => boolean
 
-export const isInlineElement: GetValue = (tag) => INLINE_ELEMENTS[tag]
+export const isInlineElement: GetValue = (tag) =>
+  tag ? INLINE_ELEMENTS[tag] : false
 
-export const getShouldBeEmpty: GetValue = (tag) => EMPTY_ELEMENTS[tag]
+export const getShouldBeEmpty: GetValue = (tag) =>
+  tag ? EMPTY_ELEMENTS[tag] : false
