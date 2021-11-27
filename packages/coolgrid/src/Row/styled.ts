@@ -19,8 +19,8 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
 
   const getValue = (param) => value([param], rootSize)
 
-  const spacingX = (gap / 2) * -1
-  const spacingY = isNumber(gutter) ? gutter - gap / 2 : gap / 2
+  const spacingX = (gap! / 2) * -1
+  const spacingY = isNumber(gutter) ? gutter! - gap! / 2 : gap! / 2
 
   return config.css`
     margin: ${getValue(spacingY)} ${getValue(spacingX)};

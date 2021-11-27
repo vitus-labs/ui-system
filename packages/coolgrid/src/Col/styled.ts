@@ -28,8 +28,8 @@ const widthStyles: WidthStyles = (
 
   // calculate % of width
   const width = __WEB__
-    ? (size / columns) * 100
-    : (RNparentWidth / columns) * size
+    ? (size! / columns!) * 100
+    : (RNparentWidth / columns!) * size!
 
   const hasGap = hasValue(gap)
 
@@ -39,7 +39,7 @@ const widthStyles: WidthStyles = (
       ? `calc(${width}% - ${gap}px)`
       : `${width}%`
     : hasGap
-    ? width - gap
+    ? width - gap!
     : width
 
   return config.css`
@@ -60,7 +60,7 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
     return ''
   }
 
-  const finalStyle = `${type}: ${value([param / 2], rootSize)}`
+  const finalStyle = `${type}: ${value([param! / 2], rootSize)}`
 
   return config.css`
       ${finalStyle};
