@@ -2,10 +2,11 @@
 import type { ComponentType, ExoticComponent, VFC } from 'react'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
-export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends ComponentType<infer TProps>
-    ? TProps
-    : TComponentOrTProps
+export type ExtractProps<
+  TComponentOrTProps
+> = TComponentOrTProps extends ComponentType<infer TProps>
+  ? TProps
+  : TComponentOrTProps
 
 export type StoryComponent = VFC<any> & {
   args: any
@@ -67,6 +68,13 @@ export type Configuration<C = unknown> = {
   attrs: AttrsTypes<C>
   name: string
   component: Element | RocketComponent
+  storyOptions: Partial<{
+    direction: 'inline' | 'rows'
+    alignX: 'left' | 'center' | 'right' | 'spaceBetween'
+    alignY: 'top' | 'center' | 'bottom' | 'spaceBetween'
+    gap: number
+    pseudo: true
+  }>
 }
 
 export type SimpleValue = string | number | boolean

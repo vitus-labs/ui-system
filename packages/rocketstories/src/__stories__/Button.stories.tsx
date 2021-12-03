@@ -3,6 +3,17 @@ import rocketstories from '~/rocketstories'
 import { Button, HoistedButton, ElementExample } from './Button'
 
 const stories = rocketstories(Button)
+  .storyOptions({
+    direction: 'inline',
+    alignX: 'left',
+    alignY: 'center',
+    gap: 16,
+    pseudo: true,
+  })
+  .attrs({
+    tag: 'button',
+    label: 'This is a label',
+  })
 
 export default stories.config()
 

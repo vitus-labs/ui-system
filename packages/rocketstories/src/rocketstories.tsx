@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import { dimensionStory, mainStory, generalStory } from './stories'
@@ -28,6 +29,7 @@ const rocketstories: Rocketstories = (component) => {
         component,
         name: component.displayName || component.name,
         attrs: {},
+        storyOptions: { gap: 16 },
       },
       {} as Configuration
     )
@@ -92,8 +94,12 @@ type CreateRocketStories<C extends RocketComponent = any> = (
   attrs: (params: AttrsTypes<C>) => ReturnType<CreateRocketStories<C>>
   config: () => { component: Element; title: string }
   main: () => ReturnType<typeof mainStory>
-  dimension: (
-    dimension: ExtractDimensions<C>
+  storyOptions: (
+    options: Configuration['storyOptions']
+  ) => ReturnType<CreateRocketStories<C>>
+  dimension: <A extends ExtractDimensions<C>, B = keyof C['$$rocketstyle'][A]>(
+    dimension: A,
+    params?: Partial<{ ignore: any }>
   ) => ReturnType<typeof dimensionStory>
 }
 
@@ -105,6 +111,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
+    storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
   } as Configuration
 
   return {
@@ -121,14 +128,22 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     // generate main story
     main: () => mainStory(result as any),
 
+    //define storyOptions
+    storyOptions: (storyOptions) =>
+      createRocketstories({ storyOptions }, result),
+
     // generate stories of defined dimension
-    dimension: (dimension) =>
-      dimensionStory({
+    dimension: (dimension, params = {}) => {
+      const { ignore = [] } = params
+
+      return dimensionStory({
         ...result,
+        ignore,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         dimension,
-      }),
+      })
+    },
   }
 }
 
