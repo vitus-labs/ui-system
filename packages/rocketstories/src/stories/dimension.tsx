@@ -125,7 +125,7 @@ const makeDimensionStories: MakeDimensionStories = ({
                 style={{ gap: storyOptions.gap / 2 }}
               >
                 <div>
-                  <Text paragraph>default</Text>
+                  <Text paragraph>Base</Text>
                   {createElement(component, {
                     ...props,
                     [dimension]: isMultiKey ? [item] : item,

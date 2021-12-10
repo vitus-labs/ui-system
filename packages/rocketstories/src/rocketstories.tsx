@@ -65,6 +65,7 @@ const createStories: CreateStories = (options, defaultOptions) => {
       : defaultOptions.name,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
+    storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
   } as Configuration
 
   return {
