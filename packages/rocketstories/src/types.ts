@@ -64,7 +64,7 @@ export type AttrsTypes<P, H = ExtractProps<P>> = {
   [I in keyof H]: H[I] | AttrItemControl<H[I]> | { disable: true }
 }
 
-export type Configuration<C = unknown> = {
+export type Configuration<C = any> = {
   attrs: AttrsTypes<C>
   name: string
   component: Element | RocketComponent
@@ -75,6 +75,7 @@ export type Configuration<C = unknown> = {
     gap: number
     pseudo: true
   }>
+  decorators: any[]
 }
 
 export type SimpleValue = string | number | boolean

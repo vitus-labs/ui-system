@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import { dimensionStory, mainStory, generalStory } from './stories'
-import Theme from './decorators/Theme'
 import type {
   Element,
   RocketComponent,
@@ -11,25 +8,47 @@ import type {
   AttrsTypes,
 } from './types'
 
+type Init = ({
+  decorators,
+  storyOptions,
+}: Partial<Pick<Configuration, 'decorators' | 'storyOptions'>>) => <
+  T extends Element | RocketComponent = any
+>(
+  component: T
+) => T extends RocketComponent
+  ? ReturnType<CreateRocketStories<T>>
+  : ReturnType<CreateStories<T>>
+
+const init: Init = ({ decorators = [], storyOptions = {} }) => (component) =>
+  rocketstories(component, { decorators, storyOptions })
+
 // --------------------------------------------------------
 // rocketstories
 // --------------------------------------------------------
 type Rocketstories = <T extends Element | RocketComponent = any>(
-  component: T
+  component: T,
+  {
+    decorators,
+    storyOptions,
+  }?: Partial<Pick<Configuration<T>, 'storyOptions' | 'decorators'>> | any
 ) => T extends RocketComponent
   ? ReturnType<CreateRocketStories<T>>
   : ReturnType<CreateStories<T>>
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const rocketstories: Rocketstories = (component) => {
+const rocketstories: Rocketstories = (
+  component,
+  { decorators = [], storyOptions = {} } = {}
+) => {
   if (!isRocketComponent(component)) {
     return createStories(
       {
         component,
         name: component.displayName || component.name,
         attrs: {},
-        storyOptions: { gap: 16 },
+        storyOptions: { gap: 16, direction: 'rows', ...storyOptions },
+        decorators,
       },
       {} as Configuration
     )
@@ -40,6 +59,8 @@ const rocketstories: Rocketstories = (component) => {
       component,
       name: component.displayName || component.name,
       attrs: {},
+      storyOptions: { gap: 16, direction: 'rows', ...storyOptions },
+      decorators,
     },
     {} as Configuration
   )
@@ -53,7 +74,11 @@ type CreateStories<C = Element> = (
   defaultOptions: Configuration
 ) => {
   attrs: (params: AttrsTypes<C>) => ReturnType<CreateStories<C>>
-  config: () => { component: Element; title: string }
+  config: () => {
+    component: Element
+    title: string
+    decorators?: Configuration['decorators']
+  }
   main: () => ReturnType<typeof generalStory>
 }
 
@@ -66,6 +91,7 @@ const createStories: CreateStories = (options, defaultOptions) => {
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
+    decorators: [...defaultOptions.decorators, ...(options.decorators || [])],
   } as Configuration
 
   return {
@@ -75,7 +101,7 @@ const createStories: CreateStories = (options, defaultOptions) => {
     config: () => ({
       component: result.component,
       title: result.name as string,
-      decorators: [Theme],
+      decorators: result.decorators,
     }),
 
     main: () => generalStory(result),
@@ -113,6 +139,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
+    decorators: [...defaultOptions.decorators, ...(options.decorators || [])],
   } as Configuration
 
   return {
@@ -123,7 +150,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     config: () => ({
       component: result.component,
       title: result.name,
-      decorators: [Theme],
+      decorators: result.decorators,
     }),
 
     // generate main story
@@ -147,5 +174,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     },
   }
 }
+
+export { init }
 
 export default rocketstories
