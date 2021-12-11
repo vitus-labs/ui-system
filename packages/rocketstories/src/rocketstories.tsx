@@ -91,7 +91,10 @@ const createStories: CreateStories = (options, defaultOptions) => {
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
-    decorators: [...defaultOptions.decorators, ...(options.decorators || [])],
+    decorators: [
+      ...(defaultOptions.decorators || []),
+      ...(options.decorators || []),
+    ],
   } as Configuration
 
   return {
@@ -139,7 +142,10 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
-    decorators: [...defaultOptions.decorators, ...(options.decorators || [])],
+    decorators: [
+      ...(defaultOptions.decorators || []),
+      ...(options.decorators || []),
+    ],
   } as Configuration
 
   return {
