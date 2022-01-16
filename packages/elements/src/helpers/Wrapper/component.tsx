@@ -45,7 +45,7 @@ const component = forwardRef<Reference, Partial<Props>>(
     const debugProps =
       process.env.NODE_ENV !== 'production'
         ? {
-            'data-element': 'Element',
+            'data-vl-element': 'Element',
           }
         : {}
 
@@ -81,7 +81,7 @@ const component = forwardRef<Reference, Partial<Props>>(
     return (
       <Styled
         {...COMMON_PROPS}
-        $needsFix
+        $parentFix
         $element={{
           block,
           extraStyles: extendCss,
@@ -89,7 +89,7 @@ const component = forwardRef<Reference, Partial<Props>>(
       >
         <Styled
           as={isInline ? 'span' : 'div'}
-          $isInner
+          $childFix
           $element={{
             direction,
             alignX,

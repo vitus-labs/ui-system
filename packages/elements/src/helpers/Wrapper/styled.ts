@@ -1,45 +1,43 @@
 import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 
-const styles = ({ theme: t, css }) =>
+const styles = ({ theme: t, css }) => css`
+  ${__WEB__ &&
   css`
-    ${__WEB__ &&
-    t.contentAlignY === 'block' &&
-    css`
-      height: 100%;
-    `};
+    ${({ $childFix }) =>
+      !$childFix &&
+      css`
+        display: ${t.block ? 'flex' : 'inline-flex'};
+      `};
 
-    ${__WEB__ &&
-    css`
-      ${({ $isInner }) =>
-        !$isInner &&
-        css`
-          display: ${t.block ? 'flex' : 'inline-flex'};
-        `};
+    ${({ $parentFix }) =>
+      $parentFix &&
+      t.block &&
+      css`
+        flex-direction: column;
+        width: 100%;
+      `};
+  `};
 
-      ${({ $needsFix }) =>
-        $needsFix &&
-        t.block &&
-        css`
-          flex-direction: column;
-          width: 100%;
-        `};
-    `};
+  ${__WEB__ &&
+  t.contentAlignY === 'block' &&
+  css`
+    height: 100%;
+  `};
 
-    ${__WEB__ &&
-    t.contentAlignY === 'block' &&
-    css`
-      height: 100%;
-    `};
+  ${alignContent({
+    direction: t.direction,
+    alignX: t.alignX,
+    alignY: t.alignY,
+  })};
 
-    ${alignContent({
-      direction: t.direction,
-      alignX: t.alignX,
-      alignY: t.alignY,
-    })};
+  ${t.block &&
+  css`
+    align-self: stretch;
+  `}
 
-    ${t.extraStyles && extendCss(t.extraStyles)};
-  `
+  ${t.extraStyles && extendCss(t.extraStyles)};
+`
 
 const platformStyles = __WEB__
   ? config.css`
@@ -53,8 +51,8 @@ export default config.styled(config.component)`
   position: relative;
   ${platformStyles};
 
-  ${({ $isInner }) =>
-    $isInner &&
+  ${({ $childFix }) =>
+    $childFix &&
     config.css`
     display: flex;
     flex: 1;

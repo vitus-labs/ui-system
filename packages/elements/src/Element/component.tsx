@@ -3,15 +3,12 @@ import { renderContent } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import { Wrapper, Content } from '~/helpers'
 import type { VLForwardedComponent } from '~/types'
-import {
-  transformVerticalProp,
-  isInlineElement,
-  getShouldBeEmpty,
-} from './utils'
+import { isInlineElement, getShouldBeEmpty } from './utils'
 
 import type { Props } from './types'
 
 const defaultDirection = 'inline'
+const defaultContentDirection = 'rows'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
@@ -30,7 +27,6 @@ const component: VLForwardedComponent<Props> = forwardRef(
       equalCols,
       gap,
 
-      vertical,
       direction,
       alignX = defaultAlignX,
       alignY = defaultAlignY,
@@ -40,7 +36,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
       beforeContentCss,
       afterContentCss,
 
-      contentDirection = defaultDirection,
+      contentDirection = defaultContentDirection,
       contentAlignX = defaultAlignX,
       contentAlignY = defaultAlignY,
 
@@ -85,7 +81,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
     // --------------------------------------------------------
     // if not single element, calculate values
     // --------------------------------------------------------
-    const isSimple = !beforeContent && !afterContent
+    const isSimpleElement = !beforeContent && !afterContent
     const CHILDREN = children || content || label
 
     const isInline = __WEB__ ? isInlineElement(tag) : false
@@ -94,38 +90,49 @@ const component: VLForwardedComponent<Props> = forwardRef(
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    const calculateDirection = () => {
+    const calculateDirection = useMemo(() => {
       let wrapperDirection: typeof direction
       let wrapperAlignX: typeof alignX = alignX
       let wrapperAlignY: typeof alignY = alignY
 
-      if (isSimple) {
+      if (isSimpleElement) {
         if (contentDirection) wrapperDirection = contentDirection
         if (contentAlignX) wrapperAlignX = contentAlignX
         if (contentAlignY) wrapperAlignY = contentAlignY
       } else if (direction) {
         wrapperDirection = direction
-      } else if (vertical !== undefined && vertical !== null) {
-        wrapperDirection = transformVerticalProp(vertical)
       } else {
         wrapperDirection = defaultDirection
       }
 
       return { wrapperDirection, wrapperAlignX, wrapperAlignY }
-    }
+    }, [
+      isSimpleElement,
+      contentDirection,
+      contentAlignX,
+      contentAlignY,
+      direction,
+    ])
 
-    const { wrapperDirection, wrapperAlignX, wrapperAlignY } =
-      calculateDirection()
+    const {
+      wrapperDirection,
+      wrapperAlignX,
+      wrapperAlignY,
+    } = calculateDirection
 
-    const beforeContentRender = useMemo(
+    const beforeContentRenderOutput = useMemo(
       () => renderContent(beforeContent),
       [beforeContent]
     )
 
-    const afterContentRender = useMemo(
+    const afterContentRenderOutput = useMemo(
       () => renderContent(afterContent),
       [afterContent]
     )
+
+    const contentRenderOutput = useMemo(() => renderContent(CHILDREN), [
+      CHILDREN,
+    ])
 
     return (
       <Wrapper
@@ -148,12 +155,12 @@ const component: VLForwardedComponent<Props> = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {beforeContentRender}
+            {beforeContentRenderOutput}
           </Content>
         )}
 
-        {isSimple ? (
-          renderContent(CHILDREN)
+        {isSimpleElement ? (
+          contentRenderOutput
         ) : (
           <Content
             tag={SUB_TAG}
@@ -165,7 +172,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
             alignY={contentAlignY}
             equalCols={equalCols}
           >
-            {renderContent(CHILDREN)}
+            {contentRenderOutput}
           </Content>
         )}
 
@@ -181,7 +188,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {renderContent(afterContentRender)}
+            {afterContentRenderOutput}
           </Content>
         )}
       </Wrapper>

@@ -8,6 +8,8 @@ export default {
   title: Element.displayName,
 }
 
+const Container = Element
+
 const LeftContent = config.styled.span`
   padding: 5px;
   border-radius: 4px;
@@ -70,7 +72,17 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
 
 export const button = () => (
   <>
-    <Button gap={[10, 20]} />
+    <Button gap={10} />
     <Button gap={[10, 20]} block={[true, true, false]} />
   </>
+)
+
+export const Stacking = () => (
+  <Element contentDirection="rows" contentAlignX="left" contentAlignY="top">
+    <Button tag="div" gap={10} />
+    <Button tag="div" block gap={10} />
+    <Button tag="div" gap={10} />
+    <Button tag="div" gap={10} />
+    <Button tag="div" gap={10} />
+  </Element>
 )

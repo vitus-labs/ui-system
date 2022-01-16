@@ -21,7 +21,7 @@ export type Props = Partial<{
   block: ResponsiveBooltype
   equalCols: ResponsiveBooltype
   gap: Responsive
-  vertical: ResponsiveBooltype
+  // vertical: ResponsiveBooltype
   direction: Direction
   contentDirection: Direction
   beforeContentDirection: Direction

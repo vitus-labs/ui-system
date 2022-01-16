@@ -246,6 +246,5 @@ const component: FC<Props> & Static = (props: Props) => {
 
 component.isIterator = true
 component.RESERVED_PROPS = RESERVED_PROPS
-component.displayName = 'vitus-labs/elements/Iterator'
 
 export default component
