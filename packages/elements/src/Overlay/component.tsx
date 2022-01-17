@@ -1,4 +1,11 @@
-import React, { useRef, useState, useEffect, useContext } from 'react'
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo,
+} from 'react'
 import { renderContent, throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import { PKG_NAME } from '~/constants'
@@ -110,21 +117,21 @@ const Component: VLComponent<Props> = ({
     return false
   }
 
-  const showContent = () => {
+  const showContent = useCallback(() => {
     setVisible(true)
 
-    if (type === 'modal' && document.body) {
+    if (__BROWSER__ && type === 'modal' && document.body) {
       document.body.style.overflow = 'hidden'
     }
-  }
+  }, [])
 
-  const hideContent = () => {
+  const hideContent = useCallback(() => {
     setVisible(false)
 
-    if (type === 'modal' && document.body) {
+    if (__BROWSER__ && type === 'modal' && document.body) {
       document.body.style.overflow = 'auto'
     }
-  }
+  }, [])
 
   const calculateContentPosition = () => {
     if (!visible) return
@@ -327,7 +334,10 @@ const Component: VLComponent<Props> = ({
   const handleWindow = throttle(calculateContentPosition, throttleDelay)
   const handleMouseMove = throttle(handleDocumentClick, throttleDelay)
 
-  const passHandlers = openOn === 'manual' || closeOn === 'manual'
+  const passHandlers = useMemo(
+    () => openOn === 'manual' || closeOn === 'manual',
+    [openOn, closeOn]
+  )
 
   return (
     <>
