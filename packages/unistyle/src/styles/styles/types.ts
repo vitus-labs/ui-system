@@ -267,7 +267,7 @@ export type ITheme = Partial<{
     | 'none'
   emptyCells: 'show' | 'hide' | Defaults
   filter: string
-  flex: string
+  flex: Value
   flexBasis: Value
   flexDirection: 'row' | 'row-reverse' | 'column' | 'column-reverse' | Defaults
   flexFlow: string
