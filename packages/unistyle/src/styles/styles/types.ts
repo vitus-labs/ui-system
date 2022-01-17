@@ -1,12 +1,20 @@
 import { config } from '@vitus-labs/core'
 
-type value = 'auto' | 'inital' | 'inherit' | number | string
-type defaults = 'initial' | 'inherit'
-type length = number | string
+type Value = 'auto' | 'inital' | 'inherit' | number | string
+type Defaults = 'initial' | 'inherit'
+type Length = number | string
 
-type borderColor = string | 'transparent' | defaults
+type BorderColor = 'transparent' | string | Defaults
+type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
+type TextDecoration =
+  | 'none'
+  | 'underline'
+  | 'overline'
+  | 'line-through'
+  | 'blink'
+  | Defaults
 
-type borderStyle =
+type BorderStyle =
   | 'none'
   | 'hidden'
   | 'dotted'
@@ -17,9 +25,9 @@ type borderStyle =
   | 'ridge'
   | 'inset'
   | 'outset'
-  | defaults
+  | Defaults
 
-type fontSize =
+type FontSize =
   | 'medium'
   | 'xx-small'
   | 'x-small'
@@ -31,9 +39,9 @@ type fontSize =
   | 'larger'
   | 'initial'
   | 'inherit'
-  | value
+  | Value
 
-type listStyleType =
+type ListStyleType =
   | 'disc'
   | 'armenian'
   | 'circle'
@@ -56,11 +64,11 @@ type listStyleType =
   | 'upper-greek'
   | 'upper-latin'
   | 'upper-roman'
-  | defaults
+  | Defaults
 
-type overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | defaults
+type Overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | Defaults
 
-type cursor =
+type Cursor =
   | 'alias'
   | 'all-scroll'
   | 'auto'
@@ -98,60 +106,191 @@ type cursor =
   | 'wait'
   | 'zoom-in'
   | 'zoom-out'
-  | defaults
+  | Defaults
 
 export type ITheme = Partial<{
-  hideEmpty: boolean
-  clearFix: boolean
-  fullScreen: boolean
-  resetAll: defaults | 'unset' | 'revert'
-  display: 'inline' | 'block' | 'inline-block' | 'flex' | 'inline-flex' | 'none'
-  position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky'
-  boxSizing: 'content-box' | 'border-box' | defaults
-  top: value
-  bottom: value
-  left: value
-  right: value
-  positionX: value
-  positionY: value
-  width: value
-  height: value
-  size: value
-  minWidth: value
-  minHeight: value
-  minSize: value
-  maxWidth: value
-  maxHeight: value
-  maxSize: value
-  margin: value
-  marginTop: value
-  marginBottom: value
-  marginLeft: value
-  marginRight: value
-  marginX: value
-  marginY: value
-  padding: value
-  paddingTop: value
-  paddingBottom: value
-  paddingLeft: value
-  paddingRight: value
-  paddingX: value
-  paddingY: value
-  objectFit:
-    | 'fill'
-    | 'contain'
-    | 'cover'
-    | 'scale-down'
+  inset: string
+  top: Value
+  bottom: Value
+  left: Value
+  right: Value
+  positionX: Value
+  positionY: Value
+  width: Value
+  height: Value
+  size: Value
+  minWidth: Value
+  minHeight: Value
+  minSize: Value
+  maxWidth: Value
+  maxHeight: Value
+  maxSize: Value
+  margin: Value
+  marginTop: Value
+  marginBottom: Value
+  marginLeft: Value
+  marginRight: Value
+  marginX: Value
+  marginY: Value
+  padding: Value
+  paddingTop: Value
+  paddingBottom: Value
+  paddingLeft: Value
+  paddingRight: Value
+  paddingX: Value
+  paddingY: Value
+
+  alignContent:
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'space-between'
+    | 'space-around'
+    | 'stretch'
+    | Defaults
+  alignItems:
+    | 'baseline'
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'stretch'
+    | Defaults
+  alignSelf:
+    | 'auto'
+    | 'baseline'
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'stretch'
+    | Defaults
+  all: 'unset' | 'revert' | Defaults
+  animation: string
+  backfaceVisibility: 'visible' | 'hidden' | Defaults
+  background: string
+  backgroundAttachment: 'scroll' | 'fixed' | Defaults
+  backgroundClip: 'border-box' | 'padding-box' | 'content-box' | Defaults
+  backgroundColor: string | 'transparent' | Defaults
+  backgroundImage: string | 'none' | Defaults
+  backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | Defaults
+  backgroundPosition: any
+  backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | Defaults
+  backgroundSize: 'auto' | Value | 'cover' | 'contain' | Defaults
+  border: string
+  borderTop: string
+  borderBottom: string
+  borderLeft: string
+  borderRight: string
+  borderWidth: Value
+  borderWidthX: Value
+  borderWidthY: Value
+  borderWidthTop: Value
+  borderWidthBottom: Value
+  borderWidthLeft: Value
+  borderWidthRight: Value
+  borderStyle: BorderStyle
+  borderStyleX: BorderStyle
+  borderStyleY: BorderStyle
+  borderStyleTop: BorderStyle
+  borderStyleBottom: BorderStyle
+  borderStyleLeft: BorderStyle
+  borderStyleRight: BorderStyle
+  borderColor: BorderColor
+  borderColorX: BorderColor
+  borderColorY: BorderColor
+  borderColorTop: BorderColor
+  borderColorBottom: BorderColor
+  borderColorLeft: BorderColor
+  borderColorRight: BorderColor
+  borderCollapse: 'separate' | 'collapse' | Defaults
+  borderImage: string
+  borderImageOutset: string
+  borderImageRepeat:
+    | `${BorderImageRepeat}`
+    | `${BorderImageRepeat} ${BorderImageRepeat}`
+  borderImageSlice: Value
+  borderImageSource: string
+  borderImageWidth: string
+  borderSpacing: string
+  borderRadius: Value | Defaults
+  borderRadiusTopLeft: Value | Defaults
+  borderRadiusLeft: Value | Defaults
+  borderRadiusTop: Value | Defaults
+  borderRadiusTopRight: Value | Defaults
+  borderRadiusRight: Value | Defaults
+  borderRadiusBottomLeft: Value | Defaults
+  borderRadiusBottom: Value | Defaults
+  borderRadiusBottomRight: Value | Defaults
+  boxShadow: string
+  boxSizing: 'content-box' | 'border-box' | Defaults
+  captionSide: 'top' | 'bottom' | Defaults
+  clear: 'left' | 'right' | 'auto' | 'both' | 'none' | Defaults
+  clip: 'shape' | 'auto' | Defaults
+  clipPath: string
+  color: string
+  content:
+    | 'normal'
     | 'none'
-    | 'initial'
-    | 'inherit'
-  objectPosition: any
-  order: number | defaults
-  resize: 'none' | 'both' | 'horizontal' | 'vertical' | defaults
+    | 'counter'
+    | 'open-quote'
+    | 'close-quote'
+    | 'no-open-quote'
+    | 'no-close-quote'
+    | Defaults
+    | string
+  counterIncrement: string
+  counterReset: string
+  cursor: Cursor
+  direction: 'ltr' | 'rtl' | Defaults
+  display:
+    | 'inline'
+    | 'block'
+    | 'contents'
+    | 'flex'
+    | 'flow'
+    | 'flow-root'
+    | 'grid'
+    | 'inline-block'
+    | 'inline-flex'
+    | 'inline-grid'
+    | 'inline-table'
+    | 'list-item'
+    | 'run-in'
+    | 'table'
+    | 'table-caption'
+    | 'table-column-group'
+    | 'table-header-group'
+    | 'table-footer-group'
+    | 'table-row-group'
+    | 'table-cell'
+    | 'table-column'
+    | 'table-row'
+    | 'none'
+  emptyCells: 'show' | 'hide' | Defaults
+  filter: string
+  flex: string
+  flexBasis: Value
+  flexDirection: 'row' | 'row-reverse' | 'column' | 'column-reverse' | Defaults
+  flexFlow: string
+  flexGrow: number | Defaults
+  flexShrink: number | Defaults
+  flexWrap: 'nowrap' | 'wrap' | 'wrap-reverse' | Defaults
+  float: 'left' | 'right' | 'none'
+  font: string
   fontFamily: string
-  lineHeight: 'normal' | defaults | length
-  fontSize: fontSize
-  fontStyle: 'normal' | 'italic' | 'oblique' | defaults
+  fontSize: FontSize
+  fontSizeAdjust: number | 'none' | Defaults
+  fontStretch:
+    | 'normal'
+    | 'ultra-condensed'
+    | 'extra-condensed'
+    | 'condensed'
+    | 'semi-condensed'
+    | 'semi-expanded'
+    | 'expanded'
+    | 'extra-expanded'
+    | 'ultra-expanded'
+  fontStyle: 'normal' | 'italic' | 'oblique' | Defaults
+  fontVariant: 'normal' | 'small-caps' | Defaults
   fontWeight:
     | 'normal'
     | 'bold'
@@ -166,85 +305,125 @@ export type ITheme = Partial<{
     | 700
     | 800
     | 900
-    | defaults
-  textAlign: 'left' | 'right' | 'center' | 'justify' | defaults
-  textTransform: 'none' | 'capitalize' | 'uppercase' | 'lowercase' | defaults
-  textDecoration: string | defaults
-  letterSpacing: 'normal' | value | defaults
-  textShadow: string
-  textOverflow: 'clip' | 'ellipsis' | string | defaults
-  textIndent: value | defaults
-  whiteSpace: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | defaults
-  wordBreak: 'normal' | 'break-all' | 'keep-all' | 'break-word' | defaults
-  wordWrap: 'normal' | 'break-word' | defaults
-  writingMode: 'horizontal-tb' | 'vertical-rl' | 'vertical-lr'
-  listStyle: string
-  listStyleType: listStyleType
-  listStyleImage: 'none' | string | defaults
-  listStylePosition: string
-  color: string
-  background: string
-  backgroundColor: string | 'transparent' | defaults
-  backgroundImage: string | 'none' | defaults
-  backgroundClip: 'border-box' | 'padding-box' | 'content-box' | defaults
-  backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | defaults
-  backgroundPosition: any
-  backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | defaults
-  backgroundSize: 'auto' | value | 'cover' | 'contain' | defaults
-  borderRadius: value | defaults
-  borderRadiusTopLeft: value | defaults
-  borderRadiusLeft: value | defaults
-  borderRadiusTop: value | defaults
-  borderRadiusTopRight: value | defaults
-  borderRadiusRight: value | defaults
-  borderRadiusBottomLeft: value | defaults
-  borderRadiusBottom: value | defaults
-  borderRadiusBottomRight: value | defaults
-  border: string
-  borderTop: string
-  borderBottom: string
-  borderLeft: string
-  borderRight: string
-  borderWidth: value
-  borderWidthX: value
-  borderWidthY: value
-  borderWidthTop: value
-  borderWidthBottom: value
-  borderWidthLeft: value
-  borderWidthRight: value
-  borderStyle: borderStyle
-  borderStyleX: borderStyle
-  borderStyleY: borderStyle
-  borderStyleTop: borderStyle
-  borderStyleBottom: borderStyle
-  borderStyleLeft: borderStyle
-  borderStyleRight: borderStyle
-  borderColor: borderColor
-  borderColorX: borderColor
-  borderColorY: borderColor
-  borderColorTop: borderColor
-  borderColorBottom: borderColor
-  borderColorLeft: borderColor
-  borderColorRight: borderColor
-  clipPath: string
-  inset: string
-  outline: string
-  transition: string
+    | Defaults
+  justifyContent:
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'space-between'
+    | 'space-around'
   keyframe: any
-  animation: string
-  zIndex: number
-  boxShadow: string
-  transform: string
+  letterSpacing: 'normal' | Value | Defaults
+  lineHeight: 'normal' | Defaults | Length
+  listStyle: string
+  listStyleImage: 'none' | string | Defaults
+  listStylePosition: string
+  listStyleType: ListStyleType
+  objectFit:
+    | 'fill'
+    | 'contain'
+    | 'cover'
+    | 'scale-down'
+    | 'none'
+    | 'initial'
+    | 'inherit'
+  objectPosition: any
   opacity: number
-  overflow: overflow
-  overflowX: overflow
-  overflowY: overflow
-  overflowWrap: 'normal' | 'break-word' | defaults
-  visibility: 'visible' | 'hidden' | 'collapse' | defaults
-  cursor: cursor
-  userSelect: 'auto' | 'none' | 'text' | 'all' | defaults
-  pointerEvents: 'auto' | 'none' | defaults
-  writingDirection: 'ltr' | 'rtl' | defaults
+  order: number | Defaults
+  outline: string
+  outlineColor: string
+  outlineOffset: Value
+  outlineStyle:
+    | 'none'
+    | 'dotted'
+    | 'dashed'
+    | 'solid'
+    | 'double'
+    | 'groove'
+    | 'ridge'
+    | 'inset'
+    | 'outset'
+    | Defaults
+  outlineWidth: Value | 'thin' | 'medium' | 'thick'
+  overflow: Overflow
+  overflowWrap: 'normal' | 'break-word' | Defaults
+  overflowX: Overflow
+  overflowY: Overflow
+  // pageBreakAfter: 'auto' | 'always' | 'avoid' | 'left' | 'right' | Defaults
+  // pageBreakBefore: 'auto' | 'always' | 'avoid' | 'left' | 'right' | Defaults
+  // pageBreakInside: 'auto' | 'avoid' | Defaults
+  perspective: string
+  perspectiveOrigin: string
+  pointerEvents: 'auto' | 'none' | Defaults
+  position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky' | Defaults
+  quotes: string
+  resize: 'none' | 'both' | 'horizontal' | 'vertical' | Defaults
+  tabSize: Value | Defaults
+  tableLayout: 'auto' | 'fixed' | Defaults
+  textAlign: 'left' | 'right' | 'center' | 'justify' | Defaults
+  textAlignLast:
+    | 'auto'
+    | 'start'
+    | 'end'
+    | 'left'
+    | 'right'
+    | 'center'
+    | 'justify'
+    | Defaults
+  textDecoration: TextDecoration
+  textDecorationColor: Value
+  textDecorationLine: TextDecoration
+  textDecorationStyle:
+    | 'solid'
+    | 'double'
+    | 'dotted'
+    | 'dashed'
+    | 'wavy'
+    | Defaults
+  textIndent: Value | Defaults
+  textJustify: 'auto' | 'none' | 'inter-word' | 'distribute' | Defaults
+  textOverflow: 'clip' | 'ellipsis' | string | Defaults
+  textShadow: string
+  textTransform: 'none' | 'capitalize' | 'uppercase' | 'lowercase' | Defaults
+  transform: string
+  transformOrigin: string
+  transformStyle: string
+  transition: string
+  transitionDelay: string
+  transitionDuration: string
+  transitionProperty: string
+  transitionTimingFunction:
+    | 'linear'
+    | 'ease'
+    | 'ease-in'
+    | 'ease-out'
+    | 'ease-in-out'
+    | `cubic-bezier(${number},${number},${number},${number})`
+    | Defaults
+  userSelect: 'auto' | 'none' | 'text' | 'all' | Defaults
+  verticalAlign:
+    | 'baseline'
+    | 'sub'
+    | 'super'
+    | 'top'
+    | 'text-top'
+    | 'middle'
+    | 'bottom'
+    | 'text-bottom'
+    | Value
+    | Defaults
+  visibility: 'visible' | 'hidden' | 'collapse' | Defaults
+  whiteSpace: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | Defaults
+  wordBreak: 'normal' | 'break-all' | 'keep-all' | 'break-word' | Defaults
+  wordWrap: 'normal' | 'break-word' | Defaults
+  writingDirection: 'ltr' | 'rtl' | Defaults
+  writingMode: 'horizontal-tb' | 'vertical-rl' | 'vertical-lr'
+  zIndex: number
+
+  hideEmpty: boolean
+  clearFix: boolean
+  fullScreen: boolean
+
   extendCss: ReturnType<typeof config.css> | string
 }>
 

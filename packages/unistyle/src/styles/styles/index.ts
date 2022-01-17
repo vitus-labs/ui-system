@@ -19,24 +19,6 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
   const pxValue = (...values) => unitValue(values, rootSize, 'px')
 
   return css`
-    ${__WEB__ &&
-    t.hideEmpty &&
-    css`
-      &:empty {
-        display: none;
-      }
-    `};
-
-    ${__WEB__ &&
-    t.clearFix &&
-    css`
-      &::after: {
-        clear: both;
-        content: '';
-        display: table;
-      }
-    `};
-
     ${t.fullScreen &&
     css`
       position: fixed;
@@ -46,18 +28,21 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       bottom: 0;
     `};
 
+    /* ------------------------------------------------- */
     /* POSITION attributes */
-    all: ${t.resetAll};
+    /* ------------------------------------------------- */
+    all: ${t.all};
     display: ${t.display};
     position: ${t.position};
     box-sizing: ${t.boxSizing};
+    float: ${t.float};
 
+    inset: ${t.inset};
     top: ${value(t.top, t.positionY)};
     bottom: ${value(t.bottom, t.positionY)};
     left: ${value(t.left, t.positionX)};
     right: ${value(t.right, t.positionX)};
 
-    /* SIZE attributes */
     width: ${value(t.width, t.size)};
     min-width: ${value(t.minWidth, t.minSize)};
     max-width: ${value(t.maxWidth, t.maxSize)};
@@ -66,7 +51,9 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     min-height: ${value(t.minHeight, t.minSize)};
     max-height: ${value(t.maxHeight, t.maxSize)};
 
+    /* ------------------------------------------------- */
     /* SPACING attributes */
+    /* ------------------------------------------------- */
     margin: ${value(t.margin)};
     margin-top: ${value(t.marginTop, t.marginY)};
     margin-bottom: ${value(t.marginBottom, t.marginY)};
@@ -79,37 +66,70 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     padding-left: ${value(t.paddingLeft, t.paddingX)};
     padding-right: ${value(t.paddingRight, t.paddingX)};
 
-    /* POSITIONING attrs */
+    /* ------------------------------------------------- */
+    /* FLEX attributes */
+    /* ------------------------------------------------- */
+    align-content: ${t.alignContent};
+    align-items: ${t.alignItems};
+    align-self: ${t.alignSelf};
+    flex: ${t.flex};
+    flex-basis: ${t.flexBasis};
+    flex-direction: ${t.flexDirection};
+    flex-flow: ${t.flexFlow};
+    flex-grow: ${t.flexGrow};
+    flex-shrink: ${t.flexShrink};
+    flex-wrap: ${t.flexWrap};
+    justify-content: ${t.justifyContent};
+
+    /* ------------------------------------------------- */
+    /* POSITIONING attributes */
+    /* ------------------------------------------------- */
     object-fit: ${t.objectFit};
     object-position: ${t.objectPosition};
     order: ${t.order};
+    opacity: ${t.opacity};
     resize: ${t.resize};
 
+    /* ------------------------------------------------- */
     /* FONT attributes */
+    /* ------------------------------------------------- */
     line-height: ${t.lineHeight};
+    font: ${t.font};
     font-family: ${t.fontFamily};
     font-size: ${value(t.fontSize)};
+    font-size-adjust: ${value(t.fontSizeAdjust)};
+    font-stretch: ${value(t.fontStretch)};
     font-style: ${t.fontStyle};
+    font-variant: ${t.fontVariant};
     font-weight: ${t.fontWeight};
     text-align: ${t.textAlign};
     text-transform: ${t.textTransform};
     text-decoration: ${t.textDecoration};
+    text-decoration-color: ${t.textDecorationColor};
+    text-decoration-line: ${t.textDecorationLine};
+    text-decoration-style: ${t.textDecorationStyle};
     letter-spacing: ${t.letterSpacing};
-    text-shadow: ${t.textShadow};
-    text-overflow: ${t.textOverflow};
     text-indent: ${t.textIndent};
+    text-justify: ${t.textJustify};
+    text-overflow: ${t.textOverflow};
+    text-shadow: ${t.textShadow};
+    text-transform: ${t.textTransform};
     white-space: ${t.whiteSpace};
     word-break: ${t.wordBreak};
     word-wrap: ${t.wordWrap};
     writing-mode: ${t.writingMode};
 
+    /* ------------------------------------------------- */
     /* LIST attributes */
+    /* ------------------------------------------------- */
     list-style: ${t.listStyle};
-    list-style-type: ${t.listStyleType};
-    list-style-position: ${t.listStylePosition};
     list-style-image: ${t.listStyleImage};
+    list-style-position: ${t.listStylePosition};
+    list-style-type: ${t.listStyleType};
 
-    /* COLORS attributes */
+    /* ------------------------------------------------- */
+    /* BACKGROUND & COLORS attributes */
+    /* ------------------------------------------------- */
     color: ${t.color};
     background: ${t.background};
     background-color: ${t.backgroundColor};
@@ -117,13 +137,16 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     css`
       background-image: url(${t.backgroundImage});
     `};
+    background-attachment: ${t.backgroundAttachment};
     background-clip: ${t.backgroundClip};
     background-origin: ${t.backgroundOrigin};
     background-position: ${t.backgroundPosition};
     background-repeat: ${t.backgroundRepeat};
     background-size: ${t.backgroundSize};
 
+    /* ------------------------------------------------- */
     /* BORDERS attributes */
+    /* ------------------------------------------------- */
     border-radius: ${value(t.borderRadius)};
     border-top-left-radius: ${value(
       t.borderRadiusTopLeft,
@@ -172,26 +195,69 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     border-right-style: ${t.borderStyleRight || t.borderStyleX};
     border-right-color: ${t.borderColorRight || t.borderColorX};
 
-    /* OTHER ATTRIBUTES */
+    border-image: ${t.borderImage};
+    border-image-outset: ${t.borderImageOutset};
+    border-image-repeat: ${t.borderImageRepeat};
+    border-image-slice: ${t.borderImageSlice};
+    border-image-source: ${t.borderImageSource};
+    border-image-width: ${t.borderImageWidth};
+    border-spacing: ${t.borderSpacing};
+
+    /* ------------------------------------------------- */
+    /* OTHER attributes */
+    /* ------------------------------------------------- */
+    backface-visibility: ${t.backfaceVisibility};
+    box-shadow: ${t.boxShadow};
+    caption-side: ${t.captionSide};
+    clear: ${t.clear};
+    clip: ${t.clip};
     clip-path: ${t.clipPath};
-    inset: ${t.inset};
+    content: ${t.content};
+    counter-increment: ${t.counterIncrement};
+    counter-reset: ${t.counterReset};
+    cursor: ${t.cursor};
+    direction: ${t.direction};
+    empty-cells: ${t.emptyCells};
+    filter: ${t.filter};
     outline: ${t.outline};
+    outline-color: ${t.outlineColor};
+    outline-offset: ${t.outlineOffset};
+    outline-style: ${t.outlineStyle};
+    outline-width: ${t.outlineWidth};
     transition: ${t.transition};
     animation: ${t.keyframe} ${t.animation};
     z-index: ${t.zIndex};
-    box-shadow: ${t.boxShadow};
     transform: ${t.transform};
-    opacity: ${t.opacity};
     overflow: ${t.overflow};
+    overflow-wrap: ${t.overflowWrap};
     overflow-x: ${t.overflowX};
     overflow-y: ${t.overflowY};
-    overflow-wrap: ${t.overflowWrap};
-    cursor: ${t.cursor};
 
-    visibility: ${t.visibility};
     user-select: ${t.userSelect};
+    visibility: ${t.visibility};
     pointer-events: ${t.pointerEvents};
     direction: ${t.writingDirection};
+
+    /* ------------------------------------------------- */
+    /* CUSTOM attributes */
+    /* ------------------------------------------------- */
+    ${__WEB__ &&
+    t.hideEmpty &&
+    css`
+      &:empty {
+        display: none;
+      }
+    `};
+
+    ${__WEB__ &&
+    t.clearFix &&
+    css`
+      &::after: {
+        clear: both;
+        content: '';
+        display: table;
+      }
+    `};
 
     ${t.extendCss};
   `
