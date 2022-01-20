@@ -21,7 +21,12 @@ export type Props = {
   contentRefName?: string
   isOpen?: boolean
   openOn?: 'click' | 'hover' | 'manual'
-  closeOn?: 'click' | 'triggerClick' | 'hover' | 'manual'
+  closeOn?:
+    | 'click'
+    | 'clickOnTrigger'
+    | 'clickOutsideContent'
+    | 'hover'
+    | 'manual'
   type?: 'dropdown' | 'tooltip' | 'popover' | 'modal'
   position?: 'absolute' | 'fixed' | 'relative' | 'static'
   align?: 'bottom' | 'top' | 'left' | 'bottom' | 'right'
@@ -30,6 +35,8 @@ export type Props = {
   offsetX?: number
   offsetY?: number
   throttleDelay?: number
+  customScrollListener?: HTMLElement
+  closeOnEsc?: boolean
 }
 
 type OverlayPosition = {
@@ -49,7 +56,7 @@ const Component: VLComponent<Props> = ({
   contentRefName,
   isOpen = false,
   openOn = 'click', // click | hover
-  closeOn = 'click', // click | triggerClick | hover | manual
+  closeOn = 'click', // click | 'clickOnTrigger' | 'clickOutsideContent' | hover | manual
   type = 'dropdown', // dropdown | tooltip | popover | modal
   align = 'bottom', // * main align prop * top | left | bottom | right
   position = 'fixed', // absolute | fixed | relative | static
@@ -58,6 +65,8 @@ const Component: VLComponent<Props> = ({
   offsetX = 0,
   offsetY = 0,
   throttleDelay = 200,
+  customScrollListener,
+  closeOnEsc = true,
 }) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const [visible, setVisible] = useState(isOpen)
@@ -75,13 +84,23 @@ const Component: VLComponent<Props> = ({
     if (
       openOn === 'click' ||
       closeOn === 'click' ||
-      closeOn === 'triggerClick'
+      closeOn === 'clickOnTrigger' ||
+      closeOn === 'clickOutsideContent'
     ) {
       window.addEventListener('click', handleDocumentClick, false)
     }
 
     if (openOn === 'hover' || closeOn === 'hover') {
       window.addEventListener('mousemove', handleMouseMove, false)
+    }
+
+    if (customScrollListener) {
+      customScrollListener.addEventListener('scroll', handleWindow, false)
+      customScrollListener.addEventListener('scroll', handleMouseMove, false)
+    }
+
+    if (closeOnEsc) {
+      window.addEventListener('keydown', handleEscKey)
     }
 
     window.addEventListener('resize', handleWindow, false)
@@ -94,6 +113,16 @@ const Component: VLComponent<Props> = ({
       window.removeEventListener('scroll', handleMouseMove, false)
       window.removeEventListener('click', handleDocumentClick, false)
       window.removeEventListener('mousemove', handleMouseMove, false)
+      window.removeEventListener('keydown', handleEscKey)
+
+      if (customScrollListener) {
+        customScrollListener.removeEventListener('scroll', handleWindow, false)
+        customScrollListener.removeEventListener(
+          'scroll',
+          handleMouseMove,
+          false
+        )
+      }
     }
   }, [openOn, closeOn, visible])
 
@@ -107,7 +136,7 @@ const Component: VLComponent<Props> = ({
     return false
   }
 
-  const observeHoverElement = (e) => {
+  const observeContent = (e) => {
     if (e && e.target && contentRef.current) {
       return (
         contentRef.current.contains(e.target) || e.target === contentRef.current
@@ -310,7 +339,7 @@ const Component: VLComponent<Props> = ({
 
     if (visible) {
       if (closeOn === 'hover' && e.type === 'mousemove') {
-        if (!observeTrigger(e) && !observeHoverElement(e)) {
+        if (!observeTrigger(e) && !observeContent(e)) {
           hideContent()
         }
       }
@@ -323,8 +352,14 @@ const Component: VLComponent<Props> = ({
         hideContent()
       }
 
-      if (closeOn === 'triggerClick' && e.type === 'click') {
+      if (closeOn === 'clickOnTrigger' && e.type === 'click') {
         if (observeTrigger(e)) {
+          hideContent()
+        }
+      }
+
+      if (closeOn === 'clickOutsideContent' && e.type === 'click') {
+        if (!observeContent(e)) {
           hideContent()
         }
       }
@@ -333,6 +368,11 @@ const Component: VLComponent<Props> = ({
 
   const handleWindow = throttle(calculateContentPosition, throttleDelay)
   const handleMouseMove = throttle(handleDocumentClick, throttleDelay)
+  const handleEscKey = (e: any) => {
+    if (e.key === 'Escape') {
+      hideContent()
+    }
+  }
 
   const passHandlers = useMemo(
     () => openOn === 'manual' || closeOn === 'manual',
