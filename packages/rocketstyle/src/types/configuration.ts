@@ -40,6 +40,7 @@ export type Configuration<
   theme: Array<OptionFunc>
   styles: StylesCbArray
   compose: Record<string, TFn>
+  statics: Record<string, any>
 } & Record<ExtractDimensionKey<D[keyof D]>, any>
 
 export type DefaultProps<

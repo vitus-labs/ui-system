@@ -2,7 +2,14 @@ import rocketstyle, { Rocketstyle } from './init'
 import Provider, { context, TProvider } from './context'
 import isRocketComponent from './isRocketComponent'
 
-import type { ConfigAttrs, RocketComponentType } from '~/types/config'
+import type {
+  ConfigAttrs,
+  RocketComponentType,
+  RocketProviderState,
+  ConsumerCtxCBValue,
+  ConsumerCtxCb,
+  ConsumerCb,
+} from '~/types/config'
 import type { TObj, ElementType, MergeTypes, ExtractProps } from '~/types/utils'
 import type {
   Dimensions,
@@ -25,6 +32,10 @@ export type {
   Rocketstyle,
   TProvider,
   RocketComponentType,
+  RocketProviderState,
+  ConsumerCtxCBValue,
+  ConsumerCtxCb,
+  ConsumerCb,
   TObj,
   ElementType,
   MergeTypes,

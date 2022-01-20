@@ -18,7 +18,7 @@ export type RocketProviderState<
     } & { pseudo: PseudoState }
   : T
 
-type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
+export type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
   props: RocketProviderState<T>
 ) => DKP extends TDKP
   ? Partial<
@@ -28,7 +28,7 @@ type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
     >
   : TObj
 
-type ConsumerCtxCb<DKP> = <T extends RocketComponentType>(
+export type ConsumerCtxCb<DKP> = <T extends RocketComponentType>(
   attrs: ConsumerCtxCBValue<T, DKP>
 ) => ReturnType<ConsumerCtxCBValue<T, DKP>>
 

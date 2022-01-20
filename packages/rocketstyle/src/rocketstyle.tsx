@@ -11,7 +11,14 @@ import React, {
   useRef,
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose, renderContent } from '@vitus-labs/core'
+import {
+  config,
+  omit,
+  pick,
+  compose,
+  renderContent,
+  isEmpty,
+} from '@vitus-labs/core'
 import { useTheme, useThemeOptions } from '~/hooks'
 import { localContext, createProvider, rocketstyleAttrsHoc } from '~/internal'
 import { calculateTheme, calculateThemeMode, themeModeCb } from '~/utils/theme'
@@ -58,13 +65,27 @@ const chainReservedOptions = (keys, opts, defaultOpts) =>
   )
 
 // --------------------------------------------------------
-// helpers for create statics on class
+// helpers for create statics chainin methods on component
 // --------------------------------------------------------
-const createStaticsEnhancers = ({ context, dimensionKeys, func, opts }) => {
+const createStaticsChainingEnhancers = ({
+  context,
+  dimensionKeys,
+  func,
+  opts,
+}) => {
   dimensionKeys.forEach((item) => {
     // eslint-disable-next-line no-param-reassign
     context[item] = (props) => func({ [item]: props }, opts)
   })
+}
+
+// --------------------------------------------------------
+// helpers for create statics on component
+// --------------------------------------------------------
+const createStaticsEnhancers = ({ context, opts }) => {
+  if (!isEmpty(opts)) {
+    Object.assign(context, opts)
+  }
 }
 
 // --------------------------------------------------------
@@ -81,6 +102,7 @@ type CloneAndEnhance = <A extends Configuration, B extends Configuration>(
 const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
   styleComponent({
     ...defaultOpts,
+    statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
     ...orOptions(CONFIG_KEYS, opts, defaultOpts),
     ...chainReservedOptions(
@@ -295,7 +317,11 @@ const styleComponent: StyleComponent<any> = (options) => {
   RocketComponent.displayName = componentName
 
   hoistNonReactStatics(RocketComponent, options.component)
-  createStaticsEnhancers({
+
+  // ------------------------------------------------------
+  // enhance for chaining methods
+  // ------------------------------------------------------
+  createStaticsChainingEnhancers({
     context: RocketComponent,
     dimensionKeys: [...options.dimensionKeys, ...STATIC_KEYS],
     func: cloneAndEnhance,
@@ -305,12 +331,25 @@ const styleComponent: StyleComponent<any> = (options) => {
   // ------------------------------------------------------
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
+  RocketComponent.is = {}
   // ------------------------------------------------------
+
+  // ------------------------------------------------------
+  // enhance for statics
+  // ------------------------------------------------------
+  createStaticsEnhancers({
+    context: RocketComponent.is,
+    opts: options.statics,
+  })
 
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS)
 
     return cloneAndEnhance(result as any, options) as any
+  }
+
+  RocketComponent.statics = (opts = {}) => {
+    return cloneAndEnhance({ statics: opts }, options) as any
   }
 
   RocketComponent.getStaticDimensions = (theme) => {

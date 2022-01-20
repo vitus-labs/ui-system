@@ -7,7 +7,6 @@ import rocketstyle from '~/index'
 // basic Button compoenent
 // --------------------------------------------------------
 const Button = rocketstyle()()({ name: 'Button', component: Element })
-
   .attrs<{ href?: string }>({
     tag: 'button',
     label: 'something',
