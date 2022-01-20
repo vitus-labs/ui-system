@@ -9,12 +9,10 @@ import { ThemeMode } from '~/types/theme'
 // --------------------------------------------------------
 // theme mode callback
 // --------------------------------------------------------
-export const themeModeCb: ThemeMode =
-  (...params) =>
-  (mode) => {
-    if (!mode || mode === 'light') return params[0]
-    return params[1]
-  }
+export const themeModeCb: ThemeMode = (...params) => (mode) => {
+  if (!mode || mode === 'light') return params[0]
+  return params[1]
+}
 
 // --------------------------------------------------------
 // calculate dimension themes
@@ -70,12 +68,12 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
   const result = {}
   if (isEmpty(options)) return result
 
-  const helper = options.reduce(
-    (acc, item) => merge(acc, item(...args)),
-    result
-  )
+  return options.reduce((acc, item) => {
+    return merge(acc, item(...args))
+  }, result)
 
-  return removeAllEmptyValues(helper)
+  // using this does not allow overriding themes properly
+  // return removeAllEmptyValues(helper)
 }
 
 // --------------------------------------------------------
@@ -109,10 +107,10 @@ export const calculateTheme: CalculateTheme = ({
 
       if (Array.isArray(value)) {
         value.forEach((item) => {
-          finalTheme = merge(finalTheme, keyTheme[item])
+          finalTheme = merge({}, finalTheme, keyTheme[item])
         })
       } else {
-        finalTheme = merge(finalTheme, keyTheme[value])
+        finalTheme = merge({}, finalTheme, keyTheme[value])
       }
     }
   )
@@ -133,12 +131,13 @@ export type CalculateThemeMode = (
 
 export const calculateThemeMode: CalculateThemeMode = (themes, variant) => {
   const callback = themeModeCb().toString()
+  const isModeCallback = (value) => value.toString() === callback
 
   const result = {}
   Object.entries(themes).forEach(([key, value]) => {
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && value !== null) {
       result[key] = calculateThemeMode(value, variant)
-    } else if (typeof value === 'function' && value.toString() === callback) {
+    } else if (typeof value === 'function' && isModeCallback(value)) {
       result[key] = value(variant)
     } else {
       result[key] = value
