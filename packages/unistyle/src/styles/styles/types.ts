@@ -416,7 +416,7 @@ export type ITheme = Partial<{
   whiteSpace: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | Defaults
   wordBreak: 'normal' | 'break-all' | 'keep-all' | 'break-word' | Defaults
   wordWrap: 'normal' | 'break-word' | Defaults
-  writingDirection: 'ltr' | 'rtl' | Defaults
+
   writingMode: 'horizontal-tb' | 'vertical-rl' | 'vertical-lr'
   zIndex: number
 

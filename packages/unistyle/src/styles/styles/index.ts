@@ -89,6 +89,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     order: ${t.order};
     opacity: ${t.opacity};
     resize: ${t.resize};
+    vertical-align: ${t.verticalAlign};
 
     /* ------------------------------------------------- */
     /* FONT attributes */
@@ -103,6 +104,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     font-variant: ${t.fontVariant};
     font-weight: ${t.fontWeight};
     text-align: ${t.textAlign};
+    text-align-last: ${t.textAlignLast};
     text-transform: ${t.textTransform};
     text-decoration: ${t.textDecoration};
     text-decoration-color: ${t.textDecorationColor};
@@ -118,6 +120,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     word-break: ${t.wordBreak};
     word-wrap: ${t.wordWrap};
     writing-mode: ${t.writingMode};
+    direction: ${t.direction};
 
     /* ------------------------------------------------- */
     /* LIST attributes */
@@ -204,10 +207,30 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     border-spacing: ${t.borderSpacing};
 
     /* ------------------------------------------------- */
-    /* OTHER attributes */
+    /* VISUAL EFFECTS attributes */
     /* ------------------------------------------------- */
     backface-visibility: ${t.backfaceVisibility};
     box-shadow: ${t.boxShadow};
+    filter: ${t.filter};
+    outline: ${t.outline};
+    outline-color: ${t.outlineColor};
+    outline-offset: ${t.outlineOffset};
+    outline-style: ${t.outlineStyle};
+    outline-width: ${t.outlineWidth};
+
+    /* ------------------------------------------------- */
+    /* ANIMATIONS attributes */
+    /* ------------------------------------------------- */
+    animation: ${t.keyframe} ${t.animation};
+    transition: ${t.transition};
+    transition-delay: ${t.transitionDelay};
+    transition-duration: ${t.transitionDuration};
+    transition-property: ${t.transitionProperty};
+    transition-timing-function: ${t.transitionTimingFunction};
+
+    /* ------------------------------------------------- */
+    /* OTHER attributes */
+    /* ------------------------------------------------- */
     caption-side: ${t.captionSide};
     clear: ${t.clear};
     clip: ${t.clip};
@@ -216,27 +239,23 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     counter-increment: ${t.counterIncrement};
     counter-reset: ${t.counterReset};
     cursor: ${t.cursor};
-    direction: ${t.direction};
     empty-cells: ${t.emptyCells};
-    filter: ${t.filter};
-    outline: ${t.outline};
-    outline-color: ${t.outlineColor};
-    outline-offset: ${t.outlineOffset};
-    outline-style: ${t.outlineStyle};
-    outline-width: ${t.outlineWidth};
-    transition: ${t.transition};
-    animation: ${t.keyframe} ${t.animation};
     z-index: ${t.zIndex};
     transform: ${t.transform};
+    transform-origin: ${t.transformOrigin};
+    transform-style: ${t.transformStyle};
     overflow: ${t.overflow};
     overflow-wrap: ${t.overflowWrap};
     overflow-x: ${t.overflowX};
     overflow-y: ${t.overflowY};
-
+    perspective: ${t.perspective};
+    perspective-origin: ${t.perspectiveOrigin};
+    pointer-events: ${t.pointerEvents};
+    quotes: ${t.quotes};
+    tab-size: ${t.tabSize};
+    table-layout: ${t.tableLayout};
     user-select: ${t.userSelect};
     visibility: ${t.visibility};
-    pointer-events: ${t.pointerEvents};
-    direction: ${t.writingDirection};
 
     /* ------------------------------------------------- */
     /* CUSTOM attributes */
