@@ -16,7 +16,8 @@ const Component: ElementType<
     'colComponent',
     'columns',
     'gap',
-    'gutter'
+    'gutter',
+    'contentAlignX'
   ]
 > = ({ children, component, css, ...props }) => {
   const parentCtx = useContext(RowContext)
