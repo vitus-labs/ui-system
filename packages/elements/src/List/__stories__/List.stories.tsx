@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { FC } from 'react'
 import Element from '~/Element'
 import List, { withActiveState } from '~/List'
@@ -83,11 +82,15 @@ export const ItemPropsAsAnObject = () => {
   const itemProps = {
     surname: 'hello',
   }
-  const Item = ({ name, surname, ...props }) => (
-    <span {...props}>
-      | {name} - {surname} |
-    </span>
-  )
+  const Item =
+    () =>
+    // eslint-disable-next-line react/no-unstable-nested-components
+    ({ name, surname, ...props }) =>
+      (
+        <span {...props}>
+          | {name} - {surname} |
+        </span>
+      )
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }
@@ -97,6 +100,7 @@ export const ItemPropsAsAFunction = () => {
   const itemProps = () => ({
     surname: 'hello',
   })
+  // eslint-disable-next-line react/no-unstable-nested-components
   const Item = ({ name, surname, ...props }) => (
     <span {...props}>
       {name} - {surname}

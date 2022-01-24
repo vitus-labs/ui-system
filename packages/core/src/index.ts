@@ -5,9 +5,9 @@ import Provider, { context } from '~/context'
 import compose from '~/compose'
 import isEmpty, { IsEmpty } from '~/isEmpty'
 import renderContent, { RenderContent } from '~/renderContent'
-import htmlTags, { HTMLTags } from '~/htmlTags'
+import htmlTags, { HTMLTags, HTMLTagsText } from '~/htmlTags'
 
-export type { IsEmpty, RenderContent, HTMLTags }
+export type { IsEmpty, RenderContent, HTMLTags, HTMLTagsText }
 
 export {
   Provider,

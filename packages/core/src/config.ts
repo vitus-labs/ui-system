@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { ComponentType } from 'react'
 import styled, {
   css,

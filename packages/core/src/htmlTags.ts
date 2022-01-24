@@ -112,7 +112,7 @@ const TAGS = [
   'th',
   'thead',
   'time',
-  'title',
+  // 'title',
   'tr',
   'track',
   // 'tt',
@@ -123,6 +123,48 @@ const TAGS = [
   'wbr',
 ] as const
 
+const TEXT_TAGS = [
+  'abbr',
+  'b',
+  'bdi',
+  'bdo',
+  'big',
+  'blockquote',
+  'cite',
+  'code',
+  'dl',
+  'dt',
+  'em',
+  'figcaption',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'i',
+  'ins',
+  'kbd',
+  'label',
+  'legend',
+  'li',
+  'p',
+  'pre',
+  'q',
+  'rp',
+  'rt',
+  's',
+  'small',
+  'strong',
+  'sub',
+  'summary',
+  'sup',
+  'time',
+  'u',
+] as const
+
 export type HTMLTags = typeof TAGS[number]
+
+export type HTMLTagsText = typeof TEXT_TAGS[number]
 
 export default TAGS

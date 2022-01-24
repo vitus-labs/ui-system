@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
 import {
   makeItResponsive,
