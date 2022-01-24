@@ -1,14 +1,14 @@
 import React, { forwardRef, ReactNode } from 'react'
-import type { HTMLTags } from '@vitus-labs/core'
+import type { HtmlTagsText } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import Styled from './styled'
 import type { VLForwardedComponent, ExtendCss } from '~/types'
+import Styled from './styled'
 
 export type Props = Partial<{
   paragraph: boolean
   label: ReactNode
   children: ReactNode
-  tag: HTMLTags
+  tag: HtmlTagsText
   extendCss: ExtendCss
 }>
 
