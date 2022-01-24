@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { get, isEmpty, set } from '@vitus-labs/core'
 import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 

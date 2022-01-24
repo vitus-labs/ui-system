@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { omit } from '@vitus-labs/core'
 import { CONTROL_TYPES } from '~/constants/controls'
 

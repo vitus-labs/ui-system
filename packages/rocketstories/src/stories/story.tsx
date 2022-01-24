@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createElement, VFC, ComponentType } from 'react'
 import {
   filterControls,

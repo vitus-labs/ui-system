@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react'
 import { usePseudoState } from '~/hooks'
 import LocalContext from './localContext'

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ComponentType, ReactElement } from 'react'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Provider } from '@vitus-labs/rocketstyle'
 import { Provider as provider } from '@vitus-labs/unistyle'
 import getTheme from '~/utils/theme'

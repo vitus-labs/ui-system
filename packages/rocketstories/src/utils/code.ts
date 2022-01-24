@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-param-reassign */
 import { get } from '@vitus-labs/core'
 import type { Control, SimpleValue, Obj } from '~/types'
 

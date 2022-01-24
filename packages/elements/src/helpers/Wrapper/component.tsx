@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef, ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import type {

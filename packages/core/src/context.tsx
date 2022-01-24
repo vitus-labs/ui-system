@@ -19,7 +19,7 @@ type ProviderType = Partial<
 >
 
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
-  if (!theme || isEmpty(theme)) return <>{children}</>
+  if (!theme || isEmpty(theme)) return children
 
   const StyledContext = config.styledContext
 

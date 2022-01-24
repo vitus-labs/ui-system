@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty, memoize, set } from '@vitus-labs/core'
 
 const removeUnexpectedKeys = (obj, keys) => {

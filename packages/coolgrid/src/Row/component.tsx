@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
 import { omitCtxKeys } from '~/utils'
 import useGridContext from '~/useContext'
@@ -12,6 +12,11 @@ const Component: ElementType<
   const parentCtx = useContext(ContainerContext)
   const { columns, gap, gutter, rowComponent, rowCss, contentAlignX, ...ctx } =
     useGridContext({ ...parentCtx, ...props })
+
+  const context = useMemo(
+    () => ({ ...ctx, columns, gap, gutter }),
+    [ctx, columns, gap, gutter]
+  )
 
   const finalProps = {
     ...omitCtxKeys(props),
@@ -27,9 +32,7 @@ const Component: ElementType<
 
   return (
     <Styled {...finalProps}>
-      <RowContext.Provider value={{ ...ctx, columns, gap, gutter }}>
-        {children}
-      </RowContext.Provider>
+      <RowContext.Provider value={context}>{children}</RowContext.Provider>
     </Styled>
   )
 }

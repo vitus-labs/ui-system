@@ -176,28 +176,27 @@ export type RocketComponent<
   UB extends boolean = boolean,
   // dimension key props
   DKP extends TDKP = TDKP
-> = IRocketComponent<A, OA, EA, T, CT, D, UB, DKP> &
-  {
-    [I in keyof D]: <
-      K extends DimensionValue = D[I],
-      P extends DimensionCallbackParam<T, CT> = DimensionCallbackParam<T, CT>
-    >(
-      param: P
-    ) => P extends DimensionCallbackParam<T, CT>
-      ? RocketComponent<
-          MergeTypes<
-            [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
-          >,
-          OA,
-          EA,
-          T,
-          CT,
-          D,
-          UB,
-          DimensionProps<K, D, P, DKP>
-        >
-      : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
-  }
+> = IRocketComponent<A, OA, EA, T, CT, D, UB, DKP> & {
+  [I in keyof D]: <
+    K extends DimensionValue = D[I],
+    P extends DimensionCallbackParam<T, CT> = DimensionCallbackParam<T, CT>
+  >(
+    param: P
+  ) => P extends DimensionCallbackParam<T, CT>
+    ? RocketComponent<
+        MergeTypes<
+          [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
+        >,
+        OA,
+        EA,
+        T,
+        CT,
+        D,
+        UB,
+        DimensionProps<K, D, P, DKP>
+      >
+    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+}
 
 /**
  * @param A    Generic _props_ params.
@@ -316,9 +315,7 @@ export interface IRocketComponent<
 
   is: Record<string, any>
 
-  getStaticDimensions: (
-    theme: TObj
-  ) => {
+  getStaticDimensions: (theme: TObj) => {
     dimensions: TObj
     useBooleans: boolean
     multiKeys: TObj

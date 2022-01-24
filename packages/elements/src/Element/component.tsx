@@ -114,11 +114,8 @@ const component: VLForwardedComponent<Props> = forwardRef(
       direction,
     ])
 
-    const {
-      wrapperDirection,
-      wrapperAlignX,
-      wrapperAlignY,
-    } = calculateDirection
+    const { wrapperDirection, wrapperAlignX, wrapperAlignY } =
+      calculateDirection
 
     const beforeContentRenderOutput = useMemo(
       () => renderContent(beforeContent),
@@ -130,9 +127,10 @@ const component: VLForwardedComponent<Props> = forwardRef(
       [afterContent]
     )
 
-    const contentRenderOutput = useMemo(() => renderContent(CHILDREN), [
-      CHILDREN,
-    ])
+    const contentRenderOutput = useMemo(
+      () => renderContent(CHILDREN),
+      [CHILDREN]
+    )
 
     return (
       <Wrapper

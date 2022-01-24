@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFn, ElementType, ArrayOfValues, ArrayOfKeys } from './utils'
 import { Dimensions, MultiKeys, ExtractDimensionKey } from './dimensions'
 import { PseudoProps } from './pseudo'

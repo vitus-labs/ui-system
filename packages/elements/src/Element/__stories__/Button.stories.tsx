@@ -8,8 +8,6 @@ export default {
   title: Element.displayName,
 }
 
-const Container = Element
-
 const LeftContent = config.styled.span`
   padding: 5px;
   border-radius: 4px;

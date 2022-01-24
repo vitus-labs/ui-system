@@ -43,7 +43,7 @@
     "build:watch": "yarn vl_build-watch",
     "lint:css": "stylelint src/*.ts src/*.tsx",
     "lint:ts": "eslint src/*",
-    "lint": "yarn lint:css && yarn lint:ts",
+    "lint": "yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
@@ -62,9 +62,9 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@types/lodash": "^4.14.178",
-    "@vitus-labs/tools-babel": "^0.23.0",
-    "@vitus-labs/tools-rollup": "^0.23.0",
-    "@vitus-labs/tools-typescript": "^0.23.0",
+    "@vitus-labs/tools-babel": "^0.24.0",
+    "@vitus-labs/tools-rollup": "^0.24.0",
+    "@vitus-labs/tools-typescript": "^0.24.0",
     "styled-components": "^5.3.3"
   }
 }
