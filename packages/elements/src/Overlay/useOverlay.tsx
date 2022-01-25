@@ -66,7 +66,7 @@ export default ({
 
   useEffect(() => {
     if (visible && ctx?.setBlocked) ctx.setBlocked()
-    else if (ctx?.setUnblocked) ctx.setUnblocked()
+    else if (!visible && ctx?.setUnblocked) ctx.setUnblocked()
   }, [visible])
 
   useEffect(() => {
