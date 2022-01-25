@@ -24,31 +24,22 @@ export const withRef = () => {
 }
 
 export const childrenStyling = () => (
-  <>
-    <ProviderButton gap={16} beforeContent="icon" afterContent="icon">
-      <ButtonConsumer gap={16} beforeContent="icon" afterContent="icon">
-        inner text component
-      </ButtonConsumer>
-    </ProviderButton>
-  </>
+  <ProviderButton gap={16} beforeContent="icon" afterContent="icon">
+    <ButtonConsumer gap={16} beforeContent="icon" afterContent="icon">
+      inner text component
+    </ButtonConsumer>
+  </ProviderButton>
 )
 
 export const childrenStylingWithRef = () => {
   const ref = createRef()
 
   return (
-    <>
-      <ProviderButton
-        ref={ref}
-        gap={16}
-        beforeContent="icon"
-        afterContent="icon"
-      >
-        <ButtonConsumer gap={16} beforeContent="icon" afterContent="icon">
-          inner text component
-        </ButtonConsumer>
-      </ProviderButton>
-    </>
+    <ProviderButton ref={ref} gap={16} beforeContent="icon" afterContent="icon">
+      <ButtonConsumer gap={16} beforeContent="icon" afterContent="icon">
+        inner text component
+      </ButtonConsumer>
+    </ProviderButton>
   )
 }
 

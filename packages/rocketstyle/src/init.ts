@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
-import styleComponent from './rocketstyle'
+import styleComponent from '~/rocketstyle'
 import {
   getKeys,
   getMultipleDimensions,

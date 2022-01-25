@@ -32,6 +32,7 @@ const Provider: FC<TProvider> = ({
     const isDark = ctxMode === 'dark'
     const inversedTheme = isDark ? 'light' : 'dark'
 
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     if (!InnerProvider) return <>{children}</>
 
     return (

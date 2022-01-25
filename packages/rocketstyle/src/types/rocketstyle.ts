@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import type { ForwardRefExoticComponent } from 'react'
 import { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
 import {

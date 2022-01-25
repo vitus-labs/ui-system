@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-
 import React, {
   useMemo,
   forwardRef,
@@ -346,9 +346,8 @@ const styleComponent: StyleComponent<any> = (options) => {
     return cloneAndEnhance(result as any, options) as any
   }
 
-  RocketComponent.statics = (opts = {}) => {
-    return cloneAndEnhance({ statics: opts }, options) as any
-  }
+  RocketComponent.statics = (opts = {}) =>
+    cloneAndEnhance({ statics: opts }, options) as any
 
   RocketComponent.getStaticDimensions = (theme) => {
     const themes = useTheme({ theme, options, cb: themeModeCb })

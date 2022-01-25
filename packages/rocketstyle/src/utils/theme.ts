@@ -1,18 +1,19 @@
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { config, isEmpty, merge } from '@vitus-labs/core'
-import { removeAllEmptyValues, removeNullableValues } from './collection'
-import { isMultiKey } from './dimensions'
 import { ThemeMode } from '~/types/theme'
+import { removeNullableValues } from './collection'
+import { isMultiKey } from './dimensions'
 
 // --------------------------------------------------------
 // theme mode callback
 // --------------------------------------------------------
-export const themeModeCb: ThemeMode = (...params) => (mode) => {
-  if (!mode || mode === 'light') return params[0]
-  return params[1]
-}
+export const themeModeCb: ThemeMode =
+  (...params) =>
+  (mode) => {
+    if (!mode || mode === 'light') return params[0]
+    return params[1]
+  }
 
 // --------------------------------------------------------
 // calculate dimension themes
@@ -68,9 +69,7 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
   const result = {}
   if (isEmpty(options)) return result
 
-  return options.reduce((acc, item) => {
-    return merge(acc, item(...args))
-  }, result)
+  return options.reduce((acc, item) => merge(acc, item(...args)), result)
 
   // using this does not allow overriding themes properly
   // return removeAllEmptyValues(helper)
