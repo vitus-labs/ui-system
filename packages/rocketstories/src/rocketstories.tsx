@@ -19,8 +19,10 @@ type Init = ({
   ? ReturnType<CreateRocketStories<T>>
   : ReturnType<CreateStories<T>>
 
-const init: Init = ({ decorators = [], storyOptions = {} }) => (component) =>
-  rocketstories(component, { decorators, storyOptions })
+const init: Init =
+  ({ decorators = [], storyOptions = {} }) =>
+  (component) =>
+    rocketstories(component, { decorators, storyOptions })
 
 // --------------------------------------------------------
 // rocketstories
@@ -127,7 +129,9 @@ type CreateRocketStories<C extends RocketComponent = any> = (
   storyOptions: (
     options: Configuration['storyOptions']
   ) => ReturnType<CreateRocketStories<C>>
-  dimension: <A extends ExtractDimensions<C>, B = keyof C['$$rocketstyle'][A]>(
+  dimension: <
+    A extends ExtractDimensions<C> /* B = keyof C['$$rocketstyle'][A] */
+  >(
     dimension: A,
     params?: Partial<{ ignore: any }>
   ) => ReturnType<typeof dimensionStory>
@@ -162,7 +166,7 @@ const createRocketstories: CreateRocketStories = (options, defaultOptions) => {
     // generate main story
     main: () => mainStory(result as any),
 
-    //define storyOptions
+    // define storyOptions
     storyOptions: (storyOptions) =>
       createRocketstories({ storyOptions }, result),
 

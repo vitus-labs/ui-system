@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { createElement, Fragment } from 'react'
 import { pick, isEmpty } from '@vitus-labs/core'
 import { Element, Text } from '@vitus-labs/elements'
@@ -94,91 +95,89 @@ const makeDimensionStories: MakeDimensionStories = ({
   // ------------------------------------------------------
   const WrapElement = isEmpty(storyOptions) ? Fragment : Element
 
-  const Enhanced = (props) => {
-    return (
-      <WrapElement
-        block
-        contentDirection={storyOptions.direction}
-        contentAlignX={storyOptions.alignX}
-        contentAlignY={storyOptions.alignY}
-        // @ts-ignore
-        style={{ gap: storyOptions.gap }}
-      >
-        {Object.keys(currentDimension).map((item) => {
-          const shouldBeIgnored = ignore.includes(item)
-          const key = `${dimension}-${item}`
+  const Enhanced = (props) => (
+    <WrapElement
+      block
+      contentDirection={storyOptions.direction}
+      contentAlignX={storyOptions.alignX}
+      contentAlignY={storyOptions.alignY}
+      // @ts-ignore
+      style={{ gap: storyOptions.gap }}
+    >
+      {Object.keys(currentDimension).map((item) => {
+        const shouldBeIgnored = ignore.includes(item)
+        const key = `${dimension}-${item}`
 
-          // do not render ignored dimension keys
-          if (shouldBeIgnored) return null
+        // do not render ignored dimension keys
+        if (shouldBeIgnored) return null
 
-          if (storyOptions.pseudo) {
-            return (
-              <WrapElement
-                key={key}
-                data-story={key}
-                contentDirection={
-                  storyOptions.direction === 'rows' ? 'inline' : 'rows'
-                }
-                contentAlignX={storyOptions.alignX}
-                contentAlignY={storyOptions.alignY}
-                // @ts-ignore
-                style={{ gap: storyOptions.gap / 2 }}
-              >
-                <div>
-                  <Text paragraph>Base</Text>
-                  {createElement(component, {
-                    ...props,
-                    [dimension]: isMultiKey ? [item] : item,
-                  })}
-                </div>
-
-                <div>
-                  <Text paragraph>Hover</Text>
-                  {createElement(component, {
-                    ...props,
-                    [dimension]: isMultiKey ? [item] : item,
-                    hover: true,
-                  })}
-                </div>
-
-                <div>
-                  <Text paragraph>Pressed</Text>
-                  {createElement(component, {
-                    ...props,
-                    [dimension]: isMultiKey ? [item] : item,
-                    pressed: true,
-                  })}
-                </div>
-
-                <div>
-                  <Text paragraph>Active</Text>
-                  {createElement(component, {
-                    ...props,
-                    [dimension]: isMultiKey ? [item] : item,
-                    active: true,
-                  })}
-                </div>
-              </WrapElement>
-            )
-          }
-
+        if (storyOptions.pseudo) {
           return (
             <WrapElement
               key={key}
-              data-story={`${dimension}-${item}`}
-              {...storyOptions}
-              contentDirection="rows"
+              data-story={key}
+              contentDirection={
+                storyOptions.direction === 'rows' ? 'inline' : 'rows'
+              }
+              contentAlignX={storyOptions.alignX}
+              contentAlignY={storyOptions.alignY}
+              // @ts-ignore
+              style={{ gap: storyOptions.gap / 2 }}
             >
-              {createElement(component, {
-                ...props,
-                [dimension]: isMultiKey ? [item] : item,
-              })}
+              <div>
+                <Text paragraph>Base</Text>
+                {createElement(component, {
+                  ...props,
+                  [dimension]: isMultiKey ? [item] : item,
+                })}
+              </div>
+
+              <div>
+                <Text paragraph>Hover</Text>
+                {createElement(component, {
+                  ...props,
+                  [dimension]: isMultiKey ? [item] : item,
+                  hover: true,
+                })}
+              </div>
+
+              <div>
+                <Text paragraph>Pressed</Text>
+                {createElement(component, {
+                  ...props,
+                  [dimension]: isMultiKey ? [item] : item,
+                  pressed: true,
+                })}
+              </div>
+
+              <div>
+                <Text paragraph>Active</Text>
+                {createElement(component, {
+                  ...props,
+                  [dimension]: isMultiKey ? [item] : item,
+                  active: true,
+                })}
+              </div>
             </WrapElement>
           )
-        })}
-      </WrapElement>
-    )
-  }
+        }
+
+        return (
+          <WrapElement
+            key={key}
+            data-story={`${dimension}-${item}`}
+            {...storyOptions}
+            contentDirection="rows"
+          >
+            {createElement(component, {
+              ...props,
+              [dimension]: isMultiKey ? [item] : item,
+            })}
+          </WrapElement>
+        )
+      })}
+    </WrapElement>
+  )
 
   Enhanced.args = args
   Enhanced.argTypes = {

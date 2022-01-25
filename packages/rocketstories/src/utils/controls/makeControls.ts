@@ -1,6 +1,5 @@
-import { CONTROL_OPTIONS, CONTROL_MAP, CONTROL_TYPES_GROUPS } from './constants'
-
 import type { Control, StorybookControl } from '~/types'
+import { CONTROL_OPTIONS, CONTROL_MAP, CONTROL_TYPES_GROUPS } from './constants'
 
 // --------------------------------------------------------
 // Make Controls
