@@ -155,6 +155,7 @@ const TEXT_TAGS = [
   'rt',
   's',
   'small',
+  'span',
   'strong',
   'sub',
   'summary',

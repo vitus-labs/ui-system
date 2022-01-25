@@ -69,22 +69,34 @@ const ScrollX = config.styled.div`
 const EqualElement = withEqualSizeBeforeAfter(Element)
 
 export const exampleDropdown = () => (
-  <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
+  <Overlay
+    triggerRefName="innerRef"
+    contentRefName="innerRef"
+    alignX="right"
+    trigger={Trigger}
+  >
     <Menu />
   </Overlay>
 )
 
 export const exampleDropdownOnHover = () => (
-  <Overlay refName="innerRef" openOn="hover" closeOn="hover" trigger={Trigger}>
+  <Overlay
+    triggerRefName="innerRef"
+    contentRefName="innerRef"
+    openOn="hover"
+    closeOn="hover"
+    trigger={Trigger}
+  >
     <Menu />
   </Overlay>
 )
 
 export const exampleDropdownOnTriggerClick = () => (
   <Overlay
-    refName="innerRef"
+    triggerRefName="innerRef"
+    contentRefName="innerRef"
     openOn="click"
-    closeOn="triggerClick"
+    closeOn="clickOnTrigger"
     trigger={Trigger}
   >
     <Menu />
@@ -92,11 +104,11 @@ export const exampleDropdownOnTriggerClick = () => (
 )
 
 export const exampleDropdownManual = () => {
-  const ManualTrigger = (props) => (
+  const ManualTrigger = ({ showContent, ...props }) => (
     <Trigger
       {...props}
       onClick={(e) => {
-        if (e.detail === 2) props.showContent(e)
+        if (e.detail === 2) showContent(e)
       }}
     >
       double click on me
@@ -105,7 +117,8 @@ export const exampleDropdownManual = () => {
 
   return (
     <Overlay
-      refName="innerRef"
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
       openOn="manual"
       closeOn="click"
       trigger={(props) => <ManualTrigger {...props} />}
@@ -117,13 +130,31 @@ export const exampleDropdownManual = () => {
 
 export const DropdownTop = () => (
   <div style={{ position: 'absolute', left: 200, top: 301 }}>
-    <Overlay refName="innerRef" alignX="left" align="top" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignX="left"
+      align="top"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
-    <Overlay refName="innerRef" alignX="center" align="top" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignX="center"
+      align="top"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
-    <Overlay refName="innerRef" alignX="right" align="top" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignX="right"
+      align="top"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
     <ScrollY />
@@ -133,18 +164,31 @@ export const DropdownTop = () => (
 export const DropdownBottom = () => (
   <div style={{ position: 'absolute', left: 200, top: 300 }}>
     <ScrollY />
-    <Overlay refName="innerRef" alignX="left" align="bottom" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignX="left"
+      align="bottom"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
     <Overlay
-      refName="innerRef"
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
       alignX="center"
       align="bottom"
       trigger={Trigger}
     >
       <Menu />
     </Overlay>
-    <Overlay refName="innerRef" alignX="right" align="bottom" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignX="right"
+      align="bottom"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
     <ScrollY />
@@ -164,11 +208,18 @@ export const DropdownLeft = () => (
       }}
     >
       <ScrollX />
-      <Overlay refName="innerRef" alignY="top" align="left" trigger={Trigger}>
+      <Overlay
+        triggerRefName="innerRef"
+        contentRefName="innerRef"
+        alignY="top"
+        align="left"
+        trigger={Trigger}
+      >
         <Menu />
       </Overlay>
       <Overlay
-        refName="innerRef"
+        triggerRefName="innerRef"
+        contentRefName="innerRef"
         alignY="center"
         align="left"
         trigger={Trigger}
@@ -176,7 +227,8 @@ export const DropdownLeft = () => (
         <Menu />
       </Overlay>
       <Overlay
-        refName="innerRef"
+        triggerRefName="innerRef"
+        contentRefName="innerRef"
         alignY="bottom"
         align="left"
         trigger={Trigger}
@@ -200,15 +252,28 @@ export const DropdownRight = () => (
     }}
   >
     <ScrollX />
-    <Overlay refName="innerRef" alignY="top" align="right" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignY="top"
+      align="right"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
-    <Overlay refName="innerRef" alignY="center" align="right" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignY="center"
+      align="right"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
     <Overlay
       closeOn="hover"
-      refName="innerRef"
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
       alignY="bottom"
       align="right"
       trigger={Trigger}
@@ -223,12 +288,22 @@ export const DropdownInsideElement = () => (
   <EqualElement
     block
     beforeContent={
-      <Overlay refName="innerRef" alignX="left" trigger={Trigger}>
+      <Overlay
+        triggerRefName="innerRef"
+        contentRefName="innerRef"
+        alignX="left"
+        trigger={Trigger}
+      >
         <Menu />
       </Overlay>
     }
     afterContent={
-      <Overlay refName="innerRef" alignX="right" trigger={Trigger}>
+      <Overlay
+        triggerRefName="innerRef"
+        contentRefName="innerRef"
+        alignX="right"
+        trigger={Trigger}
+      >
         <Menu />
       </Overlay>
     }
@@ -249,15 +324,28 @@ export const DropdownEdgePositions = () => (
   >
     <ScrollX />
     <ScrollX />
-    <Overlay refName="innerRef" alignY="top" align="bottom" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignY="top"
+      align="bottom"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
-    <Overlay refName="innerRef" alignY="center" align="right" trigger={Trigger}>
+    <Overlay
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
+      alignY="center"
+      align="right"
+      trigger={Trigger}
+    >
       <Menu />
     </Overlay>
     <Overlay
       closeOn="hover"
-      refName="innerRef"
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
       alignY="bottom"
       align="right"
       trigger={Trigger}
@@ -276,7 +364,8 @@ export const DropdownHandleHover = () => (
     <ScrollX />
     <ScrollX />
     <Overlay
-      refName="innerRef"
+      triggerRefName="innerRef"
+      contentRefName="innerRef"
       openOn="hover"
       closeOn="hover"
       alignY="top"

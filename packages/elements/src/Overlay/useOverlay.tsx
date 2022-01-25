@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import { throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
+import { useOverlayContext } from './context'
 
 type OverlayPosition = {
   position: 'absolute' | 'fixed' | 'static' | 'relative'
@@ -51,6 +52,8 @@ export default ({
   closeOnEsc = true,
 }: UseOverlayProps) => {
   const { rootSize } = useContext(context) as { rootSize: number }
+  const ctx = useOverlayContext()
+  const [blocked, handleBlocked] = useState(false)
   const [visible, setVisible] = useState(isOpen)
   const [innerAlign, setInnerAlign] = useState(align)
   const [innerAlignX, setInnerAlignX] = useState(alignX)
@@ -58,40 +61,50 @@ export default ({
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
+  const setBlocked = useCallback(() => handleBlocked(true), [])
+  const setUnblocked = useCallback(() => handleBlocked(false), [])
+
+  useEffect(() => {
+    if (visible && ctx?.setBlocked) ctx.setBlocked()
+    else if (ctx?.setUnblocked) ctx.setUnblocked()
+  }, [visible])
+
   useEffect(() => {
     if (visible) calculateContentPosition()
   }, [visible])
 
   useEffect(() => {
-    if (
-      openOn === 'click' ||
-      closeOn === 'click' ||
-      closeOn === 'clickOnTrigger' ||
-      closeOn === 'clickOutsideContent'
-    ) {
-      document.addEventListener('click', handleVisibilityByEventType, false)
-    }
+    if (!blocked) {
+      if (
+        openOn === 'click' ||
+        closeOn === 'click' ||
+        closeOn === 'clickOnTrigger' ||
+        closeOn === 'clickOutsideContent'
+      ) {
+        document.addEventListener('click', handleVisibilityByEventType, false)
+      }
 
-    if (openOn === 'hover' || closeOn === 'hover') {
-      document.addEventListener('mousemove', handleMouseMove, false)
-    }
+      if (openOn === 'hover' || closeOn === 'hover') {
+        document.addEventListener('mousemove', handleMouseMove, false)
+      }
 
-    if (customScrollListener) {
-      customScrollListener.addEventListener(
-        'scroll',
-        handleContentPosition,
-        false
-      )
-      customScrollListener.addEventListener('scroll', handleMouseMove, false)
-    }
+      if (customScrollListener) {
+        customScrollListener.addEventListener(
+          'scroll',
+          handleContentPosition,
+          false
+        )
+        customScrollListener.addEventListener('scroll', handleMouseMove, false)
+      }
 
-    if (closeOnEsc) {
-      document.addEventListener('keydown', handleEscKey)
-    }
+      if (closeOnEsc) {
+        document.addEventListener('keydown', handleEscKey)
+      }
 
-    document.addEventListener('resize', handleContentPosition, false)
-    document.addEventListener('scroll', handleContentPosition, false)
-    document.addEventListener('scroll', handleMouseMove, false)
+      document.addEventListener('resize', handleContentPosition, false)
+      document.addEventListener('scroll', handleContentPosition, false)
+      document.addEventListener('scroll', handleMouseMove, false)
+    }
 
     return () => {
       document.removeEventListener('resize', handleContentPosition, false)
@@ -114,7 +127,7 @@ export default ({
         )
       }
     }
-  }, [openOn, closeOn, visible])
+  }, [openOn, closeOn, visible, blocked])
 
   const observeTrigger = (e) => {
     if (e && e.target && triggerRef.current) {
@@ -140,6 +153,7 @@ export default ({
     setVisible(true)
 
     if (__BROWSER__ && customScrollListener) {
+      // eslint-disable-next-line no-param-reassign
       customScrollListener.style.overflow = 'hidden'
     } else if (__BROWSER__ && type === 'modal' && document.body) {
       document.body.style.overflow = 'hidden'
@@ -150,6 +164,7 @@ export default ({
     setVisible(false)
 
     if (__BROWSER__ && customScrollListener) {
+      // eslint-disable-next-line no-param-reassign
       customScrollListener.style.overflow = 'auto'
     } else if (__BROWSER__ && type === 'modal' && document.body) {
       document.body.style.overflow = 'auto'
@@ -380,5 +395,8 @@ export default ({
     alignY: innerAlignY,
     showContent,
     hideContent,
+    blocked,
+    setBlocked,
+    setUnblocked,
   }
 }
