@@ -1,6 +1,6 @@
 import { value as unitValue } from '~/units'
-import type { Theme } from './types'
 import type { Css } from '~/types'
+import type { Theme } from './types'
 
 export type { Theme as StylesTheme }
 

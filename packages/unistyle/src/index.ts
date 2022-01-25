@@ -1,4 +1,4 @@
-import Provider, { context, TProvider } from './context'
+import Provider, { context, TProvider } from '~/context'
 
 // --------------------------------------------------------
 // REACT HOOKS
@@ -41,7 +41,7 @@ import {
   AlignContentAlignYKeys,
   AlignContentDirectionKeys,
   ExtendCss,
-} from './styles'
+} from '~/styles'
 
 // --------------------------------------------------------
 // UNITS UTILITIES

@@ -31,6 +31,7 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
 
   if (!isEmpty(breakpoints)) {
     __VITUS_LABS__.sortedBreakpoints = useMemo(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       () => sortBreakpoints(breakpoints!),
       [breakpoints]
     )
