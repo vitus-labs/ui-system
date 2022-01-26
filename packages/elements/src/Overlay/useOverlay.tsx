@@ -64,16 +64,69 @@ export default ({
   const setBlocked = useCallback(() => handleBlocked(true), [])
   const setUnblocked = useCallback(() => handleBlocked(false), [])
 
+  // if an Overlay has an Overlay child, this will prevent closing parent child
   useEffect(() => {
     if (visible && ctx?.setBlocked) ctx.setBlocked()
     else if (!visible && ctx?.setUnblocked) ctx.setUnblocked()
   }, [visible])
 
+  // calculate correct position when an Overlay is opened
   useEffect(() => {
     if (visible) calculateContentPosition()
   }, [visible])
 
+  // handles calculationg correct position of content
+  // on document events (or custom scroll if set)
   useEffect(() => {
+    if (visible) {
+      document.addEventListener('resize', handleContentPosition, false)
+      document.addEventListener('scroll', handleContentPosition, false)
+
+      if (customScrollListener) {
+        customScrollListener.addEventListener(
+          'scroll',
+          handleContentPosition,
+          false
+        )
+      }
+    }
+
+    return () => {
+      document.removeEventListener('resize', handleContentPosition, false)
+      document.removeEventListener('scroll', handleContentPosition, false)
+
+      if (customScrollListener) {
+        customScrollListener.removeEventListener(
+          'scroll',
+          handleContentPosition,
+          false
+        )
+      }
+    }
+  }, [visible, customScrollListener])
+
+  // make sure scrolling is blocked in case of modal windows or when
+  // customScroll is set
+  useEffect(() => {
+    if (__BROWSER__ && customScrollListener) {
+      // eslint-disable-next-line no-param-reassign
+      customScrollListener.style.overflow = 'hidden'
+    } else if (__BROWSER__ && type === 'modal' && document.body) {
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      if (__BROWSER__ && customScrollListener) {
+        // eslint-disable-next-line no-param-reassign
+        customScrollListener.style.overflow = 'auto'
+      } else if (__BROWSER__ && type === 'modal' && document.body) {
+        document.body.style.overflow = 'auto'
+      }
+    }
+  }, [type, customScrollListener])
+
+  useEffect(() => {
+    // enable ovelray manipulation only when the state is NOT blocked=true
     if (!blocked) {
       if (
         openOn === 'click' ||
@@ -88,38 +141,34 @@ export default ({
         document.addEventListener('mousemove', handleMouseMove, false)
       }
 
-      if (customScrollListener) {
-        customScrollListener.addEventListener(
-          'scroll',
-          handleContentPosition,
-          false
-        )
-        customScrollListener.addEventListener('scroll', handleMouseMove, false)
-      }
+      // only when content is visible
+      if (visible) {
+        if (customScrollListener) {
+          customScrollListener.addEventListener(
+            'scroll',
+            handleMouseMove,
+            false
+          )
+        }
 
-      if (closeOnEsc) {
-        document.addEventListener('keydown', handleEscKey)
-      }
+        document.addEventListener('scroll', handleMouseMove, false)
 
-      document.addEventListener('resize', handleContentPosition, false)
-      document.addEventListener('scroll', handleContentPosition, false)
-      document.addEventListener('scroll', handleMouseMove, false)
+        if (closeOnEsc) {
+          document.addEventListener('keydown', handleEscKey)
+        }
+      }
     }
 
     return () => {
-      document.removeEventListener('resize', handleContentPosition, false)
-      document.removeEventListener('scroll', handleContentPosition, false)
       document.removeEventListener('scroll', handleMouseMove, false)
       document.removeEventListener('click', handleVisibilityByEventType, false)
       document.removeEventListener('mousemove', handleMouseMove, false)
-      document.removeEventListener('keydown', handleEscKey)
+
+      if (closeOnEsc) {
+        document.removeEventListener('keydown', handleEscKey)
+      }
 
       if (customScrollListener) {
-        customScrollListener.removeEventListener(
-          'scroll',
-          handleContentPosition,
-          false
-        )
         customScrollListener.removeEventListener(
           'scroll',
           handleMouseMove,
@@ -151,24 +200,10 @@ export default ({
 
   const showContent = useCallback(() => {
     setVisible(true)
-
-    if (__BROWSER__ && customScrollListener) {
-      // eslint-disable-next-line no-param-reassign
-      customScrollListener.style.overflow = 'hidden'
-    } else if (__BROWSER__ && type === 'modal' && document.body) {
-      document.body.style.overflow = 'hidden'
-    }
   }, [])
 
   const hideContent = useCallback(() => {
     setVisible(false)
-
-    if (__BROWSER__ && customScrollListener) {
-      // eslint-disable-next-line no-param-reassign
-      customScrollListener.style.overflow = 'auto'
-    } else if (__BROWSER__ && type === 'modal' && document.body) {
-      document.body.style.overflow = 'auto'
-    }
   }, [])
 
   const calculateContentPosition = () => {
