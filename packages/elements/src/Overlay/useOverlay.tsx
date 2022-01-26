@@ -34,6 +34,7 @@ export type UseOverlayProps = {
   throttleDelay?: number
   customScrollListener?: HTMLElement
   closeOnEsc?: boolean
+  disabled?: boolean
 }
 
 export default ({
@@ -50,6 +51,7 @@ export default ({
   throttleDelay = 200,
   customScrollListener,
   closeOnEsc = true,
+  disabled,
 }: UseOverlayProps) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
@@ -79,8 +81,8 @@ export default ({
   // on document events (or custom scroll if set)
   useEffect(() => {
     if (visible) {
-      document.addEventListener('resize', handleContentPosition, false)
-      document.addEventListener('scroll', handleContentPosition, false)
+      window.addEventListener('resize', handleContentPosition, false)
+      window.addEventListener('scroll', handleContentPosition, false)
 
       if (customScrollListener) {
         customScrollListener.addEventListener(
@@ -92,8 +94,8 @@ export default ({
     }
 
     return () => {
-      document.removeEventListener('resize', handleContentPosition, false)
-      document.removeEventListener('scroll', handleContentPosition, false)
+      window.removeEventListener('resize', handleContentPosition, false)
+      window.removeEventListener('scroll', handleContentPosition, false)
 
       if (customScrollListener) {
         customScrollListener.removeEventListener(
@@ -128,19 +130,20 @@ export default ({
   }, [visible, type, customScrollListener])
 
   useEffect(() => {
-    // enable ovelray manipulation only when the state is NOT blocked=true
-    if (!blocked) {
+    // enable overlay manipulation only when the state is NOT blocked=true
+    // nor in disabled state
+    if (!blocked || !disabled) {
       if (
         openOn === 'click' ||
         closeOn === 'click' ||
         closeOn === 'clickOnTrigger' ||
         closeOn === 'clickOutsideContent'
       ) {
-        document.addEventListener('click', handleVisibilityByEventType, false)
+        window.addEventListener('click', handleVisibilityByEventType, false)
       }
 
       if (openOn === 'hover' || closeOn === 'hover') {
-        document.addEventListener('mousemove', handleMouseMove, false)
+        window.addEventListener('mousemove', handleMouseMove, false)
       }
 
       // only when content is visible
@@ -153,21 +156,21 @@ export default ({
           )
         }
 
-        document.addEventListener('scroll', handleMouseMove, false)
+        window.addEventListener('scroll', handleMouseMove, false)
 
         if (closeOnEsc) {
-          document.addEventListener('keydown', handleEscKey)
+          window.addEventListener('keydown', handleEscKey)
         }
       }
     }
 
     return () => {
-      document.removeEventListener('scroll', handleMouseMove, false)
-      document.removeEventListener('click', handleVisibilityByEventType, false)
-      document.removeEventListener('mousemove', handleMouseMove, false)
+      window.removeEventListener('scroll', handleMouseMove, false)
+      window.removeEventListener('click', handleVisibilityByEventType, false)
+      window.removeEventListener('mousemove', handleMouseMove, false)
 
       if (closeOnEsc) {
-        document.removeEventListener('keydown', handleEscKey)
+        window.removeEventListener('keydown', handleEscKey)
       }
 
       if (customScrollListener) {
@@ -178,7 +181,7 @@ export default ({
         )
       }
     }
-  }, [openOn, closeOn, visible, blocked])
+  }, [openOn, closeOn, visible, blocked, disabled])
 
   const observeTrigger = (e) => {
     if (e && e.target && triggerRef.current) {
@@ -369,7 +372,7 @@ export default ({
   }
 
   const handleVisibilityByEventType = (e) => {
-    if (!visible) {
+    if (!visible && !disabled) {
       if (openOn === 'hover' && e.type === 'mousemove') {
         if (observeTrigger(e)) {
           showContent()
