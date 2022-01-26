@@ -132,7 +132,7 @@ export default ({
   useEffect(() => {
     // enable overlay manipulation only when the state is NOT blocked=true
     // nor in disabled state
-    if (!blocked || !disabled) {
+    if (!blocked && !disabled) {
       if (
         openOn === 'click' ||
         closeOn === 'click' ||
