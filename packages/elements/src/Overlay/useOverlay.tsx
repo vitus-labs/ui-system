@@ -108,22 +108,24 @@ export default ({
   // make sure scrolling is blocked in case of modal windows or when
   // customScroll is set
   useEffect(() => {
-    if (__BROWSER__ && customScrollListener) {
-      // eslint-disable-next-line no-param-reassign
-      customScrollListener.style.overflow = 'hidden'
-    } else if (__BROWSER__ && type === 'modal' && document.body) {
-      document.body.style.overflow = 'hidden'
+    if (visible) {
+      if (__BROWSER__ && customScrollListener) {
+        // eslint-disable-next-line no-param-reassign
+        customScrollListener.style.overflow = 'hidden'
+      } else if (__BROWSER__ && type === 'modal' && document.body) {
+        document.body.style.overflow = 'hidden'
+      }
     }
 
     return () => {
       if (__BROWSER__ && customScrollListener) {
         // eslint-disable-next-line no-param-reassign
-        customScrollListener.style.overflow = 'auto'
+        customScrollListener.style.overflow = ''
       } else if (__BROWSER__ && type === 'modal' && document.body) {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = ''
       }
     }
-  }, [type, customScrollListener])
+  }, [visible, type, customScrollListener])
 
   useEffect(() => {
     // enable ovelray manipulation only when the state is NOT blocked=true
