@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode } from 'react'
-import ReactDOM from 'react-dom'
+import { createPortal } from 'react-dom'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
@@ -29,7 +29,7 @@ const component: VLComponent<Props> = ({
     }
   }, [])
 
-  return ReactDOM.createPortal(children, element)
+  return createPortal(children, element)
 }
 
 const name = `${PKG_NAME}/Portal` as const

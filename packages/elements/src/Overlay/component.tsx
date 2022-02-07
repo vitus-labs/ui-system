@@ -37,7 +37,7 @@ export type Props = {
   contentRefName?: string
 } & UseOverlayProps
 
-const Component: VLComponent<Props> = ({
+const component: VLComponent<Props> = ({
   children,
   trigger,
   DOMLocation,
@@ -57,12 +57,14 @@ const Component: VLComponent<Props> = ({
     ...ctx
   } = useOverlay(props)
 
+  const { openOn, closeOn } = props
+
   const passHandlers = useMemo(
     () =>
-      props.openOn === 'manual' ||
-      props.closeOn === 'manual' ||
-      props.closeOn === 'clickOutsideContent',
-    [props.openOn, props.closeOn]
+      openOn === 'manual' ||
+      closeOn === 'manual' ||
+      closeOn === 'clickOutsideContent',
+    [openOn, closeOn]
   )
 
   return (
@@ -91,10 +93,10 @@ const Component: VLComponent<Props> = ({
   )
 }
 
-const name = `${PKG_NAME}/Ovelay` as const
+const name = `${PKG_NAME}/Overlay` as const
 
-Component.displayName = name
-Component.pkgName = PKG_NAME
-Component.VITUS_LABS__COMPONENT = name
+component.displayName = name
+component.pkgName = PKG_NAME
+component.VITUS_LABS__COMPONENT = name
 
-export default Component
+export default component
