@@ -60,8 +60,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "^0.25.0",
-    "@vitus-labs/tools-rollup": "^0.25.0",
-    "@vitus-labs/tools-typescript": "^0.25.0"
+    "@vitus-labs/tools-babel": "^0.26.0",
+    "@vitus-labs/tools-rollup": "^0.26.0",
+    "@vitus-labs/tools-typescript": "^0.26.0"
   }
 }
