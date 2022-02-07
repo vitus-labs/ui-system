@@ -9,19 +9,9 @@ export default {
   title: Overlay.displayName,
 }
 
-const Button = ({ innerRef, children, ...props }) => (
-  <button type="button" ref={innerRef} {...props}>
-    {children || 'Click on me'}
-  </button>
-)
-
-const Box = ({ innerRef, ...props }) => (
-  <div ref={innerRef} {...props}>
-    some content here
-  </div>
-)
-
-const Menu = config.styled(Box)`
+const Menu = config.styled('div').attrs({
+  children: 'some content here',
+})`
   width: 300px;
   height: 300px;
   background-color: #fff;
@@ -29,7 +19,10 @@ const Menu = config.styled(Box)`
   border: 1px solid #555555;
 `
 
-const Trigger = config.styled(Button)`
+const Trigger = config.styled('button').attrs({
+  type: 'button',
+  children: 'Click on me',
+})`
     background-color: #4CAF50;
     border: none;
     color: #FFFFFF;
@@ -69,36 +62,19 @@ const ScrollX = config.styled.div`
 const EqualElement = withEqualSizeBeforeAfter(Element)
 
 export const exampleDropdown = () => (
-  <Overlay
-    triggerRefName="innerRef"
-    contentRefName="innerRef"
-    alignX="right"
-    trigger={Trigger}
-  >
+  <Overlay alignX="right" trigger={Trigger}>
     <Menu />
   </Overlay>
 )
 
 export const exampleDropdownOnHover = () => (
-  <Overlay
-    triggerRefName="innerRef"
-    contentRefName="innerRef"
-    openOn="hover"
-    closeOn="hover"
-    trigger={Trigger}
-  >
+  <Overlay openOn="hover" closeOn="hover" trigger={Trigger}>
     <Menu />
   </Overlay>
 )
 
 export const exampleDropdownOnTriggerClick = () => (
-  <Overlay
-    triggerRefName="innerRef"
-    contentRefName="innerRef"
-    openOn="click"
-    closeOn="clickOnTrigger"
-    trigger={Trigger}
-  >
+  <Overlay openOn="click" closeOn="clickOnTrigger" trigger={Trigger}>
     <Menu />
   </Overlay>
 )
@@ -121,7 +97,7 @@ export const exampleDropdownManual = () => {
       contentRefName="innerRef"
       openOn="manual"
       closeOn="click"
-      trigger={(props) => <ManualTrigger {...props} />}
+      trigger={ManualTrigger}
     >
       <Menu />
     </Overlay>
