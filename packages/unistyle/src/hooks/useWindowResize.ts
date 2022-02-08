@@ -30,8 +30,9 @@ const useWindowResize: UseWindowResize = (
       setWindowSize(getSize())
     }, throttleDelay)
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, false)
+
+    return () => window.removeEventListener('resize', handleResize, false)
   }, []) // Empty array ensures that effect is only run on mount and unmount
 
   return windowSize

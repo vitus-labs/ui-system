@@ -29,7 +29,7 @@ type Props = {
     | ((props: Record<string, unknown>) => Record<string, unknown>)
 }
 
-const Component: SimpleHoc<Props> = (WrappedComponent) => {
+const component: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
@@ -181,9 +181,9 @@ const Component: SimpleHoc<Props> = (WrappedComponent) => {
     return <WrappedComponent {...rest} itemProps={attachItemProps} />
   }
   Enhanced.RESERVED_KEYS = RESERVED_KEYS
-  Enhanced.displayName = `vitus-labs/elements/List/withActiveState(${displayName})`
+  Enhanced.displayName = `@vitus-labs/elements/List/withActiveState(${displayName})`
 
   return Enhanced
 }
 
-export default Component
+export default component

@@ -17,7 +17,7 @@ export type Props = MergeTypes<
   ]
 >
 
-const Component: VLForwardedComponent<Props> = forwardRef(
+const component: VLForwardedComponent<Props> = forwardRef(
   ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
@@ -33,8 +33,8 @@ const Component: VLForwardedComponent<Props> = forwardRef(
 
 const name = `${PKG_NAME}/List` as const
 
-Component.displayName = name
-Component.pkgName = PKG_NAME
-Component.VITUS_LABS__COMPONENT = name
+component.displayName = name
+component.pkgName = PKG_NAME
+component.VITUS_LABS__COMPONENT = name
 
-export default Component
+export default component

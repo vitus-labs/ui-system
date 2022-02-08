@@ -27,7 +27,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
       equalCols,
       gap,
 
-      direction,
+      direction = defaultDirection,
       alignX = defaultAlignX,
       alignY = defaultAlignY,
 
@@ -67,14 +67,11 @@ const component: VLForwardedComponent<Props> = forwardRef(
       extendCss: css,
       tag,
       block,
-      contentDirection,
-      alignX: contentAlignX,
-      alignY: contentAlignY,
       as: undefined, // reset styled-components `as` prop
     }
 
     // --------------------------------------------------------
-    // return simple/empty element like input
+    // return simple/empty element like input or image etc.
     // --------------------------------------------------------
     if (shouldBeEmpty) return <Wrapper {...WRAPPER_PROPS} {...props} />
 
@@ -91,7 +88,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
     // direction & alignX & alignY calculations
     // --------------------------------------------------------
     const calculateDirection = useMemo(() => {
-      let wrapperDirection: typeof direction
+      let wrapperDirection: typeof direction = direction
       let wrapperAlignX: typeof alignX = alignX
       let wrapperAlignY: typeof alignY = alignY
 
@@ -111,6 +108,8 @@ const component: VLForwardedComponent<Props> = forwardRef(
       contentDirection,
       contentAlignX,
       contentAlignY,
+      alignX,
+      alignY,
       direction,
     ])
 

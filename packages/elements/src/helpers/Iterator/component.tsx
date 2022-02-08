@@ -1,4 +1,4 @@
-import React, { Children, FC } from 'react'
+import React, { Children, FC, useCallback, useMemo } from 'react'
 import { renderContent, isEmpty } from '@vitus-labs/core'
 import type { Props, DataArrayObject, ExtendedProps } from './types'
 
@@ -57,17 +57,23 @@ const component: FC<Props> & Static = (props: Props) => {
     itemProps,
   } = props
 
-  const renderedElement = (component, props) => renderContent(component, props)
+  const renderedElement = renderContent
 
-  const injectItemProps =
-    typeof itemProps === 'function'
-      ? (props, extendedProps) => itemProps(props, extendedProps)
-      : () => itemProps
+  const injectItemProps = useMemo(
+    () => (typeof itemProps === 'function' ? itemProps : () => itemProps),
+    [itemProps]
+  )
 
-  const injectWrapItemProps =
-    typeof wrapProps === 'function'
-      ? (props, extendedProps) => wrapProps(props, extendedProps)
-      : () => wrapProps
+  const injectWrapItemProps = useMemo(
+    () => (typeof wrapProps === 'function' ? wrapProps : () => wrapProps),
+    [wrapProps]
+  )
+
+  const getKey = useCallback((item: string | number, index) => {
+    if (typeof itemKey === 'function') return itemKey(item, index)
+
+    return index
+  }, [])
 
   // --------------------------------------------------------
   // render children
@@ -100,7 +106,7 @@ const component: FC<Props> & Static = (props: Props) => {
         )
       }
 
-      return renderContent(item as any, {
+      return renderContent(item, {
         key: i,
         ...finalItemProps,
       })
@@ -111,21 +117,12 @@ const component: FC<Props> & Static = (props: Props) => {
   // render array of strings or numbers
   // --------------------------------------------------------
   const renderSimpleArray = (data) => {
-    const renderData = data.filter(
-      (item) => item !== null || item !== undefined // remove empty values
-    )
-    const { length } = renderData
+    const { length } = data
 
-    // if it's empty
-    if (renderData.length === 0) return null
+    // if the data array is empty
+    if (data.length === 0) return null
 
-    const getKey = (item: string | number, index) => {
-      if (typeof itemKey === 'function') return itemKey(item, index)
-
-      return index
-    }
-
-    return renderData.map((item, i) => {
+    return data.map((item, i) => {
       const key = getKey(item, i)
       const keyName = valueName || 'children'
       const extendedProps = attachItemProps({
@@ -217,17 +214,25 @@ const component: FC<Props> & Static = (props: Props) => {
     // render props component + data
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      const clearData = data.filter(
-        (item) => item !== null && item !== undefined
+      const clearData = useMemo(
+        () => data.filter((item) => item !== null && item !== undefined),
+        [data]
       )
 
-      const isSimpleArray = clearData.every(
-        (item) => typeof item === 'string' || typeof item === 'number'
+      const isSimpleArray = useMemo(
+        () =>
+          clearData.every(
+            (item) => typeof item === 'string' || typeof item === 'number'
+          ),
+        [clearData]
       )
 
       if (isSimpleArray) return renderSimpleArray(clearData)
 
-      const isComplexArray = clearData.every((item) => typeof item === 'object')
+      const isComplexArray = useMemo(
+        () => clearData.every((item) => typeof item === 'object'),
+        [clearData]
+      )
 
       if (isComplexArray) return renderComplexArray(clearData)
 
