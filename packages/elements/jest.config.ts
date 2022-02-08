@@ -30,6 +30,7 @@ const config: Config.InitialOptions = {
   // extended assertions to Jest
   setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
   // setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'],
+  snapshotSerializers: ['enzyme-to-json/serializer'],
 
   // Test spec file resolution pattern
   // Matches parent folder `__tests__` and filename
