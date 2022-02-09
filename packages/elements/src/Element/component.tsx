@@ -5,8 +5,8 @@ import { Wrapper, Content } from '~/helpers'
 import { isInlineElement, getShouldBeEmpty } from './utils'
 import type { VLElement } from './types'
 
-const defaultBeforeAfterDirection = 'inline'
-const defaultDirection = 'rows'
+const defaultDirection = 'inline'
+const defaultContentDirection = 'rows'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
@@ -25,7 +25,7 @@ const component: VLElement = forwardRef(
       equalCols,
       gap,
 
-      direction = defaultDirection,
+      direction,
       alignX = defaultAlignX,
       alignY = defaultAlignY,
 
@@ -34,15 +34,15 @@ const component: VLElement = forwardRef(
       beforeContentCss,
       afterContentCss,
 
-      contentDirection = defaultDirection,
+      contentDirection = defaultContentDirection,
       contentAlignX = defaultAlignX,
       contentAlignY = defaultAlignY,
 
-      beforeContentDirection = defaultBeforeAfterDirection,
+      beforeContentDirection = defaultDirection,
       beforeContentAlignX = defaultAlignX,
       beforeContentAlignY = defaultAlignY,
 
-      afterContentDirection = defaultBeforeAfterDirection,
+      afterContentDirection = defaultDirection,
       afterContentAlignX = defaultAlignX,
       afterContentAlignY = defaultAlignY,
 
