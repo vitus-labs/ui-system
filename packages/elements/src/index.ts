@@ -10,6 +10,7 @@ import List, { Props as ListProps, withActiveState } from '~/List'
 import Overlay, {
   Props as OverlayProps,
   useOverlay,
+  OverlayProvider,
   UseOverlayProps,
 } from '~/Overlay'
 
@@ -33,6 +34,7 @@ export {
   List,
   Overlay,
   useOverlay,
+  OverlayProvider,
   Portal,
   Text,
   Provider,
