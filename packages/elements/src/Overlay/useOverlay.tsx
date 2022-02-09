@@ -385,6 +385,7 @@ export default ({
   }
 
   const handleVisibilityByEventType = (e) => {
+    console.log('handleVisibilityByEventType')
     if (!active) {
       if (
         (openOn === 'hover' && e.type === 'mousemove') ||
@@ -397,6 +398,11 @@ export default ({
     }
 
     if (active) {
+      console.log('test active')
+      console.log(e.type)
+      console.log('closeOn', closeOn)
+      console.log('openOn', openOn)
+
       if (closeOn === 'hover' && e.type === 'mousemove') {
         if (!isTrigger(e) && !isContent(e)) {
           hideContent()
@@ -430,12 +436,9 @@ export default ({
     throttleDelay
   )
 
-  const handleClick = useCallback(handleVisibilityByEventType, [])
+  const handleClick = handleVisibilityByEventType
+  const handleVisibility = throttle(handleVisibilityByEventType, throttleDelay)
 
-  const handleVisibility = useCallback(
-    throttle(handleVisibilityByEventType, throttleDelay),
-    []
-  )
   const handleEscKey = (e: any) => {
     if (e.key === 'Escape') {
       hideContent()
