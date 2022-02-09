@@ -6,8 +6,9 @@ import compose from '~/compose'
 import isEmpty, { IsEmpty } from '~/isEmpty'
 import renderContent, { RenderContent } from '~/renderContent'
 import htmlTags, { HTMLTags, HTMLTagsText } from '~/htmlTags'
+import type { HTMLElementProps } from '~/types/htmlElementAttrs'
 
-export type { IsEmpty, RenderContent, HTMLTags, HTMLTagsText }
+export type { IsEmpty, RenderContent, HTMLTags, HTMLTagsText, HTMLElementProps }
 
 export {
   Provider,

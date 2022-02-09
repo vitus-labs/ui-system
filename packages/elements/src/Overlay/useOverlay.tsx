@@ -59,49 +59,64 @@ export default ({
 }: UseOverlayProps) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
+
   const [blocked, handleBlocked] = useState(false)
-  const [active, setActive] = useState(isOpen)
+  const [active, handleActive] = useState(isOpen)
+
   const [innerAlign, setInnerAlign] = useState(align)
   const [innerAlignX, setInnerAlignX] = useState(alignX)
   const [innerAlignY, setInnerAlignY] = useState(alignY)
+
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
   const setBlocked = useCallback(() => handleBlocked(true), [])
   const setUnblocked = useCallback(() => handleBlocked(false), [])
 
+  const showContent = useCallback(() => {
+    handleActive(true)
+  }, [])
+
+  const hideContent = useCallback(() => {
+    handleActive(false)
+  }, [])
+
+  const hasCustomListener = __BROWSER__ && !!customScrollListener
+
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
   useEffect(() => {
-    if (active) calculateContentPosition()
-    if (active && ctx?.setBlocked) ctx.setBlocked()
-    else if (!active && ctx?.setUnblocked) ctx.setUnblocked()
-
-    if (active && onOpen) onOpen()
-    if (!active && onClose) onClose()
+    if (active) {
+      calculateContentPosition()
+      if (ctx?.setBlocked) ctx.setBlocked()
+      if (onOpen) onOpen()
+    } else {
+      if (ctx?.setUnblocked) ctx.setUnblocked()
+      if (onClose) onClose()
+    }
   }, [active])
 
   // handles calculating correct position of content
   // on document events (or custom scroll if set)
   useEffect(() => {
-    if (active) {
-      window.addEventListener('resize', handleContentPosition, false)
-      window.addEventListener('scroll', handleContentPosition, false)
+    if (!active) return undefined
 
-      if (customScrollListener) {
-        customScrollListener.addEventListener(
-          'scroll',
-          handleContentPosition,
-          false
-        )
-      }
+    window.addEventListener('resize', handleContentPosition, false)
+    window.addEventListener('scroll', handleContentPosition, false)
+
+    if (hasCustomListener) {
+      customScrollListener.addEventListener(
+        'scroll',
+        handleContentPosition,
+        false
+      )
     }
 
     return () => {
       window.removeEventListener('resize', handleContentPosition, false)
       window.removeEventListener('scroll', handleContentPosition, false)
 
-      if (customScrollListener) {
+      if (hasCustomListener) {
         customScrollListener.removeEventListener(
           'scroll',
           handleContentPosition,
@@ -114,14 +129,15 @@ export default ({
   // make sure scrolling is blocked in case of modal windows or when
   // customScroll is set
   useEffect(() => {
-    const hasCustomListener = __BROWSER__ && customScrollListener
     const shouldSetOverflow = __BROWSER__ && type === 'modal' && document.body
 
     if (active) {
       if (hasCustomListener) {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = 'hidden'
-      } else if (shouldSetOverflow) {
+      }
+
+      if (shouldSetOverflow) {
         document.body.style.overflow = 'hidden'
       }
     }
@@ -130,39 +146,41 @@ export default ({
       if (hasCustomListener) {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = ''
-      } else if (shouldSetOverflow) {
+      }
+
+      if (shouldSetOverflow) {
         document.body.style.overflow = ''
       }
     }
   }, [active, type, customScrollListener])
 
-  // only when content is active
+  // only when content is active handle closing
   useEffect(() => {
-    if (active) {
-      window.addEventListener('scroll', handleMouseMove, false)
+    if (!active) return undefined
 
-      if (customScrollListener) {
-        customScrollListener.addEventListener('scroll', handleMouseMove, false)
-      }
+    window.addEventListener('scroll', handleVisibility, false)
 
-      if (closeOnEsc) {
-        window.addEventListener('keydown', handleEscKey)
-      }
+    if (hasCustomListener) {
+      customScrollListener.addEventListener('scroll', handleVisibility, false)
+    }
+
+    if (closeOnEsc) {
+      window.addEventListener('keydown', handleEscKey, false)
     }
 
     return () => {
-      window.removeEventListener('scroll', handleMouseMove, false)
+      window.removeEventListener('scroll', handleVisibility, false)
 
-      if (customScrollListener) {
+      if (hasCustomListener) {
         customScrollListener.removeEventListener(
           'scroll',
-          handleMouseMove,
+          handleVisibility,
           false
         )
       }
 
       if (closeOnEsc) {
-        window.removeEventListener('keydown', handleEscKey)
+        window.removeEventListener('keydown', handleEscKey, false)
       }
     }
   }, [active, customScrollListener])
@@ -170,24 +188,24 @@ export default ({
   useEffect(() => {
     // enable overlay manipulation only when the state is NOT blocked=true
     // nor in disabled state
-    if (!blocked && !disabled) {
-      if (
-        openOn === 'click' ||
-        closeOn === 'click' ||
-        closeOn === 'clickOnTrigger' ||
-        closeOn === 'clickOutsideContent'
-      ) {
-        window.addEventListener('click', handleVisibilityByEventType, false)
-      }
+    if (blocked || disabled) return undefined
 
-      if (openOn === 'hover' || closeOn === 'hover') {
-        window.addEventListener('mousemove', handleMouseMove, false)
-      }
+    if (
+      openOn === 'click' ||
+      closeOn === 'click' ||
+      closeOn === 'clickOnTrigger' ||
+      closeOn === 'clickOutsideContent'
+    ) {
+      window.addEventListener('click', handleClick, false)
+    }
+
+    if (openOn === 'hover' || closeOn === 'hover') {
+      window.addEventListener('mousemove', handleVisibility, false)
     }
 
     return () => {
-      window.removeEventListener('click', handleVisibilityByEventType, false)
-      window.removeEventListener('mousemove', handleMouseMove, false)
+      window.removeEventListener('click', handleClick, false)
+      window.removeEventListener('mousemove', handleVisibility, false)
     }
   }, [openOn, closeOn, blocked, disabled])
 
@@ -196,24 +214,20 @@ export default ({
       return ref.current.contains(e.target) || e.target === ref.current
     }
 
-    return undefined
+    return false
   }
 
   const isTrigger = isNodeOrChild(triggerRef)
   const isContent = isNodeOrChild(contentRef)
 
-  const showContent = useCallback(() => {
-    setActive(true)
-  }, [])
-
-  const hideContent = useCallback(() => {
-    setActive(false)
-  }, [])
-
   const calculateContentPosition = () => {
     if (!active) return
 
     if (!triggerRef.current || !contentRef.current) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Cannot access `ref` of trigger or content component.')
+      }
+
       return
     }
 
@@ -371,16 +385,11 @@ export default ({
   }
 
   const handleVisibilityByEventType = (e) => {
-    // e.preventDefault()
-
     if (!active) {
-      if (openOn === 'hover' && e.type === 'mousemove') {
-        if (isTrigger(e)) {
-          showContent()
-        }
-      }
-
-      if (openOn === 'click' && e.type === 'click') {
+      if (
+        (openOn === 'hover' && e.type === 'mousemove') ||
+        (openOn === 'click' && e.type === 'click')
+      ) {
         if (isTrigger(e)) {
           showContent()
         }
@@ -420,7 +429,13 @@ export default ({
     calculateContentPosition,
     throttleDelay
   )
-  const handleMouseMove = throttle(handleVisibilityByEventType, throttleDelay)
+
+  const handleClick = useCallback(handleVisibilityByEventType, [])
+
+  const handleVisibility = useCallback(
+    throttle(handleVisibilityByEventType, throttleDelay),
+    []
+  )
   const handleEscKey = (e: any) => {
     if (e.key === 'Escape') {
       hideContent()

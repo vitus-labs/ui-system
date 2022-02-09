@@ -1,7 +1,7 @@
 import React from 'react'
-import Element from '~/Element'
+import Element, { VLElement } from '~/Element'
 
-export const Inner = (props) => (
+export const Inner: VLElement = (props) => (
   <Element
     {...props}
     css={[
@@ -15,7 +15,7 @@ export const Inner = (props) => (
   />
 )
 
-export const Wrapper = (props) => (
+export const Wrapper: VLElement = (props) => (
   <Element
     gap={10}
     css={[

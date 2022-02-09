@@ -59,6 +59,9 @@ const component = forwardRef<Reference, Partial<Props>>(
       ? !props.dangerouslySetInnerHTML && tag && isWebFixNeeded(tag)
       : false
 
+    // eslint-disable-next-line no-nested-ternary
+    const asTag = __WEB__ ? (isInline ? 'span' : 'div') : undefined
+
     if (!needsFix || __NATIVE__) {
       return (
         <Styled
@@ -87,7 +90,7 @@ const component = forwardRef<Reference, Partial<Props>>(
         }}
       >
         <Styled
-          as={isInline ? 'span' : 'div'}
+          as={asTag}
           $childFix
           $element={{
             direction,

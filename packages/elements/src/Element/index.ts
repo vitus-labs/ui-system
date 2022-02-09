@@ -1,8 +1,8 @@
 import component from './component'
 import withEqualSizeBeforeAfter from './withEqualSizeBeforeAfter'
-import type { Props } from './types'
+import type { Props, VLElement } from './types'
 
 export { withEqualSizeBeforeAfter }
-export type { Props }
+export type { Props, VLElement }
 
 export default component

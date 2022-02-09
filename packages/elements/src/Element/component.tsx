@@ -2,17 +2,15 @@ import React, { forwardRef, useMemo } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import { Wrapper, Content } from '~/helpers'
-import type { VLForwardedComponent } from '~/types'
 import { isInlineElement, getShouldBeEmpty } from './utils'
+import type { VLElement } from './types'
 
-import type { Props } from './types'
-
-const defaultDirection = 'inline'
-const defaultContentDirection = 'rows'
+const defaultBeforeAfterDirection = 'inline'
+const defaultDirection = 'rows'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
-const component: VLForwardedComponent<Props> = forwardRef(
+const component: VLElement = forwardRef(
   (
     {
       innerRef,
@@ -36,15 +34,15 @@ const component: VLForwardedComponent<Props> = forwardRef(
       beforeContentCss,
       afterContentCss,
 
-      contentDirection = defaultContentDirection,
+      contentDirection = defaultDirection,
       contentAlignX = defaultAlignX,
       contentAlignY = defaultAlignY,
 
-      beforeContentDirection = defaultDirection,
+      beforeContentDirection = defaultBeforeAfterDirection,
       beforeContentAlignX = defaultAlignX,
       beforeContentAlignY = defaultAlignY,
 
-      afterContentDirection = defaultDirection,
+      afterContentDirection = defaultBeforeAfterDirection,
       afterContentAlignX = defaultAlignX,
       afterContentAlignY = defaultAlignY,
 
@@ -60,22 +58,6 @@ const component: VLForwardedComponent<Props> = forwardRef(
       (__WEB__ && tag && getShouldBeEmpty(tag))
 
     // --------------------------------------------------------
-    // common wrapper props
-    // --------------------------------------------------------
-    const WRAPPER_PROPS = {
-      ref: ref || innerRef,
-      extendCss: css,
-      tag,
-      block,
-      as: undefined, // reset styled-components `as` prop
-    }
-
-    // --------------------------------------------------------
-    // return simple/empty element like input or image etc.
-    // --------------------------------------------------------
-    if (shouldBeEmpty) return <Wrapper {...WRAPPER_PROPS} {...props} />
-
-    // --------------------------------------------------------
     // if not single element, calculate values
     // --------------------------------------------------------
     const isSimpleElement = !beforeContent && !afterContent
@@ -87,7 +69,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
     // --------------------------------------------------------
-    const calculateDirection = useMemo(() => {
+    const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
       let wrapperDirection: typeof direction = direction
       let wrapperAlignX: typeof alignX = alignX
       let wrapperAlignY: typeof alignY = alignY
@@ -113,33 +95,31 @@ const component: VLForwardedComponent<Props> = forwardRef(
       direction,
     ])
 
-    const { wrapperDirection, wrapperAlignX, wrapperAlignY } =
-      calculateDirection
+    // --------------------------------------------------------
+    // common wrapper props
+    // --------------------------------------------------------
+    const WRAPPER_PROPS = {
+      ref: ref || innerRef,
+      extendCss: css,
+      tag,
+      block,
+      direction: wrapperDirection,
+      alignX: wrapperAlignX,
+      alignY: wrapperAlignY,
+      as: undefined, // reset styled-components `as` prop
+    }
 
-    const beforeContentRenderOutput = useMemo(
-      () => renderContent(beforeContent),
-      [beforeContent]
-    )
+    // --------------------------------------------------------
+    // return simple/empty element like input or image etc.
+    // --------------------------------------------------------
+    if (shouldBeEmpty) {
+      return <Wrapper {...props} {...WRAPPER_PROPS} />
+    }
 
-    const afterContentRenderOutput = useMemo(
-      () => renderContent(afterContent),
-      [afterContent]
-    )
-
-    const contentRenderOutput = useMemo(
-      () => renderContent(CHILDREN),
-      [CHILDREN]
-    )
+    const contentRenderOutput = renderContent(CHILDREN)
 
     return (
-      <Wrapper
-        {...props}
-        {...WRAPPER_PROPS}
-        isInline={isInline}
-        direction={wrapperDirection}
-        alignX={wrapperAlignX}
-        alignY={wrapperAlignY}
-      >
+      <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
         {beforeContent && (
           <Content
             tag={SUB_TAG}
@@ -152,7 +132,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {beforeContentRenderOutput}
+            {renderContent(beforeContent)}
           </Content>
         )}
 
@@ -185,7 +165,7 @@ const component: VLForwardedComponent<Props> = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {afterContentRenderOutput}
+            {renderContent(afterContent)}
           </Content>
         )}
       </Wrapper>

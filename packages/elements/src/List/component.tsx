@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import Element, { Props as ElementProps } from '~/Element'
+import Element, { Props as ElementProps, VLElement } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
-import type { MergeTypes, VLForwardedComponent } from '~/types'
+import type { MergeTypes } from '~/types'
 
 export type Props = MergeTypes<
   [
@@ -17,7 +17,7 @@ export type Props = MergeTypes<
   ]
 >
 
-const component: VLForwardedComponent<Props> = forwardRef(
+const component: VLElement<Props> = forwardRef(
   ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 

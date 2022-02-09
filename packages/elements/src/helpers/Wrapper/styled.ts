@@ -20,7 +20,7 @@ const styles = ({ theme: t, css }) => css`
   `};
 
   ${__WEB__ &&
-  t.contentAlignY === 'block' &&
+  t.alignY === 'block' &&
   css`
     height: 100%;
   `};
@@ -39,13 +39,7 @@ const styles = ({ theme: t, css }) => css`
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
-const platformStyles = __WEB__
-  ? config.css`
-    box-sizing: border-box;
-  `
-  : config.css`
-    display: flex;
-  `
+const platformStyles = __WEB__ ? 'box-sizing: border-box;' : 'display: flex;'
 
 export default config.styled(config.component)`
   position: relative;

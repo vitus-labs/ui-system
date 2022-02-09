@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+import type { ReactElement, ForwardedRef } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import type {
   AlignX,
@@ -8,6 +10,7 @@ import type {
   Responsive,
   ExtendCss,
   InnerRef,
+  VLStatic,
 } from '~/types'
 
 export type Props = Partial<{
@@ -40,3 +43,9 @@ export type Props = Partial<{
   beforeContentCss: ExtendCss
   afterContentCss: ExtendCss
 }>
+
+export type VLElement<P extends Record<string, unknown> = {}> = {
+  <T extends HTMLTags>(
+    props: { tag?: T } & Props & P & { ref?: ForwardedRef<any> }
+  ): ReactElement | null
+} & VLStatic
