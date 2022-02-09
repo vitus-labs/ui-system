@@ -81,8 +81,6 @@ export default ({
     handleActive(false)
   }, [])
 
-  const hasCustomListener = __BROWSER__ && !!customScrollListener
-
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
   useEffect(() => {
@@ -104,7 +102,7 @@ export default ({
     window.addEventListener('resize', handleContentPosition, false)
     window.addEventListener('scroll', handleContentPosition, false)
 
-    if (hasCustomListener) {
+    if (customScrollListener) {
       customScrollListener.addEventListener(
         'scroll',
         handleContentPosition,
@@ -116,7 +114,7 @@ export default ({
       window.removeEventListener('resize', handleContentPosition, false)
       window.removeEventListener('scroll', handleContentPosition, false)
 
-      if (hasCustomListener) {
+      if (customScrollListener) {
         customScrollListener.removeEventListener(
           'scroll',
           handleContentPosition,
@@ -132,7 +130,7 @@ export default ({
     const shouldSetOverflow = __BROWSER__ && type === 'modal' && document.body
 
     if (active) {
-      if (hasCustomListener) {
+      if (customScrollListener) {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = 'hidden'
       }
@@ -140,10 +138,19 @@ export default ({
       if (shouldSetOverflow) {
         document.body.style.overflow = 'hidden'
       }
+    } else {
+      if (customScrollListener) {
+        // eslint-disable-next-line no-param-reassign
+        customScrollListener.style.overflow = ''
+      }
+
+      if (shouldSetOverflow) {
+        document.body.style.overflow = ''
+      }
     }
 
     return () => {
-      if (hasCustomListener) {
+      if (customScrollListener) {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = ''
       }
@@ -160,7 +167,7 @@ export default ({
 
     window.addEventListener('scroll', handleVisibility, false)
 
-    if (hasCustomListener) {
+    if (customScrollListener) {
       customScrollListener.addEventListener('scroll', handleVisibility, false)
     }
 
@@ -171,7 +178,7 @@ export default ({
     return () => {
       window.removeEventListener('scroll', handleVisibility, false)
 
-      if (hasCustomListener) {
+      if (customScrollListener) {
         customScrollListener.removeEventListener(
           'scroll',
           handleVisibility,
@@ -207,7 +214,7 @@ export default ({
       window.removeEventListener('click', handleClick, false)
       window.removeEventListener('mousemove', handleVisibility, false)
     }
-  }, [openOn, closeOn, blocked, disabled])
+  }, [openOn, closeOn, blocked, disabled, active])
 
   const isNodeOrChild = (ref) => (e) => {
     if (e && e.target && ref.current) {
@@ -385,7 +392,6 @@ export default ({
   }
 
   const handleVisibilityByEventType = (e) => {
-    console.log('handleVisibilityByEventType')
     if (!active) {
       if (
         (openOn === 'hover' && e.type === 'mousemove') ||
@@ -398,11 +404,6 @@ export default ({
     }
 
     if (active) {
-      console.log('test active')
-      console.log(e.type)
-      console.log('closeOn', closeOn)
-      console.log('openOn', openOn)
-
       if (closeOn === 'hover' && e.type === 'mousemove') {
         if (!isTrigger(e) && !isContent(e)) {
           hideContent()
