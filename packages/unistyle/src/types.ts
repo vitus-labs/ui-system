@@ -15,7 +15,6 @@ export type Color =
   | `rgba(${number}, ${number}, ${number}, ${number})`
   | `hsl(${number}, ${number}%, ${number}%)`
   | `hsla(${number}, ${number}%, ${number}%, ${number})`
-  | BrowserColors
   | Defaults
 
 export type BrowserColors =
