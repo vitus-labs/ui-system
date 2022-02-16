@@ -1,6 +1,7 @@
 import { value as unitValue } from '~/units'
 import type { Css } from '~/types'
 import type { Theme } from './types'
+import { spacingShorthand } from '~/styles/shorthands'
 
 export type { Theme as StylesTheme }
 
@@ -54,17 +55,25 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* ------------------------------------------------- */
     /* SPACING attributes */
     /* ------------------------------------------------- */
-    margin: ${value(t.margin)};
-    margin-top: ${value(t.marginTop, t.marginY)};
-    margin-bottom: ${value(t.marginBottom, t.marginY)};
-    margin-left: ${value(t.marginLeft, t.marginX)};
-    margin-right: ${value(t.marginRight, t.marginX)};
+    ${spacingShorthand('margin')({
+      top: t.marginTop,
+      left: t.marginLeft,
+      bottom: t.marginBottom,
+      right: t.marginRight,
+      x: t.marginX,
+      y: t.marginY,
+      full: t.margin,
+    })};
 
-    padding: ${value(t.padding)};
-    padding-top: ${value(t.paddingTop, t.paddingY)};
-    padding-bottom: ${value(t.paddingBottom, t.paddingY)};
-    padding-left: ${value(t.paddingLeft, t.paddingX)};
-    padding-right: ${value(t.paddingRight, t.paddingX)};
+    ${spacingShorthand('padding')({
+      top: t.paddingTop,
+      left: t.paddingLeft,
+      bottom: t.paddingBottom,
+      right: t.paddingRight,
+      x: t.paddingX,
+      y: t.paddingY,
+      full: t.padding,
+    })};
 
     /* ------------------------------------------------- */
     /* FLEX attributes */

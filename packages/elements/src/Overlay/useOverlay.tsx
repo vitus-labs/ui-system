@@ -32,7 +32,7 @@ export type UseOverlayProps = {
   offsetX?: number
   offsetY?: number
   throttleDelay?: number
-  customScrollListener?: HTMLElement
+  customScrollListener?: HTMLElement | null
   closeOnEsc?: boolean
   disabled?: boolean
   onOpen?: () => void

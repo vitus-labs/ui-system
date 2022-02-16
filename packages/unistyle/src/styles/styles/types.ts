@@ -1,11 +1,10 @@
 import { config } from '@vitus-labs/core'
+import { Value, Defaults, Color } from '~/types'
 
-type Value = 'auto' | 'inital' | 'inherit' | number | string
-type Defaults = 'initial' | 'inherit'
-type Length = number | string
+type BorderColor = Color | Defaults
 
-type BorderColor = 'transparent' | string | Defaults
 type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
+
 type TextDecoration =
   | 'none'
   | 'underline'
@@ -108,7 +107,7 @@ type Cursor =
   | 'zoom-out'
   | Defaults
 
-export type ITheme = Partial<{
+export type ITheme = {
   inset: string
   top: Value
   bottom: Value
@@ -169,7 +168,7 @@ export type ITheme = Partial<{
   background: string
   backgroundAttachment: 'scroll' | 'fixed' | Defaults
   backgroundClip: 'border-box' | 'padding-box' | 'content-box' | Defaults
-  backgroundColor: string | 'transparent' | Defaults
+  backgroundColor: Color
   backgroundImage: string | 'none' | Defaults
   backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | Defaults
   backgroundPosition: any
@@ -226,7 +225,7 @@ export type ITheme = Partial<{
   clear: 'left' | 'right' | 'auto' | 'both' | 'none' | Defaults
   clip: 'shape' | 'auto' | Defaults
   clipPath: string
-  color: string
+  color: Color
   content:
     | 'normal'
     | 'none'
@@ -314,7 +313,7 @@ export type ITheme = Partial<{
     | 'space-around'
   keyframe: any
   letterSpacing: 'normal' | Value | Defaults
-  lineHeight: 'normal' | Defaults | Length
+  lineHeight: Value | 'normal' | 'revert' | 'unset' | Defaults
   listStyle: string
   listStyleImage: 'none' | string | Defaults
   listStylePosition: string
@@ -425,8 +424,8 @@ export type ITheme = Partial<{
   fullScreen: boolean
 
   extendCss: ReturnType<typeof config.css> | string
-}>
+}
 
 export type Theme = {
-  [I in keyof ITheme]: ITheme[I] | null
+  [I in keyof ITheme]: ITheme[I] | null | undefined
 }

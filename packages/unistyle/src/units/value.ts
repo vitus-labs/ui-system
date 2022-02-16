@@ -1,3 +1,4 @@
+import type { Units } from '~/types'
 import normalizeUnit from './normalizeUnit'
 
 type GetValueOf = (...values: Array<unknown>) => number | string | unknown
@@ -7,7 +8,7 @@ const getValueOf: GetValueOf = (...values) =>
 export type Value = (
   values: Array<unknown>,
   rootSize?: number,
-  outputUnit?: 'px' | 'rem' | '%' | string
+  outputUnit?: Units
 ) => string | number
 const value: Value = (values, rootSize, outputUnit) => {
   const param = getValueOf(...values)

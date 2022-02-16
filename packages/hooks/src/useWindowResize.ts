@@ -23,12 +23,12 @@ const useWindowResize: UseWindowResize = (
 
   const [windowSize, setWindowSize] = useState(getSize)
 
+  const handleResize = throttle(() => {
+    setWindowSize(getSize())
+  }, throttleDelay)
+
   useEffect(() => {
     if (__SERVER__) return undefined
-
-    const handleResize = throttle(() => {
-      setWindowSize(getSize())
-    }, throttleDelay)
 
     window.addEventListener('resize', handleResize, false)
 

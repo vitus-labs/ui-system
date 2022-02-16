@@ -1,0 +1,57 @@
+{
+  "name": "@vitus-labs/hooks",
+  "version": "0.23.0",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "main": "lib/vitus-labs-hooks.js",
+  "umd:main": "lib/vitus-labs-hooks.umd.js",
+  "module": "lib/vitus-labs-hooks.module.js",
+  "typings": "lib/index.d.ts",
+  "browser": {
+    "./lib/vitus-labs-hooks.js": "./lib/vitus-labs-hooks.js",
+    "./lib/vitus-labs-hooks.module.js": "./lib/vitus-labs-hooks.browser.js"
+  },
+  "unpkg": "lib/vitus-labs-hooks.umd.min.js",
+  "jsnext:main": "lib/vitus-labs-hooks.module.js",
+  "react-native": "lib/vitus-labs-hooks.native.js",
+  "files": [
+    "lib/"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/hooks",
+  "description": "Universal styles",
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "peerDependencies": {
+    "@vitus-labs/core": "^0.13.4",
+    "react": ">= 16.8"
+  },
+  "devDependencies": {
+    "@vitus-labs/core": "^0.23.0",
+    "@vitus-labs/tools-babel": "^0.26.0",
+    "@vitus-labs/tools-rollup": "^0.26.0",
+    "@vitus-labs/tools-typescript": "^0.26.0"
+  }
+}

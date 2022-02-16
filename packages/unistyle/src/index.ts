@@ -1,11 +1,6 @@
 import Provider, { context, TProvider } from '~/context'
 
 // --------------------------------------------------------
-// REACT HOOKS
-// --------------------------------------------------------
-import { useWindowResize, UseWindowResize } from '~/hooks'
-
-// --------------------------------------------------------
 // RESPONSIVE UTILITIES
 // --------------------------------------------------------
 import {
@@ -58,7 +53,6 @@ import {
 export type {
   TProvider,
   Breakpoints,
-  UseWindowResize,
   CreateMediaQueries,
   MakeItResponsive,
   MakeItResponsiveStyles,
@@ -81,7 +75,6 @@ export {
   breakpoints,
   Provider,
   context,
-  useWindowResize,
   makeItResponsive,
   sortBreakpoints,
   createMediaQueries,
