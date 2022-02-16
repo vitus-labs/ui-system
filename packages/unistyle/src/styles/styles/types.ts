@@ -108,7 +108,7 @@ type Cursor =
   | Defaults
 
 export type ITheme = {
-  inset: string
+  inset: Value
   top: Value
   bottom: Value
   left: Value
@@ -138,7 +138,6 @@ export type ITheme = {
   paddingRight: Value
   paddingX: Value
   paddingY: Value
-
   alignContent:
     | 'center'
     | 'flex-start'
