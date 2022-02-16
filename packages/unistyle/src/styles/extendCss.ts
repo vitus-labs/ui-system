@@ -2,8 +2,8 @@ import { config } from '@vitus-labs/core'
 
 export type ExtendCss = (
   styles:
-    | string
     | ((css: typeof config.css) => ReturnType<typeof css>)
+    | string
     | null
     | undefined
 ) => string | ReturnType<typeof config.css>

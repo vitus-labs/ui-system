@@ -55,7 +55,10 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* ------------------------------------------------- */
     /* SPACING attributes */
     /* ------------------------------------------------- */
-    ${spacingShorthand('margin')({
+    ${spacingShorthand(
+      'margin',
+      rootSize
+    )({
       top: t.marginTop,
       left: t.marginLeft,
       bottom: t.marginBottom,
@@ -65,7 +68,10 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       full: t.margin,
     })};
 
-    ${spacingShorthand('padding')({
+    ${spacingShorthand(
+      'padding',
+      rootSize
+    )({
       top: t.paddingTop,
       left: t.paddingLeft,
       bottom: t.paddingBottom,
