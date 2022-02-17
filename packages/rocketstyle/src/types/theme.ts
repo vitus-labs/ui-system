@@ -1,8 +1,8 @@
 import { THEME_MODES } from '~/constants/reservedKeys'
 import type { Css } from './styles'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ThemeDefault = {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ThemeDefault {}
 
 export type ThemeModeKeys = keyof typeof THEME_MODES
 

@@ -1,7 +1,7 @@
 import { config } from '@vitus-labs/core'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type StylesDefault = {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface StylesDefault {}
 
 export type Css = typeof config.css
 export type Style = ReturnType<Css>
