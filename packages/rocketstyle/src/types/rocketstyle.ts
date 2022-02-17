@@ -26,20 +26,20 @@ export type RocketComponent<
   // theme
   T extends TObj | unknown = ThemeDefault,
   // custom theme properties
-  CT extends TObj | unknown = StylesDefault,
+  CSS extends TObj | unknown = StylesDefault,
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
   UB extends boolean = boolean,
   // dimension key props
   DKP extends TDKP = TDKP
-> = IRocketComponent<A, OA, EA, T, CT, D, UB, DKP> & {
+> = IRocketComponent<A, OA, EA, T, CSS, D, UB, DKP> & {
   [I in keyof D]: <
     K extends DimensionValue = D[I],
-    P extends DimensionCallbackParam<T, CT> = DimensionCallbackParam<T, CT>
+    P extends DimensionCallbackParam<T, CSS> = DimensionCallbackParam<T, CSS>
   >(
     param: P
-  ) => P extends DimensionCallbackParam<T, CT>
+  ) => P extends DimensionCallbackParam<T, CSS>
     ? RocketComponent<
         MergeTypes<
           [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
@@ -47,12 +47,12 @@ export type RocketComponent<
         OA,
         EA,
         T,
-        CT,
+        CSS,
         D,
         UB,
         DimensionProps<K, D, P, DKP>
       >
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 }
 
 /**
@@ -75,8 +75,8 @@ export interface IRocketComponent<
   EA extends TObj = {},
   // theme
   T extends TObj | unknown = ThemeDefault,
-  // custom theme properties
-  CT extends TObj | unknown = StylesDefault,
+  // custom style properties
+  CSS extends TObj | unknown = StylesDefault,
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
@@ -109,12 +109,12 @@ export interface IRocketComponent<
         ExtractProps<NC>,
         EA,
         T,
-        CT,
+        CSS,
         D,
         UB,
         DKP
       >
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   // ATTRS chaining method
   // --------------------------------------------------------
@@ -122,7 +122,7 @@ export interface IRocketComponent<
    * @param A    Generic _props_ params.
    * @param OA   Origin component props params.
    * @param T    Theme passed via context.
-   * @param CT   Custom theme accepted by styles.
+   * @param CSS  Custom styles accepted by styles.
    * @param D    Dimensions to be used for defining component states.
    * @param UB   Use booleans value
    * @param DKP  Dimensions key props.
@@ -137,38 +137,38 @@ export interface IRocketComponent<
         OA,
         MergeTypes<[EA, P]>,
         T,
-        CT,
+        CSS,
         D,
         UB,
         DKP
       >
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   // THEME chaining method
   // --------------------------------------------------------
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
-      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<MergeTypes<[CT, P]>, T>
-      : Partial<CT> | ThemeCb<CT, T>
+      ? Partial<MergeTypes<[CSS, P]>> | ThemeCb<MergeTypes<[CSS, P]>, T>
+      : Partial<CSS> | ThemeCb<CSS, T>
   ) => P extends TObj
-    ? RocketComponent<A, OA, EA, T, MergeTypes<[CT, P]>, D, UB, DKP>
-    : RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+    ? RocketComponent<A, OA, EA, T, MergeTypes<[CSS, P]>, D, UB, DKP>
+    : RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
-  styles: (param: StylesCb) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  styles: (param: StylesCb) => RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   // COMPOSE chaining method
   // --------------------------------------------------------
   compose: (
     param: Record<string, GenericHoc | null | undefined | false>
-  ) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  ) => RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   // STATICS chaining method + its output + other statics
   // --------------------------------------------------------
   statics: (
     param: Record<string, any>
-  ) => RocketComponent<A, OA, EA, T, CT, D, UB, DKP>
+  ) => RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
 
   is: Record<string, any>
 

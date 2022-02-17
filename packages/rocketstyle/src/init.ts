@@ -13,8 +13,10 @@ import defaultDimensions from '~/constants/defaultDimensions'
 import type { ElementType } from '~/types/utils'
 import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
 import type { StyleComponent } from '~/types/styleComponent'
+import { ThemeDefault } from '~/types/theme'
+import { StylesDefault } from '~/types/styles'
 
-export type Rocketstyle = <T = any, CT = any>() => <
+export type Rocketstyle = <T = ThemeDefault, CSS = StylesDefault>() => <
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = true
 >({
@@ -29,7 +31,7 @@ export type Rocketstyle = <T = any, CT = any>() => <
 }: {
   name: string
   component: C
-}) => ReturnType<StyleComponent<C, T, CT, D, UB>>
+}) => ReturnType<StyleComponent<C, T, CSS, D, UB>>
 
 const rocketstyle: Rocketstyle =
   () =>

@@ -11,7 +11,7 @@ import type { RocketComponent } from './rocketstyle'
 export type StyleComponent<
   C extends ElementType,
   T extends Record<string, unknown> | unknown = unknown,
-  CT extends OptionStyles | unknown = unknown,
+  CSS extends OptionStyles | unknown = unknown,
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
 > = (props: Partial<Configuration<C, D>>) => RocketComponent<
@@ -24,7 +24,7 @@ export type StyleComponent<
   // set default extending props
   DefaultProps,
   T,
-  CT,
+  CSS,
   D,
   UB,
   // eslint-disable-next-line @typescript-eslint/ban-types
