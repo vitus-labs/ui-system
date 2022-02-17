@@ -1,5 +1,8 @@
 import { config } from '@vitus-labs/core'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type StylesDefault = {}
+
 export type Css = typeof config.css
 export type Style = ReturnType<Css>
 export type OptionStyles = Array<(css: Css) => ReturnType<Css>>
