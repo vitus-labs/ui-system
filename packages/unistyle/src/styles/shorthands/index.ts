@@ -1,5 +1,6 @@
+import insetShorthand, { InsetShorthand } from './insetShorthand'
 import spacingShorthand, { SpacingShorthand } from './spacingShorthand'
 
-export type { SpacingShorthand }
+export type { InsetShorthand, SpacingShorthand }
 
-export { spacingShorthand }
+export { insetShorthand, spacingShorthand }

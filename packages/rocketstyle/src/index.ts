@@ -24,9 +24,14 @@ import type { AttrsCb } from '~/types/attrs'
 import type { ThemeCb, ThemeModeKeys } from '~/types/theme'
 import type { GenericHoc } from '~/types/hoc'
 import type { DefaultProps } from '~/types/configuration'
-import type { RocketComponent, IRocketComponent } from '~/types/rocketstyle'
+import type {
+  RocketStyleComponent,
+  RocketComponent,
+  IRocketComponent,
+} from '~/types/rocketstyle'
 
 export type {
+  RocketStyleComponent,
   RocketComponent,
   IRocketComponent,
   Rocketstyle,

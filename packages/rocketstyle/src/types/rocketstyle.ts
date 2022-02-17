@@ -332,3 +332,118 @@ export interface IRocketComponent<
   // arguments: never
   // defaultProps: never
 }
+
+export interface RocketStyleComponent<
+  // dimensions
+  D extends Dimensions,
+  // use booleans
+  UB extends boolean = boolean,
+  // theme
+  T extends TObj | unknown = unknown,
+  // custom theme properties
+  CT extends TObj | unknown = unknown,
+  // original component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  OA extends TObj = {},
+  // attrs
+  A extends TObj = OA & DefaultProps,
+  // extended component props
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  EA extends TObj = {},
+  // dimension key props
+  DKP extends TDKP = TDKP
+> extends ForwardRefExoticComponent<A> {
+  // CONFIG chaining method
+  // --------------------------------------------------------
+  config: <NC extends ElementType | unknown = unknown>({
+    name,
+    component: NC,
+    provider,
+    consumer,
+    DEBUG,
+    inversed,
+    passProps,
+  }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
+    ? RocketStyleComponent<
+        D,
+        UB,
+        T,
+        CT,
+        ExtractProps<NC>,
+        MergeTypes<
+          [ExtractProps<NC>, DefaultProps, ExtractDimensionProps<D, DKP, UB>]
+        >,
+        DKP
+      >
+    : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  // ATTRS chaining method
+  // --------------------------------------------------------
+  /**
+   * @param A    Generic _props_ params.
+   * @param OA   Origin component props params.
+   * @param T    Theme passed via context.
+   * @param CT   Custom theme accepted by styles.
+   * @param D    Dimensions to be used for defining component states.
+   * @param UB   Use booleans value
+   * @param DKP  Dimensions key props.
+   */
+  attrs: <P extends TObj | unknown = unknown>(
+    param: P extends TObj
+      ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, T>
+      : Partial<A> | AttrsCb<A, T>
+  ) => P extends TObj
+    ? RocketStyleComponent<
+        D,
+        UB,
+        T,
+        CT,
+        OA,
+        MergeTypes<[OA, EA, P, ExtractDimensionProps<D, DKP, UB>]>,
+        MergeTypes<[EA, P]>,
+        DKP
+      >
+    : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  // THEME chaining method
+  // --------------------------------------------------------
+  theme: <P extends TObj | unknown = unknown>(
+    param: P extends TObj
+      ? Partial<MergeTypes<[CT, P]>> | ThemeCb<MergeTypes<[CT, P]>, T>
+      : Partial<CT> | ThemeCb<CT, T>
+  ) => P extends TObj
+    ? RocketStyleComponent<D, UB, T, MergeTypes<[CT, P]>, OA, A, EA, DKP>
+    : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  // STYLES chaining method
+  // --------------------------------------------------------
+  styles: (
+    param: StylesCb
+  ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  // COMPOSE chaining method
+  // --------------------------------------------------------
+  compose: (
+    param: Record<string, GenericHoc | null | undefined | false>
+  ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  // STATICS chaining method + its output + other statics
+  // --------------------------------------------------------
+  statics: (
+    param: Record<string, any>
+  ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
+
+  is: Record<string, any>
+
+  getStaticDimensions: (theme: TObj) => {
+    dimensions: TObj
+    useBooleans: boolean
+    multiKeys: TObj
+  }
+
+  getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
+
+  readonly $$rocketstyle: DKP
+  readonly IS_ROCKETSTYLE: true
+  readonly displayName: string
+}

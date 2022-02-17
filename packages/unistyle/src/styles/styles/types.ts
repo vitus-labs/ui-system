@@ -109,6 +109,8 @@ type Cursor =
 
 export type ITheme = {
   inset: Value
+  insetX: Value
+  insetY: Value
   top: Value
   bottom: Value
   left: Value

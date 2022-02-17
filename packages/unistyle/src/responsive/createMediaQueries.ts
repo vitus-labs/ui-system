@@ -2,11 +2,7 @@ export type CreateMediaQueries = <
   B,
   R extends number,
   C extends (...args: any) => any
->({
-  breakpoints,
-  rootSize,
-  css,
-}: {
+>(props: {
   breakpoints: B
   rootSize: R
   css: C
@@ -38,6 +34,6 @@ const createMediaQueries: CreateMediaQueries = ({
     }
 
     return result
-  }, {} as Record<keyof typeof breakpoints, ReturnType<typeof css>>)
+  }, {} as { [I in keyof typeof breakpoints]: ReturnType<typeof css> })
 
 export default createMediaQueries
