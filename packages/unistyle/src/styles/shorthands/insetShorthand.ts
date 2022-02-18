@@ -64,19 +64,19 @@ const insetShorthand: InsetShorthand =
 
     const [t, r, b, l] = spacing
 
-    if (spacing.every((val, _, arr) => isValidValue(val) && val === arr[0])) {
-      return `inset: ${value(t)};`
-    }
+    if (spacing.every((val) => isValidValue(val))) {
+      if (spacing.every((val, _, arr) => val === arr[0])) {
+        return `inset: ${value(t)};`
+      }
 
-    if (t === b && r === l) {
-      return `inset: ${value(t)} ${value(r)};`
-    }
+      if (t === b && r === l) {
+        return `inset: ${value(t)} ${value(r)};`
+      }
 
-    if (t && r === l && b) {
-      return `inset: ${value(t)} ${value(r)} ${value(b)};`
-    }
+      if (t && r === l && b) {
+        return `inset: ${value(t)} ${value(r)} ${value(b)};`
+      }
 
-    if (spacing.every((val) => !!val)) {
       return `inset: ${value(t)} ${value(r)} ${value(b)} ${value(l)};`
     }
 

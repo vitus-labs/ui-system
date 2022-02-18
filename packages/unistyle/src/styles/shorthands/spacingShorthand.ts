@@ -65,19 +65,19 @@ const spacingShorthand: SpacingShorthand =
 
     const [t, r, b, l] = spacing
 
-    if (spacing.every((val, _, arr) => isValidValue(val) && val === arr[0])) {
-      return `${property}: ${value(t)};`
-    }
+    if (spacing.every((val) => isValidValue(val))) {
+      if (spacing.every((val, _, arr) => val === arr[0])) {
+        return `${property}: ${value(t)};`
+      }
 
-    if (t === b && r === l) {
-      return `${property}: ${value(t)} ${value(r)};`
-    }
+      if (t === b && r === l) {
+        return `${property}: ${value(t)} ${value(r)};`
+      }
 
-    if (t && r === l && b) {
-      return `${property}: ${value(t)} ${value(r)} ${value(b)};`
-    }
+      if (t && r === l && b) {
+        return `${property}: ${value(t)} ${value(r)} ${value(b)};`
+      }
 
-    if (spacing.every((val) => !!val)) {
       return `${property}: ${value(t)} ${value(r)} ${value(b)} ${value(l)};`
     }
 
