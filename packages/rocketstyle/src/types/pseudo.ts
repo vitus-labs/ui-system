@@ -1,3 +1,5 @@
+import type { FocusEvent, MouseEvent } from 'react'
+
 export type MouseAction = (event?: MouseEvent) => void
 export type FocusAction = (event?: FocusEvent) => void
 
