@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import type { MergeTypes, ExtractProps, ElementType, TObj } from './utils'
-import type {
-  Dimensions,
-  DefaultDimensions,
-  ExtractDimensionAttrsKeys,
-} from './dimensions'
-import type { DefaultProps, Configuration } from './configuration'
+import type { ExtractProps, ElementType, TObj } from './utils'
+import type { Dimensions, DefaultDimensions } from './dimensions'
+import type { Configuration } from './configuration'
 import type { RocketComponent } from './rocketstyle'
 
 export type StyleComponent<
@@ -15,14 +11,10 @@ export type StyleComponent<
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
 > = (props: Partial<Configuration<C, D>>) => RocketComponent<
-  // extract component props + add default rocketstyle props
-  MergeTypes<
-    [Omit<ExtractProps<C>, ExtractDimensionAttrsKeys<D>>, DefaultProps]
-  >,
   // keep original component props + extract dimension props
   ExtractProps<C>,
   // set default extending props
-  DefaultProps,
+  {},
   T,
   CSS,
   D,
