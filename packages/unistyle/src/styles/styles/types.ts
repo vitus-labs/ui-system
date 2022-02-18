@@ -1,6 +1,8 @@
 import { config } from '@vitus-labs/core'
 import { Value, Defaults, Color } from '~/types'
 
+type PrimitiveValue = string | number
+
 type BorderColor = Color | Defaults
 
 type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
@@ -109,6 +111,8 @@ type Cursor =
 
 export type ITheme = {
   inset: Value
+  insetX: Value
+  insetY: Value
   top: Value
   bottom: Value
   left: Value
@@ -138,6 +142,7 @@ export type ITheme = {
   paddingRight: Value
   paddingX: Value
   paddingY: Value
+  gap: Value
   alignContent:
     | 'center'
     | 'flex-start'

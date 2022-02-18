@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
@@ -10,11 +11,11 @@ import {
 import { ALL_RESERVED_KEYS } from '~/constants/reservedKeys'
 import defaultDimensions from '~/constants/defaultDimensions'
 
-import type { ElementType } from '~/types/utils'
+import type { ElementType, TObj } from '~/types/utils'
 import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
 import type { StyleComponent } from '~/types/styleComponent'
 
-export type Rocketstyle = <T = any, CT = any>() => <
+export type Rocketstyle = <T extends TObj = {}, CSS extends TObj = {}>() => <
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = true
 >({
@@ -29,7 +30,7 @@ export type Rocketstyle = <T = any, CT = any>() => <
 }: {
   name: string
   component: C
-}) => ReturnType<StyleComponent<C, T, CT, D, UB>>
+}) => ReturnType<StyleComponent<C, T, CSS, D, UB>>
 
 const rocketstyle: Rocketstyle =
   () =>

@@ -1,4 +1,4 @@
-import React, { ReactNode, FC, useContext, ComponentType } from 'react'
+import React, { useContext, ReactNode, FC, ComponentType } from 'react'
 import { Provider as CoreProvider, context } from '@vitus-labs/core'
 
 type Theme = {
@@ -15,39 +15,18 @@ export type TProvider = {
   provider?: ComponentType<any>
 }
 
-const Provider: FC<TProvider> = ({
-  theme,
-  mode,
-  children,
-  inversed,
-  provider: RocketstyleProvider = CoreProvider,
-}) => {
-  if (inversed) {
-    const {
-      provider: InnerProvider,
-      mode: ctxMode,
-      ...ctx
-    } = useContext<TProvider>(context as any)
+const Provider: FC<TProvider> = ({ provider = CoreProvider, ...props }) => {
+  const ctx = useContext<TProvider>(context as any)
 
-    const isDark = ctxMode === 'dark'
-    const inversedTheme = isDark ? 'light' : 'dark'
+  const {
+    theme,
+    mode,
+    inversed,
+    provider: RocketstyleProvider,
+    children,
+  } = { ...props, ...ctx, provider }
 
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    if (!InnerProvider) return <>{children}</>
-
-    return (
-      <InnerProvider
-        mode={inversedTheme}
-        isDark={isDark}
-        isLight={!isDark}
-        {...ctx}
-      >
-        {children}
-      </InnerProvider>
-    )
-  }
-
-  const isDark = mode === 'dark'
+  const isDark = inversed ? mode !== 'dark' : mode === 'dark'
 
   return (
     <RocketstyleProvider
@@ -55,7 +34,7 @@ const Provider: FC<TProvider> = ({
       isDark={isDark}
       isLight={!isDark}
       theme={theme}
-      provider={RocketstyleProvider}
+      provider={provider}
     >
       {children}
     </RocketstyleProvider>

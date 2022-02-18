@@ -17,4 +17,4 @@ export type PseudoState = {
   pressed: boolean
 }
 
-export type PseudoProps = Partial<PseudoActions & PseudoState>
+export type PseudoProps = Partial<PseudoState & PseudoActions>

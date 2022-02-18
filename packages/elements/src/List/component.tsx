@@ -1,13 +1,12 @@
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import Element, { Props as ElementProps, VLElement } from '~/Element'
+import Element, { VLElement } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
 import type { MergeTypes } from '~/types'
 
 export type Props = MergeTypes<
   [
-    ElementProps,
     IteratorProps,
     {
       rootElement?: boolean

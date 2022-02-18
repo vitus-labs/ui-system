@@ -1,12 +1,17 @@
 import { THEME_MODES } from '~/constants/reservedKeys'
 import type { Css } from './styles'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ThemeDefault {}
+
+export type Theme<T> = T extends unknown ? ThemeDefault : ThemeDefault & T
+
 export type ThemeModeKeys = keyof typeof THEME_MODES
 
 export type ThemeMode = <A, B>(light: A, dark: B) => A | B
 
-export type ThemeCb<CT, T> = (
+export type ThemeCb<CSS, T> = (
   theme: T,
   mode: ThemeMode,
   css: Css
-) => Partial<CT>
+) => Partial<CSS>

@@ -1,7 +1,7 @@
+import { insetShorthand, spacingShorthand } from '~/styles/shorthands'
 import { value as unitValue } from '~/units'
 import type { Css } from '~/types'
 import type { Theme } from './types'
-import { spacingShorthand } from '~/styles/shorthands'
 
 export type { Theme as StylesTheme }
 
@@ -38,11 +38,15 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     box-sizing: ${t.boxSizing};
     float: ${t.float};
 
-    inset: ${t.inset};
-    top: ${value(t.top, t.positionY)};
-    bottom: ${value(t.bottom, t.positionY)};
-    left: ${value(t.left, t.positionX)};
-    right: ${value(t.right, t.positionX)};
+    ${insetShorthand(rootSize)({
+      top: t.top,
+      left: t.left,
+      bottom: t.bottom,
+      right: t.right,
+      x: t.insetX,
+      y: t.insetY,
+      full: t.inset,
+    })}
 
     width: ${value(t.width, t.size)};
     min-width: ${value(t.minWidth, t.minSize)};
@@ -51,6 +55,8 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     height: ${value(t.height, t.size)};
     min-height: ${value(t.minHeight, t.minSize)};
     max-height: ${value(t.maxHeight, t.maxSize)};
+
+    gap: ${value(t.gap)};
 
     /* ------------------------------------------------- */
     /* SPACING attributes */

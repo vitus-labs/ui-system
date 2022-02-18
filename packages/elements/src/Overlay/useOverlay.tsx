@@ -85,14 +85,20 @@ export default ({
   // + calculate correct position when an Overlay is opened
   useEffect(() => {
     if (active) {
-      calculateContentPosition()
       if (ctx?.setBlocked) ctx.setBlocked()
       if (onOpen) onOpen()
     } else {
       if (ctx?.setUnblocked) ctx.setUnblocked()
       if (onClose) onClose()
     }
-  }, [active])
+  }, [active, onOpen, onClose])
+
+  // calculate position on every position change state
+  useEffect(() => {
+    if (active) {
+      calculateContentPosition()
+    }
+  }, [innerAlign, innerAlignX, innerAlignY])
 
   // handles calculating correct position of content
   // on document events (or custom scroll if set)

@@ -214,25 +214,17 @@ const component: FC<Props> & Static = (props: Props) => {
     // render props component + data
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      const clearData = useMemo(
-        () => data.filter((item) => item !== null && item !== undefined),
-        [data]
+      const clearData = data.filter(
+        (item) => item !== null && item !== undefined
       )
 
-      const isSimpleArray = useMemo(
-        () =>
-          clearData.every(
-            (item) => typeof item === 'string' || typeof item === 'number'
-          ),
-        [clearData]
+      const isSimpleArray = clearData.every(
+        (item) => typeof item === 'string' || typeof item === 'number'
       )
 
       if (isSimpleArray) return renderSimpleArray(clearData)
 
-      const isComplexArray = useMemo(
-        () => clearData.every((item) => typeof item === 'object'),
-        [clearData]
-      )
+      const isComplexArray = clearData.every((item) => typeof item === 'object')
 
       if (isComplexArray) return renderComplexArray(clearData)
 

@@ -19,14 +19,16 @@ import type {
   TDKP,
   DimensionProps,
 } from '~/types/dimensions'
-import type { StylesCb } from '~/types/styles'
+import type { StylesCb, StylesDefault } from '~/types/styles'
 import type { AttrsCb } from '~/types/attrs'
-import type { ThemeCb, ThemeModeKeys } from '~/types/theme'
+import type { ThemeCb, ThemeModeKeys, ThemeDefault } from '~/types/theme'
 import type { GenericHoc } from '~/types/hoc'
 import type { DefaultProps } from '~/types/configuration'
 import type { RocketComponent, IRocketComponent } from '~/types/rocketstyle'
 
 export type {
+  StylesDefault,
+  ThemeDefault,
   RocketComponent,
   IRocketComponent,
   Rocketstyle,
