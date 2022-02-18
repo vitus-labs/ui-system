@@ -1,4 +1,10 @@
-import { useState, useCallback } from 'react'
+import {
+  useState,
+  useCallback,
+  MouseEvent,
+  FocusEvent,
+  SyntheticEvent,
+} from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
 type State = Omit<PseudoState, 'active'>
@@ -12,7 +18,7 @@ type UsePseudoState = ({
   onBlur,
 }: Partial<PseudoActions>) => { state: State; events: PseudoActions }
 
-const handleEvent = (e: Event) => {
+const handleEvent = (e: SyntheticEvent) => {
   e.preventDefault()
   e.stopPropagation()
 }
