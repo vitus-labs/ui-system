@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import type { ForwardRefExoticComponent } from 'react'
-import { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
-import {
+import type { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
+import type {
   Dimensions,
   DimensionValue,
   DimensionCallbackParam,
@@ -9,12 +9,12 @@ import {
   TDKP,
   DimensionProps,
 } from './dimensions'
-import { StylesCb, StylesDefault } from './styles'
-import { ConfigAttrs } from './config'
-import { AttrsCb } from './attrs'
-import { ThemeCb, ThemeModeKeys, ThemeDefault } from './theme'
-import { GenericHoc } from './hoc'
-import { DefaultProps } from './configuration'
+import type { StylesCb, Styles } from './styles'
+import type { ConfigAttrs } from './config'
+import type { AttrsCb } from './attrs'
+import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
+import type { GenericHoc } from './hoc'
+import type { DefaultProps } from './configuration'
 
 export type RocketComponent<
   // attrs
@@ -24,9 +24,9 @@ export type RocketComponent<
   // extended component props
   EA extends TObj = {},
   // theme
-  T extends TObj | unknown = ThemeDefault,
+  T extends TObj | unknown = unknown,
   // custom theme properties
-  CSS extends TObj | unknown = StylesDefault,
+  CSS extends TObj | unknown = unknown,
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
@@ -36,10 +36,13 @@ export type RocketComponent<
 > = IRocketComponent<A, OA, EA, T, CSS, D, UB, DKP> & {
   [I in keyof D]: <
     K extends DimensionValue = D[I],
-    P extends DimensionCallbackParam<T, CSS> = DimensionCallbackParam<T, CSS>
+    P extends DimensionCallbackParam<
+      Theme<T>,
+      Styles<CSS>
+    > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
   >(
     param: P
-  ) => P extends DimensionCallbackParam<T, CSS>
+  ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
     ? RocketComponent<
         MergeTypes<
           [OA, EA, ExtractDimensionProps<D, DimensionProps<K, D, P, DKP>, UB>]
@@ -74,9 +77,9 @@ export interface IRocketComponent<
   // eslint-disable-next-line @typescript-eslint/ban-types
   EA extends TObj = {},
   // theme
-  T extends TObj | unknown = ThemeDefault,
+  T extends TObj | unknown = unknown,
   // custom style properties
-  CSS extends TObj | unknown = StylesDefault,
+  CSS extends TObj | unknown = unknown,
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
@@ -129,8 +132,8 @@ export interface IRocketComponent<
    */
   attrs: <P extends TObj | unknown = unknown>(
     param: P extends TObj
-      ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, T>
-      : Partial<A> | AttrsCb<A, T>
+      ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, Theme<T>>
+      : Partial<A> | AttrsCb<A, Theme<T>>
   ) => P extends TObj
     ? RocketComponent<
         MergeTypes<[OA, EA, P, ExtractDimensionProps<D, DKP, UB>]>,
@@ -148,8 +151,10 @@ export interface IRocketComponent<
   // --------------------------------------------------------
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
-      ? Partial<MergeTypes<[CSS, P]>> | ThemeCb<MergeTypes<[CSS, P]>, T>
-      : Partial<CSS> | ThemeCb<CSS, T>
+      ?
+          | Partial<MergeTypes<[Styles<CSS>, P]>>
+          | ThemeCb<MergeTypes<[Styles<CSS>, P]>, Theme<T>>
+      : Partial<Styles<CSS>> | ThemeCb<Styles<CSS>, Theme<T>>
   ) => P extends TObj
     ? RocketComponent<A, OA, EA, T, MergeTypes<[CSS, P]>, D, UB, DKP>
     : RocketComponent<A, OA, EA, T, CSS, D, UB, DKP>
@@ -188,118 +193,3 @@ export interface IRocketComponent<
   // arguments: never
   // defaultProps: never
 }
-
-// export interface RocketStyleComponent<
-//   // dimensions
-//   D extends Dimensions,
-//   // use booleans
-//   UB extends boolean = boolean,
-//   // theme
-//   T extends TObj | unknown = unknown,
-//   // custom theme properties
-//   CT extends TObj | unknown = unknown,
-//   // original component props
-//   // eslint-disable-next-line @typescript-eslint/ban-types
-//   OA extends TObj = {},
-//   // attrs
-//   A extends TObj = OA & DefaultProps,
-//   // extended component props
-//   // eslint-disable-next-line @typescript-eslint/ban-types
-//   EA extends TObj = {},
-//   // dimension key props
-//   DKP extends TDKP = TDKP
-// > extends ForwardRefExoticComponent<A> {
-//   // CONFIG chaining method
-//   // --------------------------------------------------------
-//   config: <NC extends ElementType | unknown = unknown>({
-//     name,
-//     component: NC,
-//     provider,
-//     consumer,
-//     DEBUG,
-//     inversed,
-//     passProps,
-//   }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
-//     ? RocketStyleComponent<
-//         D,
-//         UB,
-//         T,
-//         CT,
-//         ExtractProps<NC>,
-//         MergeTypes<
-//           [ExtractProps<NC>, DefaultProps, ExtractDimensionProps<D, DKP, UB>]
-//         >,
-//         DKP
-//       >
-//     : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   // ATTRS chaining method
-//   // --------------------------------------------------------
-//   /**
-//    * @param A    Generic _props_ params.
-//    * @param OA   Origin component props params.
-//    * @param T    Theme passed via context.
-//    * @param CT   Custom theme accepted by styles.
-//    * @param D    Dimensions to be used for defining component states.
-//    * @param UB   Use booleans value
-//    * @param DKP  Dimensions key props.
-//    */
-//   attrs: <P extends TObj | unknown = unknown>(
-//     param: P extends TObj
-//       ? Partial<MergeTypes<[A, P]>> | AttrsCb<MergeTypes<[A, P]>, T>
-//       : Partial<A> | AttrsCb<A, T>
-//   ) => P extends TObj
-//     ? RocketStyleComponent<
-//         D,
-//         UB,
-//         T,
-//         CT,
-//         OA,
-//         MergeTypes<[OA, EA, P, ExtractDimensionProps<D, DKP, UB>]>,
-//         MergeTypes<[EA, P]>,
-//         DKP
-//       >
-//     : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   // THEME chaining method
-//   // --------------------------------------------------------
-//   theme: <P extends TObj | unknown = unknown>(
-//     param: P extends TObj
-//       ? Partial<MergeTypes<[CT, P]>> | ThemeCb<MergeTypes<[CT, P]>, T>
-//       : Partial<CT> | ThemeCb<CT, T>
-//   ) => P extends TObj
-//     ? RocketStyleComponent<D, UB, T, MergeTypes<[CT, P]>, OA, A, EA, DKP>
-//     : RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   // STYLES chaining method
-//   // --------------------------------------------------------
-//   styles: (
-//     param: StylesCb
-//   ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   // COMPOSE chaining method
-//   // --------------------------------------------------------
-//   compose: (
-//     param: Record<string, GenericHoc | null | undefined | false>
-//   ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   // STATICS chaining method + its output + other statics
-//   // --------------------------------------------------------
-//   statics: (
-//     param: Record<string, any>
-//   ) => RocketStyleComponent<D, UB, T, CT, OA, A, EA, DKP>
-
-//   is: Record<string, any>
-
-//   getStaticDimensions: (theme: TObj) => {
-//     dimensions: TObj
-//     useBooleans: boolean
-//     multiKeys: TObj
-//   }
-
-//   getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
-
-//   readonly $$rocketstyle: DKP
-//   readonly IS_ROCKETSTYLE: true
-//   readonly displayName: string
-// }

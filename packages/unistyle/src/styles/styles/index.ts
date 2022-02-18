@@ -56,6 +56,8 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     min-height: ${value(t.minHeight, t.minSize)};
     max-height: ${value(t.maxHeight, t.maxSize)};
 
+    gap: ${value(t.gap)};
+
     /* ------------------------------------------------- */
     /* SPACING attributes */
     /* ------------------------------------------------- */

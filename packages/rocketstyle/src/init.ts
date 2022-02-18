@@ -13,10 +13,8 @@ import defaultDimensions from '~/constants/defaultDimensions'
 import type { ElementType } from '~/types/utils'
 import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
 import type { StyleComponent } from '~/types/styleComponent'
-import { ThemeDefault } from '~/types/theme'
-import { StylesDefault } from '~/types/styles'
 
-export type Rocketstyle = <T = ThemeDefault, CSS = StylesDefault>() => <
+export type Rocketstyle = <T = unknown, CSS = unknown>() => <
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = true
 >({

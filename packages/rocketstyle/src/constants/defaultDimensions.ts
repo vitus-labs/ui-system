@@ -8,4 +8,6 @@ const DEFAULT_DIMENSIONS = {
   },
 } as const
 
+export type DefaultDimensions = typeof DEFAULT_DIMENSIONS
+
 export default DEFAULT_DIMENSIONS

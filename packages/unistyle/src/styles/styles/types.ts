@@ -140,6 +140,7 @@ export type ITheme = {
   paddingRight: Value
   paddingX: Value
   paddingY: Value
+  gap: Value
   alignContent:
     | 'center'
     | 'flex-start'
