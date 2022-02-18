@@ -83,7 +83,7 @@ const insetShorthand: InsetShorthand =
     let output = ''
 
     if (isValidValue(t)) {
-      output += `$-top: ${value([t])};`
+      output += `top: ${value([t])};`
     }
 
     if (isValidValue(b)) {
