@@ -65,7 +65,7 @@ const insetShorthand: InsetShorthand =
     const [t, r, b, l] = spacing
 
     if (spacing.every((val, _, arr) => isValidValue(val) && val === arr[0])) {
-      return `inset: ${t};`
+      return `inset: ${value(t)};`
     }
 
     if (t === b && r === l) {
