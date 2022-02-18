@@ -1,6 +1,8 @@
 import { config } from '@vitus-labs/core'
 import { Value, Defaults, Color } from '~/types'
 
+type PrimitiveValue = string | number
+
 type BorderColor = Color | Defaults
 
 type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
