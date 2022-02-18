@@ -1,17 +1,17 @@
-import type { MergeTypes, ExtractProps, ElementType } from './utils'
+/* eslint-disable @typescript-eslint/ban-types */
+import type { MergeTypes, ExtractProps, ElementType, TObj } from './utils'
 import type {
   Dimensions,
   DefaultDimensions,
   ExtractDimensionAttrsKeys,
 } from './dimensions'
-import type { OptionStyles } from './styles'
 import type { DefaultProps, Configuration } from './configuration'
 import type { RocketComponent } from './rocketstyle'
 
 export type StyleComponent<
   C extends ElementType,
-  T extends Record<string, unknown> | unknown = unknown,
-  CSS extends OptionStyles | unknown = unknown,
+  T extends TObj = {},
+  CSS extends TObj = {},
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
 > = (props: Partial<Configuration<C, D>>) => RocketComponent<

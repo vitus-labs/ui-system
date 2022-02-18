@@ -24,9 +24,9 @@ export type RocketComponent<
   // extended component props
   EA extends TObj = {},
   // theme
-  T extends TObj | unknown = unknown,
+  T extends TObj = {},
   // custom theme properties
-  CSS extends TObj | unknown = unknown,
+  CSS extends TObj = {},
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
@@ -77,16 +77,18 @@ export interface IRocketComponent<
   // eslint-disable-next-line @typescript-eslint/ban-types
   EA extends TObj = {},
   // theme
-  T extends TObj | unknown = unknown,
+  T extends TObj = {},
   // custom style properties
-  CSS extends TObj | unknown = unknown,
+  CSS extends TObj = {},
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
   UB extends boolean = boolean,
   // dimension key props
   DKP extends TDKP = TDKP
-> extends ForwardRefExoticComponent<A> {
+> extends ForwardRefExoticComponent<
+    MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>
+  > {
   // CONFIG chaining method
   // --------------------------------------------------------
   // {
