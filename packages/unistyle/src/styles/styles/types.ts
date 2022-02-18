@@ -270,8 +270,8 @@ export type ITheme = {
     | 'none'
   emptyCells: 'show' | 'hide' | Defaults
   filter: string
-  flex: Value
-  flexBasis: Value
+  flex: PrimitiveValue
+  flexBasis: PrimitiveValue
   flexDirection: 'row' | 'row-reverse' | 'column' | 'column-reverse' | Defaults
   flexFlow: string
   flexGrow: number | Defaults
