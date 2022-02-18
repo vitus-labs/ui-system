@@ -1,5 +1,5 @@
-export type MouseAction = (e: MouseEvent) => void
-export type FocusAction = (e: FocusEvent) => void
+export type MouseAction = (event?: MouseEvent) => void
+export type FocusAction = (event?: FocusEvent) => void
 
 export type PseudoActions = {
   onMouseEnter: MouseAction
