@@ -1,4 +1,4 @@
-import { insetShorthand, spacingShorthand } from '~/styles/shorthands'
+import { borderRadius, edge } from '~/styles/shorthands'
 import { value as unitValue } from '~/units'
 import type { Css } from '~/types'
 import type { Theme } from './types'
@@ -19,6 +19,8 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
   const value = (...values) => unitValue(values, rootSize)
   const pxValue = (...values) => unitValue(values, rootSize, 'px')
 
+  const shorthand = edge(rootSize)
+
   return css`
     ${t.fullScreen &&
     css`
@@ -38,15 +40,15 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     box-sizing: ${t.boxSizing};
     float: ${t.float};
 
-    ${insetShorthand(rootSize)({
+    ${shorthand('inset', {
+      full: t.inset,
+      x: t.insetX,
+      y: t.insetY,
       top: t.top,
       left: t.left,
       bottom: t.bottom,
       right: t.right,
-      x: t.insetX,
-      y: t.insetY,
-      full: t.inset,
-    })}
+    })};
 
     width: ${value(t.width, t.size)};
     min-width: ${value(t.minWidth, t.minSize)};
@@ -61,30 +63,24 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* ------------------------------------------------- */
     /* SPACING attributes */
     /* ------------------------------------------------- */
-    ${spacingShorthand(
-      'margin',
-      rootSize
-    )({
+    ${shorthand('margin', {
+      full: t.margin,
+      x: t.marginX,
+      y: t.marginY,
       top: t.marginTop,
       left: t.marginLeft,
       bottom: t.marginBottom,
       right: t.marginRight,
-      x: t.marginX,
-      y: t.marginY,
-      full: t.margin,
     })};
 
-    ${spacingShorthand(
-      'padding',
-      rootSize
-    )({
+    ${shorthand('padding', {
+      full: t.padding,
+      x: t.paddingX,
+      y: t.paddingY,
       top: t.paddingTop,
       left: t.paddingLeft,
       bottom: t.paddingBottom,
       right: t.paddingRight,
-      x: t.paddingX,
-      y: t.paddingY,
-      full: t.padding,
     })};
 
     /* ------------------------------------------------- */
@@ -171,27 +167,47 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* ------------------------------------------------- */
     /* BORDERS attributes */
     /* ------------------------------------------------- */
-    border-radius: ${value(t.borderRadius)};
-    border-top-left-radius: ${value(
-      t.borderRadiusTopLeft,
-      t.borderRadiusLeft,
-      t.borderRadiusTop
-    )};
-    border-top-right-radius: ${value(
-      t.borderRadiusTopRight,
-      t.borderRadiusRight,
-      t.borderRadiusTop
-    )};
-    border-bottom-left-radius: ${value(
-      t.borderRadiusBottomLeft,
-      t.borderRadiusLeft,
-      t.borderRadiusBottom
-    )};
-    border-bottom-right-radius: ${value(
-      t.borderRadiusBottomRight,
-      t.borderRadiusRight,
-      t.borderRadiusBottom
-    )};
+    ${borderRadius(rootSize)({
+      full: t.borderRadius,
+      top: t.borderRadiusTop,
+      bottom: t.borderRadiusBottom,
+      left: t.borderRadiusLeft,
+      right: t.borderRadiusRight,
+      topLeft: t.borderRadiusTopLeft,
+      topRight: t.borderRadiusTopRight,
+      bottomLeft: t.borderRadiusBottomLeft,
+      bottomRight: t.borderRadiusBottomRight,
+    })};
+
+    ${shorthand('borderWidth', {
+      full: t.borderWidth,
+      y: t.borderWidthY,
+      x: t.borderWidthX,
+      top: t.borderWidthTop,
+      bottom: t.borderWidthBottom,
+      left: t.borderWidthLeft,
+      right: t.borderWidthRight,
+    })};
+
+    ${shorthand('borderStyle', {
+      full: t.borderStyle,
+      y: t.borderStyleY,
+      x: t.borderStyleX,
+      top: t.borderStyleTop,
+      bottom: t.borderStyleBottom,
+      left: t.borderStyleLeft,
+      right: t.borderStyleRight,
+    })};
+
+    ${shorthand('borderColor', {
+      full: t.borderColor,
+      y: t.borderColorY,
+      x: t.borderColorX,
+      top: t.borderColorTop,
+      bottom: t.borderColorBottom,
+      left: t.borderColorLeft,
+      right: t.borderColorRight,
+    })};
 
     border: ${t.border};
     border-top: ${t.borderTop};
@@ -199,7 +215,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     border-left: ${t.borderLeft};
     border-right: ${t.borderRight};
 
-    border-width: ${pxValue(t.borderWidth)};
+    /* border-width: ${pxValue(t.borderWidth)};
     border-style: ${t.borderStyle};
     border-color: ${t.borderColor};
 
@@ -217,7 +233,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
 
     border-right-width: ${pxValue(t.borderWidthRight, t.borderWidthX)};
     border-right-style: ${t.borderStyleRight || t.borderStyleX};
-    border-right-color: ${t.borderColorRight || t.borderColorX};
+    border-right-color: ${t.borderColorRight || t.borderColorX}; */
 
     border-image: ${t.borderImage};
     border-image-outset: ${t.borderImageOutset};

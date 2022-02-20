@@ -1,6 +1,6 @@
-import insetShorthand, { InsetShorthand } from './insetShorthand'
-import spacingShorthand, { SpacingShorthand } from './spacingShorthand'
+import borderRadius, { BorderRadius } from './borderRadius'
+import edge, { Edge } from './edge'
 
-export type { InsetShorthand, SpacingShorthand }
+export type { BorderRadius, Edge }
 
-export { insetShorthand, spacingShorthand }
+export { borderRadius, edge }

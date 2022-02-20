@@ -214,15 +214,15 @@ export type ITheme = {
   borderImageSource: string
   borderImageWidth: string
   borderSpacing: string
-  borderRadius: Value | Defaults
-  borderRadiusTopLeft: Value | Defaults
-  borderRadiusLeft: Value | Defaults
-  borderRadiusTop: Value | Defaults
-  borderRadiusTopRight: Value | Defaults
-  borderRadiusRight: Value | Defaults
-  borderRadiusBottomLeft: Value | Defaults
-  borderRadiusBottom: Value | Defaults
-  borderRadiusBottomRight: Value | Defaults
+  borderRadius: Value
+  borderRadiusTopLeft: Value
+  borderRadiusLeft: Value
+  borderRadiusTop: Value
+  borderRadiusTopRight: Value
+  borderRadiusRight: Value
+  borderRadiusBottomLeft: Value
+  borderRadiusBottom: Value
+  borderRadiusBottomRight: Value
   boxShadow: string
   boxSizing: 'content-box' | 'border-box' | Defaults
   captionSide: 'top' | 'bottom' | Defaults
@@ -316,7 +316,7 @@ export type ITheme = {
     | 'space-between'
     | 'space-around'
   keyframe: any
-  letterSpacing: 'normal' | Value | Defaults
+  letterSpacing: 'normal' | Value
   lineHeight: Value | 'normal' | 'revert' | 'unset' | Defaults
   listStyle: string
   listStyleImage: 'none' | string | Defaults
@@ -361,7 +361,7 @@ export type ITheme = {
   position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky' | Defaults
   quotes: string
   resize: 'none' | 'both' | 'horizontal' | 'vertical' | Defaults
-  tabSize: Value | Defaults
+  tabSize: Value
   tableLayout: 'auto' | 'fixed' | Defaults
   textAlign: 'left' | 'right' | 'center' | 'justify' | Defaults
   textAlignLast:
@@ -383,7 +383,7 @@ export type ITheme = {
     | 'dashed'
     | 'wavy'
     | Defaults
-  textIndent: Value | Defaults
+  textIndent: Value
   textJustify: 'auto' | 'none' | 'inter-word' | 'distribute' | Defaults
   textOverflow: 'clip' | 'ellipsis' | string | Defaults
   textShadow: string

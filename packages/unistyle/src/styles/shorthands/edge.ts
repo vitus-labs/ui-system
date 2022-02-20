@@ -1,25 +1,60 @@
 import { normalizeUnit } from '~/units'
-import { Value } from '~/types'
+import type { Units } from '~/types'
+
+type Value = string | number | null | undefined
 
 const isValidValue = (value) => !!value || value === 0
 
-export type SpacingShorthand = (
-  property: 'padding' | 'margin',
-  rootSize?: number
-) => (props: {
-  top: Value | null | undefined
-  left: Value | null | undefined
-  right: Value | null | undefined
-  bottom: Value | null | undefined
-  x: Value | null | undefined
-  y: Value | null | undefined
-  full: Value | null | undefined
-}) => string | null
+type Definitions = { [key: string]: { unit?: Units; edgeCss: any } }
+
+const definitions: Definitions = {
+  inset: {
+    unit: 'rem',
+    edgeCss: (side) => side,
+  },
+  margin: {
+    unit: 'rem',
+    edgeCss: (side) => `margin-${side}`,
+  },
+  padding: {
+    unit: 'rem',
+    edgeCss: (side) => `padding-${side}`,
+  },
+  borderWidth: {
+    unit: 'px',
+    edgeCss: (side) => `border-${side}-width`,
+  },
+  borderStyle: {
+    edgeCss: (side) => `border-${side}-style`,
+  },
+  borderColor: {
+    edgeCss: (side) => `border-${side}-color`,
+  },
+}
+
+export type Edge = (rootSize?: number) => (
+  property:
+    | 'inset'
+    | 'margin'
+    | 'padding'
+    | 'borderWidth'
+    | 'borderStyle'
+    | 'borderColor',
+  values: {
+    full: Value
+    x: Value
+    y: Value
+    top: Value
+    left: Value
+    right: Value
+    bottom: Value
+  }
+) => string | null
 
 // eslint-disable-next-line import/prefer-default-export
-const spacingShorthand: SpacingShorthand =
-  (property, rootSize) =>
-  ({ top, left, right, bottom, x, y, full }) => {
+const edge: Edge =
+  (rootSize = 16) =>
+  (property, { top, left, right, bottom, x, y, full }) => {
     if (
       !isValidValue(top) &&
       !isValidValue(bottom) &&
@@ -32,7 +67,10 @@ const spacingShorthand: SpacingShorthand =
       return null
     }
 
-    const value = (param) => normalizeUnit({ param, rootSize })
+    const { unit, edgeCss } = definitions[property]
+
+    const value = (param) =>
+      unit ? normalizeUnit({ param, rootSize, outputUnit: unit }) : value
 
     // top - right - bottom - left
     const spacing = [full, full, full, full]
@@ -84,22 +122,22 @@ const spacingShorthand: SpacingShorthand =
     let output = ''
 
     if (isValidValue(t)) {
-      output += `${property}-top: ${value([t])};`
+      output += `${edgeCss('top')}: ${value(t)};`
     }
 
     if (isValidValue(b)) {
-      output += `${property}-bottom: ${value([b])};`
+      output += `${edgeCss('bottom')}: ${value(b)};`
     }
 
     if (isValidValue(l)) {
-      output += `${property}-left: ${value([l])};`
+      output += `${edgeCss('left')}: ${value(l)};`
     }
 
     if (isValidValue(r)) {
-      output += `${property}-right: ${value([r])};`
+      output += `${edgeCss('right')}: ${value(r)};`
     }
 
     return output
   }
 
-export default spacingShorthand
+export default edge
