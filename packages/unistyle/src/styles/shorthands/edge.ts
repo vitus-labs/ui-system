@@ -20,14 +20,14 @@ const definitions: Definitions = {
     unit: 'rem',
     edgeCss: (side) => `padding-${side}`,
   },
-  borderWidth: {
+  'border-width': {
     unit: 'px',
     edgeCss: (side) => `border-${side}-width`,
   },
-  borderStyle: {
+  'border-style': {
     edgeCss: (side) => `border-${side}-style`,
   },
-  borderColor: {
+  'border-color': {
     edgeCss: (side) => `border-${side}-color`,
   },
 }
@@ -37,9 +37,9 @@ export type Edge = (rootSize?: number) => (
     | 'inset'
     | 'margin'
     | 'padding'
-    | 'borderWidth'
-    | 'borderStyle'
-    | 'borderColor',
+    | 'border-width'
+    | 'border-style'
+    | 'border-color',
   values: {
     full: Value
     x: Value
@@ -70,7 +70,7 @@ const edge: Edge =
     const { unit, edgeCss } = definitions[property]
 
     const value = (param) =>
-      unit ? normalizeUnit({ param, rootSize, outputUnit: unit }) : value
+      unit ? normalizeUnit({ param, rootSize, outputUnit: unit }) : param
 
     // top - right - bottom - left
     const spacing = [full, full, full, full]

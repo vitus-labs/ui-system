@@ -179,7 +179,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       bottomRight: t.borderRadiusBottomRight,
     })};
 
-    ${shorthand('borderWidth', {
+    ${shorthand('border-width', {
       full: t.borderWidth,
       y: t.borderWidthY,
       x: t.borderWidthX,
@@ -189,7 +189,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       right: t.borderWidthRight,
     })};
 
-    ${shorthand('borderStyle', {
+    ${shorthand('border-style', {
       full: t.borderStyle,
       y: t.borderStyleY,
       x: t.borderStyleX,
@@ -199,7 +199,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       right: t.borderStyleRight,
     })};
 
-    ${shorthand('borderColor', {
+    ${shorthand('border-color', {
       full: t.borderColor,
       y: t.borderColorY,
       x: t.borderColorX,
