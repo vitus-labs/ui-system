@@ -1,11 +1,22 @@
 import { normalizeUnit } from '~/units'
 import type { Units } from '~/types'
 
-type Value = string | number | null | undefined
-
 const isValidValue = (value) => !!value || value === 0
 
-type Definitions = { [key: string]: { unit?: Units; edgeCss: any } }
+type Property =
+  | 'inset'
+  | 'margin'
+  | 'padding'
+  | 'border-width'
+  | 'border-style'
+  | 'border-color'
+type Value = string | number | null | undefined
+type Side = 'top' | 'bottom' | 'left' | 'right'
+
+type Definitions = Record<
+  Property,
+  { unit?: Units; edgeCss: (side: Side) => string }
+>
 
 const definitions: Definitions = {
   inset: {
@@ -33,13 +44,7 @@ const definitions: Definitions = {
 }
 
 export type Edge = (rootSize?: number) => (
-  property:
-    | 'inset'
-    | 'margin'
-    | 'padding'
-    | 'border-width'
-    | 'border-style'
-    | 'border-color',
+  property: Property,
   values: {
     full: Value
     x: Value
@@ -54,7 +59,7 @@ export type Edge = (rootSize?: number) => (
 // eslint-disable-next-line import/prefer-default-export
 const edge: Edge =
   (rootSize = 16) =>
-  (property, { top, left, right, bottom, x, y, full }) => {
+  (property, { full, x, y, top, left, right, bottom }) => {
     if (
       !isValidValue(top) &&
       !isValidValue(bottom) &&
@@ -69,42 +74,44 @@ const edge: Edge =
 
     const { unit, edgeCss } = definitions[property]
 
-    const value = (param) =>
-      unit ? normalizeUnit({ param, rootSize, outputUnit: unit }) : param
+    const value = (param) => {
+      if (unit) return normalizeUnit({ param, rootSize, outputUnit: unit })
+      return param
+    }
 
     // top - right - bottom - left
-    const spacing = [full, full, full, full]
+    const allValues = [full, full, full, full]
 
     if (isValidValue(x)) {
-      spacing[1] = x
-      spacing[3] = x
+      allValues[1] = x
+      allValues[3] = x
     }
 
     if (isValidValue(y)) {
-      spacing[0] = y
-      spacing[2] = y
+      allValues[0] = y
+      allValues[2] = y
     }
 
     if (isValidValue(top)) {
-      spacing[0] = top
+      allValues[0] = top
     }
 
     if (isValidValue(right)) {
-      spacing[1] = right
+      allValues[1] = right
     }
 
     if (isValidValue(bottom)) {
-      spacing[2] = bottom
+      allValues[2] = bottom
     }
 
     if (isValidValue(left)) {
-      spacing[3] = left
+      allValues[3] = left
     }
 
-    const [t, r, b, l] = spacing
+    const [t, r, b, l] = allValues
 
-    if (spacing.every((val) => isValidValue(val))) {
-      if (spacing.every((val, _, arr) => val === arr[0])) {
+    if (allValues.every((val) => isValidValue(val))) {
+      if (allValues.every((val, _, arr) => val === arr[0])) {
         return `${property}: ${value(t)};`
       }
 

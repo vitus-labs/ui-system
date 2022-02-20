@@ -17,8 +17,6 @@ export type Styles = ({
 
 const styles: Styles = ({ theme: t, css, rootSize }) => {
   const value = (...values) => unitValue(values, rootSize)
-  const pxValue = (...values) => unitValue(values, rootSize, 'px')
-
   const shorthand = edge(rootSize)
 
   return css`
@@ -214,26 +212,6 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     border-bottom: ${t.borderBottom};
     border-left: ${t.borderLeft};
     border-right: ${t.borderRight};
-
-    /* border-width: ${pxValue(t.borderWidth)};
-    border-style: ${t.borderStyle};
-    border-color: ${t.borderColor};
-
-    border-top-width: ${pxValue(t.borderWidthTop, t.borderWidthY)};
-    border-top-style: ${t.borderStyleTop || t.borderStyleY};
-    border-top-color: ${t.borderColorTop || t.borderColorY};
-
-    border-bottom-width: ${pxValue(t.borderWidthBottom, t.borderWidthY)};
-    border-bottom-style: ${t.borderStyleBottom || t.borderStyleY};
-    border-bottom-color: ${t.borderColorBottom || t.borderColorY};
-
-    border-left-width: ${pxValue(t.borderWidthLeft, t.borderWidthX)};
-    border-left-style: ${t.borderStyleLeft || t.borderStyleX};
-    border-left-color: ${t.borderColorLeft || t.borderColorX};
-
-    border-right-width: ${pxValue(t.borderWidthRight, t.borderWidthX)};
-    border-right-style: ${t.borderStyleRight || t.borderStyleX};
-    border-right-color: ${t.borderColorRight || t.borderColorX}; */
 
     border-image: ${t.borderImage};
     border-image-outset: ${t.borderImageOutset};
