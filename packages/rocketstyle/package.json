@@ -60,7 +60,7 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "^0.13.4",
+    "@vitus-labs/core": "*",
     "react": ">= 16.8"
   },
   "dependencies": {

@@ -45,7 +45,7 @@
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "^0.13.4",
+    "@vitus-labs/core": "*",
     "react": ">= 16.8"
   },
   "devDependencies": {

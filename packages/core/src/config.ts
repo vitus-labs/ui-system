@@ -7,7 +7,7 @@ import styled, {
   DefaultTheme,
   ThemeProviderComponent,
 } from 'styled-components'
-import type { HTMLTags } from '~/htmlTags'
+import type { HTMLTags } from '~/html'
 
 const OPTIONS: Internal = {
   styled,
