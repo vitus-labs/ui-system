@@ -1,24 +1,45 @@
 import * as React from 'react'
 
-export type HTMLElementProps = {
+type Base = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLElement>,
+  HTMLElement
+>
+
+export type HTMLElementAttrs = {
   a: React.DetailedHTMLProps<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement
   >
+
+  abbr: Base
+
+  address: Base
 
   area: React.DetailedHTMLProps<
     React.AreaHTMLAttributes<HTMLAreaElement>,
     HTMLAreaElement
   >
 
+  article: Base
+
+  aside: Base
+
   audio: React.DetailedHTMLProps<
     React.AudioHTMLAttributes<HTMLAudioElement>,
     HTMLAudioElement
   >
 
-  base: React.DetailedHTMLProps<
-    React.BaseHTMLAttributes<HTMLBaseElement>,
-    HTMLBaseElement
+  b: Base
+
+  bdi: Base
+
+  bdo: Base
+
+  big: Base
+
+  blockquote: React.DetailedHTMLProps<
+    React.BlockquoteHTMLAttributes<HTMLQuoteElement>,
+    HTMLQuoteElement
   >
 
   body: React.DetailedHTMLProps<
@@ -41,6 +62,25 @@ export type HTMLElementProps = {
     HTMLCanvasElement
   >
 
+  caption: Base
+
+  cite: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLQuoteElement>,
+    HTMLQuoteElement
+  >
+
+  code: Base
+
+  col: React.DetailedHTMLProps<
+    React.ColHTMLAttributes<HTMLTableColElement>,
+    HTMLTableColElement
+  >
+
+  colgroup: React.DetailedHTMLProps<
+    React.ColgroupHTMLAttributes<HTMLTableColElement>,
+    HTMLTableColElement
+  >
+
   data: React.DetailedHTMLProps<
     React.DataHTMLAttributes<HTMLDataElement>,
     HTMLDataElement
@@ -50,6 +90,17 @@ export type HTMLElementProps = {
     React.HTMLAttributes<HTMLDataListElement>,
     HTMLDataListElement
   >
+
+  dd: Base
+
+  del: React.DetailedHTMLProps<
+    React.DelHTMLAttributes<HTMLModElement>,
+    HTMLModElement
+  >
+
+  details: Base
+
+  dfn: Base
 
   dialog: React.DetailedHTMLProps<
     React.DialogHTMLAttributes<HTMLDialogElement>,
@@ -66,10 +117,9 @@ export type HTMLElementProps = {
     HTMLDListElement
   >
 
-  element: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLElement>,
-    HTMLElement
-  >
+  dt: Base
+
+  em: Base
 
   embed: React.DetailedHTMLProps<
     React.EmbedHTMLAttributes<HTMLEmbedElement>,
@@ -80,6 +130,12 @@ export type HTMLElementProps = {
     React.FieldsetHTMLAttributes<HTMLFieldSetElement>,
     HTMLFieldSetElement
   >
+
+  figcaption: Base
+
+  figure: Base
+
+  footer: Base
 
   form: React.DetailedHTMLProps<
     React.FormHTMLAttributes<HTMLFormElement>,
@@ -116,10 +172,7 @@ export type HTMLElementProps = {
     HTMLHeadingElement
   >
 
-  head: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLHeadElement>,
-    HTMLHeadElement
-  >
+  header: Base
 
   hr: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLHRElement>,
@@ -130,6 +183,8 @@ export type HTMLElementProps = {
     React.HtmlHTMLAttributes<HTMLHtmlElement>,
     HTMLHtmlElement
   >
+
+  i: Base
 
   iframe: React.DetailedHTMLProps<
     React.IframeHTMLAttributes<HTMLIFrameElement>,
@@ -151,10 +206,7 @@ export type HTMLElementProps = {
     HTMLModElement
   >
 
-  del: React.DetailedHTMLProps<
-    React.DelHTMLAttributes<HTMLModElement>,
-    HTMLModElement
-  >
+  kbd: Base
 
   label: React.DetailedHTMLProps<
     React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -171,20 +223,18 @@ export type HTMLElementProps = {
     HTMLLIElement
   >
 
-  link: React.DetailedHTMLProps<
-    React.LinkHTMLAttributes<HTMLLinkElement>,
-    HTMLLinkElement
-  >
+  main: Base
 
   map: React.DetailedHTMLProps<
     React.MapHTMLAttributes<HTMLMapElement>,
     HTMLMapElement
   >
 
-  meta: React.DetailedHTMLProps<
-    React.MetaHTMLAttributes<HTMLMetaElement>,
-    HTMLMetaElement
-  >
+  mark: Base
+
+  meter: Base
+
+  nav: Base
 
   object: React.DetailedHTMLProps<
     React.ObjectHTMLAttributes<HTMLObjectElement>,
@@ -206,15 +256,14 @@ export type HTMLElementProps = {
     HTMLOptionElement
   >
 
-  P: React.DetailedHTMLProps<
+  output: Base
+
+  p: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLParagraphElement>,
     HTMLParagraphElement
   >
 
-  param: React.DetailedHTMLProps<
-    React.ParamHTMLAttributes<HTMLParamElement>,
-    HTMLParamElement
-  >
+  picture: Base
 
   pre: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLPreElement>,
@@ -226,40 +275,29 @@ export type HTMLElementProps = {
     HTMLProgressElement
   >
 
-  blockquote: React.DetailedHTMLProps<
-    React.BlockquoteHTMLAttributes<HTMLQuoteElement>,
-    HTMLQuoteElement
-  >
-
   q: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLQuoteElement>,
     HTMLQuoteElement
   >
 
-  cite: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLQuoteElement>,
-    HTMLQuoteElement
-  >
+  rp: Base
 
-  slot: React.DetailedHTMLProps<
-    React.SlotHTMLAttributes<HTMLSlotElement>,
-    HTMLSlotElement
-  >
+  rt: Base
 
-  script: React.DetailedHTMLProps<
-    React.ScriptHTMLAttributes<HTMLScriptElement>,
-    HTMLScriptElement
-  >
+  ruby: Base
 
-  noscript: React.DetailedHTMLProps<
-    React.ScriptHTMLAttributes<HTMLScriptElement>,
-    HTMLScriptElement
-  >
+  s: Base
+
+  samp: Base
+
+  section: Base
 
   select: React.DetailedHTMLProps<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   >
+
+  small: Base
 
   source: React.DetailedHTMLProps<
     React.SourceHTMLAttributes<HTMLSourceElement>,
@@ -271,10 +309,13 @@ export type HTMLElementProps = {
     HTMLSpanElement
   >
 
-  style: React.DetailedHTMLProps<
-    React.StyleHTMLAttributes<HTMLStyleElement>,
-    HTMLStyleElement
-  >
+  strong: Base
+
+  sub: Base
+
+  summary: Base
+
+  sup: Base
 
   svg: React.SVGProps<SVGSVGElement>
 
@@ -283,44 +324,14 @@ export type HTMLElementProps = {
     HTMLTableElement
   >
 
-  col: React.DetailedHTMLProps<
-    React.ColHTMLAttributes<HTMLTableColElement>,
-    HTMLTableColElement
-  >
-
-  colgroup: React.DetailedHTMLProps<
-    React.ColgroupHTMLAttributes<HTMLTableColElement>,
-    HTMLTableColElement
-  >
-
-  td: React.DetailedHTMLProps<
-    React.TdHTMLAttributes<HTMLTableCellElement>,
-    HTMLTableCellElement
-  >
-
-  th: React.DetailedHTMLProps<
-    React.ThHTMLAttributes<HTMLTableCellElement>,
-    HTMLTableCellElement
-  >
-
-  tr: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableRowElement>,
-    HTMLTableRowElement
-  >
-
-  thead: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableSectionElement>,
-    HTMLTableSectionElement
-  >
-
   tbody: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLTableSectionElement>,
     HTMLTableSectionElement
   >
 
-  tfoot: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableSectionElement>,
-    HTMLTableSectionElement
+  td: React.DetailedHTMLProps<
+    React.TdHTMLAttributes<HTMLTableCellElement>,
+    HTMLTableCellElement
   >
 
   template: React.DetailedHTMLProps<
@@ -333,9 +344,26 @@ export type HTMLElementProps = {
     HTMLTextAreaElement
   >
 
-  title: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTitleElement>,
-    HTMLTitleElement
+  tfoot: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLTableSectionElement>,
+    HTMLTableSectionElement
+  >
+
+  th: React.DetailedHTMLProps<
+    React.ThHTMLAttributes<HTMLTableCellElement>,
+    HTMLTableCellElement
+  >
+
+  thead: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLTableSectionElement>,
+    HTMLTableSectionElement
+  >
+
+  time: Base
+
+  tr: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLTableRowElement>,
+    HTMLTableRowElement
   >
 
   track: React.DetailedHTMLProps<
@@ -343,18 +371,19 @@ export type HTMLElementProps = {
     HTMLTrackElement
   >
 
+  u: Base
+
   ul: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLUListElement>,
     HTMLUListElement
   >
+
+  var: Base
 
   video: React.DetailedHTMLProps<
     React.VideoHTMLAttributes<HTMLVideoElement>,
     HTMLVideoElement
   >
 
-  webview: React.DetailedHTMLProps<
-    React.WebViewHTMLAttributes<HTMLWebViewElement>,
-    HTMLWebViewElement
-  >
+  wbr: Base
 }

@@ -5,10 +5,22 @@ import Provider, { context } from '~/context'
 import compose from '~/compose'
 import isEmpty, { IsEmpty } from '~/isEmpty'
 import renderContent, { RenderContent } from '~/renderContent'
-import htmlTags, { HTMLTags, HTMLTagsText } from '~/htmlTags'
-import type { HTMLElementProps } from '~/types/htmlElementAttrs'
+import {
+  htmlTags,
+  HTMLTags,
+  HTMLTagsText,
+  HTMLElementAttrs,
+  HTMLTagAttrsByTag,
+} from '~/html'
 
-export type { IsEmpty, RenderContent, HTMLTags, HTMLTagsText, HTMLElementProps }
+export type {
+  IsEmpty,
+  RenderContent,
+  HTMLTags,
+  HTMLTagsText,
+  HTMLElementAttrs,
+  HTMLTagAttrsByTag,
+}
 
 export {
   Provider,

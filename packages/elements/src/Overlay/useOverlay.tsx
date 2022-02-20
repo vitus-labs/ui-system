@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import { throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'

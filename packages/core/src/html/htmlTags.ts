@@ -98,7 +98,7 @@ const TAGS = [
   'span',
   // 'strike',
   'strong',
-  'style',
+  // 'style',
   'sub',
   'summary',
   'sup',
