@@ -99,7 +99,7 @@ export default ({
     if (active) {
       calculateContentPosition()
     }
-  }, [innerAlign, innerAlignX, innerAlignY])
+  }, [active, innerAlign, innerAlignX, innerAlignY])
 
   // handles calculating correct position of content
   // on document events (or custom scroll if set)
