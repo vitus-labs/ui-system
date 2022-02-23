@@ -9,6 +9,7 @@ module.exports = {
       merge: 'lodash.merge',
       moize: 'moize',
       core: '@vitus-labs/core',
+      elements: '@vitus-labs/elements',
       unistyle: '@vitus-labs/unistyle',
     },
   },
