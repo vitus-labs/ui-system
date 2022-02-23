@@ -7,6 +7,8 @@ type BorderColor = Color | Defaults
 
 type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
 
+type GridProperty = 'auto' | number | `span ${number}`
+
 type TextDecoration =
   | 'none'
   | 'underline'
@@ -309,6 +311,25 @@ export type ITheme = {
     | 800
     | 900
     | Defaults
+
+  gridArea: string
+  gridAutoColumns: 'auto' | 'max-content' | 'min-content' | Value
+  gridAutoFlow: 'row' | 'column' | 'dense' | 'row dense' | 'column dense'
+  gridAutoRows: 'auto' | 'max-content' | 'min-content' | Value
+  gridColumn: `${'auto' | string} / ${GridProperty}`
+  gridColumnEnd: GridProperty
+  gridColumnGap: Value
+  gridColumnStart: GridProperty
+  gridGap: Value
+  gridRow: `${'auto' | string} / ${GridProperty}`
+  gridRowStart: GridProperty
+  gridRowEnd: GridProperty
+  gridRowGap: Value
+  gridTemplate: PrimitiveValue
+  gridTemplateAreas: PrimitiveValue
+  gridTemplateColumns: PrimitiveValue
+  gridTemplateRows: PrimitiveValue
+
   justifyContent:
     | 'flex-start'
     | 'flex-end'

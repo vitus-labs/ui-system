@@ -97,6 +97,27 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     justify-content: ${t.justifyContent};
 
     /* ------------------------------------------------- */
+    /* GRID attributes */
+    /* ------------------------------------------------- */
+    grid-area: ${t.gridArea};
+    grid-auto-columns: ${value(t.gridAutoColumns)};
+    grid-auto-flow: ${t.gridAutoFlow};
+    grid-auto-rows: ${value(t.gridAutoRows)};
+    grid-column: ${t.gridColumn};
+    grid-column-end: ${t.gridColumnEnd};
+    grid-column-gap: ${value(t.gridColumnGap)};
+    grid-column-start: ${value(t.gridColumnStart)};
+    grid-gap: ${value(t.gridGap)};
+    grid-row: ${t.gridRow};
+    grid-row-start: ${t.gridRowStart};
+    grid-row-end: ${t.gridRowEnd};
+    grid-row-gap: ${value(t.gridRowGap)};
+    grid-template: ${t.gridTemplate};
+    grid-template-areas: ${t.gridTemplateAreas};
+    grid-template-columns: ${t.gridTemplateColumns};
+    grid-template-rows: ${t.gridTemplateRows};
+
+    /* ------------------------------------------------- */
     /* POSITIONING attributes */
     /* ------------------------------------------------- */
     object-fit: ${t.objectFit};
