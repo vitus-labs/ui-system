@@ -137,7 +137,7 @@ export default ({
     const shouldSetOverflow = __BROWSER__ && type === 'modal' && document.body
 
     if (active) {
-      if (customScrollListener) {
+      if (customScrollListener && closeOn !== 'hover') {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = 'hidden'
       }
@@ -166,7 +166,7 @@ export default ({
         document.body.style.overflow = ''
       }
     }
-  }, [active, type, customScrollListener])
+  }, [active, type, customScrollListener, closeOn])
 
   // only when content is active handle closing
   useEffect(() => {
@@ -197,7 +197,7 @@ export default ({
         window.removeEventListener('keydown', handleEscKey, false)
       }
     }
-  }, [active, customScrollListener])
+  }, [active, customScrollListener, closeOnEsc])
 
   useEffect(() => {
     // enable overlay manipulation only when the state is NOT blocked=true
