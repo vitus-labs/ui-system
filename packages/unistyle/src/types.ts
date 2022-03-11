@@ -3,7 +3,16 @@ import { config } from '@vitus-labs/core'
 export type Css = typeof config.css
 
 export type Defaults = 'initial' | 'inherit'
-export type Units = 'px' | 'rem' | 'em' | '%' | 'vh' | 'vw' | 'vmin' | 'vmax'
+export type Units =
+  | 'px'
+  | 'rem'
+  | 'em'
+  | '%'
+  | 'vh'
+  | 'vw'
+  | 'vmin'
+  | 'vmax'
+  | 'ex'
 export type UnitValue = number | `${number}${Units}`
 export type Value = UnitValue | 'auto' | Defaults
 

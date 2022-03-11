@@ -164,6 +164,10 @@ export type ITheme = {
     | 'auto'
     | 'baseline'
     | 'center'
+    | 'start'
+    | 'end'
+    | 'self-start'
+    | 'self-end'
     | 'flex-start'
     | 'flex-end'
     | 'stretch'
@@ -316,7 +320,7 @@ export type ITheme = {
   gridAutoColumns: 'auto' | 'max-content' | 'min-content' | Value
   gridAutoFlow: 'row' | 'column' | 'dense' | 'row dense' | 'column dense'
   gridAutoRows: 'auto' | 'max-content' | 'min-content' | Value
-  gridColumn: `${'auto' | string} / ${GridProperty}`
+  gridColumn: `${'auto' | string | number} / ${GridProperty}`
   gridColumnEnd: GridProperty
   gridColumnGap: Value
   gridColumnStart: GridProperty
