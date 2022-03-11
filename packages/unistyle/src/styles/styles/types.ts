@@ -320,12 +320,12 @@ export type ITheme = {
   gridAutoColumns: 'auto' | 'max-content' | 'min-content' | Value
   gridAutoFlow: 'row' | 'column' | 'dense' | 'row dense' | 'column dense'
   gridAutoRows: 'auto' | 'max-content' | 'min-content' | Value
-  gridColumn: `${'auto' | string | number} / ${GridProperty}`
+  gridColumn: number | `${'auto' | string | number} / ${GridProperty}`
   gridColumnEnd: GridProperty
   gridColumnGap: Value
   gridColumnStart: GridProperty
   gridGap: Value
-  gridRow: `${'auto' | string} / ${GridProperty}`
+  gridRow: number | `${'auto' | string | number} / ${GridProperty}`
   gridRowStart: GridProperty
   gridRowEnd: GridProperty
   gridRowGap: Value
