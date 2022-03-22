@@ -4,18 +4,16 @@ import Element, {
   VLElement,
   withEqualSizeBeforeAfter,
 } from '~/Element'
-
 import List, { Props as ListProps, withActiveState } from '~/List'
-
 import Overlay, {
   Props as OverlayProps,
   useOverlay,
   OverlayProvider,
   UseOverlayProps,
 } from '~/Overlay'
-
 import Portal, { Props as PortalProps } from '~/Portal'
 import Text, { Props as TextProps } from '~/Text'
+import Util, { Props as UtilProps } from '~/Util'
 
 export type {
   VLElement,
@@ -25,6 +23,7 @@ export type {
   UseOverlayProps,
   PortalProps,
   TextProps,
+  UtilProps,
 }
 
 export {
@@ -37,5 +36,6 @@ export {
   OverlayProvider,
   Portal,
   Text,
+  Util,
   Provider,
 }

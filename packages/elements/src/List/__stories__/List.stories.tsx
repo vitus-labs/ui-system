@@ -37,6 +37,24 @@ export const listWithChildren = () => (
   </List>
 )
 
+export const listWithFragmentChildren = () => (
+  <List>
+    <>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+      <Item>Label</Item>
+    </>
+  </List>
+)
+
+export const listWithSingleChildren = () => (
+  <List>
+    <Item>Label</Item>
+  </List>
+)
+
 export const listUsingWrappComponent = () => {
   const Wrapper = ({ children }) => <li>{children}</li>
   return (

@@ -65,5 +65,8 @@
     "@vitus-labs/tools-storybook": "^0.27.0",
     "@vitus-labs/tools-typescript": "^0.27.0",
     "@vitus-labs/unistyle": "^0.39.0"
+  },
+  "dependencies": {
+    "react-is": "^17.0.2"
   }
 }

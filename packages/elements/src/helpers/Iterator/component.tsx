@@ -1,4 +1,11 @@
-import React, { Children, FC, useCallback, useMemo } from 'react'
+import React, {
+  Children,
+  FC,
+  ReactNodeArray,
+  useCallback,
+  useMemo,
+} from 'react'
+import { isFragment } from 'react-is'
 import { renderContent, isEmpty } from '@vitus-labs/core'
 import type { Props, DataArrayObject, ExtendedProps } from './types'
 
@@ -75,42 +82,59 @@ const component: FC<Props> & Static = (props: Props) => {
     return index
   }, [])
 
+  const renderChild = (child, total = 1, i = 0) => {
+    const extendedProps = attachItemProps({
+      i,
+      length: total,
+    })
+
+    const finalItemProps = itemProps ? injectItemProps({}, extendedProps) : {}
+    const finalWrapProps = wrapProps
+      ? injectWrapItemProps({}, extendedProps)
+      : {}
+
+    // if no props extension is required, just return children
+    if (!itemProps && !Wrapper) return child
+
+    if (Wrapper) {
+      return (
+        <Wrapper key={i} {...finalWrapProps}>
+          {renderedElement(child, finalItemProps)}
+        </Wrapper>
+      )
+    }
+
+    return renderContent(child, {
+      key: i,
+      ...finalItemProps,
+    })
+  }
+
   // --------------------------------------------------------
   // render children
   // --------------------------------------------------------
   const renderChildren = () => {
     if (!children) return null
 
-    const { length } = children
+    // if children is Array
+    if (Array.isArray(children)) {
+      return Children.map(children, (item, i) =>
+        renderChild(item, children.length, i)
+      )
+    }
 
-    // if no props extension is required, just return children
-    if (!itemProps && !Wrapper) return children
+    // if children is Fragment
+    if (isFragment(children)) {
+      const fragmentChildren = children.props.children as ReactNodeArray
 
-    return Children.map(children, (item, i) => {
-      const key = i
-      const extendedProps = attachItemProps({
-        i,
-        length,
+      return fragmentChildren.map((item, i) => {
+        console.log(item)
+        return renderChild(item, fragmentChildren.length, i)
       })
+    }
 
-      const finalItemProps = itemProps ? injectItemProps({}, extendedProps) : {}
-      const finalWrapProps = wrapProps
-        ? injectWrapItemProps({}, extendedProps)
-        : {}
-
-      if (Wrapper) {
-        return (
-          <Wrapper key={key} {...finalWrapProps}>
-            {renderedElement(item, finalItemProps)}
-          </Wrapper>
-        )
-      }
-
-      return renderContent(item, {
-        key: i,
-        ...finalItemProps,
-      })
-    })
+    // if single child
+    return renderChild(children)
   }
 
   // --------------------------------------------------------

@@ -1,36 +1,21 @@
+import { ReactNode } from 'react'
 import { renderContent } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
-const parseJSON = (object) => {
-  let result = {}
-  try {
-    result = JSON.parse(object)
-  } catch (e) {
-    // don't show error
-  }
-
-  return result
-}
-
 export type Props = {
-  children: Parameters<typeof renderContent>[0]
+  children: ReactNode
   className?: string | string[]
   style?: Record<string, unknown>
 }
 
-const component: VLComponent<Props> = ({ children, className, style }) => {
-  const passProps = parseJSON(
-    JSON.stringify({
-      className,
-      style,
-    })
-  )
+const component: VLComponent<Props> = ({
+  children,
+  className = '',
+  style = { color: 'blue' },
+}) => renderContent(children, { className, style })
 
-  return renderContent(children, passProps)
-}
-
-const name = `${PKG_NAME}/Element` as const
+const name = `${PKG_NAME}/Util` as const
 
 component.displayName = name
 component.pkgName = PKG_NAME
