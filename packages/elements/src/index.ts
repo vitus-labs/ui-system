@@ -1,7 +1,6 @@
 import { Provider } from '@vitus-labs/unistyle'
 import Element, {
   Props as ElementProps,
-  VLElement,
   withEqualSizeBeforeAfter,
 } from '~/Element'
 import List, { Props as ListProps, withActiveState } from '~/List'
@@ -16,7 +15,6 @@ import Text, { Props as TextProps } from '~/Text'
 import Util, { Props as UtilProps } from '~/Util'
 
 export type {
-  VLElement,
   ElementProps,
   ListProps,
   OverlayProps,
