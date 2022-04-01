@@ -9,6 +9,7 @@ import type {
   TDKP,
   DimensionProps,
   ExtractDimensions,
+  MultiKeys,
 } from './dimensions'
 import type { StylesCb, Styles } from './styles'
 import type { ConfigAttrs } from './config'
@@ -103,7 +104,7 @@ export interface IRocketComponent<
     DEBUG,
     inversed,
     passProps,
-  }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
+  }: ConfigAttrs<NC, D, DKP, UB>) => NC extends ElementType
     ? RocketComponent<ExtractProps<NC>, EA, T, CSS, S, HOC, D, UB, DKP>
     : RocketComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
 
@@ -200,9 +201,9 @@ export interface IRocketComponent<
   is: S
 
   getStaticDimensions: (theme: TObj) => {
-    dimensions: TObj
+    dimensions: DKP
     useBooleans: UB
-    multiKeys: TObj
+    multiKeys: MultiKeys<D>
   }
 
   getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
