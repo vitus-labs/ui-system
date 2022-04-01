@@ -22,7 +22,7 @@ import type {
 import type { StylesCb, StylesDefault } from '~/types/styles'
 import type { AttrsCb } from '~/types/attrs'
 import type { ThemeCb, ThemeModeKeys, ThemeDefault } from '~/types/theme'
-import type { GenericHoc } from '~/types/hoc'
+import type { GenericHoc, ComposeParam } from '~/types/hoc'
 import type { DefaultProps } from '~/types/configuration'
 import type { RocketComponent, IRocketComponent } from '~/types/rocketstyle'
 
@@ -54,6 +54,7 @@ export type {
   ThemeCb,
   ThemeModeKeys,
   GenericHoc,
+  ComposeParam,
   DefaultProps,
 }
 

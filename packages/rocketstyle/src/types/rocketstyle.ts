@@ -13,46 +13,43 @@ import type { StylesCb, Styles } from './styles'
 import type { ConfigAttrs } from './config'
 import type { AttrsCb } from './attrs'
 import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
-import type { GenericHoc } from './hoc'
+import type { ComposeParam } from './hoc'
 import type { DefaultProps } from './configuration'
 
 export type RocketComponent<
-  // original component props
   OA extends TObj = {},
-  // extended component props
   EA extends TObj = {},
-  // theme
   T extends TObj = {},
-  // custom theme properties
   CSS extends TObj = {},
-  // dimensions
+  S extends TObj = {},
   D extends Dimensions = Dimensions,
-  // use booleans
   UB extends boolean = boolean,
-  // dimension key props
   DKP extends TDKP = TDKP
-> = IRocketComponent<OA, EA, T, CSS, D, UB, DKP> & {
-  [I in keyof D]: <
-    K extends DimensionValue = D[I],
-    P extends DimensionCallbackParam<
-      Theme<T>,
-      Styles<CSS>
-    > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
-  >(
-    param: P
-  ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
-    ? RocketComponent<OA, EA, T, CSS, D, UB, DimensionProps<K, D, P, DKP>>
-    : RocketComponent<OA, EA, T, CSS, D, UB, DKP>
-}
+> = IRocketComponent<OA, EA, T, CSS, S, D, UB, DKP> &
+  {
+    [I in keyof D]: <
+      K extends DimensionValue = D[I],
+      P extends DimensionCallbackParam<
+        Theme<T>,
+        Styles<CSS>
+      > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
+    >(
+      param: P
+    ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
+      ? RocketComponent<OA, EA, T, CSS, S, D, UB, DimensionProps<K, D, P, DKP>>
+      : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
+  }
 
 /**
- * @param A    Generic _props_ params.
  * @param OA   Origin component props params.
+ * @param EA   Extended prop types
  * @param T    Theme passed via context.
- * @param CT   Custom theme accepted by styles.
+ * @param CSS  Custom theme accepted by styles.
+ * @param S    Defined statics
  * @param D    Dimensions to be used for defining component states.
  * @param UB   Use booleans value
  * @param DKP  Dimensions key props.
+ * @param DFP  Calculated final component props
  */
 export interface IRocketComponent<
   // original component props
@@ -65,6 +62,8 @@ export interface IRocketComponent<
   T extends TObj = {},
   // custom style properties
   CSS extends TObj = {},
+  // statics
+  S extends TObj = {},
   // dimensions
   D extends Dimensions = Dimensions,
   // use booleans
@@ -92,30 +91,67 @@ export interface IRocketComponent<
     inversed,
     passProps,
   }: ConfigAttrs<NC, DKP, UB>) => NC extends ElementType
-    ? RocketComponent<ExtractProps<NC>, EA, T, CSS, D, UB, DKP>
-    : RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+    ? RocketComponent<ExtractProps<NC>, EA, T, CSS, S, D, UB, DKP>
+    : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
   // ATTRS chaining method
   // --------------------------------------------------------
   /**
-   * @param A    Generic _props_ params.
-   * @param OA   Origin component props params.
-   * @param T    Theme passed via context.
-   * @param CSS  Custom styles accepted by styles.
-   * @param D    Dimensions to be used for defining component states.
-   * @param UB   Use booleans value
-   * @param DKP  Dimensions key props.
+   * A chaining method to define default component props
+   * @param param  Can be either _object_ or a _callback_
+   *
+   * #### Examples
+   *
+   * ##### Object as a parameter
+   * ```tsx
+   * const base = rocketstyleComponent
+   * const newElement = base.attrs({
+   *  propA: 'value',
+   *  propB: 'value,
+   * })
+   * ```
+   *
+   * ##### Callback as a parameter
+   * ```tsx
+   * const base = rocketstyleComponent
+   * const newElement = base.attrs((props, theme, helpers) => ({
+   * propA: props.disabled ? 'valueA' : 'valueB',
+   * propB: 'value,
+   *  }))
+   *  ```
    */
   attrs: <P extends TObj | unknown = unknown>(
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>
       : Partial<DFP> | AttrsCb<DFP, Theme<T>>
   ) => P extends TObj
-    ? RocketComponent<OA, MergeTypes<[EA, P]>, T, CSS, D, UB, DKP>
-    : RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+    ? RocketComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, D, UB, DKP>
+    : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
   // THEME chaining method
   // --------------------------------------------------------
+  /**
+   * A chaining method to define default component theme
+   * @param param  Can be either _object_ or a _callback_
+   *
+   * #### Examples
+   *
+   * ##### Object as a parameter
+   * ```tsx
+   * const base = rocketstyleComponent
+   * const newElement = base.attrs({
+   *  backgroundColor: 'black',
+   * })
+   * ```
+   *
+   * ##### Callback as a parameter
+   * ```tsx
+   * const base = rocketstyleComponent
+   * const newElement = base.theme((theme, css) => ({
+   * backgroundColor: t.color.black, // value from context
+   *  }))
+   *  ```
+   */
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
       ?
@@ -123,26 +159,28 @@ export interface IRocketComponent<
           | ThemeCb<MergeTypes<[Styles<CSS>, P]>, Theme<T>>
       : Partial<Styles<CSS>> | ThemeCb<Styles<CSS>, Theme<T>>
   ) => P extends TObj
-    ? RocketComponent<OA, EA, T, MergeTypes<[CSS, P]>, D, UB, DKP>
-    : RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+    ? RocketComponent<OA, EA, T, MergeTypes<[CSS, P]>, S, D, UB, DKP>
+    : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
-  styles: (param: StylesCb) => RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+  styles: (param: StylesCb) => RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
   // COMPOSE chaining method
   // --------------------------------------------------------
-  compose: (
-    param: Record<string, GenericHoc | null | undefined | false>
-  ) => RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+  compose: <P extends ComposeParam>(
+    param: P
+  ) => RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
   // STATICS chaining method + its output + other statics
   // --------------------------------------------------------
-  statics: (
-    param: Record<string, any>
-  ) => RocketComponent<OA, EA, T, CSS, D, UB, DKP>
+  statics: <P extends TObj | unknown = unknown>(
+    param: P
+  ) => P extends TObj
+    ? RocketComponent<OA, EA, T, CSS, MergeTypes<[S, P]>, D, UB, DKP>
+    : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
 
-  is: Record<string, any>
+  is: S
 
   getStaticDimensions: (theme: TObj) => {
     dimensions: TObj
