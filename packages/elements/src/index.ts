@@ -13,6 +13,16 @@ import Overlay, {
 import Portal, { Props as PortalProps } from '~/Portal'
 import Text, { Props as TextProps } from '~/Text'
 import Util, { Props as UtilProps } from '~/Util'
+import type {
+  AlignX,
+  AlignY,
+  Content,
+  Direction,
+  ResponsiveBooltype,
+  Responsive,
+  ExtendCss,
+  InnerRef,
+} from '~/types'
 
 export type {
   ElementProps,
@@ -22,6 +32,15 @@ export type {
   PortalProps,
   TextProps,
   UtilProps,
+  // hidden types
+  AlignX,
+  AlignY,
+  Content,
+  Direction,
+  ResponsiveBooltype,
+  Responsive,
+  ExtendCss,
+  InnerRef,
 }
 
 export {

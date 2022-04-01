@@ -82,17 +82,29 @@ export default ({
     handleActive(false)
   }, [])
 
+  useEffect(() => {
+    if (active) {
+      if (onOpen) onOpen()
+    } else {
+      if (onClose) onClose()
+    }
+  }, [active, onOpen, onClose])
+
+  useEffect(() => {
+    if (disabled) {
+      hideContent()
+    }
+  }, [disabled])
+
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
   useEffect(() => {
     if (active) {
       if (ctx?.setBlocked) ctx.setBlocked()
-      if (onOpen) onOpen()
     } else {
       if (ctx?.setUnblocked) ctx.setUnblocked()
-      if (onClose) onClose()
     }
-  }, [active, onOpen, onClose])
+  }, [active, ctx])
 
   // calculate position on every position change state
   useEffect(() => {

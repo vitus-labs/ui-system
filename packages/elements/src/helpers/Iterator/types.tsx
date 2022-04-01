@@ -9,11 +9,18 @@ import { HTMLTags } from '@vitus-labs/core'
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>
 export type SimpleValue = ReactText
+
+/**
+ * @hidden
+ */
 export type ElementType<T extends Record<string, unknown> = any> =
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
   | HTMLTags
 
+/**
+ * @hidden
+ */
 export type ExtendedProps = {
   index: number
   first: boolean
@@ -23,6 +30,9 @@ export type ExtendedProps = {
   position: number
 }
 
+/**
+ * @hidden
+ */
 export type DataArrayObject = Partial<{
   id: SimpleValue
   key: SimpleValue
@@ -85,6 +95,9 @@ export type DataArrayObject = Partial<{
 //   wrapProps?: ObjectArrayTypeCallback
 // }
 
+/**
+ * @hidden
+ */
 export type PropsCallback =
   | TObj
   | ((

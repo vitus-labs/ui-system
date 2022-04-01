@@ -3,23 +3,6 @@ import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 
 const styles = ({ theme: t, css }) => css`
   ${__WEB__ &&
-  css`
-    ${({ $childFix }) =>
-      !$childFix &&
-      css`
-        display: ${t.block ? 'flex' : 'inline-flex'};
-      `};
-
-    ${({ $parentFix }) =>
-      $parentFix &&
-      t.block &&
-      css`
-        flex-direction: column;
-        width: 100%;
-      `};
-  `};
-
-  ${__WEB__ &&
   t.alignY === 'block' &&
   css`
     height: 100%;
@@ -35,6 +18,23 @@ const styles = ({ theme: t, css }) => css`
   css`
     align-self: stretch;
   `}
+
+  ${__WEB__ &&
+  css`
+    ${({ $childFix }) =>
+      !$childFix &&
+      css`
+        display: ${t.block ? 'flex' : 'inline-flex'};
+      `};
+
+    ${({ $parentFix }) =>
+      $parentFix &&
+      t.block &&
+      css`
+        flex-direction: column;
+        width: 100%;
+      `};
+  `};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
