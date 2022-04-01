@@ -18,6 +18,7 @@ export type StyleComponent<
   T,
   CSS,
   {},
+  {},
   D,
   UB,
   // eslint-disable-next-line @typescript-eslint/ban-types
