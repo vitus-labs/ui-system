@@ -14,6 +14,13 @@ import Portal, { Props as PortalProps } from '~/Portal'
 import Text, { Props as TextProps } from '~/Text'
 import Util, { Props as UtilProps } from '~/Util'
 import type {
+  Props as IteratorProps,
+  PropsCallback,
+  DataArrayObject,
+  ExtendedProps,
+  ElementType,
+} from '~/helpers/Iterator'
+import type {
   AlignX,
   AlignY,
   Content,
@@ -32,7 +39,8 @@ export type {
   PortalProps,
   TextProps,
   UtilProps,
-  // hidden types
+  IteratorProps,
+  // hidden element types
   AlignX,
   AlignY,
   Content,
@@ -41,6 +49,11 @@ export type {
   Responsive,
   ExtendCss,
   InnerRef,
+  // hiden iterator types
+  PropsCallback,
+  DataArrayObject,
+  ExtendedProps,
+  ElementType,
 }
 
 export {
