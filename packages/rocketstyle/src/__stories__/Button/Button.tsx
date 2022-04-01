@@ -266,7 +266,7 @@ export const ButtonConsumer = rocketstyle()()({
 const newComponent = (props) => <Button {...props} />
 
 export const ButtonWithRocketstyle = Button.config({
-  name: 'ButtonProvider',
+  name: 'ButtonWithRocketstyle',
   provider: true,
   component: newComponent,
 })

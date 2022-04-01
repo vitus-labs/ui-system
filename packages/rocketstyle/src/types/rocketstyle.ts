@@ -25,20 +25,19 @@ export type RocketComponent<
   D extends Dimensions = Dimensions,
   UB extends boolean = boolean,
   DKP extends TDKP = TDKP
-> = IRocketComponent<OA, EA, T, CSS, S, D, UB, DKP> &
-  {
-    [I in keyof D]: <
-      K extends DimensionValue = D[I],
-      P extends DimensionCallbackParam<
-        Theme<T>,
-        Styles<CSS>
-      > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
-    >(
-      param: P
-    ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
-      ? RocketComponent<OA, EA, T, CSS, S, D, UB, DimensionProps<K, D, P, DKP>>
-      : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
-  }
+> = IRocketComponent<OA, EA, T, CSS, S, D, UB, DKP> & {
+  [I in keyof D]: <
+    K extends DimensionValue = D[I],
+    P extends DimensionCallbackParam<
+      Theme<T>,
+      Styles<CSS>
+    > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
+  >(
+    param: P
+  ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
+    ? RocketComponent<OA, EA, T, CSS, S, D, UB, DimensionProps<K, D, P, DKP>>
+    : RocketComponent<OA, EA, T, CSS, S, D, UB, DKP>
+}
 
 /**
  * @param OA   Origin component props params.
@@ -174,7 +173,7 @@ export interface IRocketComponent<
 
   // STATICS chaining method + its output + other statics
   // --------------------------------------------------------
-  statics: <P extends TObj | unknown = unknown>(
+  statics: <P extends TObj>(
     param: P
   ) => P extends TObj
     ? RocketComponent<OA, EA, T, CSS, MergeTypes<[S, P]>, D, UB, DKP>
