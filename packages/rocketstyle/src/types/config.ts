@@ -13,19 +13,13 @@ export type RocketComponentType = ElementType & {
 export type RocketProviderState<
   T extends RocketComponentType | TObj | unknown = unknown
 > = T extends RocketComponentType
-  ? {
-      [J in keyof T['$$rocketstyle']]: keyof T['$$rocketstyle'][J]
-    } & { pseudo: PseudoState }
+  ? Partial<T['$$rocketstyle']> & { pseudo: PseudoState }
   : T
 
 export type ConsumerCtxCBValue<T extends RocketComponentType, DKP> = (
-  props: RocketProviderState<T>
+  attrs: RocketProviderState<T>
 ) => DKP extends TDKP
-  ? Partial<
-      {
-        [J in keyof DKP]: keyof DKP[J]
-      } & { pseudo: Partial<PseudoState> }
-    >
+  ? Partial<T['$$rocketstyle'] & { pseudo: PseudoState }>
   : TObj
 
 export type ConsumerCtxCb<DKP> = <T extends RocketComponentType>(

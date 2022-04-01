@@ -8,6 +8,7 @@ import type {
   ExtractDimensionProps,
   TDKP,
   DimensionProps,
+  ExtractDimensions,
 } from './dimensions'
 import type { StylesCb, Styles } from './styles'
 import type { ConfigAttrs } from './config'
@@ -183,17 +184,16 @@ export interface IRocketComponent<
 
   getStaticDimensions: (theme: TObj) => {
     dimensions: TObj
-    useBooleans: boolean
+    useBooleans: UB
     multiKeys: TObj
   }
 
   getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
 
-  readonly $$rocketstyle: DKP
+  readonly $$rocketstyle: ExtractDimensions<D, DKP>
+  readonly $$originProps: OA
+  readonly $$extendedProps: EA
+  readonly $$allProps: DFP
   readonly IS_ROCKETSTYLE: true
   readonly displayName: string
-  // name: never
-  // length: never
-  // arguments: never
-  // defaultProps: never
 }

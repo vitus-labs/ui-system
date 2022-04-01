@@ -97,3 +97,8 @@ export type ExtractDimensionProps<
       >
     >
   : Partial<ExtractNullableDimensionKeys<DimensionObjAttrs<D, DKP>>>
+
+export type ExtractDimensions<
+  D extends Dimensions,
+  DKP extends TDKP
+> = ExtractNullableDimensionKeys<DimensionObjAttrs<D, DKP>>

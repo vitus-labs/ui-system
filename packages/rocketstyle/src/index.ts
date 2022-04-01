@@ -18,6 +18,7 @@ import type {
   ExtractDimensionProps,
   TDKP,
   DimensionProps,
+  ExtractDimensions,
 } from '~/types/dimensions'
 import type { StylesCb, StylesDefault } from '~/types/styles'
 import type { AttrsCb } from '~/types/attrs'
@@ -48,6 +49,7 @@ export type {
   ExtractDimensionProps,
   TDKP,
   DimensionProps,
+  ExtractDimensions,
   StylesCb,
   ConfigAttrs,
   AttrsCb,
