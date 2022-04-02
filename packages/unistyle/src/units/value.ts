@@ -1,39 +1,33 @@
-import type { Units } from '~/types'
-import normalizeUnit from './normalizeUnit'
+import stripUnit from './stripUnit'
 
-type GetValueOf = (...values: Array<unknown>) => number | string | unknown
-const getValueOf: GetValueOf = (...values) =>
-  values.find((value) => typeof value !== 'undefined' && value !== null)
+const isNotValue = (value) => !value && value !== 0
 
 export type Value = (
-  values: Array<unknown>,
+  param: any,
   rootSize?: number,
-  outputUnit?: Units
-) => string | number
-const value: Value = (values, rootSize, outputUnit) => {
-  const param = getValueOf(...values)
+  outputUnit?: 'px' | 'rem' | '%' | string
+) => string | number | null
 
-  if (Array.isArray(param)) {
-    return param
-      .reduce(
-        (acc, item) =>
-          acc.push(
-            normalizeUnit({
-              param: item,
-              rootSize,
-              outputUnit,
-            })
-          ),
-        []
-      )
-      .join(' ')
+const value: Value = (
+  param,
+  rootSize = 16,
+  outputUnit = __WEB__ ? 'rem' : 'px'
+) => {
+  if (isNotValue(param)) return null
+
+  const [value, unit] = stripUnit(param as string, true)
+  if (isNotValue(value)) return null
+  if (value === 0 || typeof value === 'string') return param // zero should be unitless
+
+  if (rootSize && !Number.isNaN(value)) {
+    if (!unit && outputUnit === 'px') return `${value}${outputUnit}`
+    if (!unit) return `${value / rootSize}rem`
+    if (unit === 'px' && outputUnit === 'rem') return `${value / rootSize}rem`
   }
 
-  return normalizeUnit({
-    param,
-    rootSize,
-    outputUnit,
-  })
+  if (unit) return param
+
+  return `${value}${outputUnit}`
 }
 
 export default value

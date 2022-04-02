@@ -1,4 +1,4 @@
-import { normalizeUnit } from '~/units'
+import { value } from '~/units'
 import type { Units } from '~/types'
 
 const isValidValue = (value) => !!value || value === 0
@@ -74,8 +74,8 @@ const edge: Edge =
 
     const { unit, edgeCss } = definitions[property]
 
-    const value = (param) => {
-      if (unit) return normalizeUnit({ param, rootSize, outputUnit: unit })
+    const calc = (param) => {
+      if (unit) return value(param, rootSize, unit)
       return param
     }
 
@@ -112,36 +112,36 @@ const edge: Edge =
 
     if (allValues.every((val) => isValidValue(val))) {
       if (allValues.every((val, _, arr) => val === arr[0])) {
-        return `${property}: ${value(t)};`
+        return `${property}: ${calc(t)};`
       }
 
       if (t === b && r === l) {
-        return `${property}: ${value(t)} ${value(r)};`
+        return `${property}: ${calc(t)} ${calc(r)};`
       }
 
       if (t && r === l && b) {
-        return `${property}: ${value(t)} ${value(r)} ${value(b)};`
+        return `${property}: ${calc(t)} ${calc(r)} ${calc(b)};`
       }
 
-      return `${property}: ${value(t)} ${value(r)} ${value(b)} ${value(l)};`
+      return `${property}: ${calc(t)} ${calc(r)} ${calc(b)} ${calc(l)};`
     }
 
     let output = ''
 
     if (isValidValue(t)) {
-      output += `${edgeCss('top')}: ${value(t)};`
+      output += `${edgeCss('top')}: ${calc(t)};`
     }
 
     if (isValidValue(b)) {
-      output += `${edgeCss('bottom')}: ${value(b)};`
+      output += `${edgeCss('bottom')}: ${calc(b)};`
     }
 
     if (isValidValue(l)) {
-      output += `${edgeCss('left')}: ${value(l)};`
+      output += `${edgeCss('left')}: ${calc(l)};`
     }
 
     if (isValidValue(r)) {
-      output += `${edgeCss('right')}: ${value(r)};`
+      output += `${edgeCss('right')}: ${calc(r)};`
     }
 
     return output

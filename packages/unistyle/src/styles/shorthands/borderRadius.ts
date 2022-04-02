@@ -1,5 +1,5 @@
-import { normalizeUnit } from '~/units'
-import { Value } from '~/types'
+import { value } from '~/units'
+import type { Value } from '~/types'
 
 const isValidValue = (value) => !!value || value === 0
 
@@ -45,7 +45,7 @@ const borderRadius: BorderRadius =
       return null
     }
 
-    const value = (param) => normalizeUnit({ param, rootSize })
+    const calc = (param) => value(param, rootSize)
 
     // topLeft - topRight - bottomRight - bottomLeft
     const values = [full, full, full, full]
@@ -90,38 +90,36 @@ const borderRadius: BorderRadius =
 
     if (values.every((val) => isValidValue(val))) {
       if (values.every((val, _, arr) => val === arr[0])) {
-        return `border-radius: ${value(tl)};`
+        return `border-radius: ${calc(tl)};`
       }
 
       if (tl === br && tr === bl) {
-        return `border-radius: ${value(tl)} ${value(tr)};`
+        return `border-radius: ${calc(tl)} ${calc(tr)};`
       }
 
       if (tl && tr === bl && br) {
-        return `border-radius: ${value(tl)} ${value(tr)} ${value(br)};`
+        return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)};`
       }
 
-      return `border-radius: ${value(tl)} ${value(tr)} ${value(br)} ${value(
-        bl
-      )};`
+      return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)} ${calc(bl)};`
     }
 
     let output = ''
 
     if (isValidValue(tl)) {
-      output += `border-top-left-radius: ${value(tl)};`
+      output += `border-top-left-radius: ${calc(tl)};`
     }
 
     if (isValidValue(tr)) {
-      output += `border-top-right-radius: ${value(tr)};`
+      output += `border-top-right-radius: ${calc(tr)};`
     }
 
     if (isValidValue(br)) {
-      output += `border-bottom-right-radius: ${value(br)};`
+      output += `border-bottom-right-radius: ${calc(br)};`
     }
 
     if (isValidValue(bl)) {
-      output += `border-bottom-left-radius: ${value(bl)};`
+      output += `border-bottom-left-radius: ${calc(bl)};`
     }
 
     return output

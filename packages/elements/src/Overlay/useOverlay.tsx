@@ -45,8 +45,8 @@ export default ({
   openOn = 'click', // click | hover
   closeOn = 'click', // click | 'clickOnTrigger' | 'clickOutsideContent' | hover | manual
   type = 'dropdown', // dropdown | tooltip | popover | modal
-  align = 'bottom', // * main align prop * top | left | bottom | right
   position = 'fixed', // absolute | fixed | relative | static
+  align = 'bottom', // * main align prop * top | left | bottom | right
   alignX = 'left', // left | center | right
   alignY = 'bottom', // top | center | bottom
   offsetX = 0,
@@ -64,10 +64,6 @@ export default ({
   const [blocked, handleBlocked] = useState(false)
   const [active, handleActive] = useState(isOpen)
 
-  const [innerAlign, setInnerAlign] = useState(align)
-  const [innerAlignX, setInnerAlignX] = useState(alignX)
-  const [innerAlignY, setInnerAlignY] = useState(alignY)
-
   const triggerRef = useRef<HTMLElement>()
   const contentRef = useRef<HTMLElement>()
 
@@ -83,35 +79,32 @@ export default ({
   }, [])
 
   useEffect(() => {
-    if (active) {
-      if (onOpen) onOpen()
-    } else {
-      if (onClose) onClose()
-    }
-  }, [active, onOpen, onClose])
-
-  useEffect(() => {
     if (disabled) {
       hideContent()
     }
   }, [disabled])
 
+  // calculate position on every position change state
+  useEffect(() => {
+    if (active) {
+      // hack-ish way to correctly calculate position for the first time
+      // without calling it twice the posittion is somehow wrong
+      calculateContentPosition()
+      calculateContentPosition()
+    }
+  }, [active, align, alignX, alignX])
+
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
   useEffect(() => {
     if (active) {
+      if (onOpen) onOpen()
       if (ctx?.setBlocked) ctx.setBlocked()
     } else {
+      if (onClose) onClose()
       if (ctx?.setUnblocked) ctx.setUnblocked()
     }
-  }, [active, ctx])
-
-  // calculate position on every position change state
-  useEffect(() => {
-    if (active) {
-      calculateContentPosition()
-    }
-  }, [active, innerAlign, innerAlignX, innerAlignY])
+  }, [active, onOpen, onClose])
 
   // handles calculating correct position of content
   // on document events (or custom scroll if set)
@@ -248,7 +241,6 @@ export default ({
 
   const calculateContentPosition = () => {
     if (!active) return
-
     if (!triggerRef.current || !contentRef.current) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('Cannot access `ref` of trigger or content component.')
@@ -257,110 +249,114 @@ export default ({
       return
     }
 
-    const triggerDimensions = triggerRef.current.getBoundingClientRect()
-    const contentDimensions = contentRef.current.getBoundingClientRect()
-
     const overlayPosition: OverlayPosition = {
       position,
     }
 
-    if (['dropdown', 'tooltip', 'popover'].includes(type)) {
-      if (['top', 'bottom'].includes(align)) {
-        const positionTop =
-          triggerDimensions.top - offsetY - contentDimensions.height
-        const positionBottom = triggerDimensions.bottom + offsetY
+    const t = triggerRef.current.getBoundingClientRect()
+    const c = contentRef.current.getBoundingClientRect()
 
-        const positionLeft = triggerDimensions.left - offsetX
-        const positionRight =
-          triggerDimensions.right + offsetX - contentDimensions.width
+    if (['dropdown', 'tooltip', 'popover'].includes(type)) {
+      // align is top or bottom
+      if (['top', 'bottom'].includes(align)) {
+        // axe Y position
+        // (assigned as top position)
+        const top = t.top - offsetY - c.height
+        const bottom = t.bottom + offsetY
+
+        // axe X position
+        // content position to trigger position
+        // (assigned as left position)
+        const left = t.left + offsetX
+        const right = t.right - offsetX - c.width
+
+        // calculate possible position
+        const isTop = top >= 0 // represents window.height = 0
+        const isBottom = bottom + c.height <= window.innerHeight
+        const isLeft = left + c.width <= window.innerWidth
+        const isRight = right >= 0 // represents window.width = 0
 
         if (align === 'top') {
-          const isTop = positionTop >= 0
-
-          setInnerAlign(isTop ? 'top' : 'bottom')
-          overlayPosition.top = isTop ? positionTop : positionBottom
-        } else {
-          const isBottom =
-            positionBottom + contentDimensions.height <= window.innerHeight
-
-          setInnerAlign(isBottom ? 'bottom' : 'top')
-          overlayPosition.top = isBottom ? positionBottom : positionTop
+          overlayPosition.top = isTop ? top : bottom
+        } else if (align === 'bottom') {
+          overlayPosition.top = isBottom ? bottom : top
         }
 
-        switch (alignX) {
-          case 'right': {
-            const isRight = positionRight >= 0
+        // left
+        if (alignX === 'left') {
+          overlayPosition.left = isLeft ? left : right
+        }
+        // center
+        else if (alignX === 'center') {
+          const center = t.left + (t.right - t.left) / 2 - c.width / 2
+          const isCenteredLeft = center >= 0
+          const isCenteredRight = center + c.width <= window.innerWidth
 
-            setInnerAlignX(isRight ? 'right' : 'left')
-            overlayPosition.left = isRight ? positionRight : positionLeft
-
-            break
-          }
-          case 'center': {
-            overlayPosition.left =
-              triggerDimensions.left +
-              (triggerDimensions.right - triggerDimensions.left) / 2 -
-              contentDimensions.width / 2
-            break
-          }
-          case 'left':
-          default: {
-            const isLeft =
-              positionLeft + contentDimensions.width <= window.innerWidth
-
-            setInnerAlignX(isLeft ? 'left' : 'right')
-            overlayPosition.left = isLeft ? positionLeft : positionRight
-            break
+          if (isCenteredLeft && isCenteredRight) {
+            overlayPosition.left = center
+          } else if (isCenteredLeft) {
+            overlayPosition.left = left
+          } else if (isCenteredRight) {
+            overlayPosition.left = right
           }
         }
-      } else if (['left', 'right'].includes(align)) {
-        const positionLeft =
-          triggerDimensions.left - offsetX - contentDimensions.width
-        const positionRight = triggerDimensions.right + offsetX
-
-        const positionTop = triggerDimensions.top + offsetY
-        const positionBottom =
-          triggerDimensions.bottom - offsetY - contentDimensions.height
-
-        if (align === 'left') {
-          const isLeft = positionLeft >= 0
-
-          setInnerAlign(isLeft ? 'left' : 'right')
-          overlayPosition.left = isLeft ? positionLeft : positionRight
-        } else {
-          const isRight =
-            positionRight + contentDimensions.width <= window.innerWidth
-
-          setInnerAlign(isRight ? 'right' : 'left')
-          overlayPosition.left = isRight ? positionRight : positionLeft
-        }
-
-        switch (alignY) {
-          case 'top': {
-            const isTop =
-              positionTop + contentDimensions.height <= window.innerHeight
-
-            setInnerAlignY(isTop ? 'top' : 'bottom')
-            overlayPosition.top = isTop ? positionTop : positionBottom
-            break
-          }
-          case 'center':
-            overlayPosition.top =
-              triggerDimensions.top -
-              offsetY +
-              (triggerDimensions.bottom - triggerDimensions.top) / 2 -
-              contentDimensions.height / 2
-            break
-          case 'bottom':
-          default: {
-            const isBottom = positionBottom >= 0
-
-            setInnerAlignY(isBottom ? 'bottom' : 'top')
-            overlayPosition.top = isBottom ? positionBottom : positionTop
-          }
+        // right
+        else if (alignX === 'right') {
+          overlayPosition.left = isRight ? right : left
         }
       }
-    } else if (type === 'modal') {
+
+      // align is left or right
+      else if (['left', 'right'].includes(align)) {
+        // axe X position
+        // (assigned as left position)
+        const left = t.left - offsetX - c.width
+        const right = t.right + offsetX
+
+        // axe Y position
+        // content position to trigger position
+        // (assigned as top position)
+        const top = t.top + offsetY
+        const bottom = t.bottom - offsetY - c.height
+
+        const isLeft = left >= 0
+        const isRight = right + c.width <= window.innerWidth
+        const isTop = top + c.height <= window.innerHeight
+        const isBottom = bottom >= 0
+
+        if (align === 'left') {
+          overlayPosition.left = isLeft ? left : right
+        } else if (align === 'right') {
+          overlayPosition.left = isRight ? right : left
+        }
+
+        // top
+        if (alignY === 'top') {
+          overlayPosition.top = isTop ? top : bottom
+        }
+        // center
+        else if (alignY === 'center') {
+          const center = t.top + (t.bottom - t.top) / 2 - c.height / 2
+          const isCenteredTop = center >= 0
+          const isCenteredBottom = center + c.height <= window.innerHeight
+
+          if (isCenteredTop && isCenteredBottom) {
+            overlayPosition.top = center
+          } else if (isCenteredTop) {
+            overlayPosition.top = top
+          } else if (isCenteredBottom) {
+            overlayPosition.top = bottom
+          }
+        }
+        // bottom
+        else if (alignY === 'bottom') {
+          overlayPosition.top = isBottom ? bottom : top
+        }
+      }
+    }
+
+    // modal type
+    else if (type === 'modal') {
       switch (alignX) {
         case 'right':
           overlayPosition.right = offsetX
@@ -370,8 +366,7 @@ export default ({
           break
         case 'center':
         default:
-          overlayPosition.left =
-            window.innerWidth / 2 - contentDimensions.width / 2
+          overlayPosition.left = window.innerWidth / 2 - c.width / 2
           break
       }
 
@@ -380,8 +375,7 @@ export default ({
           overlayPosition.top = offsetY
           break
         case 'center':
-          overlayPosition.top =
-            window.innerHeight / 2 - contentDimensions.height / 2
+          overlayPosition.top = window.innerHeight / 2 - c.height / 2
           break
         case 'bottom':
         default:
@@ -390,24 +384,14 @@ export default ({
       }
     }
 
+    const calc = (param) => value(param, rootSize) as string
+
     // ADD POSITION STYLES TO CONTENT
-    contentRef.current.style.position = overlayPosition.position
-    contentRef.current.style.top = value(
-      [overlayPosition.top],
-      rootSize
-    ) as string
-    contentRef.current.style.bottom = value(
-      [overlayPosition.bottom],
-      rootSize
-    ) as string
-    contentRef.current.style.left = value(
-      [overlayPosition.left],
-      rootSize
-    ) as string
-    contentRef.current.style.right = value(
-      [overlayPosition.right],
-      rootSize
-    ) as string
+    contentRef.current.style.position = position
+    contentRef.current.style.top = calc(overlayPosition.top)
+    contentRef.current.style.bottom = calc(overlayPosition.bottom)
+    contentRef.current.style.left = calc(overlayPosition.left)
+    contentRef.current.style.right = calc(overlayPosition.right)
   }
 
   const handleVisibilityByEventType = (e) => {
@@ -450,7 +434,6 @@ export default ({
       }
     }
   }
-
   const handleContentPosition = throttle(
     calculateContentPosition,
     throttleDelay
@@ -469,9 +452,9 @@ export default ({
     triggerRef,
     contentRef,
     active,
-    align: innerAlign,
-    alignX: innerAlignX,
-    alignY: innerAlignY,
+    align,
+    alignX,
+    alignY,
     showContent,
     hideContent,
     blocked,

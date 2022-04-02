@@ -41,14 +41,7 @@ import {
 // --------------------------------------------------------
 // UNITS UTILITIES
 // --------------------------------------------------------
-import {
-  stripUnit,
-  normalizeUnit,
-  value,
-  StripUnit,
-  NormalizeUnit,
-  Value,
-} from '~/units'
+import { stripUnit, value, values, StripUnit, Value, Values } from '~/units'
 
 export type {
   TProvider,
@@ -67,8 +60,8 @@ export type {
   AlignContentDirectionKeys,
   ExtendCss,
   StripUnit,
-  NormalizeUnit,
   Value,
+  Values,
 }
 
 export {
@@ -87,6 +80,6 @@ export {
   ALIGN_CONTENT_MAP_Y,
   extendCss,
   stripUnit,
-  normalizeUnit,
   value,
+  values,
 }

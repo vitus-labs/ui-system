@@ -1,5 +1,5 @@
 import { borderRadius, edge } from '~/styles/shorthands'
-import { value as unitValue } from '~/units'
+import { values } from '~/units'
 import type { Css } from '~/types'
 import type { Theme } from './types'
 
@@ -16,7 +16,7 @@ export type Styles = ({
 }) => ReturnType<typeof css>
 
 const styles: Styles = ({ theme: t, css, rootSize }) => {
-  const value = (...values) => unitValue(values, rootSize)
+  const calc = (...params) => values(params, rootSize)
   const shorthand = edge(rootSize)
 
   return css`
@@ -48,15 +48,15 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       right: t.right,
     })};
 
-    width: ${value(t.width, t.size)};
-    min-width: ${value(t.minWidth, t.minSize)};
-    max-width: ${value(t.maxWidth, t.maxSize)};
+    width: ${calc(t.width, t.size)};
+    min-width: ${calc(t.minWidth, t.minSize)};
+    max-width: ${calc(t.maxWidth, t.maxSize)};
 
-    height: ${value(t.height, t.size)};
-    min-height: ${value(t.minHeight, t.minSize)};
-    max-height: ${value(t.maxHeight, t.maxSize)};
+    height: ${calc(t.height, t.size)};
+    min-height: ${calc(t.minHeight, t.minSize)};
+    max-height: ${calc(t.maxHeight, t.maxSize)};
 
-    gap: ${value(t.gap)};
+    gap: ${calc(t.gap)};
 
     /* ------------------------------------------------- */
     /* SPACING attributes */
@@ -100,18 +100,18 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* GRID attributes */
     /* ------------------------------------------------- */
     grid-area: ${t.gridArea};
-    grid-auto-columns: ${value(t.gridAutoColumns)};
+    grid-auto-columns: ${calc(t.gridAutoColumns)};
     grid-auto-flow: ${t.gridAutoFlow};
-    grid-auto-rows: ${value(t.gridAutoRows)};
+    grid-auto-rows: ${calc(t.gridAutoRows)};
     grid-column: ${t.gridColumn};
     grid-column-end: ${t.gridColumnEnd};
-    grid-column-gap: ${value(t.gridColumnGap)};
-    grid-column-start: ${value(t.gridColumnStart)};
-    grid-gap: ${value(t.gridGap)};
+    grid-column-gap: ${calc(t.gridColumnGap)};
+    grid-column-start: ${calc(t.gridColumnStart)};
+    grid-gap: ${calc(t.gridGap)};
     grid-row: ${t.gridRow};
     grid-row-start: ${t.gridRowStart};
     grid-row-end: ${t.gridRowEnd};
-    grid-row-gap: ${value(t.gridRowGap)};
+    grid-row-gap: ${calc(t.gridRowGap)};
     grid-template: ${t.gridTemplate};
     grid-template-areas: ${t.gridTemplateAreas};
     grid-template-columns: ${t.gridTemplateColumns};
@@ -133,9 +133,9 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     line-height: ${t.lineHeight};
     font: ${t.font};
     font-family: ${t.fontFamily};
-    font-size: ${value(t.fontSize)};
-    font-size-adjust: ${value(t.fontSizeAdjust)};
-    font-stretch: ${value(t.fontStretch)};
+    font-size: ${calc(t.fontSize)};
+    font-size-adjust: ${calc(t.fontSizeAdjust)};
+    font-stretch: ${calc(t.fontStretch)};
     font-style: ${t.fontStyle};
     font-variant: ${t.fontVariant};
     font-weight: ${t.fontWeight};

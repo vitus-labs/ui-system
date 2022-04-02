@@ -46,8 +46,8 @@ const widthStyles: WidthStyles = (
   return config.css`
       flex-grow: 0;
       flex-shrink: 0;
-      max-width: ${value([val], rootSize)};
-      flex-basis: ${value([val], rootSize)};
+      max-width: ${value(val, rootSize)};
+      flex-basis: ${value(val, rootSize)};
     `
 }
 
@@ -57,11 +57,11 @@ type SpacingStyles = (
   rootSize?: number
 ) => CssOutput
 const spacingStyles: SpacingStyles = (type, param, rootSize) => {
-  if (!isNumber(param)) {
+  if (!param || !isNumber(param)) {
     return ''
   }
 
-  const finalStyle = `${type}: ${value([param! / 2], rootSize)}`
+  const finalStyle = `${type}: ${value(param / 2, rootSize)}`
 
   return config.css`
       ${finalStyle};

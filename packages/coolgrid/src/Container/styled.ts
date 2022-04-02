@@ -10,7 +10,7 @@ import { StyledTypes } from '~/types'
 const styles: MakeItResponsiveStyles<
   Pick<StyledTypes, 'width' | 'extraStyles'>
 > = ({ theme: t, css, rootSize }) => css`
-  max-width: ${value([t.width], rootSize)};
+  max-width: ${value(t.width, rootSize)};
   ${extendCss(t.extraStyles)};
 `
 
