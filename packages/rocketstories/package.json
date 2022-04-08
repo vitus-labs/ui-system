@@ -7,7 +7,6 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "main": "lib/vitus-labs-rocketstories.js",
-  "umd:main": "lib/vitus-labs-rocketstories.umd.js",
   "module": "lib/vitus-labs-rocketstories.module.js",
   "typings": "lib/index.d.ts",
   "files": [

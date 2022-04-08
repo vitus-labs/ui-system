@@ -7,16 +7,9 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "main": "lib/vitus-labs-coolgrid.js",
-  "umd:main": "lib/vitus-labs-coolgrid.umd.js",
   "module": "lib/vitus-labs-coolgrid.module.js",
-  "typings": "lib/index.d.ts",
-  "browser": {
-    "./lib/vitus-labs-coolgrid.js": "./lib/vitus-labs-coolgrid.js",
-    "./lib/vitus-labs-coolgrid.module.js": "./lib/vitus-labs-coolgrid.module.js"
-  },
-  "unpkg": "lib/vitus-labs-coolgrid.umd.min.js",
-  "jsnext:main": "lib/vitus-labs-coolgrid.module.js",
   "react-native": "lib/vitus-labs-coolgrid.module.js",
+  "typings": "lib/index.d.ts",
   "files": [
     "lib/"
   ],

@@ -7,16 +7,9 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "main": "lib/vitus-labs-core.js",
-  "umd:main": "lib/vitus-labs-core.umd.js",
   "module": "lib/vitus-labs-core.module.js",
-  "typings": "lib/index.d.ts",
-  "browser": {
-    "./lib/vitus-labs-core.js": "./lib/vitus-labs-core.js",
-    "./lib/vitus-labs-core.module.js": "./lib/vitus-labs-core.module.js"
-  },
-  "unpkg": "lib/vitus-labs-core.umd.min.js",
-  "jsnext:main": "lib/vitus-labs-core.module.js",
   "react-native": "lib/vitus-labs-core.module.js",
+  "typings": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
