@@ -99,10 +99,10 @@ export default ({
   useEffect(() => {
     if (active) {
       if (onOpen) onOpen()
-      if (ctx?.setBlocked) ctx.setBlocked()
+      if (ctx && ctx.setBlocked) ctx.setBlocked()
     } else {
       if (onClose) onClose()
-      if (ctx?.setUnblocked) ctx.setUnblocked()
+      if (ctx && ctx.setUnblocked) ctx.setUnblocked()
     }
   }, [active, onOpen, onClose])
 
