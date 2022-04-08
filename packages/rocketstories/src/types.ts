@@ -1,4 +1,5 @@
-import type { ComponentType, ExoticComponent, VFC } from 'react'
+import type { RocketComponentType } from '@vitus-labs/rocketstyle'
+import type { ComponentType, VFC } from 'react'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
 export type ExtractProps<TComponentOrTProps> =
@@ -13,9 +14,7 @@ export type StoryComponent = VFC<any> & {
 }
 
 export type Element = ComponentType
-export type RocketComponent = (ComponentType | ExoticComponent) & {
-  IS_ROCKETSTYLE: true
-  $$rocketstyle: Record<string, any>
+export type RocketComponent = RocketComponentType & {
   VITUS_LABS__COMPONENT?: string
   getStaticDimensions: any
   getDefaultAttrs: any
@@ -62,10 +61,15 @@ export type AttrsTypes<P, H = ExtractProps<P>> = {
   [I in keyof H]: H[I] | AttrItemControl<H[I]> | { disable: true }
 }
 
-export type Configuration<C = any> = {
-  attrs: AttrsTypes<C>
+export type ExtractDimensions<C extends RocketComponent> =
+  keyof C['$$rocketstyle']
+
+export type Configuration<
+  T extends Element | RocketComponent = Element | RocketComponent
+> = {
+  attrs: Record<string, any>
   name: string
-  component: Element | RocketComponent
+  component: T
   storyOptions: Partial<{
     direction: 'inline' | 'rows'
     alignX: 'left' | 'center' | 'right' | 'spaceBetween'

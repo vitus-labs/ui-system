@@ -15,17 +15,22 @@ import {
   valuesToControls,
 } from '~/utils/controls'
 
-import type { RocketComponent, StoryComponent, Configuration } from '~/types'
+import type {
+  RocketComponent,
+  StoryComponent,
+  Configuration,
+  ExtractDimensions,
+} from '~/types'
 
-type MakeDimensionStories = ({
+type MakeDimensionStories = <T extends RocketComponent>({
   name,
   component,
   dimension,
   attrs,
 }: {
   name: string
-  component: RocketComponent
-  dimension: string
+  component: T
+  dimension: ExtractDimensions<T>
   attrs: Configuration['attrs']
   storyOptions: Configuration['storyOptions']
   ignore: any
@@ -182,7 +187,7 @@ const makeDimensionStories: MakeDimensionStories = ({
   Enhanced.args = args
   Enhanced.argTypes = {
     ...storybookControls,
-    ...disableDimensionControls(dimensions, dimension),
+    ...disableDimensionControls(dimensions, dimension as any),
   }
 
   Enhanced.parameters = {
@@ -194,7 +199,7 @@ const makeDimensionStories: MakeDimensionStories = ({
         code: createJSXCodeArray(
           name,
           pick(args, Object.keys(attrs)),
-          dimension,
+          dimension as any,
           currentDimension,
           useBooleans,
           isMultiKey

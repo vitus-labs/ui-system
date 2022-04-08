@@ -3,7 +3,6 @@ import { pick } from '@vitus-labs/core'
 import getTheme from '~/utils/theme'
 import { createMainJSX } from '~/utils/code'
 import { extractDefaultBooleanProps } from '~/utils/dimensions'
-
 import {
   filterDefaultValues,
   makeControls,
@@ -13,17 +12,14 @@ import {
   dimensionsToControls,
   disableDimensionControls,
 } from '~/utils/controls'
-
-import type { RocketComponent, StoryComponent } from '~/types'
+import type { RocketComponent, StoryComponent, Configuration } from '~/types'
 
 type MainStory = ({
   name,
   component,
   attrs,
-}: {
-  name: string
+}: Omit<Configuration, 'component'> & {
   component: RocketComponent
-  attrs: Record<string, unknown>
 }) => StoryComponent
 
 const mainStory: MainStory = ({ name, component, attrs }) => {
