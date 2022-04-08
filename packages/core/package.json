@@ -62,9 +62,9 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@types/lodash": "^4.14.181",
-    "@vitus-labs/tools-babel": "^0.28.0",
-    "@vitus-labs/tools-rollup": "^0.28.0",
-    "@vitus-labs/tools-typescript": "^0.28.0",
+    "@vitus-labs/tools-babel": "^0.29.0",
+    "@vitus-labs/tools-rollup": "^0.29.0",
+    "@vitus-labs/tools-typescript": "^0.29.0",
     "styled-components": "^5.3.3"
   }
 }
