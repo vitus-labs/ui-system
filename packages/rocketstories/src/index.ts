@@ -3,7 +3,6 @@ import rocketstories, {
   Init,
   Rocketstories,
   CreateRocketStories,
-  CreateStories,
 } from '~/rocketstories'
 import type {
   ExtractDimensions,
@@ -13,6 +12,8 @@ import type {
   StorybookControl,
   RocketType,
   Configuration,
+  RocketStoryConfiguration,
+  StoryConfiguration,
   Control,
   ControlTypes,
   Controls,
@@ -24,7 +25,6 @@ export type {
   Init,
   Rocketstories,
   CreateRocketStories,
-  CreateStories,
   ExtractDimensions,
   ExtractProps,
   ElementType,
@@ -32,6 +32,8 @@ export type {
   StorybookControl,
   RocketType,
   Configuration,
+  RocketStoryConfiguration,
+  StoryConfiguration,
   Control,
   ControlTypes,
   Controls,

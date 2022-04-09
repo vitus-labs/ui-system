@@ -1,25 +1,21 @@
 import React from 'react'
-import rocketstories, { init } from '~/rocketstories'
+import { init } from '~/rocketstories'
 import { Button, HoistedButton, ElementExample } from './Button'
 
 const stories = init({
   storyOptions: {
     direction: 'inline',
-    alignX: 'left',
+    alignX: 'right',
     alignY: 'center',
     gap: 16,
     pseudo: true,
   },
   decorators: [],
-})(Button)
-  .attrs({
-    tag: 'button',
-    label: 'This is a label',
-  })
-  .config({
-    name: 'A',
-    storyOptions: { pseudo: false },
-  })
+})(Button).attrs({
+  tag: 'button',
+  label: 'This is a label',
+  contentAlignX: 'block',
+})
 
 // const stories = rocketstories(Button)
 //   .storyOptions({

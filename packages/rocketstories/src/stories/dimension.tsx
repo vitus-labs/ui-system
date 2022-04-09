@@ -22,7 +22,7 @@ import type {
   ExtractDimensions,
 } from '~/types'
 
-type MakeDimensionStories = <T extends RocketType>({
+export type DimensionStories = <T extends RocketType>({
   name,
   component,
   dimension,
@@ -38,7 +38,7 @@ type MakeDimensionStories = <T extends RocketType>({
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const makeDimensionStories: MakeDimensionStories = ({
+const makeDimensionStories: DimensionStories = ({
   name,
   component,
   dimension,

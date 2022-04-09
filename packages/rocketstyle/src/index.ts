@@ -1,6 +1,6 @@
 import rocketstyle, { Rocketstyle } from '~/init'
 import Provider, { context, TProvider } from '~/context'
-import isRocketComponent from '~/isRocketComponent'
+import isRocketComponent, { IsRocketComponent } from '~/isRocketComponent'
 
 import type {
   ConfigAttrs,
@@ -58,6 +58,7 @@ export type {
   GenericHoc,
   ComposeParam,
   DefaultProps,
+  IsRocketComponent,
 }
 
 export { context, Provider, isRocketComponent }
