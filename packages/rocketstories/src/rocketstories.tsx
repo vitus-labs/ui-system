@@ -1,22 +1,32 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import { dimensionStory, mainStory, generalStory } from './stories'
 import type {
-  Element,
-  RocketComponent,
-  Configuration,
-  AttrsTypes,
-  ExtractDimensions,
+  TObj,
+  RocketStoryConfiguration,
+  StoryConfiguration,
+  ExtractProps,
 } from './types'
 
 // --------------------------------------------------------
 // rocketstories
 // --------------------------------------------------------
-export type Init = (
-  params: Partial<Pick<Configuration, 'decorators' | 'storyOptions'>>
-) => <T extends Element | RocketComponent>(
+export type Init = <
+  P extends
+    | Partial<Omit<RocketStoryConfiguration, 'component' | 'attrs'>>
+    | Partial<Omit<StoryConfiguration, 'component' | 'attrs'>>
+>(
+  params: P
+) => <
+  T extends
+    | StoryConfiguration['component']
+    | RocketStoryConfiguration['component']
+>(
   component: T
-) => ReturnType<Rocketstories>
+) => T extends RocketStoryConfiguration['component']
+  ? ReturnType<CreateRocketStories<ExtractProps<T>, T['$$rocketstyle'], {}>>
+  : ReturnType<CreateStories<ExtractProps<T>, {}>>
 
 const init: Init =
   ({ decorators = [], storyOptions = {} }) =>
@@ -26,14 +36,20 @@ const init: Init =
 // --------------------------------------------------------
 // rocketstories
 // --------------------------------------------------------
-export type Rocketstories = <T extends Element | RocketComponent>(
+export type Rocketstories = <
+  T extends
+    | StoryConfiguration['component']
+    | RocketStoryConfiguration['component']
+>(
   component: T,
-  params?: Partial<Pick<Configuration, 'storyOptions' | 'decorators'>>
-) => T extends RocketComponent
-  ? ReturnType<CreateRocketStories<T>>
-  : ReturnType<CreateStories<T>>
+  options?: T extends RocketStoryConfiguration['component']
+    ? Partial<Omit<RocketStoryConfiguration, 'component' | 'attrs'>>
+    : Partial<Omit<StoryConfiguration, 'component' | 'attrs'>>
+) => T extends RocketStoryConfiguration['component']
+  ? ReturnType<CreateRocketStories<ExtractProps<T>, T['$$rocketstyle'], {}>>
+  : ReturnType<CreateStories<ExtractProps<T>, {}>>
 
-//@ts-ignore
+// @ts-ignore
 const rocketstories: Rocketstories = (
   component,
   { decorators = [], storyOptions = {} } = {}
@@ -43,33 +59,59 @@ const rocketstories: Rocketstories = (
     name: component.displayName || component.name,
     attrs: {},
     storyOptions: { gap: 16, direction: 'rows' as const, ...storyOptions },
-    decorators,
+    decorators: [...decorators],
   }
 
   if (!isRocketComponent(component)) {
-    return createStories(options, {})
+    return createStories(options as StoryConfiguration, {})
   }
 
-  return createRocketstories(options, {})
+  return createRocketStories(options as RocketStoryConfiguration, {})
 }
 
 // --------------------------------------------------------
 // create Stories
 // --------------------------------------------------------
-export type CreateStories<C extends Element> = (
-  defaultOptions: Configuration<C>,
-  options: Partial<Configuration<C>>
+export type CreateStories<OA extends TObj = {}, SO extends TObj = {}> = (
+  defaultOptions: StoryConfiguration,
+  options: Partial<StoryConfiguration>
 ) => {
-  attrs: (params: AttrsTypes<C>) => ReturnType<CreateStories<C>>
-  config: () => {
+  // STORY OPTIONS chaining method
+  // --------------------------------------------------------
+  storyOptions: (
+    options: StoryConfiguration['storyOptions']
+  ) => ReturnType<CreateStories<OA, SO>>
+
+  // CONFIG chaining method
+  // --------------------------------------------------------
+  config: (
+    params: Partial<Omit<StoryConfiguration, 'attrs'>>
+  ) => ReturnType<CreateStories<OA, SO>>
+
+  // ATTRS chaining method
+  // --------------------------------------------------------
+  attrs: (params: Partial<OA>) => ReturnType<CreateStories<OA, SO>>
+
+  // COMPONENT chaining method
+  // --------------------------------------------------------
+  setComponent: <P extends StoryConfiguration['component']>(
+    param: P
+  ) => P extends StoryConfiguration['component']
+    ? ReturnType<CreateStories<ExtractProps<P>, SO>>
+    : ReturnType<CreateStories<{}, SO>>
+
+  // MAIN chaining method
+  // --------------------------------------------------------
+  main: () => ReturnType<typeof generalStory>
+  export: () => {
     component: Element
     title: string
-    decorators?: Configuration['decorators']
+    decorators: StoryConfiguration['decorators']
   }
-  main: () => ReturnType<typeof generalStory>
 }
 
-const createStories: CreateStories<any> = (defaultOptions, options) => {
+// @ts-ignore
+const createStories: CreateStories = (defaultOptions, options) => {
   const name: string = get(options, 'component')
     ? get(options, 'component.displayName')
     : defaultOptions.name
@@ -77,6 +119,7 @@ const createStories: CreateStories<any> = (defaultOptions, options) => {
   const result = {
     ...defaultOptions,
     name,
+    prefix: options.prefix || defaultOptions.prefix,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
@@ -87,45 +130,80 @@ const createStories: CreateStories<any> = (defaultOptions, options) => {
   }
 
   return {
+    // chaining methods
+    storyOptions: (storyOptions) => createStories(result, { storyOptions }),
+    config: ({ component, storyOptions, prefix, name, decorators }) =>
+      createStories(result, {
+        component,
+        storyOptions,
+        prefix,
+        name,
+        decorators,
+      }),
     attrs: (attrs) => createStories(result, { attrs }),
+    setComponent: (component) => createStories(result, { component }),
 
-    // create object for `export default` in stories
-    config: () => ({
+    // output methods
+    main: () => generalStory(result),
+    export: () => ({
       component: result.component,
-      title: result.name,
+      title: `${result.prefix}/${result.name}`,
       decorators: result.decorators,
     }),
-
-    main: () => generalStory(result),
   }
 }
 
 // --------------------------------------------------------
 // create rocket stories
 // --------------------------------------------------------
-
-export type CreateRocketStories<C extends RocketComponent> = (
-  defaultOptions: Configuration<C>,
-  options: Partial<Configuration<C>>
+export type CreateRocketStories<
+  OA extends TObj = {},
+  RA extends TObj | unknown = unknown,
+  SO extends TObj = {}
+> = (
+  defaultOptions: RocketStoryConfiguration,
+  options: Partial<RocketStoryConfiguration>
 ) => {
-  attrs: (params: AttrsTypes<C>) => ReturnType<CreateRocketStories<C>>
-  config: () => { component: Element; title: string }
-  main: () => ReturnType<typeof mainStory>
+  // STORY OPTIONS chaining method
+  // --------------------------------------------------------
   storyOptions: (
-    options: Configuration['storyOptions']
-  ) => ReturnType<CreateRocketStories<C>>
-  dimension: <
-    A extends ExtractDimensions<C> /* B = keyof C['$$rocketstyle'][A] */
-  >(
-    dimension: A,
+    options: RocketStoryConfiguration['storyOptions']
+  ) => ReturnType<CreateRocketStories<OA, RA, SO>>
+
+  // CONFIG chaining method
+  // --------------------------------------------------------
+  config: (
+    params: Partial<Omit<RocketStoryConfiguration, 'attrs'>>
+  ) => ReturnType<CreateRocketStories<OA, RA, SO>>
+
+  // ATTRS chaining method
+  // --------------------------------------------------------
+  attrs: (params: Partial<OA>) => ReturnType<CreateRocketStories<OA, RA, SO>>
+
+  // COMPONENT chaining method
+  // --------------------------------------------------------
+  setComponent: <P extends RocketStoryConfiguration['component']>(
+    param: P
+  ) => P extends RocketStoryConfiguration['component']
+    ? ReturnType<CreateRocketStories<ExtractProps<P>, P['$$rocketstyle'], SO>>
+    : ReturnType<CreateRocketStories<{}, RA, SO>>
+
+  // MAIN chaining method
+  // --------------------------------------------------------
+  main: () => ReturnType<typeof generalStory>
+  dimension: <P extends keyof RA>(
+    dimension: P,
     params?: Partial<{ ignore: any }>
   ) => ReturnType<typeof dimensionStory>
+  export: () => {
+    component: Element
+    title: string
+    decorators: RocketStoryConfiguration['decorators']
+  }
 }
 
-const createRocketstories: CreateRocketStories<any> = (
-  options,
-  defaultOptions
-) => {
+// @ts-ignore
+const createRocketStories: CreateRocketStories = (options, defaultOptions) => {
   const name: string = get(options, 'component')
     ? get(options, 'component.displayName')
     : defaultOptions.name
@@ -133,6 +211,7 @@ const createRocketstories: CreateRocketStories<any> = (
   const result = {
     ...defaultOptions,
     name,
+    prefix: options.prefix || defaultOptions.prefix,
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
@@ -143,23 +222,22 @@ const createRocketstories: CreateRocketStories<any> = (
   }
 
   return {
-    attrs: (attrs) => createRocketstories(result, { attrs }),
-
-    // create object for `export default` in stories
-    config: () => ({
-      component: result.component,
-      title: result.name,
-      decorators: result.decorators,
-    }),
-
-    // generate main story
-    main: () => mainStory(result),
-
-    // define storyOptions
+    // chaining methods
     storyOptions: (storyOptions) =>
-      createRocketstories(result, { storyOptions }),
+      createRocketStories(result, { storyOptions }),
+    config: ({ component, storyOptions, prefix, name, decorators }) =>
+      createRocketStories(result, {
+        component,
+        storyOptions,
+        prefix,
+        name,
+        decorators,
+      }),
+    attrs: (attrs) => createRocketStories(result, { attrs }),
+    setComponent: (component) => createRocketStories(result, { component }),
 
-    // generate stories of defined dimension
+    // output methods
+    main: () => mainStory(result),
     dimension: (dimension, params = {}) => {
       const { ignore = [] } = params
 
@@ -169,6 +247,11 @@ const createRocketstories: CreateRocketStories<any> = (
         dimension,
       })
     },
+    export: () => ({
+      component: result.component,
+      title: `${result.prefix}/${result.name}`,
+      decorators: result.decorators,
+    }),
   }
 }
 

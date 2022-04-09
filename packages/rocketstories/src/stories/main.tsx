@@ -12,14 +12,14 @@ import {
   dimensionsToControls,
   disableDimensionControls,
 } from '~/utils/controls'
-import type { RocketComponent, StoryComponent, Configuration } from '~/types'
+import type { RocketType, StoryComponent, Configuration } from '~/types'
 
 type MainStory = ({
   name,
   component,
   attrs,
 }: Omit<Configuration, 'component'> & {
-  component: RocketComponent
+  component: RocketType
 }) => StoryComponent
 
 const mainStory: MainStory = ({ name, component, attrs }) => {

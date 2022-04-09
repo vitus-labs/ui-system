@@ -16,13 +16,13 @@ import {
 } from '~/utils/controls'
 
 import type {
-  RocketComponent,
+  RocketType,
   StoryComponent,
   Configuration,
   ExtractDimensions,
 } from '~/types'
 
-type MakeDimensionStories = <T extends RocketComponent>({
+type MakeDimensionStories = <T extends RocketType>({
   name,
   component,
   dimension,
@@ -116,7 +116,7 @@ const makeDimensionStories: MakeDimensionStories = ({
         // do not render ignored dimension keys
         if (shouldBeIgnored) return null
 
-        if (storyOptions.pseudo) {
+        if (storyOptions.pseudo === true) {
           return (
             <WrapElement
               key={key}

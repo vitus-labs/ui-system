@@ -1,5 +1,5 @@
 import * as CONTROLS from '~/controls'
-import type { Controls, RocketComponent } from '~/types'
+import type { Controls, RocketType } from '~/types'
 
 // --------------------------------------------------------
 // isColor
@@ -91,7 +91,7 @@ type ValuesToControls = ({
   values,
   dimensionControls,
 }: {
-  component: RocketComponent
+  component: RocketType
   values: Record<string, any>
   dimensionControls: Record<string, any>
 }) => Controls
