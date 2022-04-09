@@ -11,11 +11,11 @@ const stories = init({
     pseudo: true,
   },
   decorators: [],
-})(Button).attrs({
-  tag: 'button',
-  label: 'This is a label',
-  contentAlignX: 'block',
-})
+})(Button)
+  .attrs({ centered: true })
+  .attrs({ content: '' })
+
+console.log(stories)
 
 // const stories = rocketstories(Button)
 //   .storyOptions({

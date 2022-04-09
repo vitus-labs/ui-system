@@ -2,7 +2,7 @@ import rocketstories, {
   init,
   Init,
   Rocketstories,
-  CreateRocketStories,
+  IRocketStories,
 } from '~/rocketstories'
 import type {
   ExtractDimensions,
@@ -22,9 +22,9 @@ import type {
 } from '~/types'
 
 export type {
+  IRocketStories,
   Init,
   Rocketstories,
-  CreateRocketStories,
   ExtractDimensions,
   ExtractProps,
   ElementType,
