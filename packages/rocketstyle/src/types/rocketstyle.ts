@@ -89,13 +89,68 @@ export interface IRocketComponent<
 > extends ForwardRefExoticComponent<DFP> {
   // CONFIG chaining method
   // --------------------------------------------------------
-  // {
-  //   provider: true,
-  //   consumer: () => {},
-  //   component: Eement,
-  //   DEBUG: true,
-  //   name: 'aaaa'
-  // }
+  /**
+   * A chaining method to define default component theme
+   * @param param  _object_
+   *
+   * ### Examples
+   *
+   * #### Component name / displayName
+   * ```tsx
+   * const base = rocketstyleComponent
+   *  .config({
+   *    name: 'Component name'
+   *  })
+   * ```
+   *
+   * #### Replace component by a new one
+   * ```tsx
+   * const base = rocketstyleComponent
+   *  .config({
+   *    component: (props) => <div {...props} />
+   *  })
+   * ```
+   *
+   * #### Component as provider
+   * ```tsx
+   * const parent = rocketstyleComponent
+   *  .config({
+   *    provider: true
+   *  })
+   * ```
+   *
+   * #### Component as consumer
+   * ```tsx
+   * const base = rocketstyleComponent
+   *  .config({
+   *    consumer: ctx => ctx<typeof parent>(({ pseudo, state, ...rest }) => ({
+   *      pseudo,
+   *      state
+   *    }))
+   *  })
+   * ```
+   *
+   * #### Inversed theme
+   * A possibility to set individualy for each component to have `inversed` styles
+   * when using dark / light theme modes
+   * ```tsx
+   * const base = rocketstyleComponent
+   *  .config({
+   *    inversed: true
+   *  })
+   * ```
+   *
+   * #### Pass props to original component
+   * A possibility to set individualy for each component props names to be passed
+   * to `origin` component
+   *
+   * ```tsx
+   * const base = rocketstyleComponent
+   *  .config({
+   *    passProps: ['disabled', 'readOnly']
+   *  })
+   * ```
+   */
   config: <NC extends ElementType | unknown = unknown>({
     name,
     component: NC,
@@ -148,9 +203,9 @@ export interface IRocketComponent<
    * A chaining method to define default component theme
    * @param param  Can be either _object_ or a _callback_
    *
-   * #### Examples
+   * ### Examples
    *
-   * ##### Object as a parameter
+   * #### Object as a parameter
    * ```tsx
    * const base = rocketstyleComponent
    * const newElement = base.attrs({
@@ -158,13 +213,22 @@ export interface IRocketComponent<
    * })
    * ```
    *
-   * ##### Callback as a parameter
+   * #### Callback as a parameter
    * ```tsx
    * const base = rocketstyleComponent
    * const newElement = base.theme((theme, css) => ({
    * backgroundColor: t.color.black, // value from context
    *  }))
-   *  ```
+   *```
+   *
+   * #### Dark / light theme callback
+   * ```tsx
+   * const base = rocketstyleComponent
+   *
+   * const newElement = base.theme((theme, mode, css) => ({
+   * backgroundColor: mode(t.color.black, t.color.white), // theme from context
+   * }))
+   * ```
    */
   theme: <P extends TObj | unknown = unknown>(
     param: P extends TObj
@@ -178,12 +242,55 @@ export interface IRocketComponent<
 
   // STYLES chaining method
   // --------------------------------------------------------
+  /**
+   * A chaining method to define default rendered styles
+   * @param param  Callback of styled-components `css` function
+   *
+   * #### Examples
+   *
+   * ```tsx
+   * const base = rocketstyleComponent
+   *
+   * const newElement = base.styles(css => css``)
+   * ```
+   */
   styles: (
     param: StylesCb
   ) => RocketComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
 
   // COMPOSE chaining method
   // --------------------------------------------------------
+  /**
+   * A chaining method to define high-order components to wrap
+   * the defined component
+   * @param param object of key hoc function
+   *
+   * ### Examples
+   *
+   * #### Define new hoc component
+   * Using the `{ key: hoc }` annotation allows to override or remove
+   * the defined hoc(s) later on. See the examples below.
+   * ```tsx
+   * const hoc = (WrappedComponent) => (props) => <WrappedComponent {...props} />
+   * const base = rocketstyleComponent
+   *
+   * const newElement = base.compose({ hocName: hoc })
+   * ```
+   *
+   * #### Remove previously defined hoc component
+   * (1) Set value to be `false`
+   * ```tsx
+   * const newElement = base.compose({ hocName: false })
+   * ```
+   * (2) Set value to be `null`
+   * ```tsx
+   * const newElement = base.compose({ hocName: null })
+   * ```
+   * (3) Set value to be `undefined`
+   * ```tsx
+   * const newElement = base.compose({ hocName: undefined })
+   * ```
+   */
   compose: <P extends ComposeParam>(
     param: P
   ) => P extends TObj
@@ -192,12 +299,63 @@ export interface IRocketComponent<
 
   // STATICS chaining method + its output + other statics
   // --------------------------------------------------------
+  /**
+   * A chaining method to define statics on the rocketstyle component.
+   * All statics are accessible via `is` static key on the component.
+   * @param param object of statics
+   *
+   * ### Examples
+   *
+   * #### Define new static
+   * Using the `{ key: value }` annotation allows to override or remove
+   * the defined static(s) later on. See the examples below.
+   * ```tsx
+   * const base = rocketstyleComponent
+   *
+   * const newElement = base.statics({
+   * isNewStatic: true,
+   * arrayStatic: ['a', 'b'],
+   * functionStatic: (param) => { ...do something }
+   * })
+   * ```
+   *
+   * #### Override previously defined hoc component
+   * (1) Set value to be `false`
+   * ```tsx
+   * const newElement = base.statics({ isNewStatic: false })
+   * ```
+   * (2) Set value to be `null`
+   * ```tsx
+   * const newElement = base.statics({ isNewStatic: null })
+   * ```
+   * (3) Set value to be `undefined`
+   * ```tsx
+   * const newElement = base.statics({ isNewStatic: undefined })
+   * ```
+   */
   statics: <P extends TObj>(
     param: P
   ) => P extends TObj
     ? RocketComponent<OA, EA, T, CSS, MergeTypes<[S, P]>, HOC, D, UB, DKP>
     : RocketComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
 
+  /**
+   * An access to all defined statics on the component.
+   *
+   * ### Examples
+   *
+   * #### Access a static property
+   * ```tsx
+   * const element = rocketcomponent.statics({
+   * isNewStatic: true,
+   * arrayStatic: ['a', 'b'],
+   * functionStatic: (param) => { ...do something }
+   * })
+   *
+   * // staticValue = true
+   * const staticValue = element.is.isNewStatic
+   * ```
+   */
   is: S
 
   getStaticDimensions: (theme: TObj) => {
@@ -208,10 +366,82 @@ export interface IRocketComponent<
 
   getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
 
+  /**
+   * Accessible via types only!
+   *
+   * Provides defined rocketstyle dimensions and their options
+   *
+   * ### Examples
+   * ```tsx
+   * const element = rocketcomponent
+   *
+   * type Props = typeof element['$$rocketstyle']
+   *
+   * ```
+   */
   readonly $$rocketstyle: ExtractDimensions<D, DKP>
+  /**
+   * Accessible via types only!
+   *
+   * Provides defined original props types (props of origin
+   * component passed to _rocketstyle_)
+   *
+   * ### Examples
+   * ```tsx
+   * const element = rocketcomponent
+   *
+   * type Props = typeof element['$$originProps']
+   *
+   * ```
+   */
   readonly $$originProps: OA
+  /**
+   * Accessible via types only!
+   *
+   * Provides defined extended props types (props types defined
+   * on `.attrs()` chaining method
+   * component passed to _rocketstyle_)
+   *
+   * ### Examples
+   * ```tsx
+   * const element = rocketcomponent
+   *  .attrs<{ propName: string }>({})
+   *
+   * type Props = typeof element['$$extendedProps']
+   *
+   * ```
+   */
   readonly $$extendedProps: EA
+  /**
+   * Accessible via types only!
+   *
+   * Provides all defined props types (including **origin**
+   * props types, **extended** props types & **rocketstyle**
+   * props types all together)
+   *
+   * ### Examples
+   * ```tsx
+   * const element = rocketcomponent
+   *
+   * type Props = typeof element['$$allProps']
+   *
+   * ```
+   */
   readonly $$allProps: DFP
+  /**
+   * Static Rocketstyle component identificator
+   */
   readonly IS_ROCKETSTYLE: true
+  /**
+   * Component displayName defined in `.config()` chaining
+   * method
+   *
+   * ```tsx
+   * const element = rockestyleComponent
+   *  .config({
+   *    name: 'ComponentName'
+   *  })
+   * ```
+   */
   readonly displayName: string
 }
