@@ -30,7 +30,7 @@ const getControlType: GetControlType = (value) => {
   if (['number', 'bigint'].includes(primitiveType)) return 'number'
 
   if (primitiveType === 'string') {
-    if (isColor(value)) return 'color'
+    // if (isColor(value)) return 'color'
 
     return 'text'
   }

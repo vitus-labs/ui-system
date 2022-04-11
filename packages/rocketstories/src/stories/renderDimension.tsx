@@ -14,39 +14,23 @@ import {
   filterValues,
   valuesToControls,
 } from '~/utils/controls'
-
 import type {
-  RocketType,
+  RocketDimensions,
   StoryComponent,
-  Configuration,
-  ExtractDimensions,
+  RocketStoryConfiguration,
 } from '~/types'
 
-export type DimensionStories = <T extends RocketType>({
-  name,
-  component,
-  dimension,
-  attrs,
-}: {
-  name: string
-  component: T
-  dimension: ExtractDimensions<T>
-  attrs: Configuration['attrs']
-  storyOptions: Configuration['storyOptions']
-  ignore: any
-}) => StoryComponent
+export type RenderDimension<P = {}> = (
+  dimension: RocketDimensions,
+  params: RocketStoryConfiguration & {
+    ignore: any
+  }
+) => StoryComponent<P>
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const makeDimensionStories: DimensionStories = ({
-  name,
-  component,
+const renderDimension: RenderDimension = (
   dimension,
-  attrs = {},
-  storyOptions = {},
-  ignore,
-  // config = { pseudo: true },
-}) => {
+  { name, component, attrs = {}, storyOptions = {}, ignore = [] }
+) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
   // ------------------------------------------------------
@@ -96,11 +80,16 @@ const makeDimensionStories: DimensionStories = ({
   const args = filterDefaultValues(controls)
 
   // ------------------------------------------------------
+  // CREATE DEFAULT STORY DESCRIPTION
+  // ------------------------------------------------------
+  const story = `This story renders all _dimension_ **${dimension}** options.`
+
+  // ------------------------------------------------------
   // STORY COMPONENT
   // ------------------------------------------------------
   const WrapElement = isEmpty(storyOptions) ? Fragment : Element
 
-  const Enhanced = (props) => (
+  const Enhanced: StoryComponent = (props) => (
     <WrapElement
       block
       contentDirection={storyOptions.direction}
@@ -187,19 +176,19 @@ const makeDimensionStories: DimensionStories = ({
   Enhanced.args = args
   Enhanced.argTypes = {
     ...storybookControls,
-    ...disableDimensionControls(dimensions, dimension as any),
+    ...disableDimensionControls(dimensions, dimension),
   }
 
   Enhanced.parameters = {
     docs: {
-      // description: {
-      //   story: 'some story **markdown**',
-      // },
+      description: {
+        story,
+      },
       source: {
         code: createJSXCodeArray(
           name,
           pick(args, Object.keys(attrs)),
-          dimension as any,
+          dimension,
           currentDimension,
           useBooleans,
           isMultiKey
@@ -211,4 +200,4 @@ const makeDimensionStories: DimensionStories = ({
   return Enhanced
 }
 
-export default makeDimensionStories
+export default renderDimension

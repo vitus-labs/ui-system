@@ -1,21 +1,13 @@
 import React from 'react'
 import { init } from '~/rocketstories'
+import Theme from '~/decorators/Theme'
 import { Button, HoistedButton, ElementExample } from './Button'
 
-const stories = init({
-  storyOptions: {
-    direction: 'inline',
-    alignX: 'right',
-    alignY: 'center',
-    gap: 16,
-    pseudo: true,
-  },
-  decorators: [],
-})(Button)
-  .attrs({ centered: true })
-  .attrs({ content: '' })
+const storyOf = init({
+  decorators: [Theme],
+})
 
-console.log(stories)
+const stories = storyOf(Button).attrs({ centered: true }).attrs({ content: '' })
 
 // const stories = rocketstories(Button)
 //   .storyOptions({
@@ -30,7 +22,7 @@ console.log(stories)
 //     label: 'This is a label',
 //   })
 
-export default stories.export()
+export default stories.init()
 
 export const Example = stories.main()
 
@@ -39,6 +31,19 @@ export const States = stories.dimension('state')
 export const Sizes = stories.dimension('size')
 
 export const Multiple = stories.dimension('multiple')
+
+export const Custom = stories.render((props) => (
+  <Button {...props} label="Another" />
+))
+
+export const CustomList = stories.list({
+  data: ['a', 'b', 'c', 'd'],
+  valueName: 'label',
+})
+
+export const CustomListObjects = stories.list({
+  data: [{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }],
+})
 
 export const button = () => (
   <>

@@ -1,4 +1,11 @@
-import type { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
+/* eslint-disable @typescript-eslint/ban-types */
+import type {
+  ComponentType,
+  ForwardRefExoticComponent,
+  ReactNode,
+  VFC,
+} from 'react'
+import type { ListProps } from '@vitus-labs/elements'
 import type { RocketComponentType } from '@vitus-labs/rocketstyle'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
@@ -9,11 +16,12 @@ export type ExtractProps<TComponentOrTProps> =
     ? TProps
     : TComponentOrTProps
 
-export type StoryComponent<P = {}> = VFC<P> & {
-  args: any
-  argTypes: any
-  parameters: any
-}
+export type StoryComponent<P = {}> = VFC<P> &
+  Partial<{
+    args: Record<string, unknown>
+    argTypes: Record<string, unknown>
+    parameters: Record<string, unknown>
+  }>
 
 export type ElementType<T extends TObj | unknown = any> =
   | ComponentType<T>
@@ -68,6 +76,10 @@ export type AttrsTypes<P, H = ExtractProps<P>> = {
 
 export type ExtractDimensions<C extends RocketType> = keyof C['$$rocketstyle']
 
+export type RocketDimensions = keyof RocketType['$$rocketstyle']
+
+type Decorator = (Story: any) => ReactNode
+
 export type Configuration = {
   component: RocketType | ElementType
   attrs: Record<string, any>
@@ -80,14 +92,14 @@ export type Configuration = {
     gap: number
     pseudo: boolean | null | undefined
   }>
-  decorators: any[]
+  decorators: Decorator[]
 }
 
-export type RocketStoryConfiguration = Configuration & {
+export type RocketStoryConfiguration = Omit<Configuration, 'component'> & {
   component: RocketType
 }
 
-export type StoryConfiguration = Configuration & {
+export type StoryConfiguration = Omit<Configuration, 'component'> & {
   component: ElementType
 }
 
@@ -97,3 +109,14 @@ export type Obj = Record<string, SimpleValue | Array<SimpleValue>>
 export type Controls = Record<string, Control>
 
 export type PartialControls = Record<string, Partial<Control>>
+
+export type RenderStoryCallback<P extends TObj = {}> = (
+  param: (props: P) => ReactNode
+) => VFC<P>
+
+export type ListStoryOptions = Pick<
+  ListProps,
+  'itemKey' | 'itemProps' | 'wrapComponent' | 'wrapProps' | 'valueName'
+> & {
+  data: ListProps['data']
+}

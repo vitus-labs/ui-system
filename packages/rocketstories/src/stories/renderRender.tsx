@@ -1,5 +1,4 @@
-import React, { createElement } from 'react'
-import { pick } from '@vitus-labs/core'
+import { pick, get } from '@vitus-labs/core'
 import getTheme from '~/utils/theme'
 import { createMainJSX } from '~/utils/code'
 import { extractDefaultBooleanProps } from '~/utils/dimensions'
@@ -14,9 +13,12 @@ import {
 } from '~/utils/controls'
 import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 
-type MainStory = (params: RocketStoryConfiguration) => StoryComponent
+export type RenderRender = (
+  render,
+  params: RocketStoryConfiguration
+) => StoryComponent
 
-const mainStory: MainStory = ({ name, component, attrs }) => {
+const renderRender: RenderRender = (render, { name, component, attrs }) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
   // ------------------------------------------------------
@@ -50,6 +52,12 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
   // CONTROLS DEFAULT VALUES
   // ------------------------------------------------------
   const args = filterDefaultValues(controls)
+  const renderProps = get(render(args), 'props', {})
+
+  // ------------------------------------------------------
+  // CREATE DEFAULT STORY DESCRIPTION
+  // ------------------------------------------------------
+  const story = `This is a custom story`
 
   // ------------------------------------------------------
   // PROPS TO BE PASSED TO ODE GENERATION
@@ -64,9 +72,9 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
   // ------------------------------------------------------
   // STORY COMPONENT
   // ------------------------------------------------------
-  const Enhanced = (props) => <>{createElement(component, props)}</>
+  const Enhanced = render
 
-  Enhanced.args = args
+  Enhanced.args = { ...args, ...renderProps }
   Enhanced.argTypes = {
     ...storybookControls,
     ...disableDimensionControls(dimensions),
@@ -74,6 +82,9 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
 
   Enhanced.parameters = {
     docs: {
+      description: {
+        story,
+      },
       source: {
         code: createMainJSX({
           name,
@@ -93,4 +104,4 @@ const mainStory: MainStory = ({ name, component, attrs }) => {
   return Enhanced
 }
 
-export default mainStory
+export default renderRender

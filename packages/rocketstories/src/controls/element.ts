@@ -1,182 +1,186 @@
 import { htmlTags } from '@vitus-labs/core'
 
+const group = 'Element (Vitus-Labs)'
+
+const directionType = 'inline | rows | reverseRows | reverseInline'
+const alignXType = 'left | center | right | block | spaceBetween | spaceAround'
+const alignYType = 'top | center | block | spaceBetween | spaceAround'
+
 const DIRECTION = {
+  group,
   type: 'select',
-  options: ['-----', 'rows', 'inline', 'reverseInline', 'reverseRows'],
+  options: ['-----', ...directionType.split(' | ')],
   value: 'inline',
-  group: 'Element',
-  valueType: 'inline | rows | reverseRows | reverseInline | object | array',
+  valueType: `${directionType} | Record<string, ${directionType}> | Array<${directionType}`,
 }
 
 const ALIGN_X = {
+  group,
   type: 'select',
-  options: [
-    '-----',
-    'left',
-    'center',
-    'right',
-    'block',
-    'spaceBetween',
-    'spaceAround',
-  ],
-  group: 'Element',
+  options: alignXType.split(' | '),
   value: 'left',
-  valueType: 'left | center | right | block | spaceBetween | spaceAround',
+  valueType: `${alignXType} | Record<string, ${alignXType}> | Array<${alignXType}`,
 }
 
 const ALIGN_Y = {
+  group,
   type: 'select',
-  options: ['top', 'center', 'block', 'spaceBetween', 'spaceAround'],
+  options: alignYType.split(' | '),
   value: 'center',
-  group: 'Element',
-  valueType: 'top | center | block | spaceBetween | spaceAround',
+  valueType: `${alignYType} | Record<string, ${alignYType}> | Array<${alignYType}`,
 }
 
 const CSS = {
+  group,
   type: 'text',
-  group: 'Element',
   valueType: 'string | callback | css | object | array',
 }
 
 export default {
   tag: {
+    group,
     type: 'select',
     options: htmlTags,
-    group: 'Element',
     valueType: 'HTMLTag',
-    description: 'A prop which will change HTML tag of the element',
+    description: 'A prop which will change **HTML tag** of the element.',
   },
   children: {
-    description: 'React children',
-    group: 'Element',
+    group,
     valueType: 'ReactNode',
+    description:
+      'React children. Priorities when rendering are **children** → **content** → **label**, therefore _label_ has the highest priority.',
   },
   content: {
+    group,
     type: 'text',
     valueType: 'ReactNode',
-    group: 'Element',
-    description: 'A prop which can be used instead of `children`',
+    description:
+      'A prop which can be used instead of _children_. Priorities when rendering are **children** → **content** → **label**, therefore _content_ has the middle priority.',
   },
   label: {
+    group,
     type: 'text',
-    group: 'Element',
     valueType: 'ReactNode',
-    description: 'A prop which can be used instead of `children`',
+    description:
+      'A prop which can be used instead of _children_. Priorities when rendering are **children** → **content** → **label**, therefore _label_ has the lowest priority.',
   },
   block: {
+    group,
     type: 'boolean',
-    group: 'Element',
-    valueType: 'boolean | object | array',
-    description: 'Whether should behave as `inline` or `block` element',
+    valueType: 'boolean | Record<string, boolean> | Array<boolean>',
+    description:
+      'Defines whether should behave as **inline** or **block** element.',
   },
   direction: {
     ...DIRECTION,
     value: '',
     description:
-      'Define whether element should render horizontally or vertically. Does the same job as `vertical` prop and takes a precedence over that prop',
+      'Define whether element should render **horizontally** or **vertically**.',
   },
   alignX: {
     ...ALIGN_X,
     description:
-      'Define alignment of `beforeContent`, `content`, and `afterContent` with respect to root element',
+      'Define alignment of **beforeContent**, **content**, and **afterContent** with respect to root element on **axis X**.',
   },
   alignY: {
     ...ALIGN_Y,
     description:
-      'Define alignment of `beforeContent`, `content`, and `afterContent` with respect to the root element',
+      'Define alignment of **beforeContent**, **content**, and **afterContent** with respect to the root element on **axis Y**.',
   },
   contentDirection: {
     ...DIRECTION,
     description:
-      'Define whether children in content wrapper should be rendered in line or in rows',
+      'Define whether the children in **content** wrapper should be rendered in _line_ or in _rows_.',
   },
   contentAlignX: {
     ...ALIGN_X,
-    description: 'Define how children in content wrapper should be aligned',
+    description:
+      'Define how the children in **content** wrapper should be aligned on **axis X**.',
   },
   contentAlignY: {
     ...ALIGN_Y,
-    description: 'Define how children in content wrapper should be aligned',
+    description:
+      'Define how the children in **content** wrapper should be aligned on **axis Y**.',
   },
   beforeContentDirection: {
     ...DIRECTION,
     description:
-      'Define whether children in beforeContent wrapper should be rendered in line or in rows',
+      'Define whether children in **beforeContent** wrapper should be rendered in _line_ or in _rows_.',
   },
   beforeContentAlignX: {
     ...ALIGN_X,
     description:
-      'Define how children in beforeContent wrapper should be aligned',
+      'Define how children in **beforeContent** wrapper should be aligned on **axis X**.',
   },
   beforeContentAlignY: {
     ...ALIGN_Y,
     description:
-      'Define how children in beforeContent wrapper should be aligned',
+      'Define how children in **beforeContent** wrapper should be aligned on **axis Y**.',
   },
   afterContentDirection: {
     ...DIRECTION,
     description:
-      'Define whether children in afterContent wrapper should be rendered in line or in rows',
+      'Define whether children in **afterContent** wrapper should be rendered in _line_ or in _rows_.',
   },
   afterContentAlignX: {
     ...ALIGN_X,
     description:
-      'Define how children in afterContent wrapper should be aligned',
+      'Define how children in **afterContent** wrapper should be aligned on **axis X**.',
   },
   afterContentAlignY: {
     ...ALIGN_Y,
     description:
-      'Define how children in afterContent wrapper should be aligned',
+      'Define how children in **afterContent** wrapper should be aligned on **axis Y**.',
   },
   equalCols: {
     type: 'boolean',
-    group: 'Element',
-    valueType: 'boolean | object | array',
+    group,
+    valueType: 'boolean | Record<string,boolean> | Array<boolean>',
     description:
-      'Whether should all inner elements have the same `width` / `height`',
+      'Whether should all inner elements have the same `width` / `height`.',
   },
   gap: {
     type: 'number',
-    group: 'Element',
-    valueType: 'number | object | array',
+    group,
+    valueType: 'number | Record<string,number> | Array<number>',
     description:
-      'Defines space between `beforeContent`, `content` and `afterContent`',
+      'Defines space gap **between** _beforeContent_, _content_ and _afterContent_ if one of _beforeContent_ or _afterContent_ contain _children_ to be rendered.',
   },
   vertical: {
     type: 'boolean',
-    group: 'Element',
-    valueType: 'boolean | object | array',
+    group,
+    valueType: 'boolean | Record<string,boolean> | Array<boolean>',
     description:
-      'Define whether element should render horizontally or vertically',
+      'Define whether element should render horizontally or vertically.',
   },
   beforeContent: {
-    group: 'Element',
+    group,
     valueType: 'ReactNode',
     description: 'A children to be rendered inside `beforeContent` wrapper.',
   },
   afterContent: {
-    group: 'Element',
+    group,
     valueType: 'ReactNode',
     description: 'A children to be rendered inside `afterContent` wrapper.',
   },
   css: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the `root` element, you can do so by injecting styles using this property',
+      'If you need to add an additional styling to the **root** element, you can do so by injecting styles using this prop.',
   },
   contentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the `content` element, you can do so by injecting styles using this property.',
+      'If you need to add an additional styling to the **content** element, you can do so by injecting styles using this prop.',
   },
   beforeContentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the `beforeContent` element, you can do so by injecting styles using this property',
+      'If you need to add an additional styling to the **beforeContent** element, you can do so by injecting styles using this prop.',
   },
   afterContentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the `afterContent` element, you can do so by injecting styles using this property.',
+      'If you need to add an additional styling to the **afterContent** element, you can do so by injecting styles using this prop.',
   },
 } as const

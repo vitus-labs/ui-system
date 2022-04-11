@@ -1,13 +1,24 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
-import { dimensionStory, mainStory, generalStory } from './stories'
+import {
+  renderDimension,
+  RenderDimension,
+  renderMain,
+  RenderMain,
+  generalStory,
+  renderRender,
+  renderList,
+  RenderList,
+} from './stories'
 import type {
   TObj,
   Configuration,
   ElementType,
   RocketType,
   ExtractProps,
+  RenderStoryCallback,
+  ListStoryOptions,
 } from './types'
 
 // --------------------------------------------------------
@@ -47,7 +58,7 @@ const rocketstories: Rocketstories = (component, options = {}) => {
     name: component.displayName || component.name,
     attrs: {},
     storyOptions: { gap: 16, direction: 'rows' as const, ...storyOptions },
-    decorators: [...decorators],
+    decorators,
   }
 
   return createRocketStories(result)
@@ -98,17 +109,28 @@ export interface IRocketStories<
 > {
   CONFIG: Configuration
 
-  // MAIN chaining method
+  // MAIN story
   // --------------------------------------------------------
-  main: () => ReturnType<typeof mainStory> | ReturnType<typeof generalStory>
+  main: () => ReturnType<RenderMain<OA>> | ReturnType<typeof generalStory>
 
-  // DIMENSION chaining method
+  // DIMENSION(S) story
   // --------------------------------------------------------
-  dimension: (param: keyof RA) => ReturnType<typeof dimensionStory> | null
+  dimension: <P extends keyof RA>(
+    dimension: P,
+    options?: Partial<{ ignore: Array<RA[P]> }>
+  ) => ReturnType<RenderDimension<OA>> | null
 
-  // MAIN chaining method
+  // RENDER story
   // --------------------------------------------------------
-  export: () => {
+  render: RenderStoryCallback<OA>
+
+  // RENDER story
+  // --------------------------------------------------------
+  list: (params: ListStoryOptions) => ReturnType<RenderList<OA>>
+
+  // INIT chaining method
+  // --------------------------------------------------------
+  init: () => {
     component: Configuration['component']
     title: Configuration['name']
     decorators: Configuration['decorators']
@@ -139,6 +161,12 @@ export interface IRocketStories<
     : P extends ElementType
     ? IRocketStories<ExtractProps<P>, unknown, SO>
     : IRocketStories<{}, unknown, SO>
+
+  // COMPONENT chaining method
+  // --------------------------------------------------------
+  decorators: <P extends Configuration['decorators']>(
+    param: P
+  ) => IRocketStories<OA, RA, SO>
 }
 
 type CreateRocketStories = (options: Configuration) => IRocketStories
@@ -146,6 +174,7 @@ const createRocketStories: CreateRocketStories = (options) => ({
   CONFIG: options,
   // chaining methods
   storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
+
   config: ({ component, storyOptions, prefix, name, decorators }) =>
     cloneAndEhnance(options, {
       component,
@@ -154,32 +183,47 @@ const createRocketStories: CreateRocketStories = (options) => ({
       name,
       decorators,
     }),
+
   attrs: (attrs) => cloneAndEhnance(options, { attrs }),
-  setComponent: (component) =>
-    //@ts-ignore
-    cloneAndEhnance(options, { component }),
+  // @ts-ignore
+  setComponent: (component) => cloneAndEhnance(options, { component }),
+
+  decorators: (decorators) => cloneAndEhnance(options, { decorators }),
 
   // output methods
   main: () =>
     isRocketComponent(options.component)
-      ? mainStory({
+      ? renderMain({
           ...options,
           component: options.component as RocketType,
         })
       : generalStory(options),
+
+  render: (renderer) =>
+    renderRender(renderer, {
+      ...options,
+      component: options.component as RocketType,
+    }),
+
+  list: (params) =>
+    renderList(params, {
+      ...options,
+      component: options.component as RocketType,
+    }),
+
   dimension: (dimension, params = {}) => {
     if (!isRocketComponent(options.component)) return null
 
-    const { ignore = [] }: any = params
+    const { ignore = [] } = params
 
-    return dimensionStory({
+    return renderDimension(dimension, {
       ...options,
       component: options.component as RocketType,
       ignore,
-      dimension,
     })
   },
-  export: () => ({
+
+  init: () => ({
     component: options.component,
     title: options.name,
     decorators: options.decorators,

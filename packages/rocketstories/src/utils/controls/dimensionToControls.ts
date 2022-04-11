@@ -23,7 +23,7 @@ const dimensionsToControls: DimensionsToControls = ({
       type: isMultiKey ? 'multi-select' : 'select',
       value: isMultiKey ? undefined : valueKeys[0],
       options: valueKeys,
-      group: 'Rocketstyle',
+      group: 'Rocketstyle (Vitus-Labs)',
     }
 
     return { ...acc, [key]: control }

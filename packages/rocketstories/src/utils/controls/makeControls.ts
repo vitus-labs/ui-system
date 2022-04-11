@@ -14,10 +14,11 @@ const makeControls: MakeControls = (obj) =>
       ...acc,
       [key]: {
         control: { type: CONTROL_MAP[value.type] || value.type },
-        defaultValue: value.value,
+        // defaultValue: value.value,
         description: value.description,
         options: value.options || CONTROL_OPTIONS[value.type],
         table: {
+          defaultValue: value.value,
           disabled: value.disabled,
           category: value.group || CONTROL_TYPES_GROUPS[value.type],
           type: {
