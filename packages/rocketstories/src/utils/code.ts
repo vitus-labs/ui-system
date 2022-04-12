@@ -162,17 +162,8 @@ const parseComponentName = (name) => {
 // --------------------------------------------------------
 type CreateJSXCode = (name: string, props: Obj) => string
 
-export const createJSXCode: CreateJSXCode = (name, props) => {
-  const componentName = parseComponentName(name)
-
-  let result = `<${componentName} `
-
-  result += stringifyProps(props)
-
-  result += ` />`
-
-  return result
-}
+export const createJSXCode: CreateJSXCode = (name, props) =>
+  `<${parseComponentName(name)} ${stringifyProps(props)} />`
 
 // --------------------------------------------------------
 // createJSXCodeArray
@@ -227,38 +218,36 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   return result
 }
 
+const addBooleanCodeComment = (values) => {
+  let result = `\n\n`
+  result += `// Or alternatively use boolean props (e.g. ${values})`
+  result += `\n`
+
+  return result
+}
+
 // --------------------------------------------------------
 // createMainJSX
 // --------------------------------------------------------
-type CreateMainJSX = ({
-  name,
-  dimensions,
-  params,
-  booleanDimensions,
-}: {
+type GenerateMainJSXCode = (params: {
   name: string
-  dimensions: any
-  params: any
+  props: Record<string, string>
+  dimensions: Record<string, string>
   booleanDimensions: any
 }) => any
 
-export const createMainJSX: CreateMainJSX = ({
+export const generateMainJSXCode: GenerateMainJSXCode = ({
   name,
+  props,
   dimensions,
-  params,
   booleanDimensions,
 }) => {
-  let result = ''
-
-  result += createJSXCode(name, { ...dimensions, ...params })
+  let result = createJSXCode(name, { ...dimensions, ...props })
 
   if (booleanDimensions) {
-    result += `\n\n`
-    result += `// Or alternatively use boolean props (e.g. ${Object.keys(
-      booleanDimensions
-    )})`
-    result += `\n`
-    result += createJSXCode(name, { ...booleanDimensions, ...params })
+    const keys = Object.keys(booleanDimensions)
+    result += addBooleanCodeComment(keys)
+    result += createJSXCode(name, { ...booleanDimensions, ...props })
   }
 
   return result

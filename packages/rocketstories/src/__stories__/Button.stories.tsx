@@ -26,9 +26,13 @@ export default stories.init()
 
 export const Example = stories.main()
 
-export const States = stories.dimension('state')
+export const States = stories
+  .storyOptions({ pseudo: true, direction: 'rows' })
+  .dimension('state')
 
-export const Sizes = stories.dimension('size')
+export const Sizes = stories
+  .storyOptions({ direction: 'inline' })
+  .dimension('size')
 
 export const Multiple = stories.dimension('multiple')
 

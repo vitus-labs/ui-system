@@ -1,20 +1,21 @@
 // --------------------------------------------------------
 // extractDefaultBooleanProps
 // --------------------------------------------------------
-type ExtractDefaultBooleanProps = ({
-  dimensions,
-  multiKeys,
-}: {
+type ExtractDefaultBooleanProps = (params: {
   dimensions: Record<string, any>
   multiKeys: Record<string, true>
-}) => Record<string, any>
+  useBooleans?: boolean
+}) => Record<string, any> | null
 
 // eslint-disable-next-line import/prefer-default-export
 export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
   dimensions,
   multiKeys,
-}) =>
-  Object.entries(dimensions).reduce((acc, [key, value]) => {
+  useBooleans,
+}) => {
+  if (!useBooleans) return null
+
+  return Object.entries(dimensions).reduce((acc, [key, value]) => {
     if (!multiKeys[key]) {
       const propName = Object.keys(value)[0]
 
@@ -23,3 +24,4 @@ export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
 
     return acc
   }, {})
+}

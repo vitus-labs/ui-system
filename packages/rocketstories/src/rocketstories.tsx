@@ -10,7 +10,7 @@ import {
   renderRender,
   renderList,
   RenderList,
-} from './stories'
+} from '~/stories'
 import type {
   TObj,
   Configuration,
@@ -19,7 +19,7 @@ import type {
   ExtractProps,
   RenderStoryCallback,
   ListStoryOptions,
-} from './types'
+} from '~/types'
 
 // --------------------------------------------------------
 // rocketstories
@@ -64,17 +64,9 @@ const rocketstories: Rocketstories = (component, options = {}) => {
   return createRocketStories(result)
 }
 
-// interface VoidFunctionComponent<P = {}> {
-//   (props: P, context?: any): ReactElement<any, any> | null
-//   propTypes?: WeakValidationMap<P> | undefined
-//   contextTypes?: ValidationMap<any> | undefined
-//   defaultProps?: Partial<P> | undefined
-//   displayName?: string | undefined
-// }
-
 const cloneAndEhnance = (
-  options: Configuration,
-  defaultOptions: Partial<Configuration>
+  defaultOptions: Configuration,
+  options: Partial<Configuration>
 ) => {
   const result = {
     ...defaultOptions,
@@ -200,13 +192,13 @@ const createRocketStories: CreateRocketStories = (options) => ({
       : generalStory(options),
 
   render: (renderer) =>
-    renderRender(renderer, {
+    renderRender(renderer)({
       ...options,
       component: options.component as RocketType,
     }),
 
   list: (params) =>
-    renderList(params, {
+    renderList(params)({
       ...options,
       component: options.component as RocketType,
     }),
