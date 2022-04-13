@@ -13,6 +13,8 @@ export const CONTROL_TYPES = [
   'inline-radio',
   'check',
   'inline-check',
+  'function',
+  'component',
 ] as const
 
 export type T_CONTROL_TYPES = typeof CONTROL_TYPES[number]

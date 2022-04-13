@@ -14,5 +14,10 @@ export type RenderList<P = {}> = (
 
 export default (list) =>
   RocketStoryHoc((component) => (props) => (
-    <List rootElement={false} {...props} {...list} component={component} />
+    <List
+      rootElement={false}
+      itemProps={props}
+      {...list}
+      component={component}
+    />
   ))
