@@ -36,9 +36,9 @@ const rocketStory: RocketStory =
     const vitusLabsControls = getDefaultVitusLabsControls(component)
 
     const finalControls = {
+      ...dimensionControls,
       ...vitusLabsControls,
       ...createdControls,
-      ...dimensionControls,
     }
 
     const storybookControls = makeStorybookControls(finalControls, defaultAttrs)

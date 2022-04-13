@@ -43,7 +43,7 @@ export const convertDimensionsToControls: ConvertDimensionsToControls = ({
     const control = {
       type: isMultiKey ? 'multi-select' : 'select',
       options: valueKeys,
-      group: 'Rocketstyle (Vitus-Labs)',
+      group: 'Dimensions [Rocketstyle (Vitus-Labs)]',
     }
 
     return { ...acc, [key]: control }
