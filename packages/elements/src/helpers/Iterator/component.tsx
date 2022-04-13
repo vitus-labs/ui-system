@@ -127,10 +127,9 @@ const component: FC<Props> & Static = (props: Props) => {
     if (isFragment(children)) {
       const fragmentChildren = children.props.children as ReactNodeArray
 
-      return fragmentChildren.map((item, i) => {
-        console.log(item)
-        return renderChild(item, fragmentChildren.length, i)
-      })
+      return fragmentChildren.map((item, i) =>
+        renderChild(item, fragmentChildren.length, i)
+      )
     }
 
     // if single child

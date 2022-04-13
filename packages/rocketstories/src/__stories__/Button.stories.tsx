@@ -7,7 +7,12 @@ const storyOf = init({
   decorators: [Theme],
 })
 
-const stories = storyOf(Button).attrs({ centered: true }).attrs({ content: '' })
+const stories = storyOf(Button)
+  .controls({
+    beforeContent: { type: 'text', description: 'something cool' },
+  })
+  .attrs({ centered: true })
+  .attrs({ content: '' })
 
 // const stories = rocketstories(Button)
 //   .storyOptions({
@@ -27,7 +32,8 @@ export default stories.init()
 export const Example = stories.main()
 
 export const States = stories
-  .storyOptions({ pseudo: true, direction: 'rows' })
+  .storyOptions({ pseudo: true, direction: 'inline' })
+
   .dimension('state')
 
 export const Sizes = stories

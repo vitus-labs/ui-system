@@ -1,11 +1,5 @@
 import { createElement, VFC, ComponentType } from 'react'
-import {
-  filterControls,
-  filterValues,
-  valuesToControls,
-  makeControls,
-} from '~/utils/controls'
-import filterDefaultValues from '~/utils/controls/filterDefaultValues'
+import { createControls, makeStorybookControls } from '~/utils/controls'
 
 type Story = ({
   component,
@@ -15,22 +9,16 @@ type Story = ({
   attrs: Record<string, unknown>
 }) => VFC & { args: any; argTypes: any }
 
-const story: Story = ({ component, attrs }) => {
-  const definedControls = filterControls(attrs)
-  const values = filterValues(attrs)
+const story: Story = ({ component, attrs, controls }) => {
+  // ------------------------------------------------------
+  // CONTROLS GENERATION
+  // ------------------------------------------------------
+  const createdControls = createControls(controls)
 
-  const controls = valuesToControls({
-    component: component as any,
-    values,
-    dimensionControls: {},
-  })
+  const finalControls = createdControls
+  const storybookControls = makeStorybookControls(finalControls, attrs)
 
-  const storybookControls = makeControls({
-    ...controls,
-    ...definedControls,
-  })
-
-  const args = filterDefaultValues(controls)
+  const args = attrs
 
   const Enhanced = (props) => createElement(component, props)
 

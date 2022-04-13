@@ -10,7 +10,7 @@ const DIRECTION = {
   group,
   type: 'select',
   options: ['-----', ...directionType.split(' | ')],
-  value: 'inline',
+  value: 'rows',
   valueType: `${directionType} | Record<string, ${directionType}> | Array<${directionType}`,
 }
 
@@ -46,6 +46,7 @@ export default {
   },
   children: {
     group,
+    type: '',
     valueType: 'ReactNode',
     description:
       'React children. Priorities when rendering are **children** → **content** → **label**, therefore _label_ has the highest priority.',
@@ -73,7 +74,7 @@ export default {
   },
   direction: {
     ...DIRECTION,
-    value: '',
+    value: undefined,
     description:
       'Define whether element should render **horizontally** or **vertically**.',
   },
@@ -146,20 +147,22 @@ export default {
     description:
       'Defines space gap **between** _beforeContent_, _content_ and _afterContent_ if one of _beforeContent_ or _afterContent_ contain _children_ to be rendered.',
   },
-  vertical: {
-    type: 'boolean',
-    group,
-    valueType: 'boolean | Record<string,boolean> | Array<boolean>',
-    description:
-      'Define whether element should render horizontally or vertically.',
-  },
+  // vertical: {
+  //   type: 'boolean',
+  //   group,
+  //   valueType: 'boolean | Record<string,boolean> | Array<boolean>',
+  //   description:
+  //     'Define whether element should render horizontally or vertically.',
+  // },
   beforeContent: {
     group,
+    type: '',
     valueType: 'ReactNode',
     description: 'A children to be rendered inside `beforeContent` wrapper.',
   },
   afterContent: {
     group,
+    type: '',
     valueType: 'ReactNode',
     description: 'A children to be rendered inside `afterContent` wrapper.',
   },
@@ -182,5 +185,21 @@ export default {
     ...CSS,
     description:
       'If you need to add an additional styling to the **afterContent** element, you can do so by injecting styles using this prop.',
+  },
+  ref: {
+    group,
+    description: 'A React ref',
+    valueType: 'ForwardedRef<any>',
+  },
+  innerRef: {
+    group,
+    description: 'A React ref',
+    valueType: 'ForwardedRef<any>',
+  },
+  dangerouslySetInnerHTML: {
+    group,
+    type: 'text',
+    disable: true,
+    valueType: 'any',
   },
 } as const

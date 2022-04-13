@@ -1,18 +1,15 @@
-import React, { createElement } from 'react'
 import { pick } from '@vitus-labs/core'
 import getTheme from '~/utils/theme'
 import { generateMainJSXCode } from '~/utils/code'
 import { extractDefaultBooleanProps } from '~/utils/dimensions'
+import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 import {
-  filterDefaultValues,
-  makeControls,
-  filterControls,
-  filterValues,
-  valuesToControls,
-  dimensionsToControls,
+  createControls,
+  convertDimensionsToControls,
+  getDefaultVitusLabsControls,
+  makeStorybookControls,
   disableDimensionControls,
 } from '~/utils/controls'
-import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 
 export type RenderMain<P = {}> = (
   WrappedComponent: any
@@ -20,7 +17,7 @@ export type RenderMain<P = {}> = (
 
 const renderMain: RenderMain =
   (WrappedComponent) =>
-  ({ name, component, attrs }) => {
+  ({ name, component, attrs, controls }) => {
     // ------------------------------------------------------
     // ROCKETSTYLE COMPONENT INFO
     // ------------------------------------------------------
@@ -29,31 +26,22 @@ const renderMain: RenderMain =
     const defaultAttrs = component.getDefaultAttrs(attrs, theme, 'light')
     const { dimensions, useBooleans, multiKeys } = statics
 
-    const allStoryAttrs = { ...defaultAttrs, ...attrs }
+    const finalAttrs = { ...defaultAttrs, ...attrs }
 
     // ------------------------------------------------------
     // CONTROLS GENERATION
     // ------------------------------------------------------
-    const definedControls = filterControls(allStoryAttrs)
-    const values = filterValues(allStoryAttrs)
+    const createdControls = createControls(controls)
+    const dimensionControls = convertDimensionsToControls(statics)
+    const vitusLabsControls = getDefaultVitusLabsControls(component)
 
-    const dimensionControls = dimensionsToControls(statics)
+    const finalControls = {
+      ...vitusLabsControls,
+      ...createdControls,
+      ...dimensionControls,
+    }
 
-    const controls = valuesToControls({
-      component,
-      values,
-      dimensionControls,
-    })
-
-    const storybookControls = makeControls({
-      ...controls,
-      ...definedControls,
-    })
-
-    // ------------------------------------------------------
-    // CONTROLS DEFAULT VALUES
-    // ------------------------------------------------------
-    const args = filterDefaultValues(controls)
+    const storybookControls = makeStorybookControls(finalControls, defaultAttrs)
 
     // ------------------------------------------------------
     // CREATE DEFAULT STORY DESCRIPTION
@@ -76,7 +64,7 @@ const renderMain: RenderMain =
     // ------------------------------------------------------
     const Enhanced = WrappedComponent(component)
 
-    Enhanced.args = args
+    Enhanced.args = finalAttrs
     Enhanced.argTypes = {
       ...storybookControls,
       ...disableDimensionControls(dimensions),
@@ -91,7 +79,7 @@ const renderMain: RenderMain =
           code: generateMainJSXCode({
             name,
             dimensions: codeDimensionProps,
-            props: pick(attrs, Object.keys(attrs)),
+            props: pick(finalAttrs, Object.keys(attrs)),
             booleanDimensions: extractDefaultBooleanProps({
               dimensions,
               multiKeys,

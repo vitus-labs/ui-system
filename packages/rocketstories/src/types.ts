@@ -36,15 +36,17 @@ export type RocketType = RocketComponentType & {
 
 export type ControlTypes = T_CONTROL_TYPES
 
-export type Control = {
-  type: T_CONTROL_TYPES
+export type ControlConfiguration = {
+  type?: T_CONTROL_TYPES
   value?: any
   valueType?: string
   description?: string
   group?: string
   options?: any[]
-  disabled?: boolean
+  disable?: boolean
 }
+
+export type Control = ControlTypes | ControlConfiguration
 
 export type StorybookControl = {
   control: {
@@ -60,18 +62,6 @@ export type StorybookControl = {
       summary?: string
     }
   }
-}
-
-export type AttrItemControl<T> = {
-  type: T_CONTROL_TYPES
-  value?: T
-  options?: Record<string, any> | any[]
-  group?: string
-  description?: string
-}
-
-export type AttrsTypes<P, H = ExtractProps<P>> = {
-  [I in keyof H]: H[I] | AttrItemControl<H[I]> | { disable: true }
 }
 
 export type ExtractDimensions<C extends RocketType> = keyof C['$$rocketstyle']
@@ -92,6 +82,7 @@ export type Configuration = {
     gap: number
     pseudo: boolean | null | undefined
   }>
+  controls: Record<string, Control>
   decorators: Decorator[]
 }
 

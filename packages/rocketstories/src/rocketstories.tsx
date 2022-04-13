@@ -12,6 +12,7 @@ import {
   RenderList,
 } from '~/stories'
 import type {
+  Control,
   TObj,
   Configuration,
   ElementType,
@@ -75,6 +76,7 @@ const cloneAndEhnance = (
     component: options.component || defaultOptions.component,
     attrs: { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
+    controls: { ...defaultOptions.controls, ...options.controls },
     decorators: [
       ...(defaultOptions.decorators || []),
       ...(options.decorators || []),
@@ -134,6 +136,10 @@ export interface IRocketStories<
     options: Configuration['storyOptions']
   ) => IRocketStories<OA, RA, SO>
 
+  controls: (
+    options: Partial<{ [I in keyof OA]: Control }>
+  ) => IRocketStories<OA, RA, SO>
+
   // CONFIG chaining method
   // --------------------------------------------------------
   config: (
@@ -164,24 +170,6 @@ export interface IRocketStories<
 type CreateRocketStories = (options: Configuration) => IRocketStories
 const createRocketStories: CreateRocketStories = (options) => ({
   CONFIG: options,
-  // chaining methods
-  storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
-
-  config: ({ component, storyOptions, prefix, name, decorators }) =>
-    cloneAndEhnance(options, {
-      component,
-      storyOptions,
-      prefix,
-      name,
-      decorators,
-    }),
-
-  attrs: (attrs) => cloneAndEhnance(options, { attrs }),
-  // @ts-ignore
-  setComponent: (component) => cloneAndEhnance(options, { component }),
-
-  decorators: (decorators) => cloneAndEhnance(options, { decorators }),
-
   // output methods
   main: () =>
     isRocketComponent(options.component)
@@ -190,18 +178,6 @@ const createRocketStories: CreateRocketStories = (options) => ({
           component: options.component as RocketType,
         })
       : generalStory(options),
-
-  render: (renderer) =>
-    renderRender(renderer)({
-      ...options,
-      component: options.component as RocketType,
-    }),
-
-  list: (params) =>
-    renderList(params)({
-      ...options,
-      component: options.component as RocketType,
-    }),
 
   dimension: (dimension, params = {}) => {
     if (!isRocketComponent(options.component)) return null
@@ -215,11 +191,44 @@ const createRocketStories: CreateRocketStories = (options) => ({
     })
   },
 
+  render: (renderer) =>
+    renderRender(renderer)({
+      ...options,
+      component: options.component as RocketType,
+    }),
+
+  list: (params) =>
+    renderList(params)({
+      ...options,
+      component: options.component as RocketType,
+    }),
+
   init: () => ({
     component: options.component,
     title: options.name,
     decorators: options.decorators,
   }),
+
+  // chaining methods
+  storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
+  controls: (controls) => cloneAndEhnance(options, { controls }),
+
+  config: ({ component, storyOptions, prefix, name, decorators }) =>
+    cloneAndEhnance(options, {
+      component,
+      storyOptions,
+      prefix,
+      name,
+      decorators,
+    }),
+
+  attrs: (attrs) => cloneAndEhnance(options, { attrs }),
+
+  setComponent: (component) =>
+    // @ts-ignore
+    cloneAndEhnance(options, { component }),
+
+  decorators: (decorators) => cloneAndEhnance(options, { decorators }),
 })
 
 export { init }

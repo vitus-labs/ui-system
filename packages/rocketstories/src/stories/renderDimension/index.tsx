@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { createElement, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { pick, isEmpty } from '@vitus-labs/core'
-import { Element, Text } from '@vitus-labs/elements'
+import { Element } from '@vitus-labs/elements'
 import NotFound from '~/components/NotFound'
 import getTheme from '~/utils/theme'
 import { createJSXCodeArray } from '~/utils/code'
-import {
-  filterDefaultValues,
-  disableDimensionControls,
-  dimensionsToControls,
-  makeControls,
-  filterControls,
-  filterValues,
-  valuesToControls,
-} from '~/utils/controls'
 import type {
   RocketDimensions,
   StoryComponent,
@@ -23,6 +14,13 @@ import Provider from './context'
 import Item from './components/Item'
 import PseudoList from './components/PseudoList'
 import { Heading } from './components/core'
+import {
+  createControls,
+  convertDimensionsToControls,
+  getDefaultVitusLabsControls,
+  makeStorybookControls,
+  disableDimensionControls,
+} from '~/utils/controls'
 
 export type RenderDimension<P = {}> = (
   dimension: RocketDimensions,
@@ -33,7 +31,7 @@ export type RenderDimension<P = {}> = (
 
 const renderDimension: RenderDimension = (
   dimension,
-  { name, component, attrs = {}, storyOptions = {}, ignore = [] }
+  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] }
 ) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
@@ -43,7 +41,7 @@ const renderDimension: RenderDimension = (
   const defaultAttrs = component.getDefaultAttrs(attrs, theme, 'light')
   const { dimensions, useBooleans, multiKeys } = statics
 
-  const allStoryAttrs = { ...defaultAttrs, ...attrs }
+  const finalAttrs = { ...defaultAttrs, ...attrs }
 
   // ------------------------------------------------------
   // CURRENT ROCKETSTYLE DIMENSION INFO
@@ -52,42 +50,31 @@ const renderDimension: RenderDimension = (
   const isMultiKey = !!multiKeys[dimension]
 
   // ------------------------------------------------------
-  //
   // RENDER EMPTY PAGE WHEN DIMENSION IS NOT AVAILABLE
-  //
   // ------------------------------------------------------
   const DONT_RENDER = isEmpty(currentDimension)
   if (DONT_RENDER) return NotFound
 
-  console.log(storyOptions.direction)
   // ------------------------------------------------------
   // CONTROLS GENERATION
   // ------------------------------------------------------
-  const definedControls = filterControls(allStoryAttrs)
-  const values = filterValues(allStoryAttrs)
+  const createdControls = createControls(controls)
+  const dimensionControls = convertDimensionsToControls(statics)
+  const vitusLabsControls = getDefaultVitusLabsControls(component)
 
-  const dimensionControls = dimensionsToControls(statics)
+  const finalControls = {
+    ...vitusLabsControls,
+    ...createdControls,
+    ...dimensionControls,
+  }
 
-  const controls = valuesToControls({
-    component,
-    values,
-    dimensionControls,
-  })
-
-  const storybookControls = makeControls({
-    ...controls,
-    ...definedControls,
-  })
-
-  // ------------------------------------------------------
-  // CONTROLS DEFAULT VALUES
-  // ------------------------------------------------------
-  const args = filterDefaultValues(controls)
+  const storybookControls = makeStorybookControls(finalControls, defaultAttrs)
 
   // ------------------------------------------------------
   // CREATE DEFAULT STORY DESCRIPTION
   // ------------------------------------------------------
   const hasPseudo = storyOptions.pseudo === true
+
   let story = `This story renders all _options_ of the **${dimension}** dimension. `
   if (hasPseudo) {
     story += 'Including `pseudo` states.'
@@ -133,7 +120,7 @@ const renderDimension: RenderDimension = (
 
         if (storyOptions.pseudo === true) {
           return (
-            <WrapElement contentDirection="rows">
+            <WrapElement contentDirection="rows" contentAlignY="top">
               <Heading
                 level1
                 label={item.charAt(0).toUpperCase() + item.slice(1)}
@@ -141,6 +128,7 @@ const renderDimension: RenderDimension = (
               <WrapElement
                 {...storyProps}
                 contentDirection={storyOptions.direction}
+                contentAlignY="top"
               >
                 <Provider component={component}>
                   <PseudoList
@@ -171,7 +159,7 @@ const renderDimension: RenderDimension = (
     </WrapElement>
   )
 
-  Enhanced.args = args
+  Enhanced.args = finalAttrs
   Enhanced.argTypes = {
     ...storybookControls,
     ...disableDimensionControls(dimensions, dimension),
@@ -185,7 +173,7 @@ const renderDimension: RenderDimension = (
       source: {
         code: createJSXCodeArray(
           name,
-          pick(args, Object.keys(attrs)),
+          pick(finalAttrs, Object.keys(attrs)),
           dimension,
           currentDimension,
           useBooleans,

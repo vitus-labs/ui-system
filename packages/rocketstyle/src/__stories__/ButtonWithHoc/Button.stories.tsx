@@ -9,8 +9,6 @@ export default {
 export const buttonHocRef = () => {
   const ref = createRef()
 
-  console.log(ref)
-
   return (
     <>
       <Button ref={ref} label="Button" />
