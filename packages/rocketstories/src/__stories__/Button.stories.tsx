@@ -1,5 +1,5 @@
 import React from 'react'
-import { init } from '~/rocketstories'
+import { init } from '~/init'
 import Theme from '~/decorators/Theme'
 import { Button, HoistedButton, ElementExample } from './Button'
 

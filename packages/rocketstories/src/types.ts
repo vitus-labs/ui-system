@@ -42,23 +42,27 @@ export type ControlConfiguration = {
   valueType?: string
   description?: string
   group?: string
-  options?: any[]
+  options?: ArrayLike<any>
   disable?: boolean
 }
 
-export type Control = ControlTypes | ControlConfiguration
+export type Control = ControlConfiguration
+
+export type Controls = Record<string, Control>
 
 export type StorybookControl = {
   control: {
     type: string
   }
-  defaultValue?: any
   description?: string
   options?: any[]
   table: {
-    disabled?: boolean
+    disable?: boolean
     category?: string
-    type: {
+    defaultValue?: {
+      summary: any
+    }
+    type?: {
       summary?: string
     }
   }
@@ -97,13 +101,9 @@ export type StoryConfiguration = Omit<Configuration, 'component'> & {
 export type SimpleValue = string | number | boolean
 export type Obj = Record<string, SimpleValue | Array<SimpleValue>>
 
-export type Controls = Record<string, Control>
-
 export type PartialControls = Record<string, Partial<Control>>
 
-export type RenderStoryCallback<P extends TObj = {}> = (
-  param: (props: P) => ReactNode
-) => VFC<P>
+export type RenderStoryOptions<P extends TObj = {}> = (props: P) => ReactNode
 
 export type ListStoryOptions = Pick<
   ListProps,

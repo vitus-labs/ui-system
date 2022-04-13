@@ -64,7 +64,7 @@ export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
   const IS_TEXT = VITUS_LABS__COMPONENT === '@vitus-labs/elements/Text'
   const IS_OVERLAY = VITUS_LABS__COMPONENT === '@vitus-labs/elements/Overlay'
 
-  return {
+  const result = {
     ...(IS_ELEMENT || IS_LIST ? CONTROLS.ELEMENT_CONTROLS : {}),
 
     ...(IS_LIST ? CONTROLS.LIST_CONTROLS : {}),
@@ -75,6 +75,8 @@ export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
 
     ...(IS_ROCKETSTYLE ? CONTROLS.ROCKETSTYLE_CONTROLS : {}),
   }
+
+  return result as Controls
 }
 
 // --------------------------------------------------------

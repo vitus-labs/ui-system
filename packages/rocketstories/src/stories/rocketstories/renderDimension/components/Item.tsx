@@ -1,6 +1,6 @@
 import React, { createElement, VFC } from 'react'
+import { Heading } from '~/components/base'
 import { useContext } from '../context'
-import { Heading } from './core'
 
 type Props = {
   title?: string

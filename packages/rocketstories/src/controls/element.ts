@@ -202,4 +202,4 @@ export default {
     disable: true,
     valueType: 'any',
   },
-} as const
+}

@@ -3,8 +3,16 @@ import React, { Fragment } from 'react'
 import { pick, isEmpty } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import NotFound from '~/components/NotFound'
+import { Heading } from '~/components/base'
 import getTheme from '~/utils/theme'
 import { createJSXCodeArray } from '~/utils/code'
+import {
+  createControls,
+  convertDimensionsToControls,
+  getDefaultVitusLabsControls,
+  makeStorybookControls,
+  disableDimensionControls,
+} from '~/utils/controls'
 import type {
   RocketDimensions,
   StoryComponent,
@@ -13,14 +21,6 @@ import type {
 import Provider from './context'
 import Item from './components/Item'
 import PseudoList from './components/PseudoList'
-import { Heading } from './components/core'
-import {
-  createControls,
-  convertDimensionsToControls,
-  getDefaultVitusLabsControls,
-  makeStorybookControls,
-  disableDimensionControls,
-} from '~/utils/controls'
 
 export type RenderDimension<P = {}> = (
   dimension: RocketDimensions,

@@ -1,9 +1,5 @@
-import rocketstories, {
-  init,
-  Init,
-  Rocketstories,
-  IRocketStories,
-} from '~/rocketstories'
+import { init, rocketstories, Init, Rocketstories } from '~/init'
+import { IRocketStories } from '~/rocketstories'
 import type {
   ExtractDimensions,
   ExtractProps,
@@ -18,7 +14,6 @@ import type {
   ControlTypes,
   Controls,
   PartialControls,
-  AttrItemControl,
 } from '~/types'
 
 export type {
@@ -38,8 +33,7 @@ export type {
   ControlTypes,
   Controls,
   PartialControls,
-  AttrItemControl,
 }
 
-export { init }
-export default rocketstories
+export { rocketstories }
+export default init

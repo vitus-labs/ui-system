@@ -1,9 +1,9 @@
 import StoryHoc from '~/internal/StoryHoc'
 import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 
-export type RenderRender = (
+export type RenderRender<P = {}> = (
   render,
   params: RocketStoryConfiguration
-) => StoryComponent
+) => StoryComponent<P>
 
 export default (render) => StoryHoc(() => render)

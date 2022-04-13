@@ -1,69 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
-import {
-  renderDimension,
-  RenderDimension,
-  renderMain,
-  RenderMain,
-  generalStory,
-  renderRender,
-  renderList,
-  RenderList,
-} from '~/stories'
+import * as rocketstory from '~/stories/rocketstories'
+import * as simplestory from '~/stories/base'
 import type {
   Control,
   TObj,
   Configuration,
-  ElementType,
   RocketType,
   ExtractProps,
-  RenderStoryCallback,
+  RenderStoryOptions,
   ListStoryOptions,
 } from '~/types'
-
-// --------------------------------------------------------
-// rocketstories
-// --------------------------------------------------------
-export type Init = <
-  P extends Partial<Omit<Configuration, 'component' | 'attrs'>>
->(
-  params: P
-) => <T extends Configuration['component']>(
-  component: T
-) => T extends RocketType
-  ? IRocketStories<ExtractProps<T>, T['$$rocketstyle']>
-  : IRocketStories<ExtractProps<T>, unknown>
-
-const init: Init =
-  ({ decorators = [], storyOptions = {} }) =>
-  (component) =>
-    rocketstories(component, { decorators, storyOptions })
-
-// --------------------------------------------------------
-// rocketstories
-// --------------------------------------------------------
-export type Rocketstories = <C extends Configuration['component']>(
-  component: C,
-  options?: Partial<Omit<Configuration, 'component' | 'attrs'>>
-) => C extends RocketType
-  ? IRocketStories<ExtractProps<C>, C['$$rocketstyle']>
-  : IRocketStories<ExtractProps<C>, unknown>
-
-//@ts-ignore
-const rocketstories: Rocketstories = (component, options = {}) => {
-  const { decorators = [], storyOptions = {} } = options
-
-  const result: Configuration = {
-    component,
-    name: component.displayName || component.name,
-    attrs: {},
-    storyOptions: { gap: 16, direction: 'rows' as const, ...storyOptions },
-    decorators,
-  }
-
-  return createRocketStories(result)
-}
 
 const cloneAndEhnance = (
   defaultOptions: Configuration,
@@ -99,28 +47,38 @@ const cloneAndEhnance = (
 export interface IRocketStories<
   OA extends TObj = {},
   RA extends TObj | unknown = unknown,
-  SO extends TObj = {}
+  ISRS extends boolean = false
 > {
   CONFIG: Configuration
 
   // MAIN story
   // --------------------------------------------------------
-  main: () => ReturnType<RenderMain<OA>> | ReturnType<typeof generalStory>
+  main: () => ISRS extends true
+    ? ReturnType<rocketstory.RenderMain<OA>>
+    : ReturnType<simplestory.RenderMain<OA>>
 
   // DIMENSION(S) story
   // --------------------------------------------------------
   dimension: <P extends keyof RA>(
-    dimension: P,
+    dimension: ISRS extends true ? P : never,
     options?: Partial<{ ignore: Array<RA[P]> }>
-  ) => ReturnType<RenderDimension<OA>> | null
+  ) => ReturnType<rocketstory.RenderDimension<OA>> | null
 
   // RENDER story
   // --------------------------------------------------------
-  render: RenderStoryCallback<OA>
+  render: (
+    params: RenderStoryOptions<OA>
+  ) => ISRS extends true
+    ? ReturnType<rocketstory.RenderRender<OA>>
+    : ReturnType<simplestory.RenderRender<OA>>
 
   // RENDER story
   // --------------------------------------------------------
-  list: (params: ListStoryOptions) => ReturnType<RenderList<OA>>
+  list: (
+    params: ListStoryOptions
+  ) => ISRS extends true
+    ? ReturnType<rocketstory.RenderList<OA>>
+    : ReturnType<simplestory.RenderList<OA>>
 
   // INIT chaining method
   // --------------------------------------------------------
@@ -134,103 +92,111 @@ export interface IRocketStories<
   // --------------------------------------------------------
   storyOptions: (
     options: Configuration['storyOptions']
-  ) => IRocketStories<OA, RA, SO>
+  ) => IRocketStories<OA, RA, ISRS>
 
   controls: (
     options: Partial<{ [I in keyof OA]: Control }>
-  ) => IRocketStories<OA, RA, SO>
+  ) => IRocketStories<OA, RA, ISRS>
 
   // CONFIG chaining method
   // --------------------------------------------------------
-  config: (
-    params: Partial<Omit<Configuration, 'attrs'>>
-  ) => IRocketStories<OA, RA, SO>
+  config: <P extends Partial<Omit<Configuration, 'attrs'>>>(
+    params: P
+  ) => IRocketStories<OA, RA, ISRS>
 
   // ATTRS chaining method
   // --------------------------------------------------------
-  attrs: <P extends Partial<OA>>(params: P) => IRocketStories<OA, RA, SO>
+  attrs: <P extends Partial<OA>>(params: P) => IRocketStories<OA, RA, ISRS>
 
   // COMPONENT chaining method
   // --------------------------------------------------------
-  setComponent: <P extends Configuration['component']>(
+  replaceComponent: <P extends Configuration['component']>(
     param: P
   ) => P extends RocketType
-    ? IRocketStories<ExtractProps<P>, P['$$rocketstyle'], SO>
-    : P extends ElementType
-    ? IRocketStories<ExtractProps<P>, unknown, SO>
-    : IRocketStories<{}, unknown, SO>
+    ? IRocketStories<ExtractProps<P>, P['$$rocketstyle'], true>
+    : IRocketStories<ExtractProps<P>, unknown, false>
 
   // COMPONENT chaining method
   // --------------------------------------------------------
   decorators: <P extends Configuration['decorators']>(
     param: P
-  ) => IRocketStories<OA, RA, SO>
+  ) => IRocketStories<OA, RA, ISRS>
 }
 
 type CreateRocketStories = (options: Configuration) => IRocketStories
-const createRocketStories: CreateRocketStories = (options) => ({
-  CONFIG: options,
-  // output methods
-  main: () =>
-    isRocketComponent(options.component)
-      ? renderMain({
-          ...options,
-          component: options.component as RocketType,
-        })
-      : generalStory(options),
+// @ts-ignore
+const createRocketStories: CreateRocketStories = (options) => {
+  const isRocket = isRocketComponent(options.component)
 
-  dimension: (dimension, params = {}) => {
-    if (!isRocketComponent(options.component)) return null
+  return {
+    CONFIG: options,
+    // output methods
+    main: () =>
+      isRocket
+        ? rocketstory.renderMain({
+            ...options,
+            component: options.component as RocketType,
+          })
+        : simplestory.renderMain(options),
+    dimension: (dimension, params = {}) => {
+      if (!isRocket) return null
 
-    const { ignore = [] } = params
+      const { ignore = [] } = params
 
-    return renderDimension(dimension, {
-      ...options,
-      component: options.component as RocketType,
-      ignore,
-    })
-  },
+      return rocketstory.renderDimension(dimension, {
+        ...options,
+        component: options.component as RocketType,
+        ignore,
+      })
+    },
 
-  render: (renderer) =>
-    renderRender(renderer)({
-      ...options,
-      component: options.component as RocketType,
+    render: (renderer) =>
+      isRocket
+        ? rocketstory.renderRender(renderer)({
+            ...options,
+            component: options.component as RocketType,
+          })
+        : simplestory.renderRender(renderer)({
+            ...options,
+            component: options.component as RocketType,
+          }),
+
+    list: (params) =>
+      isRocket
+        ? rocketstory.renderList(params)({
+            ...options,
+            component: options.component as RocketType,
+          })
+        : simplestory.renderList(params)({
+            ...options,
+            component: options.component as RocketType,
+          }),
+
+    init: () => ({
+      component: options.component,
+      title: options.name,
+      decorators: options.decorators,
     }),
 
-  list: (params) =>
-    renderList(params)({
-      ...options,
-      component: options.component as RocketType,
-    }),
+    // chaining methods
+    storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
+    controls: (controls) => cloneAndEhnance(options, { controls }),
 
-  init: () => ({
-    component: options.component,
-    title: options.name,
-    decorators: options.decorators,
-  }),
+    config: ({ component, storyOptions, prefix, name, decorators }) =>
+      cloneAndEhnance(options, {
+        component,
+        storyOptions,
+        prefix,
+        name,
+        decorators,
+      }),
 
-  // chaining methods
-  storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
-  controls: (controls) => cloneAndEhnance(options, { controls }),
+    attrs: (attrs) => cloneAndEhnance(options, { attrs }),
 
-  config: ({ component, storyOptions, prefix, name, decorators }) =>
-    cloneAndEhnance(options, {
-      component,
-      storyOptions,
-      prefix,
-      name,
-      decorators,
-    }),
+    replaceComponent: (component) => cloneAndEhnance(options, { component }),
 
-  attrs: (attrs) => cloneAndEhnance(options, { attrs }),
+    decorators: (decorators) => cloneAndEhnance(options, { decorators }),
+  }
+}
 
-  setComponent: (component) =>
-    // @ts-ignore
-    cloneAndEhnance(options, { component }),
-
-  decorators: (decorators) => cloneAndEhnance(options, { decorators }),
-})
-
-export { init }
-
-export default rocketstories
+export default createRocketStories
