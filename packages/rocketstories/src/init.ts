@@ -38,7 +38,13 @@ const rocketstories: Rocketstories = (component, options = {}) => {
     component,
     name: component.displayName || component.name,
     attrs: {},
-    storyOptions: { gap: 16, direction: 'rows' as const, ...storyOptions },
+    storyOptions: {
+      gap: 16,
+      direction: 'rows',
+      alignY: 'top',
+      alignX: 'left',
+      ...storyOptions,
+    },
     decorators,
     controls: {},
   }

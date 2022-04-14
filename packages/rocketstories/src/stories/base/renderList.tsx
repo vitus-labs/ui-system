@@ -14,5 +14,10 @@ export type RenderList<P = {}> = (
 
 export default (list) =>
   StoryHoc((component) => (props) => (
-    <List rootElement={false} {...props} {...list} component={component} />
+    <List
+      rootElement={false}
+      {...list}
+      itemProps={props}
+      component={component}
+    />
   ))

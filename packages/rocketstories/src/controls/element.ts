@@ -5,6 +5,7 @@ const group = 'Element (Vitus-Labs)'
 const directionType = 'inline | rows | reverseRows | reverseInline'
 const alignXType = 'left | center | right | block | spaceBetween | spaceAround'
 const alignYType = 'top | center | block | spaceBetween | spaceAround'
+const CssType = 'string | (css) => css`` | css``'
 
 const DIRECTION = {
   group,
@@ -33,7 +34,7 @@ const ALIGN_Y = {
 const CSS = {
   group,
   type: 'text',
-  valueType: 'string | callback | css | object | array',
+  valueType: `${CssType} | Record<string,${CssType}> | Array<${CssType}>`,
 }
 
 export default {
@@ -49,7 +50,7 @@ export default {
     type: '',
     valueType: 'ReactNode',
     description:
-      'React children. Priorities when rendering are **children** → **content** → **label**, therefore _label_ has the highest priority.',
+      'React children. Priorities when rendering are **children** → **content** → **label**, therefore _children_ has the highest priority.',
   },
   content: {
     group,
@@ -169,22 +170,22 @@ export default {
   css: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the **root** element, you can do so by injecting styles using this prop.',
+      'An additional styling prop to enhance the **root** element CSS styles.',
   },
   contentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the **content** element, you can do so by injecting styles using this prop.',
+      'An additional styling prop to enhance the **content** element CSS styles.',
   },
   beforeContentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the **beforeContent** element, you can do so by injecting styles using this prop.',
+      'An additional styling prop to enhance the **beforeContent** element CSS styles.',
   },
   afterContentCss: {
     ...CSS,
     description:
-      'If you need to add an additional styling to the **afterContent** element, you can do so by injecting styles using this prop.',
+      'An additional styling prop to enhance the **afterContent** element CSS styles.',
   },
   ref: {
     group,
