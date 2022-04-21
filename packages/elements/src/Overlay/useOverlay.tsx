@@ -61,6 +61,9 @@ export default ({
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
 
+  const [innerAlignX, setInnerAlignX] = useState(alignX)
+  const [innerAlignY, setInnerAlignY] = useState(alignY)
+
   const [blocked, handleBlocked] = useState(false)
   const [active, handleActive] = useState(isOpen)
 
@@ -277,13 +280,16 @@ export default ({
         const isRight = right >= 0 // represents window.width = 0
 
         if (align === 'top') {
+          setInnerAlignY(isTop ? 'top' : 'bottom')
           overlayPosition.top = isTop ? top : bottom
         } else if (align === 'bottom') {
+          setInnerAlignY(isBottom ? 'bottom' : 'top')
           overlayPosition.top = isBottom ? bottom : top
         }
 
         // left
         if (alignX === 'left') {
+          setInnerAlignX(isLeft ? 'left' : 'right')
           overlayPosition.left = isLeft ? left : right
         }
         // center
@@ -293,15 +299,19 @@ export default ({
           const isCenteredRight = center + c.width <= window.innerWidth
 
           if (isCenteredLeft && isCenteredRight) {
+            setInnerAlignX('center')
             overlayPosition.left = center
           } else if (isCenteredLeft) {
+            setInnerAlignX('left')
             overlayPosition.left = left
           } else if (isCenteredRight) {
+            setInnerAlignX('right')
             overlayPosition.left = right
           }
         }
         // right
         else if (alignX === 'right') {
+          setInnerAlignX(isRight ? 'right' : 'left')
           overlayPosition.left = isRight ? right : left
         }
       }
@@ -325,13 +335,16 @@ export default ({
         const isBottom = bottom >= 0
 
         if (align === 'left') {
+          setInnerAlignX(isLeft ? 'left' : 'right')
           overlayPosition.left = isLeft ? left : right
         } else if (align === 'right') {
+          setInnerAlignX(isRight ? 'right' : 'left')
           overlayPosition.left = isRight ? right : left
         }
 
         // top
         if (alignY === 'top') {
+          setInnerAlignY(isTop ? 'top' : 'bottom')
           overlayPosition.top = isTop ? top : bottom
         }
         // center
@@ -341,15 +354,19 @@ export default ({
           const isCenteredBottom = center + c.height <= window.innerHeight
 
           if (isCenteredTop && isCenteredBottom) {
+            setInnerAlignY('center')
             overlayPosition.top = center
           } else if (isCenteredTop) {
+            setInnerAlignY('top')
             overlayPosition.top = top
           } else if (isCenteredBottom) {
+            setInnerAlignY('bottom')
             overlayPosition.top = bottom
           }
         }
         // bottom
         else if (alignY === 'bottom') {
+          setInnerAlignY(isBottom ? 'bottom' : 'top')
           overlayPosition.top = isBottom ? bottom : top
         }
       }
@@ -453,8 +470,8 @@ export default ({
     contentRef,
     active,
     align,
-    alignX,
-    alignY,
+    alignX: innerAlignX,
+    alignY: innerAlignY,
     showContent,
     hideContent,
     blocked,
