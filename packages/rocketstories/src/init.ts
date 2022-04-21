@@ -16,9 +16,9 @@ export type Init = <
   : IRocketStories<ExtractProps<T>, unknown, false>
 
 const init: Init =
-  ({ decorators = [], storyOptions = {} }) =>
+  ({ decorators = [], storyOptions = {}, ...rest }) =>
   (component) =>
-    rocketstories(component, { decorators, storyOptions })
+    rocketstories(component, { decorators, storyOptions, ...rest })
 
 // --------------------------------------------------------
 // rocketstories
