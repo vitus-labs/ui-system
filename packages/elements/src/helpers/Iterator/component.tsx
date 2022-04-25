@@ -1,12 +1,6 @@
-import React, {
-  Children,
-  FC,
-  ReactNodeArray,
-  useCallback,
-  useMemo,
-} from 'react'
+import React, { Children, FC, useCallback, useMemo } from 'react'
 import { isFragment } from 'react-is'
-import { renderContent, isEmpty } from '@vitus-labs/core'
+import { render, isEmpty } from '@vitus-labs/core'
 import type { Props, DataArrayObject, ExtendedProps } from './types'
 
 const RESERVED_PROPS = [
@@ -52,7 +46,7 @@ type Static = {
   RESERVED_PROPS: typeof RESERVED_PROPS
 }
 
-const component: FC<Props> & Static = (props: Props) => {
+const component: FC<Props> & Static = (props) => {
   const {
     itemKey,
     valueName,
@@ -63,8 +57,6 @@ const component: FC<Props> & Static = (props: Props) => {
     wrapProps,
     itemProps,
   } = props
-
-  const renderedElement = renderContent
 
   const injectItemProps = useMemo(
     () => (typeof itemProps === 'function' ? itemProps : () => itemProps),
@@ -99,12 +91,12 @@ const component: FC<Props> & Static = (props: Props) => {
     if (Wrapper) {
       return (
         <Wrapper key={i} {...finalWrapProps}>
-          {renderedElement(child, finalItemProps)}
+          {render(child, finalItemProps)}
         </Wrapper>
       )
     }
 
-    return renderContent(child, {
+    return render(child, {
       key: i,
       ...finalItemProps,
     })
@@ -125,7 +117,7 @@ const component: FC<Props> & Static = (props: Props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren = children.props.children as ReactNodeArray
+      const fragmentChildren = children.props.children
 
       return fragmentChildren.map((item, i) =>
         renderChild(item, fragmentChildren.length, i)
@@ -167,12 +159,12 @@ const component: FC<Props> & Static = (props: Props) => {
       if (Wrapper) {
         return (
           <Wrapper key={key} {...finalWrapProps}>
-            {renderedElement(component, finalItemProps)}
+            {render(component, finalItemProps)}
           </Wrapper>
         )
       }
 
-      return renderedElement(component, { key, ...finalItemProps })
+      return render(component, { key, ...finalItemProps })
     })
   }
 
@@ -215,12 +207,12 @@ const component: FC<Props> & Static = (props: Props) => {
       if (Wrapper && !itemComponent) {
         return (
           <Wrapper key={key} {...finalWrapProps}>
-            {renderedElement(renderItem, finalItemProps)}
+            {render(renderItem, finalItemProps)}
           </Wrapper>
         )
       }
 
-      return renderedElement(renderItem, { key, ...finalItemProps })
+      return render(renderItem, { key, ...finalItemProps })
     })
   }
 

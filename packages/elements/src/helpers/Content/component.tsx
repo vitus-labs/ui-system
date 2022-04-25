@@ -1,4 +1,4 @@
-import React, { memo, VFC, ReactNode } from 'react'
+import React, { memo, FC, ReactNode } from 'react'
 import type { StyledComponentPropsWithRef } from 'styled-components'
 import type {
   Direction,
@@ -23,7 +23,7 @@ type Props = {
   extendCss: ExtendCss
 }
 
-const component: VFC<Partial<Props>> = ({
+const component: FC<Partial<Props>> = ({
   contentType,
   tag,
   parentDirection,

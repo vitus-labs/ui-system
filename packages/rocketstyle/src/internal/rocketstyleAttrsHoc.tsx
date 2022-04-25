@@ -4,7 +4,7 @@ import React, {
   ForwardRefExoticComponent,
   ComponentType,
 } from 'react'
-import { renderContent } from '@vitus-labs/core'
+import { render } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
 import { useThemeOptions } from '~/hooks'
 
@@ -36,7 +36,7 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
         props,
         theme,
         {
-          renderContent,
+          render,
           mode,
           isDark,
           isLight,

@@ -3,6 +3,7 @@ import React, {
   useContext as contextHook,
   FC,
   ComponentType,
+  ReactNode,
 } from 'react'
 
 type Context = {
@@ -15,8 +16,9 @@ export const useContext = () => contextHook(context)
 
 const ContextProvider = context.Provider
 
-const Provider: FC<Context> = ({ children, ...props }) => (
-  <ContextProvider value={props}>{children}</ContextProvider>
-)
+const Provider: FC<Context & { children: ReactNode }> = ({
+  children,
+  ...props
+}) => <ContextProvider value={props}>{children}</ContextProvider>
 
 export default Provider

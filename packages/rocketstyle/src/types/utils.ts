@@ -1,4 +1,4 @@
-import type { ComponentType, ForwardRefExoticComponent, VFC } from 'react'
+import type { ComponentType, ForwardRefExoticComponent, FC } from 'react'
 
 export type TObj = Record<string, unknown>
 export type TFn = (...args: any) => any
@@ -20,7 +20,7 @@ export type SimpleHoc<P extends Record<string, unknown> = {}> = <
   T extends ComponentType<any>
 >(
   WrappedComponent: T
-) => VFC<MergeTypes<[P, ExtractProps<T>]>>
+) => FC<MergeTypes<[P, ExtractProps<T>]>>
 
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
 export type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }

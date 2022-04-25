@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { renderContent } from '@vitus-labs/core'
+import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
@@ -13,7 +13,7 @@ const component: VLComponent<Props> = ({
   children,
   className = '',
   style = { color: 'blue' },
-}) => renderContent(children, { className, style })
+}) => render(children, { className, style })
 
 const name = `${PKG_NAME}/Util` as const
 

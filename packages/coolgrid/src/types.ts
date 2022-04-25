@@ -1,11 +1,11 @@
-import { FC, ReactText, ComponentType } from 'react'
+import { FC, ReactNode, ComponentType } from 'react'
 import { config } from '@vitus-labs/core'
 import { extendCss, AlignContentAlignXKeys } from '@vitus-labs/unistyle'
 
 type CreateValueType<T> = T | Record<string, T> | Array<T>
 
 export type Obj = Record<string, unknown>
-export type Value = ReactText
+export type Value = string | number
 export type Css = Parameters<typeof extendCss>[0]
 export type ExtraStyles = Css | Record<string, Css> | Array<Css>
 export type CssOutput = ReturnType<typeof config.css> | string | any
@@ -35,7 +35,7 @@ export type ConfigurationProps = Partial<{
   containerWidth: ContainerWidth
   width:
     | ContainerWidth
-    | ((widths: Record<string, ReactText>) => Record<string, ReactText>)
+    | ((widths: Record<string, Value>) => Record<string, Value>)
 }>
 
 export type ComponentProps = ConfigurationProps &
@@ -63,7 +63,8 @@ export type StyledTypes = Partial<{
 // >
 
 export type ElementType<O extends Array<string>> = FC<
-  Omit<ComponentProps, O[number]> & Record<string, unknown>
+  Omit<ComponentProps, O[number]> &
+    Record<string, unknown> & { children: ReactNode }
 > & {
   pkgName: string
   VITUS_LABS__COMPONENT: string

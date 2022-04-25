@@ -1,4 +1,4 @@
-import React, { FC, createContext, useContext } from 'react'
+import React, { FC, createContext, useContext, ReactNode } from 'react'
 
 type Context = {
   blocked: boolean
@@ -12,7 +12,7 @@ const { Provider } = context
 
 export const useOverlayContext = () => useContext(context)
 
-const component: FC<Context> = ({
+const component: FC<Context & { children: ReactNode }> = ({
   children,
   blocked,
   setBlocked,

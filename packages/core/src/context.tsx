@@ -1,4 +1,4 @@
-import React, { createContext, FC, useMemo } from 'react'
+import React, { createContext, FC, useMemo, ReactNode } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 
@@ -15,6 +15,7 @@ type Theme = Partial<
 type ProviderType = Partial<
   {
     theme: Theme
+    children: ReactNode
   } & Record<string, any>
 >
 

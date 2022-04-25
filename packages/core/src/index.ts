@@ -4,7 +4,7 @@ import config, { init } from '~/config'
 import Provider, { context } from '~/context'
 import compose from '~/compose'
 import isEmpty, { IsEmpty } from '~/isEmpty'
-import renderContent, { RenderContent } from '~/renderContent'
+import render, { Render } from '~/render'
 import {
   htmlTags,
   HTMLTags,
@@ -15,7 +15,7 @@ import {
 
 export type {
   IsEmpty,
-  RenderContent,
+  Render,
   HTMLTags,
   HTMLTagsText,
   HTMLElementAttrs,
@@ -29,7 +29,7 @@ export {
   config,
   compose,
   isEmpty,
-  renderContent,
+  render,
   omit,
   pick,
   set,

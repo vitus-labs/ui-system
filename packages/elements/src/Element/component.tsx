@@ -1,5 +1,5 @@
 import React, { forwardRef, useMemo } from 'react'
-import { renderContent } from '@vitus-labs/core'
+import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import { Wrapper, Content } from '~/helpers'
 import { isInlineElement, getShouldBeEmpty } from './utils'
@@ -116,7 +116,7 @@ const component: VLElement = forwardRef(
       return <Wrapper {...props} {...WRAPPER_PROPS} />
     }
 
-    const contentRenderOutput = renderContent(CHILDREN)
+    const contentRenderOutput = render(CHILDREN)
 
     return (
       <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
@@ -132,7 +132,7 @@ const component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {renderContent(beforeContent)}
+            {render(beforeContent)}
           </Content>
         )}
 
@@ -165,7 +165,7 @@ const component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {renderContent(afterContent)}
+            {render(afterContent)}
           </Content>
         )}
       </Wrapper>

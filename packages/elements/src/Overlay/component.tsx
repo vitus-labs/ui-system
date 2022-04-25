@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { renderContent } from '@vitus-labs/core'
+import React, { useMemo, ReactNode } from 'react'
+import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { VLComponent, Content } from '~/types'
@@ -16,7 +16,7 @@ type TriggerRenderer = (
     showContent: () => void
     hideContent: () => void
   }>
-) => Content
+) => ReactNode
 
 type ContentRenderer = (
   props: Partial<{
@@ -27,7 +27,7 @@ type ContentRenderer = (
     alignX: AlignX
     alignY: AlignY
   }>
-) => Content
+) => ReactNode
 
 export type Props = {
   children: Content | TriggerRenderer
@@ -69,7 +69,7 @@ const component: VLComponent<Props> = ({
 
   return (
     <>
-      {renderContent(trigger, {
+      {render(trigger, {
         [triggerRefName]: triggerRef,
         active,
         ...(passHandlers ? { showContent, hideContent } : {}),
@@ -78,7 +78,7 @@ const component: VLComponent<Props> = ({
       {__BROWSER__ && active && (
         <Portal position={DOMLocation}>
           <Provider {...ctx}>
-            {renderContent(children, {
+            {render(children, {
               [contentRefName]: contentRef,
               active,
               align,

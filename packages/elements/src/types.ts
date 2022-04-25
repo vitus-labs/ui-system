@@ -1,11 +1,11 @@
 import type {
   ComponentType,
-  VFC,
+  FC,
   ForwardedRef,
   PropsWithChildren,
   ReactElement,
 } from 'react'
-import { config, renderContent } from '@vitus-labs/core'
+import { config, render } from '@vitus-labs/core'
 
 type ExtractNullableKeys<T> = {
   [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
@@ -28,7 +28,7 @@ export type SimpleHoc<P extends Record<string, unknown>> = <
   T extends ComponentType<any>
 >(
   WrappedComponent: T
-) => VFC<MergeTypes<[P, ExtractProps<T>]>>
+) => FC<MergeTypes<[P, ExtractProps<T>]>>
 
 /**
  * @hidden
@@ -53,7 +53,7 @@ export type isEmpty = null | undefined
 /**
  * @hidden
  */
-export type Content = Parameters<typeof renderContent>['0']
+export type Content = Parameters<typeof render>['0']
 
 /**
  * @hidden
@@ -152,7 +152,7 @@ export type ExtractProps<TComponentOrTProps> =
 export type VLForwardedComponent<P = Record<string, unknown>> =
   ForwardRefRenderFunction<any, P> & VLStatic
 
-export type VLComponent<P = Record<string, unknown>> = VFC<P> & VLStatic
+export type VLComponent<P = Record<string, unknown>> = FC<P> & VLStatic
 
 interface ForwardRefRenderFunction<T, P = Record<string, unknown>> {
   (
