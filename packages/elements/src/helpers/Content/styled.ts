@@ -6,6 +6,14 @@ import {
   value,
 } from '@vitus-labs/unistyle'
 
+const equalCols = config.css`
+  flex: 1;
+`
+
+const typeContent = config.css`
+  flex: 1;
+`
+
 // --------------------------------------------------------
 // calculate spacing between before / content / after
 // --------------------------------------------------------
@@ -40,10 +48,7 @@ const styles = ({ css, theme: t, rootSize }) => css`
     alignY: t.alignY,
   })};
 
-  ${t.equalCols &&
-  css`
-    flex: 1;
-  `};
+  ${t.equalCols && equalCols};
 
   ${t.gap &&
   css`
@@ -59,23 +64,16 @@ const styles = ({ css, theme: t, rootSize }) => css`
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
+const platformStyles = __WEB__ ? config.css`box-sizing: border-box;` : ''
+
 export default config.styled(config.component)`
-  ${
-    __WEB__ &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
+  ${__WEB__ && platformStyles};
 
   display: flex;
   align-self: stretch;
   flex-wrap: wrap;
 
-  ${({ $contentType }) =>
-    $contentType === 'content' &&
-    config.css`
-    flex: 1;
-  `};
+  ${({ $contentType }) => $contentType === 'content' && typeContent};
 
   ${makeItResponsive({
     key: '$element',
