@@ -13,10 +13,7 @@ const isEmpty: IsEmpty = (param) => {
     return true
   }
 
-  if (
-    Object.entries(param as any).length === 0 &&
-    param.constructor === Object
-  ) {
+  if (Object.entries(param).length === 0 && param.constructor === Object) {
     return true
   }
 

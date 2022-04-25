@@ -33,6 +33,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "installConfig": {
+    "hoistingLimits": "dependencies"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vitus-labs/ui-system.git"
