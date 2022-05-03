@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { context } from '~/context'
-import { THEME_MODES_INVERSED } from '~/constants/reservedKeys'
+import { THEME_MODES_INVERSED } from '~/constants'
 import { ThemeModeKeys } from '~/types/theme'
 
 type UseThemeAttrs = ({ inversed }: { inversed?: boolean }) => {

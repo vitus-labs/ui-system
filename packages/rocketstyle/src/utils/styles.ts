@@ -3,7 +3,7 @@ import { config } from '@vitus-labs/core'
 import type { StylesCbArray } from '~/types/styles'
 
 // --------------------------------------------------------
-// calculate styles
+// Calculate styles
 // --------------------------------------------------------
 type CalculateStyles = (
   styles: StylesCbArray | undefined

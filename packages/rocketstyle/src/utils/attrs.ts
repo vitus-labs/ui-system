@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { isEmpty } from '@vitus-labs/core'
 import { MultiKeys } from '~/types/dimensions'
 
@@ -11,7 +12,6 @@ type PickStyledAttrs = (
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
   Object.keys(props).reduce((acc, key) => {
-    // eslint-disable-next-line no-param-reassign
     if (keywords[key]) acc[key] = props[key]
     return acc
   }, {})
@@ -31,10 +31,7 @@ export const calculateChainOptions: CalculateChainOptions =
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return options.reduce(
-      (acc, item) => Object.assign(acc, item(...args)),
-      result
-    )
+    return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }
 
 // --------------------------------------------------------

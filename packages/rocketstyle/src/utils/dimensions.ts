@@ -2,14 +2,14 @@ import { get, isEmpty, set } from '@vitus-labs/core'
 import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
-// is value milti key
+// Is value a valid key
 // --------------------------------------------------------
 type IsValidKey = (value: any) => boolean
 export const isValidKey: IsValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
 // --------------------------------------------------------
-// is value milti key
+// Is value a multi key
 // --------------------------------------------------------
 type IsMultiKey = (value: any) => [boolean, string]
 export const isMultiKey: IsMultiKey = (value) => {

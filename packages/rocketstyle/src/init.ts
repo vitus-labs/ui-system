@@ -8,7 +8,7 @@ import {
   getMultipleDimensions,
   getDimensionsValues,
 } from '~/utils/dimensions'
-import { ALL_RESERVED_KEYS } from '~/constants/reservedKeys'
+import { ALL_RESERVED_KEYS } from '~/constants'
 import defaultDimensions from '~/constants/defaultDimensions'
 
 import type { ElementType, TObj } from '~/types/utils'

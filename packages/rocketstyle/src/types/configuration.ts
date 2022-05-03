@@ -1,5 +1,5 @@
 import type { TFn, ElementType, ArrayOfValues, ArrayOfKeys } from './utils'
-import type { Dimensions, MultiKeys, ExtractDimensionKey } from './dimensions'
+import type { Dimensions, MultiKeys } from './dimensions'
 import type { PseudoProps } from './pseudo'
 import type { StylesCbArray } from './styles'
 import type { ConsumerCb } from './config'
@@ -40,7 +40,7 @@ export type Configuration<
   styles: StylesCbArray
   compose: Record<string, TFn>
   statics: Record<string, any>
-} & Record<ExtractDimensionKey<D[keyof D]>, any>
+} & Record<string, any>
 
 export type DefaultProps<
   // C extends ElementType = ElementType,

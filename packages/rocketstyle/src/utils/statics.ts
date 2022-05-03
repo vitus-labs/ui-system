@@ -1,5 +1,5 @@
 import { isEmpty } from '@vitus-labs/core'
-import { STATIC_KEYS } from '~/constants/reservedKeys'
+import { STATIC_KEYS } from '~/constants'
 
 // --------------------------------------------------------
 // helpers for create statics chainin methods on component
@@ -21,8 +21,8 @@ export const createStaticsChainingEnhancers = ({
 // --------------------------------------------------------
 // helpers for create statics on component
 // --------------------------------------------------------
-export const createStaticsEnhancers = ({ context, opts }) => {
-  if (!isEmpty(opts)) {
-    Object.assign(context, opts)
+export const createStaticsEnhancers = ({ context, options }) => {
+  if (!isEmpty(options)) {
+    Object.assign(context, options)
   }
 }

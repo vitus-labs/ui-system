@@ -3,21 +3,22 @@
 import React, { useMemo, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, render } from '@vitus-labs/core'
+import { PSEUDO_KEYS, CONFIG_KEYS, STYLING_KEYS } from '~/constants'
 import { useLocalContext } from '~/context/localContext'
+import createLocalProvider from '~/context/createLocalProvider'
 import { useRef, useTheme } from '~/hooks'
-import { createLocalProvider, rocketstyleAttrsHoc } from '~/internal'
+import { rocketstyleAttrsHoc } from '~/hoc'
 import {
   createStaticsChainingEnhancers,
   createStaticsEnhancers,
 } from '~/utils/statics'
 import {
-  getTheme,
-  getThemeMode,
-  themeModeCallback,
   getThemeFromChain,
   getDimensionThemes,
+  getTheme,
+  getThemeByMode,
 } from '~/utils/theme'
-import { orOptions, chainReservedOptions } from '~/utils/chaining'
+import { chainOrOptions, chainReservedKeyOptions } from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
 import { calculateStyles } from '~/utils/styles'
 import { getDimensionsMap } from '~/utils/dimensions'
@@ -26,15 +27,8 @@ import {
   calculateStylingAttrs,
   calculateChainOptions,
 } from '~/utils/attrs'
-import {
-  PSEUDO_KEYS,
-  CONFIG_KEYS,
-  STYLING_KEYS,
-} from '~/constants/reservedKeys'
-
 import type { RocketStyleComponent } from '~/types/rocketstyle'
 import type { Configuration } from '~/types/configuration'
-import type { RocketComponent } from '~/types/rocketComponent'
 
 // --------------------------------------------------------
 // cloneAndEnhance
@@ -52,8 +46,8 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
     ...defaultOpts,
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
-    ...orOptions(CONFIG_KEYS, opts, defaultOpts),
-    ...chainReservedOptions(
+    ...chainOrOptions(CONFIG_KEYS, opts, defaultOpts),
+    ...chainReservedKeyOptions(
       [...defaultOpts.dimensionKeys, ...STYLING_KEYS],
       opts,
       defaultOpts
@@ -67,7 +61,7 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const rocketComponent: RocketComponent<any> = (options) => {
+const rocketComponent = (options) => {
   const { component, styles } = options
   const { styled } = config
 
@@ -115,7 +109,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
   const hocsFuncs = [
     rocketstyleAttrsHoc(options),
     ...calculateHocsFuncs(options.compose),
-  ] as ((arg: any) => any)[]
+  ]
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
@@ -196,7 +190,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
           const helper = __MEMOIZED_MODE_BASE_THEME__[mode]
 
           if (!helper.has(baseTheme)) {
-            helper.set(baseTheme, getThemeMode(baseTheme, mode))
+            helper.set(baseTheme, getThemeByMode(baseTheme, mode))
           }
 
           return helper.get(baseTheme)
@@ -213,7 +207,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
           const helper = __MEMOIZED_MODE_DIMENSION_THEME__[mode]
 
           if (!helper.has(themes)) {
-            helper.set(themes, getThemeMode(themes, mode))
+            helper.set(themes, getThemeByMode(themes, mode))
           }
 
           return helper.get(themes)
@@ -344,7 +338,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
   // ------------------------------------------------------
   createStaticsEnhancers({
     context: RocketComponent.is,
-    opts: options.statics,
+    options: options.statics,
   })
 
   RocketComponent.config = (opts = {}) => {
@@ -357,17 +351,23 @@ const rocketComponent: RocketComponent<any> = (options) => {
     cloneAndEnhance({ statics: opts }, options as Configuration)
 
   RocketComponent.getStaticDimensions = (theme) => {
-    const themes = useTheme({ theme, options, cb: themeModeCallback })
+    const themes = getDimensionThemes(theme, options)
+
+    const { keysMap, keywords } = getDimensionsMap({
+      themes,
+      useBooleans: options.useBooleans,
+    })
 
     return {
-      dimensions: themes.dimensions,
+      dimensions: keysMap,
+      keywords,
       useBooleans: options.useBooleans,
       multiKeys: options.multiKeys,
     }
   }
 
-  RocketComponent.getDefaultAttrs = (props, theme, mode) => {
-    const result = calculateChainOptions(options.attrs)([
+  RocketComponent.getDefaultAttrs = (props, theme, mode) =>
+    calculateChainOptions(options.attrs)([
       props,
       theme,
       {
@@ -377,9 +377,6 @@ const rocketComponent: RocketComponent<any> = (options) => {
         isLight: mode === 'dark',
       },
     ])
-
-    return result
-  }
 
   return RocketComponent as RocketStyleComponent
 }

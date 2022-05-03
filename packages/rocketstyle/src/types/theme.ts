@@ -1,4 +1,4 @@
-import { THEME_MODES } from '~/constants/reservedKeys'
+import { THEME_MODES } from '~/constants'
 import type { Css } from './styles'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

@@ -1,15 +1,15 @@
 import { createContext, useContext } from 'react'
 import type { PseudoState } from '~/types/pseudo'
 
-type TLocalContext = Partial<
+type LocalContext = Partial<
   {
     pseudo: PseudoState
-  } & Record<string, unknown>
+  } & Record<string, string>
 >
 
-const context = createContext<TLocalContext>({})
+const context = createContext<LocalContext>({})
 
-type UseLocalContext = (context: any) => TLocalContext
+type UseLocalContext = (context: any) => LocalContext
 export const useLocalContext: UseLocalContext = (consumer) => {
   const ctx = consumer ? useContext(context) : {}
   const result = consumer ? consumer((callback) => callback(ctx)) : {}

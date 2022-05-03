@@ -7,8 +7,6 @@ import {
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
-type State = Omit<PseudoState, 'active'>
-
 type UsePseudoState = ({
   onMouseEnter,
   onMouseLeave,
@@ -16,7 +14,10 @@ type UsePseudoState = ({
   onMouseUp,
   onFocus,
   onBlur,
-}: Partial<PseudoActions>) => { state: State; events: PseudoActions }
+}: Partial<PseudoActions>) => {
+  state: Omit<PseudoState, 'active'>
+  events: PseudoActions
+}
 
 const handleEvent = (e: SyntheticEvent) => {
   e.preventDefault()
