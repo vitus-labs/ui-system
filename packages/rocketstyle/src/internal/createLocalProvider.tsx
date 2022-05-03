@@ -1,6 +1,6 @@
 import React, { forwardRef, useMemo } from 'react'
 import { usePseudoState } from '~/hooks'
-import LocalContext from './localContext'
+import { LocalProvider } from '~/context/localContext'
 
 const RocketStyleProviderComponent = (WrappedComponent) =>
   forwardRef<any, any>(
@@ -36,14 +36,14 @@ const RocketStyleProviderComponent = (WrappedComponent) =>
       )
 
       return (
-        <LocalContext.Provider value={updatedState}>
+        <LocalProvider value={updatedState}>
           <WrappedComponent
             {...props}
             {...pseudo.events}
             ref={ref}
             $rocketstate={updatedState}
           />
-        </LocalContext.Provider>
+        </LocalProvider>
       )
     }
   )

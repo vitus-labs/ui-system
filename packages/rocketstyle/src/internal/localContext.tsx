@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 import type { PseudoState } from '~/types/pseudo'
 
 type TContext = Partial<
@@ -7,4 +7,11 @@ type TContext = Partial<
   } & Record<string, unknown>
 >
 
-export default createContext<TContext>({})
+const context = createContext<TContext>({})
+
+export const useLocalContext = (isConsumer = false) =>
+  isConsumer ? useContext(context) : {}
+
+export const LocalProvider = context.Provider
+
+export default context

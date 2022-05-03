@@ -4,7 +4,7 @@ import type { Dimensions, DefaultDimensions } from './dimensions'
 import type { Configuration } from './configuration'
 import type { RocketComponent } from './rocketstyle'
 
-export type StyleComponent<
+export type RocketComponent<
   C extends ElementType,
   T extends TObj = {},
   CSS extends TObj = {},

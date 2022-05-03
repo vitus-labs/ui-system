@@ -1,29 +1,28 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import React, {
-  useMemo,
-  forwardRef,
-  useContext,
-  useImperativeHandle,
-  useRef,
-} from 'react'
+import React, { useMemo, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
+import { config, omit, pick, compose, render } from '@vitus-labs/core'
+import { useLocalContext } from '~/context/localContext'
+import { useRef, useTheme } from '~/hooks'
+import { createLocalProvider, rocketstyleAttrsHoc } from '~/internal'
 import {
-  config,
-  omit,
-  pick,
-  compose,
-  renderContent,
-  isEmpty,
-} from '@vitus-labs/core'
-import { useTheme, useThemeOptions } from '~/hooks'
-import { localContext, createProvider, rocketstyleAttrsHoc } from '~/internal'
-import { calculateTheme, calculateThemeMode, themeModeCb } from '~/utils/theme'
+  createStaticsChainingEnhancers,
+  createStaticsEnhancers,
+} from '~/utils/statics'
+import {
+  getTheme,
+  getThemeMode,
+  themeModeCallback,
+  getThemeFromChain,
+  getDimensionThemes,
+} from '~/utils/theme'
+import { orOptions, chainReservedOptions } from '~/utils/chaining'
+import { calculateHocsFuncs } from '~/utils/compose'
 import { calculateStyles } from '~/utils/styles'
-import { chainOptions } from '~/utils/collection'
+import { getDimensionsMap } from '~/utils/dimensions'
 import {
-  pickStyledProps,
+  pickStyledAttrs,
   calculateStylingAttrs,
   calculateChainOptions,
 } from '~/utils/attrs'
@@ -31,74 +30,25 @@ import {
   PSEUDO_KEYS,
   CONFIG_KEYS,
   STYLING_KEYS,
-  STATIC_KEYS,
 } from '~/constants/reservedKeys'
 
-import type { RocketComponent } from '~/types/rocketstyle'
+import type { RocketStyleComponent } from '~/types/rocketstyle'
 import type { Configuration } from '~/types/configuration'
-import type { StyleComponent } from '~/types/styleComponent'
-
-// --------------------------------------------------------
-// styledComponent helpers for chaining attributes
-// --------------------------------------------------------
-type OrOptions = (
-  keys: Readonly<Array<string>>,
-  opts: Record<string, unknown>,
-  defaultOpts: Record<string, unknown>
-) => Record<string, unknown>
-
-const orOptions: OrOptions = (keys, opts, defaultOpts) =>
-  keys.reduce(
-    (acc, item) => ({ ...acc, [item]: opts[item] || defaultOpts[item] }),
-    {}
-  )
-
-const chainReservedOptions = (keys, opts, defaultOpts) =>
-  keys.reduce(
-    (acc, item) => ({
-      ...acc,
-      [item]: chainOptions(opts[item], defaultOpts[item]),
-    }),
-    {}
-  )
-
-// --------------------------------------------------------
-// helpers for create statics chainin methods on component
-// --------------------------------------------------------
-const createStaticsChainingEnhancers = ({
-  context,
-  dimensionKeys,
-  func,
-  opts,
-}) => {
-  dimensionKeys.forEach((item) => {
-    // eslint-disable-next-line no-param-reassign
-    context[item] = (props) => func({ [item]: props }, opts)
-  })
-}
-
-// --------------------------------------------------------
-// helpers for create statics on component
-// --------------------------------------------------------
-const createStaticsEnhancers = ({ context, opts }) => {
-  if (!isEmpty(opts)) {
-    Object.assign(context, opts)
-  }
-}
+import type { RocketComponent } from '~/types/rocketComponent'
 
 // --------------------------------------------------------
 // cloneAndEnhance
 // helper function which allows function chaining
-// always returns styleComponent with static functions
+// always returns rocketComponent with static functions
 // assigned
 // --------------------------------------------------------
-type CloneAndEnhance = <A extends Configuration, B extends Configuration>(
-  opts: A,
-  defaultOpts: B
-) => ReturnType<typeof styleComponent>
+type CloneAndEnhance = (
+  opts: Partial<Configuration>,
+  defaultOpts: Configuration
+) => ReturnType<typeof rocketComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
-  styleComponent({
+  rocketComponent({
     ...defaultOpts,
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -117,7 +67,7 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const styleComponent: StyleComponent<any> = (options) => {
+const rocketComponent: RocketComponent<any> = (options) => {
   const { component, styles } = options
   const { styled } = config
 
@@ -135,33 +85,47 @@ const styleComponent: StyleComponent<any> = (options) => {
     component.IS_ROCKETSTYLE || options.styled === false
       ? component
       : styled(component)`
-          ${calculateStyles(styles, config.css)};
+          ${calculateStyles(styles)};
         `
 
   // --------------------------------------------------------
-  // final component to be rendered
+  // COMPONENT - Final component to be rendered
   // --------------------------------------------------------
   const RenderComponent = options.provider
-    ? createProvider(STYLED_COMPONENT)
+    ? createLocalProvider(STYLED_COMPONENT)
     : STYLED_COMPONENT
 
   // --------------------------------------------------------
-  // hocs
+  // THEME - Calculated theme
   // --------------------------------------------------------
-  const calculateHocsFuncs = Object.values(options.compose || {})
-    .filter((item) => typeof item === 'function')
-    .reverse()
+  const __MEMOIZED_BASE_THEME__ = new WeakMap()
+  const __MEMOIZED_DIMENSION_THEME__ = new WeakMap()
+  const __MEMOIZED_MODE_BASE_THEME__ = {
+    light: new WeakMap(),
+    dark: new WeakMap(),
+  }
+  const __MEMOIZED_MODE_DIMENSION_THEME__ = {
+    light: new WeakMap(),
+    dark: new WeakMap(),
+  }
 
-  const hocsFuncs = [rocketstyleAttrsHoc(options), ...calculateHocsFuncs]
+  // --------------------------------------------------------
+  // COMPOSE - high-order components
+  // --------------------------------------------------------
+  const hocsFuncs = [
+    rocketstyleAttrsHoc(options),
+    ...calculateHocsFuncs(options.compose),
+  ] as ((arg: any) => any)[]
 
   // --------------------------------------------------------
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: RocketComponent = forwardRef(
+  const EnhancedComponent = forwardRef(
     (
       {
-        $rocketstyleRef, // it's forwarded from HOC which is always on top of hocs
+        // @ts-ignore
+        $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
         ...props
       },
       ref
@@ -171,55 +135,91 @@ const styleComponent: StyleComponent<any> = (options) => {
       // (1) one is passed from inner HOC - $rocketstyleRef
       // (2) second one is used to be used directly (e.g. inside hocs)
       // --------------------------------------------------
-      const internalRef = useRef(null)
-
-      if ($rocketstyleRef)
-        useImperativeHandle($rocketstyleRef, () => internalRef.current, [
-          $rocketstyleRef,
-        ])
-
-      if (ref) useImperativeHandle(ref, () => internalRef.current, [ref])
+      const internalRef = useRef({ $rocketstyleRef, ref })
 
       // --------------------------------------------------
       // hover - focus - pressed state passed via context from parent component
       // --------------------------------------------------
-      const rocketstyleCtx = options.consumer ? useContext(localContext) : {}
+      const localCtx = useLocalContext(options.consumer)
 
       // --------------------------------------------------
       // general theme and theme mode dark / light passed in context
       // --------------------------------------------------
-      const { theme, mode } = useThemeOptions(options)
+      const { theme, mode } = useTheme(options)
 
       // --------------------------------------------------
-      // calculate themes for all possible styling dimensions
-      // .theme(...) + defined dimensions like .states(...), .sizes(...)
+      // calculate themes for all defined styling dimensions
+      // .theme(...) + defined dimensions like .states(...), .sizes(...), etc.
       // --------------------------------------------------
-      const __ROCKETSTYLE__ = useMemo(
-        () =>
-          useTheme<typeof theme>({
-            theme,
-            options,
-            cb: themeModeCb,
-          }),
-        // recalculate this only when theme changes
+
+      // --------------------------------------------------
+      // BASE / DEFAULT THEME Object
+      // --------------------------------------------------
+      const baseTheme = useMemo(
+        () => {
+          if (!__MEMOIZED_BASE_THEME__.has(theme)) {
+            __MEMOIZED_BASE_THEME__.set(
+              theme,
+              getThemeFromChain(options.theme, theme)
+            )
+          }
+
+          return __MEMOIZED_BASE_THEME__.get(theme)
+        },
+        // recalculate this only when theme mode changes dark / light
         [theme]
       )
 
-      const {
-        reservedPropNames,
-        themes: rocketThemes,
-        dimensions,
-        baseTheme: rocketBaseTheme,
-      } = __ROCKETSTYLE__
+      // --------------------------------------------------
+      // DIMENSION(S) THEMES Object
+      // --------------------------------------------------
+      const themes = useMemo(
+        () => {
+          if (!__MEMOIZED_DIMENSION_THEME__.has(theme)) {
+            __MEMOIZED_DIMENSION_THEME__.set(
+              theme,
+              getDimensionThemes(theme, options)
+            )
+          }
 
-      const { baseTheme, themes } = useMemo(
-        () =>
-          calculateThemeMode(
-            { themes: rocketThemes, baseTheme: rocketBaseTheme },
-            mode
-          ),
+          return __MEMOIZED_DIMENSION_THEME__.get(theme)
+        },
+        // recalculate this only when theme object changes
+        [theme]
+      )
+
+      // --------------------------------------------------
+      // BASE / DEFAULT MODE THEME Object
+      // --------------------------------------------------
+      const currentModeBaseTheme = useMemo(
+        () => {
+          const helper = __MEMOIZED_MODE_BASE_THEME__[mode]
+
+          if (!helper.has(baseTheme)) {
+            helper.set(baseTheme, getThemeMode(baseTheme, mode))
+          }
+
+          return helper.get(baseTheme)
+        },
         // recalculate this only when theme mode changes dark / light
-        [mode]
+        [mode, baseTheme]
+      )
+
+      // --------------------------------------------------
+      // DIMENSION(S) MODE THEMES Object
+      // --------------------------------------------------
+      const currentModeThemes = useMemo(
+        () => {
+          const helper = __MEMOIZED_MODE_DIMENSION_THEME__[mode]
+
+          if (!helper.has(themes)) {
+            helper.set(themes, getThemeMode(themes, mode))
+          }
+
+          return helper.get(themes)
+        },
+        // recalculate this only when theme mode changes dark / light
+        [mode, themes]
       )
 
       // --------------------------------------------------
@@ -227,6 +227,15 @@ const styleComponent: StyleComponent<any> = (options) => {
       // there is no need to calculate this each time - keys are based on
       // dimensions definitions
       // --------------------------------------------------
+      const { keysMap: dimensions, keywords: reservedPropNames } = useMemo(
+        () =>
+          getDimensionsMap({
+            themes,
+            useBooleans: options.useBooleans,
+          }),
+        []
+      )
+
       const RESERVED_STYLING_PROPS_KEYS = useMemo(
         () => Object.keys(reservedPropNames),
         []
@@ -238,11 +247,19 @@ const styleComponent: StyleComponent<any> = (options) => {
       // (2) `attrs` chaining method, and from
       // (3) passing them directly to component
       // --------------------------------------------------
-      const { pseudo = {}, ...mergeProps }: Record<string, unknown> = {
-        ...(options.consumer
-          ? options.consumer((callback) => callback(rocketstyleCtx))
-          : {}),
+      const { pseudo, ...mergeProps } = {
+        ...localCtx,
         ...props,
+      }
+
+      // --------------------------------------------------
+      // pseudo rocket state
+      // calculate final component pseudo state including pseudo state
+      // from props and override by pseudo props from context
+      // --------------------------------------------------
+      const pseudoRocketstate = {
+        ...pseudo,
+        ...pick(props, PSEUDO_KEYS),
       }
 
       // --------------------------------------------------
@@ -250,22 +267,12 @@ const styleComponent: StyleComponent<any> = (options) => {
       // calculate final component state including pseudo state
       // passed as $rocketstate prop
       // --------------------------------------------------
-      const rocketstate: Record<string, unknown> = _calculateStylingAttrs({
-        props: pickStyledProps(mergeProps, reservedPropNames),
+      const rocketstate = _calculateStylingAttrs({
+        props: pickStyledAttrs(mergeProps, reservedPropNames),
         dimensions,
       })
 
-      // --------------------------------------------------
-      // pseudo state
-      // calculate final component pseudo state including pseudo state
-      // from props and override by pseudo props from context
-      // --------------------------------------------------
-      const finalPseudo = {
-        ...pick(props, PSEUDO_KEYS),
-        ...pseudo,
-      }
-
-      const finalRocketstate = { ...rocketstate, pseudo: finalPseudo }
+      const finalRocketstate = { ...rocketstate, pseudo: pseudoRocketstate }
 
       // --------------------------------------------------
       // rocketstyle
@@ -273,10 +280,10 @@ const styleComponent: StyleComponent<any> = (options) => {
       // to our styled component
       // passed as $rocketstyle prop
       // --------------------------------------------------
-      const rocketstyle = calculateTheme({
+      const rocketstyle = getTheme({
         rocketstate,
-        themes,
-        baseTheme,
+        themes: currentModeThemes,
+        baseTheme: currentModeBaseTheme,
       })
 
       // --------------------------------------------------
@@ -321,9 +328,9 @@ const styleComponent: StyleComponent<any> = (options) => {
   // ------------------------------------------------------
   createStaticsChainingEnhancers({
     context: RocketComponent,
-    dimensionKeys: [...options.dimensionKeys, ...STATIC_KEYS],
+    dimensionKeys: options.dimensionKeys,
     func: cloneAndEnhance,
-    opts: options,
+    options,
   })
 
   // ------------------------------------------------------
@@ -343,14 +350,14 @@ const styleComponent: StyleComponent<any> = (options) => {
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS)
 
-    return cloneAndEnhance(result as any, options) as any
+    return cloneAndEnhance(result, options as Configuration)
   }
 
   RocketComponent.statics = (opts = {}) =>
-    cloneAndEnhance({ statics: opts }, options) as any
+    cloneAndEnhance({ statics: opts }, options as Configuration)
 
   RocketComponent.getStaticDimensions = (theme) => {
-    const themes = useTheme({ theme, options, cb: themeModeCb })
+    const themes = useTheme({ theme, options, cb: themeModeCallback })
 
     return {
       dimensions: themes.dimensions,
@@ -364,7 +371,7 @@ const styleComponent: StyleComponent<any> = (options) => {
       props,
       theme,
       {
-        renderContent,
+        render,
         mode,
         isDark: mode === 'light',
         isLight: mode === 'dark',
@@ -374,7 +381,7 @@ const styleComponent: StyleComponent<any> = (options) => {
     return result
   }
 
-  return RocketComponent as RocketComponent
+  return RocketComponent as RocketStyleComponent
 }
 
-export default styleComponent
+export default rocketComponent

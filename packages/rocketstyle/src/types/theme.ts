@@ -8,10 +8,13 @@ export type Theme<T> = T extends unknown ? ThemeDefault : ThemeDefault & T
 
 export type ThemeModeKeys = keyof typeof THEME_MODES
 
-export type ThemeMode = <A, B>(light: A, dark: B) => A | B
+export interface ThemeModeCallback {
+  <A = any, B = any>(light: A, dark: B): (mode: 'light' | 'dark') => A | B
+  isMode: true
+}
 
 export type ThemeCb<CSS, T> = (
   theme: T,
-  mode: ThemeMode,
+  mode: ThemeModeCallback,
   css: Css
 ) => Partial<CSS>

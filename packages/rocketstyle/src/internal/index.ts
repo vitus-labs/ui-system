@@ -1,5 +1,5 @@
 import rocketstyleAttrsHoc from './rocketstyleAttrsHoc'
-import createProvider from './createProvider'
+import createLocalProvider from './createLocalProvider'
 import localContext from './localContext'
 
-export { rocketstyleAttrsHoc, createProvider, localContext }
+export { rocketstyleAttrsHoc, createLocalProvider, localContext }

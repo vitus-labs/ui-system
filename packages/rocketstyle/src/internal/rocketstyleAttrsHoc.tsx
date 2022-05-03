@@ -6,8 +6,7 @@ import React, {
 } from 'react'
 import { render } from '@vitus-labs/core'
 import { calculateChainOptions } from '~/utils/attrs'
-import { useThemeOptions } from '~/hooks'
-
+import { useTheme } from '~/hooks'
 import type { OptionFunc } from '~/types/configuration'
 
 export type RocketStyleHOC = ({
@@ -28,7 +27,7 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
 
   const Enhanced = (WrappedComponent) =>
     forwardRef<any, any>((props, ref) => {
-      const { theme, mode, isDark, isLight } = useThemeOptions({
+      const { theme, mode, isDark, isLight } = useTheme({
         inversed,
       })
 

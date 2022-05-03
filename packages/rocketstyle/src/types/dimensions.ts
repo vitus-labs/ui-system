@@ -7,7 +7,7 @@ import type {
   ValueOf,
   ReturnCbParam,
 } from './utils'
-import { ThemeMode } from './theme'
+import { ThemeModeCallback } from './theme'
 import { Css } from './styles'
 
 export type { DefaultDimensions }
@@ -44,7 +44,7 @@ export type DimensionObj<CT> = DimensionResult<CT>
 
 export type DimensionCb<T, CT> = (
   theme: T,
-  mode: ThemeMode,
+  mode: ThemeModeCallback,
   css: Css
 ) => DimensionResult<CT>
 

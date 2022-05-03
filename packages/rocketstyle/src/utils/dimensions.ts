@@ -20,18 +20,15 @@ export const isMultiKey: IsMultiKey = (value) => {
 // --------------------------------------------------------
 // calculate dimensions map
 // --------------------------------------------------------
-type CalculateDimensionsMap = ({
+type GetDimensionsMap = ({
   themes,
   useBooleans,
 }: {
   themes: Record<string, any>
-  useBooleans: boolean
+  useBooleans?: boolean
 }) => { keysMap: Record<string, any>; keywords: Record<string, any> }
 
-export const calculateDimensionsMap: CalculateDimensionsMap = ({
-  themes,
-  useBooleans,
-}) => {
+export const getDimensionsMap: GetDimensionsMap = ({ themes, useBooleans }) => {
   const result = { keysMap: {}, keywords: {} }
   if (isEmpty(themes)) return result
 
@@ -39,7 +36,7 @@ export const calculateDimensionsMap: CalculateDimensionsMap = ({
     const { keysMap, keywords } = accumulator
     keywords[key] = true
 
-    Object.entries(value as any).forEach(([itemKey, itemValue]) => {
+    Object.entries(value).forEach(([itemKey, itemValue]) => {
       if (!isValidKey(itemValue)) return
 
       if (useBooleans) {

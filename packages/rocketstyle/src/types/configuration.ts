@@ -28,7 +28,7 @@ export type Configuration<
   D extends Dimensions = Dimensions
 > = InitConfiguration<C, D> & {
   provider?: boolean
-  consumer?: ConsumerCb
+  consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
   passProps?: Array<string>

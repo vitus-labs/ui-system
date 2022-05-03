@@ -1,4 +1,4 @@
-import { renderContent } from '@vitus-labs/core'
+import { render } from '@vitus-labs/core'
 import { ThemeModeKeys } from './theme'
 
 export type AttrsCb<A, T> = (
@@ -8,6 +8,6 @@ export type AttrsCb<A, T> = (
     mode?: ThemeModeKeys
     isDark?: boolean
     isLight?: boolean
-    createElement: typeof renderContent
+    createElement: typeof render
   }
 ) => Partial<A>

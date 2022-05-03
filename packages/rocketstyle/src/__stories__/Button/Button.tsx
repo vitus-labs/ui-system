@@ -50,7 +50,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
       backgroundColor: '#6c757d',
 
       hover: {
-        backgroundColor: '#5c636a',
+        backgroundColor: 'black',
       },
     },
     ale: null,
@@ -95,7 +95,10 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
         href,
         onClick,
         $rocketstyle,
-        $rocketstate: { disabled, active, hover, focus, pressed },
+        $rocketstate: {
+          disabled,
+          pseudo: { active, hover, focus, pressed },
+        },
       }) => {
         const isDynamic = onClick || href
 

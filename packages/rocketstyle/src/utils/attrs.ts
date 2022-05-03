@@ -4,19 +4,17 @@ import { MultiKeys } from '~/types/dimensions'
 // --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
-type PickStyledProps = (
-  props: Record<string, unknown>,
+type PickStyledAttrs = (
+  props: Record<string, any>,
   keywords: Record<string, true>
 ) => Partial<typeof props>
-export const pickStyledProps: PickStyledProps = (props, keywords) => {
-  const result = {} as any
 
-  Object.entries(props).forEach(([key, value]) => {
-    if (keywords[key]) result[key] = value
-  })
-
-  return result
-}
+export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
+  Object.keys(props).reduce((acc, key) => {
+    // eslint-disable-next-line no-param-reassign
+    if (keywords[key]) acc[key] = props[key]
+    return acc
+  }, {})
 
 // --------------------------------------------------------
 // combine values
@@ -54,7 +52,7 @@ type CalculateStylingAttrs = ({
 }: {
   props: Record<string, unknown>
   dimensions: Record<string, unknown>
-}) => any
+}) => Record<string, any>
 export const calculateStylingAttrs: CalculateStylingAttrs =
   ({ useBooleans, multiKeys }) =>
   ({ props, dimensions }) => {

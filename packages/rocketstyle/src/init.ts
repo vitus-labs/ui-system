@@ -2,7 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
-import styleComponent from '~/rocketstyle'
+import rocketComponent from '~/rocketstyle'
 import {
   getKeys,
   getMultipleDimensions,
@@ -13,7 +13,7 @@ import defaultDimensions from '~/constants/defaultDimensions'
 
 import type { ElementType, TObj } from '~/types/utils'
 import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
-import type { StyleComponent } from '~/types/styleComponent'
+import type { RocketComponent } from '~/types/rocketComponent'
 
 export type Rocketstyle = <T extends TObj = {}, CSS extends TObj = {}>() => <
   D extends Dimensions = DefaultDimensions,
@@ -30,7 +30,7 @@ export type Rocketstyle = <T extends TObj = {}, CSS extends TObj = {}>() => <
 }: {
   name: string
   component: C
-}) => ReturnType<StyleComponent<C, T, CSS, D, UB>>
+}) => ReturnType<RocketComponent<C, T, CSS, D, UB>>
 
 const rocketstyle: Rocketstyle =
   () =>
@@ -75,7 +75,7 @@ const rocketstyle: Rocketstyle =
       }
     }
 
-    return styleComponent({
+    return rocketComponent({
       name,
       component,
       useBooleans,
