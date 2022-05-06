@@ -6,6 +6,7 @@ import { config, omit, pick, compose, render } from '@vitus-labs/core'
 import { PSEUDO_KEYS, CONFIG_KEYS, STYLING_KEYS } from '~/constants'
 import { useLocalContext } from '~/context/localContext'
 import createLocalProvider from '~/context/createLocalProvider'
+import { LocalThemeManager } from '~/cache'
 import { useRef, useTheme } from '~/hooks'
 import { rocketstyleAttrsHoc } from '~/hoc'
 import {
@@ -90,18 +91,9 @@ const rocketComponent = (options) => {
     : STYLED_COMPONENT
 
   // --------------------------------------------------------
-  // THEME - Calculated theme
+  // THEME - Cahed & Calculated theme(s)
   // --------------------------------------------------------
-  const __MEMOIZED_BASE_THEME__ = new WeakMap()
-  const __MEMOIZED_DIMENSION_THEME__ = new WeakMap()
-  const __MEMOIZED_MODE_BASE_THEME__ = {
-    light: new WeakMap(),
-    dark: new WeakMap(),
-  }
-  const __MEMOIZED_MODE_DIMENSION_THEME__ = {
-    light: new WeakMap(),
-    dark: new WeakMap(),
-  }
+  const ThemeManager = new LocalThemeManager()
 
   // --------------------------------------------------------
   // COMPOSE - high-order components
@@ -151,14 +143,14 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const baseTheme = useMemo(
         () => {
-          if (!__MEMOIZED_BASE_THEME__.has(theme)) {
-            __MEMOIZED_BASE_THEME__.set(
+          if (!ThemeManager.baseTheme.has(theme)) {
+            ThemeManager.baseTheme.set(
               theme,
               getThemeFromChain(options.theme, theme)
             )
           }
 
-          return __MEMOIZED_BASE_THEME__.get(theme)
+          return ThemeManager.baseTheme.get(theme)
         },
         // recalculate this only when theme mode changes dark / light
         [theme]
@@ -169,14 +161,14 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const themes = useMemo(
         () => {
-          if (!__MEMOIZED_DIMENSION_THEME__.has(theme)) {
-            __MEMOIZED_DIMENSION_THEME__.set(
+          if (!ThemeManager.dimensionsThemes.has(theme)) {
+            ThemeManager.dimensionsThemes.set(
               theme,
               getDimensionThemes(theme, options)
             )
           }
 
-          return __MEMOIZED_DIMENSION_THEME__.get(theme)
+          return ThemeManager.dimensionsThemes.get(theme)
         },
         // recalculate this only when theme object changes
         [theme]
@@ -187,7 +179,7 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const currentModeBaseTheme = useMemo(
         () => {
-          const helper = __MEMOIZED_MODE_BASE_THEME__[mode]
+          const helper = ThemeManager.modeBaseTheme[mode]
 
           if (!helper.has(baseTheme)) {
             helper.set(baseTheme, getThemeByMode(baseTheme, mode))
@@ -204,7 +196,7 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const currentModeThemes = useMemo(
         () => {
-          const helper = __MEMOIZED_MODE_DIMENSION_THEME__[mode]
+          const helper = ThemeManager.modeDimensionTheme[mode]
 
           if (!helper.has(themes)) {
             helper.set(themes, getThemeByMode(themes, mode))
