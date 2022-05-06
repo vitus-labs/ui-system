@@ -64,9 +64,9 @@ const styles = ({ css, theme: t, rootSize }) => css`
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
-const platformStyles = __WEB__ ? config.css`box-sizing: border-box;` : ''
+const platformStyles = __WEB__ ? `box-sizing: border-box;` : ''
 
-export default config.styled(config.component)`
+export default config.styled<any>(config.component)`
   ${__WEB__ && platformStyles};
 
   display: flex;

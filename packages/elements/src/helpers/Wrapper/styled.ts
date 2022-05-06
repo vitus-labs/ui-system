@@ -50,7 +50,7 @@ const platformStyles = __WEB__
   ? config.css`box-sizing: border-box;`
   : config.css`display: flex;`
 
-export default config.styled(config.component)`
+export default config.styled<any>(config.component)`
   position: relative;
   ${platformStyles};
 

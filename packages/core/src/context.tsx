@@ -23,12 +23,12 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   // eslint-disable-next-line react/jsx-no-useless-fragment
   if (!theme || isEmpty(theme)) return <>{children}</>
 
-  const StyledContext = useMemo(() => config.styledContext, [])
+  const ExternalProvider = useMemo(() => config.provider, [])
 
-  if (StyledContext) {
+  if (ExternalProvider) {
     return (
       <VitusLabsProvider value={{ theme, ...props }}>
-        <StyledContext theme={theme}>{children}</StyledContext>
+        <ExternalProvider theme={theme}>{children}</ExternalProvider>
       </VitusLabsProvider>
     )
   }

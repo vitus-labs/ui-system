@@ -16,7 +16,7 @@ export type TProvider = {
 }
 
 const Provider: FC<TProvider> = ({ provider = CoreProvider, ...props }) => {
-  const ctx = useContext<TProvider>(context as any)
+  const ctx = useContext<TProvider>(context)
 
   const {
     theme,
@@ -24,7 +24,7 @@ const Provider: FC<TProvider> = ({ provider = CoreProvider, ...props }) => {
     inversed,
     provider: RocketstyleProvider,
     children,
-  } = { ...props, ...ctx, provider }
+  } = { ...ctx, ...props, provider }
 
   const isDark = inversed ? mode !== 'dark' : mode === 'dark'
 

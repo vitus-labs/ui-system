@@ -1,4 +1,5 @@
 import { ComponentType } from 'react'
+import type { HTMLTags } from '~/html'
 import styled, {
   css,
   ThemeProvider,
@@ -7,69 +8,34 @@ import styled, {
   DefaultTheme,
   ThemeProviderComponent,
 } from 'styled-components'
-import type { HTMLTags } from '~/html'
-
-const OPTIONS: Internal = {
-  styled,
-  css,
-  styledContext: ThemeProvider,
-  component: 'div',
-  textComponent: 'span',
-} as Internal
-
-type Init = ({
-  styled,
-  css,
-  context,
-  component,
-  textComponent,
-}: {
-  styled: any
-  css: any
-  context: any
-  component?: ComponentType | HTMLTags
-  textComponent?: ComponentType | HTMLTags
-}) => void
-
-const init: Init = ({
-  styled,
-  css,
-  context,
-  component = 'div',
-  textComponent = 'span',
-}) => {
-  OPTIONS.css = css
-  OPTIONS.styled = styled
-  OPTIONS.styledContext = context
-  OPTIONS.component = component
-  OPTIONS.textComponent = textComponent
-}
 
 interface Internal {
   css: ThemedCssFunction<DefaultTheme>
   styled: StyledInterface
-  styledContext: ThemeProviderComponent<any, any>
-  component: any
-  textComponent: any
+  provider: ThemeProviderComponent<any, any>
+  component: ComponentType | HTMLTags
+  textComponent: ComponentType | HTMLTags
 }
 
-const internal: Internal = Object.freeze({
-  get css() {
-    return OPTIONS.css
-  },
-  get styled() {
-    return OPTIONS.styled
-  },
-  get styledContext() {
-    return OPTIONS.styledContext
-  },
-  get component() {
-    return OPTIONS.component
-  },
-  get textComponent() {
-    return OPTIONS.textComponent
-  },
-})
+class Configuration {
+  css = css
+  styled = styled
+  provider = ThemeProvider
+  component: ComponentType | HTMLTags = 'div'
+  textComponent: ComponentType | HTMLTags = 'span'
 
+  init = (props: Internal) => {
+    this.css = props.css
+    this.styled = props.styled
+    this.provider = props.provider
+    this.component = props.component
+    this.textComponent = props.textComponent
+  }
+}
+
+const config = new Configuration()
+
+const { init } = config
+
+export default config
 export { init }
-export default internal
