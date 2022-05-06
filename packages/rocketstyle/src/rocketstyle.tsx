@@ -143,14 +143,13 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const baseTheme = useMemo(
         () => {
-          if (!ThemeManager.baseTheme.has(theme)) {
-            ThemeManager.baseTheme.set(
-              theme,
-              getThemeFromChain(options.theme, theme)
-            )
+          const helper = ThemeManager.baseTheme
+
+          if (!helper.has(theme)) {
+            helper.set(theme, getThemeFromChain(options.theme, theme))
           }
 
-          return ThemeManager.baseTheme.get(theme)
+          return helper.get(theme)
         },
         // recalculate this only when theme mode changes dark / light
         [theme]
@@ -161,14 +160,13 @@ const rocketComponent = (options) => {
       // --------------------------------------------------
       const themes = useMemo(
         () => {
-          if (!ThemeManager.dimensionsThemes.has(theme)) {
-            ThemeManager.dimensionsThemes.set(
-              theme,
-              getDimensionThemes(theme, options)
-            )
+          const helper = ThemeManager.dimensionsThemes
+
+          if (!helper.has(theme)) {
+            helper.set(theme, getDimensionThemes(theme, options))
           }
 
-          return ThemeManager.dimensionsThemes.get(theme)
+          return helper.get(theme)
         },
         // recalculate this only when theme object changes
         [theme]

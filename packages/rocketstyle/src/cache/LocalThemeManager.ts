@@ -1,8 +1,4 @@
 export default class ThemeManager {
-  theme = {}
-
-  mode = 'light'
-
   baseTheme = new WeakMap()
 
   dimensionsThemes = new WeakMap()
