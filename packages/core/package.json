@@ -49,13 +49,13 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "moize": "^6.1.1",
-    "react-is": "^18.0.0"
+    "react-is": "^18.1.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182",
-    "@vitus-labs/tools-babel": "^0.30.0",
-    "@vitus-labs/tools-rollup": "^0.30.0",
-    "@vitus-labs/tools-typescript": "^0.30.0",
+    "@vitus-labs/tools-babel": "^0.31.0",
+    "@vitus-labs/tools-rollup": "^0.31.0",
+    "@vitus-labs/tools-typescript": "^0.31.0",
     "styled-components": "^5.3.5"
   }
 }

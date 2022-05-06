@@ -57,13 +57,13 @@
   "devDependencies": {
     "@vitus-labs/core": "^0.55.0",
     "@vitus-labs/rocketstyle": "^0.55.0",
-    "@vitus-labs/tools-babel": "^0.30.0",
-    "@vitus-labs/tools-rollup": "^0.30.0",
-    "@vitus-labs/tools-storybook": "^0.30.0",
-    "@vitus-labs/tools-typescript": "^0.30.0",
+    "@vitus-labs/tools-babel": "^0.31.0",
+    "@vitus-labs/tools-rollup": "^0.31.0",
+    "@vitus-labs/tools-storybook": "^0.31.0",
+    "@vitus-labs/tools-typescript": "^0.31.0",
     "@vitus-labs/unistyle": "^0.55.0"
   },
   "dependencies": {
-    "react-is": "^18.0.0"
+    "react-is": "^18.1.0"
   }
 }
