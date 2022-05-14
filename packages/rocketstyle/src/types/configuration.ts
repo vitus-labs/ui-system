@@ -24,7 +24,7 @@ export type InitConfiguration<C, D> = {
 }
 
 export type Configuration<
-  C = ElementType,
+  C = ElementType | unknown,
   D extends Dimensions = Dimensions
 > = InitConfiguration<C, D> & {
   provider?: boolean
@@ -38,7 +38,7 @@ export type Configuration<
   attrs: Array<OptionFunc>
   theme: Array<OptionFunc>
   styles: StylesCbArray
-  compose: Record<string, TFn>
+  compose: Record<string, TFn | null | undefined | false>
   statics: Record<string, any>
 } & Record<string, any>
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/ban-types */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import { isEmpty } from '@vitus-labs/core'
@@ -10,7 +11,7 @@ import {
 import { ALL_RESERVED_KEYS } from '~/constants'
 import defaultDimensions from '~/constants/defaultDimensions'
 
-import type { ElementType, TObj } from '~/types/utils'
+import type { ElementType } from '~/types/utils'
 import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
 import type { RocketComponent } from '~/types/rocketComponent'
 

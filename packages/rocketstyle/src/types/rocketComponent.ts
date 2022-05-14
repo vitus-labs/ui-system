@@ -10,7 +10,7 @@ export type RocketComponent<
   CSS extends TObj = {},
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
-> = (props: Partial<Configuration<C, D>>) => RocketStyleComponent<
+> = (props: Configuration<C, D>) => RocketStyleComponent<
   // keep original component props + extract dimension props
   ExtractProps<C>,
   // set default extending props

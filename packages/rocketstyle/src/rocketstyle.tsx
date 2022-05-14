@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-import React, { useMemo, forwardRef } from 'react'
+import React, { useMemo, forwardRef, ForwardedRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, render } from '@vitus-labs/core'
 import { PSEUDO_KEYS, CONFIG_KEYS, STYLING_KEYS } from '~/constants'
@@ -29,6 +29,7 @@ import {
   calculateChainOptions,
 } from '~/utils/attrs'
 import type { RocketStyleComponent } from '~/types/rocketstyle'
+import type { RocketComponent } from '~/types/rocketComponent'
 import type { Configuration } from '~/types/configuration'
 
 // --------------------------------------------------------
@@ -43,6 +44,7 @@ type CloneAndEnhance = (
 ) => ReturnType<typeof rocketComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
+  // @ts-ignore
   rocketComponent({
     ...defaultOpts,
     statics: { ...defaultOpts.statics, ...opts.statics },
@@ -62,7 +64,8 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-const rocketComponent = (options) => {
+// @ts-ignore
+const rocketComponent: RocketComponent<any> = (options) => {
   const { component, styles } = options
   const { styled } = config
 
@@ -107,7 +110,10 @@ const rocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: RocketStyleComponent = forwardRef(
+  // @ts-ignore
+  const EnhancedComponent: RocketStyleComponent<{
+    $rocketstyleRef?: ForwardedRef<unknown>
+  }> = forwardRef(
     (
       {
         // @ts-ignore
@@ -217,12 +223,12 @@ const rocketComponent = (options) => {
             themes,
             useBooleans: options.useBooleans,
           }),
-        []
+        [themes]
       )
 
       const RESERVED_STYLING_PROPS_KEYS = useMemo(
         () => Object.keys(reservedPropNames),
-        []
+        [reservedPropNames]
       )
 
       // --------------------------------------------------
@@ -301,11 +307,13 @@ const rocketComponent = (options) => {
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  const RocketComponent = compose(...hocsFuncs)(EnhancedComponent)
+  const RocketComponent: RocketStyleComponent = compose(...hocsFuncs)(
+    EnhancedComponent
+  )
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
 
-  hoistNonReactStatics(RocketComponent, options.component)
+  hoistNonReactStatics(RocketComponent as any, options.component)
 
   // ------------------------------------------------------
   // enhance for chaining methods
@@ -331,14 +339,15 @@ const rocketComponent = (options) => {
     options: options.statics,
   })
 
+  // @ts-ignore
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS)
 
-    return cloneAndEnhance(result, options as Configuration)
+    return cloneAndEnhance(result, options)
   }
 
-  RocketComponent.statics = (opts = {}) =>
-    cloneAndEnhance({ statics: opts }, options as Configuration)
+  RocketComponent.statics = (opts) =>
+    cloneAndEnhance({ statics: opts }, options) as any
 
   RocketComponent.getStaticDimensions = (theme) => {
     const themes = getDimensionThemes(theme, options)
@@ -368,7 +377,7 @@ const rocketComponent = (options) => {
       },
     ])
 
-  return RocketComponent as RocketStyleComponent
+  return RocketComponent
 }
 
 export default rocketComponent

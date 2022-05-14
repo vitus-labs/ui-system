@@ -431,7 +431,7 @@ export interface IRocketStyleComponent<
   /**
    * Static Rocketstyle component identificator
    */
-  readonly IS_ROCKETSTYLE: true
+  IS_ROCKETSTYLE: true
   /**
    * Component displayName defined in `.config()` chaining
    * method
@@ -443,5 +443,5 @@ export interface IRocketStyleComponent<
    *  })
    * ```
    */
-  readonly displayName: string
+  displayName: string
 }
