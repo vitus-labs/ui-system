@@ -107,7 +107,7 @@ const rocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent = forwardRef(
+  const EnhancedComponent: RocketStyleComponent = forwardRef(
     (
       {
         // @ts-ignore

@@ -40,8 +40,8 @@
     "prepublish": "yarn build",
     "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
-    "lint:css": "stylelint src/*.ts src/*.tsx",
-    "lint:ts": "eslint src/*",
+    "lint:css": "stylelint src/**/*",
+    "lint:ts": "eslint src/**/*",
     "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
@@ -57,10 +57,10 @@
   "devDependencies": {
     "@vitus-labs/core": "^0.55.0",
     "@vitus-labs/rocketstyle": "^0.55.0",
-    "@vitus-labs/tools-babel": "^0.31.0",
-    "@vitus-labs/tools-rollup": "^0.31.0",
-    "@vitus-labs/tools-storybook": "^0.31.0",
-    "@vitus-labs/tools-typescript": "^0.31.0",
+    "@vitus-labs/tools-babel": "^0.32.1-alpha.0",
+    "@vitus-labs/tools-rollup": "^0.32.1-alpha.0",
+    "@vitus-labs/tools-storybook": "^0.32.1-alpha.0",
+    "@vitus-labs/tools-typescript": "^0.32.1-alpha.0",
     "@vitus-labs/unistyle": "^0.55.0"
   },
   "dependencies": {
