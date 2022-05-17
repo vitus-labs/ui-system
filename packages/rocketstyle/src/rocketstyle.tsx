@@ -28,7 +28,7 @@ import {
   calculateStylingAttrs,
   calculateChainOptions,
 } from '~/utils/attrs'
-import type { IRocketStyleComponent } from '~/types/rocketstyle'
+import type { RocketStyleComponent, ExoticComponent } from '~/types/rocketstyle'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type { Configuration } from '~/types/configuration'
 
@@ -110,7 +110,7 @@ const rocketComponent: RocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent = forwardRef(
+  const EnhancedComponent: ExoticComponent = forwardRef(
     (
       {
         $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
@@ -297,19 +297,19 @@ const rocketComponent: RocketComponent = (options) => {
 
       return <RenderComponent {...finalProps} />
     }
-  ) as IRocketStyleComponent
+  )
 
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  const RocketComponent: IRocketStyleComponent = compose(...hocsFuncs)(
+  const RocketComponent: RocketStyleComponent = compose(...hocsFuncs)(
     EnhancedComponent
   )
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
 
-  hoistNonReactStatics(RocketComponent, options.component)
+  hoistNonReactStatics(RocketComponent as any, options.component)
 
   // ------------------------------------------------------
   // enhance for chaining methods

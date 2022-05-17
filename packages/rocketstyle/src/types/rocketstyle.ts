@@ -18,7 +18,7 @@ import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
 import type { ComposeParam } from './hoc'
 import type { DefaultProps } from './configuration'
 
-interface ExoticComponent<P = {}> {
+export interface ExoticComponent<P = {}> {
   (props: P & { $rocketstyleRef?: ForwardedRef<unknown> }): ReactElement<
     P & { $rocketstyleRef?: ForwardedRef<unknown>; 'data-rocketstyle': string }
   > | null

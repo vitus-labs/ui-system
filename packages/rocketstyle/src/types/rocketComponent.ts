@@ -2,7 +2,7 @@
 import type { ExtractProps, ElementType, TObj } from './utils'
 import type { Dimensions, DefaultDimensions } from './dimensions'
 import type { Configuration } from './configuration'
-import type { IRocketStyleComponent } from './rocketstyle'
+import type { RocketStyleComponent } from './rocketstyle'
 
 export type RocketComponent<
   C extends ElementType = ElementType,
@@ -10,7 +10,7 @@ export type RocketComponent<
   CSS extends TObj = {},
   D extends Dimensions = DefaultDimensions,
   UB extends boolean = boolean
-> = (props: Configuration<C, D>) => IRocketStyleComponent<
+> = (props: Configuration<C, D>) => RocketStyleComponent<
   // keep original component props + extract dimension props
   ExtractProps<C>,
   // set default extending props
