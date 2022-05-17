@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import type { ForwardRefExoticComponent } from 'react'
+import type { ReactElement, ForwardedRef } from 'react'
 import type { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
 import type {
   Dimensions,
@@ -17,6 +17,13 @@ import type { AttrsCb } from './attrs'
 import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
 import type { ComposeParam } from './hoc'
 import type { DefaultProps } from './configuration'
+
+interface ExoticComponent<P = {}> {
+  (props: P & { $rocketstyleRef?: ForwardedRef<unknown> }): ReactElement<
+    P & { $rocketstyleRef?: ForwardedRef<unknown>; 'data-rocketstyle': string }
+  > | null
+  readonly $$typeof: symbol
+}
 
 export type RocketStyleComponent<
   OA extends TObj = {},
@@ -86,7 +93,7 @@ export interface IRocketStyleComponent<
   DKP extends TDKP = TDKP,
   // calculated final props
   DFP = MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>
-> extends ForwardRefExoticComponent<DFP> {
+> extends ExoticComponent<DFP> {
   // CONFIG chaining method
   // --------------------------------------------------------
   /**

@@ -54,23 +54,20 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 
   if (isEmpty(options.dimensions)) return result
 
-  return Object.entries(options.dimensions).reduce(
-    (accumulator, [key, value]) => {
-      const [, dimension] = isMultiKey(value)
+  return Object.entries(options.dimensions).reduce((acc, [key, value]) => {
+    const [, dimension] = isMultiKey(value as any)
 
-      const helper = options[key]
+    const helper = options[key]
 
-      if (Array.isArray(helper) && helper.length > 0) {
-        const finalDimensionThemes = getThemeFromChain(helper, theme)
+    if (Array.isArray(helper) && helper.length > 0) {
+      const finalDimensionThemes = getThemeFromChain(helper, theme)
 
-        // eslint-disable-next-line no-param-reassign
-        accumulator[dimension] = removeNullableValues(finalDimensionThemes)
-      }
+      // eslint-disable-next-line no-param-reassign
+      acc[dimension] = removeNullableValues(finalDimensionThemes)
+    }
 
-      return accumulator
-    },
-    result
-  )
+    return acc
+  }, result as Record<string, any>)
 }
 
 // --------------------------------------------------------
@@ -93,7 +90,7 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
 // --------------------------------------------------------
 export type GetTheme = (params: {
   rocketstate: Record<string, string | string[]>
-  themes: Record<string, any>
+  themes: Record<string, Record<string, any>>
   baseTheme: Record<string, any>
 }) => Record<string, unknown>
 
@@ -103,7 +100,7 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
 
   Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | Array<string>]) => {
-      const keyTheme = themes[key]
+      const keyTheme: Record<string, any> = themes[key]
 
       if (Array.isArray(value)) {
         value.forEach((item) => {
@@ -142,4 +139,4 @@ export const getThemeByMode: GetThemeByMode = (object, mode) =>
     }
 
     return acc
-  }, {})
+  }, {} as Record<string, any>)

@@ -15,7 +15,7 @@ export type RocketStyleHOC = ({
 }: {
   inversed?: boolean
   attrs?: Array<OptionFunc>
-}) => (WrappedComponent: ComponentType) => ForwardRefExoticComponent<any>
+}) => (WrappedComponent: ComponentType<any>) => ForwardRefExoticComponent<any>
 
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------
@@ -25,7 +25,7 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
   // --------------------------------------------------
   const _calculateChainOptions = calculateChainOptions(attrs)
 
-  const Enhanced = (WrappedComponent) =>
+  const Enhanced = (WrappedComponent: ComponentType<any>) =>
     forwardRef<any, any>((props, ref) => {
       const { theme, mode, isDark, isLight } = useTheme({
         inversed,

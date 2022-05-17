@@ -12,7 +12,7 @@ const context = createContext<LocalContext>({})
 type UseLocalContext = (context: any) => LocalContext
 export const useLocalContext: UseLocalContext = (consumer) => {
   const ctx = consumer ? useContext(context) : {}
-  const result = consumer ? consumer((callback) => callback(ctx)) : {}
+  const result = consumer ? consumer((callback: any) => callback(ctx)) : {}
 
   return { pseudo: {}, ...result }
 }

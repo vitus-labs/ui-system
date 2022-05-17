@@ -11,25 +11,30 @@ export const isValidKey: IsValidKey = (value) =>
 // --------------------------------------------------------
 // Is value a multi key
 // --------------------------------------------------------
-type IsMultiKey = (value: any) => [boolean, string]
+type IsMultiKey = (value: string | Record<string, unknown>) => [boolean, string]
 export const isMultiKey: IsMultiKey = (value) => {
-  if (typeof value === 'object') return [true, get(value, 'propName')]
+  if (typeof value === 'object' && value !== null)
+    return [true, get(value, 'propName') as string]
   return [false, value]
 }
 
 // --------------------------------------------------------
 // calculate dimensions map
 // --------------------------------------------------------
-type GetDimensionsMap = ({
+type GetDimensionsMap = <T extends Record<string, any>>({
   themes,
   useBooleans,
 }: {
-  themes: Record<string, any>
+  themes: T
   useBooleans?: boolean
 }) => { keysMap: Record<string, any>; keywords: Record<string, any> }
 
 export const getDimensionsMap: GetDimensionsMap = ({ themes, useBooleans }) => {
-  const result = { keysMap: {}, keywords: {} }
+  const result = {
+    keysMap: {} as Record<string, any>,
+    keywords: {} as Record<string, any>,
+  }
+
   if (isEmpty(themes)) return result
 
   return Object.entries(themes).reduce((accumulator, [key, value]) => {
@@ -91,4 +96,4 @@ export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
     }
 
     return accumulator
-  }, {})
+  }, {} as Record<string, any>)

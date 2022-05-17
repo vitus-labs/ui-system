@@ -1,15 +1,12 @@
-import type { FocusEvent, MouseEvent } from 'react'
-
-export type MouseAction = (event?: MouseEvent) => void
-export type FocusAction = (event?: FocusEvent) => void
+import type { MouseEventHandler, FocusEventHandler } from 'react'
 
 export type PseudoActions = {
-  onMouseEnter: MouseAction
-  onMouseLeave: MouseAction
-  onMouseDown: MouseAction
-  onMouseUp: MouseAction
-  onFocus: FocusAction
-  onBlur: FocusAction
+  onMouseEnter: MouseEventHandler
+  onMouseLeave: MouseEventHandler
+  onMouseDown: MouseEventHandler
+  onMouseUp: MouseEventHandler
+  onFocus: FocusEventHandler
+  onBlur: FocusEventHandler
 }
 
 export type PseudoState = {

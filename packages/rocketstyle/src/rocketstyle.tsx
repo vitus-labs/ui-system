@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-import React, { useMemo, forwardRef, ForwardedRef } from 'react'
+import React, { useMemo, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, render } from '@vitus-labs/core'
 import { PSEUDO_KEYS, CONFIG_KEYS, STYLING_KEYS } from '~/constants'
@@ -28,7 +28,7 @@ import {
   calculateStylingAttrs,
   calculateChainOptions,
 } from '~/utils/attrs'
-import type { RocketStyleComponent } from '~/types/rocketstyle'
+import type { IRocketStyleComponent } from '~/types/rocketstyle'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type { Configuration } from '~/types/configuration'
 
@@ -65,7 +65,7 @@ const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
 // or styles can be extended via its statics
 // --------------------------------------------------------
 // @ts-ignore
-const rocketComponent: RocketComponent<any> = (options) => {
+const rocketComponent: RocketComponent = (options) => {
   const { component, styles } = options
   const { styled } = config
 
@@ -80,7 +80,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
 
   // create styled component with all options.styles if available
   const STYLED_COMPONENT =
-    component.IS_ROCKETSTYLE || options.styled === false
+    component.IS_ROCKETSTYLE || options.styled !== true
       ? component
       : styled(component)`
           ${calculateStyles(styles)};
@@ -110,13 +110,9 @@ const rocketComponent: RocketComponent<any> = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  // @ts-ignore
-  const EnhancedComponent: RocketStyleComponent<{
-    $rocketstyleRef?: ForwardedRef<unknown>
-  }> = forwardRef(
+  const EnhancedComponent = forwardRef(
     (
       {
-        // @ts-ignore
         $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
         ...props
       },
@@ -282,7 +278,7 @@ const rocketComponent: RocketComponent<any> = (options) => {
       // excluding: styling props
       // including: $rocketstyle, $rocketstate
       // --------------------------------------------------
-      const finalProps = {
+      const finalProps: Record<string, any> = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
         ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
@@ -301,13 +297,13 @@ const rocketComponent: RocketComponent<any> = (options) => {
 
       return <RenderComponent {...finalProps} />
     }
-  )
+  ) as IRocketStyleComponent
 
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  const RocketComponent: RocketStyleComponent = compose(...hocsFuncs)(
+  const RocketComponent: IRocketStyleComponent = compose(...hocsFuncs)(
     EnhancedComponent
   )
   RocketComponent.IS_ROCKETSTYLE = true

@@ -5,16 +5,20 @@ import { MultiKeys } from '~/types/dimensions'
 // --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
-type PickStyledAttrs = (
-  props: Record<string, any>,
-  keywords: Record<string, true>
-) => Partial<typeof props>
+type PickStyledAttrs = <
+  T extends Record<string, any>,
+  K extends { [I in keyof T]?: true }
+>(
+  props: T,
+  keywords: K
+  // @ts-ignore
+) => { [I in keyof K]: T[I] }
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
   Object.keys(props).reduce((acc, key) => {
     if (keywords[key]) acc[key] = props[key]
     return acc
-  }, {})
+  }, {} as any)
 
 // --------------------------------------------------------
 // combine values
@@ -53,7 +57,7 @@ type CalculateStylingAttrs = ({
 export const calculateStylingAttrs: CalculateStylingAttrs =
   ({ useBooleans, multiKeys }) =>
   ({ props, dimensions }) => {
-    const result = {}
+    const result: Record<string, any> = {}
 
     // (1) find dimension keys values & initialize
     // object with possible options
