@@ -5,7 +5,6 @@ import Util from '~/Util'
 
 export default {
   component: Util,
-  title: Util.displayName,
 }
 
 const Wrapper = config.styled(Util)`

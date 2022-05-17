@@ -309,7 +309,7 @@ const rocketComponent: RocketComponent = (options) => {
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
 
-  hoistNonReactStatics(RocketComponent as any, options.component)
+  hoistNonReactStatics(RocketComponent, options.component)
 
   // ------------------------------------------------------
   // enhance for chaining methods

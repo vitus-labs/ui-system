@@ -11,6 +11,9 @@ const childFix = `
 
 const parentFix = `
   flex-direction: column;
+`
+
+const parentFixBlock = `
   width: 100%;
 `
 
@@ -37,7 +40,8 @@ const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
   ${t.block && block};
 
   ${__WEB__ && !t.childFix && childFixPosition(t.block)};
-  ${__WEB__ && t.parentFix && t.block && parentFix};
+  ${__WEB__ && t.parentFix && t.block && parentFixBlock};
+  ${__WEB__ && t.parentFix && parentFix};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `

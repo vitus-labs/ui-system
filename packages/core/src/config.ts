@@ -19,17 +19,35 @@ interface Internal {
 
 class Configuration {
   css = css
+
   styled = styled
+
   provider = ThemeProvider
+
   component: ComponentType | HTMLTags = 'div'
+
   textComponent: ComponentType | HTMLTags = 'span'
 
   init = (props: Internal) => {
-    this.css = props.css
-    this.styled = props.styled
-    this.provider = props.provider
-    this.component = props.component
-    this.textComponent = props.textComponent
+    if (props.css) {
+      this.css = props.css
+    }
+
+    if (props.styled) {
+      this.styled = props.styled
+    }
+
+    if (props.provider) {
+      this.provider = props.provider
+    }
+
+    if (props.component) {
+      this.component = props.component
+    }
+
+    if (props.textComponent) {
+      this.textComponent = props.textComponent
+    }
   }
 }
 

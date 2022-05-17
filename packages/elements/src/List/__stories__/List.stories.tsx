@@ -4,7 +4,6 @@ import List, { withActiveState } from '~/List'
 
 export default {
   component: List,
-  title: List.displayName,
 }
 
 const ActiveList = withActiveState(List)

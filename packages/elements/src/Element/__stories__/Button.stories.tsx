@@ -5,7 +5,6 @@ import Element from '~/Element'
 
 export default {
   component: Element,
-  title: Element.displayName,
 }
 
 const LeftContent = config.styled.span`
@@ -30,9 +29,9 @@ const RightContent = config.styled.span`
       `};
 `
 
-const Button = rocketstyle()()({ name: 'Button', component: Element })
+const Button = rocketstyle()({ name: 'Button', component: Element })
   .attrs({
-    // primary: true,
+    primary: true,
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
@@ -71,7 +70,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
 export const button = () => (
   <>
     <Button gap={10} />
-    <Button gap={[10, 20]} block={[true, true, false]} />
+    <Button gap={[10, 20]} block />
   </>
 )
 

@@ -9,11 +9,8 @@ export type Props = {
   style?: Record<string, unknown>
 }
 
-const Component: VLComponent<Props> = ({
-  children,
-  className = '',
-  style = { color: 'blue' },
-}) => render(children, { className, style })
+const Component: VLComponent<Props> = ({ children, className = '', style }) =>
+  render(children, { className, style })
 
 const name = `${PKG_NAME}/Util` as const
 

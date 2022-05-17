@@ -82,6 +82,7 @@ const rocketstyle: Rocketstyle =
       dimensionKeys: getKeys(dimensions),
       dimensionValues: getDimensionsValues(dimensions),
       multiKeys: getMultipleDimensions(dimensions),
+      styled: true,
     })
   }
 
