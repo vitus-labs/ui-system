@@ -6,7 +6,7 @@ import type {
   ReactElement,
 } from 'react'
 import { MakeItResponsive } from '@vitus-labs/unistyle'
-import { config, render } from '@vitus-labs/core'
+import { config, render, BreakpointKeys } from '@vitus-labs/core'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
@@ -33,34 +33,16 @@ export type SimpleHoc<P extends Record<string, unknown>> = <
   WrappedComponent: T
 ) => FC<MergeTypes<[P, ExtractProps<T>]>>
 
-/**
- * @hidden
- */
 export type InnerRef = ForwardedRef<any>
 
-/**
- * @hidden
- */
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 
-/**
- * @hidden
- */
 export type Css = CssCallback | string | ReturnType<typeof config.css>
 
-/**
- * @hidden
- */
 export type isEmpty = null | undefined
 
-/**
- * @hidden
- */
 export type Content = Parameters<typeof render>['0']
 
-/**
- * @hidden
- */
 export type ContentAlignX =
   | 'left'
   | 'center'
@@ -70,9 +52,6 @@ export type ContentAlignX =
   | 'block'
   | isEmpty
 
-/**
- * @hidden
- */
 export type ContentAlignY =
   | 'top'
   | 'center'
@@ -82,9 +61,6 @@ export type ContentAlignY =
   | 'block'
   | isEmpty
 
-/**
- * @hidden
- */
 export type ContentDirection =
   | 'inline'
   | 'rows'
@@ -92,59 +68,35 @@ export type ContentDirection =
   | 'reverseRows'
   | isEmpty
 
-/**
- * @hidden
- */
 export type Ref = HTMLElement
 
-/**
- * @hidden
- */
 export type AlignY =
   | ContentAlignY
   | ContentAlignY[]
-  | Record<string, ContentAlignY>
+  | Partial<Record<BreakpointKeys, ContentAlignY>>
 
-/**
- * @hidden
- */
 export type AlignX =
   | ContentAlignX
   | ContentAlignX[]
-  | Record<string, ContentAlignX>
+  | Partial<Record<BreakpointKeys, ContentAlignX>>
 
-/**
- * @hidden
- */
 export type Direction =
   | ContentDirection
   | ContentDirection[]
-  | Record<string, ContentDirection>
+  | Partial<Record<BreakpointKeys, ContentDirection>>
 
-/**
- * @hidden
- */
 export type ResponsiveBooltype =
   | boolean
-  | Record<string, boolean>
   | Array<boolean>
+  | Partial<Record<BreakpointKeys, boolean>>
 
-/**
- * @hidden
- */
 export type Responsive =
   | number
   | Array<string | number>
-  | Record<string, number | string>
+  | Partial<Record<BreakpointKeys, number | string>>
 
-/**
- * @hidden
- */
-export type ExtendCss = Css | Array<Css> | Record<string, Css>
+export type ExtendCss = Css | Array<Css> | Partial<Record<BreakpointKeys, Css>>
 
-/**
- * @hidden
- */
 export type ExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps

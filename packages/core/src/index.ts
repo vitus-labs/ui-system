@@ -12,8 +12,11 @@ import {
   HTMLElementAttrs,
   HTMLTagAttrsByTag,
 } from '~/html'
+import type { Breakpoints, BreakpointKeys } from '~/types'
 
 export type {
+  Breakpoints,
+  BreakpointKeys,
   IsEmpty,
   Render,
   HTMLTags,
