@@ -16,7 +16,7 @@ import Util, { Props as UtilProps } from '~/Util'
 import type {
   Props as IteratorProps,
   PropsCallback,
-  DataArrayObject,
+  ObjectValue,
   ExtendedProps,
   ElementType,
 } from '~/helpers/Iterator'
@@ -51,7 +51,7 @@ export type {
   InnerRef,
   // hiden iterator types
   PropsCallback,
-  DataArrayObject,
+  ObjectValue,
   ExtendedProps,
   ElementType,
 }
