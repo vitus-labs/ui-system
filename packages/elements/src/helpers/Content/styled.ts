@@ -33,20 +33,16 @@ const calculateGap = ({
   direction,
   type,
   value,
-  css,
 }: {
   direction: 'rows' | 'inline'
   type: 'before' | 'after'
-  css: any
   value: any
 }) => {
   if (!direction || !type) return undefined
 
   const finalStyles = `${gapDimensions[direction][type]}: ${value};`
 
-  return css`
-    ${finalStyles};
-  `
+  return finalStyles
 }
 
 // --------------------------------------------------------
@@ -67,7 +63,6 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
     direction: t.parentDirection,
     type: t.contentType,
     value: value(t.gap, rootSize),
-    css,
   })};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
