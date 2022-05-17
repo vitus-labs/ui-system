@@ -7,11 +7,11 @@ import {
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
 
-const equalCols = config.css`
+const equalCols = `
   flex: 1;
 `
 
-const typeContent = config.css`
+const typeContent = `
   flex: 1;
 `
 

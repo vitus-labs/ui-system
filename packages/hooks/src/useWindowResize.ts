@@ -33,7 +33,7 @@ const useWindowResize: UseWindowResize = (
     window.addEventListener('resize', handleResize, false)
 
     return () => window.removeEventListener('resize', handleResize, false)
-  }, []) // Empty array ensures that effect is only run on mount and unmount
+  }, [handleResize]) // Empty array ensures that effect is only run on mount and unmount
 
   return windowSize
 }
