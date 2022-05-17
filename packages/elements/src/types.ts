@@ -5,7 +5,10 @@ import type {
   PropsWithChildren,
   ReactElement,
 } from 'react'
+import { MakeItResponsive } from '@vitus-labs/unistyle'
 import { config, render } from '@vitus-labs/core'
+
+export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
 type ExtractNullableKeys<T> = {
   [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react'
 import type { SimpleHoc } from '~/types'
 
@@ -33,7 +34,7 @@ const component: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props) => {
+  const Enhanced = (props: Props) => {
     const {
       type = 'single',
       activeItemRequired,

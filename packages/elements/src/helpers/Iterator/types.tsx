@@ -1,26 +1,22 @@
-import type {
-  ComponentType,
-  ForwardRefExoticComponent,
-  ReactText,
-  ReactNode,
-} from 'react'
+import type { ComponentType, ForwardRefExoticComponent, ReactNode } from 'react'
 import { HTMLTags } from '@vitus-labs/core'
 
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>
-export type SimpleValue = ReactText
+export type SimpleValue = string | number
+export type ObjectValue = Partial<{
+  id: SimpleValue
+  key: SimpleValue
+  itemId: SimpleValue
+  component: ElementType
+}> &
+  Record<string, unknown>
 
-/**
- * @hidden
- */
 export type ElementType<T extends Record<string, unknown> = any> =
   | ComponentType<T>
   | ForwardRefExoticComponent<T>
   | HTMLTags
 
-/**
- * @hidden
- */
 export type ExtendedProps = {
   index: number
   first: boolean
@@ -30,16 +26,31 @@ export type ExtendedProps = {
   position: number
 }
 
-/**
- * @hidden
- */
-export type DataArrayObject = Partial<{
-  id: SimpleValue
-  key: SimpleValue
-  itemId: SimpleValue
+export type PropsCallback =
+  | TObj
+  | ((
+      itemProps:
+        | Record<string, never>
+        | Record<string, SimpleValue>
+        | ObjectValue,
+      extendedProps: ExtendedProps
+    ) => TObj)
+
+export type Props = Partial<{
+  children: ReactNode
+  data: Array<SimpleValue | ObjectValue | MaybeNull>
   component: ElementType
-}> &
-  Record<string, unknown>
+  valueName: string
+  wrapComponent: ElementType
+  itemProps: PropsCallback
+  wrapProps?: PropsCallback
+  itemKey?:
+    | keyof ObjectValue
+    | ((
+        item: SimpleValue | Omit<ObjectValue, 'component'>,
+        index: number
+      ) => SimpleValue)
+}>
 
 // type BaseProps = Partial<{
 //   wrapComponent: ElementType
@@ -94,32 +105,3 @@ export type DataArrayObject = Partial<{
 //   itemProps?: ObjectArrayTypeCallback
 //   wrapProps?: ObjectArrayTypeCallback
 // }
-
-/**
- * @hidden
- */
-export type PropsCallback =
-  | TObj
-  | ((
-      itemProps:
-        | Record<string, never>
-        | Record<string, SimpleValue>
-        | DataArrayObject,
-      extendedProps: ExtendedProps
-    ) => TObj)
-
-export type Props = Partial<{
-  children: ReactNode
-  data: Array<SimpleValue | DataArrayObject | MaybeNull>
-  component: ElementType
-  valueName: string
-  wrapComponent: ElementType
-  itemProps: PropsCallback
-  wrapProps?: PropsCallback
-  itemKey?:
-    | keyof DataArrayObject
-    | ((
-        item: SimpleValue | Omit<DataArrayObject, 'component'>,
-        index: number
-      ) => SimpleValue)
-}>

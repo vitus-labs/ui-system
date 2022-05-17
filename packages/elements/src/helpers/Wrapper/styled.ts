@@ -1,5 +1,6 @@
 import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
+import type { ResponsiveStylesCallback } from '~/types'
 
 const childFix = config.css`
   display: flex;
@@ -21,7 +22,10 @@ const block = config.css`
   align-self: stretch;
 `
 
-const styles = ({ theme: t, css }) => css`
+const childFixPosition = (isBlock: any) =>
+  config.css`display: ${isBlock ? 'flex' : 'inline-flex'}`
+
+const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
   ${__WEB__ && t.alignY === 'block' && fullHeight};
 
   ${alignContent({
@@ -32,16 +36,9 @@ const styles = ({ theme: t, css }) => css`
 
   ${t.block && block};
 
-  ${__WEB__ &&
-  css`
-    ${({ $childFix }) =>
-      !$childFix &&
-      css`
-        display: ${t.block ? 'flex' : 'inline-flex'};
-      `};
+  ${__WEB__ && !t.childFix && childFixPosition(t.block)};
 
-    ${({ $parentFix }) => $parentFix && t.block && parentFix};
-  `};
+  ${__WEB__ && t.parentFix && t.block && parentFix};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `

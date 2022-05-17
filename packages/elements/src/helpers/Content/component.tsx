@@ -23,7 +23,7 @@ type Props = {
   extendCss: ExtendCss
 }
 
-const component: FC<Partial<Props>> = ({
+const Component: FC<Partial<Props>> = ({
   contentType,
   tag,
   parentDirection,
@@ -47,6 +47,7 @@ const component: FC<Partial<Props>> = ({
       as={tag}
       $contentType={contentType}
       $element={{
+        contentType,
         parentDirection,
         direction,
         alignX,
@@ -61,4 +62,4 @@ const component: FC<Partial<Props>> = ({
   )
 }
 
-export default memo(component)
+export default memo(Component)

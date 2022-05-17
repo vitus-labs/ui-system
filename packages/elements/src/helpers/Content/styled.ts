@@ -5,6 +5,7 @@ import {
   extendCss,
   value,
 } from '@vitus-labs/unistyle'
+import type { ResponsiveStylesCallback } from '~/types'
 
 const equalCols = config.css`
   flex: 1;
@@ -17,21 +18,31 @@ const typeContent = config.css`
 // --------------------------------------------------------
 // calculate spacing between before / content / after
 // --------------------------------------------------------
-const calculateGap = ({ direction, type, value, css }) => {
+const gapDimensions = {
+  inline: {
+    before: 'margin-right',
+    after: 'margin-left',
+  },
+  rows: {
+    before: 'margin-bottom',
+    after: 'margin-top',
+  },
+} as const
+
+const calculateGap = ({
+  direction,
+  type,
+  value,
+  css,
+}: {
+  direction: 'rows' | 'inline'
+  type: 'before' | 'after'
+  css: any
+  value: any
+}) => {
   if (!direction || !type) return undefined
 
-  const data = {
-    inline: {
-      before: 'margin-right',
-      after: 'margin-left',
-    },
-    rows: {
-      before: 'margin-bottom',
-      after: 'margin-top',
-    },
-  }
-
-  const finalStyles = `${data[direction][type]}: ${value};`
+  const finalStyles = `${gapDimensions[direction][type]}: ${value};`
 
   return css`
     ${finalStyles};
@@ -41,7 +52,7 @@ const calculateGap = ({ direction, type, value, css }) => {
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles = ({ css, theme: t, rootSize }) => css`
+const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
   ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
@@ -51,15 +62,13 @@ const styles = ({ css, theme: t, rootSize }) => css`
   ${t.equalCols && equalCols};
 
   ${t.gap &&
-  css`
-    ${({ $contentType }) =>
-      calculateGap({
-        direction: t.parentDirection,
-        type: $contentType,
-        value: value(t.gap, rootSize),
-        css,
-      })}
-  `};
+  t.contentType &&
+  calculateGap({
+    direction: t.parentDirection,
+    type: t.contentType,
+    value: value(t.gap, rootSize),
+    css,
+  })};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
@@ -67,7 +76,7 @@ const styles = ({ css, theme: t, rootSize }) => css`
 const platformStyles = __WEB__ ? `box-sizing: border-box;` : ''
 
 export default config.styled<any>(config.component)`
-  ${__WEB__ && platformStyles};
+  ${platformStyles};
 
   display: flex;
   align-self: stretch;
