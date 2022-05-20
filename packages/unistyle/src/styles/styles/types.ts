@@ -1,5 +1,5 @@
 import { config } from '@vitus-labs/core'
-import { PropertyValue, Defaults, Color } from '~/types'
+import type { PropertyValue, Defaults, Color } from '~/types'
 
 export type PrimitiveValue = string | number
 
@@ -47,7 +47,7 @@ export type FontSize =
   | 'larger'
   | 'initial'
   | 'inherit'
-  | Value
+  | PropertyValue
 
 export type ListStyleType =
   | 'disc'
