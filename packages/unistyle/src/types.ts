@@ -14,7 +14,11 @@ export type Units =
   | 'vmax'
   | 'ex'
 export type UnitValue = number | `${number}${Units}`
-export type Value = UnitValue | 'auto' | Defaults | `calc(${string | number})`
+export type PropertyValue =
+  | UnitValue
+  | 'auto'
+  | Defaults
+  | `calc(${string | number})`
 
 export type Color =
   | `#${string | number}`
@@ -28,6 +32,7 @@ export type Color =
   | `hsl(${number},${number}%,${number}%)`
   | `hsla(${number}, ${number}%, ${number}%, ${number})`
   | `hsla(${number},${number}%,${number}%,${number})`
+  | BrowserColors
   | Defaults
 
 export type BrowserColors =

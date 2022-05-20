@@ -1,15 +1,20 @@
 import { config } from '@vitus-labs/core'
-import { Value, Defaults, Color } from '~/types'
+import { PropertyValue, Defaults, Color } from '~/types'
 
-type PrimitiveValue = string | number
+export type PrimitiveValue = string | number
 
-type BorderColor = Color | Defaults
+export type BorderColor = Color | Defaults
 
-type BorderImageRepeat = 'stretch' | 'repeat' | 'round' | 'space' | Defaults
+export type BorderImageRepeat =
+  | 'stretch'
+  | 'repeat'
+  | 'round'
+  | 'space'
+  | Defaults
 
-type GridProperty = 'auto' | number | `span ${number}`
+export type GridProperty = 'auto' | number | `span ${number}`
 
-type TextDecoration =
+export type TextDecoration =
   | 'none'
   | 'underline'
   | 'overline'
@@ -17,7 +22,7 @@ type TextDecoration =
   | 'blink'
   | Defaults
 
-type BorderStyle =
+export type BorderStyle =
   | 'none'
   | 'hidden'
   | 'dotted'
@@ -30,7 +35,7 @@ type BorderStyle =
   | 'outset'
   | Defaults
 
-type FontSize =
+export type FontSize =
   | 'medium'
   | 'xx-small'
   | 'x-small'
@@ -44,7 +49,7 @@ type FontSize =
   | 'inherit'
   | Value
 
-type ListStyleType =
+export type ListStyleType =
   | 'disc'
   | 'armenian'
   | 'circle'
@@ -69,9 +74,9 @@ type ListStyleType =
   | 'upper-roman'
   | Defaults
 
-type Overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | Defaults
+export type Overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | Defaults
 
-type Cursor =
+export type Cursor =
   | 'alias'
   | 'all-scroll'
   | 'auto'
@@ -112,39 +117,39 @@ type Cursor =
   | Defaults
 
 export type ITheme = {
-  inset: Value
-  insetX: Value
-  insetY: Value
-  top: Value
-  bottom: Value
-  left: Value
-  right: Value
-  positionX: Value
-  positionY: Value
-  width: Value
-  height: Value
-  size: Value
-  minWidth: Value
-  minHeight: Value
-  minSize: Value
-  maxWidth: Value
-  maxHeight: Value
-  maxSize: Value
-  margin: Value
-  marginTop: Value
-  marginBottom: Value
-  marginLeft: Value
-  marginRight: Value
-  marginX: Value
-  marginY: Value
-  padding: Value
-  paddingTop: Value
-  paddingBottom: Value
-  paddingLeft: Value
-  paddingRight: Value
-  paddingX: Value
-  paddingY: Value
-  gap: Value
+  inset: PropertyValue
+  insetX: PropertyValue
+  insetY: PropertyValue
+  top: PropertyValue
+  bottom: PropertyValue
+  left: PropertyValue
+  right: PropertyValue
+  positionX: PropertyValue
+  positionY: PropertyValue
+  width: PropertyValue
+  height: PropertyValue
+  size: PropertyValue
+  minWidth: PropertyValue
+  minHeight: PropertyValue
+  minSize: PropertyValue
+  maxWidth: PropertyValue
+  maxHeight: PropertyValue
+  maxSize: PropertyValue
+  margin: PropertyValue
+  marginTop: PropertyValue
+  marginBottom: PropertyValue
+  marginLeft: PropertyValue
+  marginRight: PropertyValue
+  marginX: PropertyValue
+  marginY: PropertyValue
+  padding: PropertyValue
+  paddingTop: PropertyValue
+  paddingBottom: PropertyValue
+  paddingLeft: PropertyValue
+  paddingRight: PropertyValue
+  paddingX: PropertyValue
+  paddingY: PropertyValue
+  gap: PropertyValue
   alignContent:
     | 'center'
     | 'flex-start'
@@ -183,19 +188,19 @@ export type ITheme = {
   backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | Defaults
   backgroundPosition: any
   backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | Defaults
-  backgroundSize: 'auto' | Value | 'cover' | 'contain' | Defaults
+  backgroundSize: 'auto' | PropertyValue | 'cover' | 'contain' | Defaults
   border: string
   borderTop: string
   borderBottom: string
   borderLeft: string
   borderRight: string
-  borderWidth: Value
-  borderWidthX: Value
-  borderWidthY: Value
-  borderWidthTop: Value
-  borderWidthBottom: Value
-  borderWidthLeft: Value
-  borderWidthRight: Value
+  borderWidth: PropertyValue
+  borderWidthX: PropertyValue
+  borderWidthY: PropertyValue
+  borderWidthTop: PropertyValue
+  borderWidthBottom: PropertyValue
+  borderWidthLeft: PropertyValue
+  borderWidthRight: PropertyValue
   borderStyle: BorderStyle
   borderStyleX: BorderStyle
   borderStyleY: BorderStyle
@@ -216,19 +221,19 @@ export type ITheme = {
   borderImageRepeat:
     | `${BorderImageRepeat}`
     | `${BorderImageRepeat} ${BorderImageRepeat}`
-  borderImageSlice: Value
+  borderImageSlice: PropertyValue
   borderImageSource: string
   borderImageWidth: string
   borderSpacing: string
-  borderRadius: Value
-  borderRadiusTopLeft: Value
-  borderRadiusLeft: Value
-  borderRadiusTop: Value
-  borderRadiusTopRight: Value
-  borderRadiusRight: Value
-  borderRadiusBottomLeft: Value
-  borderRadiusBottom: Value
-  borderRadiusBottomRight: Value
+  borderRadius: PropertyValue
+  borderRadiusTopLeft: PropertyValue
+  borderRadiusLeft: PropertyValue
+  borderRadiusTop: PropertyValue
+  borderRadiusTopRight: PropertyValue
+  borderRadiusRight: PropertyValue
+  borderRadiusBottomLeft: PropertyValue
+  borderRadiusBottom: PropertyValue
+  borderRadiusBottomRight: PropertyValue
   boxShadow: string
   boxSizing: 'content-box' | 'border-box' | Defaults
   captionSide: 'top' | 'bottom' | Defaults
@@ -317,18 +322,18 @@ export type ITheme = {
     | Defaults
 
   gridArea: string
-  gridAutoColumns: 'auto' | 'max-content' | 'min-content' | Value
+  gridAutoColumns: 'auto' | 'max-content' | 'min-content' | PropertyValue
   gridAutoFlow: 'row' | 'column' | 'dense' | 'row dense' | 'column dense'
-  gridAutoRows: 'auto' | 'max-content' | 'min-content' | Value
+  gridAutoRows: 'auto' | 'max-content' | 'min-content' | PropertyValue
   gridColumn: number | `${'auto' | string | number} / ${GridProperty}`
   gridColumnEnd: GridProperty
-  gridColumnGap: Value
+  gridColumnGap: PropertyValue
   gridColumnStart: GridProperty
-  gridGap: Value
+  gridGap: PropertyValue
   gridRow: number | `${'auto' | string | number} / ${GridProperty}`
   gridRowStart: GridProperty
   gridRowEnd: GridProperty
-  gridRowGap: Value
+  gridRowGap: PropertyValue
   gridTemplate: PrimitiveValue
   gridTemplateAreas: PrimitiveValue
   gridTemplateColumns: PrimitiveValue
@@ -341,8 +346,8 @@ export type ITheme = {
     | 'space-between'
     | 'space-around'
   keyframe: any
-  letterSpacing: 'normal' | Value
-  lineHeight: Value | 'normal' | 'revert' | 'unset' | Defaults
+  letterSpacing: 'normal' | PropertyValue
+  lineHeight: PropertyValue | 'normal' | 'revert' | 'unset' | Defaults
   listStyle: string
   listStyleImage: 'none' | string | Defaults
   listStylePosition: string
@@ -360,7 +365,7 @@ export type ITheme = {
   order: number | Defaults
   outline: string
   outlineColor: string
-  outlineOffset: Value
+  outlineOffset: PropertyValue
   outlineStyle:
     | 'none'
     | 'dotted'
@@ -372,7 +377,7 @@ export type ITheme = {
     | 'inset'
     | 'outset'
     | Defaults
-  outlineWidth: Value | 'thin' | 'medium' | 'thick'
+  outlineWidth: PropertyValue | 'thin' | 'medium' | 'thick'
   overflow: Overflow
   overflowWrap: 'normal' | 'break-word' | Defaults
   overflowX: Overflow
@@ -386,7 +391,7 @@ export type ITheme = {
   position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky' | Defaults
   quotes: string
   resize: 'none' | 'both' | 'horizontal' | 'vertical' | Defaults
-  tabSize: Value
+  tabSize: PropertyValue
   tableLayout: 'auto' | 'fixed' | Defaults
   textAlign: 'left' | 'right' | 'center' | 'justify' | Defaults
   textAlignLast:
@@ -399,7 +404,7 @@ export type ITheme = {
     | 'justify'
     | Defaults
   textDecoration: TextDecoration
-  textDecorationColor: Value
+  textDecorationColor: PropertyValue
   textDecorationLine: TextDecoration
   textDecorationStyle:
     | 'solid'
@@ -408,7 +413,7 @@ export type ITheme = {
     | 'dashed'
     | 'wavy'
     | Defaults
-  textIndent: Value
+  textIndent: PropertyValue
   textJustify: 'auto' | 'none' | 'inter-word' | 'distribute' | Defaults
   textOverflow: 'clip' | 'ellipsis' | string | Defaults
   textShadow: string
@@ -438,7 +443,7 @@ export type ITheme = {
     | 'middle'
     | 'bottom'
     | 'text-bottom'
-    | Value
+    | PropertyValue
     | Defaults
   visibility: 'visible' | 'hidden' | 'collapse' | Defaults
   whiteSpace: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | Defaults

@@ -1,9 +1,7 @@
-import { ReactText } from 'react'
-
 type Value<V> = V extends string ? number : V
 type Unit<V> = V extends string ? string : undefined
 
-export type StripUnit = <V extends ReactText, UR extends boolean = false>(
+export type StripUnit = <V extends string | number, UR extends boolean = false>(
   value: V,
   unitReturn?: UR
 ) => UR extends true ? [Value<V>, Unit<V>] : Value<V>

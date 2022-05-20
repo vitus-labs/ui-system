@@ -1,4 +1,11 @@
 import Provider, { context, TProvider } from '~/context'
+import {
+  BrowserColors,
+  Color,
+  PropertyValue,
+  UnitValue,
+  Defaults,
+} from '~/types'
 
 // --------------------------------------------------------
 // RESPONSIVE UTILITIES
@@ -62,6 +69,11 @@ export type {
   StripUnit,
   Value,
   Values,
+  BrowserColors,
+  Color,
+  PropertyValue,
+  UnitValue,
+  Defaults,
 }
 
 export {
