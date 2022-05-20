@@ -14,16 +14,20 @@ export type Units =
   | 'vmax'
   | 'ex'
 export type UnitValue = number | `${number}${Units}`
-export type Value = UnitValue | 'auto' | Defaults
+export type Value = UnitValue | 'auto' | Defaults | `calc(${string | number})`
 
 export type Color =
   | `#${string | number}`
   | 'currentcolor'
   | 'transparent'
   | `rgb(${number}, ${number}, ${number})`
+  | `rgb(${number},${number},${number})`
   | `rgba(${number}, ${number}, ${number}, ${number})`
+  | `rgba(${number},${number},${number},${number})`
   | `hsl(${number}, ${number}%, ${number}%)`
+  | `hsl(${number},${number}%,${number}%)`
   | `hsla(${number}, ${number}%, ${number}%, ${number})`
+  | `hsla(${number},${number}%,${number}%,${number})`
   | Defaults
 
 export type BrowserColors =

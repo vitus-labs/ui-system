@@ -12,9 +12,9 @@ import styled, {
 interface Internal {
   css: ThemedCssFunction<DefaultTheme>
   styled: StyledInterface
-  provider: ThemeProviderComponent<any, any>
-  component: ComponentType | HTMLTags
-  textComponent: ComponentType | HTMLTags
+  provider?: ThemeProviderComponent<any, any>
+  component?: ComponentType | HTMLTags
+  textComponent?: ComponentType | HTMLTags
 }
 
 class Configuration {
