@@ -1,7 +1,7 @@
 import { borderRadius, edge } from '~/styles/shorthands'
 import { values } from '~/units'
 import type { Css } from '~/types'
-import type { Theme } from './types'
+import type { InnerTheme, Theme } from './types'
 
 export type { Theme as StylesTheme }
 
@@ -10,7 +10,7 @@ export type Styles = ({
   css,
   rootSize,
 }: {
-  theme: Theme
+  theme: InnerTheme
   css: Css
   rootSize?: number
 }) => ReturnType<typeof css>

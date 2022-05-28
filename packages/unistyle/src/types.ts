@@ -22,7 +22,7 @@ export type PropertyValue =
 
 export type Color =
   | `#${string | number}`
-  | 'currentcolor'
+  | 'currentColor'
   | 'transparent'
   | `rgb(${number}, ${number}, ${number})`
   | `rgb(${number},${number},${number})`

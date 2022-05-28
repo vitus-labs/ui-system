@@ -1,6 +1,8 @@
 import { config } from '@vitus-labs/core'
 import type { PropertyValue, Defaults, Color } from '~/types'
 
+export type Func<T> = (...args: any) => T
+
 export type PrimitiveValue = string | number
 
 export type BorderColor = Color | Defaults
@@ -432,6 +434,7 @@ export type ITheme = {
     | 'ease-out'
     | 'ease-in-out'
     | `cubic-bezier(${number},${number},${number},${number})`
+    | `cubic-bezier(${number}, ${number}, ${number}, ${number})`
     | Defaults
   userSelect: 'auto' | 'none' | 'text' | 'all' | Defaults
   verticalAlign:
@@ -460,6 +463,10 @@ export type ITheme = {
   extendCss: ReturnType<typeof config.css> | string
 }
 
-export type Theme = {
+export type InnerTheme = {
   [I in keyof ITheme]: ITheme[I] | null | undefined
+}
+
+export type Theme = {
+  [I in keyof ITheme]: ITheme[I] | Func<ITheme[I]> | null | undefined
 }
