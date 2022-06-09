@@ -65,7 +65,7 @@ export type StyledTypes = Partial<{
 
 export type ElementType<O extends Array<string>> = FC<
   Omit<ComponentProps, O[number]> &
-    Record<string, unknown> & { children: ReactNode }
+    Record<string, unknown> & { children?: ReactNode }
 > & {
   pkgName: string
   VITUS_LABS__COMPONENT: string
