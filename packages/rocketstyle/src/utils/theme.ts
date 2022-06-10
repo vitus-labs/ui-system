@@ -20,7 +20,9 @@ themeModeCallback.isMode = true
 // --------------------------------------------------------
 type IsModeCallback = (value: any) => boolean
 const isModeCallback: IsModeCallback = (value) =>
-  typeof value === 'function' && value.isMode
+  typeof value === 'function' &&
+  // @ts-ignore
+  value.toString() === themeModeCallback().toString()
 
 // --------------------------------------------------------
 // Get Theme From Chain
