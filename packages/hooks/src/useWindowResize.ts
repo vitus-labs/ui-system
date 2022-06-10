@@ -3,7 +3,7 @@ import { throttle } from '@vitus-labs/core'
 
 export type UseWindowResize = (
   throttleDelay?: number,
-  defaultValues?: Partial<{
+  initialValues?: Partial<{
     width: number
     height: number
   }>
@@ -23,6 +23,8 @@ const useWindowResize: UseWindowResize = (
       width: window.innerWidth,
       height: window.innerHeight,
     })
+
+    setWindowSize(getSize())
 
     const handleResize = throttle(() => {
       setWindowSize(getSize())
