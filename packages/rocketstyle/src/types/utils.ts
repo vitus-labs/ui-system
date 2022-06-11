@@ -6,8 +6,8 @@ export type CallBackParam = TObj | TFn
 export type DisplayName = string
 
 export type ElementType<T extends TObj | unknown = any> =
-  | ComponentType<T>
-  | ForwardRefExoticComponent<T>
+  | (ComponentType<T> & { [key: string]: any })
+  | (ForwardRefExoticComponent<T> & { [key: string]: any })
 
 export type ValueOf<T> = T[keyof T]
 

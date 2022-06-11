@@ -1,5 +1,5 @@
 import usePseudoState from './usePseudoState'
+import useRef from './useRef'
 import useTheme from './useTheme'
-import useThemeOptions from './useThemeOptions'
 
-export { usePseudoState, useTheme, useThemeOptions }
+export { usePseudoState, useRef, useTheme }

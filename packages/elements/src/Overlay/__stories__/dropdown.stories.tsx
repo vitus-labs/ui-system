@@ -6,7 +6,6 @@ import Overlay from '..'
 
 export default {
   component: Overlay,
-  title: Overlay.displayName,
 }
 
 const Menu = config.styled('div').attrs({

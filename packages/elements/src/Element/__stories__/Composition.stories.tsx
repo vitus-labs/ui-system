@@ -4,10 +4,9 @@ import Element from '~/Element'
 
 export default {
   component: Element,
-  title: Element.displayName,
 }
 
-const element = rocketstyle()()({ component: Element, name: 'base' }).styles(
+const element = rocketstyle()({ component: Element, name: 'base' }).styles(
   (css) => css`
     ${({ $rocketstyle: t }: any) => css`
       background-color: ${t.bgColor};

@@ -1,6 +1,7 @@
 import React, { createContext, FC, useMemo, ReactNode } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
+import type { Breakpoints } from '~/types'
 
 const context = createContext<any>({})
 const VitusLabsProvider = context.Provider
@@ -8,7 +9,7 @@ const VitusLabsProvider = context.Provider
 type Theme = Partial<
   {
     rootSize: number
-    breakpoints: Record<string, number | string>
+    breakpoints: Breakpoints
   } & Record<string, any>
 >
 
@@ -20,15 +21,15 @@ type ProviderType = Partial<
 >
 
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
+  const ExternalProvider = useMemo(() => config.provider, [])
+
   // eslint-disable-next-line react/jsx-no-useless-fragment
   if (!theme || isEmpty(theme)) return <>{children}</>
 
-  const StyledContext = useMemo(() => config.styledContext, [])
-
-  if (StyledContext) {
+  if (ExternalProvider) {
     return (
       <VitusLabsProvider value={{ theme, ...props }}>
-        <StyledContext theme={theme}>{children}</StyledContext>
+        <ExternalProvider theme={theme}>{children}</ExternalProvider>
       </VitusLabsProvider>
     )
   }

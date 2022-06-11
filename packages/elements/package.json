@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/elements",
-  "version": "0.55.0",
+  "version": "0.57.0-alpha.8",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -40,8 +40,8 @@
     "prepublish": "yarn build",
     "build": "yarn vl_build",
     "build:watch": "yarn vl_build-watch",
-    "lint:css": "stylelint src/*.ts src/*.tsx",
-    "lint:ts": "eslint src/*",
+    "lint:css": "stylelint src/**/*",
+    "lint:ts": "eslint src/**/*",
     "lint": "yarn lint:css && yarn lint:ts",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
@@ -55,15 +55,15 @@
     "react-dom": ">= 16.8"
   },
   "devDependencies": {
-    "@vitus-labs/core": "^0.55.0",
-    "@vitus-labs/rocketstyle": "^0.55.0",
-    "@vitus-labs/tools-babel": "^0.30.0",
-    "@vitus-labs/tools-rollup": "^0.30.0",
-    "@vitus-labs/tools-storybook": "^0.30.0",
-    "@vitus-labs/tools-typescript": "^0.30.0",
-    "@vitus-labs/unistyle": "^0.55.0"
+    "@vitus-labs/core": "^0.57.0-alpha.8",
+    "@vitus-labs/rocketstyle": "^0.57.0-alpha.8",
+    "@vitus-labs/tools-babel": "^0.33.0",
+    "@vitus-labs/tools-rollup": "^0.33.0",
+    "@vitus-labs/tools-storybook": "^0.33.0",
+    "@vitus-labs/tools-typescript": "^0.33.0",
+    "@vitus-labs/unistyle": "^0.57.0-alpha.8"
   },
   "dependencies": {
-    "react-is": "^18.0.0"
+    "react-is": "^18.1.0"
   }
 }

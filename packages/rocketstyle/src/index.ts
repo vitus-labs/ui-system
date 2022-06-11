@@ -22,16 +22,24 @@ import type {
 } from '~/types/dimensions'
 import type { StylesCb, StylesDefault } from '~/types/styles'
 import type { AttrsCb } from '~/types/attrs'
-import type { ThemeCb, ThemeModeKeys, ThemeDefault } from '~/types/theme'
+import type {
+  ThemeCb,
+  ThemeModeKeys,
+  ThemeDefault,
+  ThemeMode,
+} from '~/types/theme'
 import type { GenericHoc, ComposeParam } from '~/types/hoc'
 import type { DefaultProps } from '~/types/configuration'
-import type { RocketComponent, IRocketComponent } from '~/types/rocketstyle'
+import type {
+  RocketStyleComponent,
+  IRocketStyleComponent,
+} from '~/types/rocketstyle'
 
 export type {
   StylesDefault,
   ThemeDefault,
-  RocketComponent,
-  IRocketComponent,
+  RocketStyleComponent,
+  IRocketStyleComponent,
   Rocketstyle,
   TProvider,
   RocketComponentType,
@@ -59,6 +67,7 @@ export type {
   ComposeParam,
   DefaultProps,
   IsRocketComponent,
+  ThemeMode,
 }
 
 export { context, Provider, isRocketComponent }

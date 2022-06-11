@@ -1,20 +1,20 @@
 import { value } from '~/units'
-import type { Value } from '~/types'
+import type { PropertyValue } from '~/types'
 
 const isValidValue = (value) => !!value || value === 0
 
 export type BorderRadius = (
   rootSize?: number
 ) => (props: {
-  full: Value | null | undefined
-  top: Value | null | undefined
-  bottom: Value | null | undefined
-  left: Value | null | undefined
-  right: Value | null | undefined
-  topLeft: Value | null | undefined
-  topRight: Value | null | undefined
-  bottomLeft: Value | null | undefined
-  bottomRight: Value | null | undefined
+  full: PropertyValue | null | undefined
+  top: PropertyValue | null | undefined
+  bottom: PropertyValue | null | undefined
+  left: PropertyValue | null | undefined
+  right: PropertyValue | null | undefined
+  topLeft: PropertyValue | null | undefined
+  topRight: PropertyValue | null | undefined
+  bottomLeft: PropertyValue | null | undefined
+  bottomRight: PropertyValue | null | undefined
 }) => string | null
 
 // eslint-disable-next-line import/prefer-default-export

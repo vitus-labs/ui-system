@@ -6,7 +6,7 @@ import rocketstyle from '~/index'
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-const Button = rocketstyle()()({ name: 'Button', component: Element })
+const Button = rocketstyle()({ name: 'Button', component: Element })
   .attrs<{ href?: string }>({
     tag: 'button',
     label: 'something',
@@ -50,7 +50,7 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
       backgroundColor: '#6c757d',
 
       hover: {
-        backgroundColor: '#5c636a',
+        backgroundColor: 'black',
       },
     },
     ale: null,
@@ -89,13 +89,56 @@ const Button = rocketstyle()()({ name: 'Button', component: Element })
     },
     xy: true,
   })
+  // .styles(({ props, rocketTheme, rocketstate: { pseudo } }) => {
+  //   const { hover, focus, active, ...restStyles } = rocketTheme
+  //   const result = [] as any
+
+  //   const baseTheme = makeItResponsive({
+  //     theme: restStyles,
+  //     styles,
+  //     css,
+  //   })
+
+  //   const hoverTheme = makeItResponsive({
+  //     theme: hoverStyles,
+  //     styles,
+  //     css,
+  //   })
+
+  //   const focusTheme = makeItResponsive({
+  //     theme: focusStyles,
+  //     styles,
+  //     css,
+  //   })
+
+  //   const activeTheme = makeItResponsive({
+  //     theme: activeStyles,
+  //     styles,
+  //     css,
+  //   })
+
+  //   result.push(baseTheme)
+
+  //   if (!props.disabled) {
+  //     if (!pseudo.active && props.isDynamic) {
+  //       result.push(`&:hover {${hoverTheme};}`)
+  //     }
+
+  //     if (pseudo.hover) {
+  //       result.push(hoverTheme)
+  //     }
+  //   }
+  // })
   .styles(
     (css) => css<any>`
       ${({
         href,
         onClick,
         $rocketstyle,
-        $rocketstate: { disabled, active, hover, focus, pressed },
+        $rocketstate: {
+          disabled,
+          pseudo: { active, hover, focus, pressed },
+        },
       }) => {
         const isDynamic = onClick || href
 
@@ -235,7 +278,7 @@ export const ProviderButton = Button.config({
   component: Element,
 })
 
-export const ButtonConsumer = rocketstyle()()({
+export const ButtonConsumer = rocketstyle()({
   name: 'ButtonConsumer',
   component: Element,
 })

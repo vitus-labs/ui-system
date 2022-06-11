@@ -1,4 +1,4 @@
-import React, { useMemo, ReactNode, FC } from 'react'
+import React, { ReactNode, FC, useMemo } from 'react'
 import {
   config,
   isEmpty,
@@ -7,10 +7,10 @@ import {
 } from '@vitus-labs/core'
 import { sortBreakpoints, createMediaQueries } from '~/responsive'
 
-type VitusLabsContext = {
-  sortedBreakpoints?: ReturnType<typeof sortBreakpoints>
-  media?: ReturnType<typeof createMediaQueries>
-}
+// type VitusLabsContext = {
+//   sortedBreakpoints?: ReturnType<typeof sortBreakpoints>
+//   media?: ReturnType<typeof createMediaQueries>
+// }
 
 type Theme = {
   rootSize: number
@@ -24,31 +24,34 @@ export type TProvider = {
 } & Partial<Record<string, unknown>>
 
 const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const __VITUS_LABS__: VitusLabsContext = {}
-
   const { breakpoints, rootSize } = theme
 
-  if (!isEmpty(breakpoints)) {
-    __VITUS_LABS__.sortedBreakpoints = useMemo(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      () => sortBreakpoints(breakpoints!),
-      [breakpoints]
-    )
-    __VITUS_LABS__.media = useMemo(
-      () =>
-        createMediaQueries({
-          breakpoints,
-          css: config.css,
-          rootSize,
-        }),
-      [breakpoints, rootSize]
-    )
-  }
+  const sortedBreakpoints = useMemo(() => {
+    if (breakpoints && !isEmpty(breakpoints)) {
+      return sortBreakpoints(breakpoints)
+    }
+
+    return undefined
+  }, [breakpoints])
+
+  const media = useMemo(() => {
+    if (breakpoints && !isEmpty(breakpoints)) {
+      return createMediaQueries({
+        breakpoints,
+        css: config.css,
+        rootSize,
+      })
+    }
+
+    return undefined
+  }, [breakpoints, rootSize])
 
   const result = {
     ...theme,
-    __VITUS_LABS__,
+    __VITUS_LABS__: {
+      sortedBreakpoints,
+      media,
+    },
   }
 
   return (
@@ -60,5 +63,4 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
 
 export { context }
 
-// eslint-disable-next-line import/prefer-default-export
 export default Provider

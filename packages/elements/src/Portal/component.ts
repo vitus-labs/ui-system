@@ -9,7 +9,7 @@ export type Props = {
   tag?: string
 }
 
-const component: VLComponent<Props> = ({
+const Component: VLComponent<Props> = ({
   position = __BROWSER__ ? document.body : undefined,
   tag = 'div',
   children,
@@ -18,24 +18,25 @@ const component: VLComponent<Props> = ({
     __BROWSER__ ? document.createElement(tag) : undefined
   )
 
-  if (!position || !element) return null
-
   useEffect(() => {
-    if (__SERVER__) return undefined
+    if (__SERVER__ || !position || !element) return undefined
+
     position.appendChild(element)
 
     return () => {
       position.removeChild(element)
     }
-  }, [])
+  }, [element, position])
+
+  if (!position || !element) return null
 
   return createPortal(children, element)
 }
 
 const name = `${PKG_NAME}/Portal` as const
 
-component.displayName = name
-component.pkgName = PKG_NAME
-component.VITUS_LABS__COMPONENT = name
+Component.displayName = name
+Component.pkgName = PKG_NAME
+Component.VITUS_LABS__COMPONENT = name
 
-export default component
+export default Component

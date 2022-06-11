@@ -1,5 +1,5 @@
 import type { TFn, ElementType, ArrayOfValues, ArrayOfKeys } from './utils'
-import type { Dimensions, MultiKeys, ExtractDimensionKey } from './dimensions'
+import type { Dimensions, MultiKeys } from './dimensions'
 import type { PseudoProps } from './pseudo'
 import type { StylesCbArray } from './styles'
 import type { ConsumerCb } from './config'
@@ -24,11 +24,11 @@ export type InitConfiguration<C, D> = {
 }
 
 export type Configuration<
-  C = ElementType,
+  C = ElementType | unknown,
   D extends Dimensions = Dimensions
 > = InitConfiguration<C, D> & {
   provider?: boolean
-  consumer?: ConsumerCb
+  consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
   passProps?: Array<string>
@@ -38,9 +38,9 @@ export type Configuration<
   attrs: Array<OptionFunc>
   theme: Array<OptionFunc>
   styles: StylesCbArray
-  compose: Record<string, TFn>
+  compose: Record<string, TFn | null | undefined | false>
   statics: Record<string, any>
-} & Record<ExtractDimensionKey<D[keyof D]>, any>
+} & Record<string, any>
 
 export type DefaultProps<
   // C extends ElementType = ElementType,

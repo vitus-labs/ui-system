@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-param-reassign */
 import React, { createRef } from 'react'
 import { get } from '@vitus-labs/core'

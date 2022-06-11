@@ -12,8 +12,14 @@ export default {
 
 export const button = () => (
   <>
-    <Button label="Button" />
-    <Button tertiary state="primary" multiple={['centered']} label="Button" />
+    <Button label="Button" href="#" />
+    <Button
+      active
+      tertiary
+      state="primary"
+      multiple={['centered']}
+      label="Button"
+    />
   </>
 )
 

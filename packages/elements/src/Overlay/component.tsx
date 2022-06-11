@@ -37,7 +37,7 @@ export type Props = {
   contentRefName?: string
 } & UseOverlayProps
 
-const component: VLComponent<Props> = ({
+const Component: VLComponent<Props> = ({
   children,
   trigger,
   DOMLocation,
@@ -95,8 +95,8 @@ const component: VLComponent<Props> = ({
 
 const name = `${PKG_NAME}/Overlay` as const
 
-component.displayName = name
-component.pkgName = PKG_NAME
-component.VITUS_LABS__COMPONENT = name
+Component.displayName = name
+Component.pkgName = PKG_NAME
+Component.VITUS_LABS__COMPONENT = name
 
-export default component
+export default Component

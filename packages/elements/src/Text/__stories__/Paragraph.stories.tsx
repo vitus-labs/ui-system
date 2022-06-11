@@ -4,7 +4,6 @@ import Text from '~/Text'
 
 export default {
   component: Text,
-  title: Text.displayName,
 }
 
 export const paragraph = () => (

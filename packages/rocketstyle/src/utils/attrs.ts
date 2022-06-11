@@ -1,22 +1,24 @@
+/* eslint-disable no-param-reassign */
 import { isEmpty } from '@vitus-labs/core'
 import { MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
-type PickStyledProps = (
-  props: Record<string, unknown>,
-  keywords: Record<string, true>
-) => Partial<typeof props>
-export const pickStyledProps: PickStyledProps = (props, keywords) => {
-  const result = {} as any
+type PickStyledAttrs = <
+  T extends Record<string, any>,
+  K extends { [I in keyof T]?: true }
+>(
+  props: T,
+  keywords: K
+  // @ts-ignore
+) => { [I in keyof K]: T[I] }
 
-  Object.entries(props).forEach(([key, value]) => {
-    if (keywords[key]) result[key] = value
-  })
-
-  return result
-}
+export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
+  Object.keys(props).reduce((acc, key) => {
+    if (keywords[key]) acc[key] = props[key]
+    return acc
+  }, {} as any)
 
 // --------------------------------------------------------
 // combine values
@@ -33,10 +35,7 @@ export const calculateChainOptions: CalculateChainOptions =
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return options.reduce(
-      (acc, item) => Object.assign(acc, item(...args)),
-      result
-    )
+    return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }
 
 // --------------------------------------------------------
@@ -54,11 +53,11 @@ type CalculateStylingAttrs = ({
 }: {
   props: Record<string, unknown>
   dimensions: Record<string, unknown>
-}) => any
+}) => Record<string, any>
 export const calculateStylingAttrs: CalculateStylingAttrs =
   ({ useBooleans, multiKeys }) =>
   ({ props, dimensions }) => {
-    const result = {}
+    const result: Record<string, any> = {}
 
     // (1) find dimension keys values & initialize
     // object with possible options

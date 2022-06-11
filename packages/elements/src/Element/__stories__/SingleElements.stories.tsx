@@ -4,7 +4,6 @@ import Element from '~/Element'
 
 export default {
   component: Element,
-  title: Element.displayName,
 }
 
 const extendCss = config.css`

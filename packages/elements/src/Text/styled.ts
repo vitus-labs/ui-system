@@ -1,7 +1,8 @@
 import { config } from '@vitus-labs/core'
 import { makeItResponsive, extendCss } from '@vitus-labs/unistyle'
+import type { ResponsiveStylesCallback } from '~/types'
 
-const styles = ({ css, theme: t }) => css`
+const styles: ResponsiveStylesCallback = ({ css, theme: t }) => css`
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 

@@ -1,108 +1,108 @@
+/* eslint-disable no-param-reassign */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { config, isEmpty, merge } from '@vitus-labs/core'
-import { ThemeMode } from '~/types/theme'
+import { ThemeModeCallback } from '~/types/theme'
 import { removeNullableValues } from './collection'
 import { isMultiKey } from './dimensions'
 
 // --------------------------------------------------------
-// theme mode callback
+// Theme Mode Callback
 // --------------------------------------------------------
-export const themeModeCb: ThemeMode =
-  (...params) =>
-  (mode) => {
-    if (!mode || mode === 'light') return params[0]
-    return params[1]
-  }
+export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
+  if (!mode || mode === 'light') return light
+  return dark
+}
+
+themeModeCallback.isMode = true
 
 // --------------------------------------------------------
-// calculate dimension themes
+// Theme Mode Callback Check
 // --------------------------------------------------------
-type CalculateDimensionThemes = (
-  theme: Record<string, any>,
-  options: Record<string, any>,
-  cb: any
-) => Record<string, any>
+type IsModeCallback = (value: any) => boolean
+const isModeCallback: IsModeCallback = (value) =>
+  typeof value === 'function' &&
+  // @ts-ignore
+  value.toString() === themeModeCallback().toString()
 
-export const calculateDimensionThemes: CalculateDimensionThemes = (
-  theme,
-  options,
-  cb
-) => {
+// --------------------------------------------------------
+// Get Theme From Chain
+// --------------------------------------------------------
+type OptionFunc = (...arg: any) => Record<string, unknown>
+type GetThemeFromChain = (
+  options: Array<OptionFunc> | undefined | null,
+  theme: Record<string, any>
+) => ReturnType<OptionFunc>
+
+export const getThemeFromChain: GetThemeFromChain = (options, theme) => {
   const result = {}
+  if (!options || isEmpty(options)) return result
 
-  if (isEmpty(options.dimensions)) return result
-
-  return Object.entries(options.dimensions).reduce(
-    (accumulator, [key, value]) => {
-      const [, dimension] = isMultiKey(value)
-
-      const helper = options[key]
-
-      if (Array.isArray(helper) && helper.length > 0) {
-        const finalDimensionThemes = calculateChainOptions(helper, [
-          theme,
-          cb,
-          config.css,
-        ])
-
-        // eslint-disable-next-line no-param-reassign
-        accumulator[dimension] = removeNullableValues(finalDimensionThemes)
-      }
-
-      return accumulator
-    },
+  return options.reduce(
+    (acc, item) => merge(acc, item(theme, themeModeCallback, config.css)),
     result
   )
 }
 
 // --------------------------------------------------------
+// calculate dimension themes
+// --------------------------------------------------------
+type GetDimensionThemes = (
+  theme: Record<string, any>,
+  options: Record<string, any>
+) => Record<string, any>
+
+export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
+  const result = {}
+
+  if (isEmpty(options.dimensions)) return result
+
+  return Object.entries(options.dimensions).reduce((acc, [key, value]) => {
+    const [, dimension] = isMultiKey(value as any)
+
+    const helper = options[key]
+
+    if (Array.isArray(helper) && helper.length > 0) {
+      const finalDimensionThemes = getThemeFromChain(helper, theme)
+
+      // eslint-disable-next-line no-param-reassign
+      acc[dimension] = removeNullableValues(finalDimensionThemes)
+    }
+
+    return acc
+  }, result as Record<string, any>)
+}
+
+// --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
-type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
-type CalculateChainOptions = <A>(
-  options: Array<OptionFunc<A>> | undefined | null,
-  args: Array<A>
-) => ReturnType<OptionFunc<A>>
+type CalculateChainOptions = (
+  options: Array<OptionFunc> | undefined | null,
+  args: any[]
+) => Record<string, any>
 
 export const calculateChainOptions: CalculateChainOptions = (options, args) => {
   const result = {}
-  if (isEmpty(options)) return result
+  if (!options || isEmpty(options)) return result
 
   return options.reduce((acc, item) => merge(acc, item(...args)), result)
-
-  // using this does not allow overriding themes properly
-  // return removeAllEmptyValues(helper)
 }
 
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-export type CalculateTheme = <
-  P extends Record<string, unknown>,
-  T extends Record<string, unknown>,
-  B extends Record<string, unknown>
->({
-  rocketstate,
-  themes,
-  baseTheme,
-}: {
-  rocketstate: P
-  themes: T
-  baseTheme: B
-}) => B & Record<string, unknown>
+export type GetTheme = (params: {
+  rocketstate: Record<string, string | string[]>
+  themes: Record<string, Record<string, any>>
+  baseTheme: Record<string, any>
+}) => Record<string, unknown>
 
-export const calculateTheme: CalculateTheme = ({
-  rocketstate,
-  themes,
-  baseTheme,
-}) => {
+export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
   // generate final theme which will be passed to styled component
   let finalTheme = { ...baseTheme }
 
   Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | Array<string>]) => {
-      const keyTheme = themes[key]
+      const keyTheme: Record<string, any> = themes[key]
 
       if (Array.isArray(value)) {
         value.forEach((item) => {
@@ -120,28 +120,25 @@ export const calculateTheme: CalculateTheme = ({
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
-export type CalculateThemeMode = (
-  themes: Record<string, any>,
-  variant: 'light' | 'dark'
+export type GetThemeByMode = (
+  object: Record<string, any>,
+  mode: 'light' | 'dark'
 ) => Partial<{
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }>
 
-export const calculateThemeMode: CalculateThemeMode = (themes, variant) => {
-  const callback = themeModeCb().toString()
-  const isModeCallback = (value) => value.toString() === callback
+export const getThemeByMode: GetThemeByMode = (object, mode) =>
+  Object.keys(object).reduce((acc, key) => {
+    const value = object[key]
 
-  const result = {}
-  Object.entries(themes).forEach(([key, value]) => {
     if (typeof value === 'object' && value !== null) {
-      result[key] = calculateThemeMode(value, variant)
-    } else if (typeof value === 'function' && isModeCallback(value)) {
-      result[key] = value(variant)
+      acc[key] = getThemeByMode(value, mode)
+    } else if (isModeCallback(value)) {
+      acc[key] = value(mode)
     } else {
-      result[key] = value
+      acc[key] = value
     }
-  })
 
-  return result
-}
+    return acc
+  }, {} as Record<string, any>)

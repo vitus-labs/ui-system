@@ -14,7 +14,7 @@ const styles: MakeItResponsiveStyles<
   ${extendCss(t.extraStyles)};
 `
 
-export default config.styled(config.component)`
+export default config.styled<any>(config.component)`
   ${
     __WEB__ &&
     config.css`

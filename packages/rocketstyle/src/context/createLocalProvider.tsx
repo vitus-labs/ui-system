@@ -1,9 +1,21 @@
-import React, { forwardRef, useMemo } from 'react'
+import React, {
+  forwardRef,
+  useMemo,
+  ComponentType,
+  ForwardRefExoticComponent,
+} from 'react'
 import { usePseudoState } from '~/hooks'
-import LocalContext from './localContext'
+import type { PseudoProps } from '~/types/pseudo'
+import { LocalProvider } from './localContext'
 
-const RocketStyleProviderComponent = (WrappedComponent) =>
-  forwardRef<any, any>(
+type Props = PseudoProps & Record<string, any>
+
+type HOC = (
+  WrappedComponent: ComponentType<Props>
+) => ForwardRefExoticComponent<Props>
+
+const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
+  forwardRef(
     (
       {
         onMouseEnter,
@@ -36,14 +48,14 @@ const RocketStyleProviderComponent = (WrappedComponent) =>
       )
 
       return (
-        <LocalContext.Provider value={updatedState}>
+        <LocalProvider value={updatedState}>
           <WrappedComponent
             {...props}
             {...pseudo.events}
             ref={ref}
             $rocketstate={updatedState}
           />
-        </LocalContext.Provider>
+        </LocalProvider>
       )
     }
   )

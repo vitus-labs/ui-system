@@ -3,7 +3,7 @@ import { throttle } from '@vitus-labs/core'
 
 export type UseWindowResize = (
   throttleDelay?: number,
-  defaultValues?: Partial<{
+  initialValues?: Partial<{
     width: number
     height: number
   }>
@@ -16,24 +16,24 @@ const useWindowResize: UseWindowResize = (
   throttleDelay = 200,
   { width = 0, height = 0 } = {}
 ) => {
-  const getSize = () => ({
-    width: __CLIENT__ ? window.innerWidth : width,
-    height: __CLIENT__ ? window.innerHeight : height,
-  })
-
-  const [windowSize, setWindowSize] = useState(getSize)
-
-  const handleResize = throttle(() => {
-    setWindowSize(getSize())
-  }, throttleDelay)
+  const [windowSize, setWindowSize] = useState({ width, height })
 
   useEffect(() => {
-    if (__SERVER__) return undefined
+    const getSize = () => ({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    })
+
+    setWindowSize(getSize())
+
+    const handleResize = throttle(() => {
+      setWindowSize(getSize())
+    }, throttleDelay)
 
     window.addEventListener('resize', handleResize, false)
 
     return () => window.removeEventListener('resize', handleResize, false)
-  }, []) // Empty array ensures that effect is only run on mount and unmount
+  }, [throttleDelay])
 
   return windowSize
 }

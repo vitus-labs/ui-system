@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ForwardRefRenderFunction, ReactNode } from 'react'
 import type { HTMLTagsText } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLForwardedComponent, ExtendCss } from '~/types'
@@ -12,19 +12,26 @@ export type Props = Partial<{
   extendCss: ExtendCss
 }>
 
+type RenderContent = (as?: any) => ReturnType<ForwardRefRenderFunction<Props>>
+
 const component: VLForwardedComponent<Props> & {
   isText?: true
 } = forwardRef(
   ({ paragraph, label, children, tag, extendCss, ...props }, ref) => {
-    type RenderContent = (as?: any) => any
     const renderContent: RenderContent = (as = undefined) => (
       <Styled ref={ref} as={as} $text={{ extraStyles: extendCss }} {...props}>
         {children || label}
       </Styled>
     )
 
-    // eslint-disable-next-line no-nested-ternary
-    const finalTag = __WEB__ ? (paragraph ? 'p' : tag) : undefined
+    let finalTag
+
+    if (__WEB__) {
+      if (paragraph) finalTag = 'p'
+      else {
+        finalTag = tag
+      }
+    }
 
     return renderContent(finalTag)
   }

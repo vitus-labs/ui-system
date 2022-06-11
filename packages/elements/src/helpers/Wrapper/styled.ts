@@ -1,27 +1,34 @@
 import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
+import type { ResponsiveStylesCallback } from '~/types'
 
-const childFix = config.css`
+const childFix = `
   display: flex;
   flex: 1;
   width: 100%;
   height: 100%;
 `
 
-const parentFix = config.css`
+const parentFix = `
   flex-direction: column;
+`
+
+const parentFixBlock = `
   width: 100%;
 `
 
-const fullHeight = config.css`
+const fullHeight = `
   height: 100%;
 `
 
-const block = config.css`
+const block = `
   align-self: stretch;
 `
 
-const styles = ({ theme: t, css }) => css`
+const childFixPosition = (isBlock?: boolean) =>
+  `display: ${isBlock ? 'flex' : 'inline-flex'};`
+
+const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
   ${__WEB__ && t.alignY === 'block' && fullHeight};
 
   ${alignContent({
@@ -32,25 +39,16 @@ const styles = ({ theme: t, css }) => css`
 
   ${t.block && block};
 
-  ${__WEB__ &&
-  css`
-    ${({ $childFix }) =>
-      !$childFix &&
-      css`
-        display: ${t.block ? 'flex' : 'inline-flex'};
-      `};
-
-    ${({ $parentFix }) => $parentFix && t.block && parentFix};
-  `};
+  ${__WEB__ && !t.childFix && childFixPosition(t.block)};
+  ${__WEB__ && t.parentFix && t.block && parentFixBlock};
+  ${__WEB__ && t.parentFix && parentFix};
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
-const platformStyles = __WEB__
-  ? config.css`box-sizing: border-box;`
-  : config.css`display: flex;`
+const platformStyles = __WEB__ ? `box-sizing: border-box;` : `display: flex;`
 
-export default config.styled(config.component)`
+export default config.styled<any>(config.component)`
   position: relative;
   ${platformStyles};
 

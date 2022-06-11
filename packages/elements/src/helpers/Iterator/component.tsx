@@ -1,7 +1,7 @@
-import React, { Children, FC, useCallback, useMemo } from 'react'
+import React, { Children, FC, ReactNode, useCallback, useMemo } from 'react'
 import { isFragment } from 'react-is'
 import { render, isEmpty } from '@vitus-labs/core'
-import type { Props, DataArrayObject, ExtendedProps } from './types'
+import type { Props, ObjectValue, ExtendedProps, SimpleValue } from './types'
 
 const RESERVED_PROPS = [
   'children',
@@ -46,7 +46,7 @@ type Static = {
   RESERVED_PROPS: typeof RESERVED_PROPS
 }
 
-const component: FC<Props> & Static = (props) => {
+const Component: FC<Props> & Static = (props) => {
   const {
     itemKey,
     valueName,
@@ -68,13 +68,16 @@ const component: FC<Props> & Static = (props) => {
     [wrapProps]
   )
 
-  const getKey = useCallback((item: string | number, index) => {
-    if (typeof itemKey === 'function') return itemKey(item, index)
+  const getKey = useCallback(
+    (item: string | number, index: number) => {
+      if (typeof itemKey === 'function') return itemKey(item, index)
 
-    return index
-  }, [])
+      return index
+    },
+    [itemKey]
+  )
 
-  const renderChild = (child, total = 1, i = 0) => {
+  const renderChild = (child: ReactNode, total = 1, i = 0) => {
     const extendedProps = attachItemProps({
       i,
       length: total,
@@ -117,7 +120,7 @@ const component: FC<Props> & Static = (props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren = children.props.children
+      const fragmentChildren: ReactNode[] = children.props.children
 
       return fragmentChildren.map((item, i) =>
         renderChild(item, fragmentChildren.length, i)
@@ -131,7 +134,7 @@ const component: FC<Props> & Static = (props) => {
   // --------------------------------------------------------
   // render array of strings or numbers
   // --------------------------------------------------------
-  const renderSimpleArray = (data) => {
+  const renderSimpleArray = (data: SimpleValue[]) => {
     const { length } = data
 
     // if the data array is empty
@@ -171,14 +174,14 @@ const component: FC<Props> & Static = (props) => {
   // --------------------------------------------------------
   // render array of objects
   // --------------------------------------------------------
-  const renderComplexArray = (data) => {
+  const renderComplexArray = (data: ObjectValue[]) => {
     const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects
     const { length } = renderData
 
     // if it's empty
     if (renderData.length === 0) return null
 
-    const getKey = (item: DataArrayObject, index) => {
+    const getKey = (item: ObjectValue, index: number) => {
       if (!itemKey) return item.key || item.id || item.itemId || index
       if (typeof itemKey === 'function') return itemKey(item, index)
       if (typeof itemKey === 'string') return item[itemKey]
@@ -187,7 +190,7 @@ const component: FC<Props> & Static = (props) => {
     }
 
     return renderData.map((item, i) => {
-      const { component: itemComponent, ...restItem } = item as DataArrayObject
+      const { component: itemComponent, ...restItem } = item as ObjectValue
       const renderItem = itemComponent || component
       const key = getKey(restItem, i)
       const extendedProps = attachItemProps({
@@ -237,11 +240,11 @@ const component: FC<Props> & Static = (props) => {
         (item) => typeof item === 'string' || typeof item === 'number'
       )
 
-      if (isSimpleArray) return renderSimpleArray(clearData)
+      if (isSimpleArray) return renderSimpleArray(clearData as SimpleValue[])
 
       const isComplexArray = clearData.every((item) => typeof item === 'object')
 
-      if (isComplexArray) return renderComplexArray(clearData)
+      if (isComplexArray) return renderComplexArray(clearData as ObjectValue[])
 
       return null
     }
@@ -256,7 +259,7 @@ const component: FC<Props> & Static = (props) => {
   return renderItems()
 }
 
-component.isIterator = true
-component.RESERVED_PROPS = RESERVED_PROPS
+Component.isIterator = true
+Component.RESERVED_PROPS = RESERVED_PROPS
 
-export default component
+export default Component

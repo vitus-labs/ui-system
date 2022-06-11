@@ -1,13 +1,11 @@
 import {
   useState,
   useCallback,
-  MouseEvent,
-  FocusEvent,
   SyntheticEvent,
+  MouseEventHandler,
+  FocusEventHandler,
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
-
-type State = Omit<PseudoState, 'active'>
 
 type UsePseudoState = ({
   onMouseEnter,
@@ -16,71 +14,81 @@ type UsePseudoState = ({
   onMouseUp,
   onFocus,
   onBlur,
-}: Partial<PseudoActions>) => { state: State; events: PseudoActions }
+}: Partial<PseudoActions>) => {
+  state: Omit<PseudoState, 'active'>
+  events: PseudoActions
+}
 
 const handleEvent = (e: SyntheticEvent) => {
   e.preventDefault()
   e.stopPropagation()
 }
 
-const usePseudoState: UsePseudoState = (props) => {
+const usePseudoState: UsePseudoState = ({
+  onBlur,
+  onFocus,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseUp,
+}) => {
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  const onMouseEnter = useCallback(
-    (e: MouseEvent) => {
+  const handleOnMouseEnter: MouseEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setHover(true)
-      if (props.onMouseEnter) props.onMouseEnter(e)
+      if (onMouseEnter) onMouseEnter(e)
     },
-    [props.onMouseEnter]
+    [onMouseEnter]
   )
 
-  const onMouseLeave = useCallback(
-    (e: MouseEvent) => {
+  const handleOnMouseLeave: MouseEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setHover(false)
       setPressed(false)
-      if (props.onMouseLeave) props.onMouseLeave(e)
+      if (onMouseLeave) onMouseLeave(e)
     },
-    [props.onMouseLeave]
+    [onMouseLeave]
   )
 
-  const onMouseDown = useCallback(
-    (e: MouseEvent) => {
+  const handleOnMouseDown: MouseEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setPressed(true)
-      if (props.onMouseDown) props.onMouseDown(e)
+      if (onMouseDown) onMouseDown(e)
     },
-    [props.onMouseDown]
+    [onMouseDown]
   )
 
-  const onMouseUp = useCallback(
-    (e: MouseEvent) => {
+  const handleOnMouseUp: MouseEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setPressed(false)
-      if (props.onMouseUp) props.onMouseUp(e)
+      if (onMouseUp) onMouseUp(e)
     },
-    [props.onMouseUp]
+    [onMouseUp]
   )
 
-  const onFocus = useCallback(
-    (e: FocusEvent) => {
+  const handleOnFocus: FocusEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setFocus(true)
-      if (props.onFocus) props.onFocus(e)
+      if (onFocus) onFocus(e)
     },
-    [props.onFocus]
+    [onFocus]
   )
 
-  const onBlur = useCallback(
-    (e: FocusEvent) => {
+  const handleOnBlur: FocusEventHandler = useCallback(
+    (e) => {
       handleEvent(e)
       setFocus(false)
-      if (props.onBlur) props.onBlur(e)
+      if (onBlur) onBlur(e)
     },
-    [props.onBlur]
+    [onBlur]
   )
 
   return {
@@ -90,12 +98,12 @@ const usePseudoState: UsePseudoState = (props) => {
       pressed,
     },
     events: {
-      onMouseEnter,
-      onMouseLeave,
-      onMouseDown,
-      onMouseUp,
-      onFocus,
-      onBlur,
+      onMouseEnter: handleOnMouseEnter,
+      onMouseLeave: handleOnMouseLeave,
+      onMouseDown: handleOnMouseDown,
+      onMouseUp: handleOnMouseUp,
+      onFocus: handleOnFocus,
+      onBlur: handleOnBlur,
     },
   }
 }

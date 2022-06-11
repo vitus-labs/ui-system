@@ -83,8 +83,8 @@ const component = forwardRef<Reference, Partial<Props>>(
     return (
       <Styled
         {...COMMON_PROPS}
-        $parentFix
         $element={{
+          parentFix: true,
           block,
           extraStyles: extendCss,
         }}
@@ -93,6 +93,7 @@ const component = forwardRef<Reference, Partial<Props>>(
           as={asTag}
           $childFix
           $element={{
+            childFix: true,
             direction,
             alignX,
             alignY,

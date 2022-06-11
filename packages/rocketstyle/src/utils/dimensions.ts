@@ -2,44 +2,46 @@ import { get, isEmpty, set } from '@vitus-labs/core'
 import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
-// is value milti key
+// Is value a valid key
 // --------------------------------------------------------
 type IsValidKey = (value: any) => boolean
 export const isValidKey: IsValidKey = (value) =>
   value !== undefined && value !== null && value !== false
 
 // --------------------------------------------------------
-// is value milti key
+// Is value a multi key
 // --------------------------------------------------------
-type IsMultiKey = (value: any) => [boolean, string]
+type IsMultiKey = (value: string | Record<string, unknown>) => [boolean, string]
 export const isMultiKey: IsMultiKey = (value) => {
-  if (typeof value === 'object') return [true, get(value, 'propName')]
+  if (typeof value === 'object' && value !== null)
+    return [true, get(value, 'propName') as string]
   return [false, value]
 }
 
 // --------------------------------------------------------
 // calculate dimensions map
 // --------------------------------------------------------
-type CalculateDimensionsMap = ({
+type GetDimensionsMap = <T extends Record<string, any>>({
   themes,
   useBooleans,
 }: {
-  themes: Record<string, any>
-  useBooleans: boolean
+  themes: T
+  useBooleans?: boolean
 }) => { keysMap: Record<string, any>; keywords: Record<string, any> }
 
-export const calculateDimensionsMap: CalculateDimensionsMap = ({
-  themes,
-  useBooleans,
-}) => {
-  const result = { keysMap: {}, keywords: {} }
+export const getDimensionsMap: GetDimensionsMap = ({ themes, useBooleans }) => {
+  const result = {
+    keysMap: {} as Record<string, any>,
+    keywords: {} as Record<string, any>,
+  }
+
   if (isEmpty(themes)) return result
 
   return Object.entries(themes).reduce((accumulator, [key, value]) => {
     const { keysMap, keywords } = accumulator
     keywords[key] = true
 
-    Object.entries(value as any).forEach(([itemKey, itemValue]) => {
+    Object.entries(value).forEach(([itemKey, itemValue]) => {
       if (!isValidKey(itemValue)) return
 
       if (useBooleans) {
@@ -94,4 +96,4 @@ export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
     }
 
     return accumulator
-  }, {})
+  }, {} as Record<string, any>)

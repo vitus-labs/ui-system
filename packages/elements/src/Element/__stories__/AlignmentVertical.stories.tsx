@@ -4,16 +4,15 @@ import { Wrapper, Inner } from './components'
 
 export default {
   component: Element,
-  title: Element.displayName,
 }
 
 export const verticalElement = () => (
   <>
-    <Wrapper vertical block beforeContent={Inner} afterContent={Inner}>
+    <Wrapper direction="rows" block beforeContent={Inner} afterContent={Inner}>
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -24,7 +23,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -35,7 +34,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -46,7 +45,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -57,7 +56,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -68,7 +67,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -79,7 +78,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -90,7 +89,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}
@@ -101,7 +100,7 @@ export const verticalElement = () => (
       <Inner />
     </Wrapper>
     <Wrapper
-      vertical
+      direction="rows"
       block
       beforeContent={Inner}
       afterContent={Inner}

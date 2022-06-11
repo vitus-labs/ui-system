@@ -1,44 +1,32 @@
 {
   "compilerOptions": {
-    "outDir": "./lib",
-    "module": "es2015",
-    "target": "es2015",
-    "lib": ["esnext", "dom"],
-    "sourceMap": true,
-    "allowJs": true,
-    "jsx": "react",
-    "resolveJsonModule": true,
-    "skipLibCheck": false,
-    "noEmit": true,
-    "moduleResolution": "node",
-    "rootDir": "src",
-    "baseUrl": "src",
-    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "@types/node"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
     "strict": true,
-    "strictPropertyInitialization": false,
-    "strictNullChecks": true,
-    "noFallthroughCasesInSwitch": true,
-    "importHelpers": true,
-    "stripInternal": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    // "declaration": true,
-    "allowSyntheticDefaultImports": true
+    "target": "es2017",
+    "lib": [
+      "es2017"
+    ],
+    "paths": {},
+    "noEmit": true,
+    "allowJs": true
   },
-  "exclude": [
-    "node_modules",
-    "lib",
-    "dist",
-    "build",
-    "scripts",
-    "tools",
-    "examples",
-    "src/**/*.test.*",
-    "src/**/test.*",
-    "src/**/__snapshots__/**/*"
+  "include": [
+    ".eslintrc.js",
+    "stylelint.config.js",
+    "vl-tools.config.js"
   ]
 }
