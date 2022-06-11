@@ -132,6 +132,13 @@ export const getThemeByMode: GetThemeByMode = (object, mode) =>
   Object.keys(object).reduce((acc, key) => {
     const value = object[key]
 
+    console.log('value', value)
+    console.log('mode', mode)
+    console.log(isModeCallback(value))
+    if (isModeCallback(value)) {
+      value(mode)
+    }
+
     if (typeof value === 'object' && value !== null) {
       acc[key] = getThemeByMode(value, mode)
     } else if (isModeCallback(value)) {
