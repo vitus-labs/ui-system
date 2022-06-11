@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/examples-web",
-  "version": "0.57.0-alpha.8",
+  "version": "0.60.0",
   "private": true,
   "description": "",
   "main": "index.js",
