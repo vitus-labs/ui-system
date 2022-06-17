@@ -1,5 +1,5 @@
 import rocketstyle, { Rocketstyle } from '~/init'
-import Provider, { context, TProvider } from '~/context'
+import Provider, { context, TProvider } from '~/context/context'
 import isRocketComponent, { IsRocketComponent } from '~/isRocketComponent'
 
 import type {

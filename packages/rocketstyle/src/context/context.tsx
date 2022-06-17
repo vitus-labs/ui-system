@@ -1,5 +1,6 @@
 import React, { useContext, ReactNode, FC, ComponentType } from 'react'
 import { Provider as CoreProvider, context } from '@vitus-labs/core'
+import { THEME_MODES_INVERSED, MODE_DEFAULT } from '~/constants'
 
 type Theme = {
   rootSize: number
@@ -15,24 +16,31 @@ export type TProvider = {
   provider?: ComponentType<any>
 }
 
-const Provider: FC<TProvider> = ({ provider = CoreProvider, ...props }) => {
+const Provider: FC<TProvider> = ({
+  provider = CoreProvider,
+  inversed,
+  ...props
+}) => {
   const ctx = useContext<TProvider>(context)
 
   const {
     theme,
     mode,
-    inversed,
     provider: RocketstyleProvider,
     children,
   } = { ...ctx, ...props, provider }
 
-  const isDark = inversed ? mode !== 'dark' : mode === 'dark'
+  let newMode = MODE_DEFAULT
+
+  if (mode) {
+    newMode = inversed ? THEME_MODES_INVERSED[mode] : mode
+  }
 
   return (
     <RocketstyleProvider
-      mode={mode}
-      isDark={isDark}
-      isLight={!isDark}
+      mode={newMode}
+      isDark={newMode === 'dark'}
+      isLight={newMode === 'light'}
       theme={theme}
       provider={provider}
     >

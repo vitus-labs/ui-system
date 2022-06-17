@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { context } from '~/context'
+import { context } from '~/context/context'
 import { THEME_MODES_INVERSED } from '~/constants'
 import { ThemeModeKeys } from '~/types/theme'
 
