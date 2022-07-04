@@ -1,5 +1,12 @@
 /* eslint-disable no-console */
-import { useRef, useState, useEffect, useContext, useCallback } from 'react'
+import {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useContext,
+  useCallback,
+} from 'react'
 import { throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import { useOverlayContext } from './context'
@@ -275,58 +282,78 @@ export default ({
     rootSize,
   ])
 
-  const handleVisibilityByEventType = (e: Event) => {
-    if (disabled) {
-      hideContent()
-    }
-
-    if (!active) {
-      if (
-        (openOn === 'hover' && e.type === 'mousemove') ||
-        (openOn === 'click' && e.type === 'click')
-      ) {
-        if (isTrigger(e)) {
-          showContent()
-        }
-      }
-    }
-
-    if (active) {
-      if (closeOn === 'hover' && e.type === 'mousemove') {
-        if (!isTrigger(e) && !isContent(e)) {
-          hideContent()
-        }
-      }
-
-      if (closeOn === 'hover' && e.type === 'scroll') {
+  const handleVisibilityByEventType = useCallback(
+    (e: Event) => {
+      if (blocked) return
+      if (disabled) {
         hideContent()
       }
 
-      if (closeOn === 'click' && e.type === 'click') {
-        hideContent()
-      }
-
-      if (closeOn === 'clickOnTrigger' && e.type === 'click') {
-        if (isTrigger(e)) {
-          hideContent()
+      if (!active) {
+        if (
+          (openOn === 'hover' && e.type === 'mousemove') ||
+          (openOn === 'click' && e.type === 'click')
+        ) {
+          if (isTrigger(e)) {
+            showContent()
+          }
         }
       }
 
-      if (closeOn === 'clickOutsideContent' && e.type === 'click') {
-        if (!isContent(e)) {
+      if (active) {
+        if (closeOn === 'hover' && e.type === 'mousemove') {
+          if (!isTrigger(e) && !isContent(e)) {
+            hideContent()
+          }
+        }
+
+        if (closeOn === 'hover' && e.type === 'scroll') {
           hideContent()
         }
-      }
-    }
-  }
 
-  const handleContentPosition = throttle(
-    calculateContentPosition,
-    throttleDelay
+        if (closeOn === 'click' && e.type === 'click') {
+          hideContent()
+        }
+
+        if (closeOn === 'clickOnTrigger' && e.type === 'click') {
+          if (isTrigger(e)) {
+            hideContent()
+          }
+        }
+
+        if (closeOn === 'clickOutsideContent' && e.type === 'click') {
+          if (!isContent(e)) {
+            hideContent()
+          }
+        }
+      }
+    },
+    [
+      active,
+      blocked,
+      closeOn,
+      disabled,
+      hideContent,
+      isContent,
+      isTrigger,
+      openOn,
+      showContent,
+    ]
   )
 
-  const handleClick = handleVisibilityByEventType
-  const handleVisibility = throttle(handleVisibilityByEventType, throttleDelay)
+  const handleContentPosition = useMemo(
+    () => throttle(calculateContentPosition, throttleDelay),
+    [calculateContentPosition, throttleDelay]
+  )
+
+  const observeClick = useCallback(handleVisibilityByEventType, [
+    handleVisibilityByEventType,
+  ])
+
+  const observeVisibility = useMemo(
+    () => throttle(handleVisibilityByEventType, throttleDelay),
+    [handleVisibilityByEventType, throttleDelay]
+  )
 
   const handleEscKey = useCallback(
     (e: KeyboardEvent) => {
@@ -338,29 +365,15 @@ export default ({
   )
 
   useEffect(() => {
-    handleActive(isOpen)
-  }, [isOpen])
-
-  useEffect(() => {
-    setInnerAlignX(alignX)
-  }, [alignX])
-
-  useEffect(() => {
-    setInnerAlignY(alignY)
-  }, [alignY])
-
-  useEffect(() => {
     if (disabled) {
       hideContent()
+      return
     }
-  }, [disabled, hideContent])
 
-  // calculate position on every position change state
-  useEffect(() => {
-    if (active) {
-      calculateContentPosition()
-    }
-  }, [active, calculateContentPosition])
+    handleActive(isOpen)
+    setInnerAlignX(alignX)
+    setInnerAlignY(alignY)
+  }, [disabled, isOpen, alignX, alignY, hideContent])
 
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
@@ -368,11 +381,12 @@ export default ({
     if (active) {
       if (onOpen) onOpen()
       if (ctx && ctx.setBlocked) ctx.setBlocked()
+      calculateContentPosition()
     } else {
       if (onClose) onClose()
       if (ctx && ctx.setUnblocked) ctx.setUnblocked()
     }
-  }, [active, onOpen, onClose, ctx])
+  }, [active, onOpen, onClose, ctx, calculateContentPosition])
 
   // handles calculating correct position of content
   // on document events (or custom scroll if set)
@@ -447,10 +461,10 @@ export default ({
   useEffect(() => {
     if (!active || blocked) return undefined
 
-    document.addEventListener('scroll', handleVisibility, false)
+    document.addEventListener('scroll', observeVisibility, false)
 
     if (customScrollListener) {
-      customScrollListener.addEventListener('scroll', handleVisibility, false)
+      customScrollListener.addEventListener('scroll', observeVisibility, false)
     }
 
     if (closeOnEsc) {
@@ -458,12 +472,12 @@ export default ({
     }
 
     return () => {
-      document.removeEventListener('scroll', handleVisibility, false)
+      document.removeEventListener('scroll', observeVisibility, false)
 
       if (customScrollListener) {
         customScrollListener.removeEventListener(
           'scroll',
-          handleVisibility,
+          observeVisibility,
           false
         )
       }
@@ -477,7 +491,7 @@ export default ({
     blocked,
     customScrollListener,
     closeOnEsc,
-    handleVisibility,
+    observeVisibility,
     handleEscKey,
   ])
 
@@ -492,16 +506,16 @@ export default ({
       closeOn === 'clickOnTrigger' ||
       closeOn === 'clickOutsideContent'
     ) {
-      document.addEventListener('click', handleClick, false)
+      document.addEventListener('click', observeClick, false)
     }
 
     if (openOn === 'hover' || closeOn === 'hover') {
-      document.addEventListener('mousemove', handleVisibility, false)
+      document.addEventListener('mousemove', observeVisibility, false)
     }
 
     return () => {
-      document.removeEventListener('click', handleClick, false)
-      document.removeEventListener('mousemove', handleVisibility, false)
+      document.removeEventListener('click', observeClick, false)
+      document.removeEventListener('mousemove', observeVisibility, false)
     }
   }, [
     openOn,
@@ -509,8 +523,8 @@ export default ({
     blocked,
     disabled,
     active,
-    handleClick,
-    handleVisibility,
+    observeClick,
+    observeVisibility,
   ])
 
   return {
