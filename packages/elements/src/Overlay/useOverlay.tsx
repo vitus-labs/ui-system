@@ -254,16 +254,18 @@ export default ({
       }
     }
 
-    const calc = (param?: string | number) => value(param, rootSize) as string
+    const setValue = (param?: string | number) =>
+      value(param, rootSize) as string
 
     // ADD POSITION STYLES TO CONTENT
     contentRef.current.style.position = position
-    contentRef.current.style.top = calc(overlayPosition.top)
-    contentRef.current.style.bottom = calc(overlayPosition.bottom)
-    contentRef.current.style.left = calc(overlayPosition.left)
-    contentRef.current.style.right = calc(overlayPosition.right)
+    contentRef.current.style.top = setValue(overlayPosition.top)
+    contentRef.current.style.bottom = setValue(overlayPosition.bottom)
+    contentRef.current.style.left = setValue(overlayPosition.left)
+    contentRef.current.style.right = setValue(overlayPosition.right)
   }, [
     active,
+    type,
     align,
     alignX,
     alignY,
@@ -271,10 +273,13 @@ export default ({
     offsetY,
     position,
     rootSize,
-    type,
   ])
 
   const handleVisibilityByEventType = (e: Event) => {
+    if (disabled) {
+      hideContent()
+    }
+
     if (!active) {
       if (
         (openOn === 'hover' && e.type === 'mousemove') ||
@@ -314,6 +319,7 @@ export default ({
       }
     }
   }
+
   const handleContentPosition = throttle(
     calculateContentPosition,
     throttleDelay
@@ -332,6 +338,18 @@ export default ({
   )
 
   useEffect(() => {
+    handleActive(isOpen)
+  }, [isOpen])
+
+  useEffect(() => {
+    setInnerAlignX(alignX)
+  }, [alignX])
+
+  useEffect(() => {
+    setInnerAlignY(alignY)
+  }, [alignY])
+
+  useEffect(() => {
     if (disabled) {
       hideContent()
     }
@@ -340,12 +358,9 @@ export default ({
   // calculate position on every position change state
   useEffect(() => {
     if (active) {
-      // hack-ish way to correctly calculate position for the first time
-      // without calling it twice the posittion is somehow wrong
-      calculateContentPosition()
       calculateContentPosition()
     }
-  }, [active, align, alignX, alignX, calculateContentPosition])
+  }, [active, calculateContentPosition])
 
   // if an Overlay has an Overlay child, this will prevent closing parent child
   // + calculate correct position when an Overlay is opened
@@ -392,24 +407,26 @@ export default ({
   // make sure scrolling is blocked in case of modal windows or when
   // customScroll is set
   useEffect(() => {
-    const shouldSetOverflow = __BROWSER__ && type === 'modal' && document.body
+    const shouldSetDocumentOverflow =
+      __BROWSER__ && type === 'modal' && !!document.body
+    const shouldSetCustomScrollOverflow = __BROWSER__ && !!customScrollListener
 
     if (active) {
-      if (customScrollListener && closeOn !== 'hover') {
+      if (shouldSetCustomScrollOverflow && closeOn !== 'hover') {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = 'hidden'
       }
 
-      if (shouldSetOverflow) {
+      if (shouldSetDocumentOverflow) {
         document.body.style.overflow = 'hidden'
       }
     } else {
-      if (customScrollListener) {
+      if (shouldSetCustomScrollOverflow) {
         // eslint-disable-next-line no-param-reassign
         customScrollListener.style.overflow = ''
       }
 
-      if (shouldSetOverflow) {
+      if (shouldSetDocumentOverflow) {
         document.body.style.overflow = ''
       }
     }
@@ -420,7 +437,7 @@ export default ({
         customScrollListener.style.overflow = ''
       }
 
-      if (shouldSetOverflow) {
+      if (shouldSetDocumentOverflow) {
         document.body.style.overflow = ''
       }
     }
@@ -428,7 +445,7 @@ export default ({
 
   // only when content is active handle closing
   useEffect(() => {
-    if (!active) return undefined
+    if (!active && blocked) return undefined
 
     document.addEventListener('scroll', handleVisibility, false)
 
@@ -455,11 +472,18 @@ export default ({
         document.removeEventListener('keydown', handleEscKey, false)
       }
     }
-  }, [active, customScrollListener, closeOnEsc, handleVisibility, handleEscKey])
+  }, [
+    active,
+    blocked,
+    customScrollListener,
+    closeOnEsc,
+    handleVisibility,
+    handleEscKey,
+  ])
 
   useEffect(() => {
     // enable overlay manipulation only when the state is NOT blocked=true
-    // nor in disabled state
+    // nor in disabled=true state
     if (blocked || disabled) return undefined
 
     if (
