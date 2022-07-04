@@ -445,7 +445,7 @@ export default ({
 
   // only when content is active handle closing
   useEffect(() => {
-    if (!active && blocked) return undefined
+    if (!active || blocked) return undefined
 
     document.addEventListener('scroll', handleVisibility, false)
 
