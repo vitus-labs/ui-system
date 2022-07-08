@@ -388,6 +388,7 @@ export default ({
   useEffect(() => {
     if (isContentLoaded) {
       setContentPosition()
+      setContentPosition()
     }
   }, [isContentLoaded])
 
