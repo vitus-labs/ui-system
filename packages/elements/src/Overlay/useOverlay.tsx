@@ -59,6 +59,7 @@ export default ({
 }: UseOverlayProps) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
+  const [isContentLoaded, setContentLoaded] = useState(false)
 
   const [innerAlignX, setInnerAlignX] = useState(alignX)
   const [innerAlignY, setInnerAlignY] = useState(alignY)
@@ -377,12 +378,18 @@ export default ({
       if (onOpen) onOpen()
       if (ctx.setBlocked) ctx.setBlocked()
       showContent()
-      // setContentPosition()
     } else {
+      setContentLoaded(false)
       if (onClose) onClose()
       if (ctx.setUnblocked) ctx.setUnblocked()
     }
   }, [active, onOpen, onClose, ctx.setBlocked, ctx.setUnblocked])
+
+  useEffect(() => {
+    if (isContentLoaded) {
+      setContentPosition()
+    }
+  }, [isContentLoaded])
 
   // handles repositioning of content on document events
   useEffect(() => {
@@ -470,7 +477,7 @@ export default ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (node) contentRef.current = node
-    setContentPosition()
+    setContentLoaded(true)
   }
 
   return {
