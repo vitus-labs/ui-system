@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/coolgrid",
-  "version": "0.62.0-alpha.3",
+  "version": "0.62.0-alpha.4",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -54,11 +54,11 @@
     "react": ">= 16.8"
   },
   "devDependencies": {
-    "@vitus-labs/core": "^0.62.0-alpha.3",
+    "@vitus-labs/core": "^0.62.0-alpha.4",
     "@vitus-labs/tools-babel": "^0.33.0",
     "@vitus-labs/tools-rollup": "^0.33.0",
     "@vitus-labs/tools-storybook": "^0.33.0",
     "@vitus-labs/tools-typescript": "^0.33.0",
-    "@vitus-labs/unistyle": "^0.62.0-alpha.3"
+    "@vitus-labs/unistyle": "^0.62.0-alpha.4"
   }
 }
