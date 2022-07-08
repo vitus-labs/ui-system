@@ -4,7 +4,6 @@ import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { VLComponent, Content } from '~/types'
 import useOverlay, { UseOverlayProps } from './useOverlay'
-import Provider from './context'
 
 type Align = 'bottom' | 'top' | 'left' | 'bottom' | 'right'
 type AlignX = 'left' | 'center' | 'right'
@@ -54,6 +53,7 @@ const Component: VLComponent<Props> = ({
     align,
     alignX,
     alignY,
+    Provider,
     ...ctx
   } = useOverlay(props)
 
@@ -76,7 +76,7 @@ const Component: VLComponent<Props> = ({
       })}
 
       {__BROWSER__ && active && (
-        <Portal position={DOMLocation}>
+        <Portal DOMLocation={DOMLocation}>
           <Provider {...ctx}>
             {render(children, {
               [contentRefName]: contentRef,
