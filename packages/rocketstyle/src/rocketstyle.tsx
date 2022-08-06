@@ -324,14 +324,14 @@ const rocketComponent: RocketComponent = (options) => {
   // ------------------------------------------------------
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
-  RocketComponent.is = {}
+  RocketComponent.meta = {}
   // ------------------------------------------------------
 
   // ------------------------------------------------------
   // enhance for statics
   // ------------------------------------------------------
   createStaticsEnhancers({
-    context: RocketComponent.is,
+    context: RocketComponent.meta,
     options: options.statics,
   })
 
