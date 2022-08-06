@@ -16,7 +16,7 @@ type PickStyledAttrs = <
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
   Object.keys(props).reduce((acc, key) => {
-    if (keywords[key]) acc[key] = props[key]
+    if (keywords[key] && props[key]) acc[key] = props[key]
     return acc
   }, {} as any)
 

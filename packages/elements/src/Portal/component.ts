@@ -1,34 +1,36 @@
-import { useState, useEffect, ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
 export type Props = {
-  position?: HTMLElement
+  DOMLocation?: HTMLElement
   children: ReactNode
   tag?: string
 }
 
 const Component: VLComponent<Props> = ({
-  position = __BROWSER__ ? document.body : undefined,
+  DOMLocation,
   tag = 'div',
   children,
 }: Props) => {
-  const [element] = useState(
-    __BROWSER__ ? document.createElement(tag) : undefined
-  )
+  const [element, setElement] = useState<HTMLElement>()
 
   useEffect(() => {
-    if (__SERVER__ || !position || !element) return undefined
+    if (!tag) return undefined
+
+    const position = DOMLocation || document.body
+    const element = document.createElement(tag)
+    setElement(element)
 
     position.appendChild(element)
 
     return () => {
       position.removeChild(element)
     }
-  }, [element, position])
+  }, [tag, DOMLocation])
 
-  if (!position || !element) return null
+  if (!tag || !element) return null
 
   return createPortal(children, element)
 }

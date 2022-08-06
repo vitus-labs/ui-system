@@ -360,10 +360,10 @@ export interface IRocketStyleComponent<
    * })
    *
    * // staticValue = true
-   * const staticValue = element.is.isNewStatic
+   * const staticValue = element.meta.isNewStatic
    * ```
    */
-  is: S
+  meta: S
 
   getStaticDimensions: (theme: TObj) => {
     dimensions: DKP
@@ -401,7 +401,7 @@ export interface IRocketStyleComponent<
    *
    * ```
    */
-  readonly $$originProps: OA
+  readonly $$originTypes: OA
   /**
    * Accessible via types only!
    *
@@ -418,7 +418,7 @@ export interface IRocketStyleComponent<
    *
    * ```
    */
-  readonly $$extendedProps: EA
+  readonly $$extendedTypes: EA
   /**
    * Accessible via types only!
    *
@@ -434,7 +434,7 @@ export interface IRocketStyleComponent<
    *
    * ```
    */
-  readonly $$allProps: DFP
+  readonly $$types: DFP
   /**
    * Static Rocketstyle component identificator
    */
