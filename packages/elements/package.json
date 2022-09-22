@@ -64,6 +64,6 @@
     "@vitus-labs/unistyle": "^0.62.0"
   },
   "dependencies": {
-    "react-is": "^18.1.0"
+    "react-is": "^18.2.0"
   }
 }
