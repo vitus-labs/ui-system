@@ -35,8 +35,29 @@ export type Configuration<
   styled?: boolean
 
   // array chaining options
-  attrs: Array<OptionFunc>
-  theme: Array<OptionFunc>
+  attrs: OptionFunc[]
+  priorityAttrs: OptionFunc[]
+  theme: OptionFunc[]
+  styles: StylesCbArray
+  compose: Record<string, TFn | null | undefined | false>
+  statics: Record<string, any>
+} & Record<string, any>
+
+export type ExtendedConfiguration<
+  C = ElementType | unknown,
+  D extends Dimensions = Dimensions
+> = InitConfiguration<C, D> & {
+  provider?: boolean
+  consumer?: ConsumerCb<D>
+  DEBUG?: boolean
+  inversed?: boolean
+  passProps?: Array<string>
+  styled?: boolean
+
+  // array chaining options
+  attrs: OptionFunc
+  priorityAttrs: OptionFunc
+  theme: OptionFunc
   styles: StylesCbArray
   compose: Record<string, TFn | null | undefined | false>
   statics: Record<string, any>

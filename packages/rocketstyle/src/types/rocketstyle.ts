@@ -199,7 +199,8 @@ export interface IRocketStyleComponent<
   attrs: <P extends TObj | unknown = unknown>(
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>
-      : Partial<DFP> | AttrsCb<DFP, Theme<T>>
+      : Partial<DFP> | AttrsCb<DFP, Theme<T>>,
+    config?: Partial<{ priority: boolean }>
   ) => P extends TObj
     ? RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
@@ -340,7 +341,7 @@ export interface IRocketStyleComponent<
    * const newElement = base.statics({ isNewStatic: undefined })
    * ```
    */
-  statics: <P extends TObj>(
+  statics: <P extends TObj | unknown = unknown>(
     param: P
   ) => P extends TObj
     ? RocketStyleComponent<OA, EA, T, CSS, MergeTypes<[S, P]>, HOC, D, UB, DKP>

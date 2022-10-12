@@ -19,7 +19,11 @@ import {
   getTheme,
   getThemeByMode,
 } from '~/utils/theme'
-import { chainOrOptions, chainReservedKeyOptions } from '~/utils/chaining'
+import {
+  chainOptions,
+  chainOrOptions,
+  chainReservedKeyOptions,
+} from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
 import { calculateStyles } from '~/utils/styles'
 import { getDimensionsMap } from '~/utils/dimensions'
@@ -30,7 +34,10 @@ import {
 } from '~/utils/attrs'
 import type { RocketStyleComponent, ExoticComponent } from '~/types/rocketstyle'
 import type { RocketComponent } from '~/types/rocketComponent'
-import type { Configuration } from '~/types/configuration'
+import type {
+  Configuration,
+  ExtendedConfiguration,
+} from '~/types/configuration'
 
 // --------------------------------------------------------
 // cloneAndEnhance
@@ -39,14 +46,16 @@ import type { Configuration } from '~/types/configuration'
 // assigned
 // --------------------------------------------------------
 type CloneAndEnhance = (
-  opts: Partial<Configuration>,
-  defaultOpts: Configuration
+  defaultOpts: Configuration,
+  opts: Partial<ExtendedConfiguration>
 ) => ReturnType<typeof rocketComponent>
 
-const cloneAndEnhance: CloneAndEnhance = (opts, defaultOpts) =>
+const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
   // @ts-ignore
   rocketComponent({
     ...defaultOpts,
+    attrs: chainOptions(opts.attrs, defaultOpts.attrs),
+    priorityAttrs: chainOptions(opts.priorityAttrs, defaultOpts.priorityAttrs),
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
     ...chainOrOptions(CONFIG_KEYS, opts, defaultOpts),
@@ -336,14 +345,29 @@ const rocketComponent: RocketComponent = (options) => {
   })
 
   // @ts-ignore
-  RocketComponent.config = (opts = {}) => {
-    const result = pick(opts, CONFIG_KEYS)
+  RocketComponent.attrs = (attrs, { priority } = {}) => {
+    if (priority) {
+      return cloneAndEnhance(options, {
+        priorityAttrs: attrs as ExtendedConfiguration['attrs'],
+      })
+    }
 
-    return cloneAndEnhance(result, options)
+    return cloneAndEnhance(options, {
+      attrs: attrs as ExtendedConfiguration['attrs'],
+    })
   }
 
+  // @ts-ignore
+  RocketComponent.config = (opts = {}) => {
+    const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
+
+    return cloneAndEnhance(options, result)
+  }
+
+  // @ts-ignore
   RocketComponent.statics = (opts) =>
-    cloneAndEnhance({ statics: opts }, options) as any
+    // @ts-ignore
+    cloneAndEnhance(options, { statics: opts })
 
   RocketComponent.getStaticDimensions = (theme) => {
     const themes = getDimensionThemes(theme, options)

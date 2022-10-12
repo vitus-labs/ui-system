@@ -7,23 +7,24 @@ import React, {
 import { render } from '@vitus-labs/core'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import { useTheme } from '~/hooks'
-import type { OptionFunc } from '~/types/configuration'
+import type { Configuration } from '~/types/configuration'
 
 export type RocketStyleHOC = ({
   inversed,
   attrs,
-}: {
-  inversed?: boolean
-  attrs?: Array<OptionFunc>
-}) => (WrappedComponent: ComponentType<any>) => ForwardRefExoticComponent<any>
+  priorityAttrs,
+}: Pick<Configuration, 'inversed' | 'attrs' | 'priorityAttrs'>) => (
+  WrappedComponent: ComponentType<any>
+) => ForwardRefExoticComponent<any>
 
-const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
+const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
   // --------------------------------------------------
   // .attrs(...)
   // first we need to calculate final props which are
   // being returned by using `attr` chaining method
   // --------------------------------------------------
-  const _calculateChainOptions = calculateChainOptions(attrs)
+  const calculateAttrs = calculateChainOptions(attrs)
+  const calculatePriorityAttrs = calculateChainOptions(priorityAttrs)
 
   const Enhanced = (WrappedComponent: ComponentType<any>) =>
     forwardRef<any, any>((props, ref) => {
@@ -31,27 +32,31 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
         inversed,
       })
 
+      const callbackParams = [theme, { render, mode, isDark, isLight }]
+
       // --------------------------------------------------
       // remove undefined props not to override potential default props
       // only props with value (e.g. `null`) should override default props
       // --------------------------------------------------
       const filteredProps = removeUndefinedProps(props)
 
-      const calculatedAttrs = _calculateChainOptions([
+      const priorityAttrs = calculatePriorityAttrs([
         filteredProps,
-        theme,
+        ...callbackParams,
+      ])
+
+      const finalAttrs = calculateAttrs([
         {
-          render,
-          mode,
-          isDark,
-          isLight,
+          ...priorityAttrs,
+          ...filteredProps,
         },
+        ...callbackParams,
       ])
 
       return (
         <WrappedComponent
           $rocketstyleRef={ref}
-          {...calculatedAttrs}
+          {...finalAttrs}
           {...filteredProps}
         />
       )

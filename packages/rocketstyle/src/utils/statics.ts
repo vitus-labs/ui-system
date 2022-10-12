@@ -10,7 +10,7 @@ type CreateStaticsChainingEnhancers = <
 >(props: {
   context: Record<string, any>
   dimensionKeys: DK
-  func: (param: any, param2: O) => void
+  func: (defaultOpts: O, opts: any) => void
   options: O
 }) => void
 
@@ -24,7 +24,7 @@ export const createStaticsChainingEnhancers: CreateStaticsChainingEnhancers = ({
 
   keys.forEach((item) => {
     // eslint-disable-next-line no-param-reassign
-    context[item] = (props: any) => func({ [item]: props }, options)
+    context[item] = (props: any) => func(options, { [item]: props })
   })
 }
 
