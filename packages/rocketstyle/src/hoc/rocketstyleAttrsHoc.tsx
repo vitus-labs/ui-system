@@ -5,7 +5,7 @@ import React, {
   ComponentType,
 } from 'react'
 import { render } from '@vitus-labs/core'
-import { calculateChainOptions } from '~/utils/attrs'
+import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import { useTheme } from '~/hooks'
 import type { OptionFunc } from '~/types/configuration'
 
@@ -31,8 +31,14 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
         inversed,
       })
 
+      // --------------------------------------------------
+      // remove undefined props not to override potential default props
+      // only props with value (e.g. `null`) should override default props
+      // --------------------------------------------------
+      const filteredProps = removeUndefinedProps(props)
+
       const calculatedAttrs = _calculateChainOptions([
-        props,
+        filteredProps,
         theme,
         {
           render,
@@ -46,7 +52,7 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs }) => {
         <WrappedComponent
           $rocketstyleRef={ref}
           {...calculatedAttrs}
-          {...props}
+          {...filteredProps}
         />
       )
     })

@@ -3,6 +3,20 @@ import { isEmpty } from '@vitus-labs/core'
 import { MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
+// remove undefined props
+// --------------------------------------------------------
+type RemoveUndefinedProps = <T extends Record<string, any>>(
+  props: T
+) => Partial<T>
+
+export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
+  Object.keys(props).reduce((acc, key) => {
+    const currentValue = props[key]
+    if (currentValue !== undefined) return { ...acc, [key]: currentValue }
+    return acc
+  }, {})
+
+// --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
 type PickStyledAttrs = <
