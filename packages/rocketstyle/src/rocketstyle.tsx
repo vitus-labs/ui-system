@@ -78,7 +78,6 @@ const rocketComponent: RocketComponent = (options) => {
   const { component, styles } = options
   const { styled } = config
 
-  // const _calculateChainOptions = calculateChainOptions(options.attrs)
   const _calculateStylingAttrs = calculateStylingAttrs({
     multiKeys: options.multiKeys,
     useBooleans: options.useBooleans,

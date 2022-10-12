@@ -40,14 +40,14 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
       // --------------------------------------------------
       const filteredProps = removeUndefinedProps(props)
 
-      const priorityAttrs = calculatePriorityAttrs([
+      const prioritizedAttrs = calculatePriorityAttrs([
         filteredProps,
         ...callbackParams,
       ])
 
       const finalAttrs = calculateAttrs([
         {
-          ...priorityAttrs,
+          ...prioritizedAttrs,
           ...filteredProps,
         },
         ...callbackParams,
@@ -56,6 +56,7 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
       return (
         <WrappedComponent
           $rocketstyleRef={ref}
+          {...prioritizedAttrs}
           {...finalAttrs}
           {...filteredProps}
         />
