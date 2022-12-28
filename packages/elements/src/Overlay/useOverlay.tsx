@@ -362,35 +362,6 @@ export default ({
   // --------------------------------------------------------------------------
   // useEffects
   // --------------------------------------------------------------------------
-  useEffect(() => {
-    setInnerAlignX(alignX)
-    setInnerAlignY(alignY)
-
-    if (disabled) {
-      hideContent()
-    }
-  }, [disabled, alignX, alignY])
-
-  // if an Overlay has an Overlay child, this will prevent closing parent child
-  // and calculates correct position when an Overlay is opened
-  useEffect(() => {
-    if (active) {
-      if (onOpen) onOpen()
-      if (ctx.setBlocked) ctx.setBlocked()
-      showContent()
-    } else {
-      setContentLoaded(false)
-      if (onClose) onClose()
-      if (ctx.setUnblocked) ctx.setUnblocked()
-    }
-  }, [active, onOpen, onClose, ctx.setBlocked, ctx.setUnblocked])
-
-  useEffect(() => {
-    if (isContentLoaded) {
-      setContentPosition()
-      setContentPosition()
-    }
-  }, [isContentLoaded])
 
   // handles repositioning of content on document events
   useEffect(() => {
@@ -432,17 +403,6 @@ export default ({
     }
   }, [active, parentContainer, closeOn])
 
-  // only when content is active handle closing
-  useEffect(() => {
-    if (!closeOnEsc || !active || blocked) return undefined
-
-    window.addEventListener('keydown', handleEscKey, false)
-
-    return () => {
-      window.removeEventListener('keydown', handleEscKey, false)
-    }
-  }, [active, blocked, closeOnEsc])
-
   // enable overlay manipulation only when the state is NOT blocked
   // nor in disabled state
   useEffect(() => {
@@ -462,17 +422,53 @@ export default ({
     }
 
     return () => {
-      if (enabledClick) {
-        window.removeEventListener('click', handleClick, false)
-      }
-
-      if (enabledMouseMove) {
-        window.removeEventListener('mousemove', handleVisibility, false)
-      }
+      window.removeEventListener('click', handleClick, false)
+      window.removeEventListener('mousemove', handleVisibility, false)
     }
   }, [openOn, closeOn, blocked, disabled, active])
 
-  // hask-ish way to load contet correctly on the first load
+  // handle closing only when content is active
+  useEffect(() => {
+    if (!closeOnEsc || !active || blocked) return undefined
+
+    window.addEventListener('keydown', handleEscKey, false)
+
+    return () => {
+      window.removeEventListener('keydown', handleEscKey, false)
+    }
+  }, [active, blocked, closeOnEsc])
+
+  // if an Overlay has an Overlay child, this will prevent closing parent child
+  // and calculates correct position when an Overlay is opened
+  useEffect(() => {
+    if (active) {
+      if (onOpen) onOpen()
+      if (ctx.setBlocked) ctx.setBlocked()
+      showContent()
+    } else {
+      setContentLoaded(false)
+      if (onClose) onClose()
+      if (ctx.setUnblocked) ctx.setUnblocked()
+    }
+  }, [active, onOpen, onClose, ctx.setBlocked, ctx.setUnblocked])
+
+  useEffect(() => {
+    if (isContentLoaded) {
+      setContentPosition()
+      setContentPosition()
+    }
+  }, [isContentLoaded])
+
+  useEffect(() => {
+    setInnerAlignX(alignX)
+    setInnerAlignY(alignY)
+
+    if (disabled) {
+      hideContent()
+    }
+  }, [disabled, alignX, alignY])
+
+  // hack-ish way to load contet correctly on the first load
   // as `contentRef` is loaded dynamically
   const contentRefCallback = (node: HTMLElement) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

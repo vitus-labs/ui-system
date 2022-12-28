@@ -1,4 +1,4 @@
-import React, { FC, createContext, useContext, ReactNode } from 'react'
+import React, { FC, createContext, useContext, ReactNode, useMemo } from 'react'
 
 type Context = {
   blocked: boolean
@@ -17,8 +17,17 @@ const component: FC<Context & { children: ReactNode }> = ({
   blocked,
   setBlocked,
   setUnblocked,
-}) => (
-  <Provider value={{ blocked, setBlocked, setUnblocked }}>{children}</Provider>
-)
+}) => {
+  const ctx = useMemo(
+    () => ({
+      blocked,
+      setBlocked,
+      setUnblocked,
+    }),
+    [blocked, setBlocked, setUnblocked]
+  )
+
+  return <Provider value={ctx}>{children}</Provider>
+}
 
 export default component
