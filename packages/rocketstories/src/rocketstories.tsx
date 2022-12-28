@@ -31,8 +31,9 @@ const cloneAndEhnance = (
     ],
   }
 
-  const finalName: string =
-    result.name || result.component.displayName || get(result.component, 'name')
+  const finalName = (result.name ||
+    result.component.displayName ||
+    get(result.component, 'name')) as string
 
   const finalStoryName = result.prefix
     ? `${result.prefix}/${finalName}`
