@@ -34,21 +34,21 @@
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "devDependencies": {
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.10",
     "@types/react-is": "^17.0.3",
     "@types/styled-components": "^5.1.26",
-    "@vitus-labs/tools-lint": "^0.33.0",
+    "@vitus-labs/tools-lint": "^0.34.0",
     "coveralls": "^3.1.1",
     "cpr": "^3.0.1",
     "lerna": "^4.0.0",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.1",
     "react": "^18.2.0",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^18.2.0",
     "react-icons-kit": "^2.0.0",
     "styled-components": "^5.3.6",
-    "typescript": "4.7.4"
+    "typescript": "<4.8"
   },
   "packageManager": "yarn@3.2.0"
 }
