@@ -12,7 +12,7 @@ const { Provider } = context
 
 export const useOverlayContext = () => useContext(context)
 
-const component: FC<Context & { children: ReactNode }> = ({
+const Component: FC<Context & { children: ReactNode }> = ({
   children,
   blocked,
   setBlocked,
@@ -30,4 +30,4 @@ const component: FC<Context & { children: ReactNode }> = ({
   return <Provider value={ctx}>{children}</Provider>
 }
 
-export default component
+export default Component
