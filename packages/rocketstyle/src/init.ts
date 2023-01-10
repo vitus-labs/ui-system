@@ -1,6 +1,4 @@
 // @ts-nocheck
-/* eslint-disable @typescript-eslint/ban-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import { isEmpty } from '@vitus-labs/core'
 import rocketComponent from '~/rocketstyle'
 import {

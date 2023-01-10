@@ -1,18 +1,18 @@
 import { value } from '~/units'
-import { Value } from '~/types'
+import { PropertyValue } from '~/types'
 
 const isValidValue = (value) => !!value || value === 0
 
 export type SpacingShorthand = (
   property: 'padding' | 'margin'
 ) => (props: {
-  top: Value | null | undefined
-  left: Value | null | undefined
-  right: Value | null | undefined
-  bottom: Value | null | undefined
-  x: Value | null | undefined
-  y: Value | null | undefined
-  full: Value | null | undefined
+  top: PropertyValue | null | undefined
+  left: PropertyValue | null | undefined
+  right: PropertyValue | null | undefined
+  bottom: PropertyValue | null | undefined
+  x: PropertyValue | null | undefined
+  y: PropertyValue | null | undefined
+  full: PropertyValue | null | undefined
 }) => string
 
 // eslint-disable-next-line import/prefer-default-export

@@ -9,7 +9,7 @@
   "main": "lib/vitus-labs-rocketstyle.js",
   "module": "lib/vitus-labs-rocketstyle.module.js",
   "react-native": "lib/vitus-labs-rocketstyle.module.js",
-  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -65,10 +65,10 @@
     "@emotion/styled": "^11.10.5",
     "@vitus-labs/core": "^0.66.0",
     "@vitus-labs/elements": "^0.66.0",
-    "@vitus-labs/tools-babel": "^0.37.0",
-    "@vitus-labs/tools-rollup": "^0.37.0",
-    "@vitus-labs/tools-storybook": "^0.37.0",
-    "@vitus-labs/tools-typescript": "^0.37.0",
+    "@vitus-labs/tools-babel": "^0.38.0",
+    "@vitus-labs/tools-rollup": "^0.38.0",
+    "@vitus-labs/tools-storybook": "^0.38.0",
+    "@vitus-labs/tools-typescript": "^0.38.0",
     "@vitus-labs/unistyle": "^0.66.0"
   }
 }

@@ -9,7 +9,7 @@
   "main": "lib/vitus-labs-core.js",
   "module": "lib/vitus-labs-core.module.js",
   "react-native": "lib/vitus-labs-core.module.js",
-  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -53,9 +53,9 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",
-    "@vitus-labs/tools-babel": "^0.37.0",
-    "@vitus-labs/tools-rollup": "^0.37.0",
-    "@vitus-labs/tools-typescript": "^0.37.0",
+    "@vitus-labs/tools-babel": "^0.38.0",
+    "@vitus-labs/tools-rollup": "^0.38.0",
+    "@vitus-labs/tools-typescript": "^0.38.0",
     "styled-components": "^5.3.6"
   }
 }

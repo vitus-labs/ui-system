@@ -8,7 +8,7 @@
   ],
   "main": "lib/vitus-labs-rocketstories.js",
   "module": "lib/vitus-labs-rocketstories.module.js",
-  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -65,10 +65,10 @@
   "devDependencies": {
     "@vitus-labs/core": "^0.66.0",
     "@vitus-labs/rocketstyle": "^0.66.0",
-    "@vitus-labs/tools-babel": "^0.37.0",
-    "@vitus-labs/tools-rollup": "^0.37.0",
-    "@vitus-labs/tools-storybook": "^0.37.0",
-    "@vitus-labs/tools-typescript": "^0.37.0",
+    "@vitus-labs/tools-babel": "^0.38.0",
+    "@vitus-labs/tools-rollup": "^0.38.0",
+    "@vitus-labs/tools-storybook": "^0.38.0",
+    "@vitus-labs/tools-typescript": "^0.38.0",
     "@vitus-labs/unistyle": "^0.66.0"
   }
 }
