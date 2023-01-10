@@ -57,11 +57,11 @@ type SpacingStyles = (
   rootSize?: number
 ) => CssOutput
 const spacingStyles: SpacingStyles = (type, param, rootSize) => {
-  if (!param || !isNumber(param)) {
+  if (!isNumber(param)) {
     return ''
   }
 
-  const finalStyle = `${type}: ${value(param / 2, rootSize)}`
+  const finalStyle = `${type}: ${value(param! / 2, rootSize)}`
 
   return config.css`
       ${finalStyle};
