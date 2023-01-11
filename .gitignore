@@ -61,7 +61,6 @@ junit.xml
 
 # Output
 *.js.map
-*.d.ts
 
 # Runtime data
 pids

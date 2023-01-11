@@ -28,7 +28,7 @@ const RightContent = config.styled.span`
       `};
 `
 
-export const Button = rocketstyle()()({ name: 'Button', component: Element })
+export const Button = rocketstyle()({ name: 'Button', component: Element })
   .attrs({
     tag: 'button',
     label: 'This is a label',
@@ -93,7 +93,7 @@ const ExtendedButtonA = (props) => <Button {...props} />
 
 const ExampleComponent = (props) => <span {...props} />
 
-export const ElementExample = rocketstyle()()({
+export const ElementExample = rocketstyle()({
   name: 'Button',
   component: ExampleComponent,
 })

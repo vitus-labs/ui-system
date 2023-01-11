@@ -1,3 +1,5 @@
+/** @deprecated */
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { createElement, Fragment } from 'react'
 import { pick, isEmpty } from '@vitus-labs/core'

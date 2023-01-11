@@ -33,9 +33,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "installConfig": {
-    "hoistingLimits": "dependencies"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vitus-labs/ui-system.git"
@@ -63,8 +60,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "^0.37.0",
-    "@vitus-labs/tools-rollup": "^0.37.0",
-    "@vitus-labs/tools-typescript": "^0.37.0"
+    "@vitus-labs/tools-babel": "^0.40.0",
+    "@vitus-labs/tools-rollup": "^0.40.0",
+    "@vitus-labs/tools-typescript": "^0.40.0"
   }
 }

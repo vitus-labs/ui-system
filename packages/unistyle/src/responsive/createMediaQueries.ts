@@ -1,5 +1,5 @@
 export type CreateMediaQueries = <
-  B,
+  B extends {},
   R extends number,
   C extends (...args: any) => any
 >(props: {
