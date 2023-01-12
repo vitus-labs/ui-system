@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react'
 import { throttle } from '@vitus-labs/core'
 
-export type UseWindowResize = (
-  throttleDelay?: number,
-  initialValues?: Partial<{
-    width: number
-    height: number
-  }>
-) => {
+type Sizes = {
   width: number
   height: number
 }
 
+export type UseWindowResize = (
+  params: Partial<{
+    throttleDelay: number
+    onChange: (params: Sizes) => void
+  }>,
+  initialValues?: Partial<Sizes>
+) => Sizes
+
 const useWindowResize: UseWindowResize = (
-  throttleDelay = 200,
+  { throttleDelay = 200, onChange },
   { width = 0, height = 0 } = {}
 ) => {
   const [windowSize, setWindowSize] = useState({ width, height })
@@ -24,10 +26,19 @@ const useWindowResize: UseWindowResize = (
       height: window.innerHeight,
     })
 
-    setWindowSize(getSize())
+    const calculatedSize = getSize()
+
+    setWindowSize(calculatedSize)
+
+    if (onChange) {
+      onChange(calculatedSize)
+    }
 
     const handleResize = throttle(() => {
       setWindowSize(getSize())
+      if (onChange) {
+        onChange(calculatedSize)
+      }
     }, throttleDelay)
 
     window.addEventListener('resize', handleResize, false)
