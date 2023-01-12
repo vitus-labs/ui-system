@@ -70,5 +70,5 @@ export type {
   ThemeMode,
 }
 
-export { context, Provider, isRocketComponent }
+export { rocketstyle, context, Provider, isRocketComponent }
 export default rocketstyle
