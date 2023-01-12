@@ -253,6 +253,7 @@ export type ITheme = {
     | 'no-close-quote'
     | Defaults
     | string
+  contentVisibility: 'visible' | 'hidden' | 'auto'
   counterIncrement: string
   counterReset: string
   cursor: Cursor

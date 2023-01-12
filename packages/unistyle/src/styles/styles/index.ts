@@ -272,6 +272,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     clip: ${t.clip};
     clip-path: ${t.clipPath};
     content: ${t.content};
+    content-visibility: ${t.contentVisibility};
     counter-increment: ${t.counterIncrement};
     counter-reset: ${t.counterReset};
     cursor: ${t.cursor};
