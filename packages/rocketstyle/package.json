@@ -65,10 +65,10 @@
     "@emotion/styled": "^11.10.5",
     "@vitus-labs/core": "^0.68.0",
     "@vitus-labs/elements": "^0.68.0",
-    "@vitus-labs/tools-babel": "^0.40.0",
-    "@vitus-labs/tools-rollup": "^0.40.0",
-    "@vitus-labs/tools-storybook": "^0.40.0",
-    "@vitus-labs/tools-typescript": "^0.40.0",
+    "@vitus-labs/tools-babel": "^0.41.0",
+    "@vitus-labs/tools-rollup": "^0.41.0",
+    "@vitus-labs/tools-storybook": "^0.41.0",
+    "@vitus-labs/tools-typescript": "^0.41.0",
     "@vitus-labs/unistyle": "^0.68.0"
   }
 }
