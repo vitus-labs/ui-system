@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/hooks",
-  "version": "0.67.0",
+  "version": "0.68.0",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -47,7 +47,7 @@
     "react": ">= 16.8"
   },
   "devDependencies": {
-    "@vitus-labs/core": "^0.67.0",
+    "@vitus-labs/core": "^0.68.0",
     "@vitus-labs/tools-babel": "^0.40.0",
     "@vitus-labs/tools-rollup": "^0.40.0",
     "@vitus-labs/tools-storybook": "^0.40.0",
