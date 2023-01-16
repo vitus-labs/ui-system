@@ -15,7 +15,7 @@ export type UseWindowResize = (
 ) => Sizes
 
 const useWindowResize: UseWindowResize = (
-  { throttleDelay = 200, onChange },
+  { throttleDelay = 200, onChange } = {},
   { width = 0, height = 0 } = {}
 ) => {
   const [windowSize, setWindowSize] = useState({ width, height })
