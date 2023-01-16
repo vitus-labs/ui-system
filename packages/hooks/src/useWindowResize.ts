@@ -7,7 +7,7 @@ type Sizes = {
 }
 
 export type UseWindowResize = (
-  params: Partial<{
+  params?: Partial<{
     throttleDelay: number
     onChange: (params: Sizes) => void
   }>,
@@ -33,6 +33,8 @@ const useWindowResize: UseWindowResize = (
   const handleResize = throttle(updateSizes, throttleDelay)
 
   useEffect(() => {
+    updateSizes()
+
     window.addEventListener('resize', handleResize, false)
 
     return () => window.removeEventListener('resize', handleResize, false)
