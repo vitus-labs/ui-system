@@ -56,7 +56,7 @@ const useOverlay = ({
   disabled,
   onOpen,
   onClose,
-}: UseOverlayProps) => {
+}: Partial<UseOverlayProps>) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
   const [isContentLoaded, setContentLoaded] = useState(false)
@@ -219,7 +219,6 @@ const useOverlay = ({
           overlayPosition.left = offsetX
           break
         case 'center':
-        default:
           overlayPosition.left = window.innerWidth / 2 - c.width / 2
           break
       }
@@ -232,7 +231,6 @@ const useOverlay = ({
           overlayPosition.top = window.innerHeight / 2 - c.height / 2
           break
         case 'bottom':
-        default:
           overlayPosition.bottom = offsetY
           break
       }
@@ -261,15 +259,16 @@ const useOverlay = ({
 
       // ADD POSITION STYLES TO CONTENT
       // eslint-disable-next-line no-param-reassign
-      contentRef.current.style.position = position
+      if (position) contentRef.current.style.position = position
       // eslint-disable-next-line no-param-reassign
-      contentRef.current.style.top = setValue(values.top)
+      if (values.top) contentRef.current.style.top = setValue(values.top)
       // eslint-disable-next-line no-param-reassign
+      if (values.bottom)
       contentRef.current.style.bottom = setValue(values.bottom)
       // eslint-disable-next-line no-param-reassign
-      contentRef.current.style.left = setValue(values.left)
+      if (values.left) contentRef.current.style.left = setValue(values.left)
       // eslint-disable-next-line no-param-reassign
-      contentRef.current.style.right = setValue(values.right)
+      if (values.right) contentRef.current.style.right = setValue(values.right)
     },
     [position, rootSize, contentRef]
   )
@@ -354,10 +353,9 @@ const useOverlay = ({
     ]
   )
 
-  const handleContentPosition = throttle(setContentPosition, throttleDelay)
-
+  const handleContentPosition = setContentPosition
   const handleClick = handleVisibilityByEventType
-  const handleVisibility = throttle(handleVisibilityByEventType, throttleDelay)
+  const handleVisibility = handleVisibilityByEventType
 
   // --------------------------------------------------------------------------
   // useEffects
