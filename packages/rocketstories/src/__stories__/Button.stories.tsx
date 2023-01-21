@@ -3,11 +3,19 @@ import { init } from '~/init'
 import Theme from '~/decorators/Theme'
 import { Button, HoistedButton, ElementExample } from './Button'
 
+const test = () => ({
+  name: 'Hello',
+  component: Button,
+})
+
 const storyOf = init({
   decorators: [Theme],
 })
 
 const stories = storyOf(Button)
+  .config({
+    name: 'A',
+  })
   .controls({
     beforeContent: { type: 'text', description: 'something cool' },
   })
@@ -27,13 +35,17 @@ const stories = storyOf(Button)
 //     label: 'This is a label',
 //   })
 
-export default stories.init()
+// export default {
+//   name: 'Hello',
+//   component: Button,
+// }
+
+export default test()
 
 export const Example = stories.main()
 
 export const States = stories
   .storyOptions({ pseudo: true, direction: 'inline' })
-
   .dimension('state')
 
 export const Sizes = stories

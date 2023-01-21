@@ -4,7 +4,7 @@
   "exclude": ["node_modules", "__stories__", "lib"],
   "compilerOptions": {
     "strict": true,
-    "types": ["@vitus-labs/tools-rollup"],
+    "types": ["@vitus-labs/tools-rollup/global"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",

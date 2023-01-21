@@ -30,7 +30,9 @@ const useWindowResize: UseWindowResize = (
     if (onChange) onChange(sizes)
   }, [onChange])
 
-  const handleResize = throttle(updateSizes, throttleDelay)
+  const handleResize = useCallback(throttle(updateSizes, throttleDelay), [
+    onChange,
+  ])
 
   useEffect(() => {
     updateSizes()
