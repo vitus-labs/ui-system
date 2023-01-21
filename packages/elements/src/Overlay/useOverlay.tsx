@@ -15,29 +15,29 @@ type Align = 'bottom' | 'top' | 'left' | 'bottom' | 'right'
 type AlignX = 'left' | 'center' | 'right'
 type AlignY = 'bottom' | 'top' | 'center'
 
-export type UseOverlayProps = {
-  isOpen?: boolean
-  openOn?: 'click' | 'hover' | 'manual'
-  closeOn?:
+export type UseOverlayProps = Partial<{
+  isOpen: boolean
+  openOn: 'click' | 'hover' | 'manual'
+  closeOn:
     | 'click'
     | 'clickOnTrigger'
     | 'clickOutsideContent'
     | 'hover'
     | 'manual'
-  type?: 'dropdown' | 'tooltip' | 'popover' | 'modal'
-  position?: 'absolute' | 'fixed' | 'relative' | 'static'
-  align?: Align
-  alignX?: AlignX
-  alignY?: AlignY
-  offsetX?: number
-  offsetY?: number
-  throttleDelay?: number
-  parentContainer?: HTMLElement | null
-  closeOnEsc?: boolean
-  disabled?: boolean
-  onOpen?: () => void
-  onClose?: () => void
-}
+  type: 'dropdown' | 'tooltip' | 'popover' | 'modal'
+  position: 'absolute' | 'fixed' | 'relative' | 'static'
+  align: Align
+  alignX: AlignX
+  alignY: AlignY
+  offsetX: number
+  offsetY: number
+  throttleDelay: number
+  parentContainer: HTMLElement | null
+  closeOnEsc: boolean
+  disabled: boolean
+  onOpen: () => void
+  onClose: () => void
+}>
 
 const useOverlay = ({
   isOpen = false,
@@ -56,7 +56,7 @@ const useOverlay = ({
   disabled,
   onOpen,
   onClose,
-}: Partial<UseOverlayProps>) => {
+}: Partial<UseOverlayProps> = {}) => {
   const { rootSize } = useContext(context) as { rootSize: number }
   const ctx = useOverlayContext()
   const [isContentLoaded, setContentLoaded] = useState(false)
@@ -254,21 +254,30 @@ const useOverlay = ({
     (values: OverlayPosition = {}) => {
       if (!contentRef.current) return
 
+      const isValue = (value?: string | number) => {
+        if (typeof value === 'number') return true
+        if (Number.isFinite(value)) return true
+        return !!value
+      }
+
       const setValue = (param?: string | number) =>
         value(param, rootSize) as string
 
       // ADD POSITION STYLES TO CONTENT
       // eslint-disable-next-line no-param-reassign
-      if (position) contentRef.current.style.position = position
+      if (isValue(position)) contentRef.current.style.position = position
       // eslint-disable-next-line no-param-reassign
-      if (values.top) contentRef.current.style.top = setValue(values.top)
+      if (isValue(values.top))
+        contentRef.current.style.top = setValue(values.top)
       // eslint-disable-next-line no-param-reassign
-      if (values.bottom)
+      if (isValue(values.bottom))
         contentRef.current.style.bottom = setValue(values.bottom)
       // eslint-disable-next-line no-param-reassign
-      if (values.left) contentRef.current.style.left = setValue(values.left)
+      if (isValue(values.left))
+        contentRef.current.style.left = setValue(values.left)
       // eslint-disable-next-line no-param-reassign
-      if (values.right) contentRef.current.style.right = setValue(values.right)
+      if (isValue(values.right))
+        contentRef.current.style.right = setValue(values.right)
     },
     [position, rootSize, contentRef]
   )
