@@ -264,7 +264,7 @@ const useOverlay = ({
       if (values.top) contentRef.current.style.top = setValue(values.top)
       // eslint-disable-next-line no-param-reassign
       if (values.bottom)
-      contentRef.current.style.bottom = setValue(values.bottom)
+        contentRef.current.style.bottom = setValue(values.bottom)
       // eslint-disable-next-line no-param-reassign
       if (values.left) contentRef.current.style.left = setValue(values.left)
       // eslint-disable-next-line no-param-reassign
@@ -353,9 +353,28 @@ const useOverlay = ({
     ]
   )
 
-  const handleContentPosition = setContentPosition
+  const handleContentPosition = useCallback(
+    throttle(setContentPosition, throttleDelay),
+    // same deps as `setContentPosition`
+    [assignContentPosition, calculateContentPosition]
+  )
   const handleClick = handleVisibilityByEventType
-  const handleVisibility = handleVisibilityByEventType
+
+  const handleVisibility = useCallback(
+    throttle(handleVisibilityByEventType, throttleDelay),
+    // same deps as `handleVisibilityByEventType`
+    [
+      active,
+      blocked,
+      disabled,
+      openOn,
+      closeOn,
+      hideContent,
+      showContent,
+      triggerRef,
+      contentRef,
+    ]
+  )
 
   // --------------------------------------------------------------------------
   // useEffects
@@ -370,10 +389,10 @@ const useOverlay = ({
   }, [disabled, alignX, alignY, hideContent])
 
   useEffect(() => {
-    if (active && isContentLoaded) {
-      setContentPosition()
-      setContentPosition()
-    }
+    if (!active || !isContentLoaded) return undefined
+
+    setContentPosition()
+    setContentPosition()
   }, [active, isContentLoaded, setContentPosition])
 
   // if an Overlay has an Overlay child, this will prevent closing parent child
@@ -382,12 +401,13 @@ const useOverlay = ({
     if (active) {
       if (onOpen) onOpen()
       if (ctx.setBlocked) ctx.setBlocked()
+    } else {
+      setContentLoaded(false)
     }
 
     return () => {
       if (onClose) onClose()
       if (ctx.setUnblocked) ctx.setUnblocked()
-      setContentLoaded(false)
     }
   }, [active, onOpen, onClose, showContent, ctx])
 
