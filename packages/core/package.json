@@ -53,9 +53,9 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",
-    "@vitus-labs/tools-babel": "^0.42.0",
-    "@vitus-labs/tools-rollup": "^0.42.0",
-    "@vitus-labs/tools-typescript": "^0.42.0",
+    "@vitus-labs/tools-babel": "^0.43.0",
+    "@vitus-labs/tools-rollup": "^0.43.0",
+    "@vitus-labs/tools-typescript": "^0.43.0",
     "styled-components": "^5.3.6"
   }
 }
