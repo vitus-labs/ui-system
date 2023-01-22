@@ -37,7 +37,7 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-is": "^17.0.3",
     "@types/styled-components": "^5.1.26",
-    "@vitus-labs/tools-lint": "^0.43.0",
+    "@vitus-labs/tools-lint": "^0.44.0",
     "coveralls": "^3.1.1",
     "cpr": "^3.0.1",
     "lerna": "^4.0.0",

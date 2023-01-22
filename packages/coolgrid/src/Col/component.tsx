@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
 import { omitCtxKeys } from '~/utils'
 import useGridContext from '~/useContext'
@@ -26,17 +26,39 @@ const Component: ElementType<
     ...props,
   })
 
-  return (
-    <Styled
-      {...omitCtxKeys(props)}
-      as={component || colComponent}
-      $coolgrid={{
+  const finalComponent = useMemo(
+    () => component || colComponent,
+    [component, colComponent]
+  )
+
+  const finalProps = useMemo(
+    () => ({
+      $coolgrid: {
         columns,
         gap,
         size,
         padding,
         extraStyles: css || colCss,
-      }}
+      },
+    }),
+    [columns, gap, size, padding, css, colCss]
+  )
+
+  const getDevProps = () => {
+    const result = {}
+    if (process.env.NODE_ENV !== 'production') {
+      result['data-coolgrid'] = 'col'
+    }
+
+    return result
+  }
+
+  return (
+    <Styled
+      {...omitCtxKeys(props)}
+      as={finalComponent}
+      {...finalProps}
+      {...getDevProps()}
     >
       {children}
     </Styled>

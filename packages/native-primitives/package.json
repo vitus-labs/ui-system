@@ -8,15 +8,8 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "main": "lib/vitus-labs-native-primitives.js",
-  "umd:main": "lib/vitus-labs-native-primitives.umd.js",
   "module": "lib/vitus-labs-native-primitives.module.js",
-  "browser": {
-    "./lib/vitus-labs-native-primitives.js": "./lib/vitus-labs-native-primitives.js",
-    "./lib/vitus-labs-native-primitives.module.js": "./lib/vitus-labs-native-primitives.module.js"
-  },
-  "unpkg": "lib/vitus-labs-native-primitives.umd.min.js",
-  "jsnext:main": "lib/vitus-labs-native-primitives.module.js",
-  "react-native": "lib/vitus-labs-native-primitives.module.js",
+  "react-native": "lib/vitus-labs-native-primitives.native.js",
   "files": [
     "lib/"
   ],
@@ -60,8 +53,8 @@
     "lodash.pick": "^4.4.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-babel": "^0.43.0",
-    "@vitus-labs/tools-rollup": "^0.43.0",
-    "@vitus-labs/tools-typescript": "^0.43.0"
+    "@vitus-labs/tools-babel": "^0.44.0",
+    "@vitus-labs/tools-rollup": "^0.44.0",
+    "@vitus-labs/tools-typescript": "^0.44.0"
   }
 }

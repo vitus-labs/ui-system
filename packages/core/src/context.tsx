@@ -22,23 +22,20 @@ type ProviderType = Partial<
 
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.provider, [])
+  const context = useMemo(() => ({ theme, ...props }), [theme, props])
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   if (!theme || isEmpty(theme)) return <>{children}</>
 
   if (ExternalProvider) {
     return (
-      <VitusLabsProvider value={{ theme, ...props }}>
+      <VitusLabsProvider value={context}>
         <ExternalProvider theme={theme}>{children}</ExternalProvider>
       </VitusLabsProvider>
     )
   }
 
-  return (
-    <VitusLabsProvider value={{ theme, ...props }}>
-      {children}
-    </VitusLabsProvider>
-  )
+  return <VitusLabsProvider value={context}>{children}</VitusLabsProvider>
 }
 
 export { context }

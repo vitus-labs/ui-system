@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
 import { omitCtxKeys } from '~/utils'
 import Context from '~/context/ContainerContext'
@@ -14,24 +14,41 @@ const Component: ElementType<['containerWidth']> = ({
   ...props
 }) => {
   const { containerWidth = {}, ...ctx } = useGridContext(props)
+  const context = useMemo(() => ctx, [ctx])
 
   let finalWidth = containerWidth
   if (width) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     finalWidth = typeof width === 'function' ? width(containerWidth) : width
+  }
+
+  const finalProps = useMemo(
+    () => ({
+      $coolgrid: {
+        width: finalWidth,
+        extraStyles: css,
+      },
+    }),
+    [finalWidth, css]
+  )
+
+  const getDevProps = () => {
+    const result = {}
+    if (process.env.NODE_ENV !== 'production') {
+      result['data-coolgrid'] = 'container'
+    }
+
+    return result
   }
 
   return (
     <Styled
       {...omitCtxKeys(props)}
       as={component}
-      $coolgrid={{
-        width: finalWidth,
-        extraStyles: css,
-      }}
+      {...finalProps}
+      {...getDevProps()}
     >
-      <Context.Provider value={ctx}>{children}</Context.Provider>
+      <Context.Provider value={context}>{children}</Context.Provider>
     </Styled>
   )
 }
