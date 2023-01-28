@@ -1,9 +1,9 @@
 import { isEmpty } from '@vitus-labs/core'
 import attrsComponent from '~/attrs'
 import type { ElementType } from '~/types/utils'
-import type { InitAttrsComponent } from '~/types/AttrsComponent'
+import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
 
-export type Attrs = <C extends ElementType>({
+export type Attrs = <C extends ElementType<any>>({
   name,
   component,
 }: {
@@ -11,6 +11,7 @@ export type Attrs = <C extends ElementType>({
   component: C
 }) => ReturnType<InitAttrsComponent<C>>
 
+// @ts-ignore
 const attrs: Attrs = ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode
@@ -38,6 +39,10 @@ const attrs: Attrs = ({ name, component }) => {
   return attrsComponent({
     name,
     component,
+    attrs: [],
+    priorityAttrs: [],
+    compose: {},
+    statics: {},
   })
 }
 
