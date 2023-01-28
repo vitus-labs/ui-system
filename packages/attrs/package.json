@@ -1,0 +1,63 @@
+{
+  "name": "@vitus-labs/attrs",
+  "version": "0.77.0",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "main": "lib/vitus-labs-attrs.js",
+  "module": "lib/vitus-labs-attrs.module.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/attrs",
+  "description": "Attrs hoc chaining for React components",
+  "keywords": [
+    "flexible",
+    "extensible",
+    "powerful",
+    "system",
+    "react",
+    "reusability",
+    "extensible"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitus-labs/ui-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "scripts": {
+    "dev": "yarn vl_stories",
+    "prepublish": "yarn build",
+    "build": "yarn vl_build",
+    "build:watch": "yarn vl_build-watch",
+    "lint:css": "stylelint src/*.ts src/*.tsx",
+    "lint:ts": "eslint src/*",
+    "lint": "yarn lint:css && yarn lint:ts",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --runInBand --watch",
+    "cover": "coveralls < .coverage/lcov.info"
+  },
+  "peerDependencies": {
+    "@vitus-labs/core": "*",
+    "react": ">= 16.8"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.3.2"
+  },
+  "devDependencies": {
+    "@vitus-labs/core": "^0.77.0",
+    "@vitus-labs/tools-babel": "^0.44.0",
+    "@vitus-labs/tools-rollup": "^0.44.0",
+    "@vitus-labs/tools-storybook": "^0.44.0",
+    "@vitus-labs/tools-typescript": "^0.44.0"
+  }
+}
