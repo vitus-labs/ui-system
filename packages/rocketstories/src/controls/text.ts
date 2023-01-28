@@ -1,4 +1,4 @@
-import { htmlTags } from '@vitus-labs/core'
+import { HTML_TAGS } from '@vitus-labs/core'
 
 const group = 'Text (Vitus-Labs)'
 
@@ -12,7 +12,7 @@ export default {
   tag: {
     group,
     type: 'select',
-    options: htmlTags,
+    options: HTML_TAGS,
   },
   children: {
     group,

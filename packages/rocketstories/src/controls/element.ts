@@ -1,4 +1,4 @@
-import { htmlTags } from '@vitus-labs/core'
+import { HTML_TAGS } from '@vitus-labs/core'
 
 const group = 'Element (Vitus-Labs)'
 
@@ -41,7 +41,7 @@ export default {
   tag: {
     group,
     type: 'select',
-    options: htmlTags,
+    options: HTML_TAGS,
     valueType: 'HTMLTag',
     description: 'A prop which will change **HTML tag** of the element.',
   },
