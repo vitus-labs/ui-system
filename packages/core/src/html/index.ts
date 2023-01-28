@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import htmlTags, { HTMLTags, HTMLTagsText } from './htmlTags'
+import { HTML_TAGS, HTML_TEXT_TAGS, HTMLTags, HTMLTextTags } from './htmlTags'
 import type { HTMLElementAttrs } from './htmlElementAttrs'
 
-type HTMLTagAttrsByTag<T extends HTMLTags> = T extends unknown
-  ? {}
-  : HTMLElementAttrs[T]
+type HTMLTagAttrsByTag<T extends HTMLTags> = T extends HTMLTags
+  ? HTMLElementAttrs[T]
+  : {}
 
-export type { HTMLTags, HTMLTagsText, HTMLElementAttrs, HTMLTagAttrsByTag }
+export type { HTMLTags, HTMLTextTags, HTMLElementAttrs, HTMLTagAttrsByTag }
 
-export { htmlTags }
+export { HTML_TAGS, HTML_TEXT_TAGS }

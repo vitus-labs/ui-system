@@ -1,4 +1,4 @@
-const TAGS = [
+const HTML_TAGS = [
   'a',
   'abbr',
   // 'acronym',
@@ -123,7 +123,7 @@ const TAGS = [
   'wbr',
 ] as const
 
-const TEXT_TAGS = [
+const HTML_TEXT_TAGS = [
   'abbr',
   'b',
   'bdi',
@@ -164,8 +164,8 @@ const TEXT_TAGS = [
   'u',
 ] as const
 
-export type HTMLTags = typeof TAGS[number]
+export type HTMLTags = (typeof HTML_TAGS)[number]
 
-export type HTMLTagsText = typeof TEXT_TAGS[number]
+export type HTMLTextTags = (typeof HTML_TEXT_TAGS)[number]
 
-export default TAGS
+export { HTML_TAGS, HTML_TEXT_TAGS }

@@ -1,6 +1,14 @@
-export type IsEmpty = <T extends Record<string, unknown> | unknown[] | null>(
+export type IsEmpty = <T extends Record<string, any> | any[] | null>(
   param?: T
-) => null | undefined extends T ? true : keyof T extends never ? true : false
+) => T extends null | undefined
+  ? true
+  : keyof T extends never
+  ? true
+  : T extends Array<T>
+  ? T[number] extends never
+    ? true
+    : false
+  : false
 
 const isEmpty: IsEmpty = (param) => {
   if (!param) return true

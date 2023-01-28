@@ -1,4 +1,5 @@
 import type { ComponentType, ForwardRefExoticComponent, FC } from 'react'
+import type { MergeTypes, ExtractProps } from '@vitus-labs/tools-types'
 
 export type TObj = Record<string, unknown>
 export type TFn = (...args: any) => any
@@ -24,37 +25,6 @@ export type SimpleHoc<P extends Record<string, unknown> = {}> = <
 
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
 export type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }
-
-type ExtractNullableKeys<T> = {
-  [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
-}
-
-// merge types
-type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
-
-type SpreadTwo<L, R> = Id<
-  Pick<L, Exclude<keyof L, keyof R>> & R
-  // Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
-  // Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
-  // SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
->
-
-export type Spread<A extends readonly [...any]> = A extends [
-  infer L,
-  ...infer R
-]
-  ? SpreadTwo<L, Spread<R>>
-  : unknown
-
-export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
-  Spread<A>
->
-
-// extract props fron component
-export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends ElementType<infer TProps>
-    ? TProps
-    : TComponentOrTProps
 
 export type ReturnCbParam<P extends TFn | TObj> = P extends TFn
   ? ReturnType<P>

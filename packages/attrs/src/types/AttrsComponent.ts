@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import type { ReactElement, ForwardedRef } from 'react'
-import type { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
+import type { MergeTypes, ExtractProps } from '@vitus-labs/tools-types'
+import type { TObj, ElementType } from './utils'
 import type { ConfigAttrs } from './config'
-import type { Configuration, InitConfiguration } from './configuration'
 import type { AttrsCb } from './attrs'
 import type { ComposeParam } from './hoc'
 

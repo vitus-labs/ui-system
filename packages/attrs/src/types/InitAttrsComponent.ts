@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import type { ExtractProps, ElementType } from './utils'
+import type { ExtractProps } from '@vitus-labs/tools-types'
+import type { ElementType } from './utils'
 import type { Configuration } from './configuration'
 import type { AttrsComponent } from './AttrsComponent'
 

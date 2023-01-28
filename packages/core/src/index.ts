@@ -6,9 +6,10 @@ import compose from '~/compose'
 import isEmpty, { IsEmpty } from '~/isEmpty'
 import render, { Render } from '~/render'
 import {
-  htmlTags,
+  HTML_TAGS,
+  HTML_TEXT_TAGS,
   HTMLTags,
-  HTMLTagsText,
+  HTMLTextTags,
   HTMLElementAttrs,
   HTMLTagAttrsByTag,
 } from '~/html'
@@ -20,7 +21,7 @@ export type {
   IsEmpty,
   Render,
   HTMLTags,
-  HTMLTagsText,
+  HTMLTextTags,
   HTMLElementAttrs,
   HTMLTagAttrsByTag,
 }
@@ -40,5 +41,6 @@ export {
   throttle,
   merge,
   memoize,
-  htmlTags,
+  HTML_TAGS,
+  HTML_TEXT_TAGS,
 }

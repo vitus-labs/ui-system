@@ -55,10 +55,10 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.77.0",
-    "@vitus-labs/tools-babel": "^0.44.0",
-    "@vitus-labs/tools-rollup": "^0.44.0",
-    "@vitus-labs/tools-storybook": "^0.44.0",
-    "@vitus-labs/tools-typescript": "^0.44.0",
+    "@vitus-labs/tools-babel": "^0.45.0",
+    "@vitus-labs/tools-rollup": "^0.45.0",
+    "@vitus-labs/tools-storybook": "^0.45.0",
+    "@vitus-labs/tools-typescript": "^0.45.0",
     "@vitus-labs/unistyle": "^0.77.0"
   }
 }

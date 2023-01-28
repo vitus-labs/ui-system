@@ -24,7 +24,6 @@ export type Props = Partial<{
   block: ResponsiveBooltype
   equalCols: ResponsiveBooltype
   gap: Responsive
-  // vertical: ResponsiveBooltype
   direction: Direction
   contentDirection: Direction
   beforeContentDirection: Direction
@@ -37,7 +36,7 @@ export type Props = Partial<{
   contentAlignY: AlignY
   beforeContentAlignY: AlignY
   afterContentAlignY: AlignY
-  dangerouslySetInnerHTML: any
+  dangerouslySetInnerHTML: { __html: string }
   css: ExtendCss
   contentCss: ExtendCss
   beforeContentCss: ExtendCss
@@ -45,7 +44,5 @@ export type Props = Partial<{
 }>
 
 export type VLElement<P extends Record<string, unknown> = {}> = {
-  <T extends HTMLTags>(
-    props: { tag?: T } & Props & P & { ref?: ForwardedRef<any> }
-  ): ReactElement | null
+  (props: Props & P & { ref?: ForwardedRef<any> }): ReactElement | null
 } & VLStatic
