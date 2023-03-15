@@ -29,10 +29,33 @@ type ContentRenderer = (
 ) => ReactNode
 
 export type Props = {
+  /**
+   * Children to be rendered within **Overlay** component when Overlay is active.
+   */
   children: Content | TriggerRenderer
+  /**
+   * React component to be used as a trigger (e.g. `Button` for opening 
+   * dropdowns). Component must acept accept `ref` or any other prop name 
+   * defined in `triggerRefName` prop.
+   */
   trigger: Content | ContentRenderer
+  /**
+   * Defines a HTML DOM where children to be appended. Component uses JavaScript
+   * [`Node.appendChild`](https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild)
+   * 
+   * For more information follow [Portal](https://vitus-labs.com/docs/ui-system/elements/portal) 
+   * component.
+   */
   DOMLocation?: HTMLElement
+  /**
+   * Defines a prop name to be used for passing `ref` for **trigger**. By default, 
+   * the value is `ref`.
+   */
   triggerRefName?: string
+  /**
+   * Defines a prop name to be used for passing `ref` for **content** (passed `children`). 
+   * By default, the value is `ref`.
+   */
   contentRefName?: string
 } & UseOverlayProps
 
