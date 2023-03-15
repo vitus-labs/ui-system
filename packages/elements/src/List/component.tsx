@@ -5,18 +5,31 @@ import Element, { VLElement } from '~/Element'
 import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
 import type { MergeTypes } from '~/types'
 
+type ListProps = {
+  /**
+   * A boolean value. When set to `false`, component returns `React.Fragment`
+   * When set to `true`, component returns as the **root** element `Element` 
+   * component.
+   */
+  rootElement?: boolean
+  /**
+   * Label prop frol `Element` component is being ignored.
+   */
+  label: never
+  /**
+   * Content prop frol `Element` component is being ignored.
+   */
+  content: never
+}
+
 export type Props = MergeTypes<
   [
     IteratorProps,
-    {
-      rootElement?: boolean
-      label: never
-      content: never
-    }
+    ListProps
   ]
 >
 
-const component: VLElement<Props> = forwardRef(
+const Component: VLElement<Props> = forwardRef(
   ({ rootElement = false, ...props }, ref) => {
     const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
@@ -32,8 +45,8 @@ const component: VLElement<Props> = forwardRef(
 
 const name = `${PKG_NAME}/List` as const
 
-component.displayName = name
-component.pkgName = PKG_NAME
-component.VITUS_LABS__COMPONENT = name
+Component.displayName = name
+Component.pkgName = PKG_NAME
+Component.VITUS_LABS__COMPONENT = name
 
-export default component
+export default Component

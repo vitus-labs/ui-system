@@ -6182,7 +6182,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/attrs@workspace:packages/attrs"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
@@ -6199,12 +6199,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/coolgrid@workspace:packages/coolgrid"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
     "@vitus-labs/tools-typescript": ^0.45.0
-    "@vitus-labs/unistyle": ^0.77.0
+    "@vitus-labs/unistyle": ^0.79.0
   peerDependencies:
     "@vitus-labs/core": "*"
     "@vitus-labs/unistyle": "*"
@@ -6212,7 +6212,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vitus-labs/core@^0.77.0, @vitus-labs/core@workspace:packages/core":
+"@vitus-labs/core@^0.79.0, @vitus-labs/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@vitus-labs/core@workspace:packages/core"
   dependencies:
@@ -6230,17 +6230,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vitus-labs/elements@^0.77.0, @vitus-labs/elements@workspace:packages/elements":
+"@vitus-labs/elements@^0.79.0, @vitus-labs/elements@workspace:packages/elements":
   version: 0.0.0-use.local
   resolution: "@vitus-labs/elements@workspace:packages/elements"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
-    "@vitus-labs/rocketstyle": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
+    "@vitus-labs/rocketstyle": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
     "@vitus-labs/tools-typescript": ^0.45.0
-    "@vitus-labs/unistyle": ^0.77.0
+    "@vitus-labs/unistyle": ^0.79.0
     react-is: ^18.2.0
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -6267,7 +6267,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/hooks@workspace:packages/hooks"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
@@ -6296,14 +6296,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/rocketstories@workspace:packages/rocketstories"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
-    "@vitus-labs/elements": ^0.77.0
-    "@vitus-labs/rocketstyle": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
+    "@vitus-labs/elements": ^0.79.0
+    "@vitus-labs/rocketstyle": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
     "@vitus-labs/tools-typescript": ^0.45.0
-    "@vitus-labs/unistyle": ^0.77.0
+    "@vitus-labs/unistyle": ^0.79.0
     hoist-non-react-statics: ^3.3.2
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -6313,19 +6313,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vitus-labs/rocketstyle@^0.77.0, @vitus-labs/rocketstyle@workspace:packages/rocketstyle":
+"@vitus-labs/rocketstyle@^0.79.0, @vitus-labs/rocketstyle@workspace:packages/rocketstyle":
   version: 0.0.0-use.local
   resolution: "@vitus-labs/rocketstyle@workspace:packages/rocketstyle"
   dependencies:
     "@emotion/css": ^11.10.5
     "@emotion/styled": ^11.10.5
-    "@vitus-labs/core": ^0.77.0
-    "@vitus-labs/elements": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
+    "@vitus-labs/elements": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-storybook": ^0.45.0
     "@vitus-labs/tools-typescript": ^0.45.0
-    "@vitus-labs/unistyle": ^0.77.0
+    "@vitus-labs/unistyle": ^0.79.0
     hoist-non-react-statics: ^3.3.2
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -6475,11 +6475,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitus-labs/unistyle@^0.77.0, @vitus-labs/unistyle@workspace:packages/unistyle":
+"@vitus-labs/unistyle@^0.79.0, @vitus-labs/unistyle@workspace:packages/unistyle":
   version: 0.0.0-use.local
   resolution: "@vitus-labs/unistyle@workspace:packages/unistyle"
   dependencies:
-    "@vitus-labs/core": ^0.77.0
+    "@vitus-labs/core": ^0.79.0
     "@vitus-labs/tools-babel": ^0.45.0
     "@vitus-labs/tools-rollup": ^0.45.0
     "@vitus-labs/tools-typescript": ^0.45.0

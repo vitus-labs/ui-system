@@ -4,8 +4,18 @@ import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
 export type Props = {
+  /**
+   * Defines a HTML DOM where children to be appended. Component uses JavaScript
+   * [`Node.appendChild`](https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild)
+   */
   DOMLocation?: HTMLElement
+  /**
+   * Children to be rendered within **Portal** component.
+   */
   children: ReactNode
+  /**
+   * Valid HTML Tag
+   */
   tag?: string
 }
 

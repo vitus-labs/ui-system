@@ -16,26 +16,86 @@ type AlignX = 'left' | 'center' | 'right'
 type AlignY = 'bottom' | 'top' | 'center'
 
 export type UseOverlayProps = Partial<{
+  /**
+   * Defines default state whather **Overlay** component should be active.
+   * Default value is `false`.
+   */
   isOpen: boolean
+  /**
+   * Defines `event` when **Overlay** is supposed to be open.
+   * 
+   * When `manual` is set, callbacks needs to be applied to make it working.
+   */
   openOn: 'click' | 'hover' | 'manual'
+  /**
+   * Defines `event` when **Overlay** is supposed to be closed.
+   */
   closeOn:
     | 'click'
     | 'clickOnTrigger'
     | 'clickOutsideContent'
     | 'hover'
     | 'manual'
+
+  /**
+   * Defines what type of **Overlay** will be created. Type `modal` 
+   * has different positioning calculations than others.
+   */
   type: 'dropdown' | 'tooltip' | 'popover' | 'modal'
+  /**
+   * Defines how `content` is treated regarding CSS positioning.
+   */
   position: 'absolute' | 'fixed' | 'relative' | 'static'
+  /**
+   * Defines from which side is `content` aligned to `trigger` (top, left, bottom, right).
+   * For more specific alignment configuration can be used `alignX` and/or `alignY` prop.
+   */
   align: Align
+  /**
+   * Defines how `content` is aligned to `trigger` on axis X
+   */
   alignX: AlignX
+  /**
+   * Defines how `content` is aligned to `trigger` on axis Y
+   */
   alignY: AlignY
+  /**
+   * Defines `margin` from trigger on axis X.
+   */
   offsetX: number
+  /**
+   * Defines `margin` from trigger on axis Y.
+   */
   offsetY: number
+  /**
+   * Performance helper. Value defined in miliseconds for `throttling` 
+   * recalculations
+   */
   throttleDelay: number
+  /**
+   * A valid HTML element. Prop can be used for ability to handle properly 
+   * scrolling inside custom scrollable HTML element.
+   */
   parentContainer: HTMLElement | null
+  /**
+   * Defines wheather active **Overlay** is supposed to be closed on pressing 
+   * `ESC` key.
+   */
   closeOnEsc: boolean
+  /**
+   * When set to `true`, **Overlay** is automatically closed and is blocked for 
+   * being opened.
+   */
   disabled: boolean
+  /**
+   * A callback hook to be called when **Overlay** is being opened. Does not 
+   * accept any arguments.
+   */
   onOpen: () => void
+  /**
+   * A callback hook to be called when **Overlay** is being closed. Does not 
+   * accept any arguments.
+   */
   onClose: () => void
 }>
 
