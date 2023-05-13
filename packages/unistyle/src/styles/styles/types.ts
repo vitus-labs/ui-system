@@ -119,9 +119,34 @@ export type Cursor =
   | Defaults
 
 export type ITheme = {
+  /**
+   * The [inset](https://developer.mozilla.org/en-US/docs/Web/CSS/inset)
+   * CSS property is a shorthand that corresponds to the top,
+   * right, bottom, and/or left properties. It has the same multi-value
+   * syntax of the margin shorthand.
+   */
   inset: PropertyValue
+  /**
+   * Custom Shorthand to set marginx on axes X
+   * The [inset](https://developer.mozilla.org/en-US/docs/Web/CSS/inset)
+   * CSS property is a shorthand that corresponds to the top,
+   * right, bottom, and/or left properties. It has the same multi-value
+   * syntax of the margin shorthand.
+   */
   insetX: PropertyValue
+  /**
+   * Custom Shorthand to set marginx on axes Y
+   * The [inset](https://developer.mozilla.org/en-US/docs/Web/CSS/inset)
+   * CSS property is a shorthand that corresponds to the top,
+   * right, bottom, and/or left properties. It has the same multi-value
+   * syntax of the margin shorthand.
+   */
   insetY: PropertyValue
+  /**
+   * The [top](https://developer.mozilla.org/en-US/docs/Web/CSS/top)
+   * CSS property participates in specifying the vertical position
+   * of a positioned element. It has no effect on non-positioned elements.
+   */
   top: PropertyValue
   bottom: PropertyValue
   left: PropertyValue

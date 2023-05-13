@@ -198,6 +198,12 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       bottomRight: t.borderRadiusBottomRight,
     })};
 
+    border: ${t.border};
+    border-top: ${t.borderTop};
+    border-bottom: ${t.borderBottom};
+    border-left: ${t.borderLeft};
+    border-right: ${t.borderRight};
+
     ${shorthand('border-width', {
       full: t.borderWidth,
       y: t.borderWidthY,
@@ -227,12 +233,6 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
       left: t.borderColorLeft,
       right: t.borderColorRight,
     })};
-
-    border: ${t.border};
-    border-top: ${t.borderTop};
-    border-bottom: ${t.borderBottom};
-    border-left: ${t.borderLeft};
-    border-right: ${t.borderRight};
 
     border-image: ${t.borderImage};
     border-image-outset: ${t.borderImageOutset};

@@ -122,7 +122,9 @@ export interface AttrsComponent<
   // --------------------------------------------------------
   /**
    * A chaining method to define default component props
-   * @param param  Can be either _object_ or a _callback_
+   * @param param   Can be either _object_ or a _callback_
+   * @param config  Optional. Can define `priority` in chaining. All `attrs` callbacks
+   *                having `priority` set to `true` will be calculated first
    *
    * #### Examples
    *
