@@ -61,8 +61,8 @@
     "hoist-non-react-statics": "^3.3.2"
   },
   "devDependencies": {
-    "@emotion/css": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/css": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "@vitus-labs/core": "^0.79.0",
     "@vitus-labs/elements": "^0.79.0",
     "@vitus-labs/tools-babel": "^0.45.0",

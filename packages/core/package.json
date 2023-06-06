@@ -47,14 +47,14 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "moize": "^6.1.5",
+    "moize": "^6.1.6",
     "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "^4.14.195",
     "@vitus-labs/tools-babel": "^0.45.0",
     "@vitus-labs/tools-rollup": "^0.45.0",
     "@vitus-labs/tools-typescript": "^0.45.0",
-    "styled-components": "^5.3.9"
+    "styled-components": "^5.3.11"
   }
 }
