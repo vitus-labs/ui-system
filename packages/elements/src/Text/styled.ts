@@ -8,7 +8,7 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t }) => css`
 
 export default config.styled(config.textComponent)`
   color: inherit;
-  font-weight: normal;
+  font-weight: inherit;
   line-height: 1;
 
   ${makeItResponsive({
