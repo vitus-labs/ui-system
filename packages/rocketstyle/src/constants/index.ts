@@ -2,6 +2,8 @@ export const MODE_DEFAULT = 'light'
 
 export const PSEUDO_KEYS = ['hover', 'active', 'focus', 'pressed'] as const
 
+export const PSEUDO_META_KEYS = ['disabled', 'readOnly'] as const
+
 export const THEME_MODES = {
   light: true,
   dark: true,

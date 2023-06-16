@@ -14,6 +14,8 @@ export type PseudoState = {
   hover: boolean
   focus: boolean
   pressed: boolean
+  disabled: boolean
+  readOnly: boolean
 }
 
 export type PseudoProps = Partial<PseudoState & PseudoActions>

@@ -3,7 +3,12 @@
 import React, { useMemo, forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { config, omit, pick, compose, render } from '@vitus-labs/core'
-import { PSEUDO_KEYS, CONFIG_KEYS, STYLING_KEYS } from '~/constants'
+import {
+  PSEUDO_KEYS,
+  PSEUDO_META_KEYS,
+  CONFIG_KEYS,
+  STYLING_KEYS,
+} from '~/constants'
 import { useLocalContext } from '~/context/localContext'
 import createLocalProvider from '~/context/createLocalProvider'
 import { LocalThemeManager } from '~/cache'
@@ -75,7 +80,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 // --------------------------------------------------------
 // @ts-ignore
 const rocketComponent: RocketComponent = (options) => {
-  const { component, styles } = options
+  const { component, styles, DEBUG } = options
   const { styled } = config
 
   const _calculateStylingAttrs = calculateStylingAttrs({
@@ -253,7 +258,7 @@ const rocketComponent: RocketComponent = (options) => {
       // --------------------------------------------------
       const pseudoRocketstate = {
         ...pseudo,
-        ...pick(props, PSEUDO_KEYS),
+        ...pick(props, [...PSEUDO_KEYS, ...PSEUDO_META_KEYS]),
       }
 
       // --------------------------------------------------
@@ -296,6 +301,12 @@ const rocketComponent: RocketComponent = (options) => {
         // state props passed to styled component only, therefore the `$` symbol
         $rocketstyle: rocketstyle,
         $rocketstate: finalRocketstate,
+      }
+
+      if (DEBUG && process.env.NODE_ENV !== 'production') {
+        console.log('[Rocketstyle] Debug mode enabled')
+        console.log(`component ${componentName}`)
+        console.log(finalProps)
       }
 
       // all the development stuff injected

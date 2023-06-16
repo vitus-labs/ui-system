@@ -14,7 +14,7 @@ type UsePseudoState = ({
   onFocus,
   onBlur,
 }: Partial<PseudoActions>) => {
-  state: Omit<PseudoState, 'active'>
+  state: Pick<PseudoState, 'hover' | 'focus' | 'pressed'>
   events: PseudoActions
 }
 
