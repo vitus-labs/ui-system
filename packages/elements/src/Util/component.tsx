@@ -18,12 +18,17 @@ export type Props = {
   style?: Record<string, unknown>
 }
 
-const Component: VLComponent<Props> = ({ children, className = '', style }) => {
+const Component: VLComponent<Props> = ({ children, className, style }) => {
   const mergedClasses = useMemo(
-    () => Array.isArray(className) ? className.join(' ') : className
-  , [className])
-  
-  return render(children, { className: mergedClasses, style })
+    () => (Array.isArray(className) ? className.join(' ') : className),
+    [className],
+  )
+
+  const finalProps: Record<string, any> = {}
+  if (style) finalProps.style = style
+  if (mergedClasses) finalProps.className = mergedClasses
+
+  return render(children, finalProps)
 }
 
 const name = `${PKG_NAME}/Util` as const

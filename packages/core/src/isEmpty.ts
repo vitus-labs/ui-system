@@ -1,5 +1,5 @@
 export type IsEmpty = <T extends Record<string, any> | any[] | null>(
-  param?: T
+  param?: T,
 ) => T extends null | undefined
   ? true
   : keyof T extends never

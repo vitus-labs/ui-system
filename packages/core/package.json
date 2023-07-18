@@ -6,9 +6,9 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "main": "lib/vitus-labs-core.js",
-  "module": "lib/vitus-labs-core.module.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": "./lib/vitus-labs-core.module.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -46,15 +46,15 @@
     "styled-components": "<= 5"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "moize": "^6.1.6",
     "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195",
-    "@vitus-labs/tools-babel": "^0.46.0",
-    "@vitus-labs/tools-rollup": "^0.46.0",
-    "@vitus-labs/tools-typescript": "^0.46.0",
-    "styled-components": "^5.3.11"
+    "@types/lodash-es": "^4.17.8",
+    "@vitus-labs/tools-babel": "^1.0.1-alpha.14",
+    "@vitus-labs/tools-rollup": "^1.0.1-alpha.14",
+    "@vitus-labs/tools-typescript": "^1.0.1-alpha.14",
+    "styled-components": "^6.0.4"
   }
 }

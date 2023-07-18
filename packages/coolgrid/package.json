@@ -6,10 +6,10 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "main": "lib/vitus-labs-coolgrid.js",
-  "module": "lib/vitus-labs-coolgrid.module.js",
-  "react-native": "lib/vitus-labs-coolgrid.native.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": "./lib/vitus-labs-coolgrid.module.js",
+  "react-native": "./lib/vitus-labs-coolgrid.native.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -55,10 +55,10 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.81.0",
-    "@vitus-labs/tools-babel": "^0.46.0",
-    "@vitus-labs/tools-rollup": "^0.46.0",
-    "@vitus-labs/tools-storybook": "^0.46.0",
-    "@vitus-labs/tools-typescript": "^0.46.0",
+    "@vitus-labs/tools-babel": "^1.0.1-alpha.14",
+    "@vitus-labs/tools-rollup": "^1.0.1-alpha.14",
+    "@vitus-labs/tools-storybook": "^1.0.1-alpha.14",
+    "@vitus-labs/tools-typescript": "^1.0.1-alpha.14",
     "@vitus-labs/unistyle": "^0.81.0"
   }
 }

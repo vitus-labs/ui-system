@@ -5,12 +5,12 @@ import isEmpty from './isEmpty'
 type CreateTypes = Parameters<typeof createElement>[0]
 type CloneTypes = Parameters<typeof cloneElement>[0]
 type RenderProps<T extends Record<string, unknown> | undefined> = (
-  props: Partial<T>
+  props: Partial<T>,
 ) => ReactNode
 
 export type Render = <T extends Record<string, any> | undefined>(
   content?: CreateTypes | CloneTypes | ReactNode | ReactNode[] | RenderProps<T>,
-  attachProps?: T
+  attachProps?: T,
 ) => ReturnType<typeof createElement> | ReturnType<typeof cloneElement> | null
 
 const render: Render = (content, attachProps) => {

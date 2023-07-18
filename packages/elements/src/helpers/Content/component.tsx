@@ -1,5 +1,5 @@
 import React, { memo, FC, ReactNode } from 'react'
-import type { StyledComponentPropsWithRef } from 'styled-components'
+import type { HTMLTags } from '@vitus-labs/core'
 import type {
   Direction,
   AlignX,
@@ -15,7 +15,7 @@ type Props = {
   gap: Responsive
   contentType: 'before' | 'content' | 'after'
   children: ReactNode
-  tag: StyledComponentPropsWithRef<any>
+  tag: HTMLTags
   direction: Direction
   alignX: AlignX
   alignY: AlignY

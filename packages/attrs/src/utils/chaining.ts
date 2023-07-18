@@ -6,7 +6,7 @@ type Obj = Record<string, unknown>
 // --------------------------------------------------------
 type ChainOptions = (
   opts: Obj | Func | undefined,
-  defaultOpts: Func[]
+  defaultOpts: Func[],
 ) => Func[]
 
 export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {

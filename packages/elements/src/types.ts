@@ -4,6 +4,9 @@ import type {
   ForwardedRef,
   PropsWithChildren,
   ReactElement,
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
 } from 'react'
 import { MakeItResponsive } from '@vitus-labs/unistyle'
 import { config, render, BreakpointKeys } from '@vitus-labs/core'
@@ -28,9 +31,9 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
 >
 
 export type SimpleHoc<P extends Record<string, unknown>> = <
-  T extends ComponentType<any>
+  T extends ComponentType<any>,
 >(
-  WrappedComponent: T
+  WrappedComponent: T,
 ) => FC<MergeTypes<[P, ExtractProps<T>]>>
 
 export type InnerRef = ForwardedRef<any>
@@ -104,15 +107,15 @@ export type ExtractProps<TComponentOrTProps> =
 
 // export type HTMLTagProps<T extends HTMLTags> = JSX.IntrinsicElements[T];
 
-export type VLForwardedComponent<P = Record<string, unknown>> =
-  ForwardRefRenderFunction<any, P> & VLStatic
+export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
+  ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & VLStatic
 
 export type VLComponent<P = Record<string, unknown>> = FC<P> & VLStatic
 
 interface ForwardRefRenderFunction<T, P = Record<string, unknown>> {
   (
     props: PropsWithChildren<P & { ref?: ForwardedRef<T> }>,
-    ref: ForwardedRef<T>
+    ref: ForwardedRef<T>,
   ): ReactElement | null
 }
 

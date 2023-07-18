@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode } from 'react'
-import type { StyledComponentPropsWithRef } from 'styled-components'
+import type { HTMLTags } from '@vitus-labs/core'
 import type {
   Direction,
   AlignX,
@@ -14,7 +14,7 @@ type Reference = unknown
 
 type Props = {
   children: ReactNode
-  tag: StyledComponentPropsWithRef<any>
+  tag: HTMLTags
   block: ResponsiveBooltype
   isInline: boolean
   direction: Direction
@@ -39,7 +39,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
       isInline,
       ...props
     },
-    ref
+    ref,
   ) => {
     const debugProps =
       process.env.NODE_ENV !== 'production'
@@ -104,7 +104,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
         </Styled>
       </Styled>
     )
-  }
+  },
 )
 
 export default Component

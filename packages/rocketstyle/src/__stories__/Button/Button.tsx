@@ -238,7 +238,7 @@ const Button = rocketstyle()({ name: 'Button', component: Element })
           `};
         `
       }};
-    `
+    `,
   )
 
 //   (css) => css<{ $rocketstyle: any }>`
@@ -294,19 +294,19 @@ export const ButtonConsumer = rocketstyle()({
       })),
   })
   .styles(
-    (css) => css<{ $rocketstyle: any }>`
+    (css) => css`
       transition: all 0.15s ease-in-out;
       padding: 4px;
       border-radius: 0.25rem;
 
-      ${({ $rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }: any) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
       `}
-    `
+    `,
   )
 
-const newComponent = (props) => <Button {...props} />
+const newComponent = (props: any) => <Button {...props} />
 
 export const ButtonWithRocketstyle = Button.config({
   name: 'ButtonWithRocketstyle',

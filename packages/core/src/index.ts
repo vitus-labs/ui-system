@@ -1,4 +1,4 @@
-import { omit, pick, set, get, throttle, merge } from 'lodash'
+import { omit, pick, set, get, throttle, merge } from 'lodash-es'
 import memoize from 'moize'
 import config, { init } from '~/config'
 import Provider, { context } from '~/context'

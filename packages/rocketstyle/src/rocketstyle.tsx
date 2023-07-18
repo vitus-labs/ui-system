@@ -37,7 +37,11 @@ import {
   calculateStylingAttrs,
   calculateChainOptions,
 } from '~/utils/attrs'
-import type { RocketStyleComponent, ExoticComponent } from '~/types/rocketstyle'
+import type {
+  RocketStyleComponent,
+  ExoticComponent,
+  InnerComponentProps,
+} from '~/types/rocketstyle'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type {
   Configuration,
@@ -52,7 +56,7 @@ import type {
 // --------------------------------------------------------
 type CloneAndEnhance = (
   defaultOpts: Configuration,
-  opts: Partial<ExtendedConfiguration>
+  opts: Partial<ExtendedConfiguration>,
 ) => ReturnType<typeof rocketComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
@@ -67,7 +71,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
     ...chainReservedKeyOptions(
       [...defaultOpts.dimensionKeys, ...STYLING_KEYS],
       opts,
-      defaultOpts
+      defaultOpts,
     ),
   })
 
@@ -123,13 +127,14 @@ const rocketComponent: RocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: ExoticComponent = forwardRef(
+  // @ts-ignore
+  const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {
         $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
         ...props
       },
-      ref
+      ref,
     ) => {
       // --------------------------------------------------
       // handle refs
@@ -167,7 +172,7 @@ const rocketComponent: RocketComponent = (options) => {
           return helper.get(theme)
         },
         // recalculate this only when theme mode changes dark / light
-        [theme]
+        [theme],
       )
 
       // --------------------------------------------------
@@ -184,7 +189,7 @@ const rocketComponent: RocketComponent = (options) => {
           return helper.get(theme)
         },
         // recalculate this only when theme object changes
-        [theme]
+        [theme],
       )
 
       // --------------------------------------------------
@@ -201,7 +206,7 @@ const rocketComponent: RocketComponent = (options) => {
           return helper.get(baseTheme)
         },
         // recalculate this only when theme mode changes dark / light
-        [mode, baseTheme]
+        [mode, baseTheme],
       )
 
       // --------------------------------------------------
@@ -218,7 +223,7 @@ const rocketComponent: RocketComponent = (options) => {
           return helper.get(themes)
         },
         // recalculate this only when theme mode changes dark / light
-        [mode, themes]
+        [mode, themes],
       )
 
       // --------------------------------------------------
@@ -232,12 +237,12 @@ const rocketComponent: RocketComponent = (options) => {
             themes,
             useBooleans: options.useBooleans,
           }),
-        [themes]
+        [themes],
       )
 
       const RESERVED_STYLING_PROPS_KEYS = useMemo(
         () => Object.keys(reservedPropNames),
-        [reservedPropNames]
+        [reservedPropNames],
       )
 
       // --------------------------------------------------
@@ -315,7 +320,7 @@ const rocketComponent: RocketComponent = (options) => {
       }
 
       return <RenderComponent {...finalProps} />
-    }
+    },
   )
 
   // ------------------------------------------------------
@@ -323,7 +328,7 @@ const rocketComponent: RocketComponent = (options) => {
   // for all dimensions available in configuration
   // ------------------------------------------------------
   const RocketComponent: RocketStyleComponent = compose(...hocsFuncs)(
-    EnhancedComponent
+    EnhancedComponent,
   )
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
@@ -371,10 +376,10 @@ const rocketComponent: RocketComponent = (options) => {
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
 
+    // @ts-ignore
     return cloneAndEnhance(options, result)
   }
 
-  // @ts-ignore
   RocketComponent.statics = (opts) =>
     // @ts-ignore
     cloneAndEnhance(options, { statics: opts })

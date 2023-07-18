@@ -5,7 +5,7 @@ import { isEmpty } from '@vitus-labs/core'
 // Remove undefined props
 // --------------------------------------------------------
 type RemoveUndefinedProps = <T extends Record<string, any>>(
-  props: T
+  props: T,
 ) => { [I in keyof T as T[I] extends undefined ? never : I]: T[I] }
 
 export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
@@ -20,7 +20,7 @@ export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options?: Array<OptionFunc<A>>
+  options?: Array<OptionFunc<A>>,
 ) => (args: Array<A>) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions =

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import React, {
   forwardRef,
   ForwardRefExoticComponent,
@@ -11,7 +10,7 @@ export type RocketStyleHOC = ({
   attrs,
   priorityAttrs,
 }: Pick<Configuration, 'attrs' | 'priorityAttrs'>) => (
-  WrappedComponent: ComponentType<any>
+  WrappedComponent: ComponentType<any>,
 ) => ForwardRefExoticComponent<any>
 
 const attrsHOC: RocketStyleHOC = ({ attrs, priorityAttrs }) => {

@@ -6,7 +6,7 @@ export type CallBackParam = TObj | TFn
 export type DisplayName = string
 
 export type ElementType<T extends TObj | unknown = any> =
-  | (ComponentType<T> & { [key: string]: any })
+  | (ComponentType<T> & Partial<{ [key: string]: any }>)
   | (ForwardRefExoticComponent<T> & { [key: string]: any })
 
 export type ValueOf<T> = T[keyof T]
@@ -15,11 +15,10 @@ export type ArrayOfValues<T> = Array<T[keyof T]>
 
 export type ArrayOfKeys<T> = Array<keyof T>
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type SimpleHoc<P extends Record<string, unknown> = {}> = <
-  T extends ComponentType<any>
+  T extends ComponentType<any>,
 >(
-  WrappedComponent: T
+  WrappedComponent: T,
 ) => FC<MergeTypes<[P, ExtractProps<T>]>>
 
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
@@ -32,16 +31,11 @@ type ExtractNullableKeys<T> = {
 // merge types
 type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 
-type SpreadTwo<L, R> = Id<
-  Pick<L, Exclude<keyof L, keyof R>> & R
-  // Pick<R, Exclude<keyof R, OptionalPropertyNames<R>>> &
-  // Pick<R, Exclude<OptionalPropertyNames<R>, keyof L>> &
-  // SpreadProperties<L, R, OptionalPropertyNames<R> & keyof L>
->
+type SpreadTwo<L, R> = Id<Pick<L, Exclude<keyof L, keyof R>> & R>
 
 export type Spread<A extends readonly [...any]> = A extends [
   infer L,
-  ...infer R
+  ...infer R,
 ]
   ? SpreadTwo<L, Spread<R>>
   : unknown

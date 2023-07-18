@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import type { Configuration, RocketType, ExtractProps } from '~/types'
 import createRocketStories, { IRocketStories } from '~/rocketstories'
 
@@ -6,11 +5,11 @@ import createRocketStories, { IRocketStories } from '~/rocketstories'
 // rocketstories
 // --------------------------------------------------------
 export type Init = <
-  P extends Partial<Omit<Configuration, 'component' | 'attrs'>>
+  P extends Partial<Omit<Configuration, 'component' | 'attrs'>>,
 >(
-  params: P
+  params: P,
 ) => <T extends Configuration['component']>(
-  component: T
+  component: T,
 ) => T extends RocketType
   ? IRocketStories<ExtractProps<T>, T['$$rocketstyle'], true>
   : IRocketStories<ExtractProps<T>, unknown, false>
@@ -25,7 +24,7 @@ const init: Init =
 // --------------------------------------------------------
 export type Rocketstories = <C extends Configuration['component']>(
   component: C,
-  options?: Partial<Omit<Configuration, 'component' | 'attrs'>>
+  options?: Partial<Omit<Configuration, 'component' | 'attrs'>>,
 ) => C extends RocketType
   ? IRocketStories<ExtractProps<C>, C['$$rocketstyle'], true>
   : IRocketStories<ExtractProps<C>, unknown, false>
