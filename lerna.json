@@ -1,18 +1,15 @@
 {
   "npmClient": "yarn",
-  "hoist": true,
-  "useWorkspaces": true,
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.81.0",
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "ignored-file",
-        "*.md",
-        "examples/*"
-      ]
+      "ignoreChanges": ["ignored-file", "*.md"]
+    },
+    "version": {
+      "allowBranch": "main",
+      "exact": true
     }
-  }
+  },
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }
