@@ -173,17 +173,6 @@ const Component: VLElement = forwardRef(
   },
 )
 
-// ----------------------------------------------
-// TYPESCRIPT TYPES HACK
-// ----------------------------------------------
-//@ts-ignore
-Component.$$types = ''
-//@ts-ignore
-Component.$$extra = ''
-
-// ----------------------------------------------
-// DEFINE STATICS
-// ----------------------------------------------
 const name = `${PKG_NAME}/Element` as const
 
 Component.displayName = name

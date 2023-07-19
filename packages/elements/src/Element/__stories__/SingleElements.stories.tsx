@@ -1,12 +1,15 @@
 import React from 'react'
-import { config } from '@vitus-labs/core'
 import Element from '~/Element'
+import { css } from './base'
 
-export default {
+const meta = {
+  title: 'Element',
   component: Element,
 }
 
-const extendCss = config.css`
+export default meta
+
+const extendCss = css`
   background-color: #fff;
   border: 1px solid black;
   color: black;
@@ -20,10 +23,15 @@ const extendCss = config.css`
   }
 `
 
-const beforeContent = ({ hover }) => <span>{hover ? 'normal' : 'hover'}</span>
+const beforeContent = () => <span>beforeContent</span>
 
 export const Example = () => (
-  <Element css={extendCss} beforeContent={beforeContent} afterContent="right">
+  <Element
+    gap={16}
+    css={extendCss}
+    beforeContent={beforeContent}
+    afterContent="right"
+  >
     child
   </Element>
 )

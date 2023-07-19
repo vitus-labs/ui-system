@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Breakpoints {}
+export interface Breakpoints extends Record<string, any> {}
 
 export type BreakpointKeys = keyof Breakpoints

@@ -1,17 +1,20 @@
 import React from 'react'
-import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
+import { rs } from './base'
 
-export default {
+const meta = {
+  title: 'Element',
   component: Element,
 }
 
-const element = rocketstyle()({ component: Element, name: 'base' }).styles(
+export default meta
+
+const element = rs({ component: Element, name: 'base' }).styles(
   (css) => css`
     ${({ $rocketstyle: t }: any) => css`
       background-color: ${t.bgColor};
     `}
-  `
+  `,
 )
 
 const Container = element
@@ -27,7 +30,7 @@ const Container = element
     (css) => css`
       padding: 20px;
       min-height: 100px;
-    `
+    `,
   )
 
 const Inner = element

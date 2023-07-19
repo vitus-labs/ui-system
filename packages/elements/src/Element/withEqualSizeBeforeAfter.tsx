@@ -1,8 +1,7 @@
-// @ts-nocheck
-/* eslint-disable no-param-reassign */
 import React, { createRef } from 'react'
 import { get } from '@vitus-labs/core'
 import type { SimpleHoc } from '~/types'
+import type { Props as ElementProps } from './types'
 
 const isNumber = (a: unknown, b: unknown) =>
   Number.isInteger(a) && Number.isInteger(b)
@@ -37,29 +36,35 @@ const calculate: Calculate =
     }
   }
 
-type Props = Partial<{
-  equalBeforeAfter: boolean
-  vertical?: boolean
-  afterContent?: React.ReactNode
-  beforeContent?: React.ReactNode
-}>
+type Props = ElementProps &
+  Partial<{
+    equalBeforeAfter: boolean
+  }>
 
 const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component'
 
-  const Enhanced = (props) => {
-    const { equalBeforeAfter, vertical, afterContent, beforeContent, ...rest } =
-      props
+  const Enhanced = (props: Props) => {
+    const {
+      equalBeforeAfter,
+      direction,
+      afterContent,
+      beforeContent,
+      ...rest
+    } = props
     const elementRef = createRef<HTMLElement>()
 
     const calculateSize = () => {
       const beforeContent = get(elementRef, 'current.children[0]')
       const afterContent = get(elementRef, 'current.children[2]')
-      const updateElement = calculate({ beforeContent, afterContent })
 
-      if (vertical) updateElement('height')
-      else updateElement('width')
+      if (beforeContent && afterContent) {
+        const updateElement = calculate({ beforeContent, afterContent })
+
+        if (direction === 'rows') updateElement('height')
+        else updateElement('width')
+      }
     }
 
     if (equalBeforeAfter) calculateSize()
@@ -69,6 +74,7 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
         {...rest}
         afterContent={afterContent}
         beforeContent={beforeContent}
+        // @ts-ignore
         ref={elementRef}
       />
     )

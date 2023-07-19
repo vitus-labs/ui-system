@@ -1,19 +1,21 @@
 import React from 'react'
-import { config } from '@vitus-labs/core'
-import rocketstyle from '@vitus-labs/rocketstyle'
 import Element from '~/Element'
+import { rs, styled, css } from './base'
 
-export default {
+const meta = {
+  title: 'Element',
   component: Element,
 }
 
-const LeftContent = config.styled.span`
+export default meta
+
+const LeftContent = styled.span`
   padding: 5px;
   border-radius: 4px;
   background-color: black;
 `
 
-const RightContent = config.styled.span`
+const RightContent = styled.span`
   padding: 2px;
   border-radius: 4px;
   background-color: #0069d9;
@@ -22,14 +24,14 @@ const RightContent = config.styled.span`
 
   ${({ hover }: any) =>
     hover &&
-    config.css`
-        &:hover {
-          background-color: black;
-        };
-  `};
+    css`
+      &:hover {
+        background-color: black;
+      }
+    `};
 `
 
-const Button = rocketstyle()({
+const Button = rs({
   name: 'Button',
   component: Element,
 })

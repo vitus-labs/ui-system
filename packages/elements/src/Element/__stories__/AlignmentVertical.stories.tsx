@@ -1,10 +1,13 @@
 import React from 'react'
 import Element from '~/Element'
-import { Wrapper, Inner } from './components'
+import { Wrapper, Inner } from './base'
 
-export default {
+const meta = {
+  title: 'Element',
   component: Element,
 }
+
+export default meta
 
 export const verticalElement = () => (
   <>

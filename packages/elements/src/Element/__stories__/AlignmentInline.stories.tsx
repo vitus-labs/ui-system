@@ -1,7 +1,7 @@
 import React from 'react'
 import { Provider, breakpoints } from '@vitus-labs/unistyle'
 import Element from '~/Element'
-import { Wrapper, Inner } from './components'
+import { Wrapper, Inner } from './base'
 
 const meta = {
   title: 'Element',
