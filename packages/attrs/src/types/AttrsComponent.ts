@@ -1,5 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import type { ReactElement, ForwardedRef } from 'react'
+import type {
+  ForwardedRef,
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
+} from 'react'
 import type { MergeTypes, ExtractProps } from '@vitus-labs/tools-types'
 import type { TObj, ElementType } from './utils'
 import type { ConfigAttrs } from './config'
@@ -18,12 +22,23 @@ export type InitAttrsComponent<C extends ElementType = ElementType> = (params: {
   {}
 >
 
-export interface ExoticComponent<P = {}> {
-  (props: P & { $attrsRef?: ForwardedRef<unknown> }): ReactElement<
-    P & { $attrsRef?: ForwardedRef<unknown>; 'data-attrs': string }
-  > | null
-  readonly $$typeof: symbol
+export type InnerComponentProps = {
+  $attrsRef?: ForwardedRef<unknown>
+  'data-attrs': string
 }
+
+export type ExoticComponent<P extends Record<string, unknown> = {}> =
+  ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & {
+    readonly $$typeof: symbol
+  }
+
+// export interface ExoticComponent<P = {}> {
+//   (
+//     props: P & { $attrsRef?: ForwardedRef<unknown> },
+//   ): ReactElement<
+//     P & { $attrsRef?: ForwardedRef<unknown>; 'data-attrs': string }
+//   > | null
+// }
 
 /**
  * @param OA   Origin component props params.
@@ -34,17 +49,15 @@ export interface ExoticComponent<P = {}> {
  */
 export interface AttrsComponent<
   // original component props
-  // eslint-disable-next-line @typescript-eslint/ban-types
   OA extends TObj = {},
   // extended component props
-  // eslint-disable-next-line @typescript-eslint/ban-types
   EA extends TObj = {},
   // statics
   S extends TObj = {},
   // hocs
   HOC extends TObj = {},
   // calculated final props
-  DFP = MergeTypes<[OA, EA]>
+  DFP extends Record<string, any> = MergeTypes<[OA, EA]>,
 > extends ExoticComponent<DFP> {
   // CONFIG chaining method
   // --------------------------------------------------------
@@ -150,7 +163,7 @@ export interface AttrsComponent<
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>>
       : Partial<DFP> | AttrsCb<DFP>,
-    config?: Partial<{ priority: boolean }>
+    config?: Partial<{ priority: boolean }>,
   ) => P extends TObj
     ? AttrsComponent<OA, MergeTypes<[EA, P]>, S, HOC>
     : AttrsComponent<OA, EA, S, HOC>
@@ -189,7 +202,7 @@ export interface AttrsComponent<
    * ```
    */
   compose: <P extends ComposeParam>(
-    param: P
+    param: P,
   ) => P extends TObj
     ? AttrsComponent<OA, EA, S, MergeTypes<[HOC, P]>>
     : AttrsComponent<OA, EA, S, HOC>
@@ -231,7 +244,7 @@ export interface AttrsComponent<
    * ```
    */
   statics: <P extends TObj | unknown = unknown>(
-    param: P
+    param: P,
   ) => P extends TObj
     ? AttrsComponent<OA, EA, MergeTypes<[S, P]>, HOC>
     : AttrsComponent<OA, EA, S, HOC>

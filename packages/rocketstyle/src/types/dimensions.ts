@@ -45,7 +45,7 @@ export type DimensionObj<CT> = DimensionResult<CT>
 export type DimensionCb<T, CT> = (
   theme: T,
   mode: ThemeModeCallback,
-  css: Css
+  css: Css,
 ) => DimensionResult<CT>
 
 export type DimensionCallbackParam<T, CT> =
@@ -63,7 +63,7 @@ export type DimensionProps<
   K extends DimensionValue,
   D extends Dimensions,
   P extends CallBackParam,
-  DKP extends TDKP
+  DKP extends TDKP,
 > = {
   [I in ExtractDimensionKey<D[keyof D]>]: I extends ExtractDimensionKey<K>
     ? ExtractNullableDimensionKeys<
@@ -90,7 +90,7 @@ export type DimensionBooleanAttrs<DKP extends TDKP> = Partial<
 export type ExtractDimensionProps<
   D extends Dimensions,
   DKP extends TDKP,
-  UB extends boolean
+  UB extends boolean,
 > = UB extends true
   ? Partial<
       ExtractNullableDimensionKeys<
@@ -101,5 +101,5 @@ export type ExtractDimensionProps<
 
 export type ExtractDimensions<
   D extends Dimensions,
-  DKP extends TDKP
+  DKP extends TDKP,
 > = ExtractNullableDimensionKeys<DimensionObjAttrs<D, DKP>>

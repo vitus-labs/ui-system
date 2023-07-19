@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import * as rocketstory from '~/stories/rocketstories'
@@ -15,7 +14,7 @@ import type {
 
 const cloneAndEhnance = (
   defaultOptions: Configuration,
-  options: Partial<Configuration>
+  options: Partial<Configuration>,
 ) => {
   const result = {
     ...defaultOptions,
@@ -48,7 +47,7 @@ const cloneAndEhnance = (
 export interface IRocketStories<
   OA extends TObj = {},
   RA extends TObj | unknown = unknown,
-  ISRS extends boolean = false
+  ISRS extends boolean = false,
 > {
   CONFIG: Configuration
 
@@ -62,13 +61,13 @@ export interface IRocketStories<
   // --------------------------------------------------------
   dimension: <P extends keyof RA>(
     dimension: ISRS extends true ? P : never,
-    options?: Partial<{ ignore: Array<RA[P]> }>
+    options?: Partial<{ ignore: Array<RA[P]> }>,
   ) => ReturnType<rocketstory.RenderDimension<OA>> | null
 
   // RENDER story
   // --------------------------------------------------------
   render: (
-    params: RenderStoryOptions<OA>
+    params: RenderStoryOptions<OA>,
   ) => ISRS extends true
     ? ReturnType<rocketstory.RenderRender<OA>>
     : ReturnType<simplestory.RenderRender<OA>>
@@ -76,7 +75,7 @@ export interface IRocketStories<
   // RENDER story
   // --------------------------------------------------------
   list: (
-    params: ListStoryOptions
+    params: ListStoryOptions,
   ) => ISRS extends true
     ? ReturnType<rocketstory.RenderList<OA>>
     : ReturnType<simplestory.RenderList<OA>>
@@ -92,17 +91,17 @@ export interface IRocketStories<
   // STORY OPTIONS chaining method
   // --------------------------------------------------------
   storyOptions: (
-    options: Configuration['storyOptions']
+    options: Configuration['storyOptions'],
   ) => IRocketStories<OA, RA, ISRS>
 
   controls: (
-    options: Partial<{ [I in keyof OA]: Control }>
+    options: Partial<{ [I in keyof OA]: Control }>,
   ) => IRocketStories<OA, RA, ISRS>
 
   // CONFIG chaining method
   // --------------------------------------------------------
   config: <P extends Partial<Omit<Configuration, 'attrs'>>>(
-    params: P
+    params: P,
   ) => IRocketStories<OA, RA, ISRS>
 
   // ATTRS chaining method
@@ -112,7 +111,7 @@ export interface IRocketStories<
   // COMPONENT chaining method
   // --------------------------------------------------------
   replaceComponent: <P extends Configuration['component']>(
-    param: P
+    param: P,
   ) => P extends RocketType
     ? IRocketStories<ExtractProps<P>, P['$$rocketstyle'], true>
     : IRocketStories<ExtractProps<P>, unknown, false>
@@ -120,7 +119,7 @@ export interface IRocketStories<
   // COMPONENT chaining method
   // --------------------------------------------------------
   decorators: <P extends Configuration['decorators']>(
-    param: P
+    param: P,
   ) => IRocketStories<OA, RA, ISRS>
 }
 

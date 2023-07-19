@@ -6,10 +6,9 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "main": "lib/vitus-labs-rocketstyle.js",
-  "module": "lib/vitus-labs-rocketstyle.module.js",
-  "react-native": "lib/vitus-labs-rocketstyle.native.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": "./lib/vitus-labs-rocketstyle.module.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -61,14 +60,12 @@
     "hoist-non-react-statics": "^3.3.2"
   },
   "devDependencies": {
-    "@emotion/css": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
     "@vitus-labs/core": "^0.81.0",
     "@vitus-labs/elements": "^0.81.0",
-    "@vitus-labs/tools-babel": "^0.46.0",
-    "@vitus-labs/tools-rollup": "^0.46.0",
-    "@vitus-labs/tools-storybook": "^0.46.0",
-    "@vitus-labs/tools-typescript": "^0.46.0",
+    "@vitus-labs/tools-babel": "^1.0.2",
+    "@vitus-labs/tools-rollup": "^1.0.2",
+    "@vitus-labs/tools-storybook": "^1.0.2",
+    "@vitus-labs/tools-typescript": "^1.0.2",
     "@vitus-labs/unistyle": "^0.81.0"
   }
 }

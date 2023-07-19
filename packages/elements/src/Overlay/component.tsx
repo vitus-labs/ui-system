@@ -5,6 +5,8 @@ import Portal from '~/Portal'
 import type { VLComponent, Content } from '~/types'
 import useOverlay, { UseOverlayProps } from './useOverlay'
 
+const IS_BROWSER = typeof window !== 'undefined'
+
 type Align = 'bottom' | 'top' | 'left' | 'bottom' | 'right'
 type AlignX = 'left' | 'center' | 'right'
 type AlignY = 'bottom' | 'top' | 'center'
@@ -14,7 +16,7 @@ type TriggerRenderer = (
     active: boolean
     showContent: () => void
     hideContent: () => void
-  }>
+  }>,
 ) => ReactNode
 
 type ContentRenderer = (
@@ -25,35 +27,35 @@ type ContentRenderer = (
     align: Align
     alignX: AlignX
     alignY: AlignY
-  }>
+  }>,
 ) => ReactNode
 
 export type Props = {
   /**
    * Children to be rendered within **Overlay** component when Overlay is active.
    */
-  children: Content | TriggerRenderer
+  children: ContentRenderer | Content
   /**
-   * React component to be used as a trigger (e.g. `Button` for opening 
-   * dropdowns). Component must acept accept `ref` or any other prop name 
+   * React component to be used as a trigger (e.g. `Button` for opening
+   * dropdowns). Component must acept accept `ref` or any other prop name
    * defined in `triggerRefName` prop.
    */
-  trigger: Content | ContentRenderer
+  trigger: TriggerRenderer | Content
   /**
    * Defines a HTML DOM where children to be appended. Component uses JavaScript
    * [`Node.appendChild`](https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild)
-   * 
-   * For more information follow [Portal](https://vitus-labs.com/docs/ui-system/elements/portal) 
+   *
+   * For more information follow [Portal](https://vitus-labs.com/docs/ui-system/elements/portal)
    * component.
    */
   DOMLocation?: HTMLElement
   /**
-   * Defines a prop name to be used for passing `ref` for **trigger**. By default, 
+   * Defines a prop name to be used for passing `ref` for **trigger**. By default,
    * the value is `ref`.
    */
   triggerRefName?: string
   /**
-   * Defines a prop name to be used for passing `ref` for **content** (passed `children`). 
+   * Defines a prop name to be used for passing `ref` for **content** (passed `children`).
    * By default, the value is `ref`.
    */
   contentRefName?: string
@@ -87,7 +89,7 @@ const Component: VLComponent<Props> = ({
       openOn === 'manual' ||
       closeOn === 'manual' ||
       closeOn === 'clickOutsideContent',
-    [openOn, closeOn]
+    [openOn, closeOn],
   )
 
   return (
@@ -98,7 +100,7 @@ const Component: VLComponent<Props> = ({
         ...(passHandlers ? { showContent, hideContent } : {}),
       })}
 
-      {__BROWSER__ && active && (
+      {IS_BROWSER && active && (
         <Portal DOMLocation={DOMLocation}>
           <Provider {...ctx}>
             {render(children, {

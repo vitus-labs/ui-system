@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import type { ExtractProps } from '@vitus-labs/tools-types'
 import type { ElementType } from './utils'
 import type { Configuration } from './configuration'
 import type { AttrsComponent } from './AttrsComponent'
 
 export type InitAttrsComponent<C extends ElementType = ElementType> = (
-  params: Configuration<C>
+  params: Configuration<C>,
 ) => AttrsComponent<
   // keep original component props + extract dimension props
   ExtractProps<C>,

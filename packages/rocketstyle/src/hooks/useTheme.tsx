@@ -14,7 +14,7 @@ type UseThemeAttrs = ({ inversed }: { inversed?: boolean }) => Context
 
 const useThemeAttrs: UseThemeAttrs = ({ inversed }) => {
   const {
-    theme,
+    theme = {},
     mode: ctxMode = 'light',
     isDark: ctxDark,
   } = useContext<Context>(context) || {}

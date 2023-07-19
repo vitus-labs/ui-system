@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { HTML_TAGS, HTML_TEXT_TAGS, HTMLTags, HTMLTextTags } from './htmlTags'
 import type { HTMLElementAttrs } from './htmlElementAttrs'
 

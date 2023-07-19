@@ -1,5 +1,5 @@
 {
-  "compilerOptions": {
+    "compilerOptions": {
     "types": [
       "@types/node"
     ],
@@ -9,24 +9,20 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "pretty": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
-    "lib": [
-      "es2017"
-    ],
-    "paths": {},
+    "target": "ESNext",
     "noEmit": true,
     "allowJs": true
   },
   "include": [
-    ".eslintrc.js",
-    "stylelint.config.js",
-    "vl-tools.config.js"
+    "./*.js",
+    "./*.cjs",
+    "./*.mjs"
   ]
 }

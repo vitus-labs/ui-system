@@ -4,7 +4,7 @@ import rocketstyle from '~/index'
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-export default rocketstyle()({
+export default rocketstyle({
   dimensions: {
     gaps: 'gap',
   } as const,
@@ -30,7 +30,7 @@ export default rocketstyle()({
     },
   })
   .styles(
-    (css) => css<{ $rocketstyle: any }>`
+    (css) => css`
       border: 1px solid transparent;
       padding: 0 0.75rem;
       height: 40px;
@@ -45,7 +45,7 @@ export default rocketstyle()({
         flex: 1 0 auto;
       }
 
-      ${({ $rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }: any) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
         border-color: ${t.bgColor};
@@ -55,5 +55,5 @@ export default rocketstyle()({
           background-color: ${t.hover.bgColor};
         }
       `};
-    `
+    `,
   )

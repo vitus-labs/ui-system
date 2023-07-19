@@ -9,7 +9,11 @@ import { createStaticsEnhancers } from '~/utils/statics'
 import { chainOptions } from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
 import { calculateChainOptions } from '~/utils/attrs'
-import type { AttrsComponent, ExoticComponent } from '~/types/AttrsComponent'
+import type {
+  AttrsComponent,
+  ExoticComponent,
+  InnerComponentProps,
+} from '~/types/AttrsComponent'
 import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
 import type {
   Configuration,
@@ -24,7 +28,7 @@ import type {
 // --------------------------------------------------------
 type CloneAndEnhance = (
   defaultOpts: Configuration,
-  opts: Partial<ExtendedConfiguration>
+  opts: Partial<ExtendedConfiguration>,
 ) => ReturnType<typeof rocketComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
@@ -63,13 +67,13 @@ const rocketComponent: InitAttrsComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: ExoticComponent = forwardRef(
+  const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {
         $attrsRef, // it's forwarded from HOC which is always on top of all hocs
         ...props
       },
-      ref
+      ref,
     ) => {
       // --------------------------------------------------
       // handle refs
@@ -97,7 +101,7 @@ const rocketComponent: InitAttrsComponent = (options) => {
       }
 
       return <RenderComponent {...finalProps} />
-    }
+    },
   )
 
   // ------------------------------------------------------
@@ -105,7 +109,7 @@ const rocketComponent: InitAttrsComponent = (options) => {
   // for all dimensions available in configuration
   // ------------------------------------------------------
   const RocketComponent: AttrsComponent = compose(...hocsFuncs)(
-    EnhancedComponent
+    EnhancedComponent,
   )
   RocketComponent.IS_ATTRS = true
   RocketComponent.displayName = componentName

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import type { ReactElement, ForwardedRef } from 'react'
 import type { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
 import type {
@@ -18,10 +17,13 @@ import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
 import type { ComposeParam } from './hoc'
 import type { DefaultProps } from './configuration'
 
+export type InnerComponentProps = {
+  $rocketstyleRef?: ForwardedRef<unknown>
+  'data-rocketstyle': string
+}
+
 export interface ExoticComponent<P = {}> {
-  (props: P & { $rocketstyleRef?: ForwardedRef<unknown> }): ReactElement<
-    P & { $rocketstyleRef?: ForwardedRef<unknown>; 'data-rocketstyle': string }
-  > | null
+  (props: P): ReactElement<P & InnerComponentProps> | null
   readonly $$typeof: symbol
 }
 
@@ -34,16 +36,16 @@ export type RocketStyleComponent<
   HOC extends TObj = {},
   D extends Dimensions = Dimensions,
   UB extends boolean = boolean,
-  DKP extends TDKP = TDKP
+  DKP extends TDKP = TDKP,
 > = IRocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP> & {
   [I in keyof D]: <
     K extends DimensionValue = D[I],
     P extends DimensionCallbackParam<
       Theme<T>,
       Styles<CSS>
-    > = DimensionCallbackParam<Theme<T>, Styles<CSS>>
+    > = DimensionCallbackParam<Theme<T>, Styles<CSS>>,
   >(
-    param: P
+    param: P,
   ) => P extends DimensionCallbackParam<Theme<T>, Styles<CSS>>
     ? RocketStyleComponent<
         OA,
@@ -72,10 +74,8 @@ export type RocketStyleComponent<
  */
 export interface IRocketStyleComponent<
   // original component props
-  // eslint-disable-next-line @typescript-eslint/ban-types
   OA extends TObj = {},
   // extended component props
-  // eslint-disable-next-line @typescript-eslint/ban-types
   EA extends TObj = {},
   // theme
   T extends TObj = {},
@@ -92,7 +92,7 @@ export interface IRocketStyleComponent<
   // dimension key props
   DKP extends TDKP = TDKP,
   // calculated final props
-  DFP = MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>
+  DFP = MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>,
 > extends ExoticComponent<DFP> {
   // CONFIG chaining method
   // --------------------------------------------------------
@@ -200,7 +200,7 @@ export interface IRocketStyleComponent<
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>
       : Partial<DFP> | AttrsCb<DFP, Theme<T>>,
-    config?: Partial<{ priority: boolean }>
+    config?: Partial<{ priority: boolean }>,
   ) => P extends TObj
     ? RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
@@ -243,7 +243,7 @@ export interface IRocketStyleComponent<
       ?
           | Partial<MergeTypes<[Styles<CSS>, P]>>
           | ThemeCb<MergeTypes<[Styles<CSS>, P]>, Theme<T>>
-      : Partial<Styles<CSS>> | ThemeCb<Styles<CSS>, Theme<T>>
+      : Partial<Styles<CSS>> | ThemeCb<Styles<CSS>, Theme<T>>,
   ) => P extends TObj
     ? RocketStyleComponent<OA, EA, T, MergeTypes<[CSS, P]>, S, HOC, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
@@ -263,7 +263,7 @@ export interface IRocketStyleComponent<
    * ```
    */
   styles: (
-    param: StylesCb
+    param: StylesCb,
   ) => RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
 
   // COMPOSE chaining method
@@ -300,7 +300,7 @@ export interface IRocketStyleComponent<
    * ```
    */
   compose: <P extends ComposeParam>(
-    param: P
+    param: P,
   ) => P extends TObj
     ? RocketStyleComponent<OA, EA, T, CSS, S, MergeTypes<[HOC, P]>, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
@@ -342,7 +342,7 @@ export interface IRocketStyleComponent<
    * ```
    */
   statics: <P extends TObj | unknown = unknown>(
-    param: P
+    param: P,
   ) => P extends TObj
     ? RocketStyleComponent<OA, EA, T, CSS, MergeTypes<[S, P]>, HOC, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>

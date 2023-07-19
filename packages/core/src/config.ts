@@ -1,18 +1,11 @@
 import { ComponentType } from 'react'
 import type { HTMLTags } from '~/html'
-import styled, {
-  css,
-  ThemeProvider,
-  ThemedCssFunction,
-  StyledInterface,
-  DefaultTheme,
-  ThemeProviderComponent,
-} from 'styled-components'
+import styled, { css, ThemeProvider } from 'styled-components'
 
 interface Internal {
-  css: ThemedCssFunction<DefaultTheme>
-  styled: StyledInterface
-  provider?: ThemeProviderComponent<any, any>
+  css: typeof css
+  styled: typeof styled
+  provider?: typeof ThemeProvider
   component?: ComponentType | HTMLTags
   textComponent?: ComponentType | HTMLTags
 }

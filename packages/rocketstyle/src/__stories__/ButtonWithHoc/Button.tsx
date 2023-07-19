@@ -3,8 +3,8 @@ import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/index'
 
-const hoc = (WrapperComponent) => {
-  const Enhanced = (props) => {
+const hoc = (WrapperComponent: any) => {
+  const Enhanced = (props: any) => {
     const a = useRef(null)
 
     return <WrapperComponent {...props} ref={a} />
@@ -16,7 +16,7 @@ const hoc = (WrapperComponent) => {
 // --------------------------------------------------------
 // basic Button compoenent
 // --------------------------------------------------------
-export default rocketstyle()()({ name: 'Button', component: Element })
+export default rocketstyle()({ name: 'Button', component: Element })
   .compose({
     wrappedByHoc: hoc,
   })
@@ -173,33 +173,5 @@ export default rocketstyle()()({ name: 'Button', component: Element })
           `};
         `
       }};
-    `
+    `,
   )
-
-//   (css) => css<{ $rocketstyle: any }>`
-//     border: 1px solid transparent;
-//     padding: 0 0.75rem;
-//     height: 40px;
-//     font-size: 1rem;
-//     border-radius: 0.25rem;
-//     transition: all 0.15s ease-in-out;
-//     cursor: pointer;
-
-//     &::before,
-//     &::after {
-//       content: '';
-//       flex: 1 0 auto;
-//     }
-
-//     ${({ $rocketstyle: t }) => css`
-//       color: ${t.color};
-//       background-color: ${t.bgColor};
-//       border-color: ${t.bgColor};
-
-//       &:hover {
-//         color: ${t.color};
-//         background-color: ${t.hover.bgColor};
-//       }
-//     `};
-//   `
-// )

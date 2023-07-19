@@ -10,17 +10,18 @@ type CustomTheme = Record<
   string,
   Record<string, unknown> | number | string | boolean
 >
-type Theme = {
+type Theme = Partial<{
   rootSize: number
-  breakpoints?: Record<string, number>
-  __VITUS_LABS__?: {
-    media?: ReturnType<typeof createMediaQueries>
-    sortedBreakpoints?: ReturnType<typeof sortBreakpoints>
-  }
-} & CustomTheme
+  breakpoints: Record<string, number>
+  __VITUS_LABS__: Partial<{
+    media: ReturnType<typeof createMediaQueries>
+    sortedBreakpoints: ReturnType<typeof sortBreakpoints>
+  }>
+}> &
+  CustomTheme
 
 export type MakeItResponsiveStyles<
-  T extends Partial<Record<string, any>> = any
+  T extends Partial<Record<string, any>> = any,
 > = ({
   theme,
   css,
@@ -29,8 +30,8 @@ export type MakeItResponsiveStyles<
 }: {
   theme: T
   css: Css
-  rootSize: number
-  globalTheme?: Partial<Record<string, any>>
+  rootSize?: number
+  globalTheme?: Record<string, any>
 }) => ReturnType<typeof css> | string | any
 
 export type MakeItResponsive = ({
@@ -59,7 +60,7 @@ const makeItResponsive: MakeItResponsive =
       theme as Theme
 
     const renderStyles = (
-      theme: Record<string, unknown>
+      theme: Record<string, unknown>,
     ): ReturnType<typeof styles> =>
       styles({ theme, css, rootSize, globalTheme: restTheme })
 

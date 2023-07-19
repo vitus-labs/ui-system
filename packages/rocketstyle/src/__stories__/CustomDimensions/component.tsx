@@ -1,7 +1,7 @@
 import { Element } from '@vitus-labs/elements'
 import rocketstyle from '~/init'
 
-export default rocketstyle()({
+export default rocketstyle({
   dimensions: {
     colors: 'color',
   } as const,
@@ -39,13 +39,16 @@ export default rocketstyle()({
     },
   })
   .styles(
-    (css) => css<{ $rocketstyle: any }>`
+    (css) => css`
       border: 1px solid transparent;
       height: 40px;
       font-size: 1rem;
       border-radius: 0.25rem;
-      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition:
+        color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
       cursor: pointer;
 
       &::before,
@@ -54,7 +57,7 @@ export default rocketstyle()({
         flex: 1 0 auto;
       }
 
-      ${({ $rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }: any) => css`
         padding-left: ${t.paddingX}px;
         margin-left: ${t.marginX}px;
         color: ${t.color};
@@ -66,5 +69,5 @@ export default rocketstyle()({
           background-color: ${t.hover.bgColor};
         }
       `};
-    `
+    `,
   )

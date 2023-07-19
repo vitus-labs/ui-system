@@ -1,5 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import type { ReactElement, ForwardedRef } from 'react'
+import type {
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
+} from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import type {
   AlignX,
@@ -456,8 +459,12 @@ export type Props = Partial<{
   afterContentCss: ExtendCss
 }>
 
-export type VLElement<P extends Record<string, unknown> = {}> = {
-  <T extends Record<string, unknown> = {}>(
-    props: Props & P & T & { ref?: ForwardedRef<any> }
-  ): ReactElement | null
-} & VLStatic
+export type VLElement<P extends Record<string, unknown> = {}> =
+  ForwardRefExoticComponent<PropsWithoutRef<Props & P> & RefAttributes<any>> &
+    VLStatic
+
+// export type VLElement<P extends Record<string, unknown> = {}> = {
+//   <T extends Record<string, unknown> = {}>(
+//     props: Props & P & T & { ref?: ForwardedRef<any> },
+//   ): ReactElement | null
+// } & VLStatic

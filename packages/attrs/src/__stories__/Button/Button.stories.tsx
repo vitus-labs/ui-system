@@ -6,15 +6,19 @@ export default {
   title: 'Button',
 }
 
-export const button = () => (
-  <>
-    <Button label="Button" />
-    <Button label="Button" />
-  </>
-)
+export const button = {
+  render: () => (
+    <>
+      <Button label="Button" />
+      <Button label="Button" />
+    </>
+  ),
+}
 
-export const withRef = () => {
-  const ref = createRef()
+export const withRef = {
+  render: () => {
+    const ref = createRef()
 
-  return <Button ref={ref} />
+    return <Button ref={ref} />
+  },
 }

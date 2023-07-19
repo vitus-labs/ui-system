@@ -30,7 +30,7 @@ type CssProps = Partial<{
   useDefaultOutline: boolean
 }>
 
-export const element = rocketstyle<TTheme, Theme>()()({
+export const element = rocketstyle()({
   name: 'Basic.Element',
   component: Element,
 })
@@ -40,120 +40,119 @@ export const element = rocketstyle<TTheme, Theme>()()({
     fontSize: t.fontSize.sm,
   }))
   .styles(
-    (css) =>
-      css<CssProps>`
-        box-sizing: border-box;
-        text-decoration: none;
+    (css) => css<CssProps>`
+      box-sizing: border-box;
+      text-decoration: none;
 
-        ${({
-          $rocketstyle = {},
-          outline,
-          disabled,
-          active,
-          onClick,
-          href,
-          useDefaultFocus,
-          useDefaultHover,
-          useDefaultActive,
-          useDefaultOutline,
-        }) => {
-          const isDynamic = onClick || href
+      ${({
+        $rocketstyle = {},
+        outline,
+        disabled,
+        active,
+        onClick,
+        href,
+        useDefaultFocus,
+        useDefaultHover,
+        useDefaultActive,
+        useDefaultOutline,
+      }) => {
+        const isDynamic = onClick || href
 
-          const { hover: h, active: a, focus: f, ...b } = $rocketstyle
+        const { hover: h, active: a, focus: f, ...b } = $rocketstyle
 
-          const baseTheme = makeItResponsive({
-            theme: b,
-            styles,
-            css,
-          })
+        const baseTheme = makeItResponsive({
+          theme: b,
+          styles,
+          css,
+        })
 
-          const hoverTheme = makeItResponsive({
-            theme: h,
-            styles,
-            css,
-          })
+        const hoverTheme = makeItResponsive({
+          theme: h,
+          styles,
+          css,
+        })
 
-          const focusTheme = makeItResponsive({
-            theme: f,
-            styles,
-            css,
-          })
+        const focusTheme = makeItResponsive({
+          theme: f,
+          styles,
+          css,
+        })
 
-          const activeTheme = makeItResponsive({
-            theme: a,
-            styles,
-            css,
-          })
+        const activeTheme = makeItResponsive({
+          theme: a,
+          styles,
+          css,
+        })
 
-          return css`
-            /* ------------------------------------------------------ */
-            /*  BASE state */
-            /* ------------------------------------------------------ */
-            ${baseTheme};
+        return css`
+          /* ------------------------------------------------------ */
+          /*  BASE state */
+          /* ------------------------------------------------------ */
+          ${baseTheme};
 
-            ${!disabled &&
-            isDynamic &&
-            css`
-              cursor: pointer;
-            `}
+          ${!disabled &&
+          isDynamic &&
+          css`
+            cursor: pointer;
+          `}
 
-            /* ------------------------------------------------------ */
+          /* ------------------------------------------------------ */
           /*  HOVER state */
           /* ------------------------------------------------------ */
           ${!disabled &&
-            (isDynamic || useDefaultHover) &&
-            !active &&
+          (isDynamic || useDefaultHover) &&
+          !active &&
+          css`
+            &:hover {
+              ${hoverTheme};
+            }
+          `};
+
+          /* ------------------------------------------------------ */
+          /*  FOCUS state */
+          /* ------------------------------------------------------ */
+          ${!disabled &&
+          (isDynamic || useDefaultFocus) &&
+          css`
+            &:focus {
+              ${focusTheme};
+            }
+          `};
+
+          /* ------------------------------------------------------ */
+          /*  ACTIVE state */
+          /* ------------------------------------------------------ */
+          ${!disabled &&
+          (isDynamic || useDefaultActive) &&
+          css`
+            &:active {
+              ${activeTheme};
+            }
+          `};
+
+          /* ------------------------------------------------------ */
+          /*  OUTLINE revert colors */
+          /* ------------------------------------------------------ */
+          ${!disabled &&
+          outline &&
+          useDefaultOutline &&
+          css`
+            background-color: transparent;
+            border-color: ${b.borderColor};
+            color: ${b.bgColor || b.color};
+
+            ${isDynamic &&
             css`
               &:hover {
-                ${hoverTheme};
+                background-color: ${b.bgColor};
+                border-color: ${b.bgColor};
+                color: ${b.color};
               }
             `};
-
-            /* ------------------------------------------------------ */
-            /*  FOCUS state */
-            /* ------------------------------------------------------ */
-            ${!disabled &&
-            (isDynamic || useDefaultFocus) &&
-            css`
-              &:focus {
-                ${focusTheme};
-              }
-            `};
-
-            /* ------------------------------------------------------ */
-            /*  ACTIVE state */
-            /* ------------------------------------------------------ */
-            ${!disabled &&
-            (isDynamic || useDefaultActive) &&
-            css`
-              &:active {
-                ${activeTheme};
-              }
-            `};
-
-            /* ------------------------------------------------------ */
-            /*  OUTLINE revert colors */
-            /* ------------------------------------------------------ */
-            ${!disabled &&
-            outline &&
-            useDefaultOutline &&
-            css`
-              background-color: transparent;
-              border-color: ${b.borderColor};
-              color: ${b.bgColor || b.color};
-
-              ${isDynamic &&
-              css`
-                &:hover {
-                  background-color: ${b.bgColor};
-                  border-color: ${b.bgColor};
-                  color: ${b.color};
-                }
-              `};
-            `}
-          `
-        }};
-      `
+          `}
+        `
+      }};
+    `,
   )
 
 export const list = element
@@ -165,7 +164,7 @@ export const list = element
     (css) => css`
       margin: 0;
       padding: 0;
-    `
+    `,
   )
 
 export const text = element.config({

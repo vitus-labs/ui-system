@@ -6,9 +6,9 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "main": "lib/vitus-labs-hooks.js",
-  "module": "lib/vitus-labs-hooks.module.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": "./lib/vitus-labs-hooks.module.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/"
   ],
@@ -43,9 +43,9 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "^0.81.0",
-    "@vitus-labs/tools-babel": "^0.46.0",
-    "@vitus-labs/tools-rollup": "^0.46.0",
-    "@vitus-labs/tools-storybook": "^0.46.0",
-    "@vitus-labs/tools-typescript": "^0.46.0"
+    "@vitus-labs/tools-babel": "^1.0.2",
+    "@vitus-labs/tools-rollup": "^1.0.2",
+    "@vitus-labs/tools-storybook": "^1.0.2",
+    "@vitus-labs/tools-typescript": "^1.0.2"
   }
 }

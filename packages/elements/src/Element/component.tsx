@@ -48,7 +48,7 @@ const Component: VLElement = forwardRef(
 
       ...props
     },
-    ref
+    ref,
   ) => {
     // --------------------------------------------------------
     // check if should render only single element
@@ -170,7 +170,7 @@ const Component: VLElement = forwardRef(
         )}
       </Wrapper>
     )
-  }
+  },
 )
 
 const name = `${PKG_NAME}/Element` as const

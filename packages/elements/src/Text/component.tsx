@@ -50,6 +50,9 @@ const Component: VLForwardedComponent<Props> & {
   return renderContent(finalTag)
 })
 
+// ----------------------------------------------
+// DEFINE STATICS
+// ----------------------------------------------
 const name = `${PKG_NAME}/Text` as const
 
 Component.displayName = name

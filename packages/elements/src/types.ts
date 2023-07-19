@@ -2,8 +2,9 @@ import type {
   ComponentType,
   FC,
   ForwardedRef,
-  PropsWithChildren,
-  ReactElement,
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
 } from 'react'
 import { MakeItResponsive } from '@vitus-labs/unistyle'
 import { config, render, BreakpointKeys } from '@vitus-labs/core'
@@ -27,17 +28,15 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
   Spread<A>
 >
 
-export type SimpleHoc<P extends Record<string, unknown>> = <
-  T extends ComponentType<any>
->(
-  WrappedComponent: T
-) => FC<MergeTypes<[P, ExtractProps<T>]>>
+export type SimpleHoc<P extends Record<string, unknown> = {}> = (
+  WrappedComponent: ComponentType<P>,
+) => ComponentType<P>
 
 export type InnerRef = ForwardedRef<any>
 
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 
-export type Css = CssCallback | string | ReturnType<typeof config.css>
+export type Css = CssCallback | string
 
 export type isEmpty = null | undefined
 
@@ -95,7 +94,7 @@ export type Responsive =
   | Array<string | number>
   | Partial<Record<BreakpointKeys, number | string>>
 
-export type ExtendCss = Css | Array<Css> | Partial<Record<BreakpointKeys, Css>>
+export type ExtendCss = Css | Css[] | Partial<Record<BreakpointKeys, Css>>
 
 export type ExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
@@ -104,17 +103,11 @@ export type ExtractProps<TComponentOrTProps> =
 
 // export type HTMLTagProps<T extends HTMLTags> = JSX.IntrinsicElements[T];
 
-export type VLForwardedComponent<P = Record<string, unknown>> =
-  ForwardRefRenderFunction<any, P> & VLStatic
+export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
+  ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & VLStatic
 
-export type VLComponent<P = Record<string, unknown>> = FC<P> & VLStatic
-
-interface ForwardRefRenderFunction<T, P = Record<string, unknown>> {
-  (
-    props: PropsWithChildren<P & { ref?: ForwardedRef<T> }>,
-    ref: ForwardedRef<T>
-  ): ReactElement | null
-}
+export type VLComponent<P extends Record<string, unknown> = {}> = FC<P> &
+  VLStatic
 
 export type VLStatic = {
   /**

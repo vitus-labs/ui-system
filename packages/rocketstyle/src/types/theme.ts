@@ -21,5 +21,5 @@ export type ThemeMode = <A = any, B = any>(light: A, dark: B) => A | B
 export type ThemeCb<CSS, T> = (
   theme: T,
   mode: ThemeModeCallback,
-  css: Css
+  css: Css,
 ) => Partial<CSS>

@@ -24,7 +24,7 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.provider, [])
   const context = useMemo(() => ({ theme, ...props }), [theme, props])
 
-  if (isEmpty(theme)) return <>{children}</>
+  if (isEmpty(theme) || !theme) return <>{children}</>
 
   if (ExternalProvider) {
     return (
