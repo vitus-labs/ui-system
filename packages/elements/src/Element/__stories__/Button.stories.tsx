@@ -3,7 +3,6 @@ import Element from '~/Element'
 import { rs, styled, css } from './base'
 
 const meta = {
-  title: 'Element',
   component: Element,
 }
 
@@ -71,19 +70,23 @@ const Button = rs({
     `,
   )
 
-export const button = () => (
-  <>
-    <Button gap={10} />
-    <Button gap={[10, 20]} block />
-  </>
-)
+export const button = {
+  render: () => (
+    <>
+      <Button gap={10} />
+      <Button gap={[10, 20]} block />
+    </>
+  ),
+}
 
-export const Stacking = () => (
-  <Element contentDirection="rows" contentAlignX="left" contentAlignY="top">
-    <Button tag="div" gap={10} />
-    <Button tag="div" block gap={10} />
-    <Button tag="div" gap={10} />
-    <Button tag="div" gap={10} />
-    <Button tag="div" gap={10} />
-  </Element>
-)
+export const Stacking = {
+  render: () => (
+    <Element contentDirection="rows" contentAlignX="left" contentAlignY="top">
+      <Button tag="div" gap={10} />
+      <Button tag="div" block gap={10} />
+      <Button tag="div" gap={10} />
+      <Button tag="div" gap={10} />
+      <Button tag="div" gap={10} />
+    </Element>
+  ),
+}
