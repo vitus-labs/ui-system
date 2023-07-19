@@ -79,11 +79,14 @@ export const exampleDropdownOnTriggerClick = () => (
 )
 
 export const exampleDropdownManual = () => {
-  const ManualTrigger = ({ showContent, ...props }) => (
+  const ManualTrigger: (typeof Overlay)['$$types']['trigger'] = ({
+    showContent,
+    ...props
+  }) => (
     <Trigger
       {...props}
       onClick={(e) => {
-        if (e.detail === 2) showContent(e)
+        if (e.detail === 2) showContent()
       }}
     >
       double click on me

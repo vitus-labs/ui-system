@@ -26,12 +26,14 @@ const RightContent = config.styled.span`
         &:hover {
           background-color: black;
         };
-      `};
+  `};
 `
 
-const Button = rocketstyle()({ name: 'Button', component: Element })
+const Button = rocketstyle()({
+  name: 'Button',
+  component: Element,
+})
   .attrs({
-    primary: true,
     tag: 'button',
     label: 'This is a label',
     beforeContent: () => <LeftContent>ico</LeftContent>,
@@ -64,7 +66,7 @@ const Button = rocketstyle()({ name: 'Button', component: Element })
           border-color: #0062cc;
         }
       `};
-    `
+    `,
   )
 
 export const button = () => (

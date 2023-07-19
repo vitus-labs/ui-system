@@ -77,6 +77,7 @@ type DimensionTypesHelper<DKP extends TDKP> = {
 }
 
 export type DimensionObjAttrs<D extends Dimensions, DKP extends TDKP> = {
+  // @ts-ignore
   [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
     ? Array<keyof DKP[I]>
     : keyof DKP[I]

@@ -34,13 +34,13 @@ export type Props = {
   /**
    * Children to be rendered within **Overlay** component when Overlay is active.
    */
-  children: Content | TriggerRenderer
+  children: ContentRenderer | Content
   /**
    * React component to be used as a trigger (e.g. `Button` for opening
    * dropdowns). Component must acept accept `ref` or any other prop name
    * defined in `triggerRefName` prop.
    */
-  trigger: Content | ContentRenderer
+  trigger: TriggerRenderer | Content
   /**
    * Defines a HTML DOM where children to be appended. Component uses JavaScript
    * [`Node.appendChild`](https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild)

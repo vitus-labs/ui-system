@@ -110,7 +110,8 @@ export type ExtractProps<TComponentOrTProps> =
 export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
   ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & VLStatic
 
-export type VLComponent<P = Record<string, unknown>> = FC<P> & VLStatic
+export type VLComponent<P extends Record<string, unknown> = {}> = FC<P> &
+  VLStatic
 
 interface ForwardRefRenderFunction<T, P = Record<string, unknown>> {
   (

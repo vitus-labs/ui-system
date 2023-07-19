@@ -45,6 +45,17 @@ const Component: VLComponent<Props> = ({
   return createPortal(children, element)
 }
 
+// ----------------------------------------------
+// TYPESCRIPT TYPES HACK
+// ----------------------------------------------
+//@ts-ignore
+Component.$$types = ''
+//@ts-ignore
+Component.$$extra = ''
+
+// ----------------------------------------------
+// DEFINE STATICS
+// ----------------------------------------------
 const name = `${PKG_NAME}/Portal` as const
 
 Component.displayName = name

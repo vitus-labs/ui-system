@@ -8,7 +8,7 @@ import type { MergeTypes } from '~/types'
 type ListProps = {
   /**
    * A boolean value. When set to `false`, component returns `React.Fragment`
-   * When set to `true`, component returns as the **root** element `Element` 
+   * When set to `true`, component returns as the **root** element `Element`
    * component.
    */
   rootElement?: boolean
@@ -22,12 +22,7 @@ type ListProps = {
   content: never
 }
 
-export type Props = MergeTypes<
-  [
-    IteratorProps,
-    ListProps
-  ]
->
+export type Props = MergeTypes<[IteratorProps, ListProps]>
 
 const Component: VLElement<Props> = forwardRef(
   ({ rootElement = false, ...props }, ref) => {
@@ -40,7 +35,7 @@ const Component: VLElement<Props> = forwardRef(
         {renderedList}
       </Element>
     )
-  }
+  },
 )
 
 const name = `${PKG_NAME}/List` as const
