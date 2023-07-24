@@ -43,7 +43,7 @@
   },
   "peerDependencies": {
     "react": ">= 16.8",
-    "styled-components": ">= 5"
+    "styled-components": ">= 6"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",

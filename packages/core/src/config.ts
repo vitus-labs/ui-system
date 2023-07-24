@@ -1,6 +1,6 @@
 import { ComponentType } from 'react'
+import { styled, css, ThemeProvider } from 'styled-components'
 import type { HTMLTags } from '~/html'
-import styled, { css, ThemeProvider } from 'styled-components'
 
 interface Internal {
   css: typeof css
@@ -11,15 +11,23 @@ interface Internal {
 }
 
 class Configuration {
-  css = css
+  css
 
-  styled = styled
+  styled
 
-  provider = ThemeProvider
+  provider
 
-  component: ComponentType | HTMLTags = 'div'
+  component: Internal['component']
 
-  textComponent: ComponentType | HTMLTags = 'span'
+  textComponent: Internal['textComponent']
+
+  constructor(props: Internal) {
+    this.css = props.css
+    this.styled = props.styled
+    this.provider = props.provider
+    this.component = props.component
+    this.textComponent = props.textComponent
+  }
 
   init = (props: Internal) => {
     if (props.css) {
@@ -44,7 +52,15 @@ class Configuration {
   }
 }
 
-const config = new Configuration()
+const defaultParams = {
+  css,
+  styled,
+  provider: ThemeProvider,
+  component: 'div',
+  textComponent: 'span',
+} as const
+
+const config = new Configuration(defaultParams)
 
 const { init } = config
 
