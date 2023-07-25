@@ -3,11 +3,13 @@ import { config } from '@vitus-labs/core'
 import Element from '~/Element'
 import Util from '~/Util'
 
+const { styled } = config
+
 export default {
   component: Util,
 }
 
-const Wrapper = config.styled(Util)`
+const Wrapper = styled(Util)`
   color: red;
 `
 

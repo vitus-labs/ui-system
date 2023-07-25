@@ -3,21 +3,26 @@ import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import rocketstyle from '@vitus-labs/rocketstyle'
 
-const LeftContent = config.styled.span`
+const { styled } = config
+
+const LeftContent = styled.span`
   margin-right: 10px;
   padding: 5px;
   border-radius: 4px;
   background-color: black;
 `
 
-const RightContent = config.styled.span`
+const RightContent = styled.span`
   margin-left: 10px;
   padding: 2px;
   border-radius: 4px;
   background-color: #0069d9;
   line-height: 1;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 
   ${({ hover }) =>
     hover &&
@@ -65,8 +70,11 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
       height: 80px;
       font-size: 1rem;
       border-radius: 0.25rem;
-      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition:
+        color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
       cursor: pointer;
 
       &::before,
@@ -86,7 +94,7 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
           border-color: #0062cc;
         }
       `};
-    `
+    `,
   )
 
 const ExtendedButtonA = (props) => <Button {...props} />
@@ -110,7 +118,7 @@ export const ElementExample = rocketstyle()({
       ${({ $rocketstyle: t }) => css`
         color: ${t.color};
       `};
-    `
+    `,
   )
 
 export const HoistedButton = Button.config({

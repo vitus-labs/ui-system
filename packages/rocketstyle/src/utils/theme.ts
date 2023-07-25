@@ -29,8 +29,8 @@ const isModeCallback: IsModeCallback = (value) =>
 // --------------------------------------------------------
 type OptionFunc = (...arg: any) => Record<string, unknown>
 type GetThemeFromChain = (
-  options: Array<OptionFunc> | undefined | null,
-  theme: Record<string, any>
+  options: OptionFunc[] | undefined | null,
+  theme: Record<string, any>,
 ) => ReturnType<OptionFunc>
 
 export const getThemeFromChain: GetThemeFromChain = (options, theme) => {
@@ -39,7 +39,7 @@ export const getThemeFromChain: GetThemeFromChain = (options, theme) => {
 
   return options.reduce(
     (acc, item) => merge(acc, item(theme, themeModeCallback, config.css)),
-    result
+    result,
   )
 }
 
@@ -48,7 +48,7 @@ export const getThemeFromChain: GetThemeFromChain = (options, theme) => {
 // --------------------------------------------------------
 type GetDimensionThemes = (
   theme: Record<string, any>,
-  options: Record<string, any>
+  options: Record<string, any>,
 ) => Record<string, any>
 
 export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
@@ -56,20 +56,23 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 
   if (isEmpty(options.dimensions)) return result
 
-  return Object.entries(options.dimensions).reduce((acc, [key, value]) => {
-    const [, dimension] = isMultiKey(value as any)
+  return Object.entries(options.dimensions).reduce(
+    (acc, [key, value]) => {
+      const [, dimension] = isMultiKey(value as any)
 
-    const helper = options[key]
+      const helper = options[key]
 
-    if (Array.isArray(helper) && helper.length > 0) {
-      const finalDimensionThemes = getThemeFromChain(helper, theme)
+      if (Array.isArray(helper) && helper.length > 0) {
+        const finalDimensionThemes = getThemeFromChain(helper, theme)
 
-      // eslint-disable-next-line no-param-reassign
-      acc[dimension] = removeNullableValues(finalDimensionThemes)
-    }
+        // eslint-disable-next-line no-param-reassign
+        acc[dimension] = removeNullableValues(finalDimensionThemes)
+      }
 
-    return acc
-  }, result as Record<string, any>)
+      return acc
+    },
+    result as Record<string, any>,
+  )
 }
 
 // --------------------------------------------------------
@@ -77,7 +80,7 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 // --------------------------------------------------------
 type CalculateChainOptions = (
   options: Array<OptionFunc> | undefined | null,
-  args: any[]
+  args: any[],
 ) => Record<string, any>
 
 export const calculateChainOptions: CalculateChainOptions = (options, args) => {
@@ -111,7 +114,7 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
       } else {
         finalTheme = merge({}, finalTheme, keyTheme[value])
       }
-    }
+    },
   )
 
   return finalTheme
@@ -122,23 +125,26 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
 // --------------------------------------------------------
 export type GetThemeByMode = (
   object: Record<string, any>,
-  mode: 'light' | 'dark'
+  mode: 'light' | 'dark',
 ) => Partial<{
   baseTheme: Record<string, unknown>
   themes: Record<string, unknown>
 }>
 
 export const getThemeByMode: GetThemeByMode = (object, mode) =>
-  Object.keys(object).reduce((acc, key) => {
-    const value = object[key]
+  Object.keys(object).reduce(
+    (acc, key) => {
+      const value = object[key]
 
-    if (typeof value === 'object' && value !== null) {
-      acc[key] = getThemeByMode(value, mode)
-    } else if (isModeCallback(value)) {
-      acc[key] = value(mode)
-    } else {
-      acc[key] = value
-    }
+      if (typeof value === 'object' && value !== null) {
+        acc[key] = getThemeByMode(value, mode)
+      } else if (isModeCallback(value)) {
+        acc[key] = value(mode)
+      } else {
+        acc[key] = value
+      }
 
-    return acc
-  }, {} as Record<string, any>)
+      return acc
+    },
+    {} as Record<string, any>,
+  )

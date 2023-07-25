@@ -4,7 +4,7 @@ import { config } from '@vitus-labs/core'
 import Element, { withEqualSizeBeforeAfter } from '../../Element'
 import Overlay from '..'
 
-const { styled } = config
+const { styled, css } = config
 
 export default {
   component: Overlay,
@@ -41,11 +41,11 @@ const Trigger = styled('button').attrs({
     background-color: #555555;
   }
 
-  ${({ active }) =>
+  ${({ active }: any) =>
     active &&
-    config.css`
-        background-color: #555555;
-      `}
+    css`
+      background-color: #555555;
+    `}
 `
 
 const ScrollY = styled.div`
