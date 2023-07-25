@@ -1,5 +1,5 @@
 import { Element } from '@vitus-labs/elements'
-import attrs from '~/index'
+import { attrs } from '~/index'
 
 // --------------------------------------------------------
 // basic Button compoenent

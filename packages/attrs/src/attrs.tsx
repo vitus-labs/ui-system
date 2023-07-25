@@ -111,6 +111,7 @@ const rocketComponent: InitAttrsComponent = (options) => {
   const RocketComponent: AttrsComponent = compose(...hocsFuncs)(
     EnhancedComponent,
   )
+
   RocketComponent.IS_ATTRS = true
   RocketComponent.displayName = componentName
 

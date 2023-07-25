@@ -18,10 +18,10 @@ export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
-type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
+type OptionFunc<A> = (...arg: A[]) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options?: Array<OptionFunc<A>>,
-) => (args: Array<A>) => ReturnType<OptionFunc<A>>
+  options?: OptionFunc<A>[],
+) => (args: A[]) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions =
   (options) => (args) => {
