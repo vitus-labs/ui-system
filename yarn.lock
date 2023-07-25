@@ -3213,7 +3213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-a11y@npm:^7.1.0":
+"@storybook/addon-a11y@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-a11y@npm:7.1.1"
   dependencies:
@@ -3242,7 +3242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:7.1.1, @storybook/addon-actions@npm:^7.1.0":
+"@storybook/addon-actions@npm:7.1.1, @storybook/addon-actions@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-actions@npm:7.1.1"
   dependencies:
@@ -3274,7 +3274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-backgrounds@npm:^7.1.0":
+"@storybook/addon-backgrounds@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-backgrounds@npm:7.1.1"
   dependencies:
@@ -3300,7 +3300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-controls@npm:^7.1.0":
+"@storybook/addon-controls@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-controls@npm:7.1.1"
   dependencies:
@@ -3327,7 +3327,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:^7.1.0":
+"@storybook/addon-docs@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-docs@npm:7.1.1"
   dependencies:
@@ -3368,7 +3368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-measure@npm:^7.1.0":
+"@storybook/addon-measure@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-measure@npm:7.1.1"
   dependencies:
@@ -3392,7 +3392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-outline@npm:^7.1.0":
+"@storybook/addon-outline@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-outline@npm:7.1.1"
   dependencies:
@@ -3416,7 +3416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-storyshots@npm:^7.1.0":
+"@storybook/addon-storyshots@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-storyshots@npm:7.1.1"
   dependencies:
@@ -3488,7 +3488,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-toolbars@npm:^7.1.0":
+"@storybook/addon-toolbars@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-toolbars@npm:7.1.1"
   dependencies:
@@ -3509,7 +3509,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-viewport@npm:^7.1.0":
+"@storybook/addon-viewport@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addon-viewport@npm:7.1.1"
   dependencies:
@@ -3534,7 +3534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addons@npm:7.1.1, @storybook/addons@npm:^7.0.0, @storybook/addons@npm:^7.1.0":
+"@storybook/addons@npm:7.1.1, @storybook/addons@npm:^7.0.0, @storybook/addons@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/addons@npm:7.1.1"
   dependencies:
@@ -3840,7 +3840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/core-server@npm:^7.1.0":
+"@storybook/core-server@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/core-server@npm:7.1.1"
   dependencies:
@@ -4016,7 +4016,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/nextjs@npm:^7.1.0":
+"@storybook/nextjs@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/nextjs@npm:7.1.1"
   dependencies:
@@ -4184,7 +4184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-vite@npm:^7.1.0":
+"@storybook/react-vite@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/react-vite@npm:7.1.1"
   dependencies:
@@ -4204,7 +4204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:7.1.1, @storybook/react@npm:^7.1.0":
+"@storybook/react@npm:7.1.1, @storybook/react@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/react@npm:7.1.1"
   dependencies:
@@ -4280,7 +4280,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/theming@npm:7.1.1, @storybook/theming@npm:^7.0.0, @storybook/theming@npm:^7.1.0":
+"@storybook/theming@npm:7.1.1, @storybook/theming@npm:^7.0.0, @storybook/theming@npm:^7.1.1":
   version: 7.1.1
   resolution: "@storybook/theming@npm:7.1.1"
   dependencies:
@@ -4806,7 +4806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.16.19":
+"@types/node@npm:^18.17.0":
   version: 18.17.0
   resolution: "@types/node@npm:18.17.0"
   checksum: 3a43c5c5541342751b514485144818a515fac5427f663066068eaacbe8a108cbe1207aae75ec89d34c3b32414c334aad84e9083cf7fcf3ebfd970adc871314a4
@@ -4880,7 +4880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.2.15":
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.2.16":
   version: 18.2.16
   resolution: "@types/react@npm:18.2.16"
   dependencies:
@@ -4979,7 +4979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.1.0":
+"@typescript-eslint/eslint-plugin@npm:^6.2.0":
   version: 6.2.0
   resolution: "@typescript-eslint/eslint-plugin@npm:6.2.0"
   dependencies:
@@ -5005,7 +5005,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^6.1.0":
+"@typescript-eslint/parser@npm:^6.2.0":
   version: 6.2.0
   resolution: "@typescript-eslint/parser@npm:6.2.0"
   dependencies:
@@ -5186,11 +5186,11 @@ __metadata:
   dependencies:
     "@types/hoist-non-react-statics": ^3.3.1
     "@vitus-labs/core": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-types": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-types": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     hoist-non-react-statics: ^3.3.2
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -5203,10 +5203,10 @@ __metadata:
   resolution: "@vitus-labs/coolgrid@workspace:packages/coolgrid"
   dependencies:
     "@vitus-labs/core": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     "@vitus-labs/unistyle": 1.0.0-alpha.2
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -5220,9 +5220,9 @@ __metadata:
   resolution: "@vitus-labs/core@workspace:packages/core"
   dependencies:
     "@types/lodash-es": ^4.17.8
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     lodash-es: ^4.17.21
     moize: ^6.1.6
     react-is: ^18.2.0
@@ -5239,10 +5239,10 @@ __metadata:
   dependencies:
     "@vitus-labs/core": 1.0.0-alpha.2
     "@vitus-labs/rocketstyle": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     "@vitus-labs/unistyle": 1.0.0-alpha.2
     react-is: ^18.2.0
   peerDependencies:
@@ -5271,10 +5271,10 @@ __metadata:
   resolution: "@vitus-labs/hooks@workspace:packages/hooks"
   dependencies:
     "@vitus-labs/core": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
   peerDependencies:
     "@vitus-labs/core": "*"
     react: ">= 16.8"
@@ -5285,9 +5285,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/native-primitives@workspace:packages/native-primitives"
   dependencies:
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     lodash.pick: ^4.4.0
   peerDependencies:
     react: ">= 16.7"
@@ -5302,10 +5302,10 @@ __metadata:
     "@vitus-labs/core": 1.0.0-alpha.2
     "@vitus-labs/elements": 1.0.0-alpha.2
     "@vitus-labs/rocketstyle": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     "@vitus-labs/unistyle": 1.0.0-alpha.2
     hoist-non-react-statics: ^3.3.2
   peerDependencies:
@@ -5322,10 +5322,10 @@ __metadata:
   dependencies:
     "@vitus-labs/core": 1.0.0-alpha.2
     "@vitus-labs/elements": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-storybook": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-storybook": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
     "@vitus-labs/unistyle": 1.0.0-alpha.2
     hoist-non-react-statics: ^3.3.2
   peerDependencies:
@@ -5334,34 +5334,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vitus-labs/tools-babel@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-babel@npm:1.0.2"
+"@vitus-labs/tools-babel@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-babel@npm:1.0.3"
   dependencies:
     "@babel/core": ^7.22.9
     "@babel/preset-env": ^7.22.9
     "@babel/preset-react": ^7.22.5
     "@babel/preset-typescript": ^7.22.5
-  checksum: e59df4fabc507b61fece2f27739ef79563ba69b623b8c46adc18b3ff78879ac0264ac6c1e0c30668c1365754e76dd88f78b89f0e22533fbe4db2f75bebcb109e
+  checksum: c27b52cfe532dbfcb5a0af37bce029e2bb59ba2e0d167e4bc546a8d86adb8a017ed9b5bb51166f6c10d91ab4184fcef4a213a5f6b12f29564d7c544856236b57
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-core@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-core@npm:1.0.2"
+"@vitus-labs/tools-core@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-core@npm:1.0.3"
   dependencies:
     find-up: ^6.3.0
     lodash-es: ^4.17.21
-  checksum: 4b7bfc0d333f378272e4fbddd836bd59fba2f5225097d4a95448adedf7837378520c01598593d2bd40b6eb7fc416c900e17e3aaf070799000b43a8063e1d10d4
+  checksum: 8ac6d3165f18c8ccd436e806410f7db1a9091b74d898a6a73def1ed5d084f6832cceb850de422d1563b7d631a7554457f029807b45990f6c87ffb653c4876b47
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-lint@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-lint@npm:1.0.2"
+"@vitus-labs/tools-lint@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-lint@npm:1.0.3"
   dependencies:
-    "@typescript-eslint/eslint-plugin": ^6.1.0
-    "@typescript-eslint/parser": ^6.1.0
+    "@typescript-eslint/eslint-plugin": ^6.2.0
+    "@typescript-eslint/parser": ^6.2.0
     eslint: ^8.45.0
     eslint-config-airbnb: ^19.0.4
     eslint-config-prettier: ^8.8.0
@@ -5372,9 +5372,9 @@ __metadata:
     eslint-plugin-jsx-a11y: ^6.7.1
     eslint-plugin-markdown: ^3.0.0
     eslint-plugin-prettier: ^5.0.0
-    eslint-plugin-react: ^7.32.2
+    eslint-plugin-react: ^7.33.0
     eslint-plugin-react-hooks: ^4.6.0
-    eslint-plugin-storybook: ^0.6.12
+    eslint-plugin-storybook: ^0.6.13
     graphql: "*"
     lodash: ^4.17.21
     lodash-es: ^4.17.21
@@ -5391,21 +5391,21 @@ __metadata:
       optional: true
     prettier:
       optional: true
-  checksum: 09edbfb78066c38ac218b4929bab761729cf66f2e74a40407d77e24dbd0d6b1aa621cd35ff57b3793235bae9367593bd416e69995726e3c6eadfc870f89881ba
+  checksum: 73010f73dd4cb75deacb8e3dcd9f4a26910a2801d65e39f8d7f7bfc8f6f7c34cb2b8cb87653d3d7be1324fd484580f438af762fddd29575314c5e3c038670175
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-rollup@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-rollup@npm:1.0.2"
+"@vitus-labs/tools-rollup@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-rollup@npm:1.0.3"
   dependencies:
     "@microsoft/api-extractor": ^7.36.3
     "@rollup/plugin-node-resolve": ^15.1.0
     "@rollup/plugin-replace": ^5.0.2
     "@rollup/plugin-terser": ^0.4.3
     "@rollup/plugin-typescript": ^11.1.2
-    "@types/node": ^18.16.19
-    "@vitus-labs/tools-core": 1.0.2
+    "@types/node": ^18.17.0
+    "@vitus-labs/tools-core": 1.0.3
     chalk: ^5.3.0
     find-up: ^6.3.0
     lodash-es: ^4.17.21
@@ -5417,39 +5417,39 @@ __metadata:
     rollup-plugin-typescript-paths: ^1.4.0
     rollup-plugin-typescript2: ^0.35.0
     rollup-plugin-visualizer: ^5.9.2
-    ts-patch: ^3.0.1
-    tslib: ^2.6.0
+    ts-patch: ^3.0.2
+    tslib: ^2.6.1
     typescript-transform-paths: ^3.4.6
   bin:
     vl_build: lib/bin/run-build.js
     vl_build-watch: lib/bin/run-watch.js
-  checksum: 8e833af9d83bdb685d24d7a5b34a6c652f2cf5e38382f0619ef2d75265d5472572ffffecfddd552dc5d2982879503ea2acb8edd2d95692aa331a7ce7e95195d9
+  checksum: c8267c075f5a1d88c56b7b5dfca7f9673d7187c7821f4a6b5dc99ffa6409ce09d5751816242ca70db94d08c5fc74544a2770802187e3d082f6c3e081dd2fb7f3
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-storybook@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-storybook@npm:1.0.2"
+"@vitus-labs/tools-storybook@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-storybook@npm:1.0.3"
   dependencies:
-    "@storybook/addon-a11y": ^7.1.0
-    "@storybook/addon-actions": ^7.1.0
-    "@storybook/addon-backgrounds": ^7.1.0
-    "@storybook/addon-controls": ^7.1.0
-    "@storybook/addon-docs": ^7.1.0
-    "@storybook/addon-measure": ^7.1.0
-    "@storybook/addon-outline": ^7.1.0
-    "@storybook/addon-storyshots": ^7.1.0
-    "@storybook/addon-toolbars": ^7.1.0
-    "@storybook/addon-viewport": ^7.1.0
-    "@storybook/addons": ^7.1.0
-    "@storybook/core-server": ^7.1.0
-    "@storybook/nextjs": ^7.1.0
-    "@storybook/react": ^7.1.0
-    "@storybook/react-vite": ^7.1.0
-    "@storybook/theming": ^7.1.0
-    "@vitus-labs/tools-core": 1.0.2
+    "@storybook/addon-a11y": ^7.1.1
+    "@storybook/addon-actions": ^7.1.1
+    "@storybook/addon-backgrounds": ^7.1.1
+    "@storybook/addon-controls": ^7.1.1
+    "@storybook/addon-docs": ^7.1.1
+    "@storybook/addon-measure": ^7.1.1
+    "@storybook/addon-outline": ^7.1.1
+    "@storybook/addon-storyshots": ^7.1.1
+    "@storybook/addon-toolbars": ^7.1.1
+    "@storybook/addon-viewport": ^7.1.1
+    "@storybook/addons": ^7.1.1
+    "@storybook/core-server": ^7.1.1
+    "@storybook/nextjs": ^7.1.1
+    "@storybook/react": ^7.1.1
+    "@storybook/react-vite": ^7.1.1
+    "@storybook/theming": ^7.1.1
+    "@vitus-labs/tools-core": 1.0.3
     storybook-dark-mode: ^3.0.0
-    vite: ^4.4.4
+    vite: ^4.4.7
     vite-tsconfig-paths: ^4.2.0
   peerDependencies:
     "@vitus-labs/core": "*"
@@ -5459,27 +5459,27 @@ __metadata:
   bin:
     vl_stories: lib/bin/run-stories.js
     vl_stories-build: lib/bin/run-stories-build.js
-  checksum: ab5c5af38a874d5dac7f437c8769b53cf6b98a2a64c4cf173c4917adeaa4be4a636532dd6325a7044e593a9d47e7200cecec5ade327c878e02bca3369041ce32
+  checksum: 816c2b89aa0dd5b07fadd7cf9290ec61bfa300af0d2ff4dc5301c27ebddeb31be62ebd46f2fbade698159d8e25cd4bb1fe4e6dfe399916d245656cf2b502b46a
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-types@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-types@npm:1.0.2"
+"@vitus-labs/tools-types@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-types@npm:1.0.3"
   peerDependencies:
     react: "*"
-  checksum: 61a0fa97ff05e64a1828efac00320942d2e25cc50a9a221675f160043de206199bab329cf01e0ca43db7ce0271ff8cf9dc11303b515894b3809be120e291ce1f
+  checksum: 3bb02c7169aa216d49ed5d7a557dc12af246de0457d176cb3a630aac246252d859b22ac3256986139d046a864af91561068813f9853b9a30ccab1ea0c27f2f2b
   languageName: node
   linkType: hard
 
-"@vitus-labs/tools-typescript@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@vitus-labs/tools-typescript@npm:1.0.2"
+"@vitus-labs/tools-typescript@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vitus-labs/tools-typescript@npm:1.0.3"
   dependencies:
     typescript-styled-plugin: ^0.18.3
   peerDependencies:
     typescript: ">=5"
-  checksum: 6c007dee9430073b37f1d528636af9cb6bb3f0d984a2cdccf36319798e00aec6c71e793f14e7bbbbd0a66622008a0642c7116e2e52ecbdacbe5e3b4057d2c335
+  checksum: edd581c9aad4da282e7de59b3355d69d6256e7627f67888d62d8f40970238ba8a75e6faaf378a29e989032e617b7982dbf7286e141a1d129b1e2295451b6b6bb
   languageName: node
   linkType: hard
 
@@ -5487,10 +5487,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/ui-system-root@workspace:."
   dependencies:
-    "@types/react": ^18.2.15
+    "@types/react": ^18.2.16
     "@types/react-dom": ^18.2.7
     "@types/react-is": ^18.2.1
-    "@vitus-labs/tools-lint": ^1.0.2
+    "@vitus-labs/tools-lint": ^1.0.3
     coveralls: ^3.1.1
     cpr: ^3.0.1
     lerna: ^7.1.4
@@ -5499,7 +5499,7 @@ __metadata:
     react-docgen-typescript-webpack-plugin: ^1.1.0
     react-dom: ^18.2.0
     react-icons-kit: ^2.0.0
-    styled-components: ^6.0.4
+    styled-components: ^6.0.5
     typescript: ^5.1.6
   languageName: unknown
   linkType: soft
@@ -5509,9 +5509,9 @@ __metadata:
   resolution: "@vitus-labs/unistyle@workspace:packages/unistyle"
   dependencies:
     "@vitus-labs/core": 1.0.0-alpha.2
-    "@vitus-labs/tools-babel": ^1.0.2
-    "@vitus-labs/tools-rollup": ^1.0.2
-    "@vitus-labs/tools-typescript": ^1.0.2
+    "@vitus-labs/tools-babel": ^1.0.3
+    "@vitus-labs/tools-rollup": ^1.0.3
+    "@vitus-labs/tools-typescript": ^1.0.3
   peerDependencies:
     "@vitus-labs/core": "*"
     react: ">= 16.8"
@@ -8880,7 +8880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.32.2":
+"eslint-plugin-react@npm:^7.33.0":
   version: 7.33.0
   resolution: "eslint-plugin-react@npm:7.33.0"
   dependencies:
@@ -8905,7 +8905,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-storybook@npm:^0.6.12":
+"eslint-plugin-storybook@npm:^0.6.13":
   version: 0.6.13
   resolution: "eslint-plugin-storybook@npm:0.6.13"
   dependencies:
@@ -16166,7 +16166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^6.0.4, styled-components@npm:^6.0.5":
+"styled-components@npm:^6.0.5":
   version: 6.0.5
   resolution: "styled-components@npm:6.0.5"
   dependencies:
@@ -16724,7 +16724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-patch@npm:^3.0.1":
+"ts-patch@npm:^3.0.2":
   version: 3.0.2
   resolution: "ts-patch@npm:3.0.2"
   dependencies:
@@ -16806,7 +16806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.0":
+"tslib@npm:^2, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.0, tslib@npm:^2.6.1":
   version: 2.6.1
   resolution: "tslib@npm:2.6.1"
   checksum: b0d176d176487905b66ae4d5856647df50e37beea7571c53b8d10ba9222c074b81f1410fb91da13debaf2cbc970663609068bdebafa844ea9d69b146527c38fe
@@ -17484,7 +17484,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^4.4.4":
+"vite@npm:^4.4.7":
   version: 4.4.7
   resolution: "vite@npm:4.4.7"
   dependencies:
