@@ -1,7 +1,8 @@
 import { isEmpty, set } from '@vitus-labs/core'
 
-const removeUnexpectedKeys = (obj, keys) => {
+const removeUnexpectedKeys = (obj: Record<string, unknown>, keys: string[]) => {
   const result = {}
+
   keys.forEach((bp) => {
     const value = obj[bp]
 
@@ -18,7 +19,7 @@ export type TransformTheme = ({
   breakpoints,
 }: {
   theme: Record<string, unknown>
-  breakpoints: Array<string>
+  breakpoints: string[]
 }) => any
 
 const transformTheme: TransformTheme = ({ theme, breakpoints }) => {

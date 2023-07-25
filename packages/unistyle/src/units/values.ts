@@ -1,15 +1,16 @@
 import type { Units } from '~/types'
 import value from './value'
 
-type GetValueOf = (...values: Array<unknown>) => number | string | unknown
-const getValueOf: GetValueOf = (...values) =>
+type GetValueOf = (...values: unknown[]) => number | string
+const getValueOf: GetValueOf = (...values: any[]) =>
   values.find((value) => typeof value !== 'undefined' && value !== null)
 
 export type Values = (
-  values: Array<unknown>,
+  values: unknown[],
   rootSize?: number,
-  outputUnit?: Units
+  outputUnit?: Units,
 ) => string | number
+
 const values: Values = (values, rootSize, outputUnit) => {
   const param = getValueOf(...values)
 

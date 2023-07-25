@@ -1,19 +1,36 @@
 import stripUnit from './stripUnit'
 
+type CssUnits =
+  | 'px'
+  | 'rem'
+  | '%'
+  | 'em'
+  | 'ex'
+  | 'cm'
+  | 'mm'
+  | 'in'
+  | 'pt'
+  | 'pc'
+  | 'ch'
+  | 'vh'
+  | 'vw'
+  | 'vmin'
+  | 'vmax'
+
 const isNotValue = (value) => !value && value !== 0
 
 export type Value = (
-  param: any,
+  param: string | number | null | undefined,
   rootSize?: number,
-  outputUnit?: 'px' | 'rem' | '%' | string
+  outputUnit?: CssUnits,
 ) => string | number | null
 
 const value: Value = (
   param,
   rootSize = 16,
-  outputUnit = __WEB__ ? 'rem' : 'px'
+  outputUnit = __WEB__ ? 'rem' : 'px',
 ) => {
-  if (isNotValue(param)) return null
+  if (!param || isNotValue(param)) return null
 
   const [value, unit] = stripUnit(param as string, true)
   if (isNotValue(value)) return null

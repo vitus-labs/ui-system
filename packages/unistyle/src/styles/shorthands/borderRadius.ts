@@ -4,7 +4,7 @@ import type { PropertyValue } from '~/types'
 const isValidValue = (value) => !!value || value === 0
 
 export type BorderRadius = (
-  rootSize?: number
+  rootSize?: number,
 ) => (props: {
   full: PropertyValue | null | undefined
   top: PropertyValue | null | undefined

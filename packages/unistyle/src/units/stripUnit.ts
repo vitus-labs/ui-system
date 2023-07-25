@@ -3,7 +3,7 @@ type Unit<V> = V extends string ? string : undefined
 
 export type StripUnit = <V extends string | number, UR extends boolean = false>(
   value: V,
-  unitReturn?: UR
+  unitReturn?: UR,
 ) => UR extends true ? [Value<V>, Unit<V>] : Value<V>
 
 const stripUnit: StripUnit = (value, unitReturn) => {
@@ -19,6 +19,7 @@ const stripUnit: StripUnit = (value, unitReturn) => {
   }
 
   if (matchedValue) return parseFloat(value)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return value as any
 }
 

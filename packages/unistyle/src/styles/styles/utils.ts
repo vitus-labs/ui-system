@@ -4,7 +4,7 @@ import { PropertyValue } from '~/types'
 const isValidValue = (value) => !!value || value === 0
 
 export type SpacingShorthand = (
-  property: 'padding' | 'margin'
+  property: 'padding' | 'margin',
 ) => (props: {
   top: PropertyValue | null | undefined
   left: PropertyValue | null | undefined
@@ -21,7 +21,6 @@ export const spacingShorthand: SpacingShorthand =
   ({ top, left, right, bottom, x, y, full }) => {
     // top - right - bottom - left
     const spacing = [full, full, full, full]
-    const [t, r, b, l] = spacing
 
     if (isValidValue(x)) {
       spacing[1] = x
@@ -49,40 +48,40 @@ export const spacingShorthand: SpacingShorthand =
       spacing[3] = left
     }
 
+    const [t, r, b, l] = spacing
+
     if (spacing.every((val, _, arr) => isValidValue(val) && val === arr[0])) {
       return `${property}: ${t};`
     }
 
     if (t === b && r === l) {
-      return `${property}: ${value([t])} ${value([r])};`
+      return `${property}: ${value(t)} ${value(r)};`
     }
 
     if (t && r === l && b) {
-      return `${property}: ${value([t])} ${value([r])} ${value([b])};`
+      return `${property}: ${value(t)} ${value(r)} ${value(b)};`
     }
 
     if (spacing.every((val) => !!val)) {
-      return `${property}: ${value([t])} ${value([r])} ${value([b])} ${value([
-        l,
-      ])};`
+      return `${property}: ${value(t)} ${value(r)} ${value(b)} ${value(l)};`
     }
 
     let output = ''
 
     if (t) {
-      output += `${property}-top: ${value([t])};`
+      output += `${property}-top: ${value(t)};`
     }
 
     if (b) {
-      output += `${property}-bottom: ${value([b])};`
+      output += `${property}-bottom: ${value(b)};`
     }
 
     if (l) {
-      output += `${property}-left: ${value([l])};`
+      output += `${property}-left: ${value(l)};`
     }
 
     if (r) {
-      output += `${property}-right: ${value([r])};`
+      output += `${property}-right: ${value(r)};`
     }
 
     return output
