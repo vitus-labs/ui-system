@@ -43,7 +43,7 @@ type Props = ElementProps &
 
 const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
   const displayName =
-    WrappedComponent.displayName || WrappedComponent.name || 'Component'
+    WrappedComponent.displayName ?? WrappedComponent.name ?? 'Component'
 
   const Enhanced = (props: Props) => {
     const {

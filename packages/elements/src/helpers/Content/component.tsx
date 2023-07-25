@@ -10,7 +10,7 @@ import type {
 } from '~/types'
 import Styled from './styled'
 
-type Props = {
+export interface Props {
   parentDirection: Direction
   gap: Responsive
   contentType: 'before' | 'content' | 'after'
@@ -42,20 +42,22 @@ const Component: FC<Partial<Props>> = ({
         }
       : {}
 
+  const stylingProps = {
+    contentType,
+    parentDirection,
+    direction,
+    alignX,
+    alignY,
+    equalCols,
+    gap,
+    extraStyles: extendCss,
+  }
+
   return (
     <Styled
       as={tag}
       $contentType={contentType}
-      $element={{
-        contentType,
-        parentDirection,
-        direction,
-        alignX,
-        alignY,
-        equalCols,
-        gap,
-        extraStyles: extendCss,
-      }}
+      $element={stylingProps}
       {...debugProps}
       {...props}
     />

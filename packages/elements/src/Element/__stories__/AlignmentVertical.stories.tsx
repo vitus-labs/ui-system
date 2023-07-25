@@ -8,7 +8,7 @@ const meta = {
 
 export default meta
 
-export const verticalElement = {
+export const VerticalElement = {
   render: () => (
     <>
       <Wrapper

@@ -12,7 +12,7 @@ const RESERVED_KEYS = [
 type Key = string | number
 type MultipleMap = Map<Key, boolean>
 
-type ItemPropsData = {
+interface ItemPropsData {
   key: Key
   first: boolean
   last: boolean
@@ -21,10 +21,10 @@ type ItemPropsData = {
   position: number
 }
 
-type Props = {
+interface Props {
   type?: 'single' | 'multi'
   activeItemRequired?: boolean
-  activeItems?: Key | Array<string | number>
+  activeItems?: Key | (string | number)[]
   itemProps?:
     | Record<string, unknown>
     | ((props: Record<string, unknown>) => Record<string, unknown>)
@@ -49,7 +49,7 @@ const component: SimpleHoc<Props> = (WrappedComponent) => {
         if (Array.isArray(activeItems)) {
           // eslint-disable-next-line no-console
           console.warn(
-            'Iterator is type of single. activeItems cannot be an array.'
+            'Iterator is type of single. activeItems cannot be an array.',
           )
         } else {
           return activeItems
@@ -173,7 +173,7 @@ const component: SimpleHoc<Props> = (WrappedComponent) => {
         if (process.env.NODE_ENV !== 'production') {
           // eslint-disable-next-line no-console
           console.error(
-            'When type=`single` activeItems must be a single value, not an array'
+            'When type=`single` activeItems must be a single value, not an array',
           )
         }
       }

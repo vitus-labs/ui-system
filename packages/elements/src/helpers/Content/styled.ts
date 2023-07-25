@@ -7,6 +7,8 @@ import {
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
 
+const { styled, css, component } = config
+
 const equalCols = `
   flex: 1;
 `
@@ -70,19 +72,21 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
 
 const platformStyles = __WEB__ ? `box-sizing: border-box;` : ''
 
-export default config.styled<any>(config.component)`
+const StyledComponent = styled(component)<any>`
   ${platformStyles};
 
   display: flex;
   align-self: stretch;
   flex-wrap: wrap;
 
-  ${({ $contentType }) => $contentType === 'content' && typeContent};
+  ${({ $contentType }: any) => $contentType === 'content' && typeContent};
 
   ${makeItResponsive({
     key: '$element',
     styles,
-    css: config.css,
+    css,
     normalize: true,
   })};
 `
+
+export default StyledComponent

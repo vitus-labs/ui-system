@@ -1,6 +1,6 @@
 import React, { FC, createContext, useContext, ReactNode, useMemo } from 'react'
 
-type Context = {
+export interface Context {
   blocked: boolean
   setBlocked: () => void
   setUnblocked: () => void
@@ -24,7 +24,7 @@ const Component: FC<Context & { children: ReactNode }> = ({
       setBlocked,
       setUnblocked,
     }),
-    [blocked, setBlocked, setUnblocked]
+    [blocked, setBlocked, setUnblocked],
   )
 
   return <Provider value={ctx}>{children}</Provider>

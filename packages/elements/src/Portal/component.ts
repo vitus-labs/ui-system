@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
-export type Props = {
+export interface Props {
   /**
    * Defines a HTML DOM where children to be appended. Component uses JavaScript
    * [`Node.appendChild`](https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild)
@@ -29,7 +29,7 @@ const Component: VLComponent<Props> = ({
   useEffect(() => {
     if (!tag) return undefined
 
-    const position = DOMLocation || document.body
+    const position = DOMLocation ?? document.body
     const element = document.createElement(tag)
     setElement(element)
 
@@ -44,14 +44,6 @@ const Component: VLComponent<Props> = ({
 
   return createPortal(children, element)
 }
-
-// ----------------------------------------------
-// TYPESCRIPT TYPES HACK
-// ----------------------------------------------
-//@ts-ignore
-Component.$$types = ''
-//@ts-ignore
-Component.$$extra = ''
 
 // ----------------------------------------------
 // DEFINE STATICS

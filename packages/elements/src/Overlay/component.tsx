@@ -7,7 +7,7 @@ import useOverlay, { UseOverlayProps } from './useOverlay'
 
 const IS_BROWSER = typeof window !== 'undefined'
 
-type Align = 'bottom' | 'top' | 'left' | 'bottom' | 'right'
+type Align = 'bottom' | 'top' | 'left' | 'right'
 type AlignX = 'left' | 'center' | 'right'
 type AlignY = 'bottom' | 'top' | 'center'
 

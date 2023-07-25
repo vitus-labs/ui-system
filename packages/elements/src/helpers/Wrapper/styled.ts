@@ -2,6 +2,8 @@ import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
 
+const { styled, css, component } = config
+
 const childFix = `
   display: flex;
   flex: 1;
@@ -48,7 +50,7 @@ const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
 
 const platformStyles = __WEB__ ? `box-sizing: border-box;` : `display: flex;`
 
-export default config.styled<any>(config.component)`
+export default styled(component)<any>`
   position: relative;
   ${platformStyles};
 
@@ -57,7 +59,7 @@ export default config.styled<any>(config.component)`
   ${makeItResponsive({
     key: '$element',
     styles,
-    css: config.css,
+    css,
     normalize: true,
   })};
 `

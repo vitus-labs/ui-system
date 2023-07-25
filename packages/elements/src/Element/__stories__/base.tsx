@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import rocketstyle from '@vitus-labs/rocketstyle'
+import { rocketstyle } from '@vitus-labs/rocketstyle'
 import { config } from '@vitus-labs/core'
 import Element, { Props } from '~/Element'
 

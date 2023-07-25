@@ -12,7 +12,7 @@ import Styled from './styled'
 
 type Reference = unknown
 
-type Props = {
+interface Props {
   children: ReactNode
   tag: HTMLTags
   block: ResponsiveBooltype
@@ -25,6 +25,7 @@ type Props = {
   dangerouslySetInnerHTML: any
 }
 
+// eslint-disable-next-line react/display-name
 const Component = forwardRef<Reference, Partial<Props>>(
   (
     {

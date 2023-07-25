@@ -6,13 +6,14 @@ import type {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import { MakeItResponsive } from '@vitus-labs/unistyle'
-import { config, render, BreakpointKeys } from '@vitus-labs/core'
+import type { MakeItResponsive } from '@vitus-labs/unistyle'
+import type { BreakpointKeys } from '@vitus-labs/core'
+import { config, render } from '@vitus-labs/core'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
 type ExtractNullableKeys<T> = {
-  [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
+  [P in keyof T as T[P] extends null | undefined ? never : P]: T[P]
 }
 
 // merge types
@@ -86,12 +87,12 @@ export type Direction =
 
 export type ResponsiveBooltype =
   | boolean
-  | Array<boolean>
+  | boolean[]
   | Partial<Record<BreakpointKeys, boolean>>
 
 export type Responsive =
   | number
-  | Array<string | number>
+  | (string | number)[]
   | Partial<Record<BreakpointKeys, number | string>>
 
 export type ExtendCss = Css | Css[] | Partial<Record<BreakpointKeys, Css>>
@@ -106,10 +107,9 @@ export type ExtractProps<TComponentOrTProps> =
 export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
   ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & VLStatic
 
-export type VLComponent<P extends Record<string, unknown> = {}> = FC<P> &
-  VLStatic
+export type VLComponent<P extends Record<string, any> = {}> = FC<P> & VLStatic
 
-export type VLStatic = {
+export interface VLStatic {
   /**
    * React displayName
    */

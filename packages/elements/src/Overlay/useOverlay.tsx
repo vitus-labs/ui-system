@@ -11,7 +11,7 @@ type OverlayPosition = Partial<{
   right: number | string
 }>
 
-type Align = 'bottom' | 'top' | 'left' | 'bottom' | 'right'
+type Align = 'bottom' | 'top' | 'left' | 'right'
 type AlignX = 'left' | 'center' | 'right'
 type AlignY = 'bottom' | 'top' | 'center'
 
@@ -23,7 +23,7 @@ export type UseOverlayProps = Partial<{
   isOpen: boolean
   /**
    * Defines `event` when **Overlay** is supposed to be open.
-   * 
+   *
    * When `manual` is set, callbacks needs to be applied to make it working.
    */
   openOn: 'click' | 'hover' | 'manual'
@@ -38,7 +38,7 @@ export type UseOverlayProps = Partial<{
     | 'manual'
 
   /**
-   * Defines what type of **Overlay** will be created. Type `modal` 
+   * Defines what type of **Overlay** will be created. Type `modal`
    * has different positioning calculations than others.
    */
   type: 'dropdown' | 'tooltip' | 'popover' | 'modal'
@@ -68,32 +68,32 @@ export type UseOverlayProps = Partial<{
    */
   offsetY: number
   /**
-   * Performance helper. Value defined in miliseconds for `throttling` 
+   * Performance helper. Value defined in miliseconds for `throttling`
    * recalculations
    */
   throttleDelay: number
   /**
-   * A valid HTML element. Prop can be used for ability to handle properly 
+   * A valid HTML element. Prop can be used for ability to handle properly
    * scrolling inside custom scrollable HTML element.
    */
   parentContainer: HTMLElement | null
   /**
-   * Defines wheather active **Overlay** is supposed to be closed on pressing 
+   * Defines wheather active **Overlay** is supposed to be closed on pressing
    * `ESC` key.
    */
   closeOnEsc: boolean
   /**
-   * When set to `true`, **Overlay** is automatically closed and is blocked for 
+   * When set to `true`, **Overlay** is automatically closed and is blocked for
    * being opened.
    */
   disabled: boolean
   /**
-   * A callback hook to be called when **Overlay** is being opened. Does not 
+   * A callback hook to be called when **Overlay** is being opened. Does not
    * accept any arguments.
    */
   onOpen: () => void
   /**
-   * A callback hook to be called when **Overlay** is being closed. Does not 
+   * A callback hook to be called when **Overlay** is being closed. Does not
    * accept any arguments.
    */
   onClose: () => void
@@ -281,6 +281,8 @@ const useOverlay = ({
         case 'center':
           overlayPosition.left = window.innerWidth / 2 - c.width / 2
           break
+        default:
+          overlayPosition.right = offsetX
       }
 
       switch (alignY) {
@@ -293,6 +295,8 @@ const useOverlay = ({
         case 'bottom':
           overlayPosition.bottom = offsetY
           break
+        default:
+          overlayPosition.top = offsetY
       }
     }
 
@@ -339,7 +343,7 @@ const useOverlay = ({
       if (isValue(values.right))
         contentRef.current.style.right = setValue(values.right)
     },
-    [position, rootSize, contentRef]
+    [position, rootSize, contentRef],
   )
 
   const setContentPosition = useCallback(() => {
@@ -349,7 +353,7 @@ const useOverlay = ({
 
   const isNodeOrChild =
     (ref: typeof triggerRef | typeof contentRef) => (e: Event) => {
-      if (e && e.target && ref.current) {
+      if (e?.target && ref.current) {
         return (
           ref.current.contains(e.target as Element) || e.target === ref.current
         )
@@ -419,13 +423,13 @@ const useOverlay = ({
       showContent,
       triggerRef,
       contentRef,
-    ]
+    ],
   )
 
   const handleContentPosition = useCallback(
     throttle(setContentPosition, throttleDelay),
     // same deps as `setContentPosition`
-    [assignContentPosition, calculateContentPosition]
+    [assignContentPosition, calculateContentPosition],
   )
   const handleClick = handleVisibilityByEventType
 
@@ -442,7 +446,7 @@ const useOverlay = ({
       showContent,
       triggerRef,
       contentRef,
-    ]
+    ],
   )
 
   // --------------------------------------------------------------------------
@@ -462,6 +466,8 @@ const useOverlay = ({
 
     setContentPosition()
     setContentPosition()
+
+    return undefined
   }, [active, isContentLoaded, setContentPosition])
 
   // if an Overlay has an Overlay child, this will prevent closing parent child

@@ -61,7 +61,7 @@ const Component: VLElement = forwardRef(
     // if not single element, calculate values
     // --------------------------------------------------------
     const isSimpleElement = !beforeContent && !afterContent
-    const CHILDREN = children || content || label
+    const CHILDREN = children ?? content ?? label
 
     const isInline = __WEB__ ? isInlineElement(tag) : false
     const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
@@ -99,7 +99,7 @@ const Component: VLElement = forwardRef(
     // common wrapper props
     // --------------------------------------------------------
     const WRAPPER_PROPS = {
-      ref: ref || innerRef,
+      ref: ref ?? innerRef,
       extendCss: css,
       tag,
       block,

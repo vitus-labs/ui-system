@@ -34,7 +34,7 @@ const Component: VLForwardedComponent<Props> & {
 } = forwardRef(({ paragraph, label, children, tag, css, ...props }, ref) => {
   const renderContent: RenderContent = (as = undefined) => (
     <Styled ref={ref} as={as} $text={{ extraStyles: css }} {...props}>
-      {children || label}
+      {children ?? label}
     </Styled>
   )
 

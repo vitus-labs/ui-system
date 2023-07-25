@@ -3,7 +3,7 @@ import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
-export type Props = {
+export interface Props {
   /**
    * Children to be rendered within **Util** component.
    */

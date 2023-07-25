@@ -33,7 +33,7 @@ export type PropsCallback =
         | Record<string, never>
         | Record<string, SimpleValue>
         | ObjectValue,
-      extendedProps: ExtendedProps
+      extendedProps: ExtendedProps,
     ) => TObj)
 
 export type Props = Partial<{
@@ -83,7 +83,7 @@ export type Props = Partial<{
     | keyof ObjectValue
     | ((
         item: SimpleValue | Omit<ObjectValue, 'component'>,
-        index: number
+        index: number,
       ) => SimpleValue)
 }>
 

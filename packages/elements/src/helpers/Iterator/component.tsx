@@ -60,12 +60,12 @@ const Component: FC<Props> & Static = (props) => {
 
   const injectItemProps = useMemo(
     () => (typeof itemProps === 'function' ? itemProps : () => itemProps),
-    [itemProps]
+    [itemProps],
   )
 
   const injectWrapItemProps = useMemo(
     () => (typeof wrapProps === 'function' ? wrapProps : () => wrapProps),
-    [wrapProps]
+    [wrapProps],
   )
 
   const getKey = useCallback(
@@ -74,7 +74,7 @@ const Component: FC<Props> & Static = (props) => {
 
       return index
     },
-    [itemKey]
+    [itemKey],
   )
 
   const renderChild = (child: ReactNode, total = 1, i = 0) => {
@@ -114,7 +114,7 @@ const Component: FC<Props> & Static = (props) => {
     // if children is Array
     if (Array.isArray(children)) {
       return Children.map(children, (item, i) =>
-        renderChild(item, children.length, i)
+        renderChild(item, children.length, i),
       )
     }
 
@@ -123,7 +123,7 @@ const Component: FC<Props> & Static = (props) => {
       const fragmentChildren: ReactNode[] = children.props.children
 
       return fragmentChildren.map((item, i) =>
-        renderChild(item, fragmentChildren.length, i)
+        renderChild(item, fragmentChildren.length, i),
       )
     }
 
@@ -142,7 +142,7 @@ const Component: FC<Props> & Static = (props) => {
 
     return data.map((item, i) => {
       const key = getKey(item, i)
-      const keyName = valueName || 'children'
+      const keyName = valueName ?? 'children'
       const extendedProps = attachItemProps({
         i,
         length,
@@ -182,7 +182,7 @@ const Component: FC<Props> & Static = (props) => {
     if (renderData.length === 0) return null
 
     const getKey = (item: ObjectValue, index: number) => {
-      if (!itemKey) return item.key || item.id || item.itemId || index
+      if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
       if (typeof itemKey === 'function') return itemKey(item, index)
       if (typeof itemKey === 'string') return item[itemKey]
 
@@ -190,8 +190,8 @@ const Component: FC<Props> & Static = (props) => {
     }
 
     return renderData.map((item, i) => {
-      const { component: itemComponent, ...restItem } = item as ObjectValue
-      const renderItem = itemComponent || component
+      const { component: itemComponent, ...restItem } = item
+      const renderItem = itemComponent ?? component
       const key = getKey(restItem, i)
       const extendedProps = attachItemProps({
         i,
@@ -233,11 +233,11 @@ const Component: FC<Props> & Static = (props) => {
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
       const clearData = data.filter(
-        (item) => item !== null && item !== undefined
+        (item) => item !== null && item !== undefined,
       )
 
       const isSimpleArray = clearData.every(
-        (item) => typeof item === 'string' || typeof item === 'number'
+        (item) => typeof item === 'string' || typeof item === 'number',
       )
 
       if (isSimpleArray) return renderSimpleArray(clearData as SimpleValue[])

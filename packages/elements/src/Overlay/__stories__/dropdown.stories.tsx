@@ -4,11 +4,13 @@ import { config } from '@vitus-labs/core'
 import Element, { withEqualSizeBeforeAfter } from '../../Element'
 import Overlay from '..'
 
+const { styled } = config
+
 export default {
   component: Overlay,
 }
 
-const Menu = config.styled('div').attrs({
+const Menu = styled('div').attrs({
   children: 'some content here',
 })`
   width: 300px;
@@ -18,41 +20,41 @@ const Menu = config.styled('div').attrs({
   border: 1px solid #555555;
 `
 
-const Trigger = config.styled('button').attrs({
+const Trigger = styled('button').attrs({
   type: 'button',
   children: 'Click on me',
 })`
-    background-color: #4CAF50;
-    border: none;
-    color: #FFFFFF;
-    padding: 15px 32px;
-    text-align: center;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    margin: 16px 0 !important;
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
+  background-color: #4caf50;
+  border: none;
+  color: #ffffff;
+  padding: 15px 32px;
+  text-align: center;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  margin: 16px 0 !important;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
 
-    &:hover {
-      background-color: #555555;
-    }
+  &:hover {
+    background-color: #555555;
+  }
 
-    ${({ active }) =>
-      active &&
-      config.css`
+  ${({ active }) =>
+    active &&
+    config.css`
         background-color: #555555;
       `}
 `
 
-const ScrollY = config.styled.div`
+const ScrollY = styled.div`
   width: 800px;
   height: 1000px;
   background-color: papayawhip;
 `
 
-const ScrollX = config.styled.div`
+const ScrollX = styled.div`
   width: 2000px;
   height: 200px;
   background-color: papayawhip;
