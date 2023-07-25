@@ -9,5 +9,5 @@ export type AttrsCb<A, T> = (
     isDark?: boolean
     isLight?: boolean
     createElement: typeof render
-  }
+  },
 ) => Partial<A>

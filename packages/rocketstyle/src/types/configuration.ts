@@ -11,7 +11,7 @@ export type __ROCKETSTYLE__ = {
   themes: Record<string, unknown>
 }
 
-export type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
+export type OptionFunc = (...arg: unknown[]) => Record<string, unknown>
 
 export type InitConfiguration<C, D> = {
   name?: string
@@ -25,7 +25,7 @@ export type InitConfiguration<C, D> = {
 
 export type Configuration<
   C = ElementType | unknown,
-  D extends Dimensions = Dimensions
+  D extends Dimensions = Dimensions,
 > = InitConfiguration<C, D> & {
   provider?: boolean
   consumer?: ConsumerCb<D>
@@ -45,7 +45,7 @@ export type Configuration<
 
 export type ExtendedConfiguration<
   C = ElementType | unknown,
-  D extends Dimensions = Dimensions
+  D extends Dimensions = Dimensions,
 > = InitConfiguration<C, D> & {
   provider?: boolean
   consumer?: ConsumerCb<D>

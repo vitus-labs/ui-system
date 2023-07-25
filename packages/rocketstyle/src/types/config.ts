@@ -16,7 +16,7 @@ export type RocketComponentType = ElementType & {
 }
 
 export type RocketProviderState<
-  T extends RocketComponentType | TObj | unknown = unknown
+  T extends RocketComponentType | TObj | unknown = unknown,
 > = T extends RocketComponentType
   ? Partial<T['$$rocketstyle']> & { pseudo: PseudoState }
   : T
@@ -24,28 +24,28 @@ export type RocketProviderState<
 export type ConsumerCtxCBValue<
   T extends RocketComponentType,
   D extends Dimensions,
-  DKP extends TDKP
+  DKP extends TDKP,
 > = (
-  attrs: RocketProviderState<T>
+  attrs: RocketProviderState<T>,
 ) => DKP extends TDKP
   ? Partial<ExtractDimensions<D, DKP> & { pseudo: PseudoState }>
   : TObj
 
 export type ConsumerCtxCb<D extends Dimensions, DKP extends TDKP = TDKP> = <
-  T extends RocketComponentType
+  T extends RocketComponentType,
 >(
-  attrs: ConsumerCtxCBValue<T, D, DKP>
+  attrs: ConsumerCtxCBValue<T, D, DKP>,
 ) => ReturnType<ConsumerCtxCBValue<T, D, DKP>>
 
 export type ConsumerCb<D extends Dimensions, DKP extends TDKP = TDKP> = (
-  ctx: ConsumerCtxCb<D, DKP>
+  ctx: ConsumerCtxCb<D, DKP>,
 ) => ReturnType<ConsumerCtxCb<D, DKP>>
 
 export type ConfigAttrs<
   C extends ElementType | unknown,
   D extends Dimensions,
   DKP extends TDKP,
-  UB extends boolean
+  UB extends boolean,
 > = Partial<{
   name: string
   component: C
@@ -53,6 +53,6 @@ export type ConfigAttrs<
   consumer: ConsumerCb<D, DKP>
   DEBUG: boolean
   inversed: boolean
-  passProps: UB extends true ? Array<keyof DimensionBooleanAttrs<DKP>> : never
+  passProps: UB extends true ? keyof DimensionBooleanAttrs<DKP>[] : never
   styled: boolean
 }>
