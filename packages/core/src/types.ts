@@ -1,3 +1,3 @@
-export interface Breakpoints extends Record<string, any> {}
+export type Breakpoints = Record<string, number>
 
 export type BreakpointKeys = keyof Breakpoints

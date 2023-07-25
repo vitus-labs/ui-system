@@ -5,17 +5,17 @@ import type { HTMLTags } from '~/html'
 interface Internal {
   css: typeof css
   styled: typeof styled
-  provider?: typeof ThemeProvider
-  component?: ComponentType | HTMLTags
-  textComponent?: ComponentType | HTMLTags
+  provider: typeof ThemeProvider
+  component: ComponentType | HTMLTags
+  textComponent: ComponentType | HTMLTags
 }
 
 class Configuration {
-  css
+  css: Internal['css']
 
-  styled
+  styled: Internal['styled']
 
-  provider
+  ExternalProvider: Internal['provider']
 
   component: Internal['component']
 
@@ -24,7 +24,7 @@ class Configuration {
   constructor(props: Internal) {
     this.css = props.css
     this.styled = props.styled
-    this.provider = props.provider
+    this.ExternalProvider = props.provider
     this.component = props.component
     this.textComponent = props.textComponent
   }
@@ -39,7 +39,7 @@ class Configuration {
     }
 
     if (props.provider) {
-      this.provider = props.provider
+      this.ExternalProvider = props.provider
     }
 
     if (props.component) {

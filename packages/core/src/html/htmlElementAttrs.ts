@@ -5,7 +5,7 @@ type Base = React.DetailedHTMLProps<
   HTMLElement
 >
 
-export type HTMLElementAttrs = {
+export interface HTMLElementAttrs {
   a: React.DetailedHTMLProps<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement

@@ -21,7 +21,7 @@ type ProviderType = Partial<
 >
 
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
-  const ExternalProvider = useMemo(() => config.provider, [])
+  const ExternalProvider = useMemo(() => config.ExternalProvider, [])
   const context = useMemo(() => ({ theme, ...props }), [theme, props])
 
   if (isEmpty(theme) || !theme) return <>{children}</>

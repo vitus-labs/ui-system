@@ -1,19 +1,22 @@
-export type IsEmpty = <T extends Record<string, any> | any[] | null>(
-  param?: T,
+export type IsEmpty = <
+  T extends Record<number | string, any> | any[] | null | undefined,
+>(
+  param: T,
 ) => T extends null | undefined
   ? true
   : keyof T extends never
   ? true
-  : T extends Array<T>
+  : T extends T[]
   ? T[number] extends never
     ? true
     : false
   : false
 
 const isEmpty: IsEmpty = (param) => {
-  if (!param) return true
+  if (!param || param === null) return true
 
   if (typeof param !== 'object') {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return true as any
   }
 

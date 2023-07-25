@@ -55,6 +55,6 @@
     "@vitus-labs/tools-babel": "^1.0.2",
     "@vitus-labs/tools-rollup": "^1.0.2",
     "@vitus-labs/tools-typescript": "^1.0.2",
-    "styled-components": "^6.0.4"
+    "styled-components": "^6.0.5"
   }
 }

@@ -14,11 +14,13 @@ export type Render = <T extends Record<string, any> | undefined>(
 ) => ReturnType<typeof createElement> | ReturnType<typeof cloneElement> | null
 
 const render: Render = (content, attachProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (!content) return null as any
 
   const isValidEl = isValidElement(content)
-  const render = (content) =>
-    attachProps ? createElement(content, attachProps) : createElement(content)
+
+  const render = (child: Parameters<typeof createElement>[0]) =>
+    attachProps ? createElement(child, attachProps) : createElement(child)
 
   if (typeof content === 'string' && isValidEl) {
     return render(content)
