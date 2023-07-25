@@ -10,9 +10,11 @@ import {
 import { isNumber } from '~/utils'
 import { CssOutput, StyledTypes } from '~/types'
 
+const { styled, css, component } = config
+
 type SpacingStyles = (
   props: Pick<StyledTypes, 'gap' | 'gutter'>,
-  { rootSize }: { rootSize?: number }
+  { rootSize }: { rootSize?: number },
 ) => CssOutput
 
 const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
@@ -23,7 +25,7 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   const spacingX = (gap! / 2) * -1
   const spacingY = isNumber(gutter) ? gutter! - gap! / 2 : gap! / 2
 
-  return config.css`
+  return css`
     margin: ${getValue(spacingY)} ${getValue(spacingX)};
   `
 }
@@ -31,7 +33,7 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
 const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   if (!align) return ''
 
-  return config.css`
+  return css`
     justify-content: ${ALIGN_CONTENT_MAP_X[align]};
   `
 }
@@ -48,13 +50,11 @@ const styles: MakeItResponsiveStyles<
   `
 }
 
-export default config.styled<any>(config.component)`
-  ${
-    __WEB__ &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
+export default styled(component)<any>`
+  ${__WEB__ &&
+  css`
+    box-sizing: border-box;
+  `};
 
   display: flex;
   flex-wrap: wrap;
@@ -64,7 +64,7 @@ export default config.styled<any>(config.component)`
   ${makeItResponsive({
     key: '$coolgrid',
     styles,
-    css: config.css,
+    css,
     normalize: true,
   })};
 `

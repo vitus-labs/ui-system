@@ -17,7 +17,7 @@ const Component: ElementType<
     'columns',
     'gap',
     'gutter',
-    'contentAlignX'
+    'contentAlignX',
   ]
 > = ({ children, component, css, ...props }) => {
   const parentCtx = useContext(RowContext)
@@ -27,8 +27,8 @@ const Component: ElementType<
   })
 
   const finalComponent = useMemo(
-    () => component || colComponent,
-    [component, colComponent]
+    () => component ?? colComponent,
+    [component, colComponent],
   )
 
   const finalProps = useMemo(
@@ -38,10 +38,10 @@ const Component: ElementType<
         gap,
         size,
         padding,
-        extraStyles: css || colCss,
+        extraStyles: css ?? colCss,
       },
     }),
-    [columns, gap, size, padding, css, colCss]
+    [columns, gap, size, padding, css, colCss],
   )
 
   const getDevProps = () => {

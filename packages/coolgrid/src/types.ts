@@ -1,15 +1,17 @@
 import { FC, ReactNode, ComponentType } from 'react'
-import { config, BreakpointKeys } from '@vitus-labs/core'
-import { extendCss, AlignContentAlignXKeys } from '@vitus-labs/unistyle'
+import { config } from '@vitus-labs/core'
+import { extendCss } from '@vitus-labs/unistyle'
+import type { BreakpointKeys } from '@vitus-labs/core'
+import type { AlignContentAlignXKeys } from '@vitus-labs/unistyle'
 
-type CreateValueType<T> = T | Array<T> | Partial<Record<BreakpointKeys, T>>
+type CreateValueType<T> = T | T[] | Partial<Record<BreakpointKeys, T>>
 
 export type Obj = Record<string, unknown>
 export type Value = string | number
 export type Css = Parameters<typeof extendCss>[0]
 export type ExtraStyles = CreateValueType<Css>
 
-export type CssOutput = ReturnType<typeof config.css> | string | any
+export type CssOutput = ReturnType<typeof config.css> | string
 
 export type ValueType = CreateValueType<number>
 export type ContainerWidth = CreateValueType<Value>
@@ -61,7 +63,7 @@ export type StyledTypes = Partial<{
 //     Record<string, unknown>
 // >
 
-export type ElementType<O extends Array<string>> = FC<
+export type ElementType<O extends string[]> = FC<
   Omit<ComponentProps, O[number]> &
     Record<string, unknown> & { children?: ReactNode }
 > & {

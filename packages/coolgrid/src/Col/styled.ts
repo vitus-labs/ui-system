@@ -9,6 +9,8 @@ import {
 import { hasValue, isVisible, isNumber } from '~/utils'
 import { CssOutput, StyledTypes } from '~/types'
 
+const { styled, css, component } = config
+
 type HasWidth = (size?: number, columns?: number) => boolean
 
 const hasWidth: HasWidth = (size, columns) =>
@@ -16,12 +18,12 @@ const hasWidth: HasWidth = (size, columns) =>
 
 type WidthStyles = (
   props: Pick<StyledTypes, 'size' | 'columns' | 'gap' | 'RNparentWidth'>,
-  defaults: { rootSize?: number }
+  defaults: { rootSize?: number },
 ) => CssOutput
 
 const widthStyles: WidthStyles = (
   { size, columns, gap, RNparentWidth },
-  { rootSize }
+  { rootSize },
 ) => {
   if (!hasWidth(size, columns)) {
     return ''
@@ -43,18 +45,18 @@ const widthStyles: WidthStyles = (
     ? width - gap!
     : width
 
-  return config.css`
-      flex-grow: 0;
-      flex-shrink: 0;
-      max-width: ${value(val, rootSize)};
-      flex-basis: ${value(val, rootSize)};
-    `
+  return css`
+    flex-grow: 0;
+    flex-shrink: 0;
+    max-width: ${value(val, rootSize)};
+    flex-basis: ${value(val, rootSize)};
+  `
 }
 
 type SpacingStyles = (
   type: 'margin' | 'padding',
   param?: number,
-  rootSize?: number
+  rootSize?: number,
 ) => CssOutput
 const spacingStyles: SpacingStyles = (type, param, rootSize) => {
   if (!isNumber(param)) {
@@ -63,9 +65,9 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
 
   const finalStyle = `${type}: ${value(param! / 2, rootSize)}`
 
-  return config.css`
-      ${finalStyle};
-    `
+  return css`
+    ${finalStyle};
+  `
 }
 
 const styles: MakeItResponsiveStyles<StyledTypes> = ({
@@ -95,13 +97,11 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
   `
 }
 
-export default config.styled<any>(config.component)`
-  ${
-    __WEB__ &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
+export default styled(component)<any>`
+  ${__WEB__ &&
+  css`
+    box-sizing: border-box;
+  `};
 
   position: relative;
   display: flex;
@@ -113,7 +113,7 @@ export default config.styled<any>(config.component)`
   ${makeItResponsive({
     key: '$coolgrid',
     styles,
-    css: config.css,
+    css,
     normalize: true,
   })};
 `

@@ -7,6 +7,8 @@ import {
 } from '@vitus-labs/unistyle'
 import { StyledTypes } from '~/types'
 
+const { styled, css, component } = config
+
 const styles: MakeItResponsiveStyles<
   Pick<StyledTypes, 'width' | 'extraStyles'>
 > = ({ theme: t, css, rootSize }) => css`
@@ -14,13 +16,11 @@ const styles: MakeItResponsiveStyles<
   ${extendCss(t.extraStyles)};
 `
 
-export default config.styled<any>(config.component)`
-  ${
-    __WEB__ &&
-    config.css`
-      box-sizing: border-box;
-    `
-  };
+export default styled(component)<any>`
+  ${__WEB__ &&
+  css`
+    box-sizing: border-box;
+  `};
 
   display: flex;
   width: 100%;
@@ -31,7 +31,7 @@ export default config.styled<any>(config.component)`
   ${makeItResponsive({
     key: '$coolgrid',
     styles,
-    css: config.css,
+    css,
     normalize: true,
   })};
 `
