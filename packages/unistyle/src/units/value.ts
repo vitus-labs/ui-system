@@ -30,7 +30,8 @@ const value: Value = (
   rootSize = 16,
   outputUnit = __WEB__ ? 'rem' : 'px',
 ) => {
-  if (!param || isNotValue(param)) return null
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  if (isNotValue(param)) return null as any
 
   const [value, unit] = stripUnit(param as string, true)
   if (isNotValue(value)) return null

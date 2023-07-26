@@ -17,9 +17,9 @@ class Configuration {
 
   ExternalProvider: Internal['provider']
 
-  component: Internal['component']
+  component: Internal['component'] = 'div'
 
-  textComponent: Internal['textComponent']
+  textComponent: Internal['textComponent'] = 'span'
 
   constructor(props: Internal) {
     this.css = props.css
@@ -29,7 +29,7 @@ class Configuration {
     this.textComponent = props.textComponent
   }
 
-  init = (props: Internal) => {
+  init = (props: Partial<Internal>) => {
     if (props.css) {
       this.css = props.css
     }
