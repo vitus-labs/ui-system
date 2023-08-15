@@ -26,9 +26,9 @@ export const ALIGN_CONTENT_MAP_Y = {
 export const ALIGN_CONTENT_DIRECTION = __WEB__
   ? {
       inline: 'row',
-      reverseInline: 'reverse-row',
+      reverseInline: 'row-reverse',
       rows: 'column',
-      reverseRows: 'reverse-column',
+      reverseRows: 'column-reverse',
     }
   : {
       inline: 'row',
