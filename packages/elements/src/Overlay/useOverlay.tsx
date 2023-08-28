@@ -18,17 +18,19 @@ type AlignY = 'bottom' | 'top' | 'center'
 export type UseOverlayProps = Partial<{
   /**
    * Defines default state whather **Overlay** component should be active.
-   * Default value is `false`.
+   * @defaultValue `false`
    */
   isOpen: boolean
   /**
    * Defines `event` when **Overlay** is supposed to be open.
    *
    * When `manual` is set, callbacks needs to be applied to make it working.
+   * @defaultValue `click`
    */
   openOn: 'click' | 'hover' | 'manual'
   /**
    * Defines `event` when **Overlay** is supposed to be closed.
+   * @defaultValue `click`
    */
   closeOn:
     | 'click'
@@ -40,36 +42,44 @@ export type UseOverlayProps = Partial<{
   /**
    * Defines what type of **Overlay** will be created. Type `modal`
    * has different positioning calculations than others.
+   * @defaultValue `dropdown`
    */
-  type: 'dropdown' | 'tooltip' | 'popover' | 'modal'
+  type: 'dropdown' | 'tooltip' | 'popover' | 'modal' | 'custom'
   /**
    * Defines how `content` is treated regarding CSS positioning.
+   * @defaultValue `fixed`
    */
   position: 'absolute' | 'fixed' | 'relative' | 'static'
   /**
    * Defines from which side is `content` aligned to `trigger` (top, left, bottom, right).
    * For more specific alignment configuration can be used `alignX` and/or `alignY` prop.
+   * @defaultValue `bottom`
    */
   align: Align
   /**
    * Defines how `content` is aligned to `trigger` on axis X
+   * @defaultValue `left`
    */
   alignX: AlignX
   /**
    * Defines how `content` is aligned to `trigger` on axis Y
+   * @defaultValue `bottom`
    */
   alignY: AlignY
   /**
    * Defines `margin` from trigger on axis X.
+   * @defaultValue `0`
    */
   offsetX: number
   /**
    * Defines `margin` from trigger on axis Y.
+   * @defaultValue `0`
    */
   offsetY: number
   /**
    * Performance helper. Value defined in miliseconds for `throttling`
    * recalculations
+   * @defaultValue `200`
    */
   throttleDelay: number
   /**
@@ -80,6 +90,7 @@ export type UseOverlayProps = Partial<{
   /**
    * Defines wheather active **Overlay** is supposed to be closed on pressing
    * `ESC` key.
+   * @defaultValue `true`
    */
   closeOnEsc: boolean
   /**
@@ -145,18 +156,27 @@ const useOverlay = ({
     const overlayPosition: OverlayPosition = {}
 
     if (!active || !isContentLoaded) return overlayPosition
-    if (!triggerRef.current || !contentRef.current) {
+
+    if (type === 'modal' && !contentRef.current) {
       if (process.env.NODE_ENV === 'development') {
-        console.warn('Cannot access `ref` of trigger or content component.')
+        console.warn('Cannot access `ref` of `content` component.')
       }
 
       return overlayPosition
     }
 
-    const t = triggerRef.current.getBoundingClientRect()
-    const c = contentRef.current.getBoundingClientRect()
-
     if (['dropdown', 'tooltip', 'popover'].includes(type)) {
+      // return empty object when refs are not available
+      if (!triggerRef.current || !contentRef.current) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Cannot access `ref` of trigger or content component.')
+        }
+
+        return overlayPosition
+      }
+
+      const c = contentRef.current.getBoundingClientRect()
+      const t = triggerRef.current.getBoundingClientRect()
       // align is top or bottom
       if (['top', 'bottom'].includes(align)) {
         // axe Y position
@@ -271,6 +291,18 @@ const useOverlay = ({
 
     // modal type
     else if (type === 'modal') {
+      // return empty object when ref is not available
+      // triggerRef is not needed in this case
+      if (!contentRef.current) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Cannot access `ref` of trigger or content component.')
+        }
+
+        return overlayPosition
+      }
+
+      const c = contentRef.current.getBoundingClientRect()
+
       switch (alignX) {
         case 'right':
           overlayPosition.right = offsetX
