@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/rocketstyle",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -60,12 +60,12 @@
     "hoist-non-react-statics": "^3.3.2"
   },
   "devDependencies": {
-    "@vitus-labs/core": "1.0.0-alpha.4",
-    "@vitus-labs/elements": "1.0.0-alpha.4",
+    "@vitus-labs/core": "1.0.0-alpha.5",
+    "@vitus-labs/elements": "1.0.0-alpha.5",
     "@vitus-labs/tools-babel": "^1.0.3",
     "@vitus-labs/tools-rollup": "^1.0.3",
     "@vitus-labs/tools-storybook": "^1.0.3",
     "@vitus-labs/tools-typescript": "^1.0.3",
-    "@vitus-labs/unistyle": "1.0.0-alpha.4"
+    "@vitus-labs/unistyle": "1.0.0-alpha.5"
   }
 }
