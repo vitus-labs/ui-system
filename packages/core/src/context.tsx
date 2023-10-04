@@ -1,4 +1,5 @@
-import React, { createContext, FC, useMemo, ReactNode } from 'react'
+import React, { createContext, useMemo } from 'react'
+import type { FC, ReactNode } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 import type { Breakpoints } from '~/types'

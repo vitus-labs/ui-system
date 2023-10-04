@@ -1,4 +1,10 @@
-import React, { FC, createContext, useContext, ReactNode, useMemo } from 'react'
+import React, {
+  type FC,
+  createContext,
+  useContext,
+  type ReactNode,
+  useMemo,
+} from 'react'
 
 export interface Context {
   blocked: boolean

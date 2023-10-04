@@ -1,4 +1,10 @@
-import React, { Children, FC, ReactNode, useCallback, useMemo } from 'react'
+import React, {
+  Children,
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+} from 'react'
 import { isFragment } from 'react-is'
 import { render, isEmpty } from '@vitus-labs/core'
 import type { Props, ObjectValue, ExtendedProps, SimpleValue } from './types'

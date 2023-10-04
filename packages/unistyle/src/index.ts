@@ -1,5 +1,6 @@
-import Provider, { context, TProvider } from '~/context'
-import {
+import Provider, { context } from '~/context'
+import type { TProvider } from '~/context'
+import type {
   BrowserColors,
   Color,
   PropertyValue,
@@ -17,6 +18,8 @@ import {
   normalizeTheme,
   sortBreakpoints,
   transformTheme,
+} from '~/responsive'
+import type {
   Breakpoints,
   CreateMediaQueries,
   MakeItResponsive,
@@ -36,6 +39,9 @@ import {
   ALIGN_CONTENT_MAP_X,
   ALIGN_CONTENT_MAP_Y,
   extendCss,
+} from '~/styles'
+
+import type {
   Styles,
   StylesTheme,
   AlignContent,
@@ -48,7 +54,8 @@ import {
 // --------------------------------------------------------
 // UNITS UTILITIES
 // --------------------------------------------------------
-import { stripUnit, value, values, StripUnit, Value, Values } from '~/units'
+import { stripUnit, value, values } from '~/units'
+import type { StripUnit, Value, Values } from '~/units'
 
 export type {
   TProvider,

@@ -1,4 +1,4 @@
-import { FC, ReactNode, ComponentType } from 'react'
+import type { FC, ReactNode, ComponentType } from 'react'
 import { config } from '@vitus-labs/core'
 import { extendCss } from '@vitus-labs/unistyle'
 import type { BreakpointKeys } from '@vitus-labs/core'

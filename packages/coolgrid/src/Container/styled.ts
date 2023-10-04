@@ -1,11 +1,7 @@
 import { config } from '@vitus-labs/core'
-import {
-  makeItResponsive,
-  value,
-  extendCss,
-  MakeItResponsiveStyles,
-} from '@vitus-labs/unistyle'
-import { StyledTypes } from '~/types'
+import { makeItResponsive, value, extendCss } from '@vitus-labs/unistyle'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
+import type { StyledTypes } from '~/types'
 
 const { styled, css, component } = config
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, type ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import type {
   Direction,

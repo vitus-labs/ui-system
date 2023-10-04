@@ -1,7 +1,7 @@
 import React, {
   forwardRef,
-  ForwardRefExoticComponent,
-  ComponentType,
+  type ForwardRefExoticComponent,
+  type ComponentType,
 } from 'react'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import type { Configuration } from '~/types/configuration'

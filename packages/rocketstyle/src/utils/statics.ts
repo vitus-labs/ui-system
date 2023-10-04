@@ -2,11 +2,11 @@ import { isEmpty } from '@vitus-labs/core'
 import { STATIC_KEYS } from '~/constants'
 
 // --------------------------------------------------------
-// helpers for create statics chainin methods on component
+// helpers for create statics chaining methods on component
 // --------------------------------------------------------
 type CreateStaticsChainingEnhancers = <
   O extends Record<string, any>,
-  DK extends string[]
+  DK extends string[],
 >(props: {
   context: Record<string, any>
   dimensionKeys: DK

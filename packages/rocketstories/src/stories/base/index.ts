@@ -1,6 +1,6 @@
-import renderList, { RenderList } from './renderList'
-import renderMain, { RenderMain } from './renderMain'
-import renderRender, { RenderRender } from './renderRender'
+import renderList, { type RenderList } from './renderList'
+import renderMain, { type RenderMain } from './renderMain'
+import renderRender, { type RenderRender } from './renderRender'
 
 export type { RenderList, RenderRender, RenderMain }
 

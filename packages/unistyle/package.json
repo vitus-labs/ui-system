@@ -7,9 +7,12 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "type": "module",
-  "exports": "./lib/vitus-labs-unistyle.module.js",
-  "react-native": "lib/vitus-labs-unistyle.native.js",
+  "exports": {
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
   "types": "./lib/index.d.ts",
+  "react-native": "lib/vitus-labs-unistyle.native.js",
   "files": [
     "lib/"
   ],
@@ -43,8 +46,8 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "1.0.0-alpha.5",
-    "@vitus-labs/tools-babel": "^1.0.3",
-    "@vitus-labs/tools-rollup": "^1.0.3",
-    "@vitus-labs/tools-typescript": "^1.0.3"
+    "@vitus-labs/tools-babel": "^1.3.0",
+    "@vitus-labs/tools-rollup": "^1.3.0",
+    "@vitus-labs/tools-typescript": "^1.3.0"
   }
 }

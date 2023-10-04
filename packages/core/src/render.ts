@@ -1,5 +1,6 @@
+import { createElement, isValidElement, cloneElement } from 'react'
+import type { ReactNode } from 'react'
 import { isValidElementType, isFragment } from 'react-is'
-import { createElement, isValidElement, cloneElement, ReactNode } from 'react'
 import isEmpty from './isEmpty'
 
 type CreateTypes = Parameters<typeof createElement>[0]

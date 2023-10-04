@@ -1,4 +1,5 @@
-import { HTML_TAGS, HTML_TEXT_TAGS, HTMLTags, HTMLTextTags } from './htmlTags'
+import { HTML_TAGS, HTML_TEXT_TAGS } from './htmlTags'
+import type { HTMLTags, HTMLTextTags } from './htmlTags'
 import type { HTMLElementAttrs } from './htmlElementAttrs'
 
 type HTMLTagAttrsByTag<T extends HTMLTags> = T extends HTMLTags

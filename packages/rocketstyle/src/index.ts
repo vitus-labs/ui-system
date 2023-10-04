@@ -1,6 +1,9 @@
-import rocketstyle, { Rocketstyle } from '~/init'
-import Provider, { context, TProvider } from '~/context/context'
-import isRocketComponent, { IsRocketComponent } from '~/isRocketComponent'
+import rocketstyle from '~/init'
+import type { Rocketstyle } from '~/init'
+import Provider, { context } from '~/context/context'
+import type { TProvider } from '~/context/context'
+import isRocketComponent from '~/isRocketComponent'
+import type { IsRocketComponent } from '~/isRocketComponent'
 
 import type {
   ConfigAttrs,

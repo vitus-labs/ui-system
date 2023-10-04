@@ -1,8 +1,10 @@
 import React, { forwardRef } from 'react'
 import { pick, omit } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import Element, { VLElement } from '~/Element'
-import Iterator, { Props as IteratorProps } from '~/helpers/Iterator'
+import Element from '~/Element'
+import Iterator from '~/helpers/Iterator'
+import type { VLElement } from '~/Element'
+import type { Props as IteratorProps } from '~/helpers/Iterator'
 import type { MergeTypes } from '~/types'
 
 type ListProps = {
@@ -13,11 +15,11 @@ type ListProps = {
    */
   rootElement?: boolean
   /**
-   * Label prop frol `Element` component is being ignored.
+   * Label prop from `Element` component is being ignored.
    */
   label: never
   /**
-   * Content prop frol `Element` component is being ignored.
+   * Content prop from `Element` component is being ignored.
    */
   content: never
 }

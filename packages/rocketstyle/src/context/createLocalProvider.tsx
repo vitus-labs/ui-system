@@ -1,8 +1,8 @@
 import React, {
   forwardRef,
   useMemo,
-  ComponentType,
-  ForwardRefExoticComponent,
+  type ComponentType,
+  type ForwardRefExoticComponent,
 } from 'react'
 import { usePseudoState } from '~/hooks'
 import type { PseudoProps } from '~/types/pseudo'
@@ -11,7 +11,7 @@ import { LocalProvider } from './localContext'
 type Props = PseudoProps & Record<string, any>
 
 type HOC = (
-  WrappedComponent: ComponentType<Props>
+  WrappedComponent: ComponentType<Props>,
 ) => ForwardRefExoticComponent<Props>
 
 const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
@@ -27,7 +27,7 @@ const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
         $rocketstate,
         ...props
       },
-      ref
+      ref,
     ) => {
       // pseudo hook to detect states hover / pressed / focus
       const pseudo = usePseudoState({
@@ -44,7 +44,7 @@ const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
           ...$rocketstate,
           pseudo: { ...$rocketstate.pseudo, ...pseudo.state },
         }),
-        [$rocketstate, pseudo]
+        [$rocketstate, pseudo],
       )
 
       return (
@@ -57,7 +57,7 @@ const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
           />
         </LocalProvider>
       )
-    }
+    },
   )
 
 export default RocketStyleProviderComponent

@@ -1,5 +1,5 @@
 import type { ComponentType, ForwardRefExoticComponent, ReactNode } from 'react'
-import { HTMLTags } from '@vitus-labs/core'
+import { type HTMLTags } from '@vitus-labs/core'
 
 export type MaybeNull = undefined | null
 export type TObj = Record<string, unknown>

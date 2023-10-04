@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import { config, isEmpty, merge } from '@vitus-labs/core'
-import { ThemeModeCallback } from '~/types/theme'
+import type { ThemeModeCallback } from '~/types/theme'
 import { removeNullableValues } from './collection'
 import { isMultiKey } from './dimensions'
 
@@ -105,7 +105,7 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
 
   Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | Array<string>]) => {
-      const keyTheme: Record<string, any> = themes[key]
+      const keyTheme: Record<string, any> = themes[key]!
 
       if (Array.isArray(value)) {
         value.forEach((item) => {

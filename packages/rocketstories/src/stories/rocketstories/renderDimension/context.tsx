@@ -1,9 +1,9 @@
 import React, {
   createContext,
   useContext as contextHook,
-  FC,
-  ComponentType,
-  ReactNode,
+  type FC,
+  type ComponentType,
+  type ReactNode,
 } from 'react'
 
 type Context = {

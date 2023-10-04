@@ -1,18 +1,16 @@
 import { Provider } from '@vitus-labs/unistyle'
-import Element, {
-  Props as ElementProps,
-  withEqualSizeBeforeAfter,
-} from '~/Element'
-import List, { Props as ListProps, withActiveState } from '~/List'
-import Overlay, {
-  Props as OverlayProps,
-  useOverlay,
-  OverlayProvider,
-  UseOverlayProps,
-} from '~/Overlay'
-import Portal, { Props as PortalProps } from '~/Portal'
-import Text, { Props as TextProps } from '~/Text'
-import Util, { Props as UtilProps } from '~/Util'
+import Element, { withEqualSizeBeforeAfter } from '~/Element'
+import type { Props as ElementProps } from '~/Element'
+import List, { withActiveState } from '~/List'
+import type { Props as ListProps } from '~/List'
+import Overlay, { useOverlay, OverlayProvider } from '~/Overlay'
+import type { Props as OverlayProps, UseOverlayProps } from '~/Overlay'
+import Portal from '~/Portal'
+import type { Props as PortalProps } from '~/Portal'
+import Text from '~/Text'
+import type { Props as TextProps } from '~/Text'
+import Util from '~/Util'
+import type { Props as UtilProps } from '~/Util'
 import type {
   Props as IteratorProps,
   PropsCallback,

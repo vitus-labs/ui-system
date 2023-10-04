@@ -1,4 +1,4 @@
-import React, { VFC } from 'react'
+import React, { type FC } from 'react'
 import Item from './Item'
 
 const pseudo = ['base', 'hover', 'pressed', 'active'] as const
@@ -7,7 +7,7 @@ type Props = {
   itemProps: Record<string, any>
 }
 
-const component: VFC<Props> = ({ itemProps }) => (
+const component: FC<Props> = ({ itemProps }) => (
   <>
     {pseudo.map((item) => {
       const pseudoProps = { [item]: true }

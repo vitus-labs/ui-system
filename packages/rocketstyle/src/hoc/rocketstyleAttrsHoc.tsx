@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import React, {
   forwardRef,
-  ForwardRefExoticComponent,
-  ComponentType,
+  type ForwardRefExoticComponent,
+  type ComponentType,
 } from 'react'
 import { render } from '@vitus-labs/core'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
@@ -14,7 +14,7 @@ export type RocketStyleHOC = ({
   attrs,
   priorityAttrs,
 }: Pick<Configuration, 'inversed' | 'attrs' | 'priorityAttrs'>) => (
-  WrappedComponent: ComponentType<any>
+  WrappedComponent: ComponentType<any>,
 ) => ForwardRefExoticComponent<any>
 
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {

@@ -17,7 +17,7 @@ export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
 
   return Object.entries(dimensions).reduce((acc, [key, value]) => {
     if (!multiKeys[key]) {
-      const propName = Object.keys(value)[0]
+      const propName = Object.keys(value)[0] as string
 
       return { ...acc, [propName]: true }
     }

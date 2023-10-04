@@ -1,4 +1,4 @@
-import { useRef, useImperativeHandle, ForwardedRef } from 'react'
+import { useRef, useImperativeHandle, type ForwardedRef } from 'react'
 
 type UseRocketstyleRef = (props: {
   $rocketstyleRef?: ForwardedRef<unknown>

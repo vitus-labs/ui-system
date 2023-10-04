@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactElement } from 'react'
+import React, { type ComponentType, type ReactElement } from 'react'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Provider } from '@vitus-labs/rocketstyle'
 import { Provider as provider } from '@vitus-labs/unistyle'

@@ -1,8 +1,8 @@
 import {
   useState,
   useCallback,
-  MouseEventHandler,
-  FocusEventHandler,
+  type MouseEventHandler,
+  type FocusEventHandler,
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
@@ -35,7 +35,7 @@ const usePseudoState: UsePseudoState = ({
       setHover(true)
       if (onMouseEnter) onMouseEnter(e)
     },
-    [onMouseEnter]
+    [onMouseEnter],
   )
 
   const handleOnMouseLeave: MouseEventHandler = useCallback(
@@ -44,7 +44,7 @@ const usePseudoState: UsePseudoState = ({
       setPressed(false)
       if (onMouseLeave) onMouseLeave(e)
     },
-    [onMouseLeave]
+    [onMouseLeave],
   )
 
   const handleOnMouseDown: MouseEventHandler = useCallback(
@@ -52,7 +52,7 @@ const usePseudoState: UsePseudoState = ({
       setPressed(true)
       if (onMouseDown) onMouseDown(e)
     },
-    [onMouseDown]
+    [onMouseDown],
   )
 
   const handleOnMouseUp: MouseEventHandler = useCallback(
@@ -60,7 +60,7 @@ const usePseudoState: UsePseudoState = ({
       setPressed(false)
       if (onMouseUp) onMouseUp(e)
     },
-    [onMouseUp]
+    [onMouseUp],
   )
 
   const handleOnFocus: FocusEventHandler = useCallback(
@@ -68,7 +68,7 @@ const usePseudoState: UsePseudoState = ({
       setFocus(true)
       if (onFocus) onFocus(e)
     },
-    [onFocus]
+    [onFocus],
   )
 
   const handleOnBlur: FocusEventHandler = useCallback(
@@ -76,7 +76,7 @@ const usePseudoState: UsePseudoState = ({
       setFocus(false)
       if (onBlur) onBlur(e)
     },
-    [onBlur]
+    [onBlur],
   )
 
   return {

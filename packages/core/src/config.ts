@@ -1,5 +1,5 @@
-import { ComponentType } from 'react'
 import { styled, css, ThemeProvider } from 'styled-components'
+import type { ComponentType } from 'react'
 import type { HTMLTags } from '~/html'
 
 interface Internal {

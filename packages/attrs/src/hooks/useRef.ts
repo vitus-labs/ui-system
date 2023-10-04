@@ -1,4 +1,4 @@
-import { useRef, useImperativeHandle, ForwardedRef } from 'react'
+import { useRef, useImperativeHandle, type ForwardedRef } from 'react'
 
 type UseAttrsRef = (props: {
   $attrsRef?: ForwardedRef<unknown>

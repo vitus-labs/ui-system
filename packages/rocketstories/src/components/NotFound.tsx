@@ -1,4 +1,4 @@
-import React, { VFC } from 'react'
+import React, { type FC } from 'react'
 import { config } from '@vitus-labs/core'
 
 const Wrapper = config.styled.div`
@@ -6,7 +6,7 @@ const Wrapper = config.styled.div`
   font-size: 32px;
 `
 
-const component: VFC = () => <Wrapper>Nothing here</Wrapper>
+const component: FC = () => <Wrapper>Nothing here</Wrapper>
 
 component.displayName = '@vitus-labs/rocketstories/Empty'
 

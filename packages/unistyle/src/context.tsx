@@ -1,4 +1,5 @@
-import React, { ReactNode, FC, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import type { ReactNode, FC } from 'react'
 import {
   config,
   isEmpty,

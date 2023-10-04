@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
-import {
-  makeItResponsive,
-  value,
-  extendCss,
-  MakeItResponsiveStyles,
-} from '@vitus-labs/unistyle'
+import { makeItResponsive, value, extendCss } from '@vitus-labs/unistyle'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import { hasValue, isVisible, isNumber } from '~/utils'
-import { CssOutput, StyledTypes } from '~/types'
+import type { CssOutput, StyledTypes } from '~/types'
 
 const { styled, css, component } = config
 

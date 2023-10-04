@@ -1,5 +1,7 @@
-import attrs, { Attrs } from '~/init'
-import isAttrsComponent, { IsAttrsComponent } from '~/isAttrsComponent'
+import attrs from '~/init'
+import type { Attrs } from '~/init'
+import isAttrsComponent from '~/isAttrsComponent'
+import type { IsAttrsComponent } from '~/isAttrsComponent'
 import type { ConfigAttrs, AttrsComponentType } from '~/types/config'
 import type { TObj, ElementType } from '~/types/utils'
 import type { AttrsCb } from '~/types/attrs'
@@ -16,9 +18,8 @@ export type {
   AttrsCb,
   GenericHoc,
   ComposeParam,
+  IsAttrsComponent,
 }
 
 export { attrs, isAttrsComponent }
 export default attrs
-
-export type { IsAttrsComponent }

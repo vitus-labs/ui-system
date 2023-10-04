@@ -5,10 +5,10 @@ import {
   value,
   extendCss,
   ALIGN_CONTENT_MAP_X,
-  MakeItResponsiveStyles,
 } from '@vitus-labs/unistyle'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import { isNumber } from '~/utils'
-import { CssOutput, StyledTypes } from '~/types'
+import type { CssOutput, StyledTypes } from '~/types'
 
 const { styled, css, component } = config
 

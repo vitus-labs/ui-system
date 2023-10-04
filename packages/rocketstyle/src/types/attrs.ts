@@ -1,5 +1,5 @@
 import { render } from '@vitus-labs/core'
-import { ThemeModeKeys } from './theme'
+import type { ThemeModeKeys } from './theme'
 
 export type AttrsCb<A, T> = (
   props: Partial<A>,

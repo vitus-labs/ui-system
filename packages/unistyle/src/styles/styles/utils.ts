@@ -1,5 +1,5 @@
 import { value } from '~/units'
-import { PropertyValue } from '~/types'
+import type { PropertyValue } from '~/types'
 
 const isValidValue = (value) => !!value || value === 0
 

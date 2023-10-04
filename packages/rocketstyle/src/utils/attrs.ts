@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { isEmpty } from '@vitus-labs/core'
-import { MultiKeys } from '~/types/dimensions'
+import type { MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // remove undefined props
 // --------------------------------------------------------
 type RemoveUndefinedProps = <T extends Record<string, any>>(
-  props: T
+  props: T,
 ) => Partial<T>
 
 export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
@@ -21,10 +21,10 @@ export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
 // --------------------------------------------------------
 type PickStyledAttrs = <
   T extends Record<string, any>,
-  K extends { [I in keyof T]?: true }
+  K extends { [I in keyof T]?: true },
 >(
   props: T,
-  keywords: K
+  keywords: K,
   // @ts-ignore
 ) => { [I in keyof K]: T[I] }
 
@@ -39,7 +39,7 @@ export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
 // --------------------------------------------------------
 type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options?: Array<OptionFunc<A>>
+  options?: Array<OptionFunc<A>>,
 ) => (args: Array<A>) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions =
@@ -108,7 +108,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
           if (isMultiKey) {
             newDimensionValue = propsKeys.filter((key) =>
-              keywords.includes(key)
+              keywords.includes(key),
             )
           } else {
             // reverse props to guarantee the last one will have

@@ -1,9 +1,9 @@
-import React, { useMemo, ReactNode } from 'react'
+import React, { useMemo, type ReactNode } from 'react'
 import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { VLComponent, Content } from '~/types'
-import useOverlay, { UseOverlayProps } from './useOverlay'
+import useOverlay, { type UseOverlayProps } from './useOverlay'
 
 const IS_BROWSER = typeof window !== 'undefined'
 

@@ -4,7 +4,7 @@ export type SortBreakpoints = <T extends Record<string, number>>(
 
 const sortBreakpoints: SortBreakpoints = (breakpoints) => {
   const result = Object.keys(breakpoints).sort(
-    (a, b) => breakpoints[a] - breakpoints[b],
+    (a, b) => breakpoints[a]! - breakpoints[b]!,
   )
 
   return result

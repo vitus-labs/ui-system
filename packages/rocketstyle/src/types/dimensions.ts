@@ -1,4 +1,4 @@
-import { DefaultDimensions } from '~/constants/defaultDimensions'
+import type { DefaultDimensions } from '~/constants/defaultDimensions'
 import type {
   CallBackParam,
   Spread,
@@ -7,8 +7,8 @@ import type {
   ValueOf,
   ReturnCbParam,
 } from './utils'
-import { ThemeModeCallback } from './theme'
-import { Css } from './styles'
+import type { ThemeModeCallback } from './theme'
+import type { Css } from './styles'
 
 export type { DefaultDimensions }
 

@@ -1,4 +1,8 @@
-import React, { forwardRef, ForwardRefRenderFunction, ReactNode } from 'react'
+import React, {
+  forwardRef,
+  type ForwardRefRenderFunction,
+  type ReactNode,
+} from 'react'
 import type { HTMLTextTags } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLForwardedComponent, ExtendCss } from '~/types'

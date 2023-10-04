@@ -3,11 +3,12 @@ import memoize from 'moize'
 import config, { init } from '~/config'
 import Provider, { context } from '~/context'
 import compose from '~/compose'
-import isEmpty, { IsEmpty } from '~/isEmpty'
-import render, { Render } from '~/render'
-import {
-  HTML_TAGS,
-  HTML_TEXT_TAGS,
+import isEmpty from '~/isEmpty'
+import render from '~/render'
+import { HTML_TAGS, HTML_TEXT_TAGS } from '~/html'
+import type { IsEmpty } from '~/isEmpty'
+import type { Render } from '~/render'
+import type {
   HTMLTags,
   HTMLTextTags,
   HTMLElementAttrs,

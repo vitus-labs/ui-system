@@ -1,4 +1,4 @@
-import React, { createElement, VFC } from 'react'
+import React, { createElement, type FC } from 'react'
 import { Heading } from '~/components/base'
 import { useContext } from '../context'
 
@@ -6,7 +6,7 @@ type Props = {
   title?: string
 } & { [key: string]: any }
 
-const component: VFC<Props> = ({ title, ...props }) => {
+const component: FC<Props> = ({ title, ...props }) => {
   const { component } = useContext()
 
   return (

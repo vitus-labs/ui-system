@@ -1,12 +1,18 @@
-import breakpoints, { Breakpoints } from './breakpoints'
-import createMediaQueries, { CreateMediaQueries } from './createMediaQueries'
-import makeItResponsive, {
+import breakpoints from './breakpoints'
+import createMediaQueries from './createMediaQueries'
+import makeItResponsive from './makeItResponsive'
+import normalizeTheme from './normalizeTheme'
+import sortBreakpoints from './sortBreakpoints'
+import transformTheme from './transformTheme'
+import type { Breakpoints } from './breakpoints'
+import type { CreateMediaQueries } from './createMediaQueries'
+import type {
   MakeItResponsive,
   MakeItResponsiveStyles,
 } from './makeItResponsive'
-import normalizeTheme, { NormalizeTheme } from './normalizeTheme'
-import sortBreakpoints, { SortBreakpoints } from './sortBreakpoints'
-import transformTheme, { TransformTheme } from './transformTheme'
+import type { NormalizeTheme } from './normalizeTheme'
+import type { SortBreakpoints } from './sortBreakpoints'
+import type { TransformTheme } from './transformTheme'
 
 export type {
   Breakpoints,

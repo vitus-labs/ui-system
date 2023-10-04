@@ -6,7 +6,7 @@ type Obj = Record<string, unknown>
 // --------------------------------------------------------
 type ChainOptions = (
   opts: Obj | Func | undefined,
-  defaultOpts: Func[]
+  defaultOpts: Func[],
 ) => Func[]
 
 export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {
@@ -24,13 +24,13 @@ export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {
 type ChainOrOptions = (
   keys: ReadonlyArray<string>,
   opts: Obj,
-  defaultOpts: Obj
+  defaultOpts: Obj,
 ) => Record<string, unknown>
 
 export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) =>
   keys.reduce(
     (acc, item) => ({ ...acc, [item]: opts[item] || defaultOpts[item] }),
-    {}
+    {},
   )
 
 // --------------------------------------------------------
@@ -39,18 +39,18 @@ export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) =>
 type ChainReservedKeyOptions = (
   keys: ReadonlyArray<string>,
   opts: Record<string, Obj | Func>,
-  defaultOpts: Record<string, Func[]>
+  defaultOpts: Record<string, Func[]>,
 ) => Record<string, ReturnType<typeof chainOptions>>
 
 export const chainReservedKeyOptions: ChainReservedKeyOptions = (
   keys,
   opts,
-  defaultOpts
+  defaultOpts,
 ) =>
   keys.reduce(
     (acc, item) => ({
       ...acc,
-      [item]: chainOptions(opts[item], defaultOpts[item]),
+      [item]: chainOptions(opts[item], defaultOpts[item]!),
     }),
-    {}
+    {},
   )

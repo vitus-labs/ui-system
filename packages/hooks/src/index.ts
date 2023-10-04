@@ -1,5 +1,7 @@
-import useHover, { UseHover } from './useHover'
-import useWindowResize, { UseWindowResize } from './useWindowResize'
+import useHover from './useHover'
+import useWindowResize from './useWindowResize'
+import type { UseHover } from './useHover'
+import type { UseWindowResize } from './useWindowResize'
 
 export type { UseHover, UseWindowResize }
 

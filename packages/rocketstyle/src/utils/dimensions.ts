@@ -1,5 +1,5 @@
 import { get, isEmpty, set } from '@vitus-labs/core'
-import { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
+import type { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 
 // --------------------------------------------------------
 // Is value a valid key
@@ -62,7 +62,7 @@ type GetKeys = <T extends Record<string, unknown>>(obj: T) => Array<keyof T>
 export const getKeys: GetKeys = (obj) => Object.keys(obj)
 
 type GetValues = <T extends Record<string, unknown>, K extends keyof T>(
-  obj: T
+  obj: T,
 ) => T[K][]
 export const getValues: GetValues = (obj) => Object.values(obj) as any
 
@@ -71,7 +71,7 @@ export const getValues: GetValues = (obj) => Object.values(obj) as any
 // --------------------------------------------------------
 type ValueType<T> = T extends string ? T : Array<T>[0]
 type GetDimensionsValues = <T extends Dimensions, K extends keyof T>(
-  obj: T
+  obj: T,
 ) => ValueType<T[K]>[]
 
 export const getDimensionsValues: GetDimensionsValues = (obj) =>
@@ -89,11 +89,14 @@ export const getDimensionsValues: GetDimensionsValues = (obj) =>
 type GetMultipleDimensions = <T extends Dimensions>(obj: T) => MultiKeys<T>
 
 export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
-  getValues(obj).reduce((accumulator, value: DimensionValue) => {
-    if (typeof value === 'object') {
-      // eslint-disable-next-line no-param-reassign
-      if (value.multi === true) accumulator[value.propName] = true
-    }
+  getValues(obj).reduce(
+    (accumulator, value: DimensionValue) => {
+      if (typeof value === 'object') {
+        // eslint-disable-next-line no-param-reassign
+        if (value.multi === true) accumulator[value.propName] = true
+      }
 
-    return accumulator
-  }, {} as Record<string, any>)
+      return accumulator
+    },
+    {} as Record<string, any>,
+  )

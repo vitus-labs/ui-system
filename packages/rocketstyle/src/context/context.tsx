@@ -1,4 +1,9 @@
-import React, { useContext, ReactNode, FC, ComponentType } from 'react'
+import React, {
+  useContext,
+  type ReactNode,
+  type FC,
+  type ComponentType,
+} from 'react'
 import { Provider as CoreProvider, context } from '@vitus-labs/core'
 import { THEME_MODES_INVERSED, MODE_DEFAULT } from '~/constants'
 

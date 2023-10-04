@@ -1,5 +1,6 @@
-import { init, rocketstories, Init, Rocketstories } from '~/init'
-import { IRocketStories } from '~/rocketstories'
+import { init, rocketstories } from '~/init'
+import type { Init, Rocketstories } from '~/init'
+import type { IRocketStories } from '~/rocketstories'
 import type {
   ExtractDimensions,
   ExtractProps,
@@ -35,5 +36,5 @@ export type {
   PartialControls,
 }
 
-export { rocketstories }
+export { rocketstories, init }
 export default init

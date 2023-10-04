@@ -35,7 +35,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
     // array
     if (Array.isArray(value) && value.length > 0) {
       value.forEach((child, i) => {
-        const indexBreakpoint = breakpoints[i]
+        const indexBreakpoint = breakpoints[i]!
         set(result, [indexBreakpoint, key], child)
       })
     }
@@ -47,7 +47,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
     }
     // normal value
     else if (value != null) {
-      const firstBreakpoint = breakpoints[0]
+      const firstBreakpoint = breakpoints[0]!
       set(result, [firstBreakpoint, key], value)
     }
   })

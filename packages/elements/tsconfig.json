@@ -3,15 +3,12 @@
   "include": ["src"],
   "exclude": ["node_modules", "__stories__", "lib"],
   "compilerOptions": {
-    "strict": true,
     "types": ["@vitus-labs/tools-rollup/global"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
+      "~/*": ["src/*"]
     }
   }
 }

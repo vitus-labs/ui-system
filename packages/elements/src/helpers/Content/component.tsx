@@ -1,4 +1,5 @@
-import React, { memo, FC, ReactNode } from 'react'
+import React, { memo } from 'react'
+import type { FC, ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
 import type {
   Direction,

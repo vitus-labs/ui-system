@@ -1,4 +1,4 @@
-import { useMemo, ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { render } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'

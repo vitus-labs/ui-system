@@ -1,5 +1,6 @@
 import type { Configuration, RocketType, ExtractProps } from '~/types'
-import createRocketStories, { IRocketStories } from '~/rocketstories'
+import createRocketStories from '~/rocketstories'
+import type { IRocketStories } from '~/rocketstories'
 
 // --------------------------------------------------------
 // rocketstories

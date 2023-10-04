@@ -1,4 +1,4 @@
-type AssignToBreakbointKey = (
+type AssignToBreakpointKey = (
   breakpoints: string[],
 ) => (
   value: (
@@ -9,7 +9,7 @@ type AssignToBreakbointKey = (
   ) => void,
 ) => Record<string, unknown>
 
-const assignToBreakbointKey: AssignToBreakbointKey =
+const assignToBreakpointKey: AssignToBreakpointKey =
   (breakpoints) => (value) => {
     const result = {}
 
@@ -20,7 +20,7 @@ const assignToBreakbointKey: AssignToBreakbointKey =
     return result
   }
 
-const handleArrayCb = (arr: (string | number)[]) => (value, i: number) => {
+const handleArrayCb = (arr: (string | number)[]) => (_: any, i: number) => {
   const currentValue = arr[i]
   const lastValue = arr[arr.length - 1]
 
@@ -40,7 +40,7 @@ const handleObjectCb =
   (obj: Record<string, unknown>) =>
   (bp: string, i: number, bps: string[], res) => {
     const currentValue = obj[bp]
-    const previousValue = res[bps[i - 1]]
+    const previousValue = res[bps[i - 1]!]
 
     // check for non-nullable values
     if (currentValue != null) return currentValue
@@ -65,7 +65,7 @@ export type NormalizeTheme = ({
 const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
   if (!shouldNormalize(theme)) return theme
 
-  const getBpValues = assignToBreakbointKey(breakpoints)
+  const getBpValues = assignToBreakpointKey(breakpoints)
   const result = {}
 
   Object.entries(theme).forEach(([key, value]) => {
