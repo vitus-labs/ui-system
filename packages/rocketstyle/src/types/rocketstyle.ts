@@ -200,7 +200,19 @@ export interface IRocketStyleComponent<
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>
       : Partial<DFP> | AttrsCb<DFP, Theme<T>>,
-    config?: Partial<{ priority: boolean }>,
+    config?: Partial<{
+      /**
+       * priority props will be resolved first and overwritten by normal `attrs`
+       * callbacks and `props` afterwards
+       */
+      priority: boolean
+      /**
+       * filter props will be omitted when passing to final component
+       */
+      filter: P extends TObj
+        ? Partial<keyof MergeTypes<[EA, P]>>[]
+        : Partial<keyof EA>[]
+    }>,
   ) => P extends TObj
     ? RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
     : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>

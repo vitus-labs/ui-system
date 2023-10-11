@@ -64,6 +64,10 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
   rocketComponent({
     ...defaultOpts,
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
+    filterAttrs: [
+      ...(defaultOpts.filterAttrs ?? []),
+      ...(opts.filterAttrs ?? []),
+    ],
     priorityAttrs: chainOptions(opts.priorityAttrs, defaultOpts.priorityAttrs),
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -93,11 +97,11 @@ const rocketComponent: RocketComponent = (options) => {
   })
 
   const componentName =
-    options.name || options.component.displayName || options.component.name
+    options.name ?? options.component.displayName ?? options.component.name
 
   // create styled component with all options.styles if available
   const STYLED_COMPONENT =
-    component.IS_ROCKETSTYLE || options.styled !== true
+    component.IS_ROCKETSTYLE ?? options.styled !== true
       ? component
       : styled(component)`
           ${calculateStyles(styles)};
@@ -111,7 +115,7 @@ const rocketComponent: RocketComponent = (options) => {
     : STYLED_COMPONENT
 
   // --------------------------------------------------------
-  // THEME - Cahed & Calculated theme(s)
+  // THEME - Cached & Calculated theme(s)
   // --------------------------------------------------------
   const ThemeManager = new LocalThemeManager()
 
@@ -128,6 +132,7 @@ const rocketComponent: RocketComponent = (options) => {
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
   // @ts-ignore
+  // eslint-disable-next-line react/display-name
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {
@@ -299,10 +304,14 @@ const rocketComponent: RocketComponent = (options) => {
       const finalProps: Record<string, any> = {
         // this removes styling state from props and passes its state
         // under rocketstate key only
-        ...omit(mergeProps, [...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS]),
+        ...omit(mergeProps, [
+          ...RESERVED_STYLING_PROPS_KEYS,
+          ...PSEUDO_KEYS,
+          ...options.filterAttrs,
+        ]),
         // if enforced to pass styling props, we pass them directly
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-        ref: ref || $rocketstyleRef ? internalRef : undefined,
+        ref: ref ?? $rocketstyleRef ? internalRef : undefined,
         // state props passed to styled component only, therefore the `$` symbol
         $rocketstyle: rocketstyle,
         $rocketstate: finalRocketstate,
@@ -360,16 +369,22 @@ const rocketComponent: RocketComponent = (options) => {
   })
 
   // @ts-ignore
-  RocketComponent.attrs = (attrs, { priority } = {}) => {
-    if (priority) {
-      return cloneAndEnhance(options, {
-        priorityAttrs: attrs as ExtendedConfiguration['attrs'],
-      })
+  RocketComponent.attrs = (attrs, { priority, filter } = {}) => {
+    const result: Record<string, any> = {}
+
+    if (filter) {
+      result.filterAttrs = filter
     }
 
-    return cloneAndEnhance(options, {
-      attrs: attrs as ExtendedConfiguration['attrs'],
-    })
+    if (priority) {
+      result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+
+      return cloneAndEnhance(options, result)
+    }
+
+    result.attrs = attrs as ExtendedConfiguration['attrs']
+
+    return cloneAndEnhance(options, result)
   }
 
   // @ts-ignore

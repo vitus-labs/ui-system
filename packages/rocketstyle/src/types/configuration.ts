@@ -37,6 +37,7 @@ export type Configuration<
   // array chaining options
   attrs: OptionFunc[]
   priorityAttrs: OptionFunc[]
+  filterAttrs: string[]
   theme: OptionFunc[]
   styles: StylesCbArray
   compose: Record<string, TFn | null | undefined | false>
@@ -57,6 +58,7 @@ export type ExtendedConfiguration<
   // array chaining options
   attrs: OptionFunc
   priorityAttrs: OptionFunc
+  filterAttrs: string[]
   theme: OptionFunc
   styles: StylesCbArray
   compose: Record<string, TFn | null | undefined | false>
