@@ -5,7 +5,7 @@ type UseAttrsRef = (props: {
   ref?: ForwardedRef<unknown>
 }) => ForwardedRef<unknown>
 
-const useRocketstyleRef: UseAttrsRef = ({ $attrsRef, ref }) => {
+const useAttrsStyleRef: UseAttrsRef = ({ $attrsRef, ref }) => {
   const internalRef = useRef(null)
 
   useImperativeHandle($attrsRef, () => internalRef.current)
@@ -14,4 +14,4 @@ const useRocketstyleRef: UseAttrsRef = ({ $attrsRef, ref }) => {
   return internalRef
 }
 
-export default useRocketstyleRef
+export default useAttrsStyleRef

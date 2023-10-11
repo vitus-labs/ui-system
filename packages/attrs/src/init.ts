@@ -42,6 +42,7 @@ const attrs: Attrs = ({ name, component }) => {
     component,
     attrs: [],
     priorityAttrs: [],
+    filterAttrs: [],
     compose: {},
     statics: {},
   })

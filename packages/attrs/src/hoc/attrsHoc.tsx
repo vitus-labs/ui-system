@@ -6,14 +6,14 @@ import React, {
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import type { Configuration } from '~/types/configuration'
 
-export type RocketStyleHOC = ({
+export type AttrsStyleHOC = ({
   attrs,
   priorityAttrs,
 }: Pick<Configuration, 'attrs' | 'priorityAttrs'>) => (
   WrappedComponent: ComponentType<any>,
 ) => ForwardRefExoticComponent<any>
 
-const attrsHOC: RocketStyleHOC = ({ attrs, priorityAttrs }) => {
+const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
   // --------------------------------------------------
   // .attrs(...)
   // first we need to calculate final props which are
@@ -22,7 +22,7 @@ const attrsHOC: RocketStyleHOC = ({ attrs, priorityAttrs }) => {
   const calculateAttrs = calculateChainOptions(attrs)
   const calculatePriorityAttrs = calculateChainOptions(priorityAttrs)
 
-  const Enhanced = (WrappedComponent: ComponentType<any>) =>
+  const attrsHoc = (WrappedComponent: ComponentType<any>) =>
     forwardRef<any, any>((props, ref) => {
       // --------------------------------------------------
       // remove undefined props not to override potential default props
@@ -49,7 +49,7 @@ const attrsHOC: RocketStyleHOC = ({ attrs, priorityAttrs }) => {
       )
     })
 
-  return Enhanced
+  return attrsHoc
 }
 
-export default attrsHOC
+export default createAttrsHOC

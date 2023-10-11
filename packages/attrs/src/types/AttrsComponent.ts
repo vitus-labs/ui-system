@@ -103,7 +103,7 @@ export interface AttrsComponent<
    * ```
    *
    * #### Inversed theme
-   * A possibility to set individualy for each component to have `inversed` styles
+   * A possibility to set individually for each component to have `inversed` styles
    * when using dark / light theme modes
    * ```tsx
    * const base = attrsComponent
@@ -113,7 +113,7 @@ export interface AttrsComponent<
    * ```
    *
    * #### Pass props to original component
-   * A possibility to set individualy for each component props names to be passed
+   * A possibility to set individually for each component props names to be passed
    * to `origin` component
    *
    * ```tsx
@@ -163,7 +163,19 @@ export interface AttrsComponent<
     param: P extends TObj
       ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>>
       : Partial<DFP> | AttrsCb<DFP>,
-    config?: Partial<{ priority: boolean }>,
+    config?: Partial<{
+      /**
+       * priority props will be resolved first and overwritten by normal `attrs`
+       * callbacks and `props` afterwards
+       */
+      priority: boolean
+      /**
+       * filter props will be omitted when passing to final component
+       */
+      filter: P extends TObj
+        ? Partial<keyof MergeTypes<[EA, P]>>[]
+        : Partial<keyof EA>[]
+    }>,
   ) => P extends TObj
     ? AttrsComponent<OA, MergeTypes<[EA, P]>, S, HOC>
     : AttrsComponent<OA, EA, S, HOC>

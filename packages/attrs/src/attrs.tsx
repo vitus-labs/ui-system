@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import React, { forwardRef } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { pick, compose } from '@vitus-labs/core'
+import { pick, compose, omit } from '@vitus-labs/core'
 import { useRef } from '~/hooks'
 import { attrsHoc } from '~/hoc'
 import { createStaticsEnhancers } from '~/utils/statics'
@@ -10,7 +10,7 @@ import { chainOptions } from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
 import { calculateChainOptions } from '~/utils/attrs'
 import type {
-  AttrsComponent,
+  AttrsComponent as AttrsComponentType,
   ExoticComponent,
   InnerComponentProps,
 } from '~/types/AttrsComponent'
@@ -23,19 +23,23 @@ import type {
 // --------------------------------------------------------
 // cloneAndEnhance
 // helper function which allows function chaining
-// always returns rocketComponent with static functions
+// always returns attrsComponent with static functions
 // assigned
 // --------------------------------------------------------
 type CloneAndEnhance = (
   defaultOpts: Configuration,
   opts: Partial<ExtendedConfiguration>,
-) => ReturnType<typeof rocketComponent>
+) => ReturnType<typeof attrsComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
   // @ts-ignore
-  rocketComponent({
+  attrsComponent({
     ...defaultOpts,
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
+    filterAttrs: [
+      ...(defaultOpts.filterAttrs ?? []),
+      ...(opts.filterAttrs ?? []),
+    ],
     priorityAttrs: chainOptions(opts.priorityAttrs, defaultOpts.priorityAttrs),
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
@@ -49,9 +53,9 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 // or styles can be extended via its statics
 // --------------------------------------------------------
 // @ts-ignore
-const rocketComponent: InitAttrsComponent = (options) => {
+const attrsComponent: InitAttrsComponent = (options) => {
   const componentName =
-    options.name || options.component.displayName || options.component.name
+    options.name ?? options.component.displayName ?? options.component.name
 
   // --------------------------------------------------------
   // COMPONENT - Final component to be rendered
@@ -67,6 +71,7 @@ const rocketComponent: InitAttrsComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
+  // eslint-disable-next-line react/display-name
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {
@@ -77,7 +82,7 @@ const rocketComponent: InitAttrsComponent = (options) => {
     ) => {
       // --------------------------------------------------
       // handle refs
-      // (1) one is passed from inner HOC - $rocketstyleRef
+      // (1) one is passed from inner HOC - $attrsStyleRef
       // (2) second one is used to be used directly (e.g. inside hocs)
       // --------------------------------------------------
       const internalRef = useRef({ $attrsRef, ref })
@@ -86,14 +91,19 @@ const rocketComponent: InitAttrsComponent = (options) => {
       // final props
       // final props passed to WrappedComponent
       // excluding: styling props
-      // including: $rocketstyle, $rocketstate
+      // including: $attrsStyle, $attrsState
       // --------------------------------------------------
-      const finalProps: Record<string, any> = {
+      const newProps: Record<string, any> = {
         // this removes styling state from props and passes its state
-        // under rocketstate key only
+        // under attrsState key only
         ...props,
-        ref: ref || $attrsRef ? internalRef : undefined,
+        ref: ref ?? $attrsRef ? internalRef : undefined,
       }
+
+      const finalProps: Record<string, any> = omit(
+        newProps,
+        options.filterAttrs,
+      )
 
       // all the development stuff injected
       if (process.env.NODE_ENV !== 'production') {
@@ -108,58 +118,64 @@ const rocketComponent: InitAttrsComponent = (options) => {
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
-  const RocketComponent: AttrsComponent = compose(...hocsFuncs)(
+  const AttrsComponent: AttrsComponentType = compose(...hocsFuncs)(
     EnhancedComponent,
   )
 
-  RocketComponent.IS_ATTRS = true
-  RocketComponent.displayName = componentName
+  AttrsComponent.IS_ATTRS = true
+  AttrsComponent.displayName = componentName
 
-  hoistNonReactStatics(RocketComponent, options.component)
+  hoistNonReactStatics(AttrsComponent, options.component)
 
   // ------------------------------------------------------
-  RocketComponent.IS_ATTRS = true
-  RocketComponent.displayName = componentName
-  RocketComponent.meta = {}
+  AttrsComponent.IS_ATTRS = true
+  AttrsComponent.displayName = componentName
+  AttrsComponent.meta = {}
   // ------------------------------------------------------
 
   // ------------------------------------------------------
   // enhance for statics
   // ------------------------------------------------------
   createStaticsEnhancers({
-    context: RocketComponent.meta,
+    context: AttrsComponent.meta,
     options: options.statics,
   })
 
   // @ts-ignore
-  RocketComponent.attrs = (attrs, { priority } = {}) => {
-    if (priority) {
-      return cloneAndEnhance(options, {
-        priorityAttrs: attrs as ExtendedConfiguration['attrs'],
-      })
+  AttrsComponent.attrs = (attrs, { priority, filter } = {}) => {
+    const result: Record<string, any> = {}
+
+    if (filter) {
+      result.filterAttrs = filter
     }
 
-    return cloneAndEnhance(options, {
-      attrs: attrs as ExtendedConfiguration['attrs'],
-    })
+    if (priority) {
+      result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+
+      return cloneAndEnhance(options, result)
+    }
+
+    result.attrs = attrs as ExtendedConfiguration['attrs']
+
+    return cloneAndEnhance(options, result)
   }
 
   // @ts-ignore
-  RocketComponent.config = (opts = {}) => {
+  AttrsComponent.config = (opts = {}) => {
     const result = pick(opts)
 
     return cloneAndEnhance(options, result)
   }
 
   // @ts-ignore
-  RocketComponent.statics = (opts) =>
+  AttrsComponent.statics = (opts) =>
     // @ts-ignore
     cloneAndEnhance(options, { statics: opts })
 
-  RocketComponent.getDefaultAttrs = (props) =>
+  AttrsComponent.getDefaultAttrs = (props) =>
     calculateChainOptions(options.attrs)([props])
 
-  return RocketComponent
+  return AttrsComponent
 }
 
-export default rocketComponent
+export default attrsComponent
