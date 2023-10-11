@@ -1,3 +1,9 @@
-const { eslint } = require('@vitus-labs/tools-lint')
+const { createEslint } = require('@vitus-labs/tools-lint')
 
-module.exports = eslint
+module.exports = createEslint()({
+  config: {
+    rules: {
+      '@typescript-eslint/ban-types': 0,
+    },
+  },
+})
