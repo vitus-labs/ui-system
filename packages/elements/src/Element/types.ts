@@ -9,7 +9,7 @@ import type {
   AlignY,
   Content,
   Direction,
-  ResponsiveBooltype,
+  ResponsiveBoolType,
   Responsive,
   ExtendCss,
   InnerRef,
@@ -79,16 +79,16 @@ export type Props = Partial<{
   afterContent: Content
 
   /**
-   * A boolean type to define wheather **Element** should behave
+   * A boolean type to define whether **Element** should behave
    * as an inline or block element (`flex` vs. `inline-flex`)
    */
-  block: ResponsiveBooltype
+  block: ResponsiveBoolType
 
   /**
-   * A boolean type to define wheather inner wrappers should be equal
+   * A boolean type to define whether inner wrappers should be equal
    * (have the same width or height)
    */
-  equalCols: ResponsiveBooltype
+  equalCols: ResponsiveBoolType
 
   /**
    * Defines a `gap` spacing between inner wrappers between `beforeContent` and `children`

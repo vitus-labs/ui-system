@@ -53,9 +53,9 @@ const Component: VLElement = forwardRef(
     // --------------------------------------------------------
     // check if should render only single element
     // --------------------------------------------------------
-    const shouldBeEmpty =
-      !!props.dangerouslySetInnerHTML ||
-      (__WEB__ && tag && getShouldBeEmpty(tag))
+    const shouldBeEmpty = __WEB__
+      ? !!props.dangerouslySetInnerHTML || getShouldBeEmpty(tag)
+      : false
 
     // --------------------------------------------------------
     // if not single element, calculate values

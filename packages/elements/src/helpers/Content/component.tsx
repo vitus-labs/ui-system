@@ -1,28 +1,8 @@
 import React, { memo } from 'react'
-import type { FC, ReactNode } from 'react'
-import type { HTMLTags } from '@vitus-labs/core'
-import type {
-  Direction,
-  AlignX,
-  AlignY,
-  ResponsiveBooltype,
-  Responsive,
-  ExtendCss,
-} from '~/types'
+import type { FC } from 'react'
+import { IS_DEVELOPMENT } from '~/utils'
+import type { Props } from './types'
 import Styled from './styled'
-
-export interface Props {
-  parentDirection: Direction
-  gap: Responsive
-  contentType: 'before' | 'content' | 'after'
-  children: ReactNode
-  tag: HTMLTags
-  direction: Direction
-  alignX: AlignX
-  alignY: AlignY
-  equalCols: ResponsiveBooltype
-  extendCss: ExtendCss
-}
 
 const Component: FC<Partial<Props>> = ({
   contentType,
@@ -36,12 +16,11 @@ const Component: FC<Partial<Props>> = ({
   extendCss,
   ...props
 }) => {
-  const debugProps =
-    process.env.NODE_ENV !== 'production'
-      ? {
-          'data-vl-element': contentType,
-        }
-      : {}
+  const debugProps = IS_DEVELOPMENT
+    ? {
+        'data-vl-element': contentType,
+      }
+    : {}
 
   const stylingProps = {
     contentType,

@@ -126,10 +126,11 @@ const Component: FC<Props> & Static = (props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren: ReactNode[] = children.props.children
+      const fragmentChildren = children?.props?.children as ReactNode[]
+      const childrenLength = fragmentChildren.length
 
       return fragmentChildren.map((item, i) =>
-        renderChild(item, fragmentChildren.length, i),
+        renderChild(item, childrenLength, i),
       )
     }
 
@@ -144,7 +145,7 @@ const Component: FC<Props> & Static = (props) => {
     const { length } = data
 
     // if the data array is empty
-    if (data.length === 0) return null
+    if (length === 0) return null
 
     return data.map((item, i) => {
       const key = getKey(item, i)
@@ -161,11 +162,11 @@ const Component: FC<Props> & Static = (props) => {
         [keyName]: item,
       }
 
-      const finalWrapProps = wrapProps
-        ? injectWrapItemProps({ [keyName]: item }, extendedProps)
-        : {}
-
       if (Wrapper) {
+        const finalWrapProps = wrapProps
+          ? injectWrapItemProps({ [keyName]: item }, extendedProps)
+          : {}
+
         return (
           <Wrapper key={key} {...finalWrapProps}>
             {render(component, finalItemProps)}
@@ -209,11 +210,11 @@ const Component: FC<Props> & Static = (props) => {
         ...restItem,
       }
 
-      const finalWrapProps = wrapProps
-        ? injectWrapItemProps(item, extendedProps)
-        : {}
-
       if (Wrapper && !itemComponent) {
+        const finalWrapProps = wrapProps
+          ? injectWrapItemProps(item, extendedProps)
+          : {}
+
         return (
           <Wrapper key={key} {...finalWrapProps}>
             {render(renderItem, finalItemProps)}

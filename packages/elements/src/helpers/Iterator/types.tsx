@@ -48,7 +48,7 @@ export type Props = Partial<{
   data: Array<SimpleValue | ObjectValue | MaybeNull>
 
   /**
-   * A React component to be rendred within list
+   * A React component to be rendered within list
    */
   component: ElementType
 
@@ -60,7 +60,7 @@ export type Props = Partial<{
   valueName: string
 
   /**
-   * A React component to be rendred within list. `wrapComponent`
+   * A React component to be rendered within list. `wrapComponent`
    * wraps `component`. Therefore it can be used to enhance the behavior
    * of the list component
    */

@@ -50,7 +50,6 @@ export type ContentAlignX =
   | 'spaceBetween'
   | 'spaceAround'
   | 'block'
-  | isEmpty
 
 export type ContentAlignY =
   | 'top'
@@ -59,14 +58,15 @@ export type ContentAlignY =
   | 'spaceBetween'
   | 'spaceAround'
   | 'block'
-  | isEmpty
 
 export type ContentDirection =
   | 'inline'
   | 'rows'
   | 'reverseInline'
   | 'reverseRows'
-  | isEmpty
+
+export type ContentBoolean = boolean
+export type ContentSimpleValue = string | number
 
 export type Ref = HTMLElement
 
@@ -85,14 +85,14 @@ export type Direction =
   | ContentDirection[]
   | Partial<Record<BreakpointKeys, ContentDirection>>
 
-export type ResponsiveBooltype =
-  | boolean
-  | boolean[]
-  | Partial<Record<BreakpointKeys, boolean>>
+export type ResponsiveBoolType =
+  | ContentBoolean
+  | ContentBoolean[]
+  | Partial<Record<BreakpointKeys, ContentBoolean>>
 
 export type Responsive =
-  | number
-  | (string | number)[]
+  | ContentSimpleValue
+  | ContentSimpleValue[]
   | Partial<Record<BreakpointKeys, number | string>>
 
 export type ExtendCss = Css | Css[] | Partial<Record<BreakpointKeys, Css>>

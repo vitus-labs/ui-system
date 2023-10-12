@@ -1,29 +1,8 @@
-import React, { forwardRef, type ReactNode } from 'react'
-import type { HTMLTags } from '@vitus-labs/core'
-import type {
-  Direction,
-  AlignX,
-  AlignY,
-  ResponsiveBooltype,
-  ExtendCss,
-} from '~/types'
+import React, { forwardRef } from 'react'
+import { IS_DEVELOPMENT } from '~/utils'
 import { isWebFixNeeded } from './utils'
+import type { Props, Reference } from './types'
 import Styled from './styled'
-
-type Reference = unknown
-
-interface Props {
-  children: ReactNode
-  tag: HTMLTags
-  block: ResponsiveBooltype
-  isInline: boolean
-  direction: Direction
-  alignX: AlignX
-  alignY: AlignY
-  equalCols: ResponsiveBooltype
-  extendCss: ExtendCss
-  dangerouslySetInnerHTML: any
-}
 
 // eslint-disable-next-line react/display-name
 const Component = forwardRef<Reference, Partial<Props>>(
@@ -42,12 +21,11 @@ const Component = forwardRef<Reference, Partial<Props>>(
     },
     ref,
   ) => {
-    const debugProps =
-      process.env.NODE_ENV !== 'production'
-        ? {
-            'data-vl-element': 'Element',
-          }
-        : {}
+    const debugProps = IS_DEVELOPMENT
+      ? {
+          'data-vl-element': 'Element',
+        }
+      : {}
 
     const COMMON_PROPS = {
       ...props,
@@ -57,7 +35,7 @@ const Component = forwardRef<Reference, Partial<Props>>(
     }
 
     const needsFix = __WEB__
-      ? !props.dangerouslySetInnerHTML && tag && isWebFixNeeded(tag)
+      ? !props.dangerouslySetInnerHTML && isWebFixNeeded(tag)
       : false
 
     if (!needsFix || __NATIVE__) {

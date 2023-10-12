@@ -6,14 +6,15 @@ import {
   value,
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
+import type { StyledProps, ThemeProps } from './types'
 
 const { styled, css, component } = config
 
-const equalCols = `
+const equalColsCSS = `
   flex: 1;
 `
 
-const typeContent = `
+const typeContentCSS = `
   flex: 1;
 `
 
@@ -25,7 +26,15 @@ const gapDimensions = {
     before: 'margin-right',
     after: 'margin-left',
   },
+  reverseInline: {
+    before: 'margin-right',
+    after: 'margin-left',
+  },
   rows: {
+    before: 'margin-bottom',
+    after: 'margin-top',
+  },
+  reverseRows: {
     before: 'margin-bottom',
     after: 'margin-top',
   },
@@ -36,8 +45,8 @@ const calculateGap = ({
   type,
   value,
 }: {
-  direction: 'rows' | 'inline'
-  type: 'before' | 'after'
+  direction: keyof typeof gapDimensions
+  type: ThemeProps['contentType']
   value: any
 }) => {
   if (!direction || !type) return undefined
@@ -50,14 +59,22 @@ const calculateGap = ({
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
+const styles: ResponsiveStylesCallback = ({
+  css,
+  theme: t,
+  rootSize,
+}: {
+  css: typeof config.css
+  theme: ThemeProps
+  rootSize: number
+}) => css`
   ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,
   })};
 
-  ${t.equalCols && equalCols};
+  ${t.equalCols && equalColsCSS};
 
   ${t.gap &&
   t.contentType &&
@@ -70,16 +87,17 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
   ${t.extraStyles && extendCss(t.extraStyles)};
 `
 
-const platformStyles = __WEB__ ? `box-sizing: border-box;` : ''
+const platformCSS = __WEB__ ? `box-sizing: border-box;` : ''
 
 const StyledComponent = styled(component)<any>`
-  ${platformStyles};
+  ${platformCSS};
 
   display: flex;
   align-self: stretch;
   flex-wrap: wrap;
 
-  ${({ $contentType }: any) => $contentType === 'content' && typeContent};
+  ${({ $contentType }: StyledProps) =>
+    $contentType === 'content' && typeContentCSS};
 
   ${makeItResponsive({
     key: '$element',

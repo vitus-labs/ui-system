@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import { throttle, context } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
+import { IS_DEVELOPMENT } from '~/utils'
 import Provider, { useOverlayContext } from './context'
 
 type OverlayPosition = Partial<{
@@ -17,7 +18,7 @@ type AlignY = 'bottom' | 'top' | 'center'
 
 export type UseOverlayProps = Partial<{
   /**
-   * Defines default state whather **Overlay** component should be active.
+   * Defines default state whether **Overlay** component should be active.
    * @defaultValue `false`
    */
   isOpen: boolean
@@ -77,7 +78,7 @@ export type UseOverlayProps = Partial<{
    */
   offsetY: number
   /**
-   * Performance helper. Value defined in miliseconds for `throttling`
+   * Performance helper. Value defined in milliseconds for `throttling`
    * recalculations
    * @defaultValue `200`
    */
@@ -88,7 +89,7 @@ export type UseOverlayProps = Partial<{
    */
   parentContainer: HTMLElement | null
   /**
-   * Defines wheather active **Overlay** is supposed to be closed on pressing
+   * Defines whether active **Overlay** is supposed to be closed on pressing
    * `ESC` key.
    * @defaultValue `true`
    */
@@ -116,7 +117,7 @@ const useOverlay = ({
   closeOn = 'click', // click | 'clickOnTrigger' | 'clickOutsideContent' | hover | manual
   type = 'dropdown', // dropdown | tooltip | popover | modal
   position = 'fixed', // absolute | fixed | relative | static
-  align = 'bottom', // * main align prop * top | left | bottom | right
+  align = 'bottom', // main align prop top | left | bottom | right
   alignX = 'left', // left | center | right
   alignY = 'bottom', // top | center | bottom
   offsetX = 0,
@@ -158,7 +159,7 @@ const useOverlay = ({
     if (!active || !isContentLoaded) return overlayPosition
 
     if (type === 'modal' && !contentRef.current) {
-      if (process.env.NODE_ENV === 'development') {
+      if (IS_DEVELOPMENT) {
         console.warn('Cannot access `ref` of `content` component.')
       }
 
@@ -168,7 +169,7 @@ const useOverlay = ({
     if (['dropdown', 'tooltip', 'popover'].includes(type)) {
       // return empty object when refs are not available
       if (!triggerRef.current || !contentRef.current) {
-        if (process.env.NODE_ENV === 'development') {
+        if (IS_DEVELOPMENT) {
           console.warn('Cannot access `ref` of trigger or content component.')
         }
 
@@ -294,7 +295,7 @@ const useOverlay = ({
       // return empty object when ref is not available
       // triggerRef is not needed in this case
       if (!contentRef.current) {
-        if (process.env.NODE_ENV === 'development') {
+        if (IS_DEVELOPMENT) {
           console.warn('Cannot access `ref` of trigger or content component.')
         }
 
@@ -384,7 +385,7 @@ const useOverlay = ({
   }, [assignContentPosition, calculateContentPosition])
 
   const isNodeOrChild =
-    (ref: typeof triggerRef | typeof contentRef) => (e: Event) => {
+    (ref: typeof triggerRef /* | typeof contentRef */) => (e: Event) => {
       if (e?.target && ref.current) {
         return (
           ref.current.contains(e.target as Element) || e.target === ref.current
@@ -616,7 +617,7 @@ const useOverlay = ({
     handleVisibility,
   ])
 
-  // hack-ish way to load contet correctly on the first load
+  // hack-ish way to load content correctly on the first load
   // as `contentRef` is loaded dynamically
   const contentRefCallback = useCallback((node: HTMLElement) => {
     if (node) {
