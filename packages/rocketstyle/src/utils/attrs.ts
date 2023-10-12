@@ -37,10 +37,10 @@ export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
-type OptionFunc<A> = (...arg: Array<A>) => Record<string, unknown>
+type OptionFunc<A> = (...arg: A[]) => Record<string, unknown>
 type CalculateChainOptions = <A>(
-  options?: Array<OptionFunc<A>>,
-) => (args: Array<A>) => ReturnType<OptionFunc<A>>
+  options?: OptionFunc<A>[],
+) => (args: A[]) => ReturnType<OptionFunc<A>>
 
 export const calculateChainOptions: CalculateChainOptions =
   (options) => (args) => {
@@ -79,7 +79,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       const pickedProp = props[item]
       const valueTypes = ['number', 'string']
 
-      // if the property is mutli key, allow assign array as well
+      // if the property is multi key, allow assign array as well
       if (multiKeys && multiKeys[item] && Array.isArray(pickedProp)) {
         result[item] = pickedProp
       }

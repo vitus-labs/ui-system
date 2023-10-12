@@ -13,16 +13,13 @@ export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
   return dark
 }
 
-themeModeCallback.isMode = true
-
 // --------------------------------------------------------
 // Theme Mode Callback Check
 // --------------------------------------------------------
 type IsModeCallback = (value: any) => boolean
-const isModeCallback: IsModeCallback = (value) =>
+const isModeCallback: IsModeCallback = (value: any) =>
   typeof value === 'function' &&
-  // @ts-ignore
-  value.toString() === themeModeCallback().toString()
+  value.toString() === themeModeCallback.toString()
 
 // --------------------------------------------------------
 // Get Theme From Chain

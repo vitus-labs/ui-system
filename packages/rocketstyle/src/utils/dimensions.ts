@@ -69,7 +69,7 @@ export const getValues: GetValues = (obj) => Object.values(obj) as any
 // --------------------------------------------------------
 // get dimensions values array
 // --------------------------------------------------------
-type ValueType<T> = T extends string ? T : Array<T>[0]
+type ValueType<T> = T extends string ? T : T[][0]
 type GetDimensionsValues = <T extends Dimensions, K extends keyof T>(
   obj: T,
 ) => ValueType<T[K]>[]

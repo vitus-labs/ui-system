@@ -22,7 +22,7 @@ export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {
 // Chain Or Options
 // --------------------------------------------------------
 type ChainOrOptions = (
-  keys: ReadonlyArray<string>,
+  keys: readonly string[],
   opts: Obj,
   defaultOpts: Obj,
 ) => Record<string, unknown>
@@ -37,7 +37,7 @@ export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) =>
 // Chain Reserved Options
 // --------------------------------------------------------
 type ChainReservedKeyOptions = (
-  keys: ReadonlyArray<string>,
+  keys: readonly string[],
   opts: Record<string, Obj | Func>,
   defaultOpts: Record<string, Func[]>,
 ) => Record<string, ReturnType<typeof chainOptions>>
