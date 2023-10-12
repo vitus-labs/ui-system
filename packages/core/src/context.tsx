@@ -25,6 +25,7 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.ExternalProvider, [])
   const context = useMemo(() => ({ theme, ...props }), [theme, props])
 
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   if (isEmpty(theme) || !theme) return <>{children}</>
 
   if (ExternalProvider) {

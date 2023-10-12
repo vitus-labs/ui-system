@@ -11,12 +11,12 @@ export type UseWindowResize = (
     throttleDelay: number
     onChange: (params: Sizes) => void
   }>,
-  initialValues?: Partial<Sizes>
+  initialValues?: Partial<Sizes>,
 ) => Sizes
 
 const useWindowResize: UseWindowResize = (
   { throttleDelay = 200, onChange } = {},
-  { width = 0, height = 0 } = {}
+  { width = 0, height = 0 } = {},
 ) => {
   const [windowSize, setWindowSize] = useState({ width, height })
 
