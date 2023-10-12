@@ -84,20 +84,22 @@ const Component: FC<Props> & Static = (props) => {
   )
 
   const renderChild = (child: ReactNode, total = 1, i = 0) => {
+    if (!itemProps && !Wrapper) return child
+
     const extendedProps = attachItemProps({
       i,
       length: total,
     })
 
     const finalItemProps = itemProps ? injectItemProps({}, extendedProps) : {}
-    const finalWrapProps = wrapProps
-      ? injectWrapItemProps({}, extendedProps)
-      : {}
 
     // if no props extension is required, just return children
-    if (!itemProps && !Wrapper) return child
 
     if (Wrapper) {
+      const finalWrapProps = wrapProps
+        ? injectWrapItemProps({}, extendedProps)
+        : {}
+
       return (
         <Wrapper key={i} {...finalWrapProps}>
           {render(child, finalItemProps)}
