@@ -517,7 +517,7 @@ const useOverlay = ({
       if (onClose) onClose()
       if (ctx.setUnblocked) ctx.setUnblocked()
     }
-  }, [active, onOpen, onClose, showContent, ctx])
+  }, [active, showContent, ctx])
 
   // handle closing only when content is active
   useEffect(() => {
