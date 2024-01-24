@@ -56,7 +56,7 @@
     "hoist-non-react-statics": "^3.3.2"
   },
   "devDependencies": {
-    "@types/hoist-non-react-statics": "^3.3.3",
+    "@types/hoist-non-react-statics": "^3.3.5",
     "@vitus-labs/core": "1.0.1-alpha.1",
     "@vitus-labs/tools-babel": "^1.3.0",
     "@vitus-labs/tools-rollup": "^1.3.0",
