@@ -24,6 +24,7 @@ import type {
   Content,
   Direction,
   ResponsiveBoolType,
+  ContentBoolean,
   Responsive,
   ExtendCss,
   InnerRef,
@@ -44,10 +45,11 @@ export type {
   Content,
   Direction,
   ResponsiveBoolType,
+  ContentBoolean,
   Responsive,
   ExtendCss,
   InnerRef,
-  // hiden iterator types
+  // hidden iterator types
   PropsCallback,
   ObjectValue,
   ExtendedProps,
