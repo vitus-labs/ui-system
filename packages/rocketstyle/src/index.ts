@@ -26,6 +26,7 @@ import type {
 import type { StylesCb, StylesDefault } from '~/types/styles'
 import type { AttrsCb } from '~/types/attrs'
 import type {
+  ThemeModeCallback,
   ThemeCb,
   ThemeModeKeys,
   ThemeDefault,
@@ -65,6 +66,7 @@ export type {
   ConfigAttrs,
   AttrsCb,
   ThemeCb,
+  ThemeModeCallback,
   ThemeModeKeys,
   GenericHoc,
   ComposeParam,
