@@ -76,6 +76,7 @@ export const EMPTY_ELEMENTS = {
   input: true,
   keygen: true,
   link: true,
+  textarea: true,
   // 'meta': true,
   // 'param': true,
   source: true,
