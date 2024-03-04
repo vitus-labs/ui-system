@@ -1,8 +1,5 @@
-import { useState, useEffect, useLayoutEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { throttle } from '@vitus-labs/core'
-
-export const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 type Sizes = {
   width: number
@@ -37,7 +34,7 @@ const useWindowResize: UseWindowResize = (
     onChange,
   ])
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     updateSizes()
   }, [])
 
