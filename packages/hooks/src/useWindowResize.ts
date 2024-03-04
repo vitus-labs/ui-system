@@ -37,11 +37,11 @@ const useWindowResize: UseWindowResize = (
     onChange,
   ])
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     updateSizes()
   }, [])
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', handleResize, false)
 
     return () => window.removeEventListener('resize', handleResize, false)
