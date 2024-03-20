@@ -5421,12 +5421,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.9":
-  version: 18.19.9
-  resolution: "@types/node@npm:18.19.9"
+"@types/node@npm:18.19.26":
+  version: 18.19.26
+  resolution: "@types/node@npm:18.19.26"
   dependencies:
     undici-types: ~5.26.4
-  checksum: 8ffd4043ada193cf32d4c13eb850e8c510d4c96504c62fdc5326b3bb2c7ddc2c81892c351b2c0c403c29df3ab13c864a370f0282daf6d3380ba3c2001728a643
+  checksum: d72d4e7e520206a2a05cb3e03a73696fc3bdcdc6ba5330a75cfef4818cb137b260c32dfe85e8b4ea28e8fe92f1d1497e26336c607254c5eaf47032a1b1c8bb6e
   languageName: node
   linkType: hard
 
@@ -5486,12 +5486,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.18":
-  version: 18.2.18
-  resolution: "@types/react-dom@npm:18.2.18"
+"@types/react-dom@npm:^18.2.22":
+  version: 18.2.22
+  resolution: "@types/react-dom@npm:18.2.22"
   dependencies:
     "@types/react": "*"
-  checksum: 8e3da404c980e2b2a76da3852f812ea6d8b9d0e7f5923fbaf3bfbbbfa1d59116ff91c129de8f68e9b7668a67ae34484fe9df74d5a7518cf8591ec07a0c4dad57
+  checksum: 83bb3ddcd7894f20a9a6cbc2befe75d8b76984734020c455b4c50cad625a4025250d8e1d247ef6264e484d47d5a94f2dd11f77c1dcac6a5de998cb447d85b720
   languageName: node
   linkType: hard
 
@@ -5515,14 +5515,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.48":
-  version: 18.2.48
-  resolution: "@types/react@npm:18.2.48"
+"@types/react@npm:^18.2.67":
+  version: 18.2.67
+  resolution: "@types/react@npm:18.2.67"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: c9ca43ed2995389b7e09492c24e6f911a8439bb8276dd17cc66a2fbebbf0b42daf7b2ad177043256533607c2ca644d7d928fdfce37a67af1f8646d2bac988900
+  checksum: 9e48122b0e8d0ae20601f613aca32289eeb94d55c58ff03a7dc532d80ed289a1ba9715f14b773bd926ccdd63e503717f14264143ef531dc370063abe09dee0b2
   languageName: node
   linkType: hard
 
@@ -6121,21 +6121,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vitus-labs/ui-system-root@workspace:."
   dependencies:
-    "@types/node": 18.19.9
-    "@types/react": ^18.2.48
-    "@types/react-dom": ^18.2.18
+    "@types/node": 18.19.26
+    "@types/react": ^18.2.67
+    "@types/react-dom": ^18.2.22
     "@types/react-is": ^18.2.4
     "@vitus-labs/tools-lint": ^1.3.0
     coveralls: ^3.1.1
     cpr: ^3.0.1
     lerna: ^7.4.2
-    prettier: ^3.2.4
+    prettier: ^3.2.5
     react: ^18.2.0
     react-docgen-typescript-webpack-plugin: ^1.1.0
     react-dom: ^18.2.0
     react-icons-kit: ^2.0.0
     styled-components: ^6.1.8
-    typescript: 5.3.3
+    typescript: 5.4.2
   languageName: unknown
   linkType: soft
 
@@ -14954,12 +14954,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "prettier@npm:3.2.4"
+"prettier@npm:^3.2.5":
+  version: 3.2.5
+  resolution: "prettier@npm:3.2.5"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 6ec9385a836e0b9bac549e585101c086d1521c31d7b882d5c8bb7d7646da0693da5f31f4fff6dc080710e5e2d34c85e6fb2f8766876b3645c8be2f33b9c3d1a3
+  checksum: 2ee4e1417572372afb7a13bb446b34f20f1bf1747db77cf6ccaf57a9be005f2f15c40f903d41a6b79eec3f57fff14d32a20fb6dee1f126da48908926fe43c311
   languageName: node
   linkType: hard
 
@@ -17850,13 +17850,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.3.3":
-  version: 5.3.3
-  resolution: "typescript@npm:5.3.3"
+"typescript@npm:5.4.2":
+  version: 5.4.2
+  resolution: "typescript@npm:5.4.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2007ccb6e51bbbf6fde0a78099efe04dc1c3dfbdff04ca3b6a8bc717991862b39fd6126c0c3ebf2d2d98ac5e960bcaa873826bb2bb241f14277034148f41f6a2
+  checksum: 96d80fde25a09bcb04d399082fb27a808a9e17c2111e43849d2aafbd642d835e4f4ef0de09b0ba795ec2a700be6c4c2c3f62bf4660c05404c948727b5bbfb32a
   languageName: node
   linkType: hard
 
@@ -17880,13 +17880,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.3.3#~builtin<compat/typescript>":
-  version: 5.3.3
-  resolution: "typescript@patch:typescript@npm%3A5.3.3#~builtin<compat/typescript>::version=5.3.3&hash=bda367"
+"typescript@patch:typescript@5.4.2#~builtin<compat/typescript>":
+  version: 5.4.2
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#~builtin<compat/typescript>::version=5.4.2&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: f61375590b3162599f0f0d5b8737877ac0a7bc52761dbb585d67e7b8753a3a4c42d9a554c4cc929f591ffcf3a2b0602f65ae3ce74714fd5652623a816862b610
+  checksum: c1b669146bca5529873aae60870e243fa8140c85f57ca32c42f898f586d73ce4a6b4f6bb02ae312729e214d7f5859a0c70da3e527a116fdf5ad00c9fc733ecc6
   languageName: node
   linkType: hard
 
