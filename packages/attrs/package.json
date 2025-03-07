@@ -56,12 +56,12 @@
     "hoist-non-react-statics": "^3.3.2"
   },
   "devDependencies": {
-    "@types/hoist-non-react-statics": "^3.3.5",
+    "@types/hoist-non-react-statics": "^3.3.6",
     "@vitus-labs/core": "1.0.1-alpha.7",
-    "@vitus-labs/tools-babel": "^1.3.0",
-    "@vitus-labs/tools-rollup": "^1.3.0",
-    "@vitus-labs/tools-storybook": "^1.3.0",
-    "@vitus-labs/tools-types": "^1.3.0",
-    "@vitus-labs/tools-typescript": "^1.3.0"
+    "@vitus-labs/tools-babel": "^1.4.0",
+    "@vitus-labs/tools-rollup": "^1.4.0",
+    "@vitus-labs/tools-storybook": "^1.4.0",
+    "@vitus-labs/tools-types": "^1.4.0",
+    "@vitus-labs/tools-typescript": "^1.4.0"
   }
 }

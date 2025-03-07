@@ -139,8 +139,8 @@ const useOverlay = ({
   const [blocked, handleBlocked] = useState(false)
   const [active, handleActive] = useState(isOpen)
 
-  const triggerRef = useRef<HTMLElement>()
-  const contentRef = useRef<HTMLElement>()
+  const triggerRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLElement>(null)
 
   const setBlocked = useCallback(() => handleBlocked(true), [])
   const setUnblocked = useCallback(() => handleBlocked(false), [])
