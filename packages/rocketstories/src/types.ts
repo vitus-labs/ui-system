@@ -2,7 +2,7 @@ import type {
   ComponentType,
   ForwardRefExoticComponent,
   ReactNode,
-  VFC,
+  FC,
 } from 'react'
 import type { ListProps } from '@vitus-labs/elements'
 import type { RocketComponentType } from '@vitus-labs/rocketstyle'
@@ -15,7 +15,7 @@ export type ExtractProps<TComponentOrTProps> =
     ? TProps
     : TComponentOrTProps
 
-export type StoryComponent<P = {}> = VFC<P> &
+export type StoryComponent<P = {}> = FC<P> &
   Partial<{
     args: Record<string, unknown>
     argTypes: Record<string, unknown>
