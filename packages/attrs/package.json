@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/attrs",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@types/hoist-non-react-statics": "^3.3.6",
-    "@vitus-labs/core": "1.1.1",
+    "@vitus-labs/core": "1.1.2",
     "@vitus-labs/tools-babel": "^1.4.0",
     "@vitus-labs/tools-rollup": "^1.4.0",
     "@vitus-labs/tools-storybook": "^1.4.0",
