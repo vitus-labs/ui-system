@@ -1,5 +1,6 @@
+import type { CSSProperties } from 'react'
 import { config } from '@vitus-labs/core'
-import type { PropertyValue, Defaults, Color } from '~/types'
+import type { PropertyValue, Defaults, Color, Height } from '~/types'
 
 export type Func<T> = (...args: any) => T
 
@@ -15,14 +16,6 @@ export type BorderImageRepeat =
   | Defaults
 
 export type GridProperty = 'auto' | number | `span ${number}`
-
-export type TextDecoration =
-  | 'none'
-  | 'underline'
-  | 'overline'
-  | 'line-through'
-  | 'blink'
-  | Defaults
 
 export type BorderStyle =
   | 'none'
@@ -75,8 +68,6 @@ export type ListStyleType =
   | 'upper-latin'
   | 'upper-roman'
   | Defaults
-
-export type Overflow = 'visible' | 'hidden' | 'scroll' | 'auto' | Defaults
 
 export type Cursor =
   | 'alias'
@@ -154,13 +145,13 @@ export type ITheme = {
   positionX: PropertyValue
   positionY: PropertyValue
   width: PropertyValue
-  height: PropertyValue
+  height: PropertyValue | Height
   size: PropertyValue
   minWidth: PropertyValue
-  minHeight: PropertyValue
+  minHeight: PropertyValue | Height
   minSize: PropertyValue
   maxWidth: PropertyValue
-  maxHeight: PropertyValue
+  maxHeight: PropertyValue | Height
   maxSize: PropertyValue
   margin: PropertyValue
   marginTop: PropertyValue
@@ -177,44 +168,20 @@ export type ITheme = {
   paddingX: PropertyValue
   paddingY: PropertyValue
   gap: PropertyValue
-  alignContent:
-    | 'center'
-    | 'flex-start'
-    | 'flex-end'
-    | 'space-between'
-    | 'space-around'
-    | 'stretch'
-    | Defaults
-  alignItems:
-    | 'baseline'
-    | 'center'
-    | 'flex-start'
-    | 'flex-end'
-    | 'stretch'
-    | Defaults
-  alignSelf:
-    | 'auto'
-    | 'baseline'
-    | 'center'
-    | 'start'
-    | 'end'
-    | 'self-start'
-    | 'self-end'
-    | 'flex-start'
-    | 'flex-end'
-    | 'stretch'
-    | Defaults
-  all: 'unset' | 'revert' | Defaults
-  animation: string
-  backfaceVisibility: 'visible' | 'hidden' | Defaults
+  alignContent: CSSProperties['alignContent']
+  alignItems: CSSProperties['alignItems']
+  alignSelf: CSSProperties['alignSelf']
+  all: CSSProperties['all']
+  animation: CSSProperties['animation']
+  backfaceVisibility: CSSProperties['backfaceVisibility']
   background: string
-  backgroundAttachment: 'scroll' | 'fixed' | Defaults
-  backgroundClip: 'border-box' | 'padding-box' | 'content-box' | Defaults
+  backgroundAttachment: CSSProperties['backgroundAttachment']
+  backgroundClip: CSSProperties['backgroundClip']
   backgroundColor: Color
   backgroundImage: string | 'none' | Defaults
-  backgroundOrigin: 'padding-box' | 'border-box' | 'content-box' | Defaults
-  backgroundPosition: any
-  backgroundRepeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | Defaults
+  backgroundOrigin: CSSProperties['backgroundOrigin']
+  backgroundPosition: CSSProperties['backgroundPosition']
+  backgroundRepeat: CSSProperties['backgroundRepeat']
   backgroundSize: 'auto' | PropertyValue | 'cover' | 'contain' | Defaults
   border: string
   borderTop: string
@@ -261,78 +228,37 @@ export type ITheme = {
   borderRadiusBottomLeft: PropertyValue
   borderRadiusBottom: PropertyValue
   borderRadiusBottomRight: PropertyValue
-  boxShadow: string
-  boxSizing: 'content-box' | 'border-box' | Defaults
-  captionSide: 'top' | 'bottom' | Defaults
-  clear: 'left' | 'right' | 'auto' | 'both' | 'none' | Defaults
-  clip: 'shape' | 'auto' | Defaults
-  clipPath: string
+  boxShadow: CSSProperties['boxShadow']
+  boxSizing: CSSProperties['boxSizing']
+  captionSide: CSSProperties['captionSide']
+  clear: CSSProperties['clear']
+  clip: CSSProperties['clip']
+  clipPath: CSSProperties['clipPath']
   color: Color
-  content:
-    | 'normal'
-    | 'none'
-    | 'counter'
-    | 'open-quote'
-    | 'close-quote'
-    | 'no-open-quote'
-    | 'no-close-quote'
-    | Defaults
-    | string
-  contentVisibility: 'visible' | 'hidden' | 'auto'
-  counterIncrement: string
-  counterReset: string
+  content: CSSProperties['content']
+  contentVisibility: CSSProperties['contentVisibility']
+  counterIncrement: CSSProperties['counterIncrement']
+  counterReset: CSSProperties['counterReset']
   cursor: Cursor
-  direction: 'ltr' | 'rtl' | Defaults
-  display:
-    | 'inline'
-    | 'block'
-    | 'contents'
-    | 'flex'
-    | 'flow'
-    | 'flow-root'
-    | 'grid'
-    | 'inline-block'
-    | 'inline-flex'
-    | 'inline-grid'
-    | 'inline-table'
-    | 'list-item'
-    | 'run-in'
-    | 'table'
-    | 'table-caption'
-    | 'table-column-group'
-    | 'table-header-group'
-    | 'table-footer-group'
-    | 'table-row-group'
-    | 'table-cell'
-    | 'table-column'
-    | 'table-row'
-    | 'none'
-  emptyCells: 'show' | 'hide' | Defaults
-  filter: string
-  flex: PrimitiveValue
-  flexBasis: PrimitiveValue
-  flexDirection: 'row' | 'row-reverse' | 'column' | 'column-reverse' | Defaults
-  flexFlow: string
-  flexGrow: number | Defaults
-  flexShrink: number | Defaults
-  flexWrap: 'nowrap' | 'wrap' | 'wrap-reverse' | Defaults
-  float: 'left' | 'right' | 'none'
-  font: string
-  fontFamily: string
+  direction: CSSProperties['direction']
+  display: CSSProperties['display']
+  emptyCells: CSSProperties['emptyCells']
+  filter: CSSProperties['filter']
+  flex: CSSProperties['flex']
+  flexBasis: CSSProperties['flexBasis']
+  flexDirection: CSSProperties['flexDirection']
+  flexFlow: CSSProperties['flexFlow']
+  flexGrow: CSSProperties['flexGrow']
+  flexShrink: CSSProperties['flexShrink']
+  flexWrap: CSSProperties['flexWrap']
+  float: CSSProperties['float']
+  font: CSSProperties['font']
+  fontFamily: CSSProperties['fontFamily']
   fontSize: FontSize
-  fontSizeAdjust: number | 'none' | Defaults
-  fontStretch:
-    | 'normal'
-    | 'ultra-condensed'
-    | 'extra-condensed'
-    | 'condensed'
-    | 'semi-condensed'
-    | 'semi-expanded'
-    | 'expanded'
-    | 'extra-expanded'
-    | 'ultra-expanded'
-  fontStyle: 'normal' | 'italic' | 'oblique' | Defaults
-  fontVariant: 'normal' | 'small-caps' | Defaults
+  fontSizeAdjust: CSSProperties['fontSizeAdjust']
+  fontStretch: CSSProperties['fontStretch']
+  fontStyle: CSSProperties['fontStyle']
+  fontVariant: CSSProperties['fontVariant']
   fontWeight:
     | 'normal'
     | 'bold'
@@ -349,10 +275,10 @@ export type ITheme = {
     | 900
     | Defaults
 
-  gridArea: string
-  gridAutoColumns: 'auto' | 'max-content' | 'min-content' | PropertyValue
-  gridAutoFlow: 'row' | 'column' | 'dense' | 'row dense' | 'column dense'
-  gridAutoRows: 'auto' | 'max-content' | 'min-content' | PropertyValue
+  gridArea: CSSProperties['gridArea']
+  gridAutoColumns: CSSProperties['gridAutoColumns']
+  gridAutoFlow: CSSProperties['gridAutoFlow']
+  gridAutoRows: CSSProperties['gridAutoRows']
   gridColumn: number | `${'auto' | string | number} / ${GridProperty}`
   gridColumnEnd: GridProperty
   gridColumnGap: PropertyValue
@@ -362,125 +288,71 @@ export type ITheme = {
   gridRowStart: GridProperty
   gridRowEnd: GridProperty
   gridRowGap: PropertyValue
-  gridTemplate: PrimitiveValue
-  gridTemplateAreas: PrimitiveValue
-  gridTemplateColumns: PrimitiveValue
-  gridTemplateRows: PrimitiveValue
+  gridTemplate: CSSProperties['gridTemplate']
+  gridTemplateAreas: CSSProperties['gridTemplateAreas']
+  gridTemplateColumns: CSSProperties['gridTemplateColumns']
+  gridTemplateRows: CSSProperties['gridTemplateRows']
 
-  justifyContent:
-    | 'flex-start'
-    | 'flex-end'
-    | 'center'
-    | 'space-between'
-    | 'space-around'
+  justifyContent: CSSProperties['justifyContent']
+  justifyItems: CSSProperties['justifyItems']
   keyframe: any
-  letterSpacing: 'normal' | PropertyValue
-  lineHeight: PropertyValue | 'normal' | 'revert' | 'unset' | Defaults
-  listStyle: string
-  listStyleImage: 'none' | string | Defaults
-  listStylePosition: string
+  letterSpacing: CSSProperties['letterSpacing']
+  lineHeight: CSSProperties['lineHeight']
+  listStyle: CSSProperties['listStyle']
+  listStyleImage: CSSProperties['listStyleImage']
+  listStylePosition: CSSProperties['listStylePosition']
   listStyleType: ListStyleType
-  objectFit:
-    | 'fill'
-    | 'contain'
-    | 'cover'
-    | 'scale-down'
-    | 'none'
-    | 'initial'
-    | 'inherit'
-  objectPosition: any
-  opacity: number
-  order: number | Defaults
-  outline: string
-  outlineColor: string
-  outlineOffset: PropertyValue
-  outlineStyle:
-    | 'none'
-    | 'dotted'
-    | 'dashed'
-    | 'solid'
-    | 'double'
-    | 'groove'
-    | 'ridge'
-    | 'inset'
-    | 'outset'
-    | Defaults
-  outlineWidth: PropertyValue | 'thin' | 'medium' | 'thick'
-  overflow: Overflow
-  overflowWrap: 'normal' | 'break-word' | Defaults
-  overflowX: Overflow
-  overflowY: Overflow
-  // pageBreakAfter: 'auto' | 'always' | 'avoid' | 'left' | 'right' | Defaults
-  // pageBreakBefore: 'auto' | 'always' | 'avoid' | 'left' | 'right' | Defaults
-  // pageBreakInside: 'auto' | 'avoid' | Defaults
-  perspective: string
-  perspectiveOrigin: string
-  pointerEvents: 'auto' | 'none' | Defaults
-  position: 'static' | 'relative' | 'fixed' | 'absolute' | 'sticky' | Defaults
-  quotes: string
-  resize: 'none' | 'both' | 'horizontal' | 'vertical' | Defaults
-  tabSize: PropertyValue
-  tableLayout: 'auto' | 'fixed' | Defaults
-  textAlign: 'left' | 'right' | 'center' | 'justify' | Defaults
-  textAlignLast:
-    | 'auto'
-    | 'start'
-    | 'end'
-    | 'left'
-    | 'right'
-    | 'center'
-    | 'justify'
-    | Defaults
-  textDecoration: TextDecoration
-  textDecorationColor: PropertyValue
-  textDecorationLine: TextDecoration
-  textDecorationStyle:
-    | 'solid'
-    | 'double'
-    | 'dotted'
-    | 'dashed'
-    | 'wavy'
-    | Defaults
-  textIndent: PropertyValue
-  textJustify: 'auto' | 'none' | 'inter-word' | 'distribute' | Defaults
-  textOverflow: 'clip' | 'ellipsis' | string | Defaults
-  textShadow: string
-  textTransform: 'none' | 'capitalize' | 'uppercase' | 'lowercase' | Defaults
-  transform: string
-  transformOrigin: string
-  transformStyle: string
-  transition: string
-  transitionDelay: string
-  transitionDuration: string
-  transitionProperty: string
-  transitionTimingFunction:
-    | 'linear'
-    | 'ease'
-    | 'ease-in'
-    | 'ease-out'
-    | 'ease-in-out'
+  objectFit: CSSProperties['objectFit']
+  objectPosition: CSSProperties['objectPosition']
+  opacity: CSSProperties['opacity']
+  order: CSSProperties['order']
+  outline: CSSProperties['outline']
+  outlineColor: CSSProperties['outlineColor']
+  outlineOffset: CSSProperties['outlineOffset']
+  outlineStyle: CSSProperties['outlineStyle']
+  outlineWidth: CSSProperties['outlineWidth']
+  overflow: CSSProperties['overflow']
+  overflowWrap: CSSProperties['overflowWrap']
+  overflowX: CSSProperties['overflowX']
+  overflowY: CSSProperties['overflowY']
+  perspective: CSSProperties['perspective']
+  perspectiveOrigin: CSSProperties['perspectiveOrigin']
+  pointerEvents: CSSProperties['pointerEvents']
+  position: CSSProperties['position']
+  quotes: CSSProperties['quotes']
+  resize: CSSProperties['resize']
+  tabSize: CSSProperties['tabSize']
+  tableLayout: CSSProperties['tableLayout']
+  textAlign: CSSProperties['textAlign']
+  textAlignLast: CSSProperties['textAlignLast']
+  textDecoration: CSSProperties['textDecoration']
+  textDecorationColor: CSSProperties['textDecorationColor']
+  textDecorationLine: CSSProperties['textDecorationLine']
+  textDecorationStyle: CSSProperties['textDecorationStyle']
+  textIndent: CSSProperties['textIndent']
+  textJustify: CSSProperties['textJustify']
+  textOverflow: CSSProperties['textOverflow']
+  textShadow: CSSProperties['textShadow']
+  textTransform: CSSProperties['textTransform']
+  transform: CSSProperties['transform']
+  transformOrigin: CSSProperties['transformOrigin']
+  transformStyle: CSSProperties['transformStyle']
+  transition: CSSProperties['transition']
+  transitionDelay: CSSProperties['transitionDelay']
+  transitionDuration: CSSProperties['transitionDuration']
+  transitionProperty: CSSProperties['transitionProperty']
+  transitionTimingFunction: CSSProperties['transitionTimingFunction']
     | `cubic-bezier(${number},${number},${number},${number})`
     | `cubic-bezier(${number}, ${number}, ${number}, ${number})`
-    | Defaults
-  userSelect: 'auto' | 'none' | 'text' | 'all' | Defaults
-  verticalAlign:
-    | 'baseline'
-    | 'sub'
-    | 'super'
-    | 'top'
-    | 'text-top'
-    | 'middle'
-    | 'bottom'
-    | 'text-bottom'
-    | PropertyValue
-    | Defaults
-  visibility: 'visible' | 'hidden' | 'collapse' | Defaults
-  whiteSpace: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | Defaults
-  wordBreak: 'normal' | 'break-all' | 'keep-all' | 'break-word' | Defaults
-  wordWrap: 'normal' | 'break-word' | Defaults
+  userSelect: CSSProperties['userSelect']
+  verticalAlign: CSSProperties['verticalAlign']
+  visibility: CSSProperties['visibility']
+  whiteSpace: CSSProperties['whiteSpace']
+  wordBreak: CSSProperties['wordBreak']
+  wordWrap: CSSProperties['wordWrap']
 
-  writingMode: 'horizontal-tb' | 'vertical-rl' | 'vertical-lr'
-  zIndex: number
+  writingMode: CSSProperties['writingMode']
+  zIndex: CSSProperties['zIndex']
 
   hideEmpty: boolean
   clearFix: boolean

@@ -95,6 +95,7 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     flex-shrink: ${t.flexShrink};
     flex-wrap: ${t.flexWrap};
     justify-content: ${t.justifyContent};
+    justify-items: ${t.justifyItems};
 
     /* ------------------------------------------------- */
     /* GRID attributes */
