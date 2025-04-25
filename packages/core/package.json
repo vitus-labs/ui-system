@@ -45,7 +45,7 @@
     "cover": "coveralls < .coverage/lcov.info"
   },
   "peerDependencies": {
-    "react": ">= 16.8",
+    "react": ">= 18",
     "styled-components": ">= 6"
   },
   "dependencies": {
@@ -55,9 +55,9 @@
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
-    "@vitus-labs/tools-babel": "^1.4.0",
-    "@vitus-labs/tools-rollup": "^1.4.0",
-    "@vitus-labs/tools-typescript": "^1.4.0",
+    "@vitus-labs/tools-babel": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-rollup": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-typescript": "^1.5.0-alpha.0",
     "styled-components": "^6.1.15"
   }
 }

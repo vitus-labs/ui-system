@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 16.8"
+    "react": ">= 18"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.2"
@@ -58,10 +58,10 @@
   "devDependencies": {
     "@types/hoist-non-react-statics": "^3.3.6",
     "@vitus-labs/core": "1.1.2",
-    "@vitus-labs/tools-babel": "^1.4.0",
-    "@vitus-labs/tools-rollup": "^1.4.0",
-    "@vitus-labs/tools-storybook": "^1.4.0",
-    "@vitus-labs/tools-types": "^1.4.0",
-    "@vitus-labs/tools-typescript": "^1.4.0"
+    "@vitus-labs/tools-babel": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-rollup": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-storybook": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-types": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-typescript": "^1.5.0-alpha.0"
   }
 }

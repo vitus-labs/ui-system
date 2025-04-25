@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { rocketstyle } from '@vitus-labs/rocketstyle'
 import { config } from '@vitus-labs/core'
-import Element, { Props } from '~/Element'
+import Element, { type Props } from '~/Element'
 
 const { css, styled } = config
 const rs = rocketstyle()

@@ -35,12 +35,12 @@ const stories = storyOf(Button)
 //     label: 'This is a label',
 //   })
 
-// export default {
-//   name: 'Hello',
-//   component: Button,
-// }
+export default {
+  name: 'Hello',
+  component: Button,
+}
 
-export default test()
+// export default test()
 
 export const Example = stories.main()
 

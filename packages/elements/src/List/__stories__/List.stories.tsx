@@ -1,8 +1,9 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import Element from '~/Element'
 import List, { withActiveState } from '~/List'
 
 export default {
+  name: 'List',
   component: List,
 }
 

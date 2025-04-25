@@ -42,13 +42,13 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 16.8"
+    "react": ">= 18"
   },
   "devDependencies": {
     "@vitus-labs/core": "1.1.2",
-    "@vitus-labs/tools-babel": "^1.4.0",
-    "@vitus-labs/tools-rollup": "^1.4.0",
-    "@vitus-labs/tools-storybook": "^1.4.0",
-    "@vitus-labs/tools-typescript": "^1.4.0"
+    "@vitus-labs/tools-babel": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-rollup": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-storybook": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-typescript": "^1.5.0-alpha.0"
   }
 }

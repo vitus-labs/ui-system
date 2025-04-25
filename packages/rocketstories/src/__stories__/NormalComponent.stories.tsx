@@ -16,9 +16,15 @@ const stories = storyOf(NormalComponent)
   })
   .attrs({ label: 'Test' })
 
-export default stories.init()
+// export default stories.init()
+export default {
+  name: 'NormalComponent',
+  component: NormalComponent,
+}
 
 export const Example = stories.main()
+
+
 
 // export const Custom = stories.render((props) => (
 //   <NormalComponent {...props} label="Another" />

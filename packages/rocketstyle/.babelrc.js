@@ -1,1 +1,1 @@
-module.exports = require('@vitus-labs/tools-babel/lib')
+module.exports = require('@vitus-labs/tools-babel')

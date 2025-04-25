@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
 import * as rocketstory from '~/stories/rocketstories'
@@ -172,11 +173,11 @@ const createRocketStories: CreateRocketStories = (options) => {
             component: options.component as RocketType,
           }),
 
-    init: () => ({
+    init: {
       component: options.component,
       title: options.name,
       decorators: options.decorators,
-    }),
+    },
 
     // chaining methods
     storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),

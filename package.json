@@ -34,11 +34,11 @@
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "devDependencies": {
-    "@types/node": "22.13.9",
+    "@types/node": "22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-is": "^19.0.0",
-    "@vitus-labs/tools-lint": "^1.4.0",
+    "@vitus-labs/tools-lint": "^1.5.0-alpha.0",
     "coveralls": "^3.1.1",
     "cpr": "^3.0.1",
     "lerna": "^8.2.1",
