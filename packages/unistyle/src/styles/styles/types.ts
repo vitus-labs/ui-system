@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import { config } from '@vitus-labs/core'
-import type { PropertyValue, Defaults, Color, Height } from '~/types'
+import type { PropertyValue, Defaults, Color, Size } from '~/types'
 
 export type Func<T> = (...args: any) => T
 
@@ -144,15 +144,15 @@ export type ITheme = {
   right: PropertyValue
   positionX: PropertyValue
   positionY: PropertyValue
-  width: PropertyValue
-  height: PropertyValue | Height
-  size: PropertyValue
-  minWidth: PropertyValue
-  minHeight: PropertyValue | Height
-  minSize: PropertyValue
-  maxWidth: PropertyValue
-  maxHeight: PropertyValue | Height
-  maxSize: PropertyValue
+  width: PropertyValue | Size
+  height: PropertyValue | Size
+  size: PropertyValue | Size
+  minWidth: PropertyValue | Size
+  minHeight: PropertyValue | Size
+  minSize: PropertyValue | Size
+  maxWidth: PropertyValue | Size
+  maxHeight: PropertyValue | Size
+  maxSize: PropertyValue | Size
   margin: PropertyValue
   marginTop: PropertyValue
   marginBottom: PropertyValue

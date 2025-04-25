@@ -20,7 +20,7 @@ export type PropertyValue =
   | Defaults
   | `calc(${string | number})`
 
-export type Height = 'max-content' | 'min-content' | 'fit-content'
+export type Size = 'max-content' | 'min-content' | 'fit-content'
 
 export type Color =
   | `#${string | number}`
