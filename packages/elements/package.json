@@ -63,6 +63,6 @@
     "@vitus-labs/unistyle": "1.1.2"
   },
   "dependencies": {
-    "react-is": "^19.0.0"
+    "react-is": "^19.1.0"
   }
 }
