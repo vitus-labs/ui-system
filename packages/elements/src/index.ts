@@ -28,6 +28,7 @@ import type {
   Responsive,
   ExtendCss,
   InnerRef,
+  VLStatic,
 } from '~/types'
 
 export type {
@@ -49,6 +50,7 @@ export type {
   Responsive,
   ExtendCss,
   InnerRef,
+  VLStatic,
   // hidden iterator types
   PropsCallback,
   ObjectValue,

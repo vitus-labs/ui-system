@@ -4,7 +4,7 @@ import type {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { MergeTypes, ExtractProps } from '@vitus-labs/tools-types'
+import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
 import type { TObj, ElementType } from './utils'
 import type { ConfigAttrs } from './config'
 import type { AttrsCb } from './attrs'
@@ -48,6 +48,7 @@ export type ExoticComponent<P extends Record<string, unknown> = {}> =
  * @param DFP  Calculated final component props
  */
 export interface AttrsComponent<
+  C extends ElementType = ElementType,
   // original component props
   OA extends TObj = {},
   // extended component props
@@ -128,8 +129,8 @@ export interface AttrsComponent<
     component: NC,
     DEBUG,
   }: ConfigAttrs<NC>) => NC extends ElementType
-    ? AttrsComponent<ExtractProps<NC>, EA, S, HOC>
-    : AttrsComponent<OA, EA, S, HOC>
+    ? AttrsComponent<NC, ExtractProps<NC>, EA, S, HOC>
+    : AttrsComponent<C, OA, EA, S, HOC>
 
   // ATTRS chaining method
   // --------------------------------------------------------
@@ -173,12 +174,12 @@ export interface AttrsComponent<
        * filter props will be omitted when passing to final component
        */
       filter: P extends TObj
-        ? Partial<keyof MergeTypes<[EA, P]>>[]
-        : Partial<keyof EA>[]
+      ? Partial<keyof MergeTypes<[EA, P]>>[]
+      : Partial<keyof EA>[]
     }>,
   ) => P extends TObj
-    ? AttrsComponent<OA, MergeTypes<[EA, P]>, S, HOC>
-    : AttrsComponent<OA, EA, S, HOC>
+    ? AttrsComponent<C, OA, MergeTypes<[EA, P]>, S, HOC>
+    : AttrsComponent<C, OA, EA, S, HOC>
 
   // COMPOSE chaining method
   // --------------------------------------------------------
@@ -216,8 +217,8 @@ export interface AttrsComponent<
   compose: <P extends ComposeParam>(
     param: P,
   ) => P extends TObj
-    ? AttrsComponent<OA, EA, S, MergeTypes<[HOC, P]>>
-    : AttrsComponent<OA, EA, S, HOC>
+    ? AttrsComponent<C, OA, EA, S, MergeTypes<[HOC, P]>>
+    : AttrsComponent<C, OA, EA, S, HOC>
 
   // STATICS chaining method + its output + other statics
   // --------------------------------------------------------
@@ -258,8 +259,8 @@ export interface AttrsComponent<
   statics: <P extends TObj | unknown = unknown>(
     param: P,
   ) => P extends TObj
-    ? AttrsComponent<OA, EA, MergeTypes<[S, P]>, HOC>
-    : AttrsComponent<OA, EA, S, HOC>
+    ? AttrsComponent<C, OA, EA, MergeTypes<[S, P]>, HOC>
+    : AttrsComponent<C, OA, EA, S, HOC>
 
   /**
    * An access to all defined statics on the component.

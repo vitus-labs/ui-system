@@ -66,10 +66,10 @@
   "devDependencies": {
     "@vitus-labs/core": "1.2.1",
     "@vitus-labs/rocketstyle": "1.2.1",
-    "@vitus-labs/tools-babel": "^1.5.0-alpha.0",
-    "@vitus-labs/tools-rollup": "^1.5.0-alpha.0",
-    "@vitus-labs/tools-storybook": "^1.5.0-alpha.0",
-    "@vitus-labs/tools-typescript": "^1.5.0-alpha.0",
+    "@vitus-labs/tools-babel": "^1.5.1",
+    "@vitus-labs/tools-rollup": "^1.5.1",
+    "@vitus-labs/tools-storybook": "^1.5.1",
+    "@vitus-labs/tools-typescript": "^1.5.1",
     "@vitus-labs/unistyle": "1.2.1"
   }
 }

@@ -49,15 +49,15 @@
     "styled-components": ">= 6"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "moize": "^6.1.6",
-    "react-is": "^19.1.0"
+    "lodash-es": "^4.17.22",
+    "moize": "^6.1.7",
+    "react-is": "^19.2.3"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
-    "@vitus-labs/tools-babel": "^1.5.0-alpha.0",
-    "@vitus-labs/tools-rollup": "^1.5.0-alpha.0",
-    "@vitus-labs/tools-typescript": "^1.5.0-alpha.0",
-    "styled-components": "^6.1.17"
+    "@vitus-labs/tools-babel": "^1.5.1",
+    "@vitus-labs/tools-rollup": "^1.5.1",
+    "@vitus-labs/tools-typescript": "^1.5.1",
+    "styled-components": "^6.2.0"
   }
 }

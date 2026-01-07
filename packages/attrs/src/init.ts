@@ -3,7 +3,7 @@ import attrsComponent from '~/attrs'
 import type { ElementType } from '~/types/utils'
 import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
 
-export type Attrs = <C extends ElementType<any>>({
+export type Attrs = <C extends ElementType>({
   name,
   component,
 }: {
