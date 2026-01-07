@@ -3,6 +3,8 @@
 .next
 stats.html
 
+tsconfig.tsbuildinfo
+
 .yarn/*
 !.yarn/cache
 !.yarn/patches
