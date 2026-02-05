@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useMemo,
   type ForwardRefExoticComponent,
   type ComponentType,
 } from 'react'
@@ -28,25 +29,29 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
       // remove undefined props not to override potential default props
       // only props with value (e.g. `null`) should override default props
       // --------------------------------------------------
-      const filteredProps = removeUndefinedProps(props)
-
-      const prioritizedAttrs = calculatePriorityAttrs([filteredProps])
-
-      const finalAttrs = calculateAttrs([
-        {
-          ...prioritizedAttrs,
-          ...filteredProps,
-        },
-      ])
-
-      return (
-        <WrappedComponent
-          $attrsRef={ref}
-          {...prioritizedAttrs}
-          {...finalAttrs}
-          {...filteredProps}
-        />
+      const filteredProps = useMemo(
+        () => removeUndefinedProps(props),
+        [props],
       )
+
+      const finalProps = useMemo(() => {
+        const prioritizedAttrs = calculatePriorityAttrs([filteredProps])
+        const finalAttrs = calculateAttrs([
+          {
+            ...prioritizedAttrs,
+            ...filteredProps,
+          },
+        ])
+
+        return {
+          $attrsRef: ref,
+          ...prioritizedAttrs,
+          ...finalAttrs,
+          ...filteredProps,
+        }
+      }, [filteredProps, ref])
+
+      return <WrappedComponent {...finalProps} />
     })
 
   return attrsHoc

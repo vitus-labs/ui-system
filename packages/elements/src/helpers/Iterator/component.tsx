@@ -1,6 +1,7 @@
 import React, {
   Children,
   type FC,
+  type ReactElement,
   type ReactNode,
   useCallback,
   useMemo,
@@ -128,7 +129,7 @@ const Component: FC<Props> & Static = (props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren = children?.props?.children as ReactNode[]
+      const fragmentChildren = (children as ReactElement<{ children: ReactNode[] }>).props.children
       const childrenLength = fragmentChildren.length
 
       return fragmentChildren.map((item, i) =>

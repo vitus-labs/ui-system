@@ -7,16 +7,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+      - uses: actions/checkout@v4
 
-      - name: Install aplication deps
-        run: yarn install
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install application deps
+        run: bun install
 
       - name: Build packages
-        run: yarn pkgs:build
+        run: bun run pkgs:build
 
       - name: Lint codebase
-        run: yarn lint
+        run: bun run lint

@@ -34,9 +34,9 @@
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
-    "prepublish": "yarn build",
-    "build": "yarn vl_build",
-    "build:watch": "yarn vl_build-watch",
+    "prepublish": "bun run build",
+    "build": "bun run vl_build",
+    "build:watch": "bun run vl_build-watch",
     "lint:css": "stylelint src/*.ts src/*.tsx",
     "lint:ts": "eslint src/*",
     "lint": "",

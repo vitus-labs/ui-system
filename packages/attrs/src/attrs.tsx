@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { pick, compose, omit } from '@vitus-labs/core'
 import { useRef } from '~/hooks'
@@ -93,22 +93,26 @@ const attrsComponent: InitAttrsComponent = (options) => {
       // excluding: styling props
       // including: $attrsStyle, $attrsState
       // --------------------------------------------------
-      const newProps: Record<string, any> = {
-        // this removes styling state from props and passes its state
-        // under attrsState key only
-        ...props,
-        ref: ref ?? $attrsRef ? internalRef : undefined,
-      }
+      const needsRef = ref ?? $attrsRef
+      const needsFiltering =
+        options.filterAttrs && options.filterAttrs.length > 0
 
-      const finalProps: Record<string, any> = omit(
-        newProps,
-        options.filterAttrs,
-      )
+      const finalProps = useMemo(() => {
+        // Only create new object if ref needs to be added
+        const baseProps = needsRef ? { ...props, ref: internalRef } : props
 
-      // all the development stuff injected
-      if (process.env.NODE_ENV !== 'production') {
-        finalProps['data-attrs'] = componentName
-      }
+        // Only filter if there are props to filter
+        const filteredProps = needsFiltering
+          ? omit(baseProps, options.filterAttrs)
+          : baseProps
+
+        // Add dev-only data attribute
+        if (process.env.NODE_ENV !== 'production') {
+          return { ...filteredProps, 'data-attrs': componentName }
+        }
+
+        return filteredProps
+      }, [props, needsRef, internalRef])
 
       return <RenderComponent {...finalProps} />
     },
@@ -124,14 +128,9 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
   AttrsComponent.IS_ATTRS = true
   AttrsComponent.displayName = componentName
+  AttrsComponent.meta = {}
 
   hoistNonReactStatics(AttrsComponent, options.component)
-
-  // ------------------------------------------------------
-  AttrsComponent.IS_ATTRS = true
-  AttrsComponent.displayName = componentName
-  AttrsComponent.meta = {}
-  // ------------------------------------------------------
 
   // ------------------------------------------------------
   // enhance for statics

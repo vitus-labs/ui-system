@@ -160,10 +160,8 @@ export interface AttrsComponent<
    *  }))
    *  ```
    */
-  attrs: <P extends TObj | unknown = unknown>(
-    param: P extends TObj
-      ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>>
-      : Partial<DFP> | AttrsCb<DFP>,
+  attrs: <P extends TObj = {}>(
+    param: Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>>,
     config?: Partial<{
       /**
        * priority props will be resolved first and overwritten by normal `attrs`
@@ -173,13 +171,9 @@ export interface AttrsComponent<
       /**
        * filter props will be omitted when passing to final component
        */
-      filter: P extends TObj
-      ? Partial<keyof MergeTypes<[EA, P]>>[]
-      : Partial<keyof EA>[]
+      filter: Partial<keyof MergeTypes<[EA, P]>>[]
     }>,
-  ) => P extends TObj
-    ? AttrsComponent<C, OA, MergeTypes<[EA, P]>, S, HOC>
-    : AttrsComponent<C, OA, EA, S, HOC>
+  ) => AttrsComponent<C, OA, MergeTypes<[EA, P]>, S, HOC>
 
   // COMPOSE chaining method
   // --------------------------------------------------------

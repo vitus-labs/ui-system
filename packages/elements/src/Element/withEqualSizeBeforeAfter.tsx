@@ -56,8 +56,8 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
     const elementRef = createRef<HTMLElement>()
 
     const calculateSize = () => {
-      const beforeContent = get(elementRef, 'current.children[0]')
-      const afterContent = get(elementRef, 'current.children[2]')
+      const beforeContent = get(elementRef, 'current.children[0]') as HTMLElement | undefined
+      const afterContent = get(elementRef, 'current.children[2]') as HTMLElement | undefined
 
       if (beforeContent && afterContent) {
         const updateElement = calculate({ beforeContent, afterContent })
