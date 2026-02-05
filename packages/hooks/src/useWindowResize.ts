@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { throttle } from '@vitus-labs/core'
 
 type Sizes = {
@@ -19,6 +19,8 @@ const useWindowResize: UseWindowResize = (
   { width = 0, height = 0 } = {},
 ) => {
   const [windowSize, setWindowSize] = useState({ width, height })
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
 
   const updateSizes = useCallback(() => {
     const sizes = {
@@ -27,22 +29,22 @@ const useWindowResize: UseWindowResize = (
     }
 
     setWindowSize(sizes)
-    if (onChange) onChange(sizes)
-  }, [onChange])
-
-  const handleResize = useCallback(throttle(updateSizes, throttleDelay), [
-    onChange,
-  ])
-
-  useEffect(() => {
-    updateSizes()
+    if (onChangeRef.current) onChangeRef.current(sizes)
   }, [])
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize, false)
-
-    return () => window.removeEventListener('resize', handleResize, false)
+    updateSizes()
   }, [updateSizes])
+
+  useEffect(() => {
+    const throttled = throttle(updateSizes, throttleDelay)
+    window.addEventListener('resize', throttled, false)
+
+    return () => {
+      window.removeEventListener('resize', throttled, false)
+      throttled.cancel()
+    }
+  }, [updateSizes, throttleDelay])
 
   return windowSize
 }

@@ -24,7 +24,7 @@ const handleArrayCb = (arr: (string | number)[]) => (_: any, i: number) => {
   const currentValue = arr[i]
   const lastValue = arr[arr.length - 1]
 
-  return currentValue || lastValue
+  return currentValue ?? lastValue
 }
 
 // type HandleObjectCb = (

@@ -14,9 +14,10 @@ const Component: ElementType<
   const { columns, gap, gutter, rowComponent, rowCss, contentAlignX, ...ctx } =
     useGridContext({ ...parentCtx, ...props })
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const context = useMemo(
     () => ({ ...ctx, columns, gap, gutter }),
-    [ctx, columns, gap, gutter]
+    [columns, gap, gutter, ...Object.values(ctx)]
   )
 
   const finalComponent = useMemo(

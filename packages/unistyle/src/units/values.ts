@@ -9,15 +9,13 @@ export type Values = (
   values: unknown[],
   rootSize?: number,
   outputUnit?: Units,
-) => string | number
+) => string | number | null
 
 const values: Values = (values, rootSize, outputUnit) => {
   const param = getValueOf(...values)
 
   if (Array.isArray(param)) {
-    return param
-      .reduce((acc, item) => acc.push(value(item, rootSize, outputUnit)), [])
-      .join(' ')
+    return param.map((item) => value(item, rootSize, outputUnit)).join(' ')
   }
 
   return value(param, rootSize, outputUnit)

@@ -14,7 +14,8 @@ const Component: ElementType<['containerWidth']> = ({
   ...props
 }) => {
   const { containerWidth = {}, ...ctx } = useGridContext(props)
-  const context = useMemo(() => ctx, [ctx])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const context = useMemo(() => ctx, [...Object.values(ctx)])
 
   let finalWidth = containerWidth
   if (width) {
