@@ -1,8 +1,9 @@
-export default {
+/** @type {import('jest').Config} */
+module.exports = {
   displayName: 'attrs',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|tsx)$': [
+    '^.+\\.(ts|tsx|js|jsx|mjs)$': [
       '@swc/jest',
       {
         jsc: {
@@ -19,8 +20,10 @@ export default {
       },
     ],
   },
+  transformIgnorePatterns: [],
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
+    '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
   },
   testMatch: ['**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)'],
   collectCoverageFrom: [
@@ -32,5 +35,5 @@ export default {
   ],
   coverageDirectory: '.coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
 }
