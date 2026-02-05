@@ -13,22 +13,18 @@ export type IsEmpty = <
   : false
 
 const isEmpty: IsEmpty = (param) => {
-  if (!param || param === null) return true
+  if (!param) return true
 
   if (typeof param !== 'object') {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return true as any
   }
 
-  if (Array.isArray(param) && param.length === 0) {
-    return true
+  if (Array.isArray(param)) {
+    return param.length === 0
   }
 
-  if (Object.entries(param).length === 0 && param.constructor === Object) {
-    return true
-  }
-
-  return false
+  return Object.keys(param).length === 0
 }
 
 export default isEmpty

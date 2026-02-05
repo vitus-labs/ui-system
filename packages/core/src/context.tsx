@@ -23,7 +23,11 @@ type ProviderType = Partial<
 
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.ExternalProvider, [])
-  const context = useMemo(() => ({ theme, ...props }), [theme, props])
+  const context = useMemo(
+    () => ({ theme, ...props }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, ...Object.values(props)],
+  )
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   if (isEmpty(theme) || !theme) return <>{children}</>

@@ -18,14 +18,8 @@ const render: Render = (content, attachProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (!content) return null as any
 
-  const isValidEl = isValidElement(content)
-
   const render = (child: Parameters<typeof createElement>[0]) =>
     attachProps ? createElement(child, attachProps) : createElement(child)
-
-  if (typeof content === 'string' && isValidEl) {
-    return render(content)
-  }
 
   if (['number', 'boolean', 'bigint', 'string'].includes(typeof content)) {
     return content
@@ -39,7 +33,7 @@ const render: Render = (content, attachProps) => {
     return render(content)
   }
 
-  if (isValidEl) {
+  if (isValidElement(content)) {
     if (isEmpty(attachProps)) {
       return content
     }

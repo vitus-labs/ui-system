@@ -1,5 +1,4 @@
-import { omit, pick, set, get, throttle, merge } from 'lodash-es'
-import memoize from 'moize'
+import { omit, pick, set, get, throttle, merge } from '~/utils'
 import config, { init } from '~/config'
 import Provider, { context } from '~/context'
 import compose from '~/compose'
@@ -41,7 +40,6 @@ export {
   get,
   throttle,
   merge,
-  memoize,
   HTML_TAGS,
   HTML_TEXT_TAGS,
 }
