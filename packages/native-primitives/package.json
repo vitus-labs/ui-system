@@ -40,7 +40,7 @@
     "lint:css": "stylelint src/*.ts src/*.tsx",
     "lint:ts": "eslint src/*",
     "lint": "",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --passWithNoTests",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
     "cover": "coveralls < .coverage/lcov.info"

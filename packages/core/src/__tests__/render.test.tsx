@@ -1,5 +1,5 @@
 import React from 'react'
-import { render as rtlRender, screen } from '@testing-library/react'
+import { render as rtlRender } from '@testing-library/react'
 import renderFn from '~/render'
 
 const TestComponent = (props: { label?: string }) => (
@@ -16,19 +16,17 @@ describe('render', () => {
 
   it('should render a component with props', () => {
     const result = renderFn(TestComponent, { label: 'hello' })
-    rtlRender(<>{result}</>)
-    expect(screen.getByTestId('test')).toHaveTextContent('hello')
+    const { getByTestId } = rtlRender(<>{result}</>)
+    expect(getByTestId('test').textContent).toBe('hello')
   })
 
   it('should render a component without props', () => {
     const result = renderFn(TestComponent)
-    rtlRender(<>{result}</>)
-    expect(screen.getByTestId('test')).toHaveTextContent('default')
+    const { getByTestId } = rtlRender(<>{result}</>)
+    expect(getByTestId('test').textContent).toBe('default')
   })
 
   it('should return string content as-is (treated as text)', () => {
-    // Note: plain strings hit the primitives branch and are returned as-is,
-    // even if they're valid HTML tag names like 'div'
     expect(renderFn('div' as any)).toBe('div')
     expect(renderFn('hello' as any)).toBe('hello')
   })
@@ -47,15 +45,15 @@ describe('render', () => {
   it('should clone a valid React element with props', () => {
     const el = <TestComponent label="original" />
     const result = renderFn(el as any, { label: 'cloned' })
-    rtlRender(<>{result}</>)
-    expect(screen.getByTestId('test')).toHaveTextContent('cloned')
+    const { getByTestId } = rtlRender(<>{result}</>)
+    expect(getByTestId('test').textContent).toBe('cloned')
   })
 
   it('should return a valid React element without modification when no props', () => {
     const el = <TestComponent label="original" />
     const result = renderFn(el as any)
-    rtlRender(<>{result}</>)
-    expect(screen.getByTestId('test')).toHaveTextContent('original')
+    const { getByTestId } = rtlRender(<>{result}</>)
+    expect(getByTestId('test').textContent).toBe('original')
   })
 
   it('should return fragment as-is', () => {

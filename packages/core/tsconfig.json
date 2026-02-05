@@ -6,7 +6,8 @@
   "exclude": [
     "node_modules",
     "__stories__",
-    "lib"
+    "lib",
+    "src/__tests__"
   ],
   "compilerOptions": {
     "strictNullChecks": true,

@@ -1,7 +1,7 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
   "include": ["src"],
-  "exclude": ["node_modules", "__stories__", "lib"],
+  "exclude": ["node_modules", "__stories__", "lib", "src/__tests__"],
   "compilerOptions": {
     "types": ["@vitus-labs/tools-rollup/global"],
     "rootDir": "src",

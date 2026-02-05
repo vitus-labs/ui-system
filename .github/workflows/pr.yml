@@ -23,5 +23,11 @@ jobs:
       - name: Build packages
         run: bun run pkgs:build
 
+      - name: Type check
+        run: bun run typecheck
+
+      - name: Run tests
+        run: bun run test
+
       - name: Lint codebase
         run: bun run lint

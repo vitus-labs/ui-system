@@ -19,6 +19,8 @@
     "lint": "lerna run lint",
     "pkgs:clean": "rm -rf node_modules/ bun.lock && bun install",
     "pkgs:build": "lerna run build --stream",
+    "test": "lerna run test --stream",
+    "typecheck": "lerna run typecheck --stream",
     "prettier": "prettier \"./*.+(js|json|md)\" \"./src/**/*.*\" --write"
   },
   "repository": {
@@ -32,6 +34,7 @@
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
@@ -40,6 +43,8 @@
     "coveralls": "^3.1.1",
     "cpr": "^3.0.1",
     "csstype": "3",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "lerna": "^8.2.4",
     "prettier": "^3.7.4",
     "react": "^19.2.3",
@@ -48,8 +53,6 @@
     "react-icons-kit": "^2.0.0",
     "styled-components": "^6.2.0",
     "ts-patch": "^3.3.0",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0",
     "typescript": "5.9.3",
     "typescript-transform-paths": "^3.5.6"
   }

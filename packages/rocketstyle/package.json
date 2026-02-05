@@ -53,7 +53,8 @@
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info"
+    "cover": "coveralls < .coverage/lcov.info",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",

@@ -5,8 +5,9 @@
   ],
   "exclude": [
     "node_modules",
-    "__stories__",
-    "lib"
+    "src/__stories__",
+    "lib",
+    "src/__tests__"
   ],
   "compilerOptions": {
     "strict": true,
