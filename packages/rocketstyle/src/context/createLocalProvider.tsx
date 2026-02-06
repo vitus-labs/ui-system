@@ -1,8 +1,8 @@
-import React, {
-  forwardRef,
-  useMemo,
+import {
   type ComponentType,
   type ForwardRefExoticComponent,
+  forwardRef,
+  useMemo,
 } from 'react'
 import { usePseudoState } from '~/hooks'
 import type { PseudoProps } from '~/types/pseudo'

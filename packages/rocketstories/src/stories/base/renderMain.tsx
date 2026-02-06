@@ -1,10 +1,10 @@
-import React, { createElement } from 'react'
+import { createElement } from 'react'
 import StoryHoc from '~/internal/StoryHoc'
 
-import type { StoryComponent, RocketStoryConfiguration } from '~/types'
+import type { RocketStoryConfiguration, StoryComponent } from '~/types'
 
 export type RenderMain<P = {}> = (
-  params: RocketStoryConfiguration
+  params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
 export default StoryHoc((component) => (props) => (

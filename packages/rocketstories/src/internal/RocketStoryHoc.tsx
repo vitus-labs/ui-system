@@ -1,18 +1,18 @@
 import { pick } from '@vitus-labs/core'
-import getTheme from '~/utils/theme'
+import type { RocketStoryConfiguration, StoryComponent } from '~/types'
 import { generateMainJSXCode } from '~/utils/code'
-import { extractDefaultBooleanProps } from '~/utils/dimensions'
-import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 import {
-  createControls,
   convertDimensionsToControls,
+  createControls,
+  disableDimensionControls,
   getDefaultVitusLabsControls,
   makeStorybookControls,
-  disableDimensionControls,
 } from '~/utils/controls'
+import { extractDefaultBooleanProps } from '~/utils/dimensions'
+import getTheme from '~/utils/theme'
 
 export type RocketStory<P = {}> = (
-  WrappedComponent: any
+  WrappedComponent: any,
 ) => (params: RocketStoryConfiguration) => StoryComponent<P>
 
 const rocketStory: RocketStory =

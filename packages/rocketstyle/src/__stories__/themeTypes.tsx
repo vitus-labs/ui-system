@@ -1,6 +1,5 @@
-import React from 'react'
 import { Element } from '@vitus-labs/elements'
-import { styles } from '@vitus-labs/unistyle'
+import type { styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
 
 const theme = {
@@ -37,7 +36,7 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
     width: '',
     size: '',
   })
-  .theme<{ test: boolean }>((t, v, css) => ({
+  .theme<{ test: boolean }>((t, _v, css) => ({
     fontFamily: '',
     color: 'black',
     height: t.fontSize.a,

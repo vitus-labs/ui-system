@@ -1,5 +1,5 @@
-import React, { createContext, useMemo } from 'react'
 import type { FC, ReactNode } from 'react'
+import { createContext, useMemo } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 import type { Breakpoints } from '~/types'
@@ -26,7 +26,7 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const context = useMemo(
     () => ({ theme, ...props }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme, ...Object.values(props)],
+    [theme, ...Object.values(props), props],
   )
 
   // eslint-disable-next-line react/jsx-no-useless-fragment

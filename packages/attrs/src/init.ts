@@ -1,7 +1,7 @@
 import { isEmpty } from '@vitus-labs/core'
 import attrsComponent from '~/attrs'
-import type { ElementType } from '~/types/utils'
 import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
+import type { ElementType } from '~/types/utils'
 
 export type Attrs = <C extends ElementType>({
   name,
@@ -12,7 +12,7 @@ export type Attrs = <C extends ElementType>({
 }) => ReturnType<InitAttrsComponent<C>>
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error
 const attrs: Attrs = ({ name, component }) => {
   // --------------------------------------------------------
   // handle ERRORS in development mode

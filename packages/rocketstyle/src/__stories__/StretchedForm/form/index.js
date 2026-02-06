@@ -5,8 +5,8 @@ import Input from './Input'
 import InputGroup from './InputGroup'
 import InputIcon from './InputIcon'
 import Label from './Label'
-import TextInput from './TextInput'
 import Submit from './Submit'
+import TextInput from './TextInput'
 
 export {
   Form,

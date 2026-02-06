@@ -1,8 +1,8 @@
-import { useContext } from 'react'
 import { get, pick } from '@vitus-labs/core'
 import { context } from '@vitus-labs/unistyle'
+import { useContext } from 'react'
 import { CONTEXT_KEYS } from '~/constants'
-import type { Obj, ValueType, Context } from '~/types'
+import type { Context, Obj, ValueType } from '~/types'
 
 // ------------------------------------------
 // pickTheme props

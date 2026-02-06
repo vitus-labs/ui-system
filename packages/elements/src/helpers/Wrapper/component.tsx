@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
-import { isWebFixNeeded } from './utils'
-import type { Props, Reference } from './types'
 import Styled from './styled'
+import type { Props, Reference } from './types'
+import { isWebFixNeeded } from './utils'
 
 // eslint-disable-next-line react/display-name
 const Component = forwardRef<Reference, Partial<Props>>(

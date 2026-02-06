@@ -1,6 +1,5 @@
-import React from 'react'
-import { init } from '~/init'
 import Theme from '~/decorators/Theme'
+import { init } from '~/init'
 import NormalComponent from './NormalComponent'
 
 const storyOf = init({
@@ -23,8 +22,6 @@ export default {
 }
 
 export const Example = stories.main()
-
-
 
 // export const Custom = stories.render((props) => (
 //   <NormalComponent {...props} label="Another" />

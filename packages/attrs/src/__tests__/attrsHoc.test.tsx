@@ -1,5 +1,5 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
+import React from 'react'
 import createAttrsHOC from '~/hoc/attrsHoc'
 
 const Receiver = (props: any) => (
@@ -24,7 +24,7 @@ describe('attrsHoc - props merging', () => {
 
   it('should apply attrs as default props', () => {
     const hoc = createAttrsHOC({
-      attrs: [(props: any) => ({ label: 'default' })],
+      attrs: [(_props: any) => ({ label: 'default' })],
       priorityAttrs: [],
     })
     const Enhanced = hoc(Receiver)
@@ -46,8 +46,8 @@ describe('attrsHoc - props merging', () => {
 
   it('should apply priorityAttrs with lowest precedence', () => {
     const hoc = createAttrsHOC({
-      attrs: [(props: any) => ({ label: 'from-attrs' })],
-      priorityAttrs: [(props: any) => ({ label: 'from-priority' })],
+      attrs: [(_props: any) => ({ label: 'from-attrs' })],
+      priorityAttrs: [(_props: any) => ({ label: 'from-priority' })],
     })
     const Enhanced = hoc(Receiver)
 
@@ -58,10 +58,7 @@ describe('attrsHoc - props merging', () => {
 
   it('should merge results from multiple attrs functions', () => {
     const hoc = createAttrsHOC({
-      attrs: [
-        () => ({ 'data-first': 'a' }),
-        () => ({ 'data-second': 'b' }),
-      ],
+      attrs: [() => ({ 'data-first': 'a' }), () => ({ 'data-second': 'b' })],
       priorityAttrs: [],
     })
     const Enhanced = hoc(Receiver)

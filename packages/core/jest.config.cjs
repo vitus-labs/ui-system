@@ -4,9 +4,6 @@ const base = require('../../jest.config.base.cjs')
 module.exports = {
   ...base,
   displayName: 'core',
-  collectCoverageFrom: [
-    ...base.collectCoverageFrom,
-    '!src/html/**',
-  ],
+  collectCoverageFrom: [...base.collectCoverageFrom, '!src/html/**'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
 }

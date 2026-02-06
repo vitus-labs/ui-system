@@ -1,4 +1,3 @@
-import React from 'react'
 import { config } from '@vitus-labs/core'
 import Element from '~/Element'
 import Util from '~/Util'

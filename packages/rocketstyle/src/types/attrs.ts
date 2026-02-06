@@ -1,4 +1,4 @@
-import { render } from '@vitus-labs/core'
+import type { render } from '@vitus-labs/core'
 import type { ThemeModeKeys } from './theme'
 
 export type AttrsCb<A, T> = (

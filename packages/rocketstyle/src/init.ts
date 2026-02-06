@@ -1,21 +1,20 @@
 // @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
-import rocketComponent from '~/rocketstyle'
-import {
-  getKeys,
-  getMultipleDimensions,
-  getDimensionsValues,
-} from '~/utils/dimensions'
 import { ALL_RESERVED_KEYS } from '~/constants'
 import defaultDimensions from '~/constants/defaultDimensions'
-
-import type { ElementType } from '~/types/utils'
-import type { Dimensions, DefaultDimensions } from '~/types/dimensions'
+import rocketComponent from '~/rocketstyle'
+import type { DefaultDimensions, Dimensions } from '~/types/dimensions'
 import type { RocketComponent } from '~/types/rocketComponent'
+import type { ElementType } from '~/types/utils'
+import {
+  getDimensionsValues,
+  getKeys,
+  getMultipleDimensions,
+} from '~/utils/dimensions'
 
 export type Rocketstyle = <
   D extends Dimensions = DefaultDimensions,
-  UB extends boolean = true
+  UB extends boolean = true,
 >({
   dimensions,
   useBooleans,
@@ -58,7 +57,7 @@ const rocketstyle: Rocketstyle =
       } else {
         const definedDimensions = getKeys(dimensions)
         const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
-          definedDimensions.includes(item as any)
+          definedDimensions.includes(item as any),
         )
 
         if (invalidDimension) {

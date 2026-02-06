@@ -52,7 +52,9 @@ describe('transformTheme', () => {
   })
 
   it('returns empty object for empty breakpoints', () => {
-    expect(transformTheme({ theme: { fontSize: 16 }, breakpoints: [] })).toEqual({})
+    expect(
+      transformTheme({ theme: { fontSize: 16 }, breakpoints: [] }),
+    ).toEqual({})
   })
 
   it('filters out unexpected breakpoint keys from objects', () => {

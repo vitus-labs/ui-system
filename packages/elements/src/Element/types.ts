@@ -1,18 +1,18 @@
+import type { HTMLTags } from '@vitus-labs/core'
 import type {
   ForwardRefExoticComponent,
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { HTMLTags } from '@vitus-labs/core'
 import type {
   AlignX,
   AlignY,
   Content,
   Direction,
-  ResponsiveBoolType,
-  Responsive,
   ExtendCss,
   InnerRef,
+  Responsive,
+  ResponsiveBoolType,
   VLStatic,
 } from '~/types'
 

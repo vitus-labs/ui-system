@@ -1,19 +1,19 @@
-import { omit, pick, set, get, throttle, merge } from '~/utils'
+import compose from '~/compose'
 import config, { init } from '~/config'
 import Provider, { context } from '~/context'
-import compose from '~/compose'
-import isEmpty from '~/isEmpty'
-import render from '~/render'
-import { HTML_TAGS, HTML_TEXT_TAGS } from '~/html'
-import type { IsEmpty } from '~/isEmpty'
-import type { Render } from '~/render'
 import type {
-  HTMLTags,
-  HTMLTextTags,
   HTMLElementAttrs,
   HTMLTagAttrsByTag,
+  HTMLTags,
+  HTMLTextTags,
 } from '~/html'
-import type { Breakpoints, BreakpointKeys } from '~/types'
+import { HTML_TAGS, HTML_TEXT_TAGS } from '~/html'
+import type { IsEmpty } from '~/isEmpty'
+import isEmpty from '~/isEmpty'
+import type { Render } from '~/render'
+import render from '~/render'
+import type { BreakpointKeys, Breakpoints } from '~/types'
+import { get, merge, omit, pick, set, throttle } from '~/utils'
 
 export type {
   Breakpoints,

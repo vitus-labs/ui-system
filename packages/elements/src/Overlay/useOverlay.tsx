@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
-import { useRef, useState, useEffect, useContext, useCallback } from 'react'
-import { throttle, context } from '@vitus-labs/core'
+
+import { context, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
 import Provider, { useOverlayContext } from './context'
 
@@ -334,18 +335,7 @@ const useOverlay = ({
     }
 
     return overlayPosition
-  }, [
-    isContentLoaded,
-    active,
-    align,
-    alignX,
-    alignY,
-    offsetX,
-    offsetY,
-    type,
-    triggerRef,
-    contentRef,
-  ])
+  }, [isContentLoaded, active, align, alignX, alignY, offsetX, offsetY, type])
 
   const assignContentPosition = useCallback(
     (values: OverlayPosition = {}) => {
@@ -376,7 +366,7 @@ const useOverlay = ({
       if (isValue(values.right))
         contentRef.current.style.right = setValue(values.right)
     },
-    [position, rootSize, contentRef],
+    [position, rootSize],
   )
 
   const setContentPosition = useCallback(() => {
@@ -454,32 +444,21 @@ const useOverlay = ({
       closeOn,
       hideContent,
       showContent,
-      triggerRef,
-      contentRef,
+      isNodeOrChild,
     ],
   )
 
   const handleContentPosition = useCallback(
     throttle(setContentPosition, throttleDelay),
     // same deps as `setContentPosition`
-    [assignContentPosition, calculateContentPosition],
+    [],
   )
   const handleClick = handleVisibilityByEventType
 
   const handleVisibility = useCallback(
     throttle(handleVisibilityByEventType, throttleDelay),
     // same deps as `handleVisibilityByEventType`
-    [
-      active,
-      blocked,
-      disabled,
-      openOn,
-      closeOn,
-      hideContent,
-      showContent,
-      triggerRef,
-      contentRef,
-    ],
+    [],
   )
 
   // --------------------------------------------------------------------------
@@ -517,7 +496,7 @@ const useOverlay = ({
       if (onClose) onClose()
       if (ctx.setUnblocked) ctx.setUnblocked()
     }
-  }, [active, showContent, ctx])
+  }, [active, ctx, onClose, onOpen])
 
   // handle closing only when content is active
   useEffect(() => {
@@ -607,15 +586,7 @@ const useOverlay = ({
       window.removeEventListener('click', handleClick)
       window.removeEventListener('mousemove', handleVisibility)
     }
-  }, [
-    openOn,
-    closeOn,
-    blocked,
-    disabled,
-    active,
-    handleClick,
-    handleVisibility,
-  ])
+  }, [openOn, closeOn, blocked, disabled, handleClick, handleVisibility])
 
   // hack-ish way to load content correctly on the first load
   // as `contentRef` is loaded dynamically

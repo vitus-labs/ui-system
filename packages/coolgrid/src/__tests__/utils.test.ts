@@ -1,4 +1,4 @@
-import { isNumber, hasValue, isVisible, hasWidth } from '../utils'
+import { hasValue, hasWidth, isNumber, isVisible } from '../utils'
 
 describe('isNumber', () => {
   it('returns true for finite numbers', () => {

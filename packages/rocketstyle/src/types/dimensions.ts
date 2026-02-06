@@ -1,14 +1,14 @@
 import type { DefaultDimensions } from '~/constants/defaultDimensions'
+import type { Css } from './styles'
+import type { ThemeModeCallback } from './theme'
 import type {
   CallBackParam,
+  NullableKeys,
+  ReturnCbParam,
   Spread,
   TObj,
-  NullableKeys,
   ValueOf,
-  ReturnCbParam,
 } from './utils'
-import type { ThemeModeCallback } from './theme'
-import type { Css } from './styles'
 
 export type { DefaultDimensions }
 
@@ -77,7 +77,7 @@ type DimensionTypesHelper<DKP extends TDKP> = {
 }
 
 export type DimensionObjAttrs<D extends Dimensions, DKP extends TDKP> = {
-  // @ts-ignore
+  // @ts-expect-error
   [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
     ? Array<keyof DKP[I]>
     : keyof DKP[I]

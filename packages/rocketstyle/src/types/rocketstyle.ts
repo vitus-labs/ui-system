@@ -1,21 +1,21 @@
-import type { ReactElement, ForwardedRef } from 'react'
-import type { TObj, ElementType, MergeTypes, ExtractProps } from './utils'
+import type { ForwardedRef, ReactElement } from 'react'
+import type { AttrsCb } from './attrs'
+import type { ConfigAttrs } from './config'
+import type { DefaultProps } from './configuration'
 import type {
+  DimensionCallbackParam,
+  DimensionProps,
   Dimensions,
   DimensionValue,
-  DimensionCallbackParam,
   ExtractDimensionProps,
-  TDKP,
-  DimensionProps,
   ExtractDimensions,
   MultiKeys,
+  TDKP,
 } from './dimensions'
-import type { StylesCb, Styles } from './styles'
-import type { ConfigAttrs } from './config'
-import type { AttrsCb } from './attrs'
-import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
 import type { ComposeParam } from './hoc'
-import type { DefaultProps } from './configuration'
+import type { Styles, StylesCb } from './styles'
+import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
+import type { ElementType, ExtractProps, MergeTypes, TObj } from './utils'
 
 export type InnerComponentProps = {
   $rocketstyleRef?: ForwardedRef<unknown>

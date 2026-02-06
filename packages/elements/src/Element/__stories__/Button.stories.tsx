@@ -1,9 +1,9 @@
-import React from 'react'
-import type { Meta, StoryObj } from '@storybook/react';
-import Element from '~/Element'
+import type { Meta, StoryObj } from '@storybook/react'
+import type Element from '~/Element'
+
 // import { rs, styled, css } from './base'
 
-const Button = (props) => (<button />)
+const Button = (_props) => <button />
 
 const meta: Meta<typeof Element> = {
   component: Button,
@@ -11,7 +11,7 @@ const meta: Meta<typeof Element> = {
 
 export default meta
 
-type Story = StoryObj<typeof Button>;
+type Story = StoryObj<typeof Button>
 
 export const Primary: Story = {
   // 👇 Rename this story
@@ -19,7 +19,7 @@ export const Primary: Story = {
   args: {
     label: 'Button',
   },
-};
+}
 
 // const LeftContent = styled.span`
 //   padding: 5px;

@@ -27,7 +27,7 @@ describe('removeNullableValues', () => {
 
   it('returns empty object for all nullable', () => {
     expect(removeNullableValues({ a: null, b: undefined, c: false })).toEqual(
-      {}
+      {},
     )
   })
 

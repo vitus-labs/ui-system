@@ -1,16 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
-import * as rocketstory from '~/stories/rocketstories'
 import * as simplestory from '~/stories/base'
+import * as rocketstory from '~/stories/rocketstories'
 import type {
-  Control,
-  TObj,
   Configuration,
-  RocketType,
+  Control,
   ExtractProps,
-  RenderStoryOptions,
   ListStoryOptions,
+  RenderStoryOptions,
+  RocketType,
+  TObj,
 } from '~/types'
 
 const cloneAndEhnance = (
@@ -125,7 +124,7 @@ export interface IRocketStories<
 }
 
 type CreateRocketStories = (options: Configuration) => IRocketStories
-// @ts-ignore
+// @ts-expect-error
 const createRocketStories: CreateRocketStories = (options) => {
   const isRocket = isRocketComponent(options.component)
 

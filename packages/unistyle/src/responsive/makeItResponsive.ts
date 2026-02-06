@@ -1,10 +1,10 @@
 import { isEmpty } from '@vitus-labs/core'
 import type { Css } from '~/types'
-import createMediaQueries from './createMediaQueries'
-import sortBreakpoints from './sortBreakpoints'
+import type createMediaQueries from './createMediaQueries'
 import normalizeTheme from './normalizeTheme'
-import transformTheme from './transformTheme'
 import optimizeTheme from './optimizeTheme'
+import type sortBreakpoints from './sortBreakpoints'
+import transformTheme from './transformTheme'
 
 type CustomTheme = Record<
   string,

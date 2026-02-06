@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { omitCtxKeys } from '~/utils'
 import Context from '~/context/ContainerContext'
-import useGridContext from '~/useContext'
 import type { ElementType } from '~/types'
+import useGridContext from '~/useContext'
+import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
 const Component: ElementType<['containerWidth']> = ({
@@ -19,7 +19,7 @@ const Component: ElementType<['containerWidth']> = ({
 
   let finalWidth = containerWidth
   if (width) {
-    // @ts-ignore
+    // @ts-expect-error
     finalWidth = typeof width === 'function' ? width(containerWidth) : width
   }
 
@@ -30,7 +30,7 @@ const Component: ElementType<['containerWidth']> = ({
         extraStyles: css,
       },
     }),
-    [finalWidth, css]
+    [finalWidth, css],
   )
 
   const getDevProps = () => {

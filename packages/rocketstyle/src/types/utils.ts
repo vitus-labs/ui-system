@@ -1,4 +1,4 @@
-import type { ComponentType, ForwardRefExoticComponent, FC } from 'react'
+import type { ComponentType, FC, ForwardRefExoticComponent } from 'react'
 
 export type TObj = Record<string, unknown>
 export type TFn = (...args: any) => any

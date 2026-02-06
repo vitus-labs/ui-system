@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React from 'react'
 import Text from '~/Text'
 
 export default {

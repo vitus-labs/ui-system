@@ -1,6 +1,6 @@
 import { borderRadius, edge } from '~/styles/shorthands'
-import { values } from '~/units'
 import type { Css } from '~/types'
+import { values } from '~/units'
 import type { InnerTheme, Theme } from './types'
 
 export type { Theme as StylesTheme }
@@ -20,14 +20,16 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
   const shorthand = edge(rootSize)
 
   return css`
-    ${t.fullScreen &&
-    css`
+    ${
+      t.fullScreen &&
+      css`
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-    `};
+    `
+    };
 
     /* ------------------------------------------------- */
     /* POSITION attributes */
@@ -173,10 +175,12 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     color: ${t.color};
     background: ${t.background};
     background-color: ${t.backgroundColor};
-    ${t.backgroundImage &&
-    css`
+    ${
+      t.backgroundImage &&
+      css`
       background-image: url(${t.backgroundImage});
-    `};
+    `
+    };
     background-attachment: ${t.backgroundAttachment};
     background-clip: ${t.backgroundClip};
     background-origin: ${t.backgroundOrigin};
@@ -298,23 +302,27 @@ const styles: Styles = ({ theme: t, css, rootSize }) => {
     /* ------------------------------------------------- */
     /* CUSTOM attributes */
     /* ------------------------------------------------- */
-    ${__WEB__ &&
-    t.hideEmpty &&
-    css`
+    ${
+      __WEB__ &&
+      t.hideEmpty &&
+      css`
       &:empty {
         display: none;
       }
-    `};
+    `
+    };
 
-    ${__WEB__ &&
-    t.clearFix &&
-    css`
+    ${
+      __WEB__ &&
+      t.clearFix &&
+      css`
       &::after: {
         clear: both;
         content: '';
         display: table;
       }
-    `};
+    `
+    };
 
     ${t.extendCss};
   `

@@ -1,5 +1,5 @@
-import React, { type FC } from 'react'
 import { config } from '@vitus-labs/core'
+import type { FC } from 'react'
 
 const Wrapper = config.styled.div`
   display: flex;

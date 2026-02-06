@@ -1,5 +1,5 @@
-import type { ComponentType, ForwardRefExoticComponent, FC } from 'react'
 import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
+import type { ComponentType, FC, ForwardRefExoticComponent } from 'react'
 
 export type TObj = Record<string, unknown>
 export type TFn = (...args: any) => any

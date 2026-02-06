@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { omitCtxKeys } from '~/utils'
-import useGridContext from '~/useContext'
 import { RowContext } from '~/context'
 import type { ElementType } from '~/types'
+import useGridContext from '~/useContext'
+import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
 const Component: ElementType<

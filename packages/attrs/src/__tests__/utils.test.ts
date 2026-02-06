@@ -1,8 +1,8 @@
-import { removeUndefinedProps, calculateChainOptions } from '~/utils/attrs'
-import { removeNullableValues } from '~/utils/collection'
+import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import { chainOptions } from '~/utils/chaining'
-import { createStaticsEnhancers } from '~/utils/statics'
+import { removeNullableValues } from '~/utils/collection'
 import { calculateHocsFuncs } from '~/utils/compose'
+import { createStaticsEnhancers } from '~/utils/statics'
 
 // --------------------------------------------------------
 // removeUndefinedProps
@@ -111,7 +111,9 @@ describe('calculateChainOptions', () => {
   })
 
   it('should execute a single option function', () => {
-    const fn = (props: any) => ({ color: props.variant === 'primary' ? 'blue' : 'gray' })
+    const fn = (props: any) => ({
+      color: props.variant === 'primary' ? 'blue' : 'gray',
+    })
     const calculate = calculateChainOptions([fn])
     const result = calculate([{ variant: 'primary' }])
     expect(result).toEqual({ color: 'blue' })

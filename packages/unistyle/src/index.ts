@@ -1,12 +1,14 @@
-import Provider, { context } from '~/context'
 import type { TProvider } from '~/context'
+import Provider, { context } from '~/context'
 import type {
-  BrowserColors,
-  Color,
-  PropertyValue,
-  UnitValue,
-  Defaults,
-} from '~/types'
+  Breakpoints,
+  CreateMediaQueries,
+  MakeItResponsive,
+  MakeItResponsiveStyles,
+  NormalizeTheme,
+  SortBreakpoints,
+  TransformTheme,
+} from '~/responsive'
 
 // --------------------------------------------------------
 // RESPONSIVE UTILITIES
@@ -20,42 +22,38 @@ import {
   transformTheme,
 } from '~/responsive'
 import type {
-  Breakpoints,
-  CreateMediaQueries,
-  MakeItResponsive,
-  MakeItResponsiveStyles,
-  NormalizeTheme,
-  SortBreakpoints,
-  TransformTheme,
-} from '~/responsive'
-
-// --------------------------------------------------------
-// STYLES
-// --------------------------------------------------------
-import {
-  styles,
-  alignContent,
-  ALIGN_CONTENT_DIRECTION,
-  ALIGN_CONTENT_MAP_X,
-  ALIGN_CONTENT_MAP_Y,
-  extendCss,
-} from '~/styles'
-
-import type {
-  Styles,
-  StylesTheme,
   AlignContent,
   AlignContentAlignXKeys,
   AlignContentAlignYKeys,
   AlignContentDirectionKeys,
   ExtendCss,
+  Styles,
+  StylesTheme,
 } from '~/styles'
 
+// --------------------------------------------------------
+// STYLES
+// --------------------------------------------------------
+import {
+  ALIGN_CONTENT_DIRECTION,
+  ALIGN_CONTENT_MAP_X,
+  ALIGN_CONTENT_MAP_Y,
+  alignContent,
+  extendCss,
+  styles,
+} from '~/styles'
+import type {
+  BrowserColors,
+  Color,
+  Defaults,
+  PropertyValue,
+  UnitValue,
+} from '~/types'
+import type { StripUnit, Value, Values } from '~/units'
 // --------------------------------------------------------
 // UNITS UTILITIES
 // --------------------------------------------------------
 import { stripUnit, value, values } from '~/units'
-import type { StripUnit, Value, Values } from '~/units'
 
 export type {
   TProvider,

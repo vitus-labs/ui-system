@@ -1,16 +1,16 @@
-import { type ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
+import type { ReactNode } from 'react'
 import type {
-  ContentDirection,
+  AlignX,
+  AlignY,
   ContentAlignX,
   ContentAlignY,
   ContentBoolean,
+  ContentDirection,
   Css,
   Direction,
-  AlignX,
-  AlignY,
-  ResponsiveBoolType,
   ExtendCss,
+  ResponsiveBoolType,
 } from '~/types'
 
 export type Reference = unknown

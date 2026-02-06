@@ -1,4 +1,3 @@
-import React from 'react'
 import { render as rtlRender } from '@testing-library/react'
 import renderFn from '~/render'
 
@@ -16,13 +15,13 @@ describe('render', () => {
 
   it('should render a component with props', () => {
     const result = renderFn(TestComponent, { label: 'hello' })
-    const { getByTestId } = rtlRender(<>{result}</>)
+    const { getByTestId } = rtlRender(result)
     expect(getByTestId('test').textContent).toBe('hello')
   })
 
   it('should render a component without props', () => {
     const result = renderFn(TestComponent)
-    const { getByTestId } = rtlRender(<>{result}</>)
+    const { getByTestId } = rtlRender(result)
     expect(getByTestId('test').textContent).toBe('default')
   })
 
@@ -45,14 +44,14 @@ describe('render', () => {
   it('should clone a valid React element with props', () => {
     const el = <TestComponent label="original" />
     const result = renderFn(el as any, { label: 'cloned' })
-    const { getByTestId } = rtlRender(<>{result}</>)
+    const { getByTestId } = rtlRender(result)
     expect(getByTestId('test').textContent).toBe('cloned')
   })
 
   it('should return a valid React element without modification when no props', () => {
     const el = <TestComponent label="original" />
     const result = renderFn(el as any)
-    const { getByTestId } = rtlRender(<>{result}</>)
+    const { getByTestId } = rtlRender(result)
     expect(getByTestId('test').textContent).toBe('original')
   })
 

@@ -1,9 +1,8 @@
-import { createElement } from 'react'
+import type { StoryComponent, StoryConfiguration } from '~/types'
 import { createControls, makeStorybookControls } from '~/utils/controls'
-import type { StoryConfiguration, StoryComponent } from '~/types'
 
 export type Story<P = {}> = (
-  WrappedComponent: any
+  WrappedComponent: any,
 ) => (params: StoryConfiguration) => StoryComponent<P>
 
 const story: Story =

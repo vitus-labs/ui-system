@@ -1,5 +1,5 @@
-import React, { createRef } from 'react'
 import { render, screen } from '@testing-library/react'
+import React, { createRef } from 'react'
 import attrs from '~/init'
 import isAttrsComponent from '~/isAttrsComponent'
 
@@ -21,9 +21,7 @@ describe('attrs initialization', () => {
   })
 
   it('should throw when component is missing (dev mode)', () => {
-    expect(() =>
-      attrs({ name: 'Test', component: undefined as any }),
-    ).toThrow()
+    expect(() => attrs({ name: 'Test', component: undefined as any })).toThrow()
   })
 
   it('should throw when name is missing (dev mode)', () => {

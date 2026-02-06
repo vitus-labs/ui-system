@@ -1,3 +1,5 @@
+import type { BreakpointKeys, config, render } from '@vitus-labs/core'
+import type { MakeItResponsive } from '@vitus-labs/unistyle'
 import type {
   ComponentType,
   FC,
@@ -6,9 +8,6 @@ import type {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { MakeItResponsive } from '@vitus-labs/unistyle'
-import type { BreakpointKeys } from '@vitus-labs/core'
-import { config, render } from '@vitus-labs/core'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 

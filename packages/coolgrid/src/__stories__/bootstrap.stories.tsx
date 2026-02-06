@@ -1,7 +1,6 @@
-import React from 'react'
+import Col from '../Col'
 import Container from '../Container'
 import Row from '../Row'
-import Col from '../Col'
 
 const colCss = (css) => css`
   background-color: #e0e0eb;

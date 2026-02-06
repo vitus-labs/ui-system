@@ -19,7 +19,7 @@ export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
 type IsModeCallback = (value: any) => boolean
 const isModeCallback: IsModeCallback = (value: any) =>
   typeof value === 'function' &&
-  //@ts-ignore
+  //@ts-expect-error
   value.toString() === themeModeCallback().toString()
 
 // --------------------------------------------------------

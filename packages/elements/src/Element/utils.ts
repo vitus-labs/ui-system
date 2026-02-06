@@ -1,4 +1,4 @@
-import { INLINE_ELEMENTS, EMPTY_ELEMENTS } from './constants'
+import { EMPTY_ELEMENTS, INLINE_ELEMENTS } from './constants'
 
 type GetValue = (tag?: string) => boolean
 

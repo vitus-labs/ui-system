@@ -5,7 +5,7 @@ const isAttrsComponent: IsAttrsComponent = (component) => {
     component &&
     typeof component === 'object' &&
     component !== null &&
-    Object.prototype.hasOwnProperty.call(component, 'IS_ATTRS')
+    Object.hasOwn(component, 'IS_ATTRS')
   ) {
     return true
   }

@@ -6,7 +6,7 @@ import { get } from '@vitus-labs/core'
 // ------------------------------------------
 type GetContainerWidth = (
   props?: Record<string, unknown> | unknown,
-  theme?: Record<string, unknown> | unknown
+  theme?: Record<string, unknown> | unknown,
 ) => ReturnType<typeof get>
 
 export const getContainerWidth: GetContainerWidth = (props, theme) =>

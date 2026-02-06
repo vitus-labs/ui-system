@@ -24,7 +24,7 @@ describe('compose', () => {
 
   it('should pass value through string transforms', () => {
     const upper = (s: string) => s.toUpperCase()
-    const exclaim = (s: string) => s + '!'
+    const exclaim = (s: string) => `${s}!`
     // exclaim('hello') = 'hello!', upper('hello!') = 'HELLO!'
     expect(compose(upper, exclaim)('hello')).toBe('HELLO!')
   })

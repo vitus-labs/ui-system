@@ -1,11 +1,11 @@
-import React, {
-  forwardRef,
+import type { HTMLTextTags } from '@vitus-labs/core'
+import {
   type ForwardRefRenderFunction,
+  forwardRef,
   type ReactNode,
 } from 'react'
-import type { HTMLTextTags } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import type { VLForwardedComponent, ExtendCss } from '~/types'
+import type { ExtendCss, VLForwardedComponent } from '~/types'
 import Styled from './styled'
 
 export type Props = Partial<{

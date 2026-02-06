@@ -28,5 +28,5 @@ export default element
     (css) => css`
       border: none;
       outline: none;
-    `
+    `,
   )

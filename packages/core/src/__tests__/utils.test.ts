@@ -1,4 +1,4 @@
-import { omit, pick, get, set, throttle, merge } from '~/utils'
+import { get, merge, omit, pick, set, throttle } from '~/utils'
 
 // --------------------------------------------------------
 // omit

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import {
+  ALIGN_CONTENT_MAP_X,
+  extendCss,
   makeItResponsive,
   value,
-  extendCss,
-  ALIGN_CONTENT_MAP_X,
 } from '@vitus-labs/unistyle'
-import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
-import { isNumber } from '~/utils'
 import type { CssOutput, StyledTypes } from '~/types'
+import { isNumber } from '~/utils'
 
 const { styled, css, component } = config
 
@@ -51,10 +51,12 @@ const styles: MakeItResponsiveStyles<
 }
 
 export default styled(component)<any>`
-  ${__WEB__ &&
-  css`
+  ${
+    __WEB__ &&
+    css`
     box-sizing: border-box;
-  `};
+  `
+  };
 
   display: flex;
   flex-wrap: wrap;

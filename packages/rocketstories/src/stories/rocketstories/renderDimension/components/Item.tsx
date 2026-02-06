@@ -1,4 +1,4 @@
-import React, { createElement, type FC } from 'react'
+import { createElement, type FC } from 'react'
 import { Heading } from '~/components/base'
 import { useContext } from '../context'
 

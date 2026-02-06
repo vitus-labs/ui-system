@@ -1,6 +1,6 @@
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, value, extendCss } from '@vitus-labs/unistyle'
 import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
+import { extendCss, makeItResponsive, value } from '@vitus-labs/unistyle'
 import type { StyledTypes } from '~/types'
 
 const { styled, css, component } = config
@@ -13,10 +13,12 @@ const styles: MakeItResponsiveStyles<
 `
 
 export default styled(component)<any>`
-  ${__WEB__ &&
-  css`
+  ${
+    __WEB__ &&
+    css`
     box-sizing: border-box;
-  `};
+  `
+  };
 
   display: flex;
   width: 100%;

@@ -1,15 +1,14 @@
-import React from 'react'
 import { List } from '@vitus-labs/elements'
 import RocketStoryHoc from '~/internal/RocketStoryHoc'
 import type {
   ListStoryOptions,
-  StoryComponent,
   RocketStoryConfiguration,
+  StoryComponent,
 } from '~/types'
 
 export type RenderList<P = {}> = (
   render: ListStoryOptions,
-  params: RocketStoryConfiguration
+  params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
 export default (list) =>

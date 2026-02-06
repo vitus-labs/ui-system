@@ -1,37 +1,38 @@
 /** @deprecated */
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { createElement, Fragment } from 'react'
-import { pick, isEmpty } from '@vitus-labs/core'
+
+import { isEmpty, pick } from '@vitus-labs/core'
 import { Element, Text } from '@vitus-labs/elements'
+import { createElement, Fragment } from 'react'
 import NotFound from '~/components/NotFound'
-import getTheme from '~/utils/theme'
-import { createJSXCodeArray } from '~/utils/code'
-import {
-  filterDefaultValues,
-  disableDimensionControls,
-  dimensionsToControls,
-  makeControls,
-  filterControls,
-  filterValues,
-  valuesToControls,
-} from '~/utils/controls'
 import type {
   RocketDimensions,
-  StoryComponent,
   RocketStoryConfiguration,
+  StoryComponent,
 } from '~/types'
+import { createJSXCodeArray } from '~/utils/code'
+import {
+  dimensionsToControls,
+  disableDimensionControls,
+  filterControls,
+  filterDefaultValues,
+  filterValues,
+  makeControls,
+  valuesToControls,
+} from '~/utils/controls'
+import getTheme from '~/utils/theme'
 
 export type RenderDimension<P = {}> = (
   dimension: RocketDimensions,
   params: RocketStoryConfiguration & {
     ignore: any
-  }
+  },
 ) => StoryComponent<P>
 
 const renderDimension: RenderDimension = (
   dimension,
-  { name, component, attrs = {}, storyOptions = {}, ignore = [] }
+  { name, component, attrs = {}, storyOptions = {}, ignore = [] },
 ) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
@@ -97,7 +98,7 @@ const renderDimension: RenderDimension = (
       contentDirection={storyOptions.direction}
       contentAlignX={storyOptions.alignX}
       contentAlignY={storyOptions.alignY}
-      // @ts-ignore
+      // @ts-expect-error
       style={{ gap: storyOptions.gap }}
     >
       {Object.keys(currentDimension).map((item) => {
@@ -117,7 +118,7 @@ const renderDimension: RenderDimension = (
               }
               contentAlignX={storyOptions.alignX}
               contentAlignY={storyOptions.alignY}
-              // @ts-ignore
+              // @ts-expect-error
               style={{ gap: storyOptions.gap / 2 }}
             >
               <div>
@@ -193,7 +194,7 @@ const renderDimension: RenderDimension = (
           dimension,
           currentDimension,
           useBooleans,
-          isMultiKey
+          isMultiKey,
         ),
       },
     },

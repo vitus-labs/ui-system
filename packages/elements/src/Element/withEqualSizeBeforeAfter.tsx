@@ -1,5 +1,5 @@
-import React, { createRef } from 'react'
 import { get } from '@vitus-labs/core'
+import { createRef } from 'react'
 import type { SimpleHoc } from '~/types'
 import type { Props as ElementProps } from './types'
 
@@ -56,8 +56,12 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
     const elementRef = createRef<HTMLElement>()
 
     const calculateSize = () => {
-      const beforeContent = get(elementRef, 'current.children[0]') as HTMLElement | undefined
-      const afterContent = get(elementRef, 'current.children[2]') as HTMLElement | undefined
+      const beforeContent = get(elementRef, 'current.children[0]') as
+        | HTMLElement
+        | undefined
+      const afterContent = get(elementRef, 'current.children[2]') as
+        | HTMLElement
+        | undefined
 
       if (beforeContent && afterContent) {
         const updateElement = calculate({ beforeContent, afterContent })
@@ -74,7 +78,7 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
         {...rest}
         afterContent={afterContent}
         beforeContent={beforeContent}
-        // @ts-ignore
+        // @ts-expect-error
         ref={elementRef}
       />
     )

@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react'
-import type { ReactNode, FC } from 'react'
 import {
-  config,
-  isEmpty,
   Provider as CoreProvider,
+  config,
   context,
+  isEmpty,
 } from '@vitus-labs/core'
-import { sortBreakpoints, createMediaQueries } from '~/responsive'
+import type { FC, ReactNode } from 'react'
+import { useMemo } from 'react'
+import { createMediaQueries, sortBreakpoints } from '~/responsive'
 
 // type VitusLabsContext = {
 //   sortedBreakpoints?: ReturnType<typeof sortBreakpoints>

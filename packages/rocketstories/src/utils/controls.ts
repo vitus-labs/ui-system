@@ -1,9 +1,9 @@
 import * as CONTROLS from '~/controls'
 import type {
-  Controls,
-  StorybookControl,
-  RocketType,
   ControlConfiguration,
+  Controls,
+  RocketType,
+  StorybookControl,
 } from '~/types'
 
 export const createControls = (props) =>
@@ -55,7 +55,7 @@ export const convertDimensionsToControls: ConvertDimensionsToControls = ({
 type GetDefaultVitusLabsControls = (component: RocketType) => Controls
 
 export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
-  component
+  component,
 ) => {
   const { IS_ROCKETSTYLE, VITUS_LABS__COMPONENT } = component
 
@@ -84,7 +84,7 @@ export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
 // --------------------------------------------------------
 type MakeStorybookControls = (
   obj: Record<string, ControlConfiguration>,
-  props: Record<string, any>
+  props: Record<string, any>,
 ) => Record<string, StorybookControl>
 
 export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
@@ -125,7 +125,7 @@ export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
 // disableControl
 // --------------------------------------------------------
 type DisableControl = (
-  name: string
+  name: string,
 ) => Record<string, { table: { disable: true } }>
 
 const disableControl: DisableControl = (name) => ({
@@ -137,12 +137,12 @@ const disableControl: DisableControl = (name) => ({
 // --------------------------------------------------------
 type DisableDimensionControls = (
   dimensions: Record<string, boolean>,
-  name?: string
+  name?: string,
 ) => any
 
 export const disableDimensionControls: DisableDimensionControls = (
   dimensions,
-  dimensionName
+  dimensionName,
 ) => {
   const result = dimensionName ? disableControl(dimensionName) : {}
   const dimensionKeys = Object.values(dimensions)

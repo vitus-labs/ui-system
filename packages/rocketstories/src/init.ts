@@ -1,6 +1,6 @@
-import type { Configuration, RocketType, ExtractProps } from '~/types'
-import createRocketStories from '~/rocketstories'
 import type { IRocketStories } from '~/rocketstories'
+import createRocketStories from '~/rocketstories'
+import type { Configuration, ExtractProps, RocketType } from '~/types'
 
 // --------------------------------------------------------
 // rocketstories
@@ -30,7 +30,7 @@ export type Rocketstories = <C extends Configuration['component']>(
   ? IRocketStories<ExtractProps<C>, C['$$rocketstyle'], true>
   : IRocketStories<ExtractProps<C>, unknown, false>
 
-//@ts-ignore
+//@ts-expect-error
 const rocketstories: Rocketstories = (component, options = {}) => {
   const { decorators = [], storyOptions = {} } = options
 

@@ -1,7 +1,7 @@
 import type { ExtractProps } from '@vitus-labs/tools-types'
-import type { ElementType } from './utils'
-import type { Configuration } from './configuration'
 import type { AttrsComponent } from './AttrsComponent'
+import type { Configuration } from './configuration'
+import type { ElementType } from './utils'
 
 export type InitAttrsComponent<C extends ElementType = ElementType> = (
   params: Configuration<C>,

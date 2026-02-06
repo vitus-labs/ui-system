@@ -1,5 +1,6 @@
 export default {
   build: {
+    external: ['react/jsx-runtime'],
     globals: {
       React: 'react',
       ReactDOM: 'react-dom',

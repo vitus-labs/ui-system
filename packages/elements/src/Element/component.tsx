@@ -1,9 +1,9 @@
-import React, { forwardRef, useMemo } from 'react'
 import { render } from '@vitus-labs/core'
+import { forwardRef, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { Wrapper, Content } from '~/helpers'
-import { isInlineElement, getShouldBeEmpty } from './utils'
+import { Content, Wrapper } from '~/helpers'
 import type { VLElement } from './types'
+import { getShouldBeEmpty, isInlineElement } from './utils'
 
 const defaultDirection = 'inline'
 const defaultContentDirection = 'rows'

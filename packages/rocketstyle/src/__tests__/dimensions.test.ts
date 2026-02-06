@@ -1,11 +1,11 @@
 import {
-  isValidKey,
-  isMultiKey,
-  getKeys,
-  getValues,
-  getDimensionsValues,
-  getMultipleDimensions,
   getDimensionsMap,
+  getDimensionsValues,
+  getKeys,
+  getMultipleDimensions,
+  getValues,
+  isMultiKey,
+  isValidKey,
 } from '../utils/dimensions'
 
 describe('isValidKey', () => {

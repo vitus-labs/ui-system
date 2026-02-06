@@ -1,5 +1,5 @@
-import rocketstyle from '@vitus-labs/rocketstyle'
 import { Element } from '@vitus-labs/elements'
+import rocketstyle from '@vitus-labs/rocketstyle'
 import { styles } from '@vitus-labs/unistyle'
 
 export default rocketstyle()({
@@ -18,5 +18,5 @@ export default rocketstyle()({
           ${baseTheme};
         `
       }};
-    `
+    `,
   )

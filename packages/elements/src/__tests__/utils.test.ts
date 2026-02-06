@@ -1,4 +1,4 @@
-import { isInlineElement, getShouldBeEmpty } from '../Element/utils'
+import { getShouldBeEmpty, isInlineElement } from '../Element/utils'
 import { isWebFixNeeded } from '../helpers/Wrapper/utils'
 
 describe('isInlineElement', () => {

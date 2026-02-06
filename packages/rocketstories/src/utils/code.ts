@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { get } from '@vitus-labs/core'
-import type { Control, SimpleValue, Obj } from '~/types'
+import type { Control, Obj, SimpleValue } from '~/types'
 
 // --------------------------------------------------------
 // parseProps
@@ -8,9 +8,9 @@ import type { Control, SimpleValue, Obj } from '~/types'
 type ObjValue = Control
 
 type ParseProps = <
-  T extends Record<string, SimpleValue | Array<SimpleValue> | ObjValue>
+  T extends Record<string, SimpleValue | Array<SimpleValue> | ObjValue>,
 >(
-  props: T
+  props: T,
 ) => Record<keyof T, unknown>
 
 const parseProps: ParseProps = (props) =>
@@ -174,7 +174,7 @@ type CreateJSXCodeArray = (
   dimensionName: string,
   dimensions: Obj,
   useBooleans: boolean,
-  isMultiKey: boolean
+  isMultiKey: boolean,
 ) => string
 
 export const createJSXCodeArray: CreateJSXCodeArray = (
@@ -183,7 +183,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   dimensionName,
   dimensions,
   useBooleans,
-  isMultiKey
+  isMultiKey,
 ) => {
   if (!dimensions) return `// nothing here`
 
@@ -204,7 +204,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   if (useBooleans) {
     result += `\n\n`
     result += `// Or alternatively use boolean ${dimensionName} props (${Object.keys(
-      dimensions
+      dimensions,
     ).toString()})`
     result += `\n`
 

@@ -1,8 +1,8 @@
-import { config } from '@vitus-labs/core'
+import type { config } from '@vitus-labs/core'
 import type { MergeTypes } from './utils'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StylesDefault {}
+export type StylesDefault = {}
 
 export type Styles<S> = S extends unknown
   ? StylesDefault

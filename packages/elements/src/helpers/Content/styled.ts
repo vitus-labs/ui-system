@@ -1,8 +1,8 @@
 import { config } from '@vitus-labs/core'
 import {
-  makeItResponsive,
   alignContent,
   extendCss,
+  makeItResponsive,
   value,
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
@@ -76,13 +76,15 @@ const styles: ResponsiveStylesCallback = ({
 
   ${t.equalCols && equalColsCSS};
 
-  ${t.gap &&
-  t.contentType &&
-  calculateGap({
-    direction: t.parentDirection,
-    type: t.contentType,
-    value: value(t.gap, rootSize),
-  })};
+  ${
+    t.gap &&
+    t.contentType &&
+    calculateGap({
+      direction: t.parentDirection,
+      type: t.contentType,
+      value: value(t.gap, rootSize),
+    })
+  };
 
   ${t.extraStyles && extendCss(t.extraStyles)};
 `

@@ -1,4 +1,4 @@
-import React, { VFC } from 'react'
+import type { VFC } from 'react'
 
 type Props = {
   label: string

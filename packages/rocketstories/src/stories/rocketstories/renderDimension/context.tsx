@@ -1,8 +1,8 @@
-import React, {
-  createContext,
-  useContext as contextHook,
-  type FC,
+import {
   type ComponentType,
+  useContext as contextHook,
+  createContext,
+  type FC,
   type ReactNode,
 } from 'react'
 

@@ -1,8 +1,6 @@
-import type { FC, ReactNode, ComponentType } from 'react'
-import { config } from '@vitus-labs/core'
-import { extendCss } from '@vitus-labs/unistyle'
-import type { BreakpointKeys } from '@vitus-labs/core'
-import type { AlignContentAlignXKeys } from '@vitus-labs/unistyle'
+import type { BreakpointKeys, config } from '@vitus-labs/core'
+import type { AlignContentAlignXKeys, extendCss } from '@vitus-labs/unistyle'
+import type { ComponentType, FC, ReactNode } from 'react'
 
 type CreateValueType<T> = T | T[] | Partial<Record<BreakpointKeys, T>>
 

@@ -25,7 +25,7 @@ type PickStyledAttrs = <
 >(
   props: T,
   keywords: K,
-  // @ts-ignore
+  // @ts-expect-error
 ) => { [I in keyof K]: T[I] }
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
@@ -48,7 +48,7 @@ export const calculateChainOptions: CalculateChainOptions =
     if (isEmpty(options)) return result
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }
 
@@ -80,7 +80,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       const valueTypes = ['number', 'string']
 
       // if the property is multi key, allow assign array as well
-      if (multiKeys && multiKeys[item] && Array.isArray(pickedProp)) {
+      if (multiKeys?.[item] && Array.isArray(pickedProp)) {
         result[item] = pickedProp
       }
       // assign when it's only a string or number otherwise it's considered
@@ -98,7 +98,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
       Object.entries(result).forEach(([key, value]) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         const isMultiKey = multiKeys[key]
 
         // when value in result is not assigned yet

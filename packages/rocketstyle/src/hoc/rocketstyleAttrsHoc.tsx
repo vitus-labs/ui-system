@@ -1,13 +1,14 @@
 /* eslint-disable no-underscore-dangle */
-import React, {
-  forwardRef,
-  type ForwardRefExoticComponent,
-  type ComponentType,
-} from 'react'
+
 import { render } from '@vitus-labs/core'
-import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
+import {
+  type ComponentType,
+  type ForwardRefExoticComponent,
+  forwardRef,
+} from 'react'
 import { useTheme } from '~/hooks'
 import type { Configuration } from '~/types/configuration'
+import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 
 export type RocketStyleHOC = ({
   inversed,

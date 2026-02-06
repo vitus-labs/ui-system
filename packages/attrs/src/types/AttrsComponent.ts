@@ -1,14 +1,14 @@
+import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
 import type {
   ForwardedRef,
   ForwardRefExoticComponent,
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
-import type { TObj, ElementType } from './utils'
-import type { ConfigAttrs } from './config'
 import type { AttrsCb } from './attrs'
+import type { ConfigAttrs } from './config'
 import type { ComposeParam } from './hoc'
+import type { ElementType, TObj } from './utils'
 
 export type InitAttrsComponent<C extends ElementType = ElementType> = (params: {
   name: string

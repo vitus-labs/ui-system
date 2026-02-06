@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { SimpleHoc } from '~/types'
 
 const RESERVED_KEYS = [

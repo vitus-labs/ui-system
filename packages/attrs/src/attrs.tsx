@@ -1,24 +1,25 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-import React, { forwardRef, useMemo } from 'react'
+
+import { compose, omit, pick } from '@vitus-labs/core'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { pick, compose, omit } from '@vitus-labs/core'
-import { useRef } from '~/hooks'
+import { forwardRef, useMemo } from 'react'
 import { attrsHoc } from '~/hoc'
-import { createStaticsEnhancers } from '~/utils/statics'
-import { chainOptions } from '~/utils/chaining'
-import { calculateHocsFuncs } from '~/utils/compose'
-import { calculateChainOptions } from '~/utils/attrs'
+import { useRef } from '~/hooks'
 import type {
   AttrsComponent as AttrsComponentType,
   ExoticComponent,
   InnerComponentProps,
 } from '~/types/AttrsComponent'
-import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
 import type {
   Configuration,
   ExtendedConfiguration,
 } from '~/types/configuration'
+import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
+import { calculateChainOptions } from '~/utils/attrs'
+import { chainOptions } from '~/utils/chaining'
+import { calculateHocsFuncs } from '~/utils/compose'
+import { createStaticsEnhancers } from '~/utils/statics'
 
 // --------------------------------------------------------
 // cloneAndEnhance
@@ -32,7 +33,7 @@ type CloneAndEnhance = (
 ) => ReturnType<typeof attrsComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
-  // @ts-ignore
+  // @ts-expect-error
   attrsComponent({
     ...defaultOpts,
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
@@ -112,7 +113,7 @@ const attrsComponent: InitAttrsComponent = (options) => {
         }
 
         return filteredProps
-      }, [props, needsRef, internalRef])
+      }, [props, needsRef, internalRef, needsFiltering])
 
       return <RenderComponent {...finalProps} />
     },
@@ -140,7 +141,7 @@ const attrsComponent: InitAttrsComponent = (options) => {
     options: options.statics,
   })
 
-  // @ts-ignore
+  // @ts-expect-error
   AttrsComponent.attrs = (attrs, { priority, filter } = {}) => {
     const result: Record<string, any> = {}
 
@@ -159,7 +160,7 @@ const attrsComponent: InitAttrsComponent = (options) => {
     return cloneAndEnhance(options, result)
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   AttrsComponent.config = (opts = {}) => {
     const result = pick(opts)
 

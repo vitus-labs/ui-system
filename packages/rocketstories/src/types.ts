@@ -1,11 +1,11 @@
-import type {
-  ComponentType,
-  ForwardRefExoticComponent,
-  ReactNode,
-  FC,
-} from 'react'
 import type { ListProps } from '@vitus-labs/elements'
 import type { RocketComponentType } from '@vitus-labs/rocketstyle'
+import type {
+  ComponentType,
+  FC,
+  ForwardRefExoticComponent,
+  ReactNode,
+} from 'react'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
 export type TObj = Record<string, unknown>

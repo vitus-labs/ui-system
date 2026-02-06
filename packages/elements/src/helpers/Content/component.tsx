@@ -1,8 +1,8 @@
-import React, { memo } from 'react'
 import type { FC } from 'react'
+import { memo } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
-import type { Props } from './types'
 import Styled from './styled'
+import type { Props } from './types'
 
 const Component: FC<Partial<Props>> = ({
   contentType,

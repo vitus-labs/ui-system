@@ -1,6 +1,5 @@
-import React from 'react'
+import { Form, Submit, TextInput } from './form'
 import theme from './themeDecorator'
-import { Form, TextInput, Submit } from './form'
 
 export default {
   component: Form,

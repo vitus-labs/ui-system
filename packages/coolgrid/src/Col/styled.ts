@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, value, extendCss } from '@vitus-labs/unistyle'
 import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
-import { hasValue, isVisible, isNumber } from '~/utils'
+import { extendCss, makeItResponsive, value } from '@vitus-labs/unistyle'
 import type { CssOutput, StyledTypes } from '~/types'
+import { hasValue, isNumber, isVisible } from '~/utils'
 
 const { styled, css, component } = config
 
@@ -38,8 +38,8 @@ const widthStyles: WidthStyles = (
       ? `calc(${width}% - ${gap}px)`
       : `${width}%`
     : hasGap
-    ? width - gap!
-    : width
+      ? width - gap!
+      : width
 
   return css`
     flex-grow: 0;
@@ -94,10 +94,12 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
 }
 
 export default styled(component)<any>`
-  ${__WEB__ &&
-  css`
+  ${
+    __WEB__ &&
+    css`
     box-sizing: border-box;
-  `};
+  `
+  };
 
   position: relative;
   display: flex;

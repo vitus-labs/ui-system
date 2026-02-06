@@ -5,7 +5,7 @@ export type ExtendCss = (
     | ((css: typeof config.css) => ReturnType<typeof css>)
     | string
     | null
-    | undefined
+    | undefined,
 ) => string | ReturnType<typeof config.css>
 
 const extendCss: ExtendCss = (styles) => {

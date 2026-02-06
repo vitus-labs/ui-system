@@ -1,5 +1,5 @@
-import { value } from '~/units'
 import type { Units } from '~/types'
+import { value } from '~/units'
 
 const isValidValue = (value) => !!value || value === 0
 
@@ -53,7 +53,7 @@ export type Edge = (rootSize?: number) => (
     left: Value
     right: Value
     bottom: Value
-  }
+  },
 ) => string | null
 
 // eslint-disable-next-line import/prefer-default-export

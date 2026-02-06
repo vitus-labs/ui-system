@@ -1,4 +1,5 @@
-import React, {
+import { isEmpty, render } from '@vitus-labs/core'
+import {
   Children,
   type FC,
   type ReactElement,
@@ -7,8 +8,7 @@ import React, {
   useMemo,
 } from 'react'
 import { isFragment } from 'react-is'
-import { render, isEmpty } from '@vitus-labs/core'
-import type { Props, ObjectValue, ExtendedProps, SimpleValue } from './types'
+import type { ExtendedProps, ObjectValue, Props, SimpleValue } from './types'
 
 const RESERVED_PROPS = [
   'children',
@@ -129,7 +129,9 @@ const Component: FC<Props> & Static = (props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren = (children as ReactElement<{ children: ReactNode[] }>).props.children
+      const fragmentChildren = (
+        children as ReactElement<{ children: ReactNode[] }>
+      ).props.children
       const childrenLength = fragmentChildren.length
 
       return fragmentChildren.map((item, i) =>

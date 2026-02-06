@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
 import { throttle } from '@vitus-labs/core'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type Sizes = {
   width: number

@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import useWindowResize from '../useWindowResize'
 
 describe('useWindowResize', () => {
@@ -39,7 +39,7 @@ describe('useWindowResize', () => {
 
   it('accepts initial values before mount effect runs', () => {
     const { result } = renderHook(() =>
-      useWindowResize({}, { width: 500, height: 300 })
+      useWindowResize({}, { width: 500, height: 300 }),
     )
     // after mount, it reads actual window dimensions
     expect(result.current.width).toBe(1024)
@@ -49,9 +49,7 @@ describe('useWindowResize', () => {
   it('updates on window resize', () => {
     jest.useFakeTimers()
 
-    const { result } = renderHook(() =>
-      useWindowResize({ throttleDelay: 100 })
-    )
+    const { result } = renderHook(() => useWindowResize({ throttleDelay: 100 }))
 
     act(() => {
       Object.defineProperty(window, 'innerWidth', { value: 800 })
@@ -87,7 +85,7 @@ describe('useWindowResize', () => {
     expect(removeSpy).toHaveBeenCalledWith(
       'resize',
       expect.any(Function),
-      false
+      false,
     )
 
     removeSpy.mockRestore()

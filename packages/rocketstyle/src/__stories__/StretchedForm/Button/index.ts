@@ -29,7 +29,7 @@ export default element
       outline: none;
       cursor: pointer;
       white-space: nowrap;
-    `
+    `,
   )
   .attrs({
     // useDefaultOutline: true,

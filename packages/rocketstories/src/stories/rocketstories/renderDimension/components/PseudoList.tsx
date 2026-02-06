@@ -1,4 +1,4 @@
-import React, { type FC } from 'react'
+import type { FC } from 'react'
 import Item from './Item'
 
 const pseudo = ['base', 'hover', 'pressed', 'active'] as const

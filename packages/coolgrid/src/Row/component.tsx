@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { omitCtxKeys } from '~/utils'
-import useGridContext from '~/useContext'
 import { ContainerContext, RowContext } from '~/context'
 import type { ElementType } from '~/types'
+import useGridContext from '~/useContext'
+import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
 const Component: ElementType<
@@ -17,12 +17,12 @@ const Component: ElementType<
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const context = useMemo(
     () => ({ ...ctx, columns, gap, gutter }),
-    [columns, gap, gutter, ...Object.values(ctx)]
+    [columns, gap, gutter, ...Object.values(ctx)],
   )
 
   const finalComponent = useMemo(
     () => component || rowComponent,
-    [component, rowComponent]
+    [component, rowComponent],
   )
 
   const finalProps = useMemo(
@@ -35,7 +35,7 @@ const Component: ElementType<
         extraStyles: css || rowCss,
       },
     }),
-    [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss]
+    [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss],
   )
 
   const getDevProps = () => {

@@ -1,37 +1,38 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { Fragment } from 'react'
-import { pick, isEmpty } from '@vitus-labs/core'
+
+import { isEmpty, pick } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
-import NotFound from '~/components/NotFound'
+import { Fragment } from 'react'
 import { Heading } from '~/components/base'
-import getTheme from '~/utils/theme'
-import { createJSXCodeArray } from '~/utils/code'
-import {
-  createControls,
-  convertDimensionsToControls,
-  getDefaultVitusLabsControls,
-  makeStorybookControls,
-  disableDimensionControls,
-} from '~/utils/controls'
+import NotFound from '~/components/NotFound'
 import type {
   RocketDimensions,
-  StoryComponent,
   RocketStoryConfiguration,
+  StoryComponent,
 } from '~/types'
-import Provider from './context'
+import { createJSXCodeArray } from '~/utils/code'
+import {
+  convertDimensionsToControls,
+  createControls,
+  disableDimensionControls,
+  getDefaultVitusLabsControls,
+  makeStorybookControls,
+} from '~/utils/controls'
+import getTheme from '~/utils/theme'
 import Item from './components/Item'
 import PseudoList from './components/PseudoList'
+import Provider from './context'
 
 export type RenderDimension<P = {}> = (
   dimension: RocketDimensions,
   params: RocketStoryConfiguration & {
     ignore: any
-  }
+  },
 ) => StoryComponent<P>
 
 const renderDimension: RenderDimension = (
   dimension,
-  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] }
+  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] },
 ) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
@@ -177,7 +178,7 @@ const renderDimension: RenderDimension = (
           dimension,
           currentDimension,
           useBooleans,
-          isMultiKey
+          isMultiKey,
         ),
       },
     },

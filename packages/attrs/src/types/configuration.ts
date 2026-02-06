@@ -1,4 +1,4 @@
-import type { TFn, ElementType } from './utils'
+import type { ElementType, TFn } from './utils'
 
 export type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
 

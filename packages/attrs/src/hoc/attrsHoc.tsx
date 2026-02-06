@@ -1,11 +1,11 @@
-import React, {
+import {
+  type ComponentType,
+  type ForwardRefExoticComponent,
   forwardRef,
   useMemo,
-  type ForwardRefExoticComponent,
-  type ComponentType,
 } from 'react'
-import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import type { Configuration } from '~/types/configuration'
+import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 
 export type AttrsStyleHOC = ({
   attrs,
@@ -29,10 +29,7 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
       // remove undefined props not to override potential default props
       // only props with value (e.g. `null`) should override default props
       // --------------------------------------------------
-      const filteredProps = useMemo(
-        () => removeUndefinedProps(props),
-        [props],
-      )
+      const filteredProps = useMemo(() => removeUndefinedProps(props), [props])
 
       const finalProps = useMemo(() => {
         const prioritizedAttrs = calculatePriorityAttrs([filteredProps])

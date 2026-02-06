@@ -5,12 +5,12 @@ export type IsEmpty = <
 ) => T extends null | undefined
   ? true
   : keyof T extends never
-  ? true
-  : T extends T[]
-  ? T[number] extends never
     ? true
-    : false
-  : false
+    : T extends T[]
+      ? T[number] extends never
+        ? true
+        : false
+      : false
 
 const isEmpty: IsEmpty = (param) => {
   if (!param) return true

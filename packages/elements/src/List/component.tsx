@@ -1,10 +1,10 @@
-import React, { forwardRef } from 'react'
-import { pick, omit } from '@vitus-labs/core'
+import { omit, pick } from '@vitus-labs/core'
+import { forwardRef } from 'react'
 import { PKG_NAME } from '~/constants'
-import Element from '~/Element'
-import Iterator from '~/helpers/Iterator'
 import type { VLElement } from '~/Element'
+import Element from '~/Element'
 import type { Props as IteratorProps } from '~/helpers/Iterator'
+import Iterator from '~/helpers/Iterator'
 import type { MergeTypes } from '~/types'
 
 type ListProps = {

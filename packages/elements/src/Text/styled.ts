@@ -1,5 +1,5 @@
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, extendCss } from '@vitus-labs/unistyle'
+import { extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
 
 const { styled, css, textComponent } = config

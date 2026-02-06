@@ -1,6 +1,6 @@
+import type { config } from '@vitus-labs/core'
 import type { CSSProperties } from 'react'
-import { config } from '@vitus-labs/core'
-import type { PropertyValue, Defaults, Color, Size } from '~/types'
+import type { Color, Defaults, PropertyValue, Size } from '~/types'
 
 export type Func<T> = (...args: any) => T
 
@@ -341,7 +341,8 @@ export type ITheme = {
   transitionDelay: CSSProperties['transitionDelay']
   transitionDuration: CSSProperties['transitionDuration']
   transitionProperty: CSSProperties['transitionProperty']
-  transitionTimingFunction: CSSProperties['transitionTimingFunction']
+  transitionTimingFunction:
+    | CSSProperties['transitionTimingFunction']
     | `cubic-bezier(${number},${number},${number},${number})`
     | `cubic-bezier(${number}, ${number}, ${number}, ${number})`
   userSelect: CSSProperties['userSelect']

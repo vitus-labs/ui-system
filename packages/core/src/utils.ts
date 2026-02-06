@@ -12,7 +12,7 @@ export const omit = <T extends Record<string, any>>(
   const keysSet = new Set(keys as readonly string[])
 
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key) && !keysSet.has(key)) {
+    if (Object.hasOwn(obj, key) && !keysSet.has(key)) {
       result[key] = obj[key]
     }
   }
@@ -34,7 +34,7 @@ export const pick = <T extends Record<string, any>>(
 
   for (const key of keys) {
     const k = key as string
-    if (Object.prototype.hasOwnProperty.call(obj, k)) {
+    if (Object.hasOwn(obj, k)) {
       result[k] = obj[k]
     }
   }

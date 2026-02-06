@@ -1,8 +1,8 @@
 import {
-  useState,
-  useCallback,
-  type MouseEventHandler,
   type FocusEventHandler,
+  type MouseEventHandler,
+  useCallback,
+  useState,
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
