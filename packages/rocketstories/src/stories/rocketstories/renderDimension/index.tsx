@@ -1,3 +1,9 @@
+/**
+ * Renders a dimension story for a rocketstyle component. Iterates over all
+ * values of the specified dimension and renders each as an Item (or a
+ * PseudoList when pseudo-state visualization is enabled). Generates
+ * corresponding JSX code snippets and Storybook controls.
+ */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { isEmpty, pick } from '@vitus-labs/core'

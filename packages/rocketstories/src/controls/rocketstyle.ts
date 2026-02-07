@@ -1,3 +1,8 @@
+/**
+ * Default Storybook control definitions for rocketstyle pseudo-state props.
+ * Provides boolean toggles for hover, active, pressed, and focus states,
+ * as well as descriptions for their corresponding mouse/focus event handlers.
+ */
 const group = 'Rocketstyle (Vitus-Labs)'
 
 export default {

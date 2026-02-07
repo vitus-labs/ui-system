@@ -1,3 +1,8 @@
+/**
+ * Configuration and shared type definitions for the rocketstories package.
+ * Defines story configuration shapes, control types for Storybook arg tables,
+ * component type guards (RocketType vs ElementType), and rendering option types.
+ */
 import type { ListProps } from '@vitus-labs/elements'
 import type { RocketComponentType } from '@vitus-labs/rocketstyle'
 import type {

@@ -1,3 +1,8 @@
+/**
+ * Default Storybook control definitions for List-based components.
+ * Covers data input, item/wrap component props, key extraction,
+ * and disables label/content controls that do not apply to lists.
+ */
 const group = 'List (@vitus-labs)'
 
 const itemPropsType = `Record<string, any> | (props, meta) => Record<string,any>`

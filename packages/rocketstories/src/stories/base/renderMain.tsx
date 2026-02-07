@@ -1,3 +1,8 @@
+/**
+ * Renders the main (default) story for a regular non-rocketstyle component.
+ * Wraps the component through StoryHoc to attach Storybook controls, then
+ * renders it with createElement using the current args.
+ */
 import { createElement } from 'react'
 import StoryHoc from '~/internal/StoryHoc'
 

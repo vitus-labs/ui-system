@@ -157,9 +157,10 @@ const parseComponentName = (name) => {
   return name
 }
 
-// --------------------------------------------------------
-// createJSXCode
-// --------------------------------------------------------
+/**
+ * Generates a single self-closing JSX tag string for the given component
+ * name and props, e.g. `<Button primary size="large" />`.
+ */
 type CreateJSXCode = (name: string, props: Obj) => string
 
 export const createJSXCode: CreateJSXCode = (name, props) =>
@@ -226,9 +227,11 @@ const addBooleanCodeComment = (values) => {
   return result
 }
 
-// --------------------------------------------------------
-// createMainJSX
-// --------------------------------------------------------
+/**
+ * Generates the JSX code snippet shown in the Storybook docs panel for the
+ * main story. Includes the primary JSX tag and, when boolean dimension
+ * shorthand is available, an alternative boolean-prop usage example.
+ */
 type GenerateMainJSXCode = (params: {
   name: string
   props: Record<string, string>

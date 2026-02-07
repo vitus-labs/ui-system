@@ -1,3 +1,9 @@
+/**
+ * Higher-order component factory for rocketstyle components.
+ * Extracts dimension metadata and default attributes from the component's
+ * static configuration, auto-generates Storybook controls for dimensions
+ * and known Vitus Labs props, and attaches args/argTypes/parameters to the story.
+ */
 import { pick } from '@vitus-labs/core'
 import type { RocketStoryConfiguration, StoryComponent } from '~/types'
 import { generateMainJSXCode } from '~/utils/code'

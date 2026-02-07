@@ -1,3 +1,8 @@
+/**
+ * React context for the dimension story renderer. Provides the wrapped
+ * rocketstyle component reference to nested Item and PseudoList components
+ * so they can render it without prop-drilling.
+ */
 import {
   type ComponentType,
   useContext as contextHook,

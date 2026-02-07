@@ -1,3 +1,9 @@
+/**
+ * Utilities for creating, converting, and formatting Storybook controls.
+ * Handles transformation from rocketstories control definitions to the
+ * Storybook argTypes format, including dimension-based select controls
+ * and component-specific default controls.
+ */
 import * as CONTROLS from '~/controls'
 import type {
   ControlConfiguration,
@@ -6,6 +12,7 @@ import type {
   StorybookControl,
 } from '~/types'
 
+/** Normalizes user-supplied control shorthand (string or object) into full ControlConfiguration objects. */
 export const createControls = (props) =>
   Object.entries(props).reduce((acc, [key, value]) => {
     if (typeof value === 'string') {
@@ -32,6 +39,7 @@ type ConvertDimensionsToControls = ({
   multiKeys: Record<string, true>
 }) => Controls
 
+/** Converts rocketstyle dimension metadata into select/multi-select Storybook controls. */
 export const convertDimensionsToControls: ConvertDimensionsToControls = ({
   dimensions,
   multiKeys,
@@ -54,6 +62,7 @@ export const convertDimensionsToControls: ConvertDimensionsToControls = ({
 // --------------------------------------------------------
 type GetDefaultVitusLabsControls = (component: RocketType) => Controls
 
+/** Returns pre-defined controls based on the component's Vitus Labs type (Element, List, Text, Overlay). */
 export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
   component,
 ) => {
@@ -79,9 +88,7 @@ export const getDefaultVitusLabsControls: GetDefaultVitusLabsControls = (
   return result as Controls
 }
 
-// --------------------------------------------------------
-// Make Storybook Controls
-// --------------------------------------------------------
+/** Transforms internal control definitions into the Storybook argTypes format with table metadata. */
 type MakeStorybookControls = (
   obj: Record<string, ControlConfiguration>,
   props: Record<string, any>,
@@ -132,9 +139,7 @@ const disableControl: DisableControl = (name) => ({
   [name]: { table: { disable: true } },
 })
 
-// --------------------------------------------------------
-// disableDimensionControls
-// --------------------------------------------------------
+/** Produces argType overrides that hide individual dimension value keys from the controls panel. */
 type DisableDimensionControls = (
   dimensions: Record<string, boolean>,
   name?: string,

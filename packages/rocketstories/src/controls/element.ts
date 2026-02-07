@@ -1,3 +1,8 @@
+/**
+ * Default Storybook control definitions for Element-based components.
+ * Covers layout props (direction, alignX, alignY), content slots
+ * (beforeContent, afterContent), CSS extension props, and HTML tag selection.
+ */
 import { HTML_TAGS } from '@vitus-labs/core'
 
 const group = 'Element (Vitus-Labs)'

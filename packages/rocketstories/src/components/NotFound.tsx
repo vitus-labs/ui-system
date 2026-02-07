@@ -1,3 +1,7 @@
+/**
+ * Empty placeholder component displayed when a requested dimension
+ * has no values or the story cannot be rendered.
+ */
 import { config } from '@vitus-labs/core'
 import type { FC } from 'react'
 
