@@ -60,7 +60,6 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
  * Then adds chaining methods (`.attrs()`, `.config()`, `.compose()`, `.statics()`)
  * as static properties — each calls `cloneAndEnhance` to produce a new component.
  */
-// @ts-ignore
 const attrsComponent: InitAttrsComponent = (options) => {
   const componentName =
     options.name ?? options.component.displayName ?? options.component.name
@@ -158,14 +157,12 @@ const attrsComponent: InitAttrsComponent = (options) => {
     return cloneAndEnhance(options, result)
   }
 
-  // @ts-ignore
   AttrsComponent.compose = (opts) =>
-    // @ts-ignore
+    // @ts-expect-error
     cloneAndEnhance(options, { compose: opts })
 
-  // @ts-ignore
   AttrsComponent.statics = (opts) =>
-    // @ts-ignore
+    // @ts-expect-error
     cloneAndEnhance(options, { statics: opts })
 
   AttrsComponent.getDefaultAttrs = (props) =>

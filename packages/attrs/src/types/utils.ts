@@ -98,9 +98,8 @@ type _HasAny<A> = A extends [infer L, ...infer R]
     : _HasAny<R>
   : false
 
-export type MergeTypes<A extends readonly [...any]> = _HasAny<A> extends true
-  ? any
-  : ExtractNullableKeys<Spread<A>>
+export type MergeTypes<A extends readonly [...any]> =
+  _HasAny<A> extends true ? any : ExtractNullableKeys<Spread<A>>
 
 // ─── ExtractProps ─────────────────────────────────────────────
 
