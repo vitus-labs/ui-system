@@ -1,3 +1,10 @@
+/**
+ * Overlay component that renders a trigger element and conditionally shows
+ * content via a Portal. The trigger receives a ref and optional show/hide
+ * callbacks; the content is positioned and managed by the useOverlay hook.
+ * A context Provider wraps the content to support nested overlays (e.g.,
+ * a dropdown inside another dropdown) via blocked-state propagation.
+ */
 import { render } from '@vitus-labs/core'
 import { type ReactNode, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'

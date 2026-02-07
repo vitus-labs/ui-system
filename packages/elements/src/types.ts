@@ -1,3 +1,9 @@
+/**
+ * Shared type definitions for the elements package. Provides responsive
+ * value types (single | array | breakpoint-map) for layout props like
+ * alignment and direction, plus utility types for merging prop objects
+ * and defining VL component signatures with static metadata.
+ */
 import type { BreakpointKeys, config, render } from '@vitus-labs/core'
 import type { MakeItResponsive } from '@vitus-labs/unistyle'
 import type {

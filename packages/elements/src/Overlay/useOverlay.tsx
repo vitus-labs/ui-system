@@ -1,3 +1,11 @@
+/**
+ * Core hook powering the Overlay component. Manages open/close state, DOM
+ * event listeners (click, hover, scroll, resize, ESC key), and dynamic
+ * positioning of overlay content relative to its trigger. Supports dropdown,
+ * tooltip, popover, and modal types with automatic edge-of-viewport flipping.
+ * Event handlers are throttled for performance, and nested overlay blocking
+ * is coordinated through the overlay context.
+ */
 /* eslint-disable no-console */
 
 import { context, throttle } from '@vitus-labs/core'

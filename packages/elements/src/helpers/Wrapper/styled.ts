@@ -1,3 +1,10 @@
+/**
+ * Styled component for the Element wrapper layer. Handles responsive
+ * block/inline-flex display, direction, alignment, and custom CSS injection.
+ * Includes special handling for the `parentFix` / `childFix` flags that
+ * split flex behavior across two DOM nodes for button/fieldset/legend
+ * elements where a single flex container is insufficient.
+ */
 import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'

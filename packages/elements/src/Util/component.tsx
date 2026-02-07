@@ -1,3 +1,8 @@
+/**
+ * Utility wrapper that injects className and/or style props into its
+ * children without adding any DOM nodes of its own. Uses the core `render`
+ * helper to clone children with the merged props.
+ */
 import { render } from '@vitus-labs/core'
 import { type ReactNode, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'

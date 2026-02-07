@@ -1,3 +1,11 @@
+/**
+ * Data-driven list renderer that supports three input modes: React children
+ * (including fragments), an array of primitives, or an array of objects.
+ * Each item receives positional metadata (first, last, odd, even, position)
+ * and optional injected props via `itemProps`. Items can be individually
+ * wrapped with `wrapComponent`. Children always take priority over the
+ * component+data prop pattern.
+ */
 import { isEmpty, render } from '@vitus-labs/core'
 import {
   Children,

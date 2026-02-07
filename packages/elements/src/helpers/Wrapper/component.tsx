@@ -1,3 +1,10 @@
+/**
+ * Wrapper component that serves as the outermost styled container for Element.
+ * Uses forwardRef for ref forwarding to the underlying DOM node. On web, it
+ * detects button/fieldset/legend tags and applies a two-layer flex fix
+ * (parent + child Styled) because these HTML elements do not natively
+ * support `display: flex` consistently across browsers.
+ */
 import { forwardRef } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
 import Styled from './styled'

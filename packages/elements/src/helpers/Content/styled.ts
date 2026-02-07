@@ -1,3 +1,10 @@
+/**
+ * Styled component for content areas (before/content/after). Applies
+ * responsive flex alignment, gap spacing between slots based on parent
+ * direction (margin-right for inline, margin-bottom for rows), and
+ * equalCols flex distribution. The "content" slot gets `flex: 1` to
+ * fill remaining space between before and after.
+ */
 import { config } from '@vitus-labs/core'
 import {
   alignContent,

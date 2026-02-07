@@ -1,3 +1,11 @@
+/**
+ * HOC that adds single or multi selection state management to a list component.
+ * Tracks which items are active via a scalar key (single mode) or a Map of
+ * key-to-boolean entries (multi mode). Injects `itemProps` callback that
+ * provides each item with `active`, `handleItemActive`, `toggleItemActive`,
+ * and other selection helpers. Supports `activeItemRequired` to prevent
+ * deselecting the last active item.
+ */
 // @ts-nocheck
 import { useEffect, useState } from 'react'
 import type { SimpleHoc } from '~/types'
