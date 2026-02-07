@@ -9,6 +9,7 @@ type AssignToBreakpointKey = (
   ) => void,
 ) => Record<string, unknown>
 
+/** Iterates breakpoints and populates a result object using a callback per breakpoint. */
 const assignToBreakpointKey: AssignToBreakpointKey =
   (breakpoints) => (value) => {
     const result = {}
@@ -62,6 +63,12 @@ export type NormalizeTheme = ({
   breakpoints: string[]
 }) => Record<string, unknown>
 
+/**
+ * Expands each theme property into a full breakpoint map so every
+ * breakpoint has a value. Arrays fill by index (last value carries forward),
+ * objects inherit from the previous breakpoint, scalars repeat for all.
+ * Skipped entirely when no property is array/object (fast path).
+ */
 const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
   if (!shouldNormalize(theme)) return theme
 

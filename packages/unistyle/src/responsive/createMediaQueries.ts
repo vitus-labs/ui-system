@@ -8,6 +8,12 @@ export type CreateMediaQueries = <
   css: C
 }) => Record<keyof B, ReturnType<C>>
 
+/**
+ * Builds a map of breakpoint-name → tagged-template function.
+ * The smallest breakpoint (value 0) gets no media wrapper.
+ * Others are wrapped in `@media (min-width: <em>)` — em units
+ * ensure correct behaviour when users change browser font size.
+ */
 const createMediaQueries: CreateMediaQueries = ({
   breakpoints,
   rootSize,

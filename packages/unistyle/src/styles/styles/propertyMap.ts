@@ -1,5 +1,15 @@
 import type { InnerTheme } from './types'
 
+/**
+ * Descriptor types for the data-driven CSS property map.
+ *
+ * - `simple`           — CSS pass-through (no unit conversion).
+ * - `convert`          — Number values are converted via `values()` (px→rem).
+ * - `convert_fallback` — Picks first non-null from multiple theme keys, then converts.
+ * - `edge`             — Spacing shorthand (margin, padding, inset, border-*) via `edge()`.
+ * - `border_radius`    — Border radius shorthand via `borderRadius()`.
+ * - `special`          — One-off logic (fullScreen, backgroundImage, animation, etc.).
+ */
 type EdgeProperty =
   | 'inset'
   | 'margin'

@@ -17,7 +17,12 @@ export type BorderRadius = (
   bottomRight: PropertyValue | null | undefined
 }) => string | null
 
-// eslint-disable-next-line import/prefer-default-export
+/**
+ * Border radius shorthand processor. Accepts full/top/bottom/left/right
+ * and individual corner values. Produces the most compact CSS output —
+ * single-value, two-value, three-value, or four-value shorthand
+ * when all corners are specified, or individual corner properties otherwise.
+ */
 const borderRadius: BorderRadius =
   (rootSize) =>
   ({

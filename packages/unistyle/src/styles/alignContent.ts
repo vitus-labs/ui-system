@@ -47,6 +47,11 @@ export type AlignContent = ({
   alignY: AlignContentAlignYKeys
 }) => ReturnType<typeof config.css> | null
 
+/**
+ * Converts semantic direction/alignX/alignY values into `flex-direction`,
+ * `align-items`, and `justify-content`. For inline directions (row) the
+ * X/Y axes are swapped so that `alignX` always controls the horizontal axis.
+ */
 const alignContent: AlignContent = (attrs) => {
   const { direction, alignX, alignY } = attrs
 

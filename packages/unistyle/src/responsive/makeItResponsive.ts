@@ -48,6 +48,16 @@ export type MakeItResponsive = ({
   normalize?: boolean
 }) => ({ theme }: { theme?: Theme }) => any
 
+/**
+ * Core responsive engine used by every styled component in the system.
+ *
+ * Returns a styled-components interpolation function that:
+ * 1. Reads the component's theme prop (via `key` or direct `theme`)
+ * 2. Without breakpoints → renders plain CSS
+ * 3. With breakpoints → normalizes, transforms (property-per-breakpoint →
+ *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
+ *    and wraps each breakpoint's styles in the appropriate `@media` query.
+ */
 const makeItResponsive: MakeItResponsive =
   ({ theme: customTheme, key = '', css, styles, normalize = false }) =>
   ({ theme = {}, ...props }) => {

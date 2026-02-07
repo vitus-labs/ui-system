@@ -24,6 +24,11 @@ export type TProvider = {
   children: ReactNode
 } & Partial<Record<string, unknown>>
 
+/**
+ * Unistyle Provider — wraps the core Provider and enriches the theme
+ * with pre-computed sorted breakpoints and media-query tagged-template
+ * helpers consumed by `makeItResponsive`.
+ */
 const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
   const { breakpoints, rootSize } = theme
 

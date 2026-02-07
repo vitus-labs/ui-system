@@ -8,6 +8,10 @@ export type ExtendCss = (
     | undefined,
 ) => string | ReturnType<typeof config.css>
 
+/**
+ * Evaluates an `extendCss` value — either a callback receiving `css`
+ * or a raw CSS string. Returns empty string for null/undefined.
+ */
 const extendCss: ExtendCss = (styles) => {
   if (!styles) return ''
   if (typeof styles === 'function') {

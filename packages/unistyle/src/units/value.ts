@@ -17,6 +17,7 @@ type CssUnits =
   | 'vmin'
   | 'vmax'
 
+/** Returns true for null/undefined/NaN but not for 0. */
 const isNotValue = (value) => !value && value !== 0
 
 export type Value = (
@@ -25,6 +26,12 @@ export type Value = (
   outputUnit?: CssUnits,
 ) => string | number | null
 
+/**
+ * Converts a raw numeric value to a CSS string with appropriate units.
+ * - Numbers without a unit are divided by `rootSize` and output as rem (web) or px (native).
+ * - Values that already carry a unit are returned as-is, unless converting px→rem.
+ * - Zero is always returned unitless.
+ */
 const value: Value = (
   param,
   rootSize = 16,

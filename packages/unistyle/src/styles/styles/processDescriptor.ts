@@ -7,6 +7,16 @@ import type { InnerTheme } from './types'
 
 type Calc = (...params: any[]) => ReturnType<Values>
 
+/**
+ * Converts a single property descriptor + theme values into a CSS fragment.
+ *
+ * - `simple`  — pass-through (no unit conversion)
+ * - `convert` — number→rem via `calc()`
+ * - `convert_fallback` — picks first non-null from multiple theme keys, then converts
+ * - `edge`    — delegates to the edge shorthand (margin, padding, inset, border-*)
+ * - `border_radius` — delegates to the border-radius shorthand
+ * - `special` — one-off logic (fullScreen, backgroundImage url wrapping, animation combo, etc.)
+ */
 const processDescriptor = (
   d: PropertyDescriptor,
   t: InnerTheme,

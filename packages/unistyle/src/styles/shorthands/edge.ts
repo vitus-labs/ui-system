@@ -56,7 +56,12 @@ export type Edge = (rootSize?: number) => (
   },
 ) => string | null
 
-// eslint-disable-next-line import/prefer-default-export
+/**
+ * Edge shorthand processor for margin, padding, inset, border-width/style/color.
+ * Accepts full/x/y/top/right/bottom/left values and produces the most compact
+ * CSS output — using shorthand syntax when all four sides are specified,
+ * or individual side properties when only some are set.
+ */
 const edge: Edge =
   (rootSize = 16) =>
   (property, { full, x, y, top, left, right, bottom }) => {
