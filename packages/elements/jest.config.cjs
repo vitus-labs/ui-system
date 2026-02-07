@@ -4,6 +4,10 @@ const base = require('../../jest.config.base.cjs')
 module.exports = {
   ...base,
   displayName: 'elements',
+  globals: {
+    __WEB__: true,
+    __NATIVE__: false,
+  },
   moduleNameMapper: {
     ...base.moduleNameMapper,
     '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
