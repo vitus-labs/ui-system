@@ -149,10 +149,7 @@ const Button = rocketstyle()({ name: 'Button', component: Element })
         } = $rocketstyle
 
         const baseTheme = makeItResponsive({
-          theme:
-            {
-              ...restStyles,
-            } || {},
+          theme: restStyles,
           styles,
           css,
         })
