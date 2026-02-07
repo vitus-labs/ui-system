@@ -374,6 +374,29 @@ describe('Iterator', () => {
     })
   })
 
+  describe('children with itemProps (no wrapComponent)', () => {
+    it('injects itemProps into children without wrapping', () => {
+      const itemPropsFn = jest.fn(() => ({ 'data-injected': 'yes' }))
+      render(
+        <Iterator itemProps={itemPropsFn}>
+          <span data-testid="child-a">A</span>
+          <span data-testid="child-b">B</span>
+        </Iterator>,
+      )
+      expect(itemPropsFn).toHaveBeenCalled()
+    })
+
+    it('injects itemProps into single child', () => {
+      const itemPropsFn = jest.fn(() => ({}))
+      render(
+        <Iterator itemProps={itemPropsFn}>
+          <span data-testid="only">Only</span>
+        </Iterator>,
+      )
+      expect(itemPropsFn).toHaveBeenCalled()
+    })
+  })
+
   describe('edge cases', () => {
     it('returns null when component is missing but data exists', () => {
       const { container } = render(
@@ -387,6 +410,34 @@ describe('Iterator', () => {
         <Iterator component={TextItem} data={'not-array' as any} />,
       )
       expect(container.innerHTML).toBe('')
+    })
+
+    it('returns null for mixed simple and object array', () => {
+      const { container } = render(
+        <Iterator component={TextItem} data={['hello', { name: 'world' }] as any} />,
+      )
+      expect(container.innerHTML).toBe('')
+    })
+
+    it('returns null for unsupported data types in array', () => {
+      const { container } = render(
+        <Iterator component={TextItem} data={[true, false] as any} />,
+      )
+      expect(container.innerHTML).toBe('')
+    })
+
+    it('handles itemKey as number (fallback to index)', () => {
+      const Item = ({ name }: any) => (
+        <span data-testid="item">{name}</span>
+      )
+      render(
+        <Iterator
+          component={Item}
+          data={[{ name: 'Alice' }, { name: 'Bob' }]}
+          itemKey={42 as any}
+        />,
+      )
+      expect(screen.getAllByTestId('item')).toHaveLength(2)
     })
   })
 })

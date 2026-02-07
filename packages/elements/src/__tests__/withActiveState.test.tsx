@@ -183,6 +183,89 @@ describe('withActiveState', () => {
     })
   })
 
+  describe('exposed helper functions', () => {
+    // MockList that exposes all injected helpers
+    const MockWithHelpers = ({ itemProps, ...rest }: any) => {
+      const data = rest.data || []
+      return (
+        <div data-testid="list">
+          {data.map((item: any, i: number) => {
+            const key = typeof item === 'object' ? item.id : item
+            const extended = {
+              key,
+              first: i === 0,
+              last: i === data.length - 1,
+              odd: i % 2 === 0,
+              even: i % 2 === 1,
+              position: i + 1,
+            }
+            const props = typeof itemProps === 'function' ? itemProps(extended) : {}
+            return (
+              <button
+                type="button"
+                key={key}
+                data-testid={`item-${key}`}
+                data-active={String(props.active ?? false)}
+                onClick={props.handleItemActive}
+                onMouseEnter={() => props.toggleItemActive?.(key)}
+                onFocus={() => props.setItemActive?.(key)}
+                onBlur={() => props.unsetItemActive?.(key)}
+              >
+                {props.unsetAllItemsActive && (
+                  <span
+                    data-testid={`unselectall-${key}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      props.unsetAllItemsActive()
+                    }}
+                  />
+                )}
+                {key}
+              </button>
+            )
+          })}
+        </div>
+      )
+    }
+    MockWithHelpers.displayName = 'MockWithHelpers'
+    const HelperList = withActiveState(MockWithHelpers)
+
+    it('toggleItemActive toggles item state', () => {
+      render(<HelperList data={['a', 'b']} />)
+      // mouseEnter calls toggleItemActive
+      fireEvent.mouseEnter(screen.getByTestId('item-a'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      fireEvent.mouseEnter(screen.getByTestId('item-a'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+    })
+
+    it('setItemActive and unsetItemActive work', () => {
+      render(<HelperList data={['a', 'b']} />)
+      fireEvent.focus(screen.getByTestId('item-a'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      fireEvent.blur(screen.getByTestId('item-a'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+    })
+
+    it('unsetAllItemsActive clears all in multi mode', () => {
+      render(<HelperList type="multi" data={['a', 'b']} />)
+      fireEvent.click(screen.getByTestId('item-a'))
+      fireEvent.click(screen.getByTestId('item-b'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      // Click the unsetAll button
+      fireEvent.click(screen.getByTestId('unselectall-a'))
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
+    })
+
+    it('isItemActive returns false for unknown type', () => {
+      // @ts-expect-error testing invalid type
+      render(<HelperList type="unknown" data={['a']} />)
+      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+    })
+  })
+
   describe('itemProps passthrough', () => {
     it('passes static itemProps to items', () => {
       const MockWithExtra = ({ itemProps, ...rest }: any) => {
