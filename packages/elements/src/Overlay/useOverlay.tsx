@@ -10,7 +10,14 @@
 
 import { context, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
 import Provider, { useOverlayContext } from './context'
 
@@ -161,6 +168,23 @@ const useOverlay = ({
   const hideContent = useCallback(() => {
     handleActive(false)
   }, [])
+
+  // For position: absolute, getBoundingClientRect() returns viewport-relative
+  // values but the element is positioned relative to its offsetParent.
+  // We need to subtract the offsetParent's viewport rect to get correct coords.
+  const getAncestorOffset = useCallback(() => {
+    if (position !== 'absolute' || !contentRef.current) {
+      return { top: 0, left: 0 }
+    }
+
+    const offsetParent = contentRef.current.offsetParent as HTMLElement | null
+    if (!offsetParent || offsetParent === document.body) {
+      return { top: 0, left: 0 }
+    }
+
+    const rect = offsetParent.getBoundingClientRect()
+    return { top: rect.top, left: rect.left }
+  }, [position])
 
   const calculateContentPosition = useCallback(() => {
     const overlayPosition: OverlayPosition = {}
@@ -352,37 +376,66 @@ const useOverlay = ({
       }
     }
 
+    // For position: absolute, adjust viewport-relative coords to be
+    // relative to the offsetParent so the overlay lands correctly.
+    const ancestor = getAncestorOffset()
+    if (ancestor.top !== 0 || ancestor.left !== 0) {
+      if (
+        overlayPosition.top != null &&
+        typeof overlayPosition.top === 'number'
+      ) {
+        overlayPosition.top -= ancestor.top
+      }
+      if (
+        overlayPosition.bottom != null &&
+        typeof overlayPosition.bottom === 'number'
+      ) {
+        overlayPosition.bottom += ancestor.top
+      }
+      if (
+        overlayPosition.left != null &&
+        typeof overlayPosition.left === 'number'
+      ) {
+        overlayPosition.left -= ancestor.left
+      }
+      if (
+        overlayPosition.right != null &&
+        typeof overlayPosition.right === 'number'
+      ) {
+        overlayPosition.right += ancestor.left
+      }
+    }
+
     return overlayPosition
-  }, [isContentLoaded, active, align, alignX, alignY, offsetX, offsetY, type])
+  }, [
+    isContentLoaded,
+    active,
+    align,
+    alignX,
+    alignY,
+    offsetX,
+    offsetY,
+    type,
+    getAncestorOffset,
+  ])
 
   const assignContentPosition = useCallback(
     (values: OverlayPosition = {}) => {
       if (!contentRef.current) return
 
-      const isValue = (value?: string | number) => {
-        if (typeof value === 'number') return true
-        if (Number.isFinite(value)) return true
-        return !!value
-      }
-
+      const el = contentRef.current
       const setValue = (param?: string | number) =>
         value(param, rootSize) as string
 
-      // ADD POSITION STYLES TO CONTENT
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(position)) contentRef.current.style.position = position
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.top))
-        contentRef.current.style.top = setValue(values.top)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.bottom))
-        contentRef.current.style.bottom = setValue(values.bottom)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.left))
-        contentRef.current.style.left = setValue(values.left)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.right))
-        contentRef.current.style.right = setValue(values.right)
+      el.style.position = position
+
+      // Reset all directional properties first, then apply only the ones
+      // present in `values`. This prevents stale values lingering when the
+      // overlay flips direction (e.g. top→bottom leaves old `top` behind).
+      el.style.top = values.top != null ? setValue(values.top) : ''
+      el.style.bottom = values.bottom != null ? setValue(values.bottom) : ''
+      el.style.left = values.left != null ? setValue(values.left) : ''
+      el.style.right = values.right != null ? setValue(values.right) : ''
     },
     [position, rootSize],
   )
@@ -392,8 +445,8 @@ const useOverlay = ({
     assignContentPosition(currentPosition)
   }, [assignContentPosition, calculateContentPosition])
 
-  const isNodeOrChild =
-    (ref: typeof triggerRef /* | typeof contentRef */) => (e: Event) => {
+  const isNodeOrChild = useCallback(
+    (ref: { current: HTMLElement | null }) => (e: Event) => {
       if (e?.target && ref.current) {
         return (
           ref.current.contains(e.target as Element) || e.target === ref.current
@@ -401,7 +454,9 @@ const useOverlay = ({
       }
 
       return false
-    }
+    },
+    [],
+  )
 
   const handleVisibilityByEventType = useCallback(
     (e: Event) => {
@@ -410,12 +465,9 @@ const useOverlay = ({
       const isTrigger = isNodeOrChild(triggerRef)
       const isContent = isNodeOrChild(contentRef)
 
-      // showing content observing
+      // showing content observing (hover is handled by dedicated mouseenter/mouseleave)
       if (!active) {
-        if (
-          (openOn === 'hover' && e.type === 'mousemove') ||
-          (openOn === 'click' && e.type === 'click')
-        ) {
+        if (openOn === 'click' && e.type === 'click') {
           if (isTrigger(e)) {
             showContent()
           }
@@ -424,15 +476,7 @@ const useOverlay = ({
 
       // hiding content observing
       if (active) {
-        if (
-          closeOn === 'hover' &&
-          e.type === 'mousemove' &&
-          !isTrigger(e) &&
-          !isContent(e)
-        ) {
-          hideContent()
-        }
-
+        // hover close on scroll (mouseenter/mouseleave handles mouse movement)
         if (closeOn === 'hover' && e.type === 'scroll') {
           hideContent()
         }
@@ -466,17 +510,28 @@ const useOverlay = ({
     ],
   )
 
-  const handleContentPosition = useCallback(
-    throttle(setContentPosition, throttleDelay),
-    // same deps as `setContentPosition`
-    [],
+  // Use refs to avoid stale closures in throttled callbacks.
+  // The throttled wrappers are stable (only recreated if throttleDelay changes),
+  // but always call the latest version of the underlying function via the ref.
+  const latestSetContentPosition = useRef(setContentPosition)
+  latestSetContentPosition.current = setContentPosition
+
+  const latestHandleVisibility = useRef(handleVisibilityByEventType)
+  latestHandleVisibility.current = handleVisibilityByEventType
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleContentPosition = useMemo(
+    () => throttle(() => latestSetContentPosition.current(), throttleDelay),
+    [throttleDelay],
   )
+
   const handleClick = handleVisibilityByEventType
 
-  const handleVisibility = useCallback(
-    throttle(handleVisibilityByEventType, throttleDelay),
-    // same deps as `handleVisibilityByEventType`
-    [],
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleVisibility = useMemo(
+    () =>
+      throttle((e: Event) => latestHandleVisibility.current(e), throttleDelay),
+    [throttleDelay],
   )
 
   // --------------------------------------------------------------------------
@@ -494,25 +549,39 @@ const useOverlay = ({
   useEffect(() => {
     if (!active || !isContentLoaded) return undefined
 
+    // First call positions immediately; the rAF callback re-measures after
+    // the browser has had a chance to reflow, catching any geometry changes
+    // caused by the initial positioning (e.g. content becoming visible).
     setContentPosition()
-    setContentPosition()
+    const rafId = requestAnimationFrame(() => setContentPosition())
 
-    return undefined
+    return () => cancelAnimationFrame(rafId)
   }, [active, isContentLoaded, setContentPosition])
 
-  // if an Overlay has an Overlay child, this will prevent closing parent child
-  // and calculates correct position when an Overlay is opened
+  // Track previous active state so callbacks only fire on actual transitions,
+  // not on every dependency change or unmount-while-closed.
+  const prevActiveRef = useRef(false)
   useEffect(() => {
-    if (active) {
+    const wasActive = prevActiveRef.current
+    prevActiveRef.current = active
+
+    if (active && !wasActive) {
       if (onOpen) onOpen()
       if (ctx.setBlocked) ctx.setBlocked()
-    } else {
+    } else if (!active && wasActive) {
+      setContentLoaded(false)
+      if (onClose) onClose()
+      if (ctx.setUnblocked) ctx.setUnblocked()
+    } else if (!active) {
       setContentLoaded(false)
     }
 
     return () => {
-      if (onClose) onClose()
-      if (ctx.setUnblocked) ctx.setUnblocked()
+      // On unmount, only clean up if currently active
+      if (active) {
+        if (onClose) onClose()
+        if (ctx.setUnblocked) ctx.setUnblocked()
+      }
     }
   }, [active, ctx, onClose, onOpen])
 
@@ -546,7 +615,7 @@ const useOverlay = ({
 
     if (shouldSetOverflow) document.body.style.overflow = 'hidden'
     window.addEventListener('resize', handleContentPosition)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       if (shouldSetOverflow) document.body.style.overflow = ''
@@ -567,7 +636,7 @@ const useOverlay = ({
       handleVisibility(e)
     }
 
-    parentContainer.addEventListener('scroll', onScroll)
+    parentContainer.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       // eslint-disable-next-line no-param-reassign
@@ -582,12 +651,10 @@ const useOverlay = ({
     handleVisibility,
   ])
 
-  // enable overlay manipulation only when the state is NOT blocked
-  // nor in disabled state
+  // Click-based open/close: attach to window
   useEffect(() => {
     if (blocked || disabled) return undefined
 
-    const enabledMouseMove = openOn === 'hover' || closeOn === 'hover'
     const enabledClick =
       openOn === 'click' ||
       ['click', 'clickOnTrigger', 'clickOutsideContent'].includes(closeOn)
@@ -596,15 +663,84 @@ const useOverlay = ({
       window.addEventListener('click', handleClick)
     }
 
-    if (enabledMouseMove) {
-      window.addEventListener('mousemove', handleVisibility)
+    return () => {
+      window.removeEventListener('click', handleClick)
+    }
+  }, [openOn, closeOn, blocked, disabled, handleClick])
+
+  // Hover-based open/close: mouseenter/mouseleave on trigger + content
+  // instead of window-level mousemove (which fires on every pixel of movement).
+  // A short timeout bridges the gap between trigger and content elements.
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isContentLoaded signals contentRef.current is available so the effect re-runs to attach listeners
+  useEffect(() => {
+    const enabledHover = openOn === 'hover' || closeOn === 'hover'
+    if (blocked || disabled || !enabledHover) return undefined
+
+    const trigger = triggerRef.current
+    const content = contentRef.current
+
+    const clearHoverTimeout = () => {
+      if (hoverTimeoutRef.current != null) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
+    }
+
+    const scheduleHide = () => {
+      clearHoverTimeout()
+      hoverTimeoutRef.current = setTimeout(hideContent, 100)
+    }
+
+    const onTriggerEnter = () => {
+      clearHoverTimeout()
+      if (openOn === 'hover' && !active) showContent()
+    }
+
+    const onTriggerLeave = () => {
+      if (closeOn === 'hover' && active) scheduleHide()
+    }
+
+    const onContentEnter = () => {
+      clearHoverTimeout()
+    }
+
+    const onContentLeave = () => {
+      if (closeOn === 'hover' && active) scheduleHide()
+    }
+
+    if (trigger) {
+      trigger.addEventListener('mouseenter', onTriggerEnter)
+      trigger.addEventListener('mouseleave', onTriggerLeave)
+    }
+
+    if (content) {
+      content.addEventListener('mouseenter', onContentEnter)
+      content.addEventListener('mouseleave', onContentLeave)
     }
 
     return () => {
-      window.removeEventListener('click', handleClick)
-      window.removeEventListener('mousemove', handleVisibility)
+      clearHoverTimeout()
+      if (trigger) {
+        trigger.removeEventListener('mouseenter', onTriggerEnter)
+        trigger.removeEventListener('mouseleave', onTriggerLeave)
+      }
+      if (content) {
+        content.removeEventListener('mouseenter', onContentEnter)
+        content.removeEventListener('mouseleave', onContentLeave)
+      }
     }
-  }, [openOn, closeOn, blocked, disabled, handleClick, handleVisibility])
+  }, [
+    active,
+    isContentLoaded,
+    blocked,
+    disabled,
+    openOn,
+    closeOn,
+    showContent,
+    hideContent,
+  ])
 
   // hack-ish way to load content correctly on the first load
   // as `contentRef` is loaded dynamically

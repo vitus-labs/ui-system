@@ -194,25 +194,23 @@ const Component: FC<Props> & Static = (props) => {
   // --------------------------------------------------------
   // render array of objects
   // --------------------------------------------------------
+  const getObjectKey = (item: ObjectValue, index: number) => {
+    if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
+    if (typeof itemKey === 'function') return itemKey(item, index)
+    if (typeof itemKey === 'string') return item[itemKey]
+
+    return index
+  }
+
   const renderComplexArray = (data: ObjectValue[]) => {
-    const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects
-    const { length } = renderData
+    const { length } = data
 
-    // if it's empty
-    if (renderData.length === 0) return null
+    if (length === 0) return null
 
-    const getKey = (item: ObjectValue, index: number) => {
-      if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
-      if (typeof itemKey === 'function') return itemKey(item, index)
-      if (typeof itemKey === 'string') return item[itemKey]
-
-      return index
-    }
-
-    return renderData.map((item, i) => {
+    return data.map((item, i) => {
       const { component: itemComponent, ...restItem } = item
       const renderItem = itemComponent ?? component
-      const key = getKey(restItem, i)
+      const key = getObjectKey(restItem, i)
       const extendedProps = attachItemProps({
         i,
         length,
@@ -250,21 +248,32 @@ const Component: FC<Props> & Static = (props) => {
 
     // --------------------------------------------------------
     // render props component + data
+    // single pass: filter nullish/empty and determine array type
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      const clearData = data.filter(
-        (item) => item !== null && item !== undefined,
-      )
+      let isSimple = true
+      let isComplex = true
+      const clearData: (SimpleValue | ObjectValue)[] = []
 
-      const isSimpleArray = clearData.every(
-        (item) => typeof item === 'string' || typeof item === 'number',
-      )
+      for (const item of data) {
+        if (item == null) continue
 
-      if (isSimpleArray) return renderSimpleArray(clearData as SimpleValue[])
+        if (typeof item === 'string' || typeof item === 'number') {
+          isComplex = false
+        } else if (typeof item === 'object') {
+          if (isEmpty(item)) continue
+          isSimple = false
+        } else {
+          isSimple = false
+          isComplex = false
+        }
 
-      const isComplexArray = clearData.every((item) => typeof item === 'object')
+        clearData.push(item)
+      }
 
-      if (isComplexArray) return renderComplexArray(clearData as ObjectValue[])
+      if (clearData.length === 0) return null
+      if (isSimple) return renderSimpleArray(clearData as SimpleValue[])
+      if (isComplex) return renderComplexArray(clearData as ObjectValue[])
 
       return null
     }

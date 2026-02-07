@@ -1,47 +1,36 @@
 /**
  * HOC that equalizes the dimensions of beforeContent and afterContent areas.
- * After render, it measures both DOM nodes and sets the larger dimension on
- * both so they match. Uses width for inline direction and height for rows
- * direction. This is useful for centering the main content when before/after
- * slots have different intrinsic sizes (e.g., an icon on one side only).
+ * After render, it measures both DOM nodes via useLayoutEffect and sets the
+ * larger dimension on both so they match. Uses width for inline direction
+ * and height for rows direction. This is useful for centering the main
+ * content when before/after slots have different intrinsic sizes.
  */
-import { get } from '@vitus-labs/core'
-import { createRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { SimpleHoc } from '~/types'
 import type { Props as ElementProps } from './types'
-
-const isNumber = (a: unknown, b: unknown) =>
-  Number.isInteger(a) && Number.isInteger(b)
 
 const types = {
   height: 'offsetHeight',
   width: 'offsetWidth',
-}
+} as const
 
-type Calculate = ({
-  beforeContent,
-  afterContent,
-}: {
-  beforeContent: HTMLElement
-  afterContent: HTMLElement
-}) => (type: 'height' | 'width') => void
+type DimensionType = keyof typeof types
 
-const calculate: Calculate =
-  ({ beforeContent, afterContent }) =>
-  (type: keyof typeof types) => {
-    const beforeContentSize = get(beforeContent, types[type])
-    const afterContentSize = get(afterContent, types[type])
+const equalize = (
+  beforeEl: HTMLElement,
+  afterEl: HTMLElement,
+  type: DimensionType,
+) => {
+  const prop = types[type]
+  const beforeSize = beforeEl[prop]
+  const afterSize = afterEl[prop]
 
-    if (isNumber(beforeContentSize, afterContentSize)) {
-      if (beforeContentSize > afterContentSize) {
-        beforeContent.style[type] = `${beforeContentSize}px`
-        afterContent.style[type] = `${beforeContentSize}px`
-      } else {
-        beforeContent.style[type] = `${afterContentSize}px`
-        afterContent.style[type] = `${afterContentSize}px`
-      }
-    }
+  if (Number.isInteger(beforeSize) && Number.isInteger(afterSize)) {
+    const maxSize = `${Math.max(beforeSize, afterSize)}px`
+    beforeEl.style[type] = maxSize
+    afterEl.style[type] = maxSize
   }
+}
 
 type Props = ElementProps &
   Partial<{
@@ -60,25 +49,19 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
       beforeContent,
       ...rest
     } = props
-    const elementRef = createRef<HTMLElement>()
+    const elementRef = useRef<HTMLElement>(null)
 
-    const calculateSize = () => {
-      const beforeContent = get(elementRef, 'current.children[0]') as
-        | HTMLElement
-        | undefined
-      const afterContent = get(elementRef, 'current.children[2]') as
-        | HTMLElement
-        | undefined
+    useLayoutEffect(() => {
+      if (!equalBeforeAfter || !elementRef.current) return
 
-      if (beforeContent && afterContent) {
-        const updateElement = calculate({ beforeContent, afterContent })
+      const { children } = elementRef.current
+      const beforeEl = children[0] as HTMLElement | undefined
+      const afterEl = children[2] as HTMLElement | undefined
 
-        if (direction === 'rows') updateElement('height')
-        else updateElement('width')
+      if (beforeEl && afterEl) {
+        equalize(beforeEl, afterEl, direction === 'rows' ? 'height' : 'width')
       }
-    }
-
-    if (equalBeforeAfter) calculateSize()
+    })
 
     return (
       <WrappedComponent
