@@ -1,5 +1,7 @@
 // --------------------------------------------------------
-// omit - create a new object without the specified keys
+// omit — create a new object without the specified keys.
+// Accepts nullable input for convenience (returns `{}`).
+// Uses a Set for O(1) key lookup.
 // --------------------------------------------------------
 export const omit = <T extends Record<string, any>>(
   obj: T | null | undefined,
@@ -21,7 +23,9 @@ export const omit = <T extends Record<string, any>>(
 }
 
 // --------------------------------------------------------
-// pick - create a new object with only the specified keys
+// pick — create a new object with only the specified keys.
+// Accepts nullable input for convenience (returns `{}`).
+// When no keys given, returns a shallow copy of the whole object.
 // --------------------------------------------------------
 export const pick = <T extends Record<string, any>>(
   obj: T | null | undefined,
@@ -43,12 +47,13 @@ export const pick = <T extends Record<string, any>>(
 }
 
 // --------------------------------------------------------
-// get - retrieve a nested value by path
-// supports dot notation and bracket notation
+// get — retrieve a nested value by dot/bracket path.
 // e.g. get(obj, 'a.b.c') or get(obj, 'a.children[0]')
+// Returns `defaultValue` when any segment is null/undefined.
 // --------------------------------------------------------
 const PATH_RE = /[^.[\]]+/g
 
+/** Split a dot/bracket path string into individual key tokens. */
 const parsePath = (path: string | string[]): string[] => {
   if (Array.isArray(path)) return path
   const parts = path.match(PATH_RE)
@@ -72,9 +77,9 @@ export const get = (
 }
 
 // --------------------------------------------------------
-// set - set a nested value by path (mutates the object)
-// supports array paths: set(obj, ['a', 'b'], value)
-// supports string paths: set(obj, 'a.b', value)
+// set — set a nested value by path (mutates the object).
+// Auto-creates intermediate objects/arrays as needed.
+// Blocks prototype-pollution keys (__proto__, constructor, prototype).
 // --------------------------------------------------------
 const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor'])
 
@@ -108,7 +113,11 @@ export const set = (
 }
 
 // --------------------------------------------------------
-// throttle - limit function execution rate
+// throttle — limit function execution to at most once per `wait` ms.
+// Trailing calls are preserved: if called during the cooldown, the
+// last invocation fires after the remaining delay.
+// Returns a throttled function with a `.cancel()` method to clear
+// any pending trailing call.
 // --------------------------------------------------------
 export const throttle = <T extends (...args: any[]) => any>(
   fn: T,
@@ -153,7 +162,9 @@ export const throttle = <T extends (...args: any[]) => any>(
 }
 
 // --------------------------------------------------------
-// merge - deep merge objects (source wins, arrays replaced)
+// merge — deep merge objects (source wins, arrays replaced wholesale).
+// Only plain objects are recursed into; class instances and arrays
+// are assigned by reference. Blocks prototype-pollution keys.
 // --------------------------------------------------------
 const isPlainObject = (value: unknown): value is Record<string, any> =>
   value !== null &&

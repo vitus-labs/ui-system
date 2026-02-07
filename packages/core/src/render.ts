@@ -9,6 +9,14 @@ type RenderProps<T extends Record<string, unknown> | undefined> = (
   props: Partial<T>,
 ) => ReactNode
 
+/**
+ * Flexible element renderer that handles multiple content types:
+ * - Primitives (string, number) — returned as-is
+ * - Arrays and fragments — returned as-is
+ * - Component types (class/function) — created via `createElement`
+ * - Valid elements — cloned with `attachProps` if provided
+ * - Falsy values — return null
+ */
 export type Render = <T extends Record<string, any> | undefined>(
   content?: CreateTypes | CloneTypes | ReactNode | ReactNode[] | RenderProps<T>,
   attachProps?: T,

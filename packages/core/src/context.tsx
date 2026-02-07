@@ -4,6 +4,10 @@ import config from '~/config'
 import isEmpty from '~/isEmpty'
 import type { Breakpoints } from '~/types'
 
+/**
+ * Internal React context shared across all @vitus-labs packages.
+ * Carries the theme object plus any extra provider props.
+ */
 const context = createContext<any>({})
 const VitusLabsProvider = context.Provider
 
@@ -21,6 +25,11 @@ type ProviderType = Partial<
   } & Record<string, any>
 >
 
+/**
+ * Dual-layer provider that feeds both the internal VitusLabs context
+ * and an optional external styling provider (e.g. styled-components'
+ * ThemeProvider). When no theme is supplied, renders children directly.
+ */
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.ExternalProvider, [])
   const context = useMemo(

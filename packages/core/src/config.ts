@@ -2,6 +2,11 @@ import type { ComponentType } from 'react'
 import { css, styled, ThemeProvider } from 'styled-components'
 import type { HTMLTags } from '~/html'
 
+/**
+ * Singleton configuration that bridges the UI system with styled-components.
+ * All packages reference `config.css`, `config.styled`, etc. so the styling
+ * engine can be swapped at runtime (e.g. for React Native) via `init()`.
+ */
 interface Internal {
   css: typeof css
   styled: typeof styled

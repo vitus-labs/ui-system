@@ -1,3 +1,8 @@
+/**
+ * Type-safe emptiness check for objects, arrays, null, and undefined.
+ * Returns `true` for null, undefined, empty objects `{}`, and empty arrays `[]`.
+ * Non-object primitives (string, number) also return `true` as any.
+ */
 export type IsEmpty = <
   T extends Record<number | string, any> | any[] | null | undefined,
 >(
