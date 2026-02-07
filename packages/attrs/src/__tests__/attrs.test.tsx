@@ -146,6 +146,43 @@ describe('.config() chaining', () => {
     expect(Configured).not.toBe(Original)
     expect(Configured.IS_ATTRS).toBe(true)
   })
+
+  it('should update displayName when name is changed', () => {
+    const Original = attrs({ name: 'Original', component: BaseComponent })
+    const Renamed = Original.config({ name: 'Renamed' })
+    expect(Renamed.displayName).toBe('Renamed')
+    expect(Original.displayName).toBe('Original')
+  })
+
+  it('should swap the rendered component', () => {
+    const AltComponent = (props: any) => (
+      <span data-testid="alt" {...props}>
+        {props.label}
+      </span>
+    )
+
+    const Original = attrs({ name: 'Test', component: BaseComponent })
+    const Swapped = Original.config({ component: AltComponent })
+
+    render(<Swapped label="swapped" />)
+    expect(screen.queryByTestId('base')).toBeNull()
+    expect(screen.getByTestId('alt')).toHaveTextContent('swapped')
+  })
+
+  it('should preserve attrs chain after config swap', () => {
+    const AltComponent = (props: any) => (
+      <span data-testid="alt" {...props}>
+        {props.label}
+      </span>
+    )
+
+    const Component = attrs({ name: 'Test', component: BaseComponent })
+      .attrs(() => ({ label: 'from-attrs' }))
+      .config({ component: AltComponent })
+
+    render(<Component />)
+    expect(screen.getByTestId('alt')).toHaveTextContent('from-attrs')
+  })
 })
 
 // --------------------------------------------------------
@@ -180,6 +217,70 @@ describe('.statics() chaining', () => {
 })
 
 // --------------------------------------------------------
+// .compose() chaining
+// --------------------------------------------------------
+describe('.compose() chaining', () => {
+  it('should wrap component with a HOC', () => {
+    const withWrapper = (WrappedComponent: any) => (props: any) => (
+      <div data-testid="hoc-wrapper">
+        <WrappedComponent {...props} />
+      </div>
+    )
+
+    const Component = attrs({
+      name: 'Test',
+      component: BaseComponent,
+    }).compose({ withWrapper })
+
+    render(<Component label="composed" />)
+    expect(screen.getByTestId('hoc-wrapper')).toBeDefined()
+    expect(screen.getByTestId('base')).toHaveTextContent('composed')
+  })
+
+  it('should apply multiple HOCs in correct order', () => {
+    const order: string[] = []
+
+    const withOuter = (Wrapped: any) => (props: any) => {
+      order.push('outer')
+      return <Wrapped {...props} />
+    }
+
+    const withInner = (Wrapped: any) => (props: any) => {
+      order.push('inner')
+      return <Wrapped {...props} />
+    }
+
+    const Component = attrs({
+      name: 'Test',
+      component: BaseComponent,
+    }).compose({ withOuter, withInner })
+
+    render(<Component />)
+    // calculateHocsFuncs reverses the order: last-defined runs first
+    expect(order).toEqual(['inner', 'outer'])
+  })
+
+  it('should remove a HOC by setting it to false', () => {
+    const withWrapper = (WrappedComponent: any) => (props: any) => (
+      <div data-testid="hoc-wrapper">
+        <WrappedComponent {...props} />
+      </div>
+    )
+
+    const WithHoc = attrs({
+      name: 'Test',
+      component: BaseComponent,
+    }).compose({ withWrapper })
+
+    const WithoutHoc = WithHoc.compose({ withWrapper: false })
+
+    render(<WithoutHoc label="no-hoc" />)
+    expect(screen.queryByTestId('hoc-wrapper')).toBeNull()
+    expect(screen.getByTestId('base')).toHaveTextContent('no-hoc')
+  })
+})
+
+// --------------------------------------------------------
 // .getDefaultAttrs()
 // --------------------------------------------------------
 describe('.getDefaultAttrs()', () => {
@@ -199,6 +300,18 @@ describe('.getDefaultAttrs()', () => {
     const Component = attrs({ name: 'Test', component: BaseComponent })
     const defaults = Component.getDefaultAttrs({})
     expect(defaults).toEqual({})
+  })
+
+  it('should merge multiple attrs chains', () => {
+    const Component = attrs({
+      name: 'Test',
+      component: BaseComponent,
+    })
+      .attrs(() => ({ color: 'blue' }))
+      .attrs(() => ({ size: 'lg' }))
+
+    const defaults = Component.getDefaultAttrs({})
+    expect(defaults).toEqual({ color: 'blue', size: 'lg' })
   })
 })
 
@@ -278,5 +391,49 @@ describe('immutability', () => {
 
     render(<Child />)
     expect(screen.getByTestId('base')).toHaveTextContent('Child')
+  })
+})
+
+// --------------------------------------------------------
+// Deep chaining
+// --------------------------------------------------------
+describe('deep chaining', () => {
+  it('should accumulate attrs across 3+ levels', () => {
+    const Component = attrs({ name: 'Test', component: BaseComponent })
+      .attrs(() => ({ 'data-a': '1' }))
+      .attrs(() => ({ 'data-b': '2' }))
+      .attrs(() => ({ 'data-c': '3' }))
+
+    render(<Component />)
+    const el = screen.getByTestId('base')
+    expect(el).toHaveAttribute('data-a', '1')
+    expect(el).toHaveAttribute('data-b', '2')
+    expect(el).toHaveAttribute('data-c', '3')
+  })
+
+  it('should combine attrs, statics, and config in a single chain', () => {
+    const Component = attrs({ name: 'Base', component: BaseComponent })
+      .attrs(() => ({ label: 'hello' }))
+      .statics({ variant: 'primary' })
+      .config({ name: 'FinalName' })
+      .attrs(() => ({ 'data-extra': 'yes' }))
+
+    expect(Component.displayName).toBe('FinalName')
+    expect(Component.meta).toEqual({ variant: 'primary' })
+
+    render(<Component />)
+    const el = screen.getByTestId('base')
+    expect(el).toHaveTextContent('hello')
+    expect(el).toHaveAttribute('data-extra', 'yes')
+  })
+
+  it('should allow later attrs to override earlier ones', () => {
+    const Component = attrs({ name: 'Test', component: BaseComponent })
+      .attrs(() => ({ label: 'first' }))
+      .attrs(() => ({ label: 'second' }))
+      .attrs(() => ({ label: 'third' }))
+
+    render(<Component />)
+    expect(screen.getByTestId('base')).toHaveTextContent('third')
   })
 })

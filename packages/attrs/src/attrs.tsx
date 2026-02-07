@@ -36,6 +36,8 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
   // @ts-expect-error
   attrsComponent({
     ...defaultOpts,
+    ...(opts.name ? { name: opts.name } : undefined),
+    ...(opts.component ? { component: opts.component } : undefined),
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
     filterAttrs: [
       ...(defaultOpts.filterAttrs ?? []),
@@ -155,6 +157,11 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
     return cloneAndEnhance(options, result)
   }
+
+  // @ts-ignore
+  AttrsComponent.compose = (opts) =>
+    // @ts-ignore
+    cloneAndEnhance(options, { compose: opts })
 
   // @ts-ignore
   AttrsComponent.statics = (opts) =>
