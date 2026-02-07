@@ -12,6 +12,10 @@ import Styled from './styled'
  * components via ContainerContext, and renders a styled wrapper with
  * responsive max-width.
  */
+
+const DEV_PROPS: Record<string, string> =
+  process.env.NODE_ENV !== 'production' ? { 'data-coolgrid': 'container' } : {}
+
 const Component: ElementType<['containerWidth']> = ({
   children,
   component,
@@ -19,15 +23,52 @@ const Component: ElementType<['containerWidth']> = ({
   width,
   ...props
 }) => {
-  const { containerWidth = {}, ...ctx } = useGridContext(props)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const context = useMemo(() => ctx, [...Object.values(ctx)])
+  const {
+    containerWidth = {},
+    columns,
+    size,
+    gap,
+    padding,
+    gutter,
+    colCss,
+    colComponent,
+    rowCss,
+    rowComponent,
+    contentAlignX,
+  } = useGridContext(props)
 
-  let finalWidth = containerWidth
-  if (width) {
+  const context = useMemo(
+    () => ({
+      columns,
+      size,
+      gap,
+      padding,
+      gutter,
+      colCss,
+      colComponent,
+      rowCss,
+      rowComponent,
+      contentAlignX,
+    }),
+    [
+      columns,
+      size,
+      gap,
+      padding,
+      gutter,
+      colCss,
+      colComponent,
+      rowCss,
+      rowComponent,
+      contentAlignX,
+    ],
+  )
+
+  const finalWidth = useMemo(() => {
+    if (!width) return containerWidth
     // @ts-expect-error
-    finalWidth = typeof width === 'function' ? width(containerWidth) : width
-  }
+    return typeof width === 'function' ? width(containerWidth) : width
+  }, [width, containerWidth])
 
   const finalProps = useMemo(
     () => ({
@@ -39,21 +80,12 @@ const Component: ElementType<['containerWidth']> = ({
     [finalWidth, css],
   )
 
-  const getDevProps = () => {
-    const result = {}
-    if (process.env.NODE_ENV !== 'production') {
-      result['data-coolgrid'] = 'container'
-    }
-
-    return result
-  }
-
   return (
     <Styled
       {...omitCtxKeys(props)}
       as={component}
       {...finalProps}
-      {...getDevProps()}
+      {...DEV_PROPS}
     >
       <Context.Provider value={context}>{children}</Context.Provider>
     </Styled>

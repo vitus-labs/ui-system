@@ -11,6 +11,10 @@ import Styled from './styled'
  * (columns, gap, gutter) and calculates its own width as a fraction
  * of the total columns. Supports responsive size, padding, and visibility.
  */
+
+const DEV_PROPS: Record<string, string> =
+  process.env.NODE_ENV !== 'production' ? { 'data-coolgrid': 'col' } : {}
+
 const Component: ElementType<
   [
     'containerWidth',
@@ -31,11 +35,6 @@ const Component: ElementType<
     ...props,
   })
 
-  const finalComponent = useMemo(
-    () => component ?? colComponent,
-    [component, colComponent],
-  )
-
   const finalProps = useMemo(
     () => ({
       $coolgrid: {
@@ -49,21 +48,12 @@ const Component: ElementType<
     [columns, gap, size, padding, css, colCss],
   )
 
-  const getDevProps = () => {
-    const result = {}
-    if (process.env.NODE_ENV !== 'production') {
-      result['data-coolgrid'] = 'col'
-    }
-
-    return result
-  }
-
   return (
     <Styled
       {...omitCtxKeys(props)}
-      as={finalComponent}
+      as={component ?? colComponent}
       {...finalProps}
-      {...getDevProps()}
+      {...DEV_PROPS}
     >
       {children}
     </Styled>

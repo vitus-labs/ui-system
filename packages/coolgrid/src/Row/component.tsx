@@ -12,23 +12,41 @@ import Styled from './styled'
  * gap, gutter) to Col children via RowContext. Renders a flex-wrap container
  * with negative margins to offset column gutters.
  */
+
+const DEV_PROPS: Record<string, string> =
+  process.env.NODE_ENV !== 'production' ? { 'data-coolgrid': 'row' } : {}
+
 const Component: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
 > = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
 
-  const { columns, gap, gutter, rowComponent, rowCss, contentAlignX, ...ctx } =
-    useGridContext({ ...parentCtx, ...props })
+  const {
+    columns,
+    gap,
+    gutter,
+    rowComponent,
+    rowCss,
+    contentAlignX,
+    containerWidth,
+    size,
+    padding,
+    colCss,
+    colComponent,
+  } = useGridContext({ ...parentCtx, ...props })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const context = useMemo(
-    () => ({ ...ctx, columns, gap, gutter }),
-    [columns, gap, gutter, ...Object.values(ctx)],
-  )
-
-  const finalComponent = useMemo(
-    () => component || rowComponent,
-    [component, rowComponent],
+    () => ({
+      containerWidth,
+      size,
+      padding,
+      colCss,
+      colComponent,
+      columns,
+      gap,
+      gutter,
+    }),
+    [containerWidth, size, padding, colCss, colComponent, columns, gap, gutter],
   )
 
   const finalProps = useMemo(
@@ -44,21 +62,12 @@ const Component: ElementType<
     [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss],
   )
 
-  const getDevProps = () => {
-    const result = {}
-    if (process.env.NODE_ENV !== 'production') {
-      result['data-coolgrid'] = 'row'
-    }
-
-    return result
-  }
-
   return (
     <Styled
       {...omitCtxKeys(props)}
-      as={finalComponent}
+      as={component || rowComponent}
       {...finalProps}
-      {...getDevProps()}
+      {...DEV_PROPS}
     >
       <RowContext.Provider value={context}>{children}</RowContext.Provider>
     </Styled>
