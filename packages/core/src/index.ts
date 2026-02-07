@@ -1,6 +1,7 @@
 import compose from '~/compose'
 import config, { init } from '~/config'
 import Provider, { context } from '~/context'
+import hoistNonReactStatics from '~/hoistNonReactStatics'
 import type {
   HTMLElementAttrs,
   HTMLTagAttrsByTag,
@@ -42,4 +43,5 @@ export {
   merge,
   HTML_TAGS,
   HTML_TEXT_TAGS,
+  hoistNonReactStatics,
 }

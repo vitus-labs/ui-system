@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
 
-import { compose, omit, pick } from '@vitus-labs/core'
-import hoistNonReactStatics from 'hoist-non-react-statics'
+import { compose, hoistNonReactStatics, omit, pick } from '@vitus-labs/core'
 import { forwardRef, useMemo } from 'react'
 import { attrsHoc } from '~/hoc'
 import { useRef } from '~/hooks'

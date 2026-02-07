@@ -45,15 +45,11 @@
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
       "version": "1.2.2",
-      "dependencies": {
-        "hoist-non-react-statics": "^3.3.2",
-      },
       "devDependencies": {
         "@swc/jest": "^0.2.39",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.1",
         "@testing-library/user-event": "^14.6.1",
-        "@types/hoist-non-react-statics": "^3.3.7",
         "@types/jest": "^30.0.0",
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -65,7 +61,7 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
-        "react": ">= 18",
+        "react": ">= 19",
       },
     },
     "packages/coolgrid": {
@@ -86,7 +82,7 @@
       "peerDependencies": {
         "@vitus-labs/core": "*",
         "@vitus-labs/unistyle": "*",
-        "react": ">= 18",
+        "react": ">= 19",
         "styled-components": ">= 6",
       },
     },
@@ -107,7 +103,7 @@
         "jest-environment-jsdom": "^30.2.0",
       },
       "peerDependencies": {
-        "react": ">= 18",
+        "react": ">= 19",
         "styled-components": ">= 6",
       },
     },
@@ -133,8 +129,8 @@
       "peerDependencies": {
         "@vitus-labs/core": "*",
         "@vitus-labs/unistyle": "*",
-        "react": ">= 18",
-        "react-dom": ">= 18",
+        "react": ">= 19",
+        "react-dom": ">= 19",
         "styled-components": ">= 6",
       },
     },
@@ -154,7 +150,7 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
-        "react": ">= 18",
+        "react": ">= 19",
       },
     },
     "packages/rocketstories": {
@@ -162,7 +158,6 @@
       "version": "1.2.2",
       "dependencies": {
         "@vitus-labs/elements": "workspace:*",
-        "hoist-non-react-statics": "^3.3.2",
       },
       "devDependencies": {
         "@swc/jest": "^0.2.39",
@@ -182,15 +177,12 @@
         "@vitus-labs/core": "*",
         "@vitus-labs/rocketstyle": "*",
         "@vitus-labs/unistyle": "*",
-        "react": ">= 16.7",
+        "react": ">= 19",
       },
     },
     "packages/rocketstyle": {
       "name": "@vitus-labs/rocketstyle",
       "version": "1.2.2",
-      "dependencies": {
-        "hoist-non-react-statics": "^3.3.2",
-      },
       "devDependencies": {
         "@swc/jest": "^0.2.39",
         "@testing-library/jest-dom": "^6.9.1",
@@ -206,7 +198,7 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
-        "react": ">= 18",
+        "react": ">= 19",
       },
     },
     "packages/unistyle": {
@@ -224,7 +216,7 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
-        "react": ">= 18",
+        "react": ">= 19",
       },
     },
   },
@@ -1001,8 +993,6 @@
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 
-    "@types/hoist-non-react-statics": ["@types/hoist-non-react-statics@3.3.7", "", { "dependencies": { "hoist-non-react-statics": "^3.3.0" }, "peerDependencies": { "@types/react": "*" } }, "sha512-PQTyIulDkIDro8P+IHbKCsw7U2xxBYflVzW/FgWdCAePD9xGSidgA76/GeJ6lBKoblyhf9pBY763gbrN+1dI8g=="],
-
     "@types/html-minifier-terser": ["@types/html-minifier-terser@6.1.0", "", {}, "sha512-oh/6byDPnL1zeNXFrDXFLyZjkr1MsBG667IM792caf1L2UPOOMf65NFzjUH/ltyfwjAGfs1rsX1eftK0jC/KIg=="],
 
     "@types/istanbul-lib-coverage": ["@types/istanbul-lib-coverage@2.0.6", "", {}, "sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w=="],
@@ -1772,8 +1762,6 @@
     "he": ["he@1.2.0", "", { "bin": { "he": "bin/he" } }, "sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw=="],
 
     "hmac-drbg": ["hmac-drbg@1.0.1", "", { "dependencies": { "hash.js": "^1.0.3", "minimalistic-assert": "^1.0.0", "minimalistic-crypto-utils": "^1.0.1" } }, "sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg=="],
-
-    "hoist-non-react-statics": ["hoist-non-react-statics@3.3.2", "", { "dependencies": { "react-is": "^16.7.0" } }, "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw=="],
 
     "hosted-git-info": ["hosted-git-info@7.0.2", "", { "dependencies": { "lru-cache": "^10.0.1" } }, "sha512-puUZAUKT5m8Zzvs72XWy3HtvVbTWljRE66cP60bxJzAqf2DgICo7lYTY2IHUmLnNpjYvw5bvmoHvPc0QO2a62w=="],
 
@@ -2952,8 +2940,6 @@
     "gzip-size/duplexer": ["duplexer@0.1.2", "", {}, "sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg=="],
 
     "handlebars/source-map": ["source-map@0.6.1", "", {}, "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="],
-
-    "hoist-non-react-statics/react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
     "html-minifier-terser/camel-case": ["camel-case@4.1.2", "", { "dependencies": { "pascal-case": "^3.1.2", "tslib": "^2.0.3" } }, "sha512-gxGWBrTT1JuMx6R+o5PTXMmUnhnVzLQ9SNutD4YqKtI6ap897t3tKECYla6gCWEkplXnlNybEkZg9GEGxKFCgw=="],
 

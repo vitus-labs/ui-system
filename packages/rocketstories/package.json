@@ -62,8 +62,7 @@
     "react": ">= 19"
   },
   "dependencies": {
-    "@vitus-labs/elements": "workspace:*",
-    "hoist-non-react-statics": "^3.3.2"
+    "@vitus-labs/elements": "workspace:*"
   },
   "devDependencies": {
     "@swc/jest": "^0.2.39",

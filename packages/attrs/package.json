@@ -51,15 +51,11 @@
     "@vitus-labs/core": "*",
     "react": ">= 19"
   },
-  "dependencies": {
-    "hoist-non-react-statics": "^3.3.2"
-  },
   "devDependencies": {
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
-    "@types/hoist-non-react-statics": "^3.3.7",
     "@types/jest": "^30.0.0",
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/elements": "workspace:*",

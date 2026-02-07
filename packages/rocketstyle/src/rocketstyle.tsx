@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
 
-import { compose, config, omit, pick, render } from '@vitus-labs/core'
-import hoistNonReactStatics from 'hoist-non-react-statics'
+import {
+  compose,
+  config,
+  hoistNonReactStatics,
+  omit,
+  pick,
+  render,
+} from '@vitus-labs/core'
 import { forwardRef, useMemo } from 'react'
 import { LocalThemeManager } from '~/cache'
 import {
