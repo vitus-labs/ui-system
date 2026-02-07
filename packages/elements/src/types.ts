@@ -36,7 +36,7 @@ export type InnerRef = ForwardedRef<any>
 
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 
-export type Css = CssCallback | string
+export type Css = CssCallback | ReturnType<typeof config.css> | string
 
 export type isEmpty = null | undefined
 

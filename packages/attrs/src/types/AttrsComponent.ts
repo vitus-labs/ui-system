@@ -1,4 +1,3 @@
-import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
 import type {
   ForwardedRef,
   ForwardRefExoticComponent,
@@ -8,19 +7,7 @@ import type {
 import type { AttrsCb } from './attrs'
 import type { ConfigAttrs } from './config'
 import type { ComposeParam } from './hoc'
-import type { ElementType, TObj } from './utils'
-
-export type InitAttrsComponent<C extends ElementType = ElementType> = (params: {
-  name: string
-  component: C
-}) => AttrsComponent<
-  // keep original component props + extract dimension props
-  ExtractProps<C>,
-  // set default extending props
-  {},
-  {},
-  {}
->
+import type { ElementType, ExtractProps, MergeTypes, TObj } from './utils'
 
 export type InnerComponentProps = {
   $attrsRef?: ForwardedRef<unknown>

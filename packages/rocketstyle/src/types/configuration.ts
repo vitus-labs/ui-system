@@ -65,7 +65,4 @@ export type ExtendedConfiguration<
   statics: Record<string, any>
 } & Record<string, any>
 
-export type DefaultProps<> =
-  // C extends ElementType = ElementType,
-  // D extends Dimensions = Dimensions
-  Partial<PseudoProps>
+export type DefaultProps = Partial<PseudoProps>

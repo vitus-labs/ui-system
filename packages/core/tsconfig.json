@@ -1,11 +1,11 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
   "include": ["src"],
-  "exclude": ["node_modules", "src/__stories__", "lib", "src/__tests__"],
+  "exclude": ["node_modules", "lib"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "strictNullChecks": true,
-    "types": ["@vitus-labs/tools-rollup/global"],
+    "types": ["@vitus-labs/tools-rolldown/global", "jest"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",

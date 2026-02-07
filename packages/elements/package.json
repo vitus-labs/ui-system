@@ -37,8 +37,8 @@
   "scripts": {
     "dev": "bun run vl_stories",
     "prepublish": "bun run build",
-    "build": "bun run vl_build",
-    "build:watch": "bun run vl_build-watch",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
@@ -54,12 +54,17 @@
     "styled-components": ">= 6"
   },
   "devDependencies": {
+    "@swc/jest": "^0.2.39",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/jest": "^30.0.0",
     "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/tools-babel": "^1.5.1",
-    "@vitus-labs/tools-rollup": "^1.5.1",
-    "@vitus-labs/tools-storybook": "^1.5.1",
-    "@vitus-labs/tools-typescript": "^1.5.1",
-    "@vitus-labs/unistyle": "workspace:*"
+    "@vitus-labs/rocketstyle": "^1.2.2",
+    "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
+    "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
+    "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
+    "@vitus-labs/unistyle": "workspace:*",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0"
   },
   "dependencies": {
     "react-is": "^19.2.3"

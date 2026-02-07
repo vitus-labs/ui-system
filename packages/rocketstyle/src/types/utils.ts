@@ -24,12 +24,20 @@ export type SimpleHoc<P extends Record<string, unknown> = {}> = <
 type IsFalseOrNullable<T> = T extends null | undefined | false ? never : true
 export type NullableKeys<T> = { [K in keyof T]: IsFalseOrNullable<T[K]> }
 
-type ExtractNullableKeys<T> = {
-  [P in keyof T as T[P] extends null | never | undefined ? never : P]: T[P]
-}
+export type ReturnCbParam<P extends TFn | TObj> = P extends TFn
+  ? ReturnType<P>
+  : P
 
-// merge types
+// ─── MergeTypes ───────────────────────────────────────────────
 type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+
+type ExtractNullableKeys<T> = {
+  [P in keyof T as [T[P]] extends [never]
+    ? never
+    : [T[P]] extends [null | undefined]
+      ? never
+      : P]: T[P]
+}
 
 type SpreadTwo<L, R> = Id<Pick<L, Exclude<keyof L, keyof R>> & R>
 
@@ -44,12 +52,10 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
   Spread<A>
 >
 
-// extract props fron component
+// ─── ExtractProps ─────────────────────────────────────────────
 export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends ElementType<infer TProps>
+  TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps
-    : TComponentOrTProps
-
-export type ReturnCbParam<P extends TFn | TObj> = P extends TFn
-  ? ReturnType<P>
-  : P
+    : TComponentOrTProps extends ForwardRefExoticComponent<infer TProps>
+      ? TProps
+      : TComponentOrTProps

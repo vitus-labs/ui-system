@@ -12,19 +12,17 @@ const Button = attrs({ name: 'Button', component: Element })
   .attrs<{ something?: boolean }>(
     ({ content }) => ({
       tag: 'button',
-      // label: true,
       contentAlignX: 'block',
       content,
       contentDirection: 'inline',
     }),
     { filter: ['something'] },
   )
-  .attrs(({ content }) => ({
+  .attrs({
     tag: 'button',
-    // label: true,
-    contentAlignX: 'block',
-    content,
-  }))
+    // contentAlignX: 'block',
+    // content,
+  })
   .attrs({
     tag: 'button',
     alignX: 'center',

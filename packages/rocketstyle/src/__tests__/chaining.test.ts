@@ -18,7 +18,7 @@ describe('chainOptions', () => {
     const obj = { a: 1 }
     const result = chainOptions(obj, [])
     expect(result).toHaveLength(1)
-    expect(result[0]()).toEqual({ a: 1 })
+    expect(result[0]?.()).toEqual({ a: 1 })
   })
 
   it('returns defaults when opts is undefined', () => {
@@ -35,7 +35,8 @@ describe('chainOptions', () => {
 
   it('defaults to empty array when defaultOpts missing', () => {
     const fn = () => ({ a: 1 })
-    const result = chainOptions(fn, undefined as any)
+    // @ts-expect-error testing with undefined defaults
+    const result = chainOptions(fn, undefined)
     expect(result).toHaveLength(1)
   })
 })
@@ -82,8 +83,8 @@ describe('chainReservedKeyOptions', () => {
     const opts = { theme: { color: 'red' } }
     const defaults = { theme: [] }
 
-    const result = chainReservedKeyOptions(keys, opts as any, defaults)
+    const result = chainReservedKeyOptions(keys, opts, defaults)
     expect(result.theme).toHaveLength(1)
-    expect(result.theme[0]()).toEqual({ color: 'red' })
+    expect(result.theme?.[0]?.()).toEqual({ color: 'red' })
   })
 })

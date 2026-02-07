@@ -19,7 +19,7 @@ const defaultDimensions = {
   // multiple: { propName: 'multiple', multi: true },
 } as const
 
-const Test = rocketstyle<typeof theme, ThemeDefinition>()({
+const Test = rocketstyle({
   useBooleans: true,
   dimensions: defaultDimensions,
 })({
