@@ -14,6 +14,12 @@ export type UseWindowResize = (
   initialValues?: Partial<Sizes>,
 ) => Sizes
 
+/**
+ * Tracks the browser viewport size, throttled to avoid excessive re-renders.
+ * Reads `window.innerWidth`/`innerHeight` on mount and on every resize event.
+ * An optional `onChange` callback fires alongside state updates.
+ * Cleans up both the event listener and any pending throttled call on unmount.
+ */
 const useWindowResize: UseWindowResize = (
   { throttleDelay = 200, onChange } = {},
   { width = 0, height = 0 } = {},
