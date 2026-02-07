@@ -1,5 +1,5 @@
-import { Provider, breakpoints } from '@vitus-labs/unistyle'
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import { breakpoints, Provider } from '@vitus-labs/unistyle'
 import { forwardRef } from 'react'
 import OverlayComponent from '../Overlay/component'
 
@@ -28,47 +28,61 @@ const mockBoundingRects = (
   contentRect: Partial<DOMRect>,
 ) => {
   const defaultRect = {
-    top: 0, left: 0, right: 0, bottom: 0,
-    width: 0, height: 0, x: 0, y: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
     toJSON: () => {},
   }
 
   const triggerEl = screen.getByTestId('trigger')
   const contentEl = screen.getByTestId('content')
 
-  triggerEl.getBoundingClientRect = () => ({
-    ...defaultRect,
-    ...triggerRect,
-  }) as DOMRect
+  triggerEl.getBoundingClientRect = () =>
+    ({
+      ...defaultRect,
+      ...triggerRect,
+    }) as DOMRect
 
-  contentEl.getBoundingClientRect = () => ({
-    ...defaultRect,
-    ...contentRect,
-  }) as DOMRect
+  contentEl.getBoundingClientRect = () =>
+    ({
+      ...defaultRect,
+      ...contentRect,
+    }) as DOMRect
 }
 
 // Mock requestAnimationFrame for positioning
 beforeEach(() => {
-  jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
     cb(0)
     return 0
   })
   // Set window dimensions
-  Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true, configurable: true })
-  Object.defineProperty(window, 'innerHeight', { value: 768, writable: true, configurable: true })
+  Object.defineProperty(window, 'innerWidth', {
+    value: 1024,
+    writable: true,
+    configurable: true,
+  })
+  Object.defineProperty(window, 'innerHeight', {
+    value: 768,
+    writable: true,
+    configurable: true,
+  })
 })
 
 afterEach(() => {
-  jest.restoreAllMocks()
+  vi.restoreAllMocks()
   document.body.style.overflow = ''
 })
 
 describe('Overlay', () => {
   describe('statics', () => {
     it('has displayName', () => {
-      expect(OverlayComponent.displayName).toBe(
-        '@vitus-labs/elements/Overlay',
-      )
+      expect(OverlayComponent.displayName).toBe('@vitus-labs/elements/Overlay')
     })
 
     it('has pkgName', () => {
@@ -78,22 +92,16 @@ describe('Overlay', () => {
 
   describe('rendering', () => {
     it('renders trigger always', () => {
-      render(
-        <OverlayComponent trigger={Trigger}>
-          {Content}
-        </OverlayComponent>,
-        { wrapper },
-      )
+      render(<OverlayComponent trigger={Trigger}>{Content}</OverlayComponent>, {
+        wrapper,
+      })
       expect(screen.getByTestId('trigger')).toBeInTheDocument()
     })
 
     it('does not render content when closed', () => {
-      render(
-        <OverlayComponent trigger={Trigger}>
-          {Content}
-        </OverlayComponent>,
-        { wrapper },
-      )
+      render(<OverlayComponent trigger={Trigger}>{Content}</OverlayComponent>, {
+        wrapper,
+      })
       expect(screen.queryByTestId('content')).not.toBeInTheDocument()
     })
 
@@ -222,18 +230,16 @@ describe('Overlay', () => {
     })
 
     it('opens via showContent callback', async () => {
-      const TriggerManual = forwardRef<HTMLButtonElement, any>(
-        (props, ref) => (
-          <button
-            type="button"
-            ref={ref}
-            data-testid="trigger"
-            onClick={props.showContent}
-          >
-            Open
-          </button>
-        ),
-      )
+      const TriggerManual = forwardRef<HTMLButtonElement, any>((props, ref) => (
+        <button
+          type="button"
+          ref={ref}
+          data-testid="trigger"
+          onClick={props.showContent}
+        >
+          Open
+        </button>
+      ))
       TriggerManual.displayName = 'TriggerManual'
 
       render(
@@ -290,7 +296,7 @@ describe('Overlay', () => {
 
   describe('callbacks', () => {
     it('calls onOpen when overlay opens', async () => {
-      const onOpen = jest.fn()
+      const onOpen = vi.fn()
       render(
         <OverlayComponent
           trigger={Trigger}
@@ -309,7 +315,7 @@ describe('Overlay', () => {
     })
 
     it('calls onClose when overlay closes', async () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       render(
         <OverlayComponent
           trigger={Trigger}
@@ -333,7 +339,12 @@ describe('Overlay', () => {
   describe('modal type', () => {
     it('sets body overflow hidden when modal is open', () => {
       render(
-        <OverlayComponent trigger={Trigger} isOpen type="modal" closeOn="manual">
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
           {Content}
         </OverlayComponent>,
         { wrapper },
@@ -343,7 +354,12 @@ describe('Overlay', () => {
 
     it('restores body overflow when modal closes', async () => {
       const { unmount } = render(
-        <OverlayComponent trigger={Trigger} isOpen type="modal" closeOn="manual">
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
           {Content}
         </OverlayComponent>,
         { wrapper },
@@ -359,7 +375,11 @@ describe('Overlay', () => {
       render(
         <OverlayComponent trigger={Trigger} isOpen closeOn="manual">
           {(props: any) => (
-            <div ref={props.ref} data-testid="fn-content" data-active={String(props.active)}>
+            <div
+              ref={props.ref}
+              data-testid="fn-content"
+              data-active={String(props.active)}
+            >
               Function Content
             </div>
           )}
@@ -421,7 +441,9 @@ describe('Overlay', () => {
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
       // Trigger resize to recalculate position
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
       expect(content.style.top).not.toBe('')
@@ -441,10 +463,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 100, left: 400, right: 600, bottom: 130, width: 200, height: 30 },
+        {
+          top: 100,
+          left: 400,
+          right: 600,
+          bottom: 130,
+          width: 200,
+          height: 30,
+        },
         { top: 0, left: 0, right: 100, bottom: 50, width: 100, height: 50 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.top).not.toBe('')
     })
@@ -463,10 +494,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 100, left: 800, right: 1000, bottom: 130, width: 200, height: 30 },
+        {
+          top: 100,
+          left: 800,
+          right: 1000,
+          bottom: 130,
+          width: 200,
+          height: 30,
+        },
         { top: 0, left: 0, right: 150, bottom: 50, width: 150, height: 50 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -490,7 +530,9 @@ describe('Overlay', () => {
         { top: 400, left: 50, right: 150, bottom: 430, width: 100, height: 30 },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -513,7 +555,9 @@ describe('Overlay', () => {
         { top: 50, left: 50, right: 150, bottom: 80, width: 100, height: 30 },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -534,10 +578,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 300, left: 500, right: 600, bottom: 330, width: 100, height: 30 },
+        {
+          top: 300,
+          left: 500,
+          right: 600,
+          bottom: 330,
+          width: 100,
+          height: 30,
+        },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -556,10 +609,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 300, left: 500, right: 600, bottom: 360, width: 100, height: 60 },
+        {
+          top: 300,
+          left: 500,
+          right: 600,
+          bottom: 360,
+          width: 100,
+          height: 60,
+        },
         { top: 0, left: 0, right: 100, bottom: 40, width: 100, height: 40 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -578,10 +640,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 300, left: 500, right: 600, bottom: 330, width: 100, height: 30 },
+        {
+          top: 300,
+          left: 500,
+          right: 600,
+          bottom: 330,
+          width: 100,
+          height: 30,
+        },
         { top: 0, left: 0, right: 100, bottom: 50, width: 100, height: 50 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -601,10 +672,19 @@ describe('Overlay', () => {
       )
       // Trigger near left edge — not enough room for 200px content
       mockBoundingRects(
-        { top: 300, left: 100, right: 200, bottom: 330, width: 100, height: 30 },
+        {
+          top: 300,
+          left: 100,
+          right: 200,
+          bottom: 330,
+          width: 100,
+          height: 30,
+        },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -625,10 +705,19 @@ describe('Overlay', () => {
         { wrapper },
       )
       mockBoundingRects(
-        { top: 300, left: 100, right: 200, bottom: 330, width: 100, height: 30 },
+        {
+          top: 300,
+          left: 100,
+          right: 200,
+          bottom: 330,
+          width: 100,
+          height: 30,
+        },
         { top: 0, left: 0, right: 150, bottom: 80, width: 150, height: 80 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -648,10 +737,19 @@ describe('Overlay', () => {
       )
       // Trigger near right edge
       mockBoundingRects(
-        { top: 300, left: 800, right: 1000, bottom: 330, width: 200, height: 30 },
+        {
+          top: 300,
+          left: 800,
+          right: 1000,
+          bottom: 330,
+          width: 200,
+          height: 30,
+        },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -678,7 +776,9 @@ describe('Overlay', () => {
         { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 },
         { top: 0, left: 0, right: 300, bottom: 200, width: 300, height: 200 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -701,7 +801,9 @@ describe('Overlay', () => {
         { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 },
         { top: 0, left: 0, right: 300, bottom: 200, width: 300, height: 200 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -726,7 +828,9 @@ describe('Overlay', () => {
         { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 },
         { top: 0, left: 0, right: 400, bottom: 300, width: 400, height: 300 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -750,19 +854,36 @@ describe('Overlay', () => {
       const contentEl = screen.getByTestId('content')
       // Mock offsetParent with a position
       const fakeParent = document.createElement('div')
-      fakeParent.getBoundingClientRect = () => ({
-        top: 50, left: 30, right: 530, bottom: 550,
-        width: 500, height: 500, x: 30, y: 50,
-        toJSON: () => {},
-      } as DOMRect)
+      fakeParent.getBoundingClientRect = () =>
+        ({
+          top: 50,
+          left: 30,
+          right: 530,
+          bottom: 550,
+          width: 500,
+          height: 500,
+          x: 30,
+          y: 50,
+          toJSON: () => {},
+        }) as DOMRect
       Object.defineProperty(contentEl, 'offsetParent', {
-        value: fakeParent, configurable: true,
+        value: fakeParent,
+        configurable: true,
       })
       mockBoundingRects(
-        { top: 200, left: 100, right: 200, bottom: 230, width: 100, height: 30 },
+        {
+          top: 200,
+          left: 100,
+          right: 200,
+          bottom: 230,
+          width: 100,
+          height: 30,
+        },
         { top: 0, left: 0, right: 150, bottom: 80, width: 150, height: 80 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       expect(contentEl.style.position).toBe('absolute')
     })
   })
@@ -770,7 +891,11 @@ describe('Overlay', () => {
   describe('click: clickOutsideContent', () => {
     it('stays open when clicking inside content', async () => {
       render(
-        <OverlayComponent trigger={Trigger} isOpen closeOn="clickOutsideContent">
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          closeOn="clickOutsideContent"
+        >
           {Content}
         </OverlayComponent>,
         { wrapper },
@@ -784,7 +909,11 @@ describe('Overlay', () => {
 
     it('closes when clicking outside content', async () => {
       render(
-        <OverlayComponent trigger={Trigger} isOpen closeOn="clickOutsideContent">
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          closeOn="clickOutsideContent"
+        >
           {Content}
         </OverlayComponent>,
         { wrapper },
@@ -815,13 +944,15 @@ describe('Overlay', () => {
       expect(screen.getByTestId('content')).toBeInTheDocument()
 
       // Leave trigger — content should hide after timeout
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       await act(async () => {
         fireEvent.mouseLeave(trigger)
       })
-      act(() => { jest.advanceTimersByTime(200) })
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
       expect(screen.queryByTestId('content')).not.toBeInTheDocument()
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('stays open when moving from trigger to content', async () => {
@@ -839,7 +970,7 @@ describe('Overlay', () => {
       })
       expect(screen.getByTestId('content')).toBeInTheDocument()
 
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       // Leave trigger (starts close timer)
       await act(async () => {
         fireEvent.mouseLeave(trigger)
@@ -848,7 +979,9 @@ describe('Overlay', () => {
       await act(async () => {
         fireEvent.mouseEnter(screen.getByTestId('content'))
       })
-      act(() => { jest.advanceTimersByTime(200) })
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
       // Content should still be visible
       expect(screen.getByTestId('content')).toBeInTheDocument()
 
@@ -856,9 +989,11 @@ describe('Overlay', () => {
       await act(async () => {
         fireEvent.mouseLeave(screen.getByTestId('content'))
       })
-      act(() => { jest.advanceTimersByTime(200) })
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
       expect(screen.queryByTestId('content')).not.toBeInTheDocument()
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('closes on scroll when closeOn=hover', async () => {
@@ -958,7 +1093,9 @@ describe('Overlay', () => {
         { top: 100, left: 50, right: 150, bottom: 130, width: 100, height: 30 },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent.scroll(window) })
+      act(() => {
+        fireEvent.scroll(window)
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })
@@ -974,7 +1111,9 @@ describe('Overlay', () => {
         { top: 100, left: 50, right: 150, bottom: 130, width: 100, height: 30 },
         { top: 0, left: 0, right: 200, bottom: 100, width: 200, height: 100 },
       )
-      act(() => { fireEvent(window, new Event('resize')) })
+      act(() => {
+        fireEvent(window, new Event('resize'))
+      })
       const content = screen.getByTestId('content')
       expect(content.style.position).toBe('fixed')
     })

@@ -3,7 +3,7 @@
  * Wraps the component through RocketStoryHoc to auto-generate dimension
  * controls and Vitus Labs-specific argTypes, then renders it with createElement.
  */
-import { createElement } from 'react'
+import { type ComponentType, createElement } from 'react'
 import RocketStoryHoc from '~/internal/RocketStoryHoc'
 
 import type { RocketStoryConfiguration, StoryComponent } from '~/types'
@@ -12,6 +12,8 @@ export type RenderMain<P = {}> = (
   params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
-export default RocketStoryHoc((component) => (props) => (
-  <>{createElement(component, props)}</>
-))
+export default RocketStoryHoc(
+  (component: ComponentType) => (props: Record<string, unknown>) => (
+    <>{createElement(component, props)}</>
+  ),
+)

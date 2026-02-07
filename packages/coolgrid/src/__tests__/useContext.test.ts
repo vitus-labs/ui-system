@@ -62,12 +62,18 @@ describe('getContainerWidth', () => {
   })
 
   it('falls back to theme.grid.container', () => {
-    const result = getContainerWidth({}, { grid: { container: { xs: '100%' } } })
+    const result = getContainerWidth(
+      {},
+      { grid: { container: { xs: '100%' } } },
+    )
     expect(result).toEqual({ xs: '100%' })
   })
 
   it('falls back to theme.coolgrid.container', () => {
-    const result = getContainerWidth({}, { coolgrid: { container: { md: 720 } } })
+    const result = getContainerWidth(
+      {},
+      { coolgrid: { container: { md: 720 } } },
+    )
     expect(result).toEqual({ md: 720 })
   })
 

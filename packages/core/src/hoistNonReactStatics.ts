@@ -76,7 +76,7 @@ const hoistNonReactStatics = <T, S>(
     const k = key as string
     if (
       KNOWN_STATICS[k] ||
-      (excludeList && excludeList[k]) ||
+      excludeList?.[k] ||
       sourceStatics[k] ||
       targetStatics[k]
     ) {
@@ -87,7 +87,9 @@ const hoistNonReactStatics = <T, S>(
     if (descriptor) {
       try {
         Object.defineProperty(target, key, descriptor)
-      } catch {}
+      } catch {
+        // Silently skip non-configurable properties
+      }
     }
   }
 

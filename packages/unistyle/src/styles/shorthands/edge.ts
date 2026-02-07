@@ -1,7 +1,7 @@
 import type { Units } from '~/types'
 import { value } from '~/units'
 
-const isValidValue = (value) => !!value || value === 0
+const isValidValue = (value: unknown) => !!value || value === 0
 
 type Property =
   | 'inset'
@@ -79,8 +79,8 @@ const edge: Edge =
 
     const { unit, edgeCss } = definitions[property]
 
-    const calc = (param) => {
-      if (unit) return value(param, rootSize, unit)
+    const calc = (param: Value) => {
+      if (unit) return value(param as any, rootSize, unit)
       return param
     }
 

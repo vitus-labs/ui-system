@@ -13,8 +13,8 @@ import type {
 } from '~/types'
 
 /** Normalizes user-supplied control shorthand (string or object) into full ControlConfiguration objects. */
-export const createControls = (props) =>
-  Object.entries(props).reduce((acc, [key, value]) => {
+export const createControls = (props: Record<string, any>) =>
+  Object.entries(props).reduce<Record<string, any>>((acc, [key, value]) => {
     if (typeof value === 'string') {
       return {
         ...acc,
@@ -95,7 +95,7 @@ type MakeStorybookControls = (
 ) => Record<string, StorybookControl>
 
 export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
-  Object.entries(obj).reduce((acc, [key, control]) => {
+  Object.entries(obj).reduce<Record<string, StorybookControl>>((acc, [key, control]) => {
     const defaultValue =
       typeof props[key] !== 'function' ? props[key] : undefined
 
@@ -109,7 +109,7 @@ export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
     } else {
       // eslint-disable-next-line no-param-reassign
       acc[key] = {
-        control: { type: control.type /* || CONTROL_MAP[control.type] */ },
+        control: { type: control.type ?? 'text' },
         description: control.description,
         options: control.options /* || CONTROL_OPTIONS[control.type] */,
         table: {

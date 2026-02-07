@@ -31,7 +31,9 @@ describe('makeItResponsive', () => {
         $test: { color: 'red' },
       })
       expect(result).toBeDefined()
-      const flat = Array.isArray(result) ? result.flat().join('') : String(result)
+      const flat = Array.isArray(result)
+        ? result.flat().join('')
+        : String(result)
       expect(flat).toContain('color: red')
     })
   })
@@ -43,8 +45,9 @@ describe('makeItResponsive', () => {
       __VITUS_LABS__: {
         sortedBreakpoints: ['xs', 'md'],
         media: {
-          xs: (...args: any[]) => css(...args),
-          md: (...args: any[]) => css`@media (min-width: 48em) { ${css(...args)} }`,
+          xs: (...args: any[]) => (css as any)(...args),
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
         },
       },
     }
@@ -88,7 +91,9 @@ describe('makeItResponsive', () => {
       })
       const result = fn({ theme: {} })
       expect(result).toBeDefined()
-      const flat = Array.isArray(result) ? result.flat().join('') : String(result)
+      const flat = Array.isArray(result)
+        ? result.flat().join('')
+        : String(result)
       expect(flat).toContain('color: green')
     })
   })

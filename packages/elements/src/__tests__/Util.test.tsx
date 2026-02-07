@@ -41,7 +41,9 @@ describe('Util', () => {
           <div data-testid="child">Content</div>
         </Util>,
       )
-      expect(screen.getByTestId('child')).toHaveStyle({ color: 'rgb(255, 0, 0)' })
+      expect(screen.getByTestId('child')).toHaveStyle({
+        color: 'rgb(255, 0, 0)',
+      })
     })
   })
 

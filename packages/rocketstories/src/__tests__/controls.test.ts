@@ -1,9 +1,9 @@
 import {
-  createControls,
   convertDimensionsToControls,
+  createControls,
+  disableDimensionControls,
   getDefaultVitusLabsControls,
   makeStorybookControls,
-  disableDimensionControls,
 } from '../utils/controls'
 
 describe('createControls', () => {

@@ -29,7 +29,10 @@ describe('unistyle Provider', () => {
         <Consumer />
       </Provider>,
     )
-    expect(screen.getByTestId('consumer')).toHaveAttribute('data-has-vl', 'true')
+    expect(screen.getByTestId('consumer')).toHaveAttribute(
+      'data-has-vl',
+      'true',
+    )
   })
 
   it('provides rootSize through context', () => {
@@ -38,7 +41,10 @@ describe('unistyle Provider', () => {
         <Consumer />
       </Provider>,
     )
-    expect(screen.getByTestId('consumer')).toHaveAttribute('data-rootsize', '16')
+    expect(screen.getByTestId('consumer')).toHaveAttribute(
+      'data-rootsize',
+      '16',
+    )
   })
 
   it('handles theme without breakpoints', () => {
@@ -47,7 +53,10 @@ describe('unistyle Provider', () => {
         <Consumer />
       </Provider>,
     )
-    expect(screen.getByTestId('consumer')).toHaveAttribute('data-has-vl', 'true')
+    expect(screen.getByTestId('consumer')).toHaveAttribute(
+      'data-has-vl',
+      'true',
+    )
   })
 
   it('handles empty breakpoints', () => {
@@ -57,7 +66,10 @@ describe('unistyle Provider', () => {
       </Provider>,
     )
     // Empty breakpoints treated same as no breakpoints
-    expect(screen.getByTestId('consumer')).toHaveAttribute('data-has-vl', 'true')
+    expect(screen.getByTestId('consumer')).toHaveAttribute(
+      'data-has-vl',
+      'true',
+    )
   })
 
   it('passes extra props', () => {

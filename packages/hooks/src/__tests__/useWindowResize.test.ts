@@ -47,7 +47,7 @@ describe('useWindowResize', () => {
   })
 
   it('updates on window resize', () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     const { result } = renderHook(() => useWindowResize({ throttleDelay: 100 }))
 
@@ -55,29 +55,29 @@ describe('useWindowResize', () => {
       Object.defineProperty(window, 'innerWidth', { value: 800 })
       Object.defineProperty(window, 'innerHeight', { value: 600 })
       window.dispatchEvent(new Event('resize'))
-      jest.advanceTimersByTime(200)
+      vi.advanceTimersByTime(200)
     })
 
     expect(result.current.width).toBe(800)
     expect(result.current.height).toBe(600)
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('calls onChange callback', () => {
-    jest.useFakeTimers()
-    const onChange = jest.fn()
+    vi.useFakeTimers()
+    const onChange = vi.fn()
 
     renderHook(() => useWindowResize({ throttleDelay: 100, onChange }))
 
     // onChange is called on mount
     expect(onChange).toHaveBeenCalledWith({ width: 1024, height: 768 })
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('cleans up event listener on unmount', () => {
-    const removeSpy = jest.spyOn(window, 'removeEventListener')
+    const removeSpy = vi.spyOn(window, 'removeEventListener')
 
     const { unmount } = renderHook(() => useWindowResize())
     unmount()

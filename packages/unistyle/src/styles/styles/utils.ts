@@ -1,7 +1,7 @@
 import type { PropertyValue } from '~/types'
 import { value } from '~/units'
 
-const isValidValue = (value) => !!value || value === 0
+const isValidValue = (value: unknown) => !!value || value === 0
 
 export type SpacingShorthand = (
   property: 'padding' | 'margin',

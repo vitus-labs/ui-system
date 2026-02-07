@@ -56,7 +56,7 @@ const calculateGap = ({
   type: ThemeProps['contentType']
   value: any
 }) => {
-  if (!direction || !type) return undefined
+  if (!direction || !type || type === 'content') return undefined
 
   const finalStyles = `${gapDimensions[direction][type]}: ${value};`
 
@@ -70,10 +70,6 @@ const styles: ResponsiveStylesCallback = ({
   css,
   theme: t,
   rootSize,
-}: {
-  css: typeof config.css
-  theme: ThemeProps
-  rootSize: number
 }) => css`
   ${alignContent({
     direction: t.direction,
@@ -93,7 +89,7 @@ const styles: ResponsiveStylesCallback = ({
     })
   };
 
-  ${t.extraStyles && extendCss(t.extraStyles)};
+  ${t.extraStyles && extendCss(t.extraStyles as any)};
 `
 
 const platformCSS = __WEB__ ? `box-sizing: border-box;` : ''

@@ -19,7 +19,7 @@ describe('createMediaQueries', () => {
       rootSize: 16,
       css,
     })
-    const output = result.xs`color: red;`
+    const output = (result as any).xs`color: red;`
     const flat = Array.isArray(output) ? output.join('') : String(output)
     expect(flat).toContain('color: red')
     expect(flat).not.toContain('@media')
@@ -31,7 +31,7 @@ describe('createMediaQueries', () => {
       rootSize: 16,
       css,
     })
-    const output = result.md`color: blue;`
+    const output = (result as any).md`color: blue;`
     const flat = Array.isArray(output) ? output.join('') : String(output)
     expect(flat).toContain('@media')
     expect(flat).toContain('min-width')
@@ -45,7 +45,7 @@ describe('createMediaQueries', () => {
       rootSize: 16,
       css,
     })
-    const output = result.lg`display: block;`
+    const output = (result as any).lg`display: block;`
     const flat = Array.isArray(output) ? output.join('') : String(output)
     // 1024 / 16 = 64em
     expect(flat).toContain('64em')
@@ -57,7 +57,7 @@ describe('createMediaQueries', () => {
       rootSize: 10,
       css,
     })
-    const output = result.md`color: red;`
+    const output = (result as any).md`color: red;`
     const flat = Array.isArray(output) ? output.join('') : String(output)
     // 768 / 10 = 76.8em
     expect(flat).toContain('76.8em')

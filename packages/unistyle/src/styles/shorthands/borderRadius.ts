@@ -1,7 +1,7 @@
 import type { PropertyValue } from '~/types'
 import { value } from '~/units'
 
-const isValidValue = (value) => !!value || value === 0
+const isValidValue = (value: unknown) => !!value || value === 0
 
 export type BorderRadius = (
   rootSize?: number,
@@ -50,7 +50,8 @@ const borderRadius: BorderRadius =
       return null
     }
 
-    const calc = (param) => value(param, rootSize)
+    const calc = (param: PropertyValue | null | undefined) =>
+      value(param as any, rootSize)
 
     // topLeft - topRight - bottomRight - bottomLeft
     const values = [full, full, full, full]

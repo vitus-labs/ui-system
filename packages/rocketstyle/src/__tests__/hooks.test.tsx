@@ -1,9 +1,10 @@
-import { renderHook, act } from '@testing-library/react'
-import { type ReactNode, createContext, useContext } from 'react'
+import { act, renderHook } from '@testing-library/react'
+import type { ReactNode } from 'react'
+import { context } from '../context/context'
+import { LocalProvider, useLocalContext } from '../context/localContext'
 import usePseudoState from '../hooks/usePseudoState'
 import useRocketstyleRef from '../hooks/useRef'
 import useThemeAttrs from '../hooks/useTheme'
-import { useLocalContext, LocalProvider } from '../context/localContext'
 
 describe('usePseudoState', () => {
   it('returns initial state with all false', () => {
@@ -73,12 +74,12 @@ describe('usePseudoState', () => {
   })
 
   it('calls user-provided event handlers', () => {
-    const onMouseEnter = jest.fn()
-    const onMouseLeave = jest.fn()
-    const onMouseDown = jest.fn()
-    const onMouseUp = jest.fn()
-    const onFocus = jest.fn()
-    const onBlur = jest.fn()
+    const onMouseEnter = vi.fn()
+    const onMouseLeave = vi.fn()
+    const onMouseDown = vi.fn()
+    const onMouseUp = vi.fn()
+    const onFocus = vi.fn()
+    const onBlur = vi.fn()
 
     const { result } = renderHook(() =>
       usePseudoState({
@@ -142,9 +143,6 @@ describe('useRocketstyleRef', () => {
 })
 
 describe('useThemeAttrs', () => {
-  // Import the context from core (via the rocketstyle re-export)
-  // We need to use the same context that useTheme reads from
-  const { context } = require('../context/context')
 
   const createWrapper =
     (value: any) =>
@@ -217,7 +215,7 @@ describe('useLocalContext', () => {
 
   it('calls consumer with getter function', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <LocalProvider value={{ pseudo: { hover: true } }}>
+      <LocalProvider value={{ pseudo: { hover: true } as any }}>
         {children}
       </LocalProvider>
     )

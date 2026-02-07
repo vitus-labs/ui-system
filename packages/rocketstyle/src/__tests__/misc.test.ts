@@ -1,27 +1,27 @@
+import ThemeManager from '../cache/LocalThemeManager'
+import {
+  ALL_RESERVED_KEYS,
+  CONFIG_KEYS,
+  MODE_DEFAULT,
+  PSEUDO_KEYS,
+  PSEUDO_META_KEYS,
+  STATIC_KEYS,
+  STYLING_KEYS,
+  THEME_MODES,
+  THEME_MODES_INVERSED,
+} from '../constants'
+import BOOLEAN_TAGS from '../constants/booleanTags'
+import DEFAULT_DIMENSIONS from '../constants/defaultDimensions'
 import {
   createStaticsChainingEnhancers,
   createStaticsEnhancers,
 } from '../utils/statics'
 import { calculateStyles } from '../utils/styles'
-import ThemeManager from '../cache/LocalThemeManager'
-import {
-  MODE_DEFAULT,
-  PSEUDO_KEYS,
-  PSEUDO_META_KEYS,
-  THEME_MODES,
-  THEME_MODES_INVERSED,
-  CONFIG_KEYS,
-  STYLING_KEYS,
-  STATIC_KEYS,
-  ALL_RESERVED_KEYS,
-} from '../constants'
-import DEFAULT_DIMENSIONS from '../constants/defaultDimensions'
-import BOOLEAN_TAGS from '../constants/booleanTags'
 
 describe('createStaticsChainingEnhancers', () => {
   it('attaches chaining methods for dimension keys + static keys', () => {
     const context: Record<string, any> = {}
-    const func = jest.fn()
+    const func = vi.fn()
 
     createStaticsChainingEnhancers({
       context,
@@ -39,7 +39,7 @@ describe('createStaticsChainingEnhancers', () => {
 
   it('calls func with options and key-value pair', () => {
     const context: Record<string, any> = {}
-    const func = jest.fn()
+    const func = vi.fn()
     const options = { some: 'option' } as any
 
     createStaticsChainingEnhancers({
@@ -85,7 +85,7 @@ describe('calculateStyles', () => {
   it('evaluates each style callback', () => {
     const styleFn1 = () => 'style1'
     const styleFn2 = () => 'style2'
-    const result = calculateStyles([styleFn1, styleFn2])
+    const result = calculateStyles([styleFn1, styleFn2] as any)
     expect(result).toHaveLength(2)
     expect(result[0]).toBe('style1')
     expect(result[1]).toBe('style2')

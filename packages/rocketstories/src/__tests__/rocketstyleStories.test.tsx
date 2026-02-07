@@ -1,5 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import { createElement } from 'react'
+import RocketStoryHoc from '../internal/RocketStoryHoc'
+import renderMain from '../stories/rocketstories/renderMain'
+import renderRender from '../stories/rocketstories/renderRender'
+import renderList from '../stories/rocketstories/renderList'
+import renderDimension from '../stories/rocketstories/renderDimension'
+import DimensionProvider, { useContext as useDimensionContext } from '../stories/rocketstories/renderDimension/context'
+import DimensionItem from '../stories/rocketstories/renderDimension/components/Item'
+import PseudoList from '../stories/rocketstories/renderDimension/components/PseudoList'
 
 // Mock window.__VITUS_LABS_STORIES__ for getTheme
 beforeAll(() => {
@@ -11,9 +19,7 @@ beforeAll(() => {
 // ---------------------------------------------------------------------------
 // MOCK ROCKETSTYLE COMPONENT
 // ---------------------------------------------------------------------------
-const MockRSComponent = (props: any) => (
-  <div data-testid="mock-rs" {...props} />
-)
+const MockRSComponent = (props: any) => <div data-testid="mock-rs" {...props} />
 MockRSComponent.IS_ROCKETSTYLE = true
 MockRSComponent.VITUS_LABS__COMPONENT = '@vitus-labs/elements/Element'
 MockRSComponent.getStaticDimensions = (_theme: any) => ({
@@ -73,7 +79,6 @@ MockEmptyDimComponent.getDefaultAttrs = (
 // ---------------------------------------------------------------------------
 describe('RocketStoryHoc', () => {
   it('creates a story component with args and argTypes', () => {
-    const RocketStoryHoc = require('../internal/RocketStoryHoc').default
 
     const wrappedComponent = (component: any) => (props: any) =>
       createElement(component, props)
@@ -96,7 +101,6 @@ describe('RocketStoryHoc', () => {
   })
 
   it('includes dimension controls in argTypes', () => {
-    const RocketStoryHoc = require('../internal/RocketStoryHoc').default
 
     const wrappedComponent = (component: any) => (props: any) =>
       createElement(component, props)
@@ -115,7 +119,6 @@ describe('RocketStoryHoc', () => {
   })
 
   it('disables individual dimension value controls', () => {
-    const RocketStoryHoc = require('../internal/RocketStoryHoc').default
 
     const wrappedComponent = (component: any) => (props: any) =>
       createElement(component, props)
@@ -136,7 +139,6 @@ describe('RocketStoryHoc', () => {
   })
 
   it('generates boolean dimension code', () => {
-    const RocketStoryHoc = require('../internal/RocketStoryHoc').default
 
     const wrappedComponent = (component: any) => (props: any) =>
       createElement(component, props)
@@ -158,7 +160,6 @@ describe('RocketStoryHoc', () => {
 // ---------------------------------------------------------------------------
 describe('rocketstories renderMain', () => {
   it('creates a story from rocketstyle component', () => {
-    const renderMain = require('../stories/rocketstories/renderMain').default
 
     const story = renderMain({
       name: 'RocketButton',
@@ -179,7 +180,6 @@ describe('rocketstories renderMain', () => {
 // ---------------------------------------------------------------------------
 describe('rocketstories renderRender', () => {
   it('wraps custom render in rocketstyle story', () => {
-    const renderRender = require('../stories/rocketstories/renderRender').default
 
     const customRender = (props: any) => <div {...props}>Custom</div>
     const storyFactory = renderRender(customRender)
@@ -201,7 +201,6 @@ describe('rocketstories renderRender', () => {
 // ---------------------------------------------------------------------------
 describe('rocketstories renderList', () => {
   it('wraps list config in rocketstyle story', () => {
-    const renderList = require('../stories/rocketstories/renderList').default
 
     const storyFactory = renderList({ data: [{ id: 1 }, { id: 2 }] })
     const story = storyFactory({
@@ -222,9 +221,8 @@ describe('rocketstories renderList', () => {
 // ---------------------------------------------------------------------------
 describe('renderDimension context', () => {
   it('Provider provides component via context', () => {
-    const { default: Provider, useContext } = require(
-      '../stories/rocketstories/renderDimension/context',
-    )
+    const Provider = DimensionProvider
+    const useContext = useDimensionContext
 
     const TestConsumer = () => {
       const ctx = useContext()
@@ -243,15 +241,9 @@ describe('renderDimension context', () => {
   })
 
   it('useContext returns empty when no provider', () => {
-    const { useContext } = require(
-      '../stories/rocketstories/renderDimension/context',
-    )
-
     const TestConsumer = () => {
-      const ctx = useContext()
-      return (
-        <div data-testid="consumer">{ctx.component ? 'has' : 'none'}</div>
-      )
+      const ctx = useDimensionContext()
+      return <div data-testid="consumer">{ctx.component ? 'has' : 'none'}</div>
     }
 
     render(<TestConsumer />)
@@ -264,12 +256,8 @@ describe('renderDimension context', () => {
 // ---------------------------------------------------------------------------
 describe('renderDimension Item', () => {
   it('renders component from context', () => {
-    const { default: Provider } = require(
-      '../stories/rocketstories/renderDimension/context',
-    )
-    const Item = require(
-      '../stories/rocketstories/renderDimension/components/Item',
-    ).default
+    const Provider = DimensionProvider
+    const Item = DimensionItem
 
     const InnerComp = (props: any) => (
       <span data-testid="inner">{props.label}</span>
@@ -285,12 +273,8 @@ describe('renderDimension Item', () => {
   })
 
   it('renders title heading when provided', () => {
-    const { default: Provider } = require(
-      '../stories/rocketstories/renderDimension/context',
-    )
-    const Item = require(
-      '../stories/rocketstories/renderDimension/components/Item',
-    ).default
+    const Provider = DimensionProvider
+    const Item = DimensionItem
 
     const InnerComp = (props: any) => <span>inner</span>
 
@@ -311,12 +295,7 @@ describe('renderDimension Item', () => {
 // ---------------------------------------------------------------------------
 describe('renderDimension PseudoList', () => {
   it('renders 4 pseudo states', () => {
-    const { default: Provider } = require(
-      '../stories/rocketstories/renderDimension/context',
-    )
-    const PseudoList = require(
-      '../stories/rocketstories/renderDimension/components/PseudoList',
-    ).default
+    const Provider = DimensionProvider
 
     // Item destructures `title` out and passes remaining props to inner component
     // PseudoList passes pseudo boolean props (base, hover, pressed, active)
@@ -349,9 +328,6 @@ describe('renderDimension PseudoList', () => {
 // ---------------------------------------------------------------------------
 describe('renderDimension', () => {
   it('returns NotFound for empty dimension', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const result = renderDimension('state' as any, {
       name: 'Test',
@@ -366,16 +342,18 @@ describe('renderDimension', () => {
   })
 
   it('creates story with args and argTypes for valid dimension', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'DimButton',
       component: MockRSComponent as any,
       attrs: { label: 'Hi' },
       controls: { label: 'text' },
-      storyOptions: { gap: 16, direction: 'rows', alignX: 'left', alignY: 'top' },
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
       ignore: [],
     })
 
@@ -389,9 +367,6 @@ describe('renderDimension', () => {
   })
 
   it('creates story without storyOptions', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'NoOpts',
@@ -407,9 +382,6 @@ describe('renderDimension', () => {
   })
 
   it('creates story with pseudo option', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'PseudoButton',
@@ -431,9 +403,6 @@ describe('renderDimension', () => {
   })
 
   it('handles multi-key dimensions', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('tags' as any, {
       name: 'MultiKey',
@@ -449,9 +418,6 @@ describe('renderDimension', () => {
   })
 
   it('respects ignore list', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'IgnoreButton',
@@ -466,16 +432,18 @@ describe('renderDimension', () => {
   })
 
   it('renders story component with items', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'RenderTest',
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
-      storyOptions: { gap: 16, direction: 'rows', alignX: 'left', alignY: 'top' },
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
       ignore: [],
     })
 
@@ -485,9 +453,6 @@ describe('renderDimension', () => {
   })
 
   it('renders story component with pseudo states', () => {
-    const renderDimension = require(
-      '../stories/rocketstories/renderDimension',
-    ).default
 
     const story = renderDimension('state' as any, {
       name: 'PseudoRender',

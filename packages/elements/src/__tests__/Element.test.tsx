@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { Provider, breakpoints } from '@vitus-labs/unistyle'
+import { breakpoints, Provider } from '@vitus-labs/unistyle'
 import Element from '../Element/component'
 
 const wrapper = ({ children }: any) => (
@@ -17,9 +17,7 @@ describe('Element', () => {
     })
 
     it('has VITUS_LABS__COMPONENT', () => {
-      expect(Element.VITUS_LABS__COMPONENT).toBe(
-        '@vitus-labs/elements/Element',
-      )
+      expect(Element.VITUS_LABS__COMPONENT).toBe('@vitus-labs/elements/Element')
     })
   })
 
@@ -77,9 +75,7 @@ describe('Element', () => {
 
     it('renders only beforeContent + content without afterContent', () => {
       render(
-        <Element
-          beforeContent={<span data-testid="before">Before</span>}
-        >
+        <Element beforeContent={<span data-testid="before">Before</span>}>
           <span data-testid="main">Main</span>
         </Element>,
         { wrapper },

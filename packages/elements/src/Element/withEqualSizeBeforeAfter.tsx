@@ -62,11 +62,7 @@ const withEqualBeforeAfter = (WrappedComponent: any) => {
       const afterEl = el.lastElementChild as HTMLElement | null
 
       if (beforeEl && afterEl && beforeEl !== afterEl) {
-        equalize(
-          beforeEl,
-          afterEl,
-          direction === 'rows' ? 'height' : 'width',
-        )
+        equalize(beforeEl, afterEl, direction === 'rows' ? 'height' : 'width')
       }
     })
 

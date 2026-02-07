@@ -1,5 +1,5 @@
-import { Provider, breakpoints } from '@vitus-labs/unistyle'
 import { render, screen } from '@testing-library/react'
+import { breakpoints, Provider } from '@vitus-labs/unistyle'
 import List from '../List/component'
 
 const TextItem = ({ children, ...props }: any) => (
@@ -25,10 +25,7 @@ describe('List', () => {
 
   describe('without rootElement (default)', () => {
     it('renders items as fragment', () => {
-      render(
-        <List component={TextItem} data={['a', 'b', 'c']} />,
-        { wrapper },
-      )
+      render(<List component={TextItem} data={['a', 'b', 'c']} />, { wrapper })
       const items = screen.getAllByTestId('item')
       expect(items).toHaveLength(3)
       expect(items[0]).toHaveTextContent('a')
@@ -47,20 +44,18 @@ describe('List', () => {
     })
 
     it('returns null for empty data', () => {
-      const { container } = render(
-        <List component={TextItem} data={[]} />,
-        { wrapper },
-      )
+      const { container } = render(<List component={TextItem} data={[]} />, {
+        wrapper,
+      })
       expect(container.innerHTML).toBe('')
     })
   })
 
   describe('with rootElement', () => {
     it('wraps items in Element', () => {
-      render(
-        <List rootElement component={TextItem} data={['x', 'y']} />,
-        { wrapper },
-      )
+      render(<List rootElement component={TextItem} data={['x', 'y']} />, {
+        wrapper,
+      })
       const items = screen.getAllByTestId('item')
       expect(items).toHaveLength(2)
       // Items should be inside a styled element container
@@ -85,24 +80,22 @@ describe('List', () => {
 
   describe('Iterator features through List', () => {
     it('supports valueName', () => {
-      const Item = ({ title }: any) => (
-        <span data-testid="item">{title}</span>
-      )
-      render(
-        <List component={Item} data={['hello']} valueName="title" />,
-        { wrapper },
-      )
+      const Item = ({ title }: any) => <span data-testid="item">{title}</span>
+      render(<List component={Item} data={['hello']} valueName="title" />, {
+        wrapper,
+      })
       expect(screen.getByTestId('item')).toHaveTextContent('hello')
     })
 
     it('supports object array data', () => {
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       render(
         <List
           component={Item}
-          data={[{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]}
+          data={[
+            { id: 1, name: 'Alice' },
+            { id: 2, name: 'Bob' },
+          ]}
         />,
         { wrapper },
       )

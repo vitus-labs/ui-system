@@ -48,9 +48,9 @@
     "build": "bun run vl_rolldown_build",
     "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
-    "test:watch": "jest --runInBand --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "cover": "coveralls < .coverage/lcov.info",
     "typecheck": "tsc --noEmit"
   },
@@ -59,16 +59,11 @@
     "react": ">= 19"
   },
   "devDependencies": {
-    "@swc/jest": "^0.2.39",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@types/jest": "^30.0.0",
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/elements": "^1.2.2",
     "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
     "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
     "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-    "@vitus-labs/unistyle": "workspace:*",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0"
+    "@vitus-labs/unistyle": "workspace:*"
   }
 }

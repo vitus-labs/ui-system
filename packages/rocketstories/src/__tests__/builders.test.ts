@@ -1,4 +1,8 @@
 import { CONTROL_TYPES } from '../constants/controls'
+import getTheme from '../utils/theme'
+import { init, rocketstories } from '../init'
+import renderMainBase from '../stories/base/renderMain'
+import renderRenderBase from '../stories/base/renderRender'
 
 // Mock window.__VITUS_LABS_STORIES__ for getTheme
 beforeAll(() => {
@@ -25,14 +29,12 @@ describe('CONTROL_TYPES', () => {
 
 describe('getTheme utility', () => {
   it('reads theme from window global', () => {
-    const getTheme = require('../utils/theme').default
     const theme = getTheme()
     expect(theme).toEqual({ rootSize: 16 })
   })
 })
 
 describe('init and rocketstories factories', () => {
-  const { init, rocketstories } = require('../init')
 
   const MockComponent = (props: any) => null
   MockComponent.displayName = 'MockButton'
@@ -93,7 +95,6 @@ describe('init and rocketstories factories', () => {
 })
 
 describe('createRocketStories builder', () => {
-  const { rocketstories } = require('../init')
 
   const MockComponent = (props: any) => null
   MockComponent.displayName = 'TestComp'
@@ -207,7 +208,7 @@ describe('createRocketStories builder', () => {
 
 describe('StoryHoc (base)', () => {
   it('attaches args and argTypes to story', () => {
-    const renderMain = require('../stories/base/renderMain').default
+    const renderMain = renderMainBase
     const MockComp = (props: any) => null
     MockComp.displayName = 'Mock'
 
@@ -226,7 +227,7 @@ describe('StoryHoc (base)', () => {
 
 describe('base renderRender', () => {
   it('wraps custom render function as story', () => {
-    const renderRender = require('../stories/base/renderRender').default
+    const renderRender = renderRenderBase
     const customRender = (props: any) => null
 
     const storyFactory = renderRender(customRender)

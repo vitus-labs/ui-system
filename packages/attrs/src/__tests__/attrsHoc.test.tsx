@@ -99,7 +99,7 @@ describe('attrsHoc - props merging', () => {
 // --------------------------------------------------------
 describe('attrsHoc - attrs callback receives props', () => {
   it('should pass filtered props to attrs callback', () => {
-    const attrsFn = jest.fn(() => ({}))
+    const attrsFn = vi.fn(() => ({}))
     const hoc = createAttrsHOC({
       attrs: [attrsFn],
       priorityAttrs: [],
@@ -113,7 +113,7 @@ describe('attrsHoc - attrs callback receives props', () => {
   })
 
   it('should pass priority attrs merged with props to attrs callback', () => {
-    const attrsFn = jest.fn(() => ({}))
+    const attrsFn = vi.fn(() => ({}))
     const hoc = createAttrsHOC({
       attrs: [attrsFn],
       priorityAttrs: [() => ({ fromPriority: true })],

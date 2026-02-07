@@ -37,8 +37,12 @@ const optimizeTheme: OptimizeTheme = ({ theme, breakpoints }) => {
     const key = breakpoints[i] as string
     const previousBreakpoint = breakpoints[i - 1] as string
 
-    if (i === 0 || !shallowEqual(theme[previousBreakpoint], theme[key])) {
-      result[key] = theme[key]
+    const current = theme[key]
+    if (
+      current &&
+      (i === 0 || !shallowEqual(theme[previousBreakpoint], current))
+    ) {
+      result[key] = current
     }
   }
 

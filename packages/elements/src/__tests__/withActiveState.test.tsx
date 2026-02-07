@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import withActiveState from '../List/withActiveState'
 
 const MockList = ({ itemProps, ...rest }: any) => {
@@ -55,41 +55,71 @@ describe('withActiveState', () => {
   describe('single selection (default)', () => {
     it('no items active by default', () => {
       render(<EnhancedList data={['a', 'b', 'c']} />)
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('activates item on click', () => {
       render(<EnhancedList data={['a', 'b']} />)
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('deactivates item on second click', () => {
       render(<EnhancedList data={['a', 'b']} />)
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('switches active item', () => {
       render(<EnhancedList data={['a', 'b']} />)
       fireEvent.click(screen.getByTestId('item-a'))
       fireEvent.click(screen.getByTestId('item-b'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('initializes with activeItems', () => {
       render(<EnhancedList data={['a', 'b']} activeItems="b" />)
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('warns when activeItems is array in single mode', () => {
-      const spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       render(<EnhancedList data={['a', 'b']} activeItems={['a', 'b']} />)
       expect(spy).toHaveBeenCalledWith(
         expect.stringContaining('activeItems` was passed as an array'),
@@ -103,9 +133,15 @@ describe('withActiveState', () => {
       render(
         <EnhancedList data={['a', 'b']} activeItems="a" activeItemRequired />,
       )
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('allows switching to another item', () => {
@@ -113,7 +149,10 @@ describe('withActiveState', () => {
         <EnhancedList data={['a', 'b']} activeItems="a" activeItemRequired />,
       )
       fireEvent.click(screen.getByTestId('item-b'))
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
   })
 
@@ -122,34 +161,66 @@ describe('withActiveState', () => {
       render(<EnhancedList type="multi" data={['a', 'b', 'c']} />)
       fireEvent.click(screen.getByTestId('item-a'))
       fireEvent.click(screen.getByTestId('item-c'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-c')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-c')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('toggles item off', () => {
       render(<EnhancedList type="multi" data={['a', 'b']} />)
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('initializes with activeItems array', () => {
       render(
-        <EnhancedList type="multi" data={['a', 'b', 'c']} activeItems={['a', 'c']} />,
+        <EnhancedList
+          type="multi"
+          data={['a', 'b', 'c']}
+          activeItems={['a', 'c']}
+        />,
       )
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-c')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-c')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('initializes with single activeItems value', () => {
-      render(
-        <EnhancedList type="multi" data={['a', 'b']} activeItems="b" />,
+      render(<EnhancedList type="multi" data={['a', 'b']} activeItems="b" />)
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
       )
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
   })
 
@@ -163,9 +234,15 @@ describe('withActiveState', () => {
           activeItemRequired
         />,
       )
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
 
     it('allows deselecting when other items are active', () => {
@@ -178,8 +255,14 @@ describe('withActiveState', () => {
         />,
       )
       fireEvent.click(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
     })
   })
 
@@ -199,7 +282,8 @@ describe('withActiveState', () => {
               even: i % 2 === 1,
               position: i + 1,
             }
-            const props = typeof itemProps === 'function' ? itemProps(extended) : {}
+            const props =
+              typeof itemProps === 'function' ? itemProps(extended) : {}
             return (
               <button
                 type="button"
@@ -212,7 +296,8 @@ describe('withActiveState', () => {
                 onBlur={() => props.unsetItemActive?.(key)}
               >
                 {props.unsetAllItemsActive && (
-                  <span
+                  <button
+                    type="button"
                     data-testid={`unselectall-${key}`}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -234,35 +319,62 @@ describe('withActiveState', () => {
       render(<HelperList data={['a', 'b']} />)
       // mouseEnter calls toggleItemActive
       fireEvent.mouseEnter(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.mouseEnter(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('setItemActive and unsetItemActive work', () => {
       render(<HelperList data={['a', 'b']} />)
       fireEvent.focus(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       fireEvent.blur(screen.getByTestId('item-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('unsetAllItemsActive clears all in multi mode', () => {
       render(<HelperList type="multi" data={['a', 'b']} />)
       fireEvent.click(screen.getByTestId('item-a'))
       fireEvent.click(screen.getByTestId('item-b'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'true')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'true')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'true',
+      )
       // Click the unsetAll button
       fireEvent.click(screen.getByTestId('unselectall-a'))
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
-      expect(screen.getByTestId('item-b')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
+      expect(screen.getByTestId('item-b')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
 
     it('isItemActive returns false for unknown type', () => {
       // @ts-expect-error testing invalid type
       render(<HelperList type="unknown" data={['a']} />)
-      expect(screen.getByTestId('item-a')).toHaveAttribute('data-active', 'false')
+      expect(screen.getByTestId('item-a')).toHaveAttribute(
+        'data-active',
+        'false',
+      )
     })
   })
 
@@ -285,7 +397,11 @@ describe('withActiveState', () => {
               const props =
                 typeof itemProps === 'function' ? itemProps(extended) : {}
               return (
-                <span key={key} data-testid={`item-${key}`} data-extra={props.extra}>
+                <span
+                  key={key}
+                  data-testid={`item-${key}`}
+                  data-extra={props.extra}
+                >
                   {key}
                 </span>
               )
@@ -295,9 +411,7 @@ describe('withActiveState', () => {
       }
       MockWithExtra.displayName = 'MockWithExtra'
       const Enhanced = withActiveState(MockWithExtra)
-      render(
-        <Enhanced data={['a']} itemProps={{ extra: 'val' }} />,
-      )
+      render(<Enhanced data={['a']} itemProps={{ extra: 'val' }} />)
       expect(screen.getByTestId('item-a')).toHaveAttribute('data-extra', 'val')
     })
 

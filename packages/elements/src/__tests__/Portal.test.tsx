@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import Portal from '../Portal/component'
 
 describe('Portal', () => {
@@ -20,9 +20,9 @@ describe('Portal', () => {
         </Portal>,
       )
       // Portal renders asynchronously via useEffect + useState
-      expect(
-        await screen.findByTestId('portal-child'),
-      ).toHaveTextContent('Hello')
+      expect(await screen.findByTestId('portal-child')).toHaveTextContent(
+        'Hello',
+      )
     })
 
     it('renders into custom DOMLocation', async () => {
@@ -36,11 +36,13 @@ describe('Portal', () => {
         </Portal>,
       )
 
-      expect(
-        await screen.findByTestId('custom-child'),
-      ).toHaveTextContent('Custom')
+      expect(await screen.findByTestId('custom-child')).toHaveTextContent(
+        'Custom',
+      )
       // Child should be inside the custom container's subtree
-      expect(container.querySelector('[data-testid="custom-child"]')).toBeTruthy()
+      expect(
+        container.querySelector('[data-testid="custom-child"]'),
+      ).toBeTruthy()
 
       document.body.removeChild(container)
     })
@@ -51,9 +53,7 @@ describe('Portal', () => {
           <span data-testid="sec-child">Content</span>
         </Portal>,
       )
-      expect(
-        await screen.findByTestId('sec-child'),
-      ).toBeInTheDocument()
+      expect(await screen.findByTestId('sec-child')).toBeInTheDocument()
       // The portal wrapper should be a section element
       const sections = document.body.querySelectorAll('section')
       expect(sections.length).toBeGreaterThan(0)
@@ -65,9 +65,7 @@ describe('Portal', () => {
           <span data-testid="cleanup-child">Temp</span>
         </Portal>,
       )
-      expect(
-        await screen.findByTestId('cleanup-child'),
-      ).toBeInTheDocument()
+      expect(await screen.findByTestId('cleanup-child')).toBeInTheDocument()
 
       // Count divs before unmount
       const divsBefore = document.body.querySelectorAll(':scope > div').length

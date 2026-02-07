@@ -8,7 +8,7 @@
 import { config } from '@vitus-labs/core'
 import { alignContent, extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
-import type { StyledProps, ThemeProps } from './types'
+import type { StyledProps } from './types'
 
 const { styled, css, component } = config
 
@@ -41,9 +41,6 @@ const childFixPosition = (isBlock?: boolean) =>
 const styles: ResponsiveStylesCallback = ({
   theme: t,
   css,
-}: {
-  theme: ThemeProps
-  css: typeof config.css
 }) => css`
   ${__WEB__ && t.alignY === 'block' && fullHeightCSS};
 
@@ -59,7 +56,7 @@ const styles: ResponsiveStylesCallback = ({
   ${__WEB__ && t.parentFix && t.block && parentFixBlockCSS};
   ${__WEB__ && t.parentFix && parentFixCSS};
 
-  ${t.extraStyles && extendCss(t.extraStyles)};
+  ${t.extraStyles && extendCss(t.extraStyles as any)};
 `
 
 const platformCSS = __WEB__ ? `box-sizing: border-box;` : `display: flex;`

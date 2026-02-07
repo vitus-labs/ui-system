@@ -6,13 +6,9 @@ import withEqualSizeBeforeAfter from '../Element/withEqualSizeBeforeAfter'
 const MockElement = forwardRef<HTMLDivElement, any>(
   ({ beforeContent, afterContent, children, direction, ...rest }, ref) => (
     <div ref={ref} data-testid="root" {...rest}>
-      {beforeContent && (
-        <div data-testid="before">{beforeContent}</div>
-      )}
+      {beforeContent && <div data-testid="before">{beforeContent}</div>}
       <div data-testid="content">{children}</div>
-      {afterContent && (
-        <div data-testid="after">{afterContent}</div>
-      )}
+      {afterContent && <div data-testid="after">{afterContent}</div>}
     </div>
   ),
 )
@@ -23,13 +19,11 @@ const Enhanced = withEqualSizeBeforeAfter(MockElement)
 describe('withEqualSizeBeforeAfter', () => {
   describe('statics', () => {
     it('sets displayName', () => {
-      expect(Enhanced.displayName).toBe(
-        'withEqualSizeBeforeAfter(MockElement)',
-      )
+      expect(Enhanced.displayName).toBe('withEqualSizeBeforeAfter(MockElement)')
     })
 
     it('uses Component fallback when no displayName', () => {
-      const Anonymous = forwardRef<HTMLDivElement, any>((props, ref) => (
+      const Anonymous = forwardRef<HTMLDivElement, any>((_props, ref) => (
         <div ref={ref} />
       ))
       // Remove displayName and name to force fallback
@@ -111,8 +105,14 @@ describe('withEqualSizeBeforeAfter', () => {
       const afterEl = root.children[2] as HTMLElement
 
       // Mock offsetWidth to simulate different sizes
-      Object.defineProperty(beforeEl, 'offsetWidth', { value: 50, configurable: true })
-      Object.defineProperty(afterEl, 'offsetWidth', { value: 100, configurable: true })
+      Object.defineProperty(beforeEl, 'offsetWidth', {
+        value: 50,
+        configurable: true,
+      })
+      Object.defineProperty(afterEl, 'offsetWidth', {
+        value: 100,
+        configurable: true,
+      })
 
       // Re-render to trigger useLayoutEffect
       render(

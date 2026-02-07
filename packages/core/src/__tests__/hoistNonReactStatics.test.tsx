@@ -157,11 +157,15 @@ describe('hoistNonReactStatics', () => {
   })
 
   it('hoists statics from prototype chain', () => {
-    function Base() {}
+    function Base() {
+      // constructor stub
+    }
     Base.prototype = Object.create(null)
     ;(Base as any).inheritedStatic = 'from base'
 
-    function Source() {}
+    function Source() {
+      // constructor stub
+    }
     Source.prototype = Object.create(null)
     Object.setPrototypeOf(Source, Base)
     ;(Source as any).ownStatic = 'from source'

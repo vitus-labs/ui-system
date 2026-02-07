@@ -214,15 +214,15 @@ describe('set', () => {
 // --------------------------------------------------------
 describe('throttle', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('should call function immediately on first invocation', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn, 100)
     throttled('a')
     expect(fn).toHaveBeenCalledWith('a')
@@ -230,7 +230,7 @@ describe('throttle', () => {
   })
 
   it('should not call again within wait period', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn, 100)
     throttled()
     throttled()
@@ -239,7 +239,7 @@ describe('throttle', () => {
   })
 
   it('should call with latest args after wait period', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn, 100)
 
     throttled('first')
@@ -249,36 +249,36 @@ describe('throttle', () => {
     expect(fn).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledWith('first')
 
-    jest.advanceTimersByTime(100)
+    vi.advanceTimersByTime(100)
 
     expect(fn).toHaveBeenCalledTimes(2)
     expect(fn).toHaveBeenLastCalledWith('third')
   })
 
   it('should allow immediate call after wait period elapses', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn, 100)
 
     throttled()
-    jest.advanceTimersByTime(100)
+    vi.advanceTimersByTime(100)
     throttled()
     expect(fn).toHaveBeenCalledTimes(2)
   })
 
   it('should cancel pending invocations', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn, 100)
 
     throttled('first')
     throttled('second')
     throttled.cancel()
 
-    jest.advanceTimersByTime(200)
+    vi.advanceTimersByTime(200)
     expect(fn).toHaveBeenCalledTimes(1)
   })
 
   it('should work with default wait of 0', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     const throttled = throttle(fn)
     throttled()
     expect(fn).toHaveBeenCalledTimes(1)

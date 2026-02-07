@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { Provider, breakpoints } from '@vitus-labs/unistyle'
+import { breakpoints, Provider } from '@vitus-labs/unistyle'
 import Text from '../Text/component'
 
 const wrapper = ({ children }: any) => (

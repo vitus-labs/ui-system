@@ -46,7 +46,7 @@ export type MakeItResponsive = ({
   css: any
   styles: MakeItResponsiveStyles
   normalize?: boolean
-}) => ({ theme }: { theme?: Theme }) => any
+}) => (props: { theme?: Theme; [key: string]: any }) => any
 
 /**
  * Core responsive engine used by every styled component in the system.
@@ -103,14 +103,14 @@ const makeItResponsive: MakeItResponsive =
       breakpoints: sortedBreakpoints,
     })
 
-    return sortedBreakpoints.map((item) => {
+    return sortedBreakpoints.map((item: string) => {
       const breakpointTheme = optimizedTheme[item]
 
       if (!breakpointTheme || !media) return ''
 
       const result = renderStyles(breakpointTheme)
 
-      return media[item]`
+      return (media as Record<string, any>)[item]`
         ${result};
       `
     })

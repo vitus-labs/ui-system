@@ -12,7 +12,7 @@ type AssignToBreakpointKey = (
 /** Iterates breakpoints and populates a result object using a callback per breakpoint. */
 const assignToBreakpointKey: AssignToBreakpointKey =
   (breakpoints) => (value) => {
-    const result = {}
+    const result: Record<string, unknown> = {}
 
     breakpoints.forEach((item, i) => {
       result[item] = value(item, i, breakpoints, result)
@@ -39,7 +39,7 @@ const handleArrayCb = (arr: (string | number)[]) => (_: any, i: number) => {
 
 const handleObjectCb =
   (obj: Record<string, unknown>) =>
-  (bp: string, i: number, bps: string[], res) => {
+  (bp: string, i: number, bps: string[], res: Record<string, unknown>) => {
     const currentValue = obj[bp]
     const previousValue = res[bps[i - 1]!]
 
@@ -73,7 +73,7 @@ const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
   if (!shouldNormalize(theme)) return theme
 
   const getBpValues = assignToBreakpointKey(breakpoints)
-  const result = {}
+  const result: Record<string, unknown> = {}
 
   Object.entries(theme).forEach(([key, value]) => {
     if (value == null) return

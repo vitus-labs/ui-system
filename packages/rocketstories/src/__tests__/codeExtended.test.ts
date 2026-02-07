@@ -66,7 +66,10 @@ describe('createJSXCode extended', () => {
 
   it('handles array with nested arrays', () => {
     const result = createJSXCode('Button', {
-      matrix: [[1, 2], [3, 4]],
+      matrix: [
+        [1, 2],
+        [3, 4],
+      ],
     })
     expect(result).toContain('matrix={')
   })

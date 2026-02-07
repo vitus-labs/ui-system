@@ -421,7 +421,6 @@ const rocketComponent: RocketComponent = (options) => {
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
 
-    // @ts-expect-error
     return cloneAndEnhance(options, result)
   }
 

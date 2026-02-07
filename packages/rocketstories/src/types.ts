@@ -46,7 +46,7 @@ export type ControlConfiguration = {
   valueType?: string
   description?: string
   group?: string
-  options?: ArrayLike<any>
+  options?: any[]
   disable?: boolean
 }
 
@@ -55,7 +55,7 @@ export type Control = ControlConfiguration
 export type Controls = Record<string, Control>
 
 export type StorybookControl = {
-  control: {
+  control?: {
     type: string
   }
   description?: string

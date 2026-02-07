@@ -147,7 +147,7 @@ const stringifyProps: StringifyProps = (props) => {
   }, '')
 }
 
-const parseComponentName = (name) => {
+const parseComponentName = (name: string) => {
   const helper = name.split('/')
 
   if (helper.length > 1) {
@@ -219,7 +219,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   return result
 }
 
-const addBooleanCodeComment = (values) => {
+const addBooleanCodeComment = (values: string[]) => {
   let result = `\n\n`
   result += `// Or alternatively use boolean props (e.g. ${values})`
   result += `\n`

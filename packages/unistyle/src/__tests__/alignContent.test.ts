@@ -11,19 +11,31 @@ describe('alignContent', () => {
 
   it('returns null when direction is missing', () => {
     expect(
-      alignContent({ direction: undefined as any, alignX: 'left', alignY: 'top' }),
+      alignContent({
+        direction: undefined as any,
+        alignX: 'left',
+        alignY: 'top',
+      }),
     ).toBeNull()
   })
 
   it('returns null when alignX is missing', () => {
     expect(
-      alignContent({ direction: 'inline', alignX: undefined as any, alignY: 'top' }),
+      alignContent({
+        direction: 'inline',
+        alignX: undefined as any,
+        alignY: 'top',
+      }),
     ).toBeNull()
   })
 
   it('returns null when alignY is missing', () => {
     expect(
-      alignContent({ direction: 'inline', alignX: 'left', alignY: undefined as any }),
+      alignContent({
+        direction: 'inline',
+        alignX: 'left',
+        alignY: undefined as any,
+      }),
     ).toBeNull()
   })
 

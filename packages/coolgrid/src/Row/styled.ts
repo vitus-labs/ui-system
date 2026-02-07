@@ -26,7 +26,7 @@ type SpacingStyles = (
 const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!isNumber(gap)) return ''
 
-  const getValue = (param) => value(param, rootSize)
+  const getValue = (param: any) => value(param, rootSize)
 
   const spacingX = (gap! / 2) * -1
   const spacingY = isNumber(gutter) ? gutter! - gap! / 2 : gap! / 2

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
-import { config, Provider as CoreProvider } from '@vitus-labs/core'
-import { type ReactNode, forwardRef } from 'react'
-import rocketstyle from '../init'
+import { Provider as CoreProvider, config } from '@vitus-labs/core'
+import { forwardRef, type ReactNode } from 'react'
 import Provider from '../context/context'
+import rocketstyle from '../init'
 import isRocketComponent from '../isRocketComponent'
 
 // Mock styled function that returns the component unchanged
@@ -25,7 +25,7 @@ beforeAll(() => {
   config.init({
     css: mockCss as any,
     styled: mockStyled as any,
-    ExternalProvider: MockExternalProvider as any,
+    provider: MockExternalProvider as any,
     component: 'div',
     textComponent: 'span',
   })
@@ -33,15 +33,7 @@ beforeAll(() => {
 
 // Base component that filters internal props
 const BaseComponent = forwardRef(
-  (
-    {
-      children,
-      $rocketstyle,
-      $rocketstate,
-      ...rest
-    }: any,
-    ref: any,
-  ) => (
+  ({ children, $rocketstyle, $rocketstate, ...rest }: any, ref: any) => (
     <div ref={ref} {...rest}>
       {children}
     </div>
@@ -119,7 +111,7 @@ describe('rocketstyle factory', () => {
 })
 
 describe('chaining methods', () => {
-  const Button = rocketstyle()({
+  const Button: any = rocketstyle()({
     name: 'ChainButton',
     component: BaseComponent,
   })
@@ -209,7 +201,7 @@ describe('chaining methods', () => {
 
 describe('rendering', () => {
   it('renders a basic rocketstyle component', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'RenderButton',
       component: BaseComponent,
     }).config({})
@@ -219,7 +211,7 @@ describe('rendering', () => {
   })
 
   it('adds data-rocketstyle attribute in dev mode', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'DevButton',
       component: BaseComponent,
     }).config({})
@@ -231,20 +223,20 @@ describe('rendering', () => {
   })
 
   it('renders with attrs defaults', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'AttrsButton',
       component: BaseComponent,
-    }).attrs(() => ({ 'data-default': 'yes' }))
+    }).attrs((() => ({ 'data-default': 'yes' })) as any)
 
     render(<Button data-testid="btn">Test</Button>, { wrapper })
     expect(screen.getByTestId('btn')).toHaveAttribute('data-default', 'yes')
   })
 
   it('explicit props override attrs', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'OverrideButton',
       component: BaseComponent,
-    }).attrs(() => ({ 'data-val': 'from-attrs' }))
+    }).attrs((() => ({ 'data-val': 'from-attrs' })) as any)
 
     render(
       <Button data-testid="btn" data-val="from-props">
@@ -256,7 +248,7 @@ describe('rendering', () => {
   })
 
   it('renders with theme', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'ThemedButton',
       component: BaseComponent,
     }).theme(() => ({ fontSize: 14 }))
@@ -266,7 +258,7 @@ describe('rendering', () => {
   })
 
   it('renders with dimension states', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'StatesButton',
       component: BaseComponent,
     })
@@ -286,7 +278,7 @@ describe('rendering', () => {
   })
 
   it('renders with boolean dimension props', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'BoolButton',
       component: BaseComponent,
     }).states(() => ({
@@ -304,10 +296,10 @@ describe('rendering', () => {
   })
 
   it('renders with priority attrs', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'PriorityButton',
       component: BaseComponent,
-    }).attrs(() => ({ 'data-priority': 'yes' }), { priority: true })
+    }).attrs((() => ({ 'data-priority': 'yes' })) as any, { priority: true })
 
     render(<Button data-testid="btn">Test</Button>, { wrapper })
     expect(screen.getByTestId('btn')).toHaveAttribute('data-priority', 'yes')
@@ -325,7 +317,7 @@ describe('Provider', () => {
   })
 
   it('provides mode to children', () => {
-    const Button = rocketstyle()({
+    const Button: any = rocketstyle()({
       name: 'ModeButton',
       component: BaseComponent,
     }).config({})

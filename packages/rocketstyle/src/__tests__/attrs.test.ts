@@ -1,8 +1,8 @@
 import {
-  removeUndefinedProps,
-  pickStyledAttrs,
   calculateChainOptions,
   calculateStylingAttrs,
+  pickStyledAttrs,
+  removeUndefinedProps,
 } from '../utils/attrs'
 
 describe('removeUndefinedProps', () => {
@@ -48,7 +48,7 @@ describe('pickStyledAttrs', () => {
   })
 
   it('returns empty when no keywords match', () => {
-    const result = pickStyledAttrs({ label: 'hello' }, { state: true })
+    const result = pickStyledAttrs({ label: 'hello' } as any, { state: true })
     expect(result).toEqual({})
   })
 
@@ -71,7 +71,7 @@ describe('calculateChainOptions', () => {
 
   it('evaluates chain of functions and merges via Object.assign', () => {
     const fn1 = (props: any) => ({ a: 1, ...props })
-    const fn2 = (props: any) => ({ b: 2 })
+    const fn2 = (_props: any) => ({ b: 2 })
     const calc = calculateChainOptions([fn1, fn2])
     expect(calc([{ c: 3 }])).toEqual({ a: 1, b: 2, c: 3 })
   })
@@ -84,9 +84,9 @@ describe('calculateChainOptions', () => {
   })
 
   it('passes all args to each function', () => {
-    const fn = jest.fn(() => ({}))
+    const fn = vi.fn(() => ({}))
     const calc = calculateChainOptions([fn])
-    calc(['arg1', 'arg2'])
+    calc(['arg1', 'arg2'] as any)
     expect(fn).toHaveBeenCalledWith('arg1', 'arg2')
   })
 })

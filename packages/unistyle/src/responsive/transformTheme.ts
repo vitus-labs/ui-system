@@ -2,7 +2,7 @@ import { isEmpty, set } from '@vitus-labs/core'
 
 /** Filter out breakpoint keys that don't exist in the sorted breakpoints list. */
 const removeUnexpectedKeys = (obj: Record<string, unknown>, keys: string[]) => {
-  const result = {}
+  const result: Record<string, unknown> = {}
 
   keys.forEach((bp) => {
     const value = obj[bp]

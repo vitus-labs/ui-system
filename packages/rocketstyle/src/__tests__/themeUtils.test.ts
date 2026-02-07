@@ -1,10 +1,10 @@
 import {
-  themeModeCallback,
-  getThemeFromChain,
-  getDimensionThemes,
   calculateChainOptions,
+  getDimensionThemes,
   getTheme,
   getThemeByMode,
+  getThemeFromChain,
+  themeModeCallback,
 } from '../utils/theme'
 
 describe('themeModeCallback', () => {
@@ -39,7 +39,7 @@ describe('getThemeFromChain', () => {
   })
 
   it('evaluates chain of callbacks and deep-merges results', () => {
-    const fn1 = (theme: any) => ({ color: 'blue' })
+    const fn1 = (_theme: any) => ({ color: 'blue' })
     const fn2 = (theme: any) => ({ bg: theme.primary })
     const result = getThemeFromChain([fn1, fn2], { primary: 'red' })
     expect(result).toEqual({ color: 'blue', bg: 'red' })
@@ -53,7 +53,7 @@ describe('getThemeFromChain', () => {
   })
 
   it('passes themeModeCallback and config.css to each callback', () => {
-    const fn = jest.fn(() => ({}))
+    const fn = vi.fn(() => ({}))
     getThemeFromChain([fn], { rootSize: 16 })
     expect(fn).toHaveBeenCalledWith(
       { rootSize: 16 },
@@ -150,7 +150,7 @@ describe('calculateChainOptions (theme)', () => {
   })
 
   it('passes args to each function', () => {
-    const fn = jest.fn(() => ({}))
+    const fn = vi.fn(() => ({}))
     calculateChainOptions([fn], ['arg1', 'arg2'])
     expect(fn).toHaveBeenCalledWith('arg1', 'arg2')
   })
@@ -224,25 +224,25 @@ describe('getThemeByMode', () => {
 
   it('resolves mode callbacks for light', () => {
     const cb = themeModeCallback('lightColor', 'darkColor')
-    const result = getThemeByMode({ color: cb }, 'light')
+    const result: any = getThemeByMode({ color: cb }, 'light')
     expect(result.color).toBe('lightColor')
   })
 
   it('resolves mode callbacks for dark', () => {
     const cb = themeModeCallback('lightColor', 'darkColor')
-    const result = getThemeByMode({ color: cb }, 'dark')
+    const result: any = getThemeByMode({ color: cb }, 'dark')
     expect(result.color).toBe('darkColor')
   })
 
   it('resolves nested mode callbacks', () => {
     const cb = themeModeCallback('lightBg', 'darkBg')
-    const result = getThemeByMode({ nested: { bg: cb } }, 'light')
+    const result: any = getThemeByMode({ nested: { bg: cb } }, 'light')
     expect(result.nested.bg).toBe('lightBg')
   })
 
   it('handles mixed values and mode callbacks', () => {
     const cb = themeModeCallback('#fff', '#000')
-    const result = getThemeByMode(
+    const result: any = getThemeByMode(
       { bg: cb, fontSize: 16, nested: { color: 'static' } },
       'dark',
     )

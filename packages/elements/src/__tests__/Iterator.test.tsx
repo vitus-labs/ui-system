@@ -54,10 +54,8 @@ describe('Iterator', () => {
     it('renders fragment children', () => {
       render(
         <Iterator>
-          <>
-            <span data-testid="frag-1">A</span>
-            <span data-testid="frag-2">B</span>
-          </>
+          <span data-testid="frag-1">A</span>
+          <span data-testid="frag-2">B</span>
         </Iterator>,
       )
       expect(screen.getByTestId('frag-1')).toBeInTheDocument()
@@ -114,12 +112,8 @@ describe('Iterator', () => {
     })
 
     it('uses valueName to set prop name', () => {
-      const Item = ({ title }: any) => (
-        <span data-testid="item">{title}</span>
-      )
-      render(
-        <Iterator component={Item} data={['hello']} valueName="title" />,
-      )
+      const Item = ({ title }: any) => <span data-testid="item">{title}</span>
+      render(<Iterator component={Item} data={['hello']} valueName="title" />)
       expect(screen.getByTestId('item')).toHaveTextContent('hello')
     })
 
@@ -131,9 +125,7 @@ describe('Iterator', () => {
 
   describe('object array mode', () => {
     it('renders object array with component', () => {
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       render(
         <Iterator
           component={Item}
@@ -150,9 +142,7 @@ describe('Iterator', () => {
     })
 
     it('filters empty objects from data', () => {
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       render(
         <Iterator
           component={Item}
@@ -167,16 +157,11 @@ describe('Iterator', () => {
       const Default = ({ label }: any) => (
         <span data-testid="default">{label}</span>
       )
-      const Custom = ({ label }: any) => (
-        <em data-testid="custom">{label}</em>
-      )
+      const Custom = ({ label }: any) => <em data-testid="custom">{label}</em>
       render(
         <Iterator
           component={Default}
-          data={[
-            { label: 'one' },
-            { label: 'two', component: Custom },
-          ]}
+          data={[{ label: 'one' }, { label: 'two', component: Custom }]}
         />,
       )
       expect(screen.getByTestId('default')).toHaveTextContent('one')
@@ -184,9 +169,7 @@ describe('Iterator', () => {
     })
 
     it('uses itemKey string to pick key from item', () => {
-      const Item = ({ slug }: any) => (
-        <span data-testid="item">{slug}</span>
-      )
+      const Item = ({ slug }: any) => <span data-testid="item">{slug}</span>
       render(
         <Iterator
           component={Item}
@@ -199,10 +182,8 @@ describe('Iterator', () => {
     })
 
     it('uses itemKey function for custom keys', () => {
-      const keyFn = jest.fn((_item, index) => `custom-${index}`)
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const keyFn = vi.fn((_item, index) => `custom-${index}`)
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       render(
         <Iterator
           component={Item}
@@ -214,9 +195,7 @@ describe('Iterator', () => {
     })
 
     it('falls back to id/key/itemId for keys', () => {
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       // Should not throw with id-based keys
       render(
         <Iterator
@@ -250,7 +229,7 @@ describe('Iterator', () => {
     })
 
     it('passes itemProps callback with extended props', () => {
-      const itemPropsFn = jest.fn((_item, extended) => ({
+      const itemPropsFn = vi.fn((_item, extended) => ({
         pos: extended.position,
         isFirst: extended.first,
         isLast: extended.last,
@@ -327,7 +306,7 @@ describe('Iterator', () => {
     })
 
     it('passes wrapProps callback with extended props', () => {
-      const wrapPropsFn = jest.fn((_item, extended) => ({
+      const wrapPropsFn = vi.fn((_item, extended) => ({
         'data-pos': extended.position,
       }))
       const Wrap = ({ children, ...rest }: any) => (
@@ -352,19 +331,14 @@ describe('Iterator', () => {
       const Default = ({ label }: any) => (
         <span data-testid="default">{label}</span>
       )
-      const Custom = ({ label }: any) => (
-        <em data-testid="custom">{label}</em>
-      )
+      const Custom = ({ label }: any) => <em data-testid="custom">{label}</em>
       const Wrap = ({ children }: any) => (
         <div data-testid="wrap">{children}</div>
       )
       render(
         <Iterator
           component={Default}
-          data={[
-            { label: 'one' },
-            { label: 'two', component: Custom },
-          ]}
+          data={[{ label: 'one' }, { label: 'two', component: Custom }]}
           wrapComponent={Wrap}
         />,
       )
@@ -376,7 +350,7 @@ describe('Iterator', () => {
 
   describe('children with itemProps (no wrapComponent)', () => {
     it('injects itemProps into children without wrapping', () => {
-      const itemPropsFn = jest.fn(() => ({ 'data-injected': 'yes' }))
+      const itemPropsFn = vi.fn(() => ({ 'data-injected': 'yes' }))
       render(
         <Iterator itemProps={itemPropsFn}>
           <span data-testid="child-a">A</span>
@@ -387,7 +361,7 @@ describe('Iterator', () => {
     })
 
     it('injects itemProps into single child', () => {
-      const itemPropsFn = jest.fn(() => ({}))
+      const itemPropsFn = vi.fn(() => ({}))
       render(
         <Iterator itemProps={itemPropsFn}>
           <span data-testid="only">Only</span>
@@ -399,9 +373,7 @@ describe('Iterator', () => {
 
   describe('edge cases', () => {
     it('returns null when component is missing but data exists', () => {
-      const { container } = render(
-        <Iterator data={['a', 'b']} />,
-      )
+      const { container } = render(<Iterator data={['a', 'b']} />)
       expect(container.innerHTML).toBe('')
     })
 
@@ -414,7 +386,10 @@ describe('Iterator', () => {
 
     it('returns null for mixed simple and object array', () => {
       const { container } = render(
-        <Iterator component={TextItem} data={['hello', { name: 'world' }] as any} />,
+        <Iterator
+          component={TextItem}
+          data={['hello', { name: 'world' }] as any}
+        />,
       )
       expect(container.innerHTML).toBe('')
     })
@@ -427,9 +402,7 @@ describe('Iterator', () => {
     })
 
     it('handles itemKey as number (fallback to index)', () => {
-      const Item = ({ name }: any) => (
-        <span data-testid="item">{name}</span>
-      )
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
       render(
         <Iterator
           component={Item}

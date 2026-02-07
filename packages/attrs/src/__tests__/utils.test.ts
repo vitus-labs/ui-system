@@ -136,7 +136,7 @@ describe('calculateChainOptions', () => {
   })
 
   it('should pass arguments to each option function', () => {
-    const fn = jest.fn((_: any) => ({}))
+    const fn = vi.fn((_: any) => ({}))
     const calculate = calculateChainOptions([fn])
     const props = { variant: 'primary' }
     calculate([props])

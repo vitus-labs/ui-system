@@ -18,7 +18,7 @@ type CssUnits =
   | 'vmax'
 
 /** Returns true for null/undefined/NaN but not for 0. */
-const isNotValue = (value) => !value && value !== 0
+const isNotValue = (value: unknown) => !value && value !== 0
 
 export type Value = (
   param: string | number | null | undefined,

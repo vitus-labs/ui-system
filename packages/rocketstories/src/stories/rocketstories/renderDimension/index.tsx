@@ -114,7 +114,6 @@ const renderDimension: RenderDimension = (
         const key = `${dimension}-${item}`
 
         const storyProps = {
-          key,
           'data-story': key,
           contentDirection: revertedDirection,
           contentAlignX: storyOptions.alignX,
