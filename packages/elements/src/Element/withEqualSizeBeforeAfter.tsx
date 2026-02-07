@@ -1,3 +1,10 @@
+/**
+ * HOC that equalizes the dimensions of beforeContent and afterContent areas.
+ * After render, it measures both DOM nodes and sets the larger dimension on
+ * both so they match. Uses width for inline direction and height for rows
+ * direction. This is useful for centering the main content when before/after
+ * slots have different intrinsic sizes (e.g., an icon on one side only).
+ */
 import { get } from '@vitus-labs/core'
 import { createRef } from 'react'
 import type { SimpleHoc } from '~/types'

@@ -5,6 +5,7 @@ import type { MultiKeys } from '~/types/dimensions'
 // --------------------------------------------------------
 // remove undefined props
 // --------------------------------------------------------
+/** Strips keys with `undefined` values so they don't shadow default props during merging. */
 type RemoveUndefinedProps = <T extends Record<string, any>>(
   props: T,
 ) => Partial<T>
@@ -19,6 +20,7 @@ export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
 // --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
+/** Picks only the props whose keys exist in the dimension keywords lookup and have truthy values. */
 type PickStyledAttrs = <
   T extends Record<string, any>,
   K extends { [I in keyof T]?: true },
@@ -37,6 +39,10 @@ export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
+/**
+ * Returns a curried function that evaluates an array of `.attrs()` callbacks,
+ * spreading each result into a single merged props object via `Object.assign`.
+ */
 type OptionFunc<A> = (...arg: A[]) => Record<string, unknown>
 type CalculateChainOptions = <A>(
   options?: OptionFunc<A>[],
@@ -55,6 +61,11 @@ export const calculateChainOptions: CalculateChainOptions =
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
+/**
+ * Resolves the active value for each styling dimension from component props.
+ * First checks for explicit prop values (string, number, or array for multi-keys),
+ * then falls back to boolean shorthand props when `useBooleans` is enabled.
+ */
 type CalculateStylingAttrs = ({
   useBooleans,
   multiKeys,

@@ -1,3 +1,8 @@
+/**
+ * List of standard HTML boolean attributes. Used to identify props
+ * that are valid boolean DOM attributes and should not be filtered
+ * out as unknown styling props.
+ */
 export default [
   'allowFullScreen',
   'allowPaymentRequest',

@@ -29,6 +29,11 @@ export type Rocketstyle = <
   component: C
 }) => ReturnType<RocketComponent<C, {}, {}, D, UB>>
 
+/**
+ * Factory initializer for rocketstyle components. Validates dimension
+ * configurations against reserved keys, then delegates to the core
+ * `rocketComponent` builder with pre-computed dimension metadata.
+ */
 const rocketstyle: Rocketstyle =
   ({ dimensions = defaultDimensions, useBooleans = true } = {}) =>
   ({ name, component }) => {

@@ -1,3 +1,8 @@
+/**
+ * Default dimension configuration for rocketstyle components.
+ * Defines four built-in dimensions: `states`, `sizes`, `variants`,
+ * and `multiple` (a multi-select dimension).
+ */
 const DEFAULT_DIMENSIONS = {
   states: 'state',
   sizes: 'size',

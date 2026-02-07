@@ -16,6 +16,11 @@ export type TProvider = {
   provider?: ComponentType<any>
 }
 
+/**
+ * Top-level theme and mode provider for rocketstyle components.
+ * Reads the parent context, merges incoming props, and resolves
+ * the active mode (with optional inversion for nested dark/light switching).
+ */
 const Provider: FC<TProvider> = ({
   provider = CoreProvider,
   inversed,

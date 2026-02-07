@@ -4,6 +4,10 @@ type Obj = Record<string, unknown>
 // --------------------------------------------------------
 // Chain Options
 // --------------------------------------------------------
+/**
+ * Appends a new option (function or plain object) to an existing chain
+ * of option callbacks. Objects are wrapped in a thunk for uniform handling.
+ */
 type ChainOptions = (
   opts: Obj | Func | undefined,
   defaultOpts: Func[],
@@ -21,6 +25,10 @@ export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {
 // --------------------------------------------------------
 // Chain Or Options
 // --------------------------------------------------------
+/**
+ * For each key, picks the new value if truthy, otherwise falls back
+ * to the default. Used for config keys that replace rather than merge.
+ */
 type ChainOrOptions = (
   keys: readonly string[],
   opts: Obj,
@@ -36,6 +44,10 @@ export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) =>
 // --------------------------------------------------------
 // Chain Reserved Options
 // --------------------------------------------------------
+/**
+ * Chains option callbacks for reserved dimension and styling keys,
+ * delegating to `chainOptions` for each key individually.
+ */
 type ChainReservedKeyOptions = (
   keys: readonly string[],
   opts: Record<string, Obj | Func>,

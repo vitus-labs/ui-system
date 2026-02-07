@@ -49,6 +49,14 @@ import {
   getThemeFromChain,
 } from '~/utils/theme'
 
+/**
+ * Core rocketstyle component factory. Creates a fully-featured React component
+ * that integrates theme management (with light/dark mode support), multi-tier
+ * WeakMap caching, dimension-based styling props, pseudo-state detection, and
+ * chainable static methods (`.attrs()`, `.theme()`, `.styles()`, `.config()`, etc.).
+ * @module rocketstyle
+ */
+
 // --------------------------------------------------------
 // cloneAndEnhance
 // helper function which allows function chaining
@@ -60,6 +68,7 @@ type CloneAndEnhance = (
   opts: Partial<ExtendedConfiguration>,
 ) => ReturnType<typeof rocketComponent>
 
+/** Clones the current configuration and merges new options, returning a fresh rocketComponent. */
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
   // @ts-expect-error
   rocketComponent({
@@ -87,6 +96,11 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
+/**
+ * Builds the final renderable React component with theme resolution,
+ * dimension mapping, pseudo-state context, HOC composition, and
+ * chainable static enhancers attached to the returned component.
+ */
 // @ts-expect-error
 const rocketComponent: RocketComponent = (options) => {
   const { component, styles, DEBUG } = options

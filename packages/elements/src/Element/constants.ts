@@ -1,3 +1,4 @@
+/** Props consumed by Element that should not be forwarded to the underlying DOM node. */
 export const RESERVED_PROPS = [
   'innerRef',
   'tag',
@@ -31,6 +32,11 @@ export const RESERVED_PROPS = [
   'afterContentAlignY',
 ] as const
 
+/**
+ * HTML tags that are inline-level by default. When Element renders one of
+ * these tags, child Content wrappers use `span` instead of `div` to
+ * preserve valid HTML nesting.
+ */
 export const INLINE_ELEMENTS = {
   span: true,
   a: true,
@@ -65,6 +71,11 @@ export const INLINE_ELEMENTS = {
   sup: true,
 }
 
+/**
+ * HTML void/self-closing elements that cannot have children. When Element
+ * detects one of these tags, it skips rendering beforeContent/content/afterContent
+ * and returns the Wrapper alone.
+ */
 export const EMPTY_ELEMENTS = {
   area: true,
   base: true,

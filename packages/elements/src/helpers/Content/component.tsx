@@ -1,3 +1,9 @@
+/**
+ * Memoized content area used inside Element to render one of the three
+ * layout slots (before, content, after). Passes alignment, direction,
+ * gap, and equalCols styling props to the underlying styled component.
+ * Adds a `data-vl-element` attribute in development for debugging.
+ */
 import type { FC } from 'react'
 import { memo } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'

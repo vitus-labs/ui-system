@@ -18,6 +18,12 @@ export type RocketStyleHOC = ({
   WrappedComponent: ComponentType<any>,
 ) => ForwardRefExoticComponent<any>
 
+/**
+ * HOC that resolves the `.attrs()` chain before the inner component renders.
+ * Evaluates both regular and priority attrs callbacks with the current theme
+ * and mode, then merges the results with explicit props (priority attrs
+ * are applied first, regular attrs can be overridden by direct props).
+ */
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
   // --------------------------------------------------
   // .attrs(...)

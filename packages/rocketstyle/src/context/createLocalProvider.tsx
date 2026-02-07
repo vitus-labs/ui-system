@@ -14,6 +14,11 @@ type HOC = (
   WrappedComponent: ComponentType<Props>,
 ) => ForwardRefExoticComponent<Props>
 
+/**
+ * Higher-order component that wraps a component with a LocalProvider,
+ * detecting pseudo-states (hover, focus, pressed) via mouse/focus events
+ * and broadcasting them through local context to child rocketstyle components.
+ */
 const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
   forwardRef(
     (

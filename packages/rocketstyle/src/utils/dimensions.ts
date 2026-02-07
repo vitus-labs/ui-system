@@ -4,6 +4,7 @@ import type { Dimensions, DimensionValue, MultiKeys } from '~/types/dimensions'
 // --------------------------------------------------------
 // Is value a valid key
 // --------------------------------------------------------
+/** Checks whether a dimension value is defined and not explicitly disabled (false). */
 type IsValidKey = (value: any) => boolean
 export const isValidKey: IsValidKey = (value) =>
   value !== undefined && value !== null && value !== false
@@ -11,6 +12,7 @@ export const isValidKey: IsValidKey = (value) =>
 // --------------------------------------------------------
 // Is value a multi key
 // --------------------------------------------------------
+/** Determines if a dimension value is a multi-key config object, returning [isMulti, propName]. */
 type IsMultiKey = (value: string | Record<string, unknown>) => [boolean, string]
 export const isMultiKey: IsMultiKey = (value) => {
   if (typeof value === 'object' && value !== null)
@@ -21,6 +23,11 @@ export const isMultiKey: IsMultiKey = (value) => {
 // --------------------------------------------------------
 // calculate dimensions map
 // --------------------------------------------------------
+/**
+ * Builds a two-level map (`keysMap`) of dimension -> option -> true,
+ * and a flat `keywords` lookup of all prop names reserved by dimensions
+ * (including boolean shorthand keys when `useBooleans` is enabled).
+ */
 type GetDimensionsMap = <T extends Record<string, any>>({
   themes,
   useBooleans,
@@ -58,6 +65,7 @@ export const getDimensionsMap: GetDimensionsMap = ({ themes, useBooleans }) => {
 // --------------------------------------------------------
 // simple object getters
 // --------------------------------------------------------
+/** Returns the keys of an object with proper typing. */
 type GetKeys = <T extends Record<string, unknown>>(obj: T) => Array<keyof T>
 export const getKeys: GetKeys = (obj) => Object.keys(obj)
 
@@ -69,6 +77,7 @@ export const getValues: GetValues = (obj) => Object.values(obj) as any
 // --------------------------------------------------------
 // get dimensions values array
 // --------------------------------------------------------
+/** Extracts the prop name from each dimension value, unwrapping multi-key config objects. */
 type ValueType<T> = T extends string ? T : T[][0]
 type GetDimensionsValues = <T extends Dimensions, K extends keyof T>(
   obj: T,
@@ -86,6 +95,7 @@ export const getDimensionsValues: GetDimensionsValues = (obj) =>
 // --------------------------------------------------------
 // get multiple dimensions map
 // --------------------------------------------------------
+/** Builds a lookup of dimension prop names that accept multiple simultaneous values. */
 type GetMultipleDimensions = <T extends Dimensions>(obj: T) => MultiKeys<T>
 
 export const getMultipleDimensions: GetMultipleDimensions = (obj) =>

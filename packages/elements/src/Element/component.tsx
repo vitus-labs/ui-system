@@ -1,3 +1,11 @@
+/**
+ * Core building block of the elements package. Renders a three-section layout
+ * (beforeContent / content / afterContent) inside a flex Wrapper. When only
+ * content is present, the Wrapper inherits content-level alignment directly
+ * to avoid an unnecessary nesting layer. Handles HTML-specific edge cases
+ * like void elements (input, img) and inline elements (span, a) by
+ * skipping children or switching sub-tags accordingly.
+ */
 import { render } from '@vitus-labs/core'
 import { forwardRef, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
