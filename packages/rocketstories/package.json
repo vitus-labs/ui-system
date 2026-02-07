@@ -6,9 +6,12 @@
   "maintainers": [
     "Vit Bokisch <vit@bokisch.cz>"
   ],
-  "main": "lib/vitus-labs-rocketstories.js",
-  "module": "lib/vitus-labs-rocketstories.module.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": {
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/"
   ],
