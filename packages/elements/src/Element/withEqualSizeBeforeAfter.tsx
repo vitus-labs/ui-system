@@ -5,8 +5,7 @@
  * and height for rows direction. This is useful for centering the main
  * content when before/after slots have different intrinsic sizes.
  */
-import { useLayoutEffect, useRef } from 'react'
-import type { SimpleHoc } from '~/types'
+import { type Ref, useImperativeHandle, useLayoutEffect, useRef } from 'react'
 import type { Props as ElementProps } from './types'
 
 const types = {
@@ -35,31 +34,39 @@ const equalize = (
 type Props = ElementProps &
   Partial<{
     equalBeforeAfter: boolean
+    ref: Ref<HTMLElement>
   }>
 
-const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
+const withEqualBeforeAfter = (WrappedComponent: any) => {
   const displayName =
     WrappedComponent.displayName ?? WrappedComponent.name ?? 'Component'
 
-  const Enhanced = (props: Props) => {
-    const {
-      equalBeforeAfter,
-      direction,
-      afterContent,
-      beforeContent,
-      ...rest
-    } = props
-    const elementRef = useRef<HTMLElement>(null)
+  const Enhanced = ({
+    equalBeforeAfter,
+    direction,
+    afterContent,
+    beforeContent,
+    ref,
+    ...rest
+  }: Props) => {
+    const internalRef = useRef<HTMLElement>(null)
+
+    useImperativeHandle(ref, () => internalRef.current as HTMLElement)
 
     useLayoutEffect(() => {
-      if (!equalBeforeAfter || !elementRef.current) return
+      if (!equalBeforeAfter || !beforeContent || !afterContent) return
+      if (!internalRef.current) return
 
-      const { children } = elementRef.current
-      const beforeEl = children[0] as HTMLElement | undefined
-      const afterEl = children[2] as HTMLElement | undefined
+      const el = internalRef.current
+      const beforeEl = el.firstElementChild as HTMLElement | null
+      const afterEl = el.lastElementChild as HTMLElement | null
 
-      if (beforeEl && afterEl) {
-        equalize(beforeEl, afterEl, direction === 'rows' ? 'height' : 'width')
+      if (beforeEl && afterEl && beforeEl !== afterEl) {
+        equalize(
+          beforeEl,
+          afterEl,
+          direction === 'rows' ? 'height' : 'width',
+        )
       }
     })
 
@@ -68,8 +75,7 @@ const withEqualBeforeAfter: SimpleHoc<Props> = (WrappedComponent) => {
         {...rest}
         afterContent={afterContent}
         beforeContent={beforeContent}
-        // @ts-expect-error
-        ref={elementRef}
+        ref={internalRef}
       />
     )
   }
