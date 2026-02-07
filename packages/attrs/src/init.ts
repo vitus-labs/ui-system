@@ -3,6 +3,17 @@ import attrsComponent from '~/attrs'
 import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
 import type { ElementType } from '~/types/utils'
 
+/**
+ * Public entry point for creating an attrs-enhanced component.
+ *
+ * ```tsx
+ * const Button = attrs({ name: 'Button', component: Element })
+ *   .attrs({ tag: 'button' })
+ *   .attrs<{ primary?: boolean }>(({ primary }) => ({
+ *     backgroundColor: primary ? 'blue' : 'gray',
+ *   }))
+ * ```
+ */
 export type Attrs = <C extends ElementType>({
   name,
   component,
@@ -14,9 +25,7 @@ export type Attrs = <C extends ElementType>({
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const attrs: Attrs = ({ name, component }) => {
-  // --------------------------------------------------------
-  // handle ERRORS in development mode
-  // --------------------------------------------------------
+  // Validate required params in development — fail fast with clear errors.
   if (process.env.NODE_ENV !== 'production') {
     type Errors = Partial<{
       component: string
@@ -37,6 +46,7 @@ const attrs: Attrs = ({ name, component }) => {
     }
   }
 
+  // Bootstrap with empty configuration — all chains start from scratch.
   return attrsComponent({
     name,
     component,
