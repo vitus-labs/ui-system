@@ -1,3 +1,4 @@
+import { getContainerWidth } from '../Container/utils'
 import { getGridContext } from '../useContext'
 
 describe('getGridContext', () => {
@@ -51,5 +52,27 @@ describe('getGridContext', () => {
     const result = getGridContext(undefined as any, undefined as any)
     expect(result.columns).toBeUndefined()
     expect(result.containerWidth).toBeUndefined()
+  })
+})
+
+describe('getContainerWidth', () => {
+  it('returns width from props', () => {
+    const result = getContainerWidth({ width: { xs: 600 } }, {})
+    expect(result).toEqual({ xs: 600 })
+  })
+
+  it('falls back to theme.grid.container', () => {
+    const result = getContainerWidth({}, { grid: { container: { xs: '100%' } } })
+    expect(result).toEqual({ xs: '100%' })
+  })
+
+  it('falls back to theme.coolgrid.container', () => {
+    const result = getContainerWidth({}, { coolgrid: { container: { md: 720 } } })
+    expect(result).toEqual({ md: 720 })
+  })
+
+  it('returns undefined when nothing matches', () => {
+    const result = getContainerWidth({}, {})
+    expect(result).toBeFalsy()
   })
 })
