@@ -31,7 +31,7 @@ export type Configuration<
   consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
-  passProps?: Array<string>
+  passProps?: string[]
   styled?: boolean
 
   // array chaining options
@@ -52,7 +52,7 @@ export type ExtendedConfiguration<
   consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
-  passProps?: Array<string>
+  passProps?: string[]
   styled?: boolean
 
   // array chaining options

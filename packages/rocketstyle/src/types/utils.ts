@@ -11,7 +11,7 @@ export type ElementType<T extends TObj | unknown = any> =
 
 export type ValueOf<T> = T[keyof T]
 
-export type ArrayOfValues<T> = Array<T[keyof T]>
+export type ArrayOfValues<T> = T[keyof T][]
 
 export type ArrayOfKeys<T> = Array<keyof T>
 

@@ -71,7 +71,7 @@ export interface IRocketStories<
   // --------------------------------------------------------
   dimension: <P extends keyof RA>(
     dimension: ISRS extends true ? P : never,
-    options?: Partial<{ ignore: Array<RA[P]> }>,
+    options?: Partial<{ ignore: RA[P][] }>,
   ) => ReturnType<rocketstory.RenderDimension<OA>> | null
 
   // RENDER story

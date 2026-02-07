@@ -39,7 +39,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/react-is": "^19.2.0",
-    "@biomejs/biome": "^2.3.14",
+    "@vitus-labs/tools-lint": "^1.5.2-alpha.1",
     "cpr": "^3.0.1",
     "csstype": "3",
     "jest": "^30.2.0",

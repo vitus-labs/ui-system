@@ -25,6 +25,7 @@ describe('isRocketComponent', () => {
   })
 
   it('returns false for functions', () => {
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: test fixture
     expect(isRocketComponent(() => {})).toBe(false)
   })
 

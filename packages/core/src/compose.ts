@@ -2,8 +2,7 @@ type ArityOneFn = (arg: any) => any
 
 /** Extracts the last function from a tuple type. */
 type PickLastInTuple<T extends any[]> = T extends [
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ...rest: infer U,
+  ...rest: infer _U,
   argn: infer L,
 ]
   ? L

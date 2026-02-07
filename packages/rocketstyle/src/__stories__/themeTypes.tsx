@@ -2,7 +2,7 @@ import { Element } from '@vitus-labs/elements'
 import type { styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
 
-const theme = {
+const _theme = {
   fontSize: {
     a: 12,
     b: 12,
@@ -10,7 +10,7 @@ const theme = {
 }
 
 type Theme = Parameters<typeof styles>[0]['theme']
-type ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
+type _ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
 
 const defaultDimensions = {
   gaps: 'gap',

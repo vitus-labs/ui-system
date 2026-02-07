@@ -5,7 +5,6 @@
     "": {
       "name": "@vitus-labs/ui-system-root",
       "devDependencies": {
-        "@biomejs/biome": "^2.3.14",
         "@swc/jest": "^0.2.39",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.1",
@@ -14,6 +13,7 @@
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "@types/react-is": "^19.2.0",
+        "@vitus-labs/tools-lint": "^1.5.2-alpha.1",
         "cpr": "^3.0.1",
         "csstype": "3",
         "jest": "^30.2.0",
@@ -1112,6 +1112,8 @@
     "@vitus-labs/rocketstyle": ["@vitus-labs/rocketstyle@workspace:packages/rocketstyle"],
 
     "@vitus-labs/tools-core": ["@vitus-labs/tools-core@1.5.2-alpha.1", "", { "dependencies": { "find-up": "^7.0.0", "lodash-es": "^4.17.22" } }, "sha512-3BHdaXJ69P7W177RvCCDNjTfItKs0AbipM1FZwr1AbUKV+ydUuBV3Usg3U4mUU71OJaQLQ97EorTsYToca0Abw=="],
+
+    "@vitus-labs/tools-lint": ["@vitus-labs/tools-lint@1.5.2-alpha.1", "", { "dependencies": { "@biomejs/biome": "^2.3.14" } }, "sha512-0lU+BSo6IUX9Esc1ZXt5dyB3uaz9kQ/RYXdhSMyJqZkTmj8vjuho88g0APZMy+wQvRyVCq79gfGDn+J4OSrN5Q=="],
 
     "@vitus-labs/tools-rolldown": ["@vitus-labs/tools-rolldown@1.5.2-alpha.1", "", { "dependencies": { "@vitus-labs/tools-core": "1.5.2-alpha.1", "chalk": "^5.6.2", "rimraf": "^6.1.2", "rolldown": "^1.0.0-rc.3", "rolldown-plugin-dts": "^0.13.4", "rollup-plugin-filesize": "^10.0.0", "rollup-plugin-visualizer": "^5.14.0" }, "bin": { "vl_rolldown_build": "lib/bin/run-build.js", "vl_rolldown_build-watch": "lib/bin/run-watch.js" } }, "sha512-fmT2nQpxkL6Fr4YUG3VvjDCKJ48i/OrajZ3HL/VtynKU95u4z9e12geMztlV6tWSmqWZFcW1CrjgTs473pjScg=="],
 

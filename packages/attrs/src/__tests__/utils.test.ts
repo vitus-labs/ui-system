@@ -167,7 +167,7 @@ describe('chainOptions', () => {
     const obj = { color: 'blue' }
     const result = chainOptions(obj, [])
     expect(result).toHaveLength(1)
-    expect(result[0]!()).toEqual(obj)
+    expect(result[0]?.()).toEqual(obj)
   })
 
   it('should return empty array when no defaults and undefined opts', () => {

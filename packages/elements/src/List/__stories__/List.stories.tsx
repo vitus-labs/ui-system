@@ -139,15 +139,10 @@ export const renderCustomComponentInItem = () => {
     { name: 'c' },
     { name: 'd' },
   ]
-  const itemProps = (props) => {
-    const { key, first, last, odd, even, position } = props
-
-    return {
-      onClick: () => {
-        console.log(key, first, last, odd, even, position)
-      },
-    }
-  }
+  const itemProps = () => ({
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: story demo
+    onClick: () => {},
+  })
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }

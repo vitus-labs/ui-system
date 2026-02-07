@@ -127,7 +127,7 @@ const renderDimension: RenderDimension = (
 
         if (storyOptions.pseudo === true) {
           return (
-            <WrapElement contentDirection="rows" contentAlignY="top">
+            <WrapElement key={key} contentDirection="rows" contentAlignY="top">
               <Heading
                 level1
                 label={item.charAt(0).toUpperCase() + item.slice(1)}
@@ -151,7 +151,7 @@ const renderDimension: RenderDimension = (
         }
 
         return (
-          <WrapElement {...storyProps}>
+          <WrapElement key={key} {...storyProps}>
             <Provider component={component}>
               <Item
                 {...{

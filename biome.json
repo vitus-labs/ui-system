@@ -1,65 +1,46 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "extends": ["@vitus-labs/tools-lint/biome"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 80
-  },
   "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "asNeeded",
-      "trailingCommas": "all"
-    }
+    "globals": [
+      "__VITUS_LABS_STORIES__",
+      "__BROWSER__",
+      "__NATIVE__",
+      "__NODE__",
+      "__WEB__",
+      "__CLIENT__",
+      "__VERSION__",
+      "jest",
+      "describe",
+      "it",
+      "expect",
+      "beforeEach",
+      "afterEach",
+      "beforeAll",
+      "afterAll"
+    ]
   },
   "linter": {
-    "enabled": true,
     "rules": {
-      "recommended": true,
       "complexity": {
-        "noForEach": "off",
-        "noBannedTypes": "off",
-        "noEmptyTypeParameters": "off"
+        "noBannedTypes": "off"
       },
       "style": {
-        "noNonNullAssertion": "off",
         "noParameterAssign": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off",
-        "noAssignInExpressions": "off",
-        "noImplicitAnyLet": "off",
-        "noArrayIndexKey": "off"
+        "noAssignInExpressions": "off"
       },
       "correctness": {
-        "noUnusedImports": "warn",
-        "useHookAtTopLevel": "off",
-        "useJsxKeyInIterable": "warn",
-        "useExhaustiveDependencies": "warn",
-        "noUnusedVariables": "warn"
+        "useExhaustiveDependencies": "warn"
       },
-      "performance": {
-        "noAccumulatingSpread": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "a11y": {
-        "useButtonType": "off"
-      }
-    }
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
+      "nursery": {
+        "noShadow": "off"
       }
     }
   }

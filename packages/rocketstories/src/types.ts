@@ -103,7 +103,7 @@ export type StoryConfiguration = Omit<Configuration, 'component'> & {
 }
 
 export type SimpleValue = string | number | boolean
-export type Obj = Record<string, SimpleValue | Array<SimpleValue>>
+export type Obj = Record<string, SimpleValue | SimpleValue[]>
 
 export type PartialControls = Record<string, Partial<Control>>
 

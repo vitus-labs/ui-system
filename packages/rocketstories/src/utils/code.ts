@@ -8,7 +8,7 @@ import type { Control, Obj, SimpleValue } from '~/types'
 type ObjValue = Control
 
 type ParseProps = <
-  T extends Record<string, SimpleValue | Array<SimpleValue> | ObjValue>,
+  T extends Record<string, SimpleValue | SimpleValue[] | ObjValue>,
 >(
   props: T,
 ) => Record<keyof T, unknown>
@@ -46,7 +46,7 @@ const parseProps: ParseProps = (props) =>
 // --------------------------------------------------------
 // stringifyArray
 // --------------------------------------------------------
-type StringifyArray = (props: Array<unknown>) => string
+type StringifyArray = (props: unknown[]) => string
 
 const stringifyArray: StringifyArray = (props) => {
   let result = '['

@@ -169,9 +169,12 @@ const useOverlay = ({
 
     if (type === 'modal' && !contentRef.current) {
       if (IS_DEVELOPMENT) {
-        console.warn('Cannot access `ref` of `content` component.')
+        // biome-ignore lint/suspicious/noConsole: dev-mode warning
+        console.warn(
+          '[@vitus-labs/elements] Overlay: contentRef is not attached. ' +
+            'Make sure the overlay content is mounted before opening.',
+        )
       }
-
       return overlayPosition
     }
 
@@ -179,9 +182,13 @@ const useOverlay = ({
       // return empty object when refs are not available
       if (!triggerRef.current || !contentRef.current) {
         if (IS_DEVELOPMENT) {
-          console.warn('Cannot access `ref` of trigger or content component.')
+          // biome-ignore lint/suspicious/noConsole: dev-mode warning
+          console.warn(
+            `[@vitus-labs/elements] Overlay (${type}): ` +
+              `${!triggerRef.current ? 'triggerRef' : 'contentRef'} is not attached. ` +
+              'Position cannot be calculated without both refs.',
+          )
         }
-
         return overlayPosition
       }
 
@@ -305,9 +312,12 @@ const useOverlay = ({
       // triggerRef is not needed in this case
       if (!contentRef.current) {
         if (IS_DEVELOPMENT) {
-          console.warn('Cannot access `ref` of trigger or content component.')
+          // biome-ignore lint/suspicious/noConsole: dev-mode warning
+          console.warn(
+            '[@vitus-labs/elements] Overlay (modal): contentRef is not attached. ' +
+              'Modal position cannot be calculated without a content element.',
+          )
         }
-
         return overlayPosition
       }
 

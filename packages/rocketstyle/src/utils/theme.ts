@@ -85,7 +85,7 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 // --------------------------------------------------------
 /** Reduces an array of option callbacks by calling each with the given args and deep-merging results. */
 type CalculateChainOptions = (
-  options: Array<OptionFunc> | undefined | null,
+  options: OptionFunc[] | undefined | null,
   args: any[],
 ) => Record<string, any>
 
@@ -115,7 +115,7 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
   let finalTheme = { ...baseTheme }
 
   Object.entries(rocketstate).forEach(
-    ([key, value]: [string, string | Array<string>]) => {
+    ([key, value]: [string, string | string[]]) => {
       const keyTheme: Record<string, any> = themes[key]!
 
       if (Array.isArray(value)) {

@@ -3,12 +3,12 @@ import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
 import type theme from './theme'
 
-type TTheme = typeof theme
+type _TTheme = typeof theme
 type TStyles = Parameters<typeof styles>[0]['theme']
 
 type ResponsiveStyles<T extends Record<string, unknown>> = Record<
   keyof T,
-  T[keyof T] | Record<string, T[keyof T]> | Array<T[keyof T]>
+  T[keyof T] | Record<string, T[keyof T]> | T[keyof T][]
 >
 
 type FinalStyles = ResponsiveStyles<TStyles>

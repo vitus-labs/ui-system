@@ -103,7 +103,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
  */
 // @ts-expect-error
 const rocketComponent: RocketComponent = (options) => {
-  const { component, styles, DEBUG } = options
+  const { component, styles } = options
   const { styled } = config
 
   const _calculateStylingAttrs = calculateStylingAttrs({
@@ -332,15 +332,24 @@ const rocketComponent: RocketComponent = (options) => {
         $rocketstate: finalRocketstate,
       }
 
-      if (DEBUG && process.env.NODE_ENV !== 'production') {
-        console.log('[Rocketstyle] Debug mode enabled')
-        console.log(`component ${componentName}`)
-        console.log(finalProps)
-      }
-
       // all the development stuff injected
       if (process.env.NODE_ENV !== 'production') {
         finalProps['data-rocketstyle'] = componentName
+
+        if (options.DEBUG) {
+          const debugPayload = {
+            component: componentName,
+            rocketstate: finalRocketstate,
+            rocketstyle,
+            dimensions,
+            mode,
+            reservedPropNames: RESERVED_STYLING_PROPS_KEYS,
+            filteredAttrs: options.filterAttrs,
+          }
+
+          // biome-ignore lint/suspicious/noConsole: debug logging controlled by DEBUG option
+          console.debug(`[rocketstyle] ${componentName} render:`, debugPayload)
+        }
       }
 
       return <RenderComponent {...finalProps} />
@@ -406,7 +415,7 @@ const rocketComponent: RocketComponent = (options) => {
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
 
-    // @ts-ignore
+    // @ts-expect-error
     return cloneAndEnhance(options, result)
   }
 

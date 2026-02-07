@@ -1,6 +1,6 @@
 import type { ElementType, TFn } from './utils'
 
-export type OptionFunc = (...arg: Array<unknown>) => Record<string, unknown>
+export type OptionFunc = (...arg: unknown[]) => Record<string, unknown>
 
 export type InitConfiguration<C> = {
   name?: string

@@ -18,11 +18,13 @@ const context = createContext<LocalContext>({})
  * Retrieves the local pseudo-state context. When a consumer callback
  * is provided, it transforms the raw context; otherwise returns defaults.
  */
-type UseLocalContext = (context: any) => LocalContext
+type UseLocalContext = (consumer: any) => LocalContext
 export const useLocalContext: UseLocalContext = (consumer) => {
-  const ctx = consumer ? useContext(context) : {}
-  const result = consumer ? consumer((callback: any) => callback(ctx)) : {}
+  const ctx = useContext(context)
 
+  if (!consumer) return { pseudo: {} }
+
+  const result = consumer((callback: any) => callback(ctx))
   return { pseudo: {}, ...result }
 }
 

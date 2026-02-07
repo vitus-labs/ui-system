@@ -48,7 +48,7 @@ const Component: VLForwardedComponent<Props> & {
     </Styled>
   )
 
-  let finalTag
+  let finalTag: string | undefined
 
   if (__WEB__) {
     if (paragraph) finalTag = 'p'

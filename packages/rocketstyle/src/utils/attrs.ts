@@ -114,7 +114,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
         // when value in result is not assigned yet
         if (!value) {
-          let newDimensionValue
+          let newDimensionValue: string | string[] | undefined
           const keywords = Object.keys(dimensions[key] as any)
 
           if (isMultiKey) {
