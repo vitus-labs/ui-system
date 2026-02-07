@@ -22,7 +22,9 @@ module.exports = {
   transformIgnorePatterns: [],
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
+    '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
   },
+  setupFilesAfterEnv: ['<rootDir>/../../jest.setup.cjs'],
   testMatch: ['**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)'],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

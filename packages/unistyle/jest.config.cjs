@@ -7,9 +7,4 @@ module.exports = {
   globals: {
     __WEB__: true,
   },
-  moduleNameMapper: {
-    ...base.moduleNameMapper,
-    '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
-  },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
 }

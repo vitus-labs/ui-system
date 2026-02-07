@@ -4,9 +4,4 @@ const base = require('../../jest.config.base.cjs')
 module.exports = {
   ...base,
   displayName: 'hooks',
-  moduleNameMapper: {
-    ...base.moduleNameMapper,
-    '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
-  },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
 }

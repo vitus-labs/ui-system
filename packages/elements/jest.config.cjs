@@ -10,8 +10,6 @@ module.exports = {
   },
   moduleNameMapper: {
     ...base.moduleNameMapper,
-    '^@vitus-labs/core$': '<rootDir>/../core/lib/index.js',
     '^@vitus-labs/unistyle$': '<rootDir>/../unistyle/lib/index.js',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
 }
