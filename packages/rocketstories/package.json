@@ -59,7 +59,7 @@
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 16.7"
+    "react": ">= 19"
   },
   "dependencies": {
     "@vitus-labs/elements": "workspace:*",

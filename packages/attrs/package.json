@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 18"
+    "react": ">= 19"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.2"

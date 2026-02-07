@@ -49,8 +49,8 @@
   "peerDependencies": {
     "@vitus-labs/core": "*",
     "@vitus-labs/unistyle": "*",
-    "react": ">= 18",
-    "react-dom": ">= 18",
+    "react": ">= 19",
+    "react-dom": ">= 19",
     "styled-components": ">= 6"
   },
   "devDependencies": {

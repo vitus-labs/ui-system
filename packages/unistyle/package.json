@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 18"
+    "react": ">= 19"
   },
   "devDependencies": {
     "@swc/jest": "^0.2.39",
