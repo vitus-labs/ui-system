@@ -1,3 +1,9 @@
+/**
+ * Type definitions for the coolgrid layout system.
+ * Supports responsive values as single values, arrays (mobile-first),
+ * or breakpoint-keyed objects. Defines config props for Container/Row/Col
+ * and the resolved styled-component prop types.
+ */
 import type { BreakpointKeys, config } from '@vitus-labs/core'
 import type { AlignContentAlignXKeys, extendCss } from '@vitus-labs/unistyle'
 import type { ComponentType, FC, ReactNode } from 'react'

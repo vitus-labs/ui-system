@@ -6,6 +6,12 @@ import useGridContext from '~/useContext'
 import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
+/**
+ * Row component that reads inherited config from ContainerContext, merges
+ * it with its own props, and provides the resolved grid settings (columns,
+ * gap, gutter) to Col children via RowContext. Renders a flex-wrap container
+ * with negative margins to offset column gutters.
+ */
 const Component: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
 > = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {

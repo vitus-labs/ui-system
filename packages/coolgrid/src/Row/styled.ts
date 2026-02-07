@@ -12,6 +12,12 @@ import { isNumber } from '~/utils'
 
 const { styled, css, component } = config
 
+/**
+ * Computes negative horizontal margins to compensate for column gap,
+ * and vertical margins that account for gutter (inter-row spacing).
+ * This creates the classic grid pattern where column gaps cancel out
+ * at the row edges.
+ */
 type SpacingStyles = (
   props: Pick<StyledTypes, 'gap' | 'gutter'>,
   { rootSize }: { rootSize?: number },
@@ -30,6 +36,7 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   `
 }
 
+/** Maps the contentAlignX prop to a CSS justify-content value. */
 const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   if (!align) return ''
 
@@ -38,6 +45,7 @@ const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   `
 }
 
+/** Composes spacing, alignment, and extra CSS into a single responsive style block for the Row. */
 const styles: MakeItResponsiveStyles<
   Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extraStyles'>
 > = ({ theme, css, rootSize }) => {

@@ -6,6 +6,12 @@ import useGridContext from '~/useContext'
 import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
+/**
+ * Container component that establishes the outermost grid boundary.
+ * Resolves grid config from the theme, provides it to descendant Row/Col
+ * components via ContainerContext, and renders a styled wrapper with
+ * responsive max-width.
+ */
 const Component: ElementType<['containerWidth']> = ({
   children,
   component,

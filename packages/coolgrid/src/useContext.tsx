@@ -4,9 +4,10 @@ import { useContext } from 'react'
 import { CONTEXT_KEYS } from '~/constants'
 import type { Context, Obj, ValueType } from '~/types'
 
-// ------------------------------------------
-// pickTheme props
-// ------------------------------------------
+/**
+ * Picks only the recognized grid configuration keys from a props object,
+ * filtering out any non-grid props before they enter context resolution.
+ */
 export type PickThemeProps = <T extends Record<string, unknown>>(
   props: T,
   keywords: Array<keyof T>,
@@ -14,9 +15,12 @@ export type PickThemeProps = <T extends Record<string, unknown>>(
 const pickThemeProps: PickThemeProps = (props, keywords) =>
   pick(props, keywords)
 
-// ------------------------------------------
-// create grid settings
-// ------------------------------------------
+/**
+ * Resolves grid columns and container width using a three-layer fallback:
+ * 1. Explicit component props (e.g. `columns={6}`)
+ * 2. `theme.grid.columns` / `theme.grid.container`
+ * 3. `theme.coolgrid.columns` / `theme.coolgrid.container`
+ */
 type GetGridContext = (
   props: Obj,
   theme: Obj,
@@ -34,6 +38,11 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
     get(theme, 'coolgrid.container')) as Record<string, number>,
 })
 
+/**
+ * Hook that reads the unistyle theme context and merges it with the
+ * component's own props to produce the final grid configuration.
+ * Applies the three-layer resolution (props -> grid.* -> coolgrid.*).
+ */
 type UseGridContext = (props: Obj) => Context
 const useGridContext: UseGridContext = (props) => {
   const { theme } = useContext(context)

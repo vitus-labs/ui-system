@@ -9,6 +9,7 @@ const { styled, css, component } = config
 
 type HasWidth = (size?: number, columns?: number) => boolean
 
+/** Returns true when both size and columns are valid, enabling explicit width calculation. */
 const hasWidth: HasWidth = (size, columns) =>
   hasValue(size) && hasValue(columns)
 
@@ -17,6 +18,10 @@ type WidthStyles = (
   defaults: { rootSize?: number },
 ) => CssOutput
 
+/**
+ * Calculates column width as a percentage of total columns, subtracting
+ * the gap when present. On web uses `calc(%)`, on native uses absolute pixels.
+ */
 const widthStyles: WidthStyles = (
   { size, columns, gap, RNparentWidth },
   { rootSize },
@@ -54,6 +59,7 @@ type SpacingStyles = (
   param?: number,
   rootSize?: number,
 ) => CssOutput
+/** Applies half of the given value as either margin or padding (used for gap and padding distribution). */
 const spacingStyles: SpacingStyles = (type, param, rootSize) => {
   if (!isNumber(param)) {
     return ''
@@ -66,6 +72,11 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
   `
 }
 
+/**
+ * Main responsive style block for Col. When the column is visible, applies
+ * width, padding, margin, and extra CSS. When hidden (size === 0), moves
+ * the element off-screen with fixed positioning.
+ */
 const styles: MakeItResponsiveStyles<StyledTypes> = ({
   theme,
   css,

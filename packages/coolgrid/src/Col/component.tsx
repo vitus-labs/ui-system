@@ -6,6 +6,11 @@ import useGridContext from '~/useContext'
 import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
 
+/**
+ * Col (column) component that reads grid settings from RowContext
+ * (columns, gap, gutter) and calculates its own width as a fraction
+ * of the total columns. Supports responsive size, padding, and visibility.
+ */
 const Component: ElementType<
   [
     'containerWidth',
