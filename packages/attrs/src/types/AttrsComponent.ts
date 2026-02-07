@@ -160,9 +160,9 @@ export interface AttrsComponent<
       /**
        * filter props will be omitted when passing to final component
        */
-      filter: P extends TObj
-        ? Partial<keyof MergeTypes<[EA, P]>>[]
-        : Partial<keyof EA>[]
+      filter: unknown extends P
+        ? string[]
+        : (keyof MergeTypes<[EA, P]>)[]
     }>,
   ) => P extends TObj
     ? AttrsComponent<C, OA, MergeTypes<[EA, P]>, S, HOC>

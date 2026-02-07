@@ -22,8 +22,6 @@ export type Attrs = <C extends ElementType>({
   component: C
 }) => ReturnType<InitAttrsComponent<C>>
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 const attrs: Attrs = ({ name, component }) => {
   // Validate required params in development — fail fast with clear errors.
   if (process.env.NODE_ENV !== 'production') {

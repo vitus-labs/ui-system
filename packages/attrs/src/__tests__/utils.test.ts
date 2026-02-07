@@ -120,23 +120,23 @@ describe('calculateChainOptions', () => {
   })
 
   it('should merge results from multiple option functions', () => {
-    const fn1 = () => ({ color: 'blue' })
-    const fn2 = () => ({ size: 'large' })
+    const fn1 = (_: any) => ({ color: 'blue' })
+    const fn2 = (_: any) => ({ size: 'large' })
     const calculate = calculateChainOptions([fn1, fn2])
     const result = calculate([{}])
     expect(result).toEqual({ color: 'blue', size: 'large' })
   })
 
   it('should let later functions override earlier ones', () => {
-    const fn1 = () => ({ color: 'blue' })
-    const fn2 = () => ({ color: 'red' })
+    const fn1 = (_: any) => ({ color: 'blue' })
+    const fn2 = (_: any) => ({ color: 'red' })
     const calculate = calculateChainOptions([fn1, fn2])
     const result = calculate([{}])
     expect(result).toEqual({ color: 'red' })
   })
 
   it('should pass arguments to each option function', () => {
-    const fn = jest.fn(() => ({}))
+    const fn = jest.fn((_: any) => ({}))
     const calculate = calculateChainOptions([fn])
     const props = { variant: 'primary' }
     calculate([props])
@@ -167,7 +167,7 @@ describe('chainOptions', () => {
     const obj = { color: 'blue' }
     const result = chainOptions(obj, [])
     expect(result).toHaveLength(1)
-    expect(result[0]()).toEqual(obj)
+    expect(result[0]!()).toEqual(obj)
   })
 
   it('should return empty array when no defaults and undefined opts', () => {

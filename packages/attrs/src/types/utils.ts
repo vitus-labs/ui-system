@@ -52,22 +52,36 @@ export type ReturnCbParam<P extends TFn | TObj> = P extends TFn
 // override earlier ones while preserving the rest.
 // ──────────────────────────────────────────────────────────────
 
-/** Forces TypeScript to expand/flatten a type for better IDE display. */
-type Id<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+/**
+ * Forces TypeScript to expand/flatten a type for better IDE display.
+ * Short-circuits for `any` — the mapped type would turn `any` into
+ * `{ [x: string]: any; [x: number]: any; [x: symbol]: any }`, losing
+ * its identity as `any` and breaking downstream type checks.
+ */
+type Id<T> = 0 extends 1 & T
+  ? T
+  : T extends infer U
+    ? { [K in keyof U]: U[K] }
+    : never
 
 /**
  * Strips keys whose values are `never`, `null`, or `undefined`.
  * Uses tuple wrapping `[T[P]] extends [never]` to avoid distribution
  * over union types (a bare `T[P] extends never` would incorrectly
  * match union members).
+ *
+ * Short-circuits for `any` — the `as` clause in mapped types loses
+ * index signatures, which would turn `any` into an empty type.
  */
-type ExtractNullableKeys<T> = {
-  [P in keyof T as [T[P]] extends [never]
-    ? never
-    : [T[P]] extends [null | undefined]
-      ? never
-      : P]: T[P]
-}
+type ExtractNullableKeys<T> = 0 extends 1 & T
+  ? T
+  : {
+      [P in keyof T as [T[P]] extends [never]
+        ? never
+        : [T[P]] extends [null | undefined]
+          ? never
+          : P]: T[P]
+    }
 
 /** Merges two types: keeps all keys from L that don't exist in R, then adds all of R. */
 type SpreadTwo<L, R> = Id<Pick<L, Exclude<keyof L, keyof R>> & R>
@@ -77,9 +91,16 @@ type Spread<A extends readonly [...any]> = A extends [infer L, ...infer R]
   ? SpreadTwo<L, Spread<R>>
   : unknown
 
-export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
-  Spread<A>
->
+/** Recursively checks whether any element in the tuple is `any`. */
+type _HasAny<A> = A extends [infer L, ...infer R]
+  ? 0 extends 1 & L
+    ? true
+    : _HasAny<R>
+  : false
+
+export type MergeTypes<A extends readonly [...any]> = _HasAny<A> extends true
+  ? any
+  : ExtractNullableKeys<Spread<A>>
 
 // ─── ExtractProps ─────────────────────────────────────────────
 
