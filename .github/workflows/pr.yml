@@ -1,9 +1,11 @@
-name: Pull Request
+name: CI
 
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,19 +17,19 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
-      - name: Install application deps
+      - name: Install dependencies
         run: bun install
 
       - name: Build packages
         run: bun run pkgs:build
 
+      - name: Lint
+        run: bun run lint
+
       - name: Type check
         run: bun run typecheck
 
-      - name: Run tests
+      - name: Test
         run: bun run test
-
-      - name: Lint codebase
-        run: bun run lint
