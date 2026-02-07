@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 import { chainOptions } from '~/utils/chaining'
 import { removeNullableValues } from '~/utils/collection'

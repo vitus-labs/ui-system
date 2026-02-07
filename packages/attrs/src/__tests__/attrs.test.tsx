@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { render, screen } from '@testing-library/react'
 import React, { createRef } from 'react'
 import attrs from '~/init'

@@ -18,11 +18,11 @@ const Button = attrs({ name: 'Button', component: Element })
     }),
     { filter: ['something'] },
   )
-  .attrs({
+  .attrs(() => ({
     tag: 'button',
     // contentAlignX: 'block',
     // content,
-  })
+  }))
   .attrs({
     tag: 'button',
     alignX: 'center',
