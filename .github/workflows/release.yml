@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  # Stable releases — manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+  # Prereleases — automatic on feature/release branch pushes
+  push:
+    branches:
+      - 'feature/**'
+      - 'release/**'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ── Stable release (main only, manual) ──────────────────────────
+  stable:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    name: Publish Stable
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint & Format
+        run: bun run lint
+
+      - name: Build all packages
+        run: bun run pkgs:build
+
+      - name: Type check
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish
+        run: bunx lerna publish ${{ inputs.type }} --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+  # ── Prerelease (feature/release branches, automatic) ────────────
+  prerelease:
+    if: github.event_name == 'push'
+    name: Publish Prerelease
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint & Format
+        run: bun run lint
+
+      - name: Build all packages
+        run: bun run pkgs:build
+
+      - name: Type check
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
+
+      - name: Publish canary
+        run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

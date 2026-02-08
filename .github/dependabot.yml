@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-is"
+          - "@types/react"
+          - "@types/react-dom"
+          - "@types/react-is"
+      styled-components:
+        patterns:
+          - "styled-components"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "vitest"
+          - "@vitest/*"
+          - "jsdom"
+      biome:
+        patterns:
+          - "@biomejs/*"
+      types:
+        patterns:
+          - "@types/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
