@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "release": "lerna publish --force-publish",
-    "lint": "lerna run lint",
+    "lint": "biome check packages/*/src/",
     "pkgs:clean": "rm -rf node_modules/ bun.lock && bun install",
     "pkgs:build": "lerna run build --stream",
     "test": "vitest run",

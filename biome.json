@@ -15,7 +15,7 @@
       "__WEB__",
       "__CLIENT__",
       "__VERSION__",
-      "jest",
+      "vi",
       "describe",
       "it",
       "expect",
