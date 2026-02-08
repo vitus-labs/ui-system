@@ -38,6 +38,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - name: Build packages (needed for workspace resolution)
+        run: bun run pkgs:build
       - run: bun run test
 
   build:
