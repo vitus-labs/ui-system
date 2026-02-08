@@ -1,7 +1,7 @@
 import type { Units } from '~/types'
 import { value } from '~/units'
 
-const isValidValue = (value: unknown) => !!value || value === 0
+const isValidValue = (v: unknown) => !!v || v === 0
 
 type Property =
   | 'inset'
@@ -12,6 +12,16 @@ type Property =
   | 'border-color'
 type Value = string | number | null | undefined
 type Side = 'top' | 'bottom' | 'left' | 'right'
+
+type EdgeValues = {
+  full: Value
+  x: Value
+  y: Value
+  top: Value
+  left: Value
+  right: Value
+  bottom: Value
+}
 
 type Definitions = Record<
   Property,
@@ -43,18 +53,73 @@ const definitions: Definitions = {
   },
 }
 
-export type Edge = (rootSize?: number) => (
+const hasAnyValue = (vals: EdgeValues) =>
+  isValidValue(vals.top) ||
+  isValidValue(vals.bottom) ||
+  isValidValue(vals.left) ||
+  isValidValue(vals.right) ||
+  isValidValue(vals.x) ||
+  isValidValue(vals.y) ||
+  isValidValue(vals.full)
+
+// top - right - bottom - left
+const resolveSides = ({ full, x, y, top, left, right, bottom }: EdgeValues) => {
+  const sides: Value[] = [full, full, full, full]
+
+  if (isValidValue(x)) {
+    sides[1] = x
+    sides[3] = x
+  }
+
+  if (isValidValue(y)) {
+    sides[0] = y
+    sides[2] = y
+  }
+
+  if (isValidValue(top)) sides[0] = top
+  if (isValidValue(right)) sides[1] = right
+  if (isValidValue(bottom)) sides[2] = bottom
+  if (isValidValue(left)) sides[3] = left
+
+  return sides
+}
+
+const formatShorthand = (
   property: Property,
-  values: {
-    full: Value
-    x: Value
-    y: Value
-    top: Value
-    left: Value
-    right: Value
-    bottom: Value
-  },
-) => string | null
+  sides: Value[],
+  calc: (v: Value) => Value,
+) => {
+  const [t, r, b, l] = sides
+
+  if (sides.every((val, _, arr) => val === arr[0]))
+    return `${property}: ${calc(t)};`
+
+  if (t === b && r === l) return `${property}: ${calc(t)} ${calc(r)};`
+
+  if (t && r === l && b) return `${property}: ${calc(t)} ${calc(r)} ${calc(b)};`
+
+  return `${property}: ${calc(t)} ${calc(r)} ${calc(b)} ${calc(l)};`
+}
+
+const formatIndividual = (
+  sides: Value[],
+  edgeCss: (side: Side) => string,
+  calc: (v: Value) => Value,
+) => {
+  const [t, r, b, l] = sides
+  let output = ''
+
+  if (isValidValue(t)) output += `${edgeCss('top')}: ${calc(t)};`
+  if (isValidValue(b)) output += `${edgeCss('bottom')}: ${calc(b)};`
+  if (isValidValue(l)) output += `${edgeCss('left')}: ${calc(l)};`
+  if (isValidValue(r)) output += `${edgeCss('right')}: ${calc(r)};`
+
+  return output
+}
+
+export type Edge = (
+  rootSize?: number,
+) => (property: Property, values: EdgeValues) => string | null
 
 /**
  * Edge shorthand processor for margin, padding, inset, border-width/style/color.
@@ -64,92 +129,19 @@ export type Edge = (rootSize?: number) => (
  */
 const edge: Edge =
   (rootSize = 16) =>
-  (property, { full, x, y, top, left, right, bottom }) => {
-    if (
-      !isValidValue(top) &&
-      !isValidValue(bottom) &&
-      !isValidValue(left) &&
-      !isValidValue(right) &&
-      !isValidValue(x) &&
-      !isValidValue(y) &&
-      !isValidValue(full)
-    ) {
-      return null
-    }
+  (property, values) => {
+    if (!hasAnyValue(values)) return null
 
     const { unit, edgeCss } = definitions[property]
+    const calc = (param: Value) =>
+      unit ? value(param as any, rootSize, unit) : param
 
-    const calc = (param: Value) => {
-      if (unit) return value(param as any, rootSize, unit)
-      return param
-    }
+    const sides = resolveSides(values)
 
-    // top - right - bottom - left
-    const allValues = [full, full, full, full]
+    if (sides.every((val) => isValidValue(val)))
+      return formatShorthand(property, sides, calc)
 
-    if (isValidValue(x)) {
-      allValues[1] = x
-      allValues[3] = x
-    }
-
-    if (isValidValue(y)) {
-      allValues[0] = y
-      allValues[2] = y
-    }
-
-    if (isValidValue(top)) {
-      allValues[0] = top
-    }
-
-    if (isValidValue(right)) {
-      allValues[1] = right
-    }
-
-    if (isValidValue(bottom)) {
-      allValues[2] = bottom
-    }
-
-    if (isValidValue(left)) {
-      allValues[3] = left
-    }
-
-    const [t, r, b, l] = allValues
-
-    if (allValues.every((val) => isValidValue(val))) {
-      if (allValues.every((val, _, arr) => val === arr[0])) {
-        return `${property}: ${calc(t)};`
-      }
-
-      if (t === b && r === l) {
-        return `${property}: ${calc(t)} ${calc(r)};`
-      }
-
-      if (t && r === l && b) {
-        return `${property}: ${calc(t)} ${calc(r)} ${calc(b)};`
-      }
-
-      return `${property}: ${calc(t)} ${calc(r)} ${calc(b)} ${calc(l)};`
-    }
-
-    let output = ''
-
-    if (isValidValue(t)) {
-      output += `${edgeCss('top')}: ${calc(t)};`
-    }
-
-    if (isValidValue(b)) {
-      output += `${edgeCss('bottom')}: ${calc(b)};`
-    }
-
-    if (isValidValue(l)) {
-      output += `${edgeCss('left')}: ${calc(l)};`
-    }
-
-    if (isValidValue(r)) {
-      output += `${edgeCss('right')}: ${calc(r)};`
-    }
-
-    return output
+    return formatIndividual(sides, edgeCss, calc)
   }
 
 export default edge

@@ -7,6 +7,9 @@ import type { InnerTheme } from './types'
 
 type Calc = (...params: any[]) => ReturnType<Values>
 
+const toCssDecl = (css: string, v: unknown) =>
+  v == null ? '' : `${css}: ${v};`
+
 /**
  * Converts a single property descriptor + theme values into a CSS fragment.
  *
@@ -17,6 +20,59 @@ type Calc = (...params: any[]) => ReturnType<Values>
  * - `border_radius` — delegates to the border-radius shorthand
  * - `special` — one-off logic (fullScreen, backgroundImage url wrapping, animation combo, etc.)
  */
+const processSpecial = (
+  d: Extract<PropertyDescriptor, { kind: 'special' }>,
+  t: InnerTheme,
+  css: Css,
+): string | ReturnType<typeof css> => {
+  switch (d.id) {
+    case 'fullScreen':
+      if (!t.fullScreen) return ''
+      return css`
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      `
+
+    case 'backgroundImage':
+      if (!t.backgroundImage) return ''
+      return css`
+        background-image: url(${t.backgroundImage});
+      `
+
+    case 'animation': {
+      const parts = [t.keyframe, t.animation].filter(Boolean).join(' ')
+      return parts ? `animation: ${parts};` : ''
+    }
+
+    case 'hideEmpty':
+      if (!(__WEB__ && t.hideEmpty)) return ''
+      return css`
+        &:empty {
+          display: none;
+        }
+      `
+
+    case 'clearFix':
+      if (!(__WEB__ && t.clearFix)) return ''
+      return css`
+        &::after {
+          clear: both;
+          content: '';
+          display: table;
+        }
+      `
+
+    case 'extendCss':
+      return t.extendCss ?? ''
+
+    default:
+      return ''
+  }
+}
+
 const processDescriptor = (
   d: PropertyDescriptor,
   t: InnerTheme,
@@ -26,23 +82,14 @@ const processDescriptor = (
   borderRadiusFn: ReturnType<BorderRadius>,
 ): string | ReturnType<typeof css> => {
   switch (d.kind) {
-    case 'simple': {
-      const v = t[d.key]
-      if (v == null) return ''
-      return `${d.css}: ${v};`
-    }
+    case 'simple':
+      return toCssDecl(d.css, t[d.key])
 
-    case 'convert': {
-      const v = calc(t[d.key])
-      if (v == null) return ''
-      return `${d.css}: ${v};`
-    }
+    case 'convert':
+      return toCssDecl(d.css, calc(t[d.key]))
 
-    case 'convert_fallback': {
-      const v = calc(...d.keys.map((k) => t[k]))
-      if (v == null) return ''
-      return `${d.css}: ${v};`
-    }
+    case 'convert_fallback':
+      return toCssDecl(d.css, calc(...d.keys.map((k) => t[k])))
 
     case 'edge':
       return (
@@ -73,54 +120,7 @@ const processDescriptor = (
       )
 
     case 'special':
-      switch (d.id) {
-        case 'fullScreen':
-          if (!t.fullScreen) return ''
-          return css`
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-          `
-
-        case 'backgroundImage':
-          if (!t.backgroundImage) return ''
-          return css`
-            background-image: url(${t.backgroundImage});
-          `
-
-        case 'animation': {
-          if (t.keyframe == null && t.animation == null) return ''
-          const parts = [t.keyframe, t.animation].filter(Boolean).join(' ')
-          if (!parts) return ''
-          return `animation: ${parts};`
-        }
-
-        case 'hideEmpty':
-          if (!(__WEB__ && t.hideEmpty)) return ''
-          return css`
-            &:empty {
-              display: none;
-            }
-          `
-
-        case 'clearFix':
-          if (!(__WEB__ && t.clearFix)) return ''
-          return css`
-            &::after {
-              clear: both;
-              content: '';
-              display: table;
-            }
-          `
-
-        case 'extendCss':
-          return t.extendCss ?? ''
-
-        default:
-          return ''
-      }
+      return processSpecial(d, t, css)
   }
 }
 

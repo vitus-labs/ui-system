@@ -18,6 +18,38 @@ import {
 import { isFragment } from 'react-is'
 import type { ExtendedProps, ObjectValue, Props, SimpleValue } from './types'
 
+type ClassifiedData =
+  | { type: 'simple'; data: SimpleValue[] }
+  | { type: 'complex'; data: ObjectValue[] }
+  | null
+
+const classifyData = (data: unknown[]): ClassifiedData => {
+  const items = data.filter(
+    (item) =>
+      item != null && !(typeof item === 'object' && isEmpty(item as any)),
+  )
+
+  if (items.length === 0) return null
+
+  let isSimple = true
+  let isComplex = true
+
+  for (const item of items) {
+    if (typeof item === 'string' || typeof item === 'number') {
+      isComplex = false
+    } else if (typeof item === 'object') {
+      isSimple = false
+    } else {
+      isSimple = false
+      isComplex = false
+    }
+  }
+
+  if (isSimple) return { type: 'simple', data: items as SimpleValue[] }
+  if (isComplex) return { type: 'complex', data: items as ObjectValue[] }
+  return null
+}
+
 const RESERVED_PROPS = [
   'children',
   'component',
@@ -251,31 +283,11 @@ const Component: FC<Props> & Static = (props) => {
     // single pass: filter nullish/empty and determine array type
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      let isSimple = true
-      let isComplex = true
-      const clearData: (SimpleValue | ObjectValue)[] = []
-
-      for (const item of data) {
-        if (item == null) continue
-
-        if (typeof item === 'string' || typeof item === 'number') {
-          isComplex = false
-        } else if (typeof item === 'object') {
-          if (isEmpty(item)) continue
-          isSimple = false
-        } else {
-          isSimple = false
-          isComplex = false
-        }
-
-        clearData.push(item)
-      }
-
-      if (clearData.length === 0) return null
-      if (isSimple) return renderSimpleArray(clearData as SimpleValue[])
-      if (isComplex) return renderComplexArray(clearData as ObjectValue[])
-
-      return null
+      const classified = classifyData(data)
+      if (!classified) return null
+      if (classified.type === 'simple')
+        return renderSimpleArray(classified.data)
+      return renderComplexArray(classified.data)
     }
 
     // --------------------------------------------------------

@@ -106,10 +106,11 @@ const renderDimension: RenderDimension = (
       } as const)
     : {}
 
+  const innerGap = storyOptions.gap ? storyOptions.gap / 2 : 0
+
   const Enhanced: StoryComponent = (props) => (
     <WrapElement {...wrapperProps}>
       {Object.keys(currentDimension).map((item) => {
-        // const storyName = `${dimension}-${item}`
         const shouldBeIgnored = ignore.includes(item)
         const key = `${dimension}-${item}`
 
@@ -118,7 +119,7 @@ const renderDimension: RenderDimension = (
           contentDirection: revertedDirection,
           contentAlignX: storyOptions.alignX,
           contentAlignY: storyOptions.alignY,
-          style: { gap: storyOptions.gap ? storyOptions.gap / 2 : 0 },
+          style: { gap: innerGap },
         } as const
 
         // do not render ignored dimension keys

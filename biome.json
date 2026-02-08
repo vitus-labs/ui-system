@@ -28,8 +28,7 @@
   "linter": {
     "rules": {
       "complexity": {
-        "noBannedTypes": "off",
-        "noExcessiveCognitiveComplexity": "warn"
+        "noBannedTypes": "off"
       },
       "style": {
         "noParameterAssign": "off"

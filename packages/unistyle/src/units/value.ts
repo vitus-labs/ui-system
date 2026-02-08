@@ -40,19 +40,18 @@ const value: Value = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (isNotValue(param)) return null as any
 
-  const [value, unit] = stripUnit(param as string, true)
-  if (isNotValue(value)) return null
-  if (value === 0 || typeof value === 'string') return param // zero should be unitless
+  const [val, unit] = stripUnit(param as string, true)
+  if (isNotValue(val)) return null
+  if (val === 0 || typeof val === 'string') return param // zero should be unitless
 
-  if (rootSize && !Number.isNaN(value)) {
-    if (!unit && outputUnit === 'px') return `${value}${outputUnit}`
-    if (!unit) return `${value / rootSize}rem`
-    if (unit === 'px' && outputUnit === 'rem') return `${value / rootSize}rem`
-  }
-
+  const canConvert = rootSize && !Number.isNaN(val)
+  if (canConvert && !unit && outputUnit === 'px') return `${val}${outputUnit}`
+  if (canConvert && !unit) return `${val / rootSize}rem`
+  if (canConvert && unit === 'px' && outputUnit === 'rem')
+    return `${val / rootSize}rem`
   if (unit) return param
 
-  return `${value}${outputUnit}`
+  return `${val}${outputUnit}`
 }
 
 export default value

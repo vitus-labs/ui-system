@@ -34,46 +34,52 @@ export type Rocketstyle = <
  * configurations against reserved keys, then delegates to the core
  * `rocketComponent` builder with pre-computed dimension metadata.
  */
+type InitErrors = Partial<{
+  component: string
+  name: string
+  dimensions: string
+  invalidDimensions: string
+}>
+
+const validateInit = (
+  name: string,
+  component: unknown,
+  dimensions: Dimensions,
+) => {
+  const errors: InitErrors = {}
+
+  if (!component) {
+    errors.component = 'Parameter `component` is missing in params!'
+  }
+
+  if (!name) {
+    errors.name = 'Parameter `name` is missing in params!'
+  }
+
+  if (isEmpty(dimensions)) {
+    errors.dimensions = 'Parameter `dimensions` is missing in params!'
+  } else {
+    const definedDimensions = getKeys(dimensions)
+    const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
+      definedDimensions.includes(item as any),
+    )
+
+    if (invalidDimension) {
+      errors.invalidDimensions = `Some of your \`dimensions\` is invalid and uses reserved static keys which are
+          ${defaultDimensions.toString()}`
+    }
+  }
+
+  if (!isEmpty(errors)) {
+    throw Error(JSON.stringify(errors))
+  }
+}
+
 const rocketstyle: Rocketstyle =
   ({ dimensions = defaultDimensions, useBooleans = true } = {}) =>
   ({ name, component }) => {
-    // --------------------------------------------------------
-    // handle ERRORS in development mode
-    // --------------------------------------------------------
     if (process.env.NODE_ENV !== 'production') {
-      type Errors = Partial<{
-        component: string
-        name: string
-        dimensions: string
-        invalidDimensions: string
-      }>
-
-      const errors: Errors = {}
-      if (!component) {
-        errors.component = 'Parameter `component` is missing in params!'
-      }
-
-      if (!name) {
-        errors.name = 'Parameter `name` is missing in params!'
-      }
-
-      if (isEmpty(dimensions)) {
-        errors.dimensions = 'Parameter `dimensions` is missing in params!'
-      } else {
-        const definedDimensions = getKeys(dimensions)
-        const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
-          definedDimensions.includes(item as any),
-        )
-
-        if (invalidDimension) {
-          errors.invalidDimensions = `Some of your \`dimensions\` is invalid and uses reserved static keys which are
-          ${defaultDimensions.toString()}`
-        }
-      }
-
-      if (!isEmpty(errors)) {
-        throw Error(JSON.stringify(errors))
-      }
+      validateInit(name, component, dimensions)
     }
 
     return rocketComponent({

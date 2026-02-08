@@ -127,6 +127,282 @@ export type UseOverlayProps = Partial<{
   onClose: () => void
 }>
 
+type PositionResult = {
+  pos: OverlayPosition
+  resolvedAlignX: AlignX
+  resolvedAlignY: AlignY
+}
+
+const sel = <T,>(cond: boolean, a: T, b: T): T => (cond ? a : b)
+
+const devWarn = (msg: string) => {
+  if (!IS_DEVELOPMENT) return
+  // biome-ignore lint/suspicious/noConsole: dev-mode warning
+  console.warn(msg)
+}
+
+const calcDropdownVertical = (
+  c: DOMRect,
+  t: DOMRect,
+  align: 'top' | 'bottom',
+  alignX: AlignX,
+  offsetX: number,
+  offsetY: number,
+): PositionResult => {
+  const pos: OverlayPosition = {}
+
+  const topPos = t.top - offsetY - c.height
+  const bottomPos = t.bottom + offsetY
+  const leftPos = t.left + offsetX
+  const rightPos = t.right - offsetX - c.width
+
+  const fitsTop = topPos >= 0
+  const fitsBottom = bottomPos + c.height <= window.innerHeight
+  const fitsLeft = leftPos + c.width <= window.innerWidth
+  const fitsRight = rightPos >= 0
+
+  const useTop = sel(align === 'top', fitsTop, !fitsBottom)
+  pos.top = sel(useTop, topPos, bottomPos)
+  const resolvedAlignY: AlignY = sel(useTop, 'top', 'bottom')
+
+  let resolvedAlignX: AlignX = alignX
+  if (alignX === 'left') {
+    pos.left = sel(fitsLeft, leftPos, rightPos)
+    resolvedAlignX = sel(fitsLeft, 'left', 'right')
+  } else if (alignX === 'right') {
+    pos.left = sel(fitsRight, rightPos, leftPos)
+    resolvedAlignX = sel(fitsRight, 'right', 'left')
+  } else {
+    const center = t.left + (t.right - t.left) / 2 - c.width / 2
+    const fitsCL = center >= 0
+    const fitsCR = center + c.width <= window.innerWidth
+
+    if (fitsCL && fitsCR) {
+      resolvedAlignX = 'center'
+      pos.left = center
+    } else if (fitsCL) {
+      resolvedAlignX = 'left'
+      pos.left = leftPos
+    } else if (fitsCR) {
+      resolvedAlignX = 'right'
+      pos.left = rightPos
+    }
+  }
+
+  return { pos, resolvedAlignX, resolvedAlignY }
+}
+
+const calcDropdownHorizontal = (
+  c: DOMRect,
+  t: DOMRect,
+  align: 'left' | 'right',
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+): PositionResult => {
+  const pos: OverlayPosition = {}
+
+  const leftPos = t.left - offsetX - c.width
+  const rightPos = t.right + offsetX
+  const topPos = t.top + offsetY
+  const bottomPos = t.bottom - offsetY - c.height
+
+  const fitsLeft = leftPos >= 0
+  const fitsRight = rightPos + c.width <= window.innerWidth
+  const fitsTop = topPos + c.height <= window.innerHeight
+  const fitsBottom = bottomPos >= 0
+
+  const useLeft = sel(align === 'left', fitsLeft, !fitsRight)
+  pos.left = sel(useLeft, leftPos, rightPos)
+  const resolvedAlignX: AlignX = sel(useLeft, 'left', 'right')
+
+  let resolvedAlignY: AlignY = alignY
+  if (alignY === 'top') {
+    pos.top = sel(fitsTop, topPos, bottomPos)
+    resolvedAlignY = sel(fitsTop, 'top', 'bottom')
+  } else if (alignY === 'bottom') {
+    pos.top = sel(fitsBottom, bottomPos, topPos)
+    resolvedAlignY = sel(fitsBottom, 'bottom', 'top')
+  } else {
+    const center = t.top + (t.bottom - t.top) / 2 - c.height / 2
+    const fitsCT = center >= 0
+    const fitsCB = center + c.height <= window.innerHeight
+
+    if (fitsCT && fitsCB) {
+      resolvedAlignY = 'center'
+      pos.top = center
+    } else if (fitsCT) {
+      resolvedAlignY = 'top'
+      pos.top = topPos
+    } else if (fitsCB) {
+      resolvedAlignY = 'bottom'
+      pos.top = bottomPos
+    }
+  }
+
+  return { pos, resolvedAlignX, resolvedAlignY }
+}
+
+const calcModalPos = (
+  c: DOMRect,
+  alignX: AlignX,
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+): OverlayPosition => {
+  const pos: OverlayPosition = {}
+
+  switch (alignX) {
+    case 'right':
+      pos.right = offsetX
+      break
+    case 'left':
+      pos.left = offsetX
+      break
+    case 'center':
+      pos.left = window.innerWidth / 2 - c.width / 2
+      break
+    default:
+      pos.right = offsetX
+  }
+
+  switch (alignY) {
+    case 'top':
+      pos.top = offsetY
+      break
+    case 'center':
+      pos.top = window.innerHeight / 2 - c.height / 2
+      break
+    case 'bottom':
+      pos.bottom = offsetY
+      break
+    default:
+      pos.top = offsetY
+  }
+
+  return pos
+}
+
+const adjustForAncestor = (
+  pos: OverlayPosition,
+  ancestor: { top: number; left: number },
+): OverlayPosition => {
+  if (ancestor.top === 0 && ancestor.left === 0) return pos
+
+  const result = { ...pos }
+  if (typeof result.top === 'number') result.top -= ancestor.top
+  if (typeof result.bottom === 'number') result.bottom += ancestor.top
+  if (typeof result.left === 'number') result.left -= ancestor.left
+  if (typeof result.right === 'number') result.right += ancestor.left
+
+  return result
+}
+
+type ComputeResult = {
+  pos: OverlayPosition
+  resolvedAlignX?: AlignX
+  resolvedAlignY?: AlignY
+}
+
+const computePosition = (
+  type: string,
+  align: Align,
+  alignX: AlignX,
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+  triggerEl: HTMLElement | null,
+  contentEl: HTMLElement | null,
+  ancestorOffset: { top: number; left: number },
+): ComputeResult => {
+  const isDropdown = ['dropdown', 'tooltip', 'popover'].includes(type)
+
+  if (isDropdown && (!triggerEl || !contentEl)) {
+    devWarn(
+      `[@vitus-labs/elements] Overlay (${type}): ` +
+        `${triggerEl ? 'contentRef' : 'triggerRef'} is not attached. ` +
+        'Position cannot be calculated without both refs.',
+    )
+    return { pos: {} }
+  }
+
+  if (isDropdown && triggerEl && contentEl) {
+    const c = contentEl.getBoundingClientRect()
+    const t = triggerEl.getBoundingClientRect()
+    const result =
+      align === 'top' || align === 'bottom'
+        ? calcDropdownVertical(c, t, align, alignX, offsetX, offsetY)
+        : calcDropdownHorizontal(
+            c,
+            t,
+            align as 'left' | 'right',
+            alignY,
+            offsetX,
+            offsetY,
+          )
+
+    return {
+      pos: adjustForAncestor(result.pos, ancestorOffset),
+      resolvedAlignX: result.resolvedAlignX,
+      resolvedAlignY: result.resolvedAlignY,
+    }
+  }
+
+  if (type === 'modal') {
+    if (!contentEl) {
+      devWarn(
+        '[@vitus-labs/elements] Overlay (modal): contentRef is not attached. ' +
+          'Modal position cannot be calculated without a content element.',
+      )
+      return { pos: {} }
+    }
+    const c = contentEl.getBoundingClientRect()
+    return {
+      pos: adjustForAncestor(
+        calcModalPos(c, alignX, alignY, offsetX, offsetY),
+        ancestorOffset,
+      ),
+    }
+  }
+
+  return { pos: {} }
+}
+
+const processVisibilityEvent = (
+  e: Event,
+  active: boolean,
+  openOn: string,
+  closeOn: string,
+  isTrigger: (e: Event) => boolean,
+  isContent: (e: Event) => boolean,
+  showContent: () => void,
+  hideContent: () => void,
+) => {
+  // Open on click (hover is handled by dedicated mouseenter/mouseleave)
+  if (!active && openOn === 'click' && e.type === 'click' && isTrigger(e)) {
+    showContent()
+    return
+  }
+
+  if (!active) return
+
+  // Close handlers
+  if (closeOn === 'hover' && e.type === 'scroll') {
+    hideContent()
+    return
+  }
+
+  if (e.type !== 'click') return
+
+  if (closeOn === 'click') {
+    hideContent()
+  } else if (closeOn === 'clickOnTrigger' && isTrigger(e)) {
+    hideContent()
+  } else if (closeOn === 'clickOutsideContent' && !isContent(e)) {
+    hideContent()
+  }
+}
+
 const useOverlay = ({
   isOpen = false,
   openOn = 'click', // click | hover
@@ -187,226 +463,24 @@ const useOverlay = ({
   }, [position])
 
   const calculateContentPosition = useCallback(() => {
-    const overlayPosition: OverlayPosition = {}
+    if (!active || !isContentLoaded) return {}
 
-    if (!active || !isContentLoaded) return overlayPosition
+    const result = computePosition(
+      type,
+      align,
+      alignX,
+      alignY,
+      offsetX,
+      offsetY,
+      triggerRef.current,
+      contentRef.current,
+      getAncestorOffset(),
+    )
 
-    if (type === 'modal' && !contentRef.current) {
-      if (IS_DEVELOPMENT) {
-        // biome-ignore lint/suspicious/noConsole: dev-mode warning
-        console.warn(
-          '[@vitus-labs/elements] Overlay: contentRef is not attached. ' +
-            'Make sure the overlay content is mounted before opening.',
-        )
-      }
-      return overlayPosition
-    }
+    if (result.resolvedAlignX) setInnerAlignX(result.resolvedAlignX)
+    if (result.resolvedAlignY) setInnerAlignY(result.resolvedAlignY)
 
-    if (['dropdown', 'tooltip', 'popover'].includes(type)) {
-      // return empty object when refs are not available
-      if (!triggerRef.current || !contentRef.current) {
-        if (IS_DEVELOPMENT) {
-          // biome-ignore lint/suspicious/noConsole: dev-mode warning
-          console.warn(
-            `[@vitus-labs/elements] Overlay (${type}): ` +
-              `${!triggerRef.current ? 'triggerRef' : 'contentRef'} is not attached. ` +
-              'Position cannot be calculated without both refs.',
-          )
-        }
-        return overlayPosition
-      }
-
-      const c = contentRef.current.getBoundingClientRect()
-      const t = triggerRef.current.getBoundingClientRect()
-      // align is top or bottom
-      if (['top', 'bottom'].includes(align)) {
-        // axe Y position
-        // (assigned as top position)
-        const top = t.top - offsetY - c.height
-        const bottom = t.bottom + offsetY
-
-        // axe X position
-        // content position to trigger position
-        // (assigned as left position)
-        const left = t.left + offsetX
-        const right = t.right - offsetX - c.width
-
-        // calculate possible position
-        const isTop = top >= 0 // represents window.height = 0
-        const isBottom = bottom + c.height <= window.innerHeight
-        const isLeft = left + c.width <= window.innerWidth
-        const isRight = right >= 0 // represents window.width = 0
-
-        if (align === 'top') {
-          setInnerAlignY(isTop ? 'top' : 'bottom')
-          overlayPosition.top = isTop ? top : bottom
-        } else if (align === 'bottom') {
-          setInnerAlignY(isBottom ? 'bottom' : 'top')
-          overlayPosition.top = isBottom ? bottom : top
-        }
-
-        // left
-        if (alignX === 'left') {
-          setInnerAlignX(isLeft ? 'left' : 'right')
-          overlayPosition.left = isLeft ? left : right
-        }
-        // center
-        else if (alignX === 'center') {
-          const center = t.left + (t.right - t.left) / 2 - c.width / 2
-          const isCenteredLeft = center >= 0
-          const isCenteredRight = center + c.width <= window.innerWidth
-
-          if (isCenteredLeft && isCenteredRight) {
-            setInnerAlignX('center')
-            overlayPosition.left = center
-          } else if (isCenteredLeft) {
-            setInnerAlignX('left')
-            overlayPosition.left = left
-          } else if (isCenteredRight) {
-            setInnerAlignX('right')
-            overlayPosition.left = right
-          }
-        }
-        // right
-        else if (alignX === 'right') {
-          setInnerAlignX(isRight ? 'right' : 'left')
-          overlayPosition.left = isRight ? right : left
-        }
-      }
-
-      // align is left or right
-      else if (['left', 'right'].includes(align)) {
-        // axe X position
-        // (assigned as left position)
-        const left = t.left - offsetX - c.width
-        const right = t.right + offsetX
-
-        // axe Y position
-        // content position to trigger position
-        // (assigned as top position)
-        const top = t.top + offsetY
-        const bottom = t.bottom - offsetY - c.height
-
-        const isLeft = left >= 0
-        const isRight = right + c.width <= window.innerWidth
-        const isTop = top + c.height <= window.innerHeight
-        const isBottom = bottom >= 0
-
-        if (align === 'left') {
-          setInnerAlignX(isLeft ? 'left' : 'right')
-          overlayPosition.left = isLeft ? left : right
-        } else if (align === 'right') {
-          setInnerAlignX(isRight ? 'right' : 'left')
-          overlayPosition.left = isRight ? right : left
-        }
-
-        // top
-        if (alignY === 'top') {
-          setInnerAlignY(isTop ? 'top' : 'bottom')
-          overlayPosition.top = isTop ? top : bottom
-        }
-        // center
-        else if (alignY === 'center') {
-          const center = t.top + (t.bottom - t.top) / 2 - c.height / 2
-          const isCenteredTop = center >= 0
-          const isCenteredBottom = center + c.height <= window.innerHeight
-
-          if (isCenteredTop && isCenteredBottom) {
-            setInnerAlignY('center')
-            overlayPosition.top = center
-          } else if (isCenteredTop) {
-            setInnerAlignY('top')
-            overlayPosition.top = top
-          } else if (isCenteredBottom) {
-            setInnerAlignY('bottom')
-            overlayPosition.top = bottom
-          }
-        }
-        // bottom
-        else if (alignY === 'bottom') {
-          setInnerAlignY(isBottom ? 'bottom' : 'top')
-          overlayPosition.top = isBottom ? bottom : top
-        }
-      }
-    }
-
-    // modal type
-    else if (type === 'modal') {
-      // return empty object when ref is not available
-      // triggerRef is not needed in this case
-      if (!contentRef.current) {
-        if (IS_DEVELOPMENT) {
-          // biome-ignore lint/suspicious/noConsole: dev-mode warning
-          console.warn(
-            '[@vitus-labs/elements] Overlay (modal): contentRef is not attached. ' +
-              'Modal position cannot be calculated without a content element.',
-          )
-        }
-        return overlayPosition
-      }
-
-      const c = contentRef.current.getBoundingClientRect()
-
-      switch (alignX) {
-        case 'right':
-          overlayPosition.right = offsetX
-          break
-        case 'left':
-          overlayPosition.left = offsetX
-          break
-        case 'center':
-          overlayPosition.left = window.innerWidth / 2 - c.width / 2
-          break
-        default:
-          overlayPosition.right = offsetX
-      }
-
-      switch (alignY) {
-        case 'top':
-          overlayPosition.top = offsetY
-          break
-        case 'center':
-          overlayPosition.top = window.innerHeight / 2 - c.height / 2
-          break
-        case 'bottom':
-          overlayPosition.bottom = offsetY
-          break
-        default:
-          overlayPosition.top = offsetY
-      }
-    }
-
-    // For position: absolute, adjust viewport-relative coords to be
-    // relative to the offsetParent so the overlay lands correctly.
-    const ancestor = getAncestorOffset()
-    if (ancestor.top !== 0 || ancestor.left !== 0) {
-      if (
-        overlayPosition.top != null &&
-        typeof overlayPosition.top === 'number'
-      ) {
-        overlayPosition.top -= ancestor.top
-      }
-      if (
-        overlayPosition.bottom != null &&
-        typeof overlayPosition.bottom === 'number'
-      ) {
-        overlayPosition.bottom += ancestor.top
-      }
-      if (
-        overlayPosition.left != null &&
-        typeof overlayPosition.left === 'number'
-      ) {
-        overlayPosition.left -= ancestor.left
-      }
-      if (
-        overlayPosition.right != null &&
-        typeof overlayPosition.right === 'number'
-      ) {
-        overlayPosition.right += ancestor.left
-      }
-    }
-
-    return overlayPosition
+    return result.pos
   }, [
     isContentLoaded,
     active,
@@ -462,41 +536,16 @@ const useOverlay = ({
     (e: Event) => {
       if (blocked || disabled) return
 
-      const isTrigger = isNodeOrChild(triggerRef)
-      const isContent = isNodeOrChild(contentRef)
-
-      // showing content observing (hover is handled by dedicated mouseenter/mouseleave)
-      if (!active) {
-        if (openOn === 'click' && e.type === 'click') {
-          if (isTrigger(e)) {
-            showContent()
-          }
-        }
-      }
-
-      // hiding content observing
-      if (active) {
-        // hover close on scroll (mouseenter/mouseleave handles mouse movement)
-        if (closeOn === 'hover' && e.type === 'scroll') {
-          hideContent()
-        }
-
-        if (closeOn === 'click' && e.type === 'click') {
-          hideContent()
-        }
-
-        if (closeOn === 'clickOnTrigger' && e.type === 'click') {
-          if (isTrigger(e)) {
-            hideContent()
-          }
-        }
-
-        if (closeOn === 'clickOutsideContent' && e.type === 'click') {
-          if (!isContent(e)) {
-            hideContent()
-          }
-        }
-      }
+      processVisibilityEvent(
+        e,
+        active,
+        openOn,
+        closeOn,
+        isNodeOrChild(triggerRef),
+        isNodeOrChild(contentRef),
+        showContent,
+        hideContent,
+      )
     },
     [
       active,
@@ -566,12 +615,12 @@ const useOverlay = ({
     prevActiveRef.current = active
 
     if (active && !wasActive) {
-      if (onOpen) onOpen()
-      if (ctx.setBlocked) ctx.setBlocked()
+      onOpen?.()
+      ctx.setBlocked?.()
     } else if (!active && wasActive) {
       setContentLoaded(false)
-      if (onClose) onClose()
-      if (ctx.setUnblocked) ctx.setUnblocked()
+      onClose?.()
+      ctx.setUnblocked?.()
     } else if (!active) {
       setContentLoaded(false)
     }
@@ -579,8 +628,8 @@ const useOverlay = ({
     return () => {
       // On unmount, only clean up if currently active
       if (active) {
-        if (onClose) onClose()
-        if (ctx.setUnblocked) ctx.setUnblocked()
+        onClose?.()
+        ctx.setUnblocked?.()
       }
     }
   }, [active, ctx, onClose, onOpen])
