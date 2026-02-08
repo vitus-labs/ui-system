@@ -32,11 +32,7 @@
         "noExcessiveCognitiveComplexity": "warn"
       },
       "style": {
-        "noParameterAssign": "off",
-        "noNonNullAssertion": "off"
-      },
-      "a11y": {
-        "useButtonType": "off"
+        "noParameterAssign": "off"
       },
       "suspicious": {
         "noAssignInExpressions": "off"

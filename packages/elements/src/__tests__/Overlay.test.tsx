@@ -36,7 +36,7 @@ const mockBoundingRects = (
     height: 0,
     x: 0,
     y: 0,
-    toJSON: () => {},
+    toJSON: () => undefined,
   }
 
   const triggerEl = screen.getByTestId('trigger')
@@ -864,7 +864,7 @@ describe('Overlay', () => {
           height: 500,
           x: 30,
           y: 50,
-          toJSON: () => {},
+          toJSON: () => undefined,
         }) as DOMRect
       Object.defineProperty(contentEl, 'offsetParent', {
         value: fakeParent,

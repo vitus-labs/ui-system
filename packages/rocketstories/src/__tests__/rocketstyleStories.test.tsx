@@ -271,7 +271,7 @@ describe('renderDimension Item', () => {
     const Provider = DimensionProvider
     const Item = DimensionItem
 
-    const InnerComp = (props: any) => <span>inner</span>
+    const InnerComp = (_props: any) => <span>inner</span>
 
     const { container } = render(
       <Provider component={InnerComp}>

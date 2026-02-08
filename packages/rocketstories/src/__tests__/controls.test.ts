@@ -181,7 +181,7 @@ describe('makeStorybookControls', () => {
     const controls = {
       onClick: { type: 'function', value: 'handler' },
     }
-    const result = makeStorybookControls(controls, { onClick: () => {} })
+    const result = makeStorybookControls(controls, { onClick: () => undefined })
     expect(result.onClick.table.defaultValue.summary).toBe('handler')
   })
 

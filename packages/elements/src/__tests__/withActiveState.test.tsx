@@ -119,7 +119,7 @@ describe('withActiveState', () => {
     })
 
     it('warns when activeItems is array in single mode', () => {
-      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
       render(<EnhancedList data={['a', 'b']} activeItems={['a', 'b']} />)
       expect(spy).toHaveBeenCalledWith(
         expect.stringContaining('activeItems` was passed as an array'),

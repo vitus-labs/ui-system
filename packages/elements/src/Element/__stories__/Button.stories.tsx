@@ -1,4 +1,4 @@
-const Button = (_props) => <button />
+const Button = (_props) => <button type="button" />
 
 const meta = {
   component: Button,

@@ -35,7 +35,7 @@ describe('getTheme utility', () => {
 })
 
 describe('init and rocketstories factories', () => {
-  const MockComponent = (props: any) => null
+  const MockComponent = (_props: any) => null
   MockComponent.displayName = 'MockButton'
 
   it('rocketstories creates a builder from component', () => {
@@ -94,7 +94,7 @@ describe('init and rocketstories factories', () => {
 })
 
 describe('createRocketStories builder', () => {
-  const MockComponent = (props: any) => null
+  const MockComponent = (_props: any) => null
   MockComponent.displayName = 'TestComp'
 
   it('has all chaining methods', () => {
@@ -196,7 +196,7 @@ describe('createRocketStories builder', () => {
   })
 
   it('render() returns a story component', () => {
-    const renderer = (props: any) => null
+    const renderer = (_props: any) => null
     const builder = rocketstories(MockComponent)
     const story = builder.render(renderer as any)
     expect(story).toBeDefined()
@@ -207,7 +207,7 @@ describe('createRocketStories builder', () => {
 describe('StoryHoc (base)', () => {
   it('attaches args and argTypes to story', () => {
     const renderMain = renderMainBase
-    const MockComp = (props: any) => null
+    const MockComp = (_props: any) => null
     MockComp.displayName = 'Mock'
 
     const story = renderMain({
@@ -226,7 +226,7 @@ describe('StoryHoc (base)', () => {
 describe('base renderRender', () => {
   it('wraps custom render function as story', () => {
     const renderRender = renderRenderBase
-    const customRender = (props: any) => null
+    const customRender = (_props: any) => null
 
     const storyFactory = renderRender(customRender)
     const story = storyFactory({
