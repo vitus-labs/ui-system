@@ -143,7 +143,6 @@ describe('useRocketstyleRef', () => {
 })
 
 describe('useThemeAttrs', () => {
-
   const createWrapper =
     (value: any) =>
     ({ children }: { children: ReactNode }) => (

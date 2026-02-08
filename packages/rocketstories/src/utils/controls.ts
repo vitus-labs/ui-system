@@ -95,38 +95,41 @@ type MakeStorybookControls = (
 ) => Record<string, StorybookControl>
 
 export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
-  Object.entries(obj).reduce<Record<string, StorybookControl>>((acc, [key, control]) => {
-    const defaultValue =
-      typeof props[key] !== 'function' ? props[key] : undefined
+  Object.entries(obj).reduce<Record<string, StorybookControl>>(
+    (acc, [key, control]) => {
+      const defaultValue =
+        typeof props[key] !== 'function' ? props[key] : undefined
 
-    if (control.disable) {
-      // eslint-disable-next-line no-param-reassign
-      acc[key] = {
-        table: {
-          disable: control.disable,
-        },
-      }
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      acc[key] = {
-        control: { type: control.type ?? 'text' },
-        description: control.description,
-        options: control.options /* || CONTROL_OPTIONS[control.type] */,
-        table: {
-          defaultValue: {
-            summary: defaultValue || control.value,
+      if (control.disable) {
+        // eslint-disable-next-line no-param-reassign
+        acc[key] = {
+          table: {
+            disable: control.disable,
           },
-          disable: control.disable,
-          category: control.group /* || CONTROL_TYPES_GROUPS[control.type] */,
-          type: {
-            summary: control.valueType,
+        }
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        acc[key] = {
+          control: { type: control.type ?? 'text' },
+          description: control.description,
+          options: control.options /* || CONTROL_OPTIONS[control.type] */,
+          table: {
+            defaultValue: {
+              summary: defaultValue || control.value,
+            },
+            disable: control.disable,
+            category: control.group /* || CONTROL_TYPES_GROUPS[control.type] */,
+            type: {
+              summary: control.valueType,
+            },
           },
-        },
+        }
       }
-    }
 
-    return acc
-  }, {})
+      return acc
+    },
+    {},
+  )
 
 // --------------------------------------------------------
 // disableControl

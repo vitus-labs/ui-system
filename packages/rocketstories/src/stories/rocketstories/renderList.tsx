@@ -3,8 +3,9 @@
  * Accepts list configuration and wraps the component through RocketStoryHoc,
  * rendering it inside a Vitus Labs List element with auto-generated controls.
  */
-import type { ComponentType } from 'react'
+
 import { List } from '@vitus-labs/elements'
+import type { ComponentType } from 'react'
 import RocketStoryHoc from '~/internal/RocketStoryHoc'
 import type {
   ListStoryOptions,
@@ -19,13 +20,12 @@ export type RenderList<P = {}> = (
 
 export default (list: ListStoryOptions) =>
   RocketStoryHoc(
-    (component: ComponentType) =>
-      (props: Record<string, unknown>) => (
-        <List
-          rootElement={false}
-          itemProps={props}
-          {...list}
-          component={component}
-        />
-      ),
+    (component: ComponentType) => (props: Record<string, unknown>) => (
+      <List
+        rootElement={false}
+        itemProps={props}
+        {...list}
+        component={component}
+      />
+    ),
   )

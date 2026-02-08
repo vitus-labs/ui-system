@@ -3,8 +3,9 @@
  * Accepts list configuration (data, itemKey, etc.) and wraps the component
  * through StoryHoc, rendering it inside a Vitus Labs List element.
  */
-import type { ComponentType } from 'react'
+
 import { List } from '@vitus-labs/elements'
+import type { ComponentType } from 'react'
 import StoryHoc from '~/internal/StoryHoc'
 import type {
   ListStoryOptions,

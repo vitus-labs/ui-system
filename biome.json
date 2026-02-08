@@ -28,10 +28,15 @@
   "linter": {
     "rules": {
       "complexity": {
-        "noBannedTypes": "off"
+        "noBannedTypes": "off",
+        "noExcessiveCognitiveComplexity": "warn"
       },
       "style": {
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "noNonNullAssertion": "off"
+      },
+      "a11y": {
+        "useButtonType": "off"
       },
       "suspicious": {
         "noAssignInExpressions": "off"

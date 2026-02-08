@@ -66,11 +66,7 @@ const calculateGap = ({
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles: ResponsiveStylesCallback = ({
-  css,
-  theme: t,
-  rootSize,
-}) => css`
+const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
   ${alignContent({
     direction: t.direction,
     alignX: t.alignX,

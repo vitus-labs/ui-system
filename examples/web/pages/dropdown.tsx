@@ -43,7 +43,7 @@ const Trigger = rocketstyle()()({ name: 'Button', component }).styles(
       config.css`
         background-color: #555555;
       `}
-  `
+  `,
 )
 
 const EqualElement = withEqualWidthBeforeAfter(Element)
@@ -55,7 +55,7 @@ const Menu = rocketstyle()()({ name: 'Button', component: box }).styles(
     background-color: #fff;
     border-radius: 8px;
     border: 1px solid #555555;
-  `
+  `,
 )
 
 export default () => (

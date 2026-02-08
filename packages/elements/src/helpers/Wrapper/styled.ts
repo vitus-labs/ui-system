@@ -38,10 +38,7 @@ const blockCSS = `
 const childFixPosition = (isBlock?: boolean) =>
   `display: ${isBlock ? 'flex' : 'inline-flex'};`
 
-const styles: ResponsiveStylesCallback = ({
-  theme: t,
-  css,
-}) => css`
+const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
   ${__WEB__ && t.alignY === 'block' && fullHeightCSS};
 
   ${alignContent({

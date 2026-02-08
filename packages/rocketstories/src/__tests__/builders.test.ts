@@ -1,8 +1,8 @@
 import { CONTROL_TYPES } from '../constants/controls'
-import getTheme from '../utils/theme'
 import { init, rocketstories } from '../init'
 import renderMainBase from '../stories/base/renderMain'
 import renderRenderBase from '../stories/base/renderRender'
+import getTheme from '../utils/theme'
 
 // Mock window.__VITUS_LABS_STORIES__ for getTheme
 beforeAll(() => {
@@ -35,7 +35,6 @@ describe('getTheme utility', () => {
 })
 
 describe('init and rocketstories factories', () => {
-
   const MockComponent = (props: any) => null
   MockComponent.displayName = 'MockButton'
 
@@ -95,7 +94,6 @@ describe('init and rocketstories factories', () => {
 })
 
 describe('createRocketStories builder', () => {
-
   const MockComponent = (props: any) => null
   MockComponent.displayName = 'TestComp'
 
