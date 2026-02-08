@@ -31,6 +31,7 @@
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@types/node": "25.0.3",
