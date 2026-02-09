@@ -21,7 +21,6 @@ const isEmpty: IsEmpty = (param) => {
   if (!param) return true
 
   if (typeof param !== 'object') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return true as any
   }
 

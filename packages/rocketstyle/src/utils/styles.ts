@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { config } from '@vitus-labs/core'
 import type { StylesCbArray } from '~/types/styles'
 

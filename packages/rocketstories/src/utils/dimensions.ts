@@ -10,7 +10,6 @@ type ExtractDefaultBooleanProps = (params: {
   useBooleans?: boolean
 }) => Record<string, any> | null
 
-// eslint-disable-next-line import/prefer-default-export
 export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
   dimensions,
   multiKeys,

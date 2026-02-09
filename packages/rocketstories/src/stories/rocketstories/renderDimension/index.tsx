@@ -4,8 +4,6 @@
  * PseudoList when pseudo-state visualization is enabled). Generates
  * corresponding JSX code snippets and Storybook controls.
  */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { isEmpty, pick } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import { Fragment } from 'react'

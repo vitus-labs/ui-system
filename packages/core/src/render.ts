@@ -23,7 +23,6 @@ export type Render = <T extends Record<string, any> | undefined>(
 ) => ReturnType<typeof createElement> | ReturnType<typeof cloneElement> | null
 
 const render: Render = (content, attachProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (!content) return null as any
 
   const render = (child: Parameters<typeof createElement>[0]) =>

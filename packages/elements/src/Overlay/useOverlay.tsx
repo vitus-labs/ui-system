@@ -6,8 +6,6 @@
  * Event handlers are throttled for performance, and nested overlay blocking
  * is coordinated through the overlay context.
  */
-/* eslint-disable no-console */
-
 import { context, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
 import {
@@ -568,7 +566,6 @@ const useOverlay = ({
   const latestHandleVisibility = useRef(handleVisibilityByEventType)
   latestHandleVisibility.current = handleVisibilityByEventType
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleContentPosition = useMemo(
     () => throttle(() => latestSetContentPosition.current(), throttleDelay),
     [throttleDelay],
@@ -576,7 +573,6 @@ const useOverlay = ({
 
   const handleClick = handleVisibilityByEventType
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleVisibility = useMemo(
     () =>
       throttle((e: Event) => latestHandleVisibility.current(e), throttleDelay),
@@ -677,7 +673,6 @@ const useOverlay = ({
   useEffect(() => {
     if (!active || !parentContainer) return undefined
 
-    // eslint-disable-next-line no-param-reassign
     if (closeOn !== 'hover') parentContainer.style.overflow = 'hidden'
 
     const onScroll = (e: Event) => {
@@ -688,7 +683,6 @@ const useOverlay = ({
     parentContainer.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
-      // eslint-disable-next-line no-param-reassign
       parentContainer.style.overflow = ''
       parentContainer.removeEventListener('scroll', onScroll)
     }

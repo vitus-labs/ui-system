@@ -81,7 +81,6 @@ const makeItResponsive: MakeItResponsive =
       `
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { media, sortedBreakpoints } = __VITUS_LABS__!
 
     let helperTheme = internalTheme

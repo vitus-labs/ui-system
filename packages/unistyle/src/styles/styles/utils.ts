@@ -65,6 +65,5 @@ export type SpacingShorthand = (
   property: 'padding' | 'margin',
 ) => (props: SideValues) => string
 
-// eslint-disable-next-line import/prefer-default-export
 export const spacingShorthand: SpacingShorthand = (property) => (props) =>
   formatSpacing(property, resolveSides(props))

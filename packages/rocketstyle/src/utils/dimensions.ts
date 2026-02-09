@@ -102,7 +102,6 @@ export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
   getValues(obj).reduce(
     (accumulator, value: DimensionValue) => {
       if (typeof value === 'object') {
-        // eslint-disable-next-line no-param-reassign
         if (value.multi === true) accumulator[value.propName] = true
       }
 

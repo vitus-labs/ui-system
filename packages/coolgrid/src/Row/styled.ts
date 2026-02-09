@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
 import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import {
@@ -26,10 +25,11 @@ type SpacingStyles = (
 const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!isNumber(gap)) return ''
 
+  const g = gap as number
   const getValue = (param: any) => value(param, rootSize)
 
-  const spacingX = (gap! / 2) * -1
-  const spacingY = isNumber(gutter) ? gutter! - gap! / 2 : gap! / 2
+  const spacingX = (g / 2) * -1
+  const spacingY = isNumber(gutter) ? (gutter as number) - g / 2 : g / 2
 
   return css`
     margin: ${getValue(spacingY)} ${getValue(spacingX)};

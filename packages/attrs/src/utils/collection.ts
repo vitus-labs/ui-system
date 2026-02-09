@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 /**
  * Filters out keys with `null`, `undefined`, or `false` values.
  * Used to clean compose config — setting a HOC to `false`/`null` removes it.

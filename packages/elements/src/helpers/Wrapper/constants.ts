@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 /**
  * HTML elements that need a two-layer DOM workaround because browsers do not
  * fully support flexbox layout on button, fieldset, and legend elements.

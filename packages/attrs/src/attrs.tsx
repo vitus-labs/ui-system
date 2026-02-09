@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable no-underscore-dangle */
-
 import { compose, hoistNonReactStatics, omit, pick } from '@vitus-labs/core'
 import { forwardRef, useMemo } from 'react'
 import { attrsHoc } from '~/hoc'
@@ -71,7 +68,6 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
   // The inner component receives already-computed props from the HOC chain.
   // It handles ref merging, prop filtering, and final rendering.
-  // eslint-disable-next-line react/display-name
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {
