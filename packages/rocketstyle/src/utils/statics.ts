@@ -27,7 +27,6 @@ export const createStaticsChainingEnhancers: CreateStaticsChainingEnhancers = ({
   const keys = [...dimensionKeys, ...STATIC_KEYS]
 
   keys.forEach((item) => {
-    // eslint-disable-next-line no-param-reassign
     context[item] = (props: any) => func(options, { [item]: props })
   })
 }

@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 /**
  * Extracts HOC functions from the `.compose()` configuration and reverses
  * them for correct application order. Setting a key to `null`, `undefined`,

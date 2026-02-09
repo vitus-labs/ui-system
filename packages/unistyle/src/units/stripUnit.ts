@@ -25,7 +25,6 @@ const stripUnit: StripUnit = (value, unitReturn) => {
   }
 
   if (matchedValue) return parseFloat(value)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return value as any
 }
 

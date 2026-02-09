@@ -101,14 +101,12 @@ export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
         typeof props[key] !== 'function' ? props[key] : undefined
 
       if (control.disable) {
-        // eslint-disable-next-line no-param-reassign
         acc[key] = {
           table: {
             disable: control.disable,
           },
         }
       } else {
-        // eslint-disable-next-line no-param-reassign
         acc[key] = {
           control: { type: control.type ?? 'text' },
           description: control.description,
@@ -157,7 +155,6 @@ export const disableDimensionControls: DisableDimensionControls = (
 
   return dimensionKeys.reduce((acc, value) => {
     Object.keys(value).forEach((item) => {
-      // eslint-disable-next-line no-param-reassign
       acc = { ...acc, ...disableControl(item) }
     })
 

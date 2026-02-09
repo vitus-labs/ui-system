@@ -15,7 +15,6 @@ const DEV_PROPS: Record<string, string> = IS_DEVELOPMENT
   ? { 'data-vl-element': 'Element' }
   : {}
 
-// eslint-disable-next-line react/display-name
 const Component = forwardRef<Reference, Partial<Props>>(
   (
     {
@@ -61,7 +60,6 @@ const Component = forwardRef<Reference, Partial<Props>>(
       )
     }
 
-    // eslint-disable-next-line no-nested-ternary
     const asTag = __WEB__ ? (isInline ? 'span' : 'div') : undefined
 
     return (

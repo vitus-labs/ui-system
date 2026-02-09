@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable no-underscore-dangle */
-
 import {
   compose,
   config,
@@ -153,7 +150,6 @@ const rocketComponent: RocketComponent = (options) => {
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
   // @ts-expect-error
-  // eslint-disable-next-line react/display-name
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {

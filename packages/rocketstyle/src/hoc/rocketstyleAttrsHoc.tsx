@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { render } from '@vitus-labs/core'
 import {
   type ComponentType,

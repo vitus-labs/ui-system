@@ -100,7 +100,6 @@ export const ItemPropsAsAnObject = () => {
   }
   const Item =
     () =>
-    // eslint-disable-next-line react/no-unstable-nested-components
     ({ name, surname, ...props }) => (
       <span {...props}>
         | {name} - {surname} |
@@ -115,7 +114,6 @@ export const ItemPropsAsAFunction = () => {
   const itemProps = () => ({
     surname: 'hello',
   })
-  // eslint-disable-next-line react/no-unstable-nested-components
   const Item = ({ name, surname, ...props }) => (
     <span {...props}>
       {name} - {surname}

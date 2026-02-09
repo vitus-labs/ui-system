@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 /**
  * Extracts HOC functions from the compose configuration object,
  * filters out non-function entries, and reverses them so the

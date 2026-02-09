@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import { config, isEmpty, merge } from '@vitus-labs/core'
 import type { ThemeModeCallback } from '~/types/theme'
 import { removeNullableValues } from './collection'
@@ -70,7 +68,6 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
       if (Array.isArray(helper) && helper.length > 0) {
         const finalDimensionThemes = getThemeFromChain(helper, theme)
 
-        // eslint-disable-next-line no-param-reassign
         acc[dimension] = removeNullableValues(finalDimensionThemes)
       }
 

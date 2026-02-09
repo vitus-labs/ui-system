@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { get } from '@vitus-labs/core'
 import type { Control, Obj, SimpleValue } from '~/types'
 

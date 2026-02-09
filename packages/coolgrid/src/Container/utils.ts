@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { get } from '@vitus-labs/core'
 
 /**

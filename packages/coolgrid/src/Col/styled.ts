@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
 import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import { extendCss, makeItResponsive, value } from '@vitus-labs/unistyle'
@@ -30,20 +29,21 @@ const widthStyles: WidthStyles = (
     return ''
   }
 
+  const s = size as number
+  const c = columns as number
+  const g = gap as number
+
   // calculate % of width
-  const width = __WEB__
-    ? (size! / columns!) * 100
-    : (RNparentWidth / columns!) * size!
+  const width = __WEB__ ? (s / c) * 100 : (RNparentWidth / c) * s
 
   const hasGap = hasValue(gap)
 
-  // eslint-disable-next-line no-nested-ternary
   const val = __WEB__
     ? hasGap
-      ? `calc(${width}% - ${gap}px)`
+      ? `calc(${width}% - ${g}px)`
       : `${width}%`
     : hasGap
-      ? width - gap!
+      ? width - g
       : width
 
   return css`
@@ -65,7 +65,7 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
     return ''
   }
 
-  const finalStyle = `${type}: ${value(param! / 2, rootSize)}`
+  const finalStyle = `${type}: ${value((param as number) / 2, rootSize)}`
 
   return css`
     ${finalStyle};
