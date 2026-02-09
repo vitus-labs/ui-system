@@ -149,7 +149,6 @@ const rocketComponent: RocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  // @ts-expect-error
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
       {

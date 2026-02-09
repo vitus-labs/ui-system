@@ -283,6 +283,59 @@ describe('throttle', () => {
     throttled()
     expect(fn).toHaveBeenCalledTimes(1)
   })
+
+  it('should skip trailing call when trailing: false', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100, { trailing: false })
+
+    throttled('first')
+    throttled('second')
+    throttled('third')
+
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('first')
+
+    vi.advanceTimersByTime(200)
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should skip leading call when leading: false', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100, { leading: false })
+
+    throttled('first')
+    expect(fn).toHaveBeenCalledTimes(0)
+
+    vi.advanceTimersByTime(100)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('first')
+  })
+
+  it('should support leading: false with trailing: true (default)', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100, { leading: false })
+
+    throttled('a')
+    throttled('b')
+    expect(fn).toHaveBeenCalledTimes(0)
+
+    vi.advanceTimersByTime(100)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('b')
+  })
+
+  it('should still fire leading call after cooldown with trailing: false', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100, { trailing: false })
+
+    throttled('first')
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    vi.advanceTimersByTime(100)
+    throttled('second')
+    expect(fn).toHaveBeenCalledTimes(2)
+    expect(fn).toHaveBeenLastCalledWith('second')
+  })
 })
 
 // --------------------------------------------------------
