@@ -63,14 +63,14 @@
     "react": ">= 19"
   },
   "dependencies": {
-    "@vitus-labs/elements": "workspace:*"
+    "@vitus-labs/elements": "1.2.2"
   },
   "devDependencies": {
-    "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/rocketstyle": "workspace:*",
+    "@vitus-labs/core": "1.2.2",
+    "@vitus-labs/rocketstyle": "1.2.2",
     "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
     "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
     "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-    "@vitus-labs/unistyle": "workspace:*"
+    "@vitus-labs/unistyle": "1.2.2"
   }
 }

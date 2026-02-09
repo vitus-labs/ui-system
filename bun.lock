@@ -7,33 +7,33 @@
       "devDependencies": {
         "@biomejs/biome": "^2.3.14",
         "@testing-library/jest-dom": "^6.9.1",
-        "@testing-library/react": "^16.3.1",
+        "@testing-library/react": "^16.3.2",
         "@types/node": "25.0.3",
-        "@types/react": "^19.2.7",
+        "@types/react": "^19.2.13",
         "@types/react-dom": "^19.2.3",
         "@types/react-is": "^19.2.0",
-        "@vitus-labs/tools-lint": "^1.5.2-alpha.1",
+        "@vitus-labs/tools-lint": "^1.5.2-alpha.5",
         "cpr": "^3.0.1",
-        "csstype": "3",
+        "csstype": "^3.2.3",
         "jsdom": "^26.1.0",
         "lerna": "^8.2.4",
-        "react": "^19.2.3",
+        "react": "^19.2.4",
         "react-docgen-typescript-webpack-plugin": "^1.1.0",
-        "react-dom": "^19.2.3",
+        "react-dom": "^19.2.4",
         "react-icons-kit": "^2.0.0",
-        "styled-components": "^6.2.0",
+        "styled-components": "^6.3.9",
         "ts-patch": "^3.3.0",
         "typescript": "5.9.3",
         "typescript-transform-paths": "^3.5.6",
-        "vitest": "^3.1.1",
+        "vitest": "^3.2.4",
       },
     },
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
       "version": "1.2.2",
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/elements": "workspace:*",
+        "@vitus-labs/core": "1.2.2",
+        "@vitus-labs/elements": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
@@ -47,11 +47,11 @@
       "name": "@vitus-labs/coolgrid",
       "version": "1.2.2",
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/unistyle": "1.2.2",
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
@@ -82,12 +82,12 @@
         "react-is": "^19.2.3",
       },
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/rocketstyle": "^1.2.2",
+        "@vitus-labs/core": "1.2.2",
+        "@vitus-labs/rocketstyle": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/unistyle": "1.2.2",
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
@@ -101,7 +101,7 @@
       "name": "@vitus-labs/hooks",
       "version": "1.2.2",
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
@@ -115,15 +115,15 @@
       "name": "@vitus-labs/rocketstories",
       "version": "1.2.2",
       "dependencies": {
-        "@vitus-labs/elements": "workspace:*",
+        "@vitus-labs/elements": "1.2.2",
       },
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/rocketstyle": "workspace:*",
+        "@vitus-labs/core": "1.2.2",
+        "@vitus-labs/rocketstyle": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/unistyle": "1.2.2",
       },
       "peerDependencies": {
         "@storybook/react": "*",
@@ -137,12 +137,12 @@
       "name": "@vitus-labs/rocketstyle",
       "version": "1.2.2",
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/elements": "^1.2.2",
+        "@vitus-labs/core": "1.2.2",
+        "@vitus-labs/elements": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/unistyle": "1.2.2",
       },
       "peerDependencies": {
         "@vitus-labs/core": "*",
@@ -153,7 +153,7 @@
       "name": "@vitus-labs/unistyle",
       "version": "1.2.2",
       "devDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "1.2.2",
         "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
         "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
       },
@@ -914,7 +914,7 @@
 
     "@vitus-labs/tools-core": ["@vitus-labs/tools-core@1.5.2-alpha.1", "", { "dependencies": { "find-up": "^7.0.0", "lodash-es": "^4.17.22" } }, "sha512-3BHdaXJ69P7W177RvCCDNjTfItKs0AbipM1FZwr1AbUKV+ydUuBV3Usg3U4mUU71OJaQLQ97EorTsYToca0Abw=="],
 
-    "@vitus-labs/tools-lint": ["@vitus-labs/tools-lint@1.5.2-alpha.1", "", { "dependencies": { "@biomejs/biome": "^2.3.14" } }, "sha512-0lU+BSo6IUX9Esc1ZXt5dyB3uaz9kQ/RYXdhSMyJqZkTmj8vjuho88g0APZMy+wQvRyVCq79gfGDn+J4OSrN5Q=="],
+    "@vitus-labs/tools-lint": ["@vitus-labs/tools-lint@1.5.2-alpha.5", "", { "dependencies": { "@biomejs/biome": "^2.3.14" } }, "sha512-YGNujfym994d5sZFQT5l1fhq1G+Ryinwf2bcrpU3IXUhZ7V2kjXdYJtCaaGaEkZfDwwrj4jAAOeSusjF9kkkoA=="],
 
     "@vitus-labs/tools-rolldown": ["@vitus-labs/tools-rolldown@1.5.2-alpha.1", "", { "dependencies": { "@vitus-labs/tools-core": "1.5.2-alpha.1", "chalk": "^5.6.2", "rimraf": "^6.1.2", "rolldown": "^1.0.0-rc.3", "rolldown-plugin-dts": "^0.13.4", "rollup-plugin-filesize": "^10.0.0", "rollup-plugin-visualizer": "^5.14.0" }, "bin": { "vl_rolldown_build": "lib/bin/run-build.js", "vl_rolldown_build-watch": "lib/bin/run-watch.js" } }, "sha512-fmT2nQpxkL6Fr4YUG3VvjDCKJ48i/OrajZ3HL/VtynKU95u4z9e12geMztlV6tWSmqWZFcW1CrjgTs473pjScg=="],
 
@@ -2230,7 +2230,7 @@
 
     "style-loader": ["style-loader@3.3.4", "", { "peerDependencies": { "webpack": "^5.0.0" } }, "sha512-0WqXzrsMTyb8yjZJHDqwmnwRJvhALK9LfRtRc6B4UTWe8AijYLZYZ9thuJTZc2VfQWINADW/j+LiJnfy2RoC1w=="],
 
-    "styled-components": ["styled-components@6.3.8", "", { "dependencies": { "@emotion/is-prop-valid": "1.4.0", "@emotion/unitless": "0.10.0", "@types/stylis": "4.2.7", "css-to-react-native": "3.2.0", "csstype": "3.2.3", "postcss": "8.4.49", "shallowequal": "1.1.0", "stylis": "4.3.6", "tslib": "2.8.1" }, "peerDependencies": { "react": ">= 16.8.0", "react-dom": ">= 16.8.0" }, "optionalPeers": ["react-dom"] }, "sha512-Kq/W41AKQloOqKM39zfaMdJ4BcYDw/N5CIq4/GTI0YjU6pKcZ1KKhk6b4du0a+6RA9pIfOP/eu94Ge7cu+PDCA=="],
+    "styled-components": ["styled-components@6.3.9", "", { "dependencies": { "@emotion/is-prop-valid": "1.4.0", "@emotion/unitless": "0.10.0", "@types/stylis": "4.2.7", "css-to-react-native": "3.2.0", "csstype": "3.2.3", "postcss": "8.4.49", "shallowequal": "1.1.0", "stylis": "4.3.6", "tslib": "2.8.1" }, "peerDependencies": { "react": ">= 16.8.0", "react-dom": ">= 16.8.0" }, "optionalPeers": ["react-dom"] }, "sha512-J72R4ltw0UBVUlEjTzI0gg2STOqlI9JBhQOL4Dxt7aJOnnSesy0qJDn4PYfMCafk9cWOaVg129Pesl5o+DIh0Q=="],
 
     "styled-jsx": ["styled-jsx@5.1.6", "", { "dependencies": { "client-only": "0.0.1" }, "peerDependencies": { "react": ">= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0" } }, "sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA=="],
 
