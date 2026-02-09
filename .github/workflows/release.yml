@@ -67,7 +67,6 @@ jobs:
       - name: Publish
         run: bunx lerna publish ${{ inputs.type }} --yes
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
   # ── Prerelease (feature/release branches, automatic) ────────────
@@ -107,5 +106,4 @@ jobs:
       - name: Publish canary
         run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
