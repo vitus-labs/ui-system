@@ -57,9 +57,9 @@
   "devDependencies": {
     "@vitus-labs/core": "1.2.2",
     "@vitus-labs/rocketstyle": "1.2.2",
-    "@vitus-labs/tools-rolldown": "^1.5.2-alpha.1",
-    "@vitus-labs/tools-storybook": "^1.5.2-alpha.1",
-    "@vitus-labs/tools-typescript": "^1.5.2-alpha.1",
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-storybook": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0",
     "@vitus-labs/unistyle": "1.2.2"
   },
   "dependencies": {

@@ -35,7 +35,7 @@
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/react-is": "^19.2.0",
-    "@vitus-labs/tools-lint": "^1.5.1",
+    "@vitus-labs/tools-lint": "^1.6.0",
     "cpr": "^3.0.1",
     "csstype": "^3.2.3",
     "jsdom": "^28.0.0",
