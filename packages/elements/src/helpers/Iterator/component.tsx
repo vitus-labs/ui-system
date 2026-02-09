@@ -26,7 +26,7 @@ type ClassifiedData =
 const classifyData = (data: unknown[]): ClassifiedData => {
   const items = data.filter(
     (item) =>
-      item != null && !(typeof item === 'object' && isEmpty(item as any)),
+      item != null && !(typeof item === 'object' && isEmpty(item as Record<string, unknown>)),
   )
 
   if (items.length === 0) return null

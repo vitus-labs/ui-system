@@ -21,7 +21,7 @@ const assignToBreakpointKey: AssignToBreakpointKey =
     return result
   }
 
-const handleArrayCb = (arr: (string | number)[]) => (_: any, i: number) => {
+const handleArrayCb = (arr: (string | number)[]) => (_: unknown, i: number) => {
   const currentValue = arr[i]
   const lastValue = arr[arr.length - 1]
 
@@ -80,7 +80,7 @@ const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
 
     // if it's an array
     if (Array.isArray(value)) {
-      result[key] = getBpValues(handleArrayCb(value as any))
+      result[key] = getBpValues(handleArrayCb(value as (string | number)[]))
     }
     // if it's an object
     else if (typeof value === 'object') {

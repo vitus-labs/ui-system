@@ -107,5 +107,5 @@ export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
 
       return accumulator
     },
-    {} as Record<string, any>,
+    {} as Record<string, true>,
   )

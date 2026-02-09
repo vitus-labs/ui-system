@@ -134,7 +134,7 @@ const edge: Edge =
 
     const { unit, edgeCss } = definitions[property]
     const calc = (param: Value) =>
-      unit ? value(param as any, rootSize, unit) : param
+      unit ? value(param, rootSize, unit) : param
 
     const sides = resolveSides(values)
 

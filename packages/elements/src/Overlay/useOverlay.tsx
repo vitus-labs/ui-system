@@ -634,7 +634,7 @@ const useOverlay = ({
   useEffect(() => {
     if (!closeOnEsc || !active || blocked) return undefined
 
-    const handleEscKey = (e: any) => {
+    const handleEscKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         hideContent()
       }
