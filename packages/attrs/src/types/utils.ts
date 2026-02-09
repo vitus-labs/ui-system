@@ -73,14 +73,18 @@ type Id<T> = 0 extends 1 & T
  * Short-circuits for `any` — the `as` clause in mapped types loses
  * index signatures, which would turn `any` into an empty type.
  */
+type IsAny<T> = 0 extends 1 & T ? true : false
+
 type ExtractNullableKeys<T> = 0 extends 1 & T
   ? T
   : {
-      [P in keyof T as [T[P]] extends [never]
-        ? never
-        : [T[P]] extends [null | undefined]
+      [P in keyof T as IsAny<T[P]> extends true
+        ? P
+        : [T[P]] extends [never]
           ? never
-          : P]: T[P]
+          : [T[P]] extends [null | undefined]
+            ? never
+            : P]: T[P]
     }
 
 /** Merges two types: keeps all keys from L that don't exist in R, then adds all of R. */
