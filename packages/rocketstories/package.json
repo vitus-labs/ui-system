@@ -56,7 +56,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@storybook/react": "*",
+    "@storybook/react": "10.2.8",
     "@vitus-labs/core": "*",
     "@vitus-labs/rocketstyle": "*",
     "@vitus-labs/unistyle": "*",

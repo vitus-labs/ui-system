@@ -196,7 +196,7 @@ export type Props = Partial<{
    *
    * https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml
    */
-  dangerouslySetInnerHTML: { __html: string }
+  dangerouslySetInnerHTML: { __html: string | TrustedHTML }
 
   /**
    * An additional prop for extending styling of the **root** wrapper element

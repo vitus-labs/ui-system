@@ -114,38 +114,54 @@ export const set = (
 
 // --------------------------------------------------------
 // throttle — limit function execution to at most once per `wait` ms.
-// Trailing calls are preserved: if called during the cooldown, the
-// last invocation fires after the remaining delay.
+// By default both leading and trailing calls are enabled.
+// Set `leading: false` to skip the immediate invocation.
+// Set `trailing: false` to skip the deferred trailing invocation.
 // Returns a throttled function with a `.cancel()` method to clear
 // any pending trailing call.
 // --------------------------------------------------------
 export const throttle = <T extends (...args: any[]) => any>(
   fn: T,
   wait: number = 0,
+  options?: { leading?: boolean; trailing?: boolean },
 ): T & { cancel: () => void } => {
+  const leading = options?.leading !== false
+  const trailing = options?.trailing !== false
+
   let lastCallTime: number | undefined
   let timeoutId: ReturnType<typeof setTimeout> | undefined
   let lastArgs: any[] | undefined
 
+  const invoke = (args: any[]) => {
+    lastCallTime = Date.now()
+    fn(...args)
+  }
+
+  const startTrailingTimer = (args: any[], delay: number) => {
+    lastArgs = args
+    if (timeoutId !== undefined) return
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined
+      if (lastArgs) {
+        invoke(lastArgs)
+        lastArgs = undefined
+      }
+    }, delay)
+  }
+
   const throttled = (...args: any[]) => {
     const now = Date.now()
+    const elapsed = lastCallTime === undefined ? wait : now - lastCallTime
 
-    if (lastCallTime === undefined || now - lastCallTime >= wait) {
-      lastCallTime = now
-      fn(...args)
-    } else {
-      lastArgs = args
-      if (timeoutId === undefined) {
-        const remaining = wait - (now - lastCallTime)
-        timeoutId = setTimeout(() => {
-          lastCallTime = Date.now()
-          timeoutId = undefined
-          if (lastArgs) {
-            fn(...lastArgs)
-            lastArgs = undefined
-          }
-        }, remaining)
+    if (elapsed >= wait) {
+      if (leading) {
+        invoke(args)
+      } else {
+        lastCallTime = now
+        if (trailing) startTrailingTimer(args, wait)
       }
+    } else if (trailing) {
+      startTrailingTimer(args, wait - elapsed)
     }
   }
 

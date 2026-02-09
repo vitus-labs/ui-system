@@ -1,4 +1,4 @@
-import type { ForwardedRef, ReactElement } from 'react'
+import type { ForwardedRef, ReactNode } from 'react'
 import type { AttrsCb } from './attrs'
 import type { ConfigAttrs } from './config'
 import type { DefaultProps } from './configuration'
@@ -23,7 +23,7 @@ export type InnerComponentProps = {
 }
 
 export interface ExoticComponent<P = {}> {
-  (props: P): ReactElement<P & InnerComponentProps> | null
+  (props: P): ReactNode
   readonly $$typeof: symbol
 }
 
