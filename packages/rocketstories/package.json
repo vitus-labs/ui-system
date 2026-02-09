@@ -7,6 +7,7 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
@@ -43,6 +44,9 @@
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
+  "engines": {
+    "node": ">= 18"
+  },
   "scripts": {
     "dev": "bun run vl_stories",
     "prepublish": "bun run build",
@@ -57,9 +61,9 @@
   },
   "peerDependencies": {
     "@storybook/react": "10.2.8",
-    "@vitus-labs/core": "*",
-    "@vitus-labs/rocketstyle": "*",
-    "@vitus-labs/unistyle": "*",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*",
+    "@vitus-labs/unistyle": "workspace:*",
     "react": ">= 19"
   },
   "dependencies": {

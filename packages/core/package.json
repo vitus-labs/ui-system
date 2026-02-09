@@ -7,6 +7,7 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
@@ -31,6 +32,9 @@
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "engines": {
+    "node": ">= 18"
   },
   "scripts": {
     "dev": "bun run vl_stories",
