@@ -1,9 +1,10 @@
+import type { FC } from 'react'
 import RocketStoryHoc from '~/internal/RocketStoryHoc'
-import type { StoryComponent, RocketStoryConfiguration } from '~/types'
+import type { RocketStoryConfiguration, StoryComponent } from '~/types'
 
 export type RenderRender<P = {}> = (
-  render,
-  params: RocketStoryConfiguration
+  render: FC,
+  params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
-export default (render) => RocketStoryHoc(() => render)
+export default (render: FC) => RocketStoryHoc(() => render)

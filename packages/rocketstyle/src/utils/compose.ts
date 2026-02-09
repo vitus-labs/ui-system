@@ -1,4 +1,9 @@
 /* eslint-disable import/prefer-default-export */
+/**
+ * Extracts HOC functions from the compose configuration object,
+ * filters out non-function entries, and reverses them so the
+ * outermost HOC in the chain wraps first (inside-out composition).
+ */
 type CalculateHocsFuncs = (
   options: Record<string, any>,
 ) => ((arg: any) => any)[]

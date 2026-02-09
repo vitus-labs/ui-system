@@ -1,6 +1,6 @@
 import component, { type Props } from './component'
-import useOverlay, { type UseOverlayProps } from './useOverlay'
 import OverlayProvider from './context'
+import useOverlay, { type UseOverlayProps } from './useOverlay'
 
 export type { Props, UseOverlayProps }
 

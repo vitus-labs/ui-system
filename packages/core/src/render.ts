@@ -1,6 +1,6 @@
-import { createElement, isValidElement, cloneElement } from 'react'
 import type { ReactNode } from 'react'
-import { isValidElementType, isFragment } from 'react-is'
+import { cloneElement, createElement, isValidElement } from 'react'
+import { isFragment, isValidElementType } from 'react-is'
 import isEmpty from './isEmpty'
 
 type CreateTypes = Parameters<typeof createElement>[0]
@@ -9,6 +9,14 @@ type RenderProps<T extends Record<string, unknown> | undefined> = (
   props: Partial<T>,
 ) => ReactNode
 
+/**
+ * Flexible element renderer that handles multiple content types:
+ * - Primitives (string, number) — returned as-is
+ * - Arrays and fragments — returned as-is
+ * - Component types (class/function) — created via `createElement`
+ * - Valid elements — cloned with `attachProps` if provided
+ * - Falsy values — return null
+ */
 export type Render = <T extends Record<string, any> | undefined>(
   content?: CreateTypes | CloneTypes | ReactNode | ReactNode[] | RenderProps<T>,
   attachProps?: T,
@@ -18,14 +26,8 @@ const render: Render = (content, attachProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (!content) return null as any
 
-  const isValidEl = isValidElement(content)
-
   const render = (child: Parameters<typeof createElement>[0]) =>
     attachProps ? createElement(child, attachProps) : createElement(child)
-
-  if (typeof content === 'string' && isValidEl) {
-    return render(content)
-  }
 
   if (['number', 'boolean', 'bigint', 'string'].includes(typeof content)) {
     return content
@@ -39,7 +41,7 @@ const render: Render = (content, attachProps) => {
     return render(content)
   }
 
-  if (isValidEl) {
+  if (isValidElement(content)) {
     if (isEmpty(attachProps)) {
       return content
     }

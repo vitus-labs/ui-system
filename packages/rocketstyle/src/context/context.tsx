@@ -1,11 +1,6 @@
-import React, {
-  useContext,
-  type ReactNode,
-  type FC,
-  type ComponentType,
-} from 'react'
 import { Provider as CoreProvider, context } from '@vitus-labs/core'
-import { THEME_MODES_INVERSED, MODE_DEFAULT } from '~/constants'
+import { type ComponentType, type FC, type ReactNode, useContext } from 'react'
+import { MODE_DEFAULT, THEME_MODES_INVERSED } from '~/constants'
 
 type Theme = {
   rootSize: number
@@ -21,6 +16,11 @@ export type TProvider = {
   provider?: ComponentType<any>
 }
 
+/**
+ * Top-level theme and mode provider for rocketstyle components.
+ * Reads the parent context, merges incoming props, and resolves
+ * the active mode (with optional inversion for nested dark/light switching).
+ */
 const Provider: FC<TProvider> = ({
   provider = CoreProvider,
   inversed,

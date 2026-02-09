@@ -1,6 +1,6 @@
-import React, { useRef } from 'react'
 import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
+import { useRef } from 'react'
 import rocketstyle from '~/index'
 
 const hoc = (WrapperComponent: any) => {
@@ -117,60 +117,74 @@ export default rocketstyle()({ name: 'Button', component: Element })
           /* -------------------------------------------------------- */
           ${baseTheme};
 
-          ${!disabled &&
-          isDynamic &&
-          css`
+          ${
+            !disabled &&
+            isDynamic &&
+            css`
             cursor: pointer;
-          `}
+          `
+          }
 
           /* -------------------------------------------------------- */
         /* HOVER STATE */
         /* -------------------------------------------------------- */
-        ${!disabled &&
+        ${
+          !disabled &&
           !active &&
           isDynamic &&
           css`
             &:hover {
               ${hoverTheme};
             }
-          `};
+          `
+        };
 
-          ${hover &&
-          css`
+          ${
+            hover &&
+            css`
             ${hoverTheme};
-          `};
+          `
+          };
 
           /* -------------------------------------------------------- */
           /* FOCUS STATE */
           /* -------------------------------------------------------- */
-          ${!disabled &&
-          css`
+          ${
+            !disabled &&
+            css`
             &:focus {
               ${focusTheme};
             }
-          `};
+          `
+          };
 
-          ${focus &&
-          css`
+          ${
+            focus &&
+            css`
             ${focusTheme};
-          `};
+          `
+          };
 
           /* -------------------------------------------------------- */
           /* ACTIVE / PRESSED STATE */
           /* -------------------------------------------------------- */
-          ${!disabled &&
-          isDynamic &&
-          css`
+          ${
+            !disabled &&
+            isDynamic &&
+            css`
             &:active {
               ${activeTheme};
             }
-          `};
+          `
+          };
 
-          ${!disabled &&
-          (active || pressed) &&
-          css`
+          ${
+            !disabled &&
+            (active || pressed) &&
+            css`
             ${activeTheme};
-          `};
+          `
+          };
         `
       }};
     `,

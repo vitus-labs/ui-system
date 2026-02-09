@@ -1,7 +1,8 @@
 import { isEmpty, set } from '@vitus-labs/core'
 
+/** Filter out breakpoint keys that don't exist in the sorted breakpoints list. */
 const removeUnexpectedKeys = (obj: Record<string, unknown>, keys: string[]) => {
-  const result = {}
+  const result: Record<string, unknown> = {}
 
   keys.forEach((bp) => {
     const value = obj[bp]
@@ -22,6 +23,12 @@ export type TransformTheme = ({
   breakpoints: string[]
 }) => any
 
+/**
+ * Pivots the theme from property-centric to breakpoint-centric layout.
+ * Input:  `{ fontSize: { xs: 12, md: 15 }, color: 'red' }`
+ * Output: `{ xs: { fontSize: 12, color: 'red' }, md: { fontSize: 15 } }`
+ * Supports three input shapes per property: scalar, array (positional), or object (keyed).
+ */
 const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
   const result = {}
 

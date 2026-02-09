@@ -1,6 +1,6 @@
-import React, { type FC } from 'react'
-import { rocketstyle } from '@vitus-labs/rocketstyle'
 import { config } from '@vitus-labs/core'
+import { rocketstyle } from '@vitus-labs/rocketstyle'
+import type { FC } from 'react'
 import Element, { type Props } from '~/Element'
 
 const { css, styled } = config

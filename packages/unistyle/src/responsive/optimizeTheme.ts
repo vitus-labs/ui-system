@@ -6,19 +6,47 @@ export type OptimizeTheme = ({
   breakpoints: string[]
 }) => Record<string, Record<string, unknown>>
 
-const optimizeTheme: OptimizeTheme = ({ theme, breakpoints }) =>
-  breakpoints.reduce((acc, key, i) => {
-    if (i === 0) return { ...acc, [key]: theme[key] }
+const shallowEqual = (
+  a: Record<string, unknown> | undefined,
+  b: Record<string, unknown> | undefined,
+): boolean => {
+  if (a === b) return true
+  if (!a || !b) return false
 
-    const previousBreakpoint = breakpoints[i - 1]!
-    const previousValue = theme[previousBreakpoint]
-    const currentValue = theme[key]
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
 
-    if (JSON.stringify(previousValue) !== JSON.stringify(currentValue)) {
-      return { ...acc, [key]: theme[key] }
+  if (keysA.length !== keysB.length) return false
+
+  for (const key of keysA) {
+    if (a[key] !== b[key]) return false
+  }
+
+  return true
+}
+
+/**
+ * Removes breakpoints whose styles are identical to the previous one.
+ * This avoids generating duplicate `@media` blocks.
+ * The smallest breakpoint is always kept.
+ */
+const optimizeTheme: OptimizeTheme = ({ theme, breakpoints }) => {
+  const result: Record<string, Record<string, unknown>> = {}
+
+  for (let i = 0; i < breakpoints.length; i++) {
+    const key = breakpoints[i] as string
+    const previousBreakpoint = breakpoints[i - 1] as string
+
+    const current = theme[key]
+    if (
+      current &&
+      (i === 0 || !shallowEqual(theme[previousBreakpoint], current))
+    ) {
+      result[key] = current
     }
+  }
 
-    return acc
-  }, {})
+  return result
+}
 
 export default optimizeTheme

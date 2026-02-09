@@ -1,5 +1,13 @@
+/**
+ * HOC that adds single or multi selection state management to a list component.
+ * Tracks which items are active via a scalar key (single mode) or a Map of
+ * key-to-boolean entries (multi mode). Injects `itemProps` callback that
+ * provides each item with `active`, `handleItemActive`, `toggleItemActive`,
+ * and other selection helpers. Supports `activeItemRequired` to prevent
+ * deselecting the last active item.
+ */
 // @ts-nocheck
-import React, { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { SimpleHoc } from '~/types'
 
 const RESERVED_KEYS = [
@@ -46,12 +54,7 @@ const component: SimpleHoc<Props> = (WrappedComponent) => {
     type InitActiveItems = () => Key | MultipleMap | undefined
     const initActiveItems: InitActiveItems = () => {
       if (type === 'single') {
-        if (Array.isArray(activeItems)) {
-          // eslint-disable-next-line no-console
-          console.warn(
-            'Iterator is type of single. activeItems cannot be an array.',
-          )
-        } else {
+        if (!Array.isArray(activeItems)) {
           return activeItems
         }
       } else if (type === 'multi') {
@@ -171,9 +174,12 @@ const component: SimpleHoc<Props> = (WrappedComponent) => {
     useEffect(() => {
       if (type === 'single' && Array.isArray(activeItems)) {
         if (process.env.NODE_ENV !== 'production') {
-          // eslint-disable-next-line no-console
-          console.error(
-            'When type=`single` activeItems must be a single value, not an array',
+          // biome-ignore lint/suspicious/noConsole: dev-mode warning
+          console.warn(
+            '[@vitus-labs/elements] List/withActiveState: ' +
+              '`activeItems` was passed as an array but `type` is "single". ' +
+              'In single selection mode, `activeItems` should be a single key (string | number). ' +
+              'The array value will be ignored.',
           )
         }
       }

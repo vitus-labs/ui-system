@@ -1,13 +1,14 @@
 /* eslint-disable no-underscore-dangle */
-import React, {
-  forwardRef,
-  type ForwardRefExoticComponent,
-  type ComponentType,
-} from 'react'
+
 import { render } from '@vitus-labs/core'
-import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
+import {
+  type ComponentType,
+  type ForwardRefExoticComponent,
+  forwardRef,
+} from 'react'
 import { useTheme } from '~/hooks'
 import type { Configuration } from '~/types/configuration'
+import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 
 export type RocketStyleHOC = ({
   inversed,
@@ -17,6 +18,12 @@ export type RocketStyleHOC = ({
   WrappedComponent: ComponentType<any>,
 ) => ForwardRefExoticComponent<any>
 
+/**
+ * HOC that resolves the `.attrs()` chain before the inner component renders.
+ * Evaluates both regular and priority attrs callbacks with the current theme
+ * and mode, then merges the results with explicit props (priority attrs
+ * are applied first, regular attrs can be overridden by direct props).
+ */
 const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
   // --------------------------------------------------
   // .attrs(...)

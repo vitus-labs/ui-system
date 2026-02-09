@@ -5,6 +5,7 @@ import type { MultiKeys } from '~/types/dimensions'
 // --------------------------------------------------------
 // remove undefined props
 // --------------------------------------------------------
+/** Strips keys with `undefined` values so they don't shadow default props during merging. */
 type RemoveUndefinedProps = <T extends Record<string, any>>(
   props: T,
 ) => Partial<T>
@@ -19,13 +20,14 @@ export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
 // --------------------------------------------------------
 // pick styled props
 // --------------------------------------------------------
+/** Picks only the props whose keys exist in the dimension keywords lookup and have truthy values. */
 type PickStyledAttrs = <
   T extends Record<string, any>,
   K extends { [I in keyof T]?: true },
 >(
   props: T,
   keywords: K,
-  // @ts-ignore
+  // @ts-expect-error
 ) => { [I in keyof K]: T[I] }
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
@@ -37,6 +39,10 @@ export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
+/**
+ * Returns a curried function that evaluates an array of `.attrs()` callbacks,
+ * spreading each result into a single merged props object via `Object.assign`.
+ */
 type OptionFunc<A> = (...arg: A[]) => Record<string, unknown>
 type CalculateChainOptions = <A>(
   options?: OptionFunc<A>[],
@@ -48,13 +54,18 @@ export const calculateChainOptions: CalculateChainOptions =
     if (isEmpty(options)) return result
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }
 
 // --------------------------------------------------------
 // get style attributes
 // --------------------------------------------------------
+/**
+ * Resolves the active value for each styling dimension from component props.
+ * First checks for explicit prop values (string, number, or array for multi-keys),
+ * then falls back to boolean shorthand props when `useBooleans` is enabled.
+ */
 type CalculateStylingAttrs = ({
   useBooleans,
   multiKeys,
@@ -80,7 +91,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       const valueTypes = ['number', 'string']
 
       // if the property is multi key, allow assign array as well
-      if (multiKeys && multiKeys[item] && Array.isArray(pickedProp)) {
+      if (multiKeys?.[item] && Array.isArray(pickedProp)) {
         result[item] = pickedProp
       }
       // assign when it's only a string or number otherwise it's considered
@@ -98,12 +109,12 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
       Object.entries(result).forEach(([key, value]) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         const isMultiKey = multiKeys[key]
 
         // when value in result is not assigned yet
         if (!value) {
-          let newDimensionValue
+          let newDimensionValue: string | string[] | undefined
           const keywords = Object.keys(dimensions[key] as any)
 
           if (isMultiKey) {

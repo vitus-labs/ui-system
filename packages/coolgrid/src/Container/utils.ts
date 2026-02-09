@@ -1,12 +1,13 @@
 /* eslint-disable import/prefer-default-export */
 import { get } from '@vitus-labs/core'
 
-// ------------------------------------------
-// get container width
-// ------------------------------------------
+/**
+ * Resolves the container max-width map using a three-layer fallback:
+ * props.width -> theme.grid.container -> theme.coolgrid.container.
+ */
 type GetContainerWidth = (
   props?: Record<string, unknown> | unknown,
-  theme?: Record<string, unknown> | unknown
+  theme?: Record<string, unknown> | unknown,
 ) => ReturnType<typeof get>
 
 export const getContainerWidth: GetContainerWidth = (props, theme) =>

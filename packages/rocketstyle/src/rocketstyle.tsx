@@ -1,52 +1,67 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-underscore-dangle */
-import React, { useMemo, forwardRef } from 'react'
-import hoistNonReactStatics from 'hoist-non-react-statics'
-import { config, omit, pick, compose, render } from '@vitus-labs/core'
+
 import {
+  compose,
+  config,
+  hoistNonReactStatics,
+  omit,
+  pick,
+  render,
+} from '@vitus-labs/core'
+import { forwardRef, useMemo } from 'react'
+import { LocalThemeManager } from '~/cache'
+import {
+  CONFIG_KEYS,
   PSEUDO_KEYS,
   PSEUDO_META_KEYS,
-  CONFIG_KEYS,
   STYLING_KEYS,
 } from '~/constants'
-import { useLocalContext } from '~/context/localContext'
 import createLocalProvider from '~/context/createLocalProvider'
-import { LocalThemeManager } from '~/cache'
-import { useRef, useTheme } from '~/hooks'
+import { useLocalContext } from '~/context/localContext'
 import { rocketstyleAttrsHoc } from '~/hoc'
+import { useRef, useTheme } from '~/hooks'
+import type {
+  Configuration,
+  ExtendedConfiguration,
+} from '~/types/configuration'
+import type { RocketComponent } from '~/types/rocketComponent'
+import type {
+  ExoticComponent,
+  InnerComponentProps,
+  RocketStyleComponent,
+} from '~/types/rocketstyle'
 import {
-  createStaticsChainingEnhancers,
-  createStaticsEnhancers,
-} from '~/utils/statics'
-import {
-  getThemeFromChain,
-  getDimensionThemes,
-  getTheme,
-  getThemeByMode,
-} from '~/utils/theme'
+  calculateChainOptions,
+  calculateStylingAttrs,
+  pickStyledAttrs,
+} from '~/utils/attrs'
 import {
   chainOptions,
   chainOrOptions,
   chainReservedKeyOptions,
 } from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
-import { calculateStyles } from '~/utils/styles'
 import { getDimensionsMap } from '~/utils/dimensions'
 import {
-  pickStyledAttrs,
-  calculateStylingAttrs,
-  calculateChainOptions,
-} from '~/utils/attrs'
-import type {
-  RocketStyleComponent,
-  ExoticComponent,
-  InnerComponentProps,
-} from '~/types/rocketstyle'
-import type { RocketComponent } from '~/types/rocketComponent'
-import type {
-  Configuration,
-  ExtendedConfiguration,
-} from '~/types/configuration'
+  createStaticsChainingEnhancers,
+  createStaticsEnhancers,
+} from '~/utils/statics'
+import { calculateStyles } from '~/utils/styles'
+import {
+  getDimensionThemes,
+  getTheme,
+  getThemeByMode,
+  getThemeFromChain,
+} from '~/utils/theme'
+
+/**
+ * Core rocketstyle component factory. Creates a fully-featured React component
+ * that integrates theme management (with light/dark mode support), multi-tier
+ * WeakMap caching, dimension-based styling props, pseudo-state detection, and
+ * chainable static methods (`.attrs()`, `.theme()`, `.styles()`, `.config()`, etc.).
+ * @module rocketstyle
+ */
 
 // --------------------------------------------------------
 // cloneAndEnhance
@@ -59,8 +74,9 @@ type CloneAndEnhance = (
   opts: Partial<ExtendedConfiguration>,
 ) => ReturnType<typeof rocketComponent>
 
+/** Clones the current configuration and merges new options, returning a fresh rocketComponent. */
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
-  // @ts-ignore
+  // @ts-expect-error
   rocketComponent({
     ...defaultOpts,
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
@@ -86,9 +102,14 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 // assigned, so it can be even rendered as a valid component
 // or styles can be extended via its statics
 // --------------------------------------------------------
-// @ts-ignore
+/**
+ * Builds the final renderable React component with theme resolution,
+ * dimension mapping, pseudo-state context, HOC composition, and
+ * chainable static enhancers attached to the returned component.
+ */
+// @ts-expect-error
 const rocketComponent: RocketComponent = (options) => {
-  const { component, styles, DEBUG } = options
+  const { component, styles } = options
   const { styled } = config
 
   const _calculateStylingAttrs = calculateStylingAttrs({
@@ -101,7 +122,7 @@ const rocketComponent: RocketComponent = (options) => {
 
   // create styled component with all options.styles if available
   const STYLED_COMPONENT =
-    component.IS_ROCKETSTYLE ?? options.styled !== true
+    (component.IS_ROCKETSTYLE ?? options.styled !== true)
       ? component
       : styled(component)`
           ${calculateStyles(styles)};
@@ -131,7 +152,7 @@ const rocketComponent: RocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  // @ts-ignore
+  // @ts-expect-error
   // eslint-disable-next-line react/display-name
   const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
     (
@@ -311,21 +332,30 @@ const rocketComponent: RocketComponent = (options) => {
         ]),
         // if enforced to pass styling props, we pass them directly
         ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-        ref: ref ?? $rocketstyleRef ? internalRef : undefined,
+        ref: (ref ?? $rocketstyleRef) ? internalRef : undefined,
         // state props passed to styled component only, therefore the `$` symbol
         $rocketstyle: rocketstyle,
         $rocketstate: finalRocketstate,
       }
 
-      if (DEBUG && process.env.NODE_ENV !== 'production') {
-        console.log('[Rocketstyle] Debug mode enabled')
-        console.log(`component ${componentName}`)
-        console.log(finalProps)
-      }
-
       // all the development stuff injected
       if (process.env.NODE_ENV !== 'production') {
         finalProps['data-rocketstyle'] = componentName
+
+        if (options.DEBUG) {
+          const debugPayload = {
+            component: componentName,
+            rocketstate: finalRocketstate,
+            rocketstyle,
+            dimensions,
+            mode,
+            reservedPropNames: RESERVED_STYLING_PROPS_KEYS,
+            filteredAttrs: options.filterAttrs,
+          }
+
+          // biome-ignore lint/suspicious/noConsole: debug logging controlled by DEBUG option
+          console.debug(`[rocketstyle] ${componentName} render:`, debugPayload)
+        }
       }
 
       return <RenderComponent {...finalProps} />
@@ -368,7 +398,7 @@ const rocketComponent: RocketComponent = (options) => {
     options: options.statics,
   })
 
-  // @ts-ignore
+  // @ts-expect-error
   RocketComponent.attrs = (attrs, { priority, filter } = {}) => {
     const result: Record<string, any> = {}
 
@@ -387,16 +417,15 @@ const rocketComponent: RocketComponent = (options) => {
     return cloneAndEnhance(options, result)
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   RocketComponent.config = (opts = {}) => {
     const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
 
-    // @ts-ignore
     return cloneAndEnhance(options, result)
   }
 
   RocketComponent.statics = (opts) =>
-    // @ts-ignore
+    // @ts-expect-error
     cloneAndEnhance(options, { statics: opts })
 
   RocketComponent.getStaticDimensions = (theme) => {

@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "npmClient": "yarn",
+  "npmClient": "npm",
   "packages": ["packages/*"],
   "version": "1.2.2",
   "command": {
@@ -8,8 +8,9 @@
       "ignoreChanges": ["ignored-file", "*.md"]
     },
     "version": {
-      "allowBranch": "main",
-      "exact": true
+      "allowBranch": ["main", "feature/*", "release/*"],
+      "exact": true,
+      "preid": "alpha"
     }
   }
 }

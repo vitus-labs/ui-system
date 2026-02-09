@@ -8,6 +8,7 @@ import { isMultiKey } from './dimensions'
 // --------------------------------------------------------
 // Theme Mode Callback
 // --------------------------------------------------------
+/** Creates a mode-switching function that returns the light or dark value based on the active mode. */
 export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
   if (!mode || mode === 'light') return light
   return dark
@@ -16,15 +17,17 @@ export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
 // --------------------------------------------------------
 // Theme Mode Callback Check
 // --------------------------------------------------------
+/** Detects whether a value is a `themeModeCallback` function by comparing stringified signatures. */
 type IsModeCallback = (value: any) => boolean
 const isModeCallback: IsModeCallback = (value: any) =>
   typeof value === 'function' &&
-  //@ts-ignore
+  //@ts-expect-error
   value.toString() === themeModeCallback().toString()
 
 // --------------------------------------------------------
 // Get Theme From Chain
 // --------------------------------------------------------
+/** Reduces an array of chained `.theme()` callbacks into a single merged theme object. */
 type OptionFunc = (...arg: any) => Record<string, unknown>
 type GetThemeFromChain = (
   options: OptionFunc[] | undefined | null,
@@ -44,6 +47,10 @@ export const getThemeFromChain: GetThemeFromChain = (options, theme) => {
 // --------------------------------------------------------
 // calculate dimension themes
 // --------------------------------------------------------
+/**
+ * Computes the theme object for each dimension by evaluating its
+ * chained callbacks against the global theme, then strips nullable values.
+ */
 type GetDimensionThemes = (
   theme: Record<string, any>,
   options: Record<string, any>,
@@ -76,8 +83,9 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 // --------------------------------------------------------
 // combine values
 // --------------------------------------------------------
+/** Reduces an array of option callbacks by calling each with the given args and deep-merging results. */
 type CalculateChainOptions = (
-  options: Array<OptionFunc> | undefined | null,
+  options: OptionFunc[] | undefined | null,
   args: any[],
 ) => Record<string, any>
 
@@ -91,6 +99,11 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
 // --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
+/**
+ * Generates the final theme object by starting with the base theme
+ * and merging in dimension-specific theme slices based on the current
+ * rocketstate (active dimension values). Supports multi-key dimensions.
+ */
 export type GetTheme = (params: {
   rocketstate: Record<string, string | string[]>
   themes: Record<string, Record<string, any>>
@@ -102,7 +115,7 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
   let finalTheme = { ...baseTheme }
 
   Object.entries(rocketstate).forEach(
-    ([key, value]: [string, string | Array<string>]) => {
+    ([key, value]: [string, string | string[]]) => {
       const keyTheme: Record<string, any> = themes[key]!
 
       if (Array.isArray(value)) {
@@ -119,8 +132,12 @@ export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
 }
 
 // --------------------------------------------------------
-// generate theme
+// resolve theme by mode
 // --------------------------------------------------------
+/**
+ * Recursively traverses a theme object and resolves any `themeModeCallback`
+ * functions to their concrete light or dark values for the given mode.
+ */
 export type GetThemeByMode = (
   object: Record<string, any>,
   mode: 'light' | 'dark',

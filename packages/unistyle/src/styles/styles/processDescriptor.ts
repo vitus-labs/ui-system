@@ -1,0 +1,127 @@
+import type { BorderRadius } from '~/styles/shorthands/borderRadius'
+import type { Edge } from '~/styles/shorthands/edge'
+import type { Css } from '~/types'
+import type { Values } from '~/units/values'
+import type { PropertyDescriptor } from './propertyMap'
+import type { InnerTheme } from './types'
+
+type Calc = (...params: any[]) => ReturnType<Values>
+
+const toCssDecl = (css: string, v: unknown) =>
+  v == null ? '' : `${css}: ${v};`
+
+/**
+ * Converts a single property descriptor + theme values into a CSS fragment.
+ *
+ * - `simple`  — pass-through (no unit conversion)
+ * - `convert` — number→rem via `calc()`
+ * - `convert_fallback` — picks first non-null from multiple theme keys, then converts
+ * - `edge`    — delegates to the edge shorthand (margin, padding, inset, border-*)
+ * - `border_radius` — delegates to the border-radius shorthand
+ * - `special` — one-off logic (fullScreen, backgroundImage url wrapping, animation combo, etc.)
+ */
+const processSpecial = (
+  d: Extract<PropertyDescriptor, { kind: 'special' }>,
+  t: InnerTheme,
+  css: Css,
+): string | ReturnType<typeof css> => {
+  switch (d.id) {
+    case 'fullScreen':
+      if (!t.fullScreen) return ''
+      return css`
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      `
+
+    case 'backgroundImage':
+      if (!t.backgroundImage) return ''
+      return css`
+        background-image: url(${t.backgroundImage});
+      `
+
+    case 'animation': {
+      const parts = [t.keyframe, t.animation].filter(Boolean).join(' ')
+      return parts ? `animation: ${parts};` : ''
+    }
+
+    case 'hideEmpty':
+      if (!(__WEB__ && t.hideEmpty)) return ''
+      return css`
+        &:empty {
+          display: none;
+        }
+      `
+
+    case 'clearFix':
+      if (!(__WEB__ && t.clearFix)) return ''
+      return css`
+        &::after {
+          clear: both;
+          content: '';
+          display: table;
+        }
+      `
+
+    case 'extendCss':
+      return t.extendCss ?? ''
+
+    default:
+      return ''
+  }
+}
+
+const processDescriptor = (
+  d: PropertyDescriptor,
+  t: InnerTheme,
+  css: Css,
+  calc: Calc,
+  shorthand: ReturnType<Edge>,
+  borderRadiusFn: ReturnType<BorderRadius>,
+): string | ReturnType<typeof css> => {
+  switch (d.kind) {
+    case 'simple':
+      return toCssDecl(d.css, t[d.key])
+
+    case 'convert':
+      return toCssDecl(d.css, calc(t[d.key]))
+
+    case 'convert_fallback':
+      return toCssDecl(d.css, calc(...d.keys.map((k) => t[k])))
+
+    case 'edge':
+      return (
+        shorthand(d.property, {
+          full: t[d.keys.full],
+          x: t[d.keys.x],
+          y: t[d.keys.y],
+          top: t[d.keys.top],
+          left: t[d.keys.left],
+          bottom: t[d.keys.bottom],
+          right: t[d.keys.right],
+        }) ?? ''
+      )
+
+    case 'border_radius':
+      return (
+        borderRadiusFn({
+          full: t[d.keys.full],
+          top: t[d.keys.top],
+          bottom: t[d.keys.bottom],
+          left: t[d.keys.left],
+          right: t[d.keys.right],
+          topLeft: t[d.keys.topLeft],
+          topRight: t[d.keys.topRight],
+          bottomLeft: t[d.keys.bottomLeft],
+          bottomRight: t[d.keys.bottomRight],
+        }) ?? ''
+      )
+
+    case 'special':
+      return processSpecial(d, t, css)
+  }
+}
+
+export default processDescriptor

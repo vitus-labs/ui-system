@@ -1,18 +1,24 @@
+/**
+ * Higher-order component factory for rocketstyle components.
+ * Extracts dimension metadata and default attributes from the component's
+ * static configuration, auto-generates Storybook controls for dimensions
+ * and known Vitus Labs props, and attaches args/argTypes/parameters to the story.
+ */
 import { pick } from '@vitus-labs/core'
-import getTheme from '~/utils/theme'
+import type { RocketStoryConfiguration, StoryComponent } from '~/types'
 import { generateMainJSXCode } from '~/utils/code'
-import { extractDefaultBooleanProps } from '~/utils/dimensions'
-import type { StoryComponent, RocketStoryConfiguration } from '~/types'
 import {
-  createControls,
   convertDimensionsToControls,
+  createControls,
+  disableDimensionControls,
   getDefaultVitusLabsControls,
   makeStorybookControls,
-  disableDimensionControls,
 } from '~/utils/controls'
+import { extractDefaultBooleanProps } from '~/utils/dimensions'
+import getTheme from '~/utils/theme'
 
 export type RocketStory<P = {}> = (
-  WrappedComponent: any
+  WrappedComponent: any,
 ) => (params: RocketStoryConfiguration) => StoryComponent<P>
 
 const rocketStory: RocketStory =

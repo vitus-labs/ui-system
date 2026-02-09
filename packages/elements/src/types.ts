@@ -1,3 +1,11 @@
+/**
+ * Shared type definitions for the elements package. Provides responsive
+ * value types (single | array | breakpoint-map) for layout props like
+ * alignment and direction, plus utility types for merging prop objects
+ * and defining VL component signatures with static metadata.
+ */
+import type { BreakpointKeys, config, render } from '@vitus-labs/core'
+import type { MakeItResponsive } from '@vitus-labs/unistyle'
 import type {
   ComponentType,
   FC,
@@ -6,9 +14,6 @@ import type {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { MakeItResponsive } from '@vitus-labs/unistyle'
-import type { BreakpointKeys } from '@vitus-labs/core'
-import { config, render } from '@vitus-labs/core'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
@@ -37,7 +42,7 @@ export type InnerRef = ForwardedRef<any>
 
 export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
 
-export type Css = CssCallback | string
+export type Css = CssCallback | ReturnType<typeof config.css> | string
 
 export type isEmpty = null | undefined
 

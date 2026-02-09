@@ -1,9 +1,8 @@
-import React from 'react'
 import { Element } from '@vitus-labs/elements'
-import { styles } from '@vitus-labs/unistyle'
+import type { styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
 
-const theme = {
+const _theme = {
   fontSize: {
     a: 12,
     b: 12,
@@ -11,7 +10,7 @@ const theme = {
 }
 
 type Theme = Parameters<typeof styles>[0]['theme']
-type ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
+type _ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
 
 const defaultDimensions = {
   gaps: 'gap',
@@ -20,7 +19,7 @@ const defaultDimensions = {
   // multiple: { propName: 'multiple', multi: true },
 } as const
 
-const Test = rocketstyle<typeof theme, ThemeDefinition>()({
+const Test = rocketstyle({
   useBooleans: true,
   dimensions: defaultDimensions,
 })({
@@ -37,7 +36,7 @@ const Test = rocketstyle<typeof theme, ThemeDefinition>()({
     width: '',
     size: '',
   })
-  .theme<{ test: boolean }>((t, v, css) => ({
+  .theme<{ test: boolean }>((t, _v, css) => ({
     fontFamily: '',
     color: 'black',
     height: t.fontSize.a,

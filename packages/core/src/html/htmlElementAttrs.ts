@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 
 type Base = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,

@@ -1,5 +1,5 @@
-import React from 'react'
 import { element } from '../base'
+
 // import { withEqualWidthBeforeAfter } from '@vitus-labs/elements'
 
 const Wrapper = element
@@ -41,7 +41,7 @@ const Inner = element
         background-color: #fff;
         bottom: 58px;
       }
-    `
+    `,
   )
 
 export default (props) => (

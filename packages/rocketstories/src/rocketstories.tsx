@@ -1,18 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { get } from '@vitus-labs/core'
 import { isRocketComponent } from '@vitus-labs/rocketstyle'
-import * as rocketstory from '~/stories/rocketstories'
 import * as simplestory from '~/stories/base'
+import * as rocketstory from '~/stories/rocketstories'
 import type {
-  Control,
-  TObj,
   Configuration,
-  RocketType,
+  Control,
   ExtractProps,
-  RenderStoryOptions,
   ListStoryOptions,
+  RenderStoryOptions,
+  RocketType,
+  TObj,
 } from '~/types'
 
+/**
+ * Clones the current configuration, merges in new options,
+ * and returns a fresh IRocketStories instance for immutable chaining.
+ */
 const cloneAndEhnance = (
   defaultOptions: Configuration,
   options: Partial<Configuration>,
@@ -42,9 +45,15 @@ const cloneAndEhnance = (
   return createRocketStories({ ...result, name: finalStoryName })
 }
 
-// --------------------------------------------------------
-// create rocket stories
-// --------------------------------------------------------
+/**
+ * Chainable builder interface returned by the rocketstories factory.
+ * Provides methods to generate Storybook stories (main, dimension, list, render)
+ * and chainable configuration methods (attrs, controls, storyOptions, config, etc.).
+ *
+ * @typeParam OA - The component's own prop types
+ * @typeParam RA - The rocketstyle dimension attributes (unknown for non-rocketstyle components)
+ * @typeParam ISRS - Whether the wrapped component is a rocketstyle component
+ */
 export interface IRocketStories<
   OA extends TObj = {},
   RA extends TObj | unknown = unknown,
@@ -62,7 +71,7 @@ export interface IRocketStories<
   // --------------------------------------------------------
   dimension: <P extends keyof RA>(
     dimension: ISRS extends true ? P : never,
-    options?: Partial<{ ignore: Array<RA[P]> }>,
+    options?: Partial<{ ignore: RA[P][] }>,
   ) => ReturnType<rocketstory.RenderDimension<OA>> | null
 
   // RENDER story
@@ -124,8 +133,13 @@ export interface IRocketStories<
   ) => IRocketStories<OA, RA, ISRS>
 }
 
+/**
+ * Core story generation pipeline. Takes a full Configuration object and returns
+ * an IRocketStories builder. Delegates to rocketstory or simplestory renderers
+ * depending on whether the component is a rocketstyle component.
+ */
 type CreateRocketStories = (options: Configuration) => IRocketStories
-// @ts-ignore
+// @ts-expect-error
 const createRocketStories: CreateRocketStories = (options) => {
   const isRocket = isRocketComponent(options.component)
 

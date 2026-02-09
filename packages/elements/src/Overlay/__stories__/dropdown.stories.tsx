@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React from 'react'
+
 import { config } from '@vitus-labs/core'
 import Element, { withEqualSizeBeforeAfter } from '../../Element'
 import Overlay from '..'

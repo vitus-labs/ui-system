@@ -1,4 +1,4 @@
-import React, { type FC } from 'react'
+import type { FC } from 'react'
 import Element from '~/Element'
 import List, { withActiveState } from '~/List'
 
@@ -39,13 +39,11 @@ export const listWithChildren = () => (
 
 export const listWithFragmentChildren = () => (
   <List>
-    <>
-      <Item>Label</Item>
-      <Item>Label</Item>
-      <Item>Label</Item>
-      <Item>Label</Item>
-      <Item>Label</Item>
-    </>
+    <Item>Label</Item>
+    <Item>Label</Item>
+    <Item>Label</Item>
+    <Item>Label</Item>
+    <Item>Label</Item>
   </List>
 )
 
@@ -103,12 +101,11 @@ export const ItemPropsAsAnObject = () => {
   const Item =
     () =>
     // eslint-disable-next-line react/no-unstable-nested-components
-    ({ name, surname, ...props }) =>
-      (
-        <span {...props}>
-          | {name} - {surname} |
-        </span>
-      )
+    ({ name, surname, ...props }) => (
+      <span {...props}>
+        | {name} - {surname} |
+      </span>
+    )
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }
@@ -142,15 +139,10 @@ export const renderCustomComponentInItem = () => {
     { name: 'c' },
     { name: 'd' },
   ]
-  const itemProps = (props) => {
-    const { key, first, last, odd, even, position } = props
-
-    return {
-      onClick: () => {
-        console.log(key, first, last, odd, even, position)
-      },
-    }
-  }
+  const itemProps = () => ({
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: story demo
+    onClick: () => {},
+  })
 
   return <List data={data} component={Item} itemProps={itemProps} />
 }

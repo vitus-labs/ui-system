@@ -1,4 +1,4 @@
-import type { MouseEventHandler, FocusEventHandler } from 'react'
+import type { FocusEventHandler, MouseEventHandler } from 'react'
 
 export type PseudoActions = {
   onMouseEnter: MouseEventHandler

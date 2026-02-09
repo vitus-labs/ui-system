@@ -1,11 +1,16 @@
-import type {
-  ComponentType,
-  ForwardRefExoticComponent,
-  ReactNode,
-  FC,
-} from 'react'
+/**
+ * Configuration and shared type definitions for the rocketstories package.
+ * Defines story configuration shapes, control types for Storybook arg tables,
+ * component type guards (RocketType vs ElementType), and rendering option types.
+ */
 import type { ListProps } from '@vitus-labs/elements'
 import type { RocketComponentType } from '@vitus-labs/rocketstyle'
+import type {
+  ComponentType,
+  FC,
+  ForwardRefExoticComponent,
+  ReactNode,
+} from 'react'
 import type { T_CONTROL_TYPES } from '~/constants/controls'
 
 export type TObj = Record<string, unknown>
@@ -41,7 +46,7 @@ export type ControlConfiguration = {
   valueType?: string
   description?: string
   group?: string
-  options?: ArrayLike<any>
+  options?: any[]
   disable?: boolean
 }
 
@@ -50,7 +55,7 @@ export type Control = ControlConfiguration
 export type Controls = Record<string, Control>
 
 export type StorybookControl = {
-  control: {
+  control?: {
     type: string
   }
   description?: string
@@ -98,7 +103,7 @@ export type StoryConfiguration = Omit<Configuration, 'component'> & {
 }
 
 export type SimpleValue = string | number | boolean
-export type Obj = Record<string, SimpleValue | Array<SimpleValue>>
+export type Obj = Record<string, SimpleValue | SimpleValue[]>
 
 export type PartialControls = Record<string, Partial<Control>>
 

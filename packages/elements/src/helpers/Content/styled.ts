@@ -1,8 +1,15 @@
+/**
+ * Styled component for content areas (before/content/after). Applies
+ * responsive flex alignment, gap spacing between slots based on parent
+ * direction (margin-right for inline, margin-bottom for rows), and
+ * equalCols flex distribution. The "content" slot gets `flex: 1` to
+ * fill remaining space between before and after.
+ */
 import { config } from '@vitus-labs/core'
 import {
-  makeItResponsive,
   alignContent,
   extendCss,
+  makeItResponsive,
   value,
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
@@ -49,7 +56,7 @@ const calculateGap = ({
   type: ThemeProps['contentType']
   value: any
 }) => {
-  if (!direction || !type) return undefined
+  if (!direction || !type || type === 'content') return undefined
 
   const finalStyles = `${gapDimensions[direction][type]}: ${value};`
 
@@ -59,15 +66,7 @@ const calculateGap = ({
 // --------------------------------------------------------
 // calculations of styles to be rendered
 // --------------------------------------------------------
-const styles: ResponsiveStylesCallback = ({
-  css,
-  theme: t,
-  rootSize,
-}: {
-  css: typeof config.css
-  theme: ThemeProps
-  rootSize: number
-}) => css`
+const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
   ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
@@ -76,15 +75,17 @@ const styles: ResponsiveStylesCallback = ({
 
   ${t.equalCols && equalColsCSS};
 
-  ${t.gap &&
-  t.contentType &&
-  calculateGap({
-    direction: t.parentDirection,
-    type: t.contentType,
-    value: value(t.gap, rootSize),
-  })};
+  ${
+    t.gap &&
+    t.contentType &&
+    calculateGap({
+      direction: t.parentDirection,
+      type: t.contentType,
+      value: value(t.gap, rootSize),
+    })
+  };
 
-  ${t.extraStyles && extendCss(t.extraStyles)};
+  ${t.extraStyles && extendCss(t.extraStyles as any)};
 `
 
 const platformCSS = __WEB__ ? `box-sizing: border-box;` : ''

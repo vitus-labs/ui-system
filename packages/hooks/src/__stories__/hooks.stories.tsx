@@ -1,4 +1,3 @@
-import React from 'react'
 import { useWindowResize } from '..'
 
 export default {
@@ -7,9 +6,7 @@ export default {
 }
 
 export const test = () => {
-  const { width } = useWindowResize()
-
-  console.log(width)
+  const _size = useWindowResize()
 
   return <div>hell world</div>
 }

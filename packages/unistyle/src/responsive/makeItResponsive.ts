@@ -1,10 +1,10 @@
 import { isEmpty } from '@vitus-labs/core'
 import type { Css } from '~/types'
-import createMediaQueries from './createMediaQueries'
-import sortBreakpoints from './sortBreakpoints'
+import type createMediaQueries from './createMediaQueries'
 import normalizeTheme from './normalizeTheme'
-import transformTheme from './transformTheme'
 import optimizeTheme from './optimizeTheme'
+import type sortBreakpoints from './sortBreakpoints'
+import transformTheme from './transformTheme'
 
 type CustomTheme = Record<
   string,
@@ -46,8 +46,18 @@ export type MakeItResponsive = ({
   css: any
   styles: MakeItResponsiveStyles
   normalize?: boolean
-}) => ({ theme }: { theme?: Theme }) => any
+}) => (props: { theme?: Theme; [key: string]: any }) => any
 
+/**
+ * Core responsive engine used by every styled component in the system.
+ *
+ * Returns a styled-components interpolation function that:
+ * 1. Reads the component's theme prop (via `key` or direct `theme`)
+ * 2. Without breakpoints → renders plain CSS
+ * 3. With breakpoints → normalizes, transforms (property-per-breakpoint →
+ *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
+ *    and wraps each breakpoint's styles in the appropriate `@media` query.
+ */
 const makeItResponsive: MakeItResponsive =
   ({ theme: customTheme, key = '', css, styles, normalize = false }) =>
   ({ theme = {}, ...props }) => {
@@ -93,14 +103,14 @@ const makeItResponsive: MakeItResponsive =
       breakpoints: sortedBreakpoints,
     })
 
-    return sortedBreakpoints.map((item) => {
+    return sortedBreakpoints.map((item: string) => {
       const breakpointTheme = optimizedTheme[item]
 
       if (!breakpointTheme || !media) return ''
 
       const result = renderStyles(breakpointTheme)
 
-      return media[item]`
+      return (media as Record<string, any>)[item]`
         ${result};
       `
     })

@@ -1,18 +1,18 @@
-import type { ReactNode } from 'react'
 import type { HTMLTags } from '@vitus-labs/core'
+import type { ReactNode } from 'react'
 import type {
-  ContentDirection,
+  AlignX,
+  AlignY,
   ContentAlignX,
   ContentAlignY,
   ContentBoolean,
+  ContentDirection,
   ContentSimpleValue,
   Css,
   Direction,
-  AlignX,
-  AlignY,
-  ResponsiveBoolType,
-  Responsive,
   ExtendCss,
+  Responsive,
+  ResponsiveBoolType,
 } from '~/types'
 
 export interface Props {

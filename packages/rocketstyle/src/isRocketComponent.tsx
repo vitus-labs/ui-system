@@ -5,7 +5,7 @@ const isRocketComponent: IsRocketComponent = (component) => {
     component &&
     typeof component === 'object' &&
     component !== null &&
-    Object.prototype.hasOwnProperty.call(component, 'IS_ROCKETSTYLE')
+    Object.hasOwn(component, 'IS_ROCKETSTYLE')
   ) {
     return true
   }

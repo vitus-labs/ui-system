@@ -1,23 +1,16 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "__stories__",
-    "lib"
-  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "lib", "src/__tests__", "src/__stories__"],
   "compilerOptions": {
+    "jsx": "react-jsx",
     "strict": true,
-    "types": ["@vitus-labs/tools-rollup/global"],
+    "types": ["@vitus-labs/tools-rolldown/global"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
+      "~/*": ["src/*"]
     }
   }
 }

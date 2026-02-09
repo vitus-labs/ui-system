@@ -17,4 +17,4 @@ export const CONTROL_TYPES = [
   'component',
 ] as const
 
-export type T_CONTROL_TYPES = typeof CONTROL_TYPES[number]
+export type T_CONTROL_TYPES = (typeof CONTROL_TYPES)[number]

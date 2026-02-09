@@ -1,4 +1,3 @@
-import React from 'react'
 import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/index'
@@ -150,10 +149,7 @@ const Button = rocketstyle()({ name: 'Button', component: Element })
         } = $rocketstyle
 
         const baseTheme = makeItResponsive({
-          theme:
-            {
-              ...restStyles,
-            } || {},
+          theme: restStyles,
           styles,
           css,
         })
@@ -182,60 +178,74 @@ const Button = rocketstyle()({ name: 'Button', component: Element })
           /* -------------------------------------------------------- */
           ${baseTheme};
 
-          ${!disabled &&
-          isDynamic &&
-          css`
+          ${
+            !disabled &&
+            isDynamic &&
+            css`
             cursor: pointer;
-          `}
+          `
+          }
 
           /* -------------------------------------------------------- */
         /* HOVER STATE */
         /* -------------------------------------------------------- */
-        ${!disabled &&
+        ${
+          !disabled &&
           !active &&
           isDynamic &&
           css`
             &:hover {
               ${hoverTheme};
             }
-          `};
+          `
+        };
 
-          ${hover &&
-          css`
+          ${
+            hover &&
+            css`
             ${hoverTheme};
-          `};
+          `
+          };
 
           /* -------------------------------------------------------- */
           /* FOCUS STATE */
           /* -------------------------------------------------------- */
-          ${!disabled &&
-          css`
+          ${
+            !disabled &&
+            css`
             &:focus {
               ${focusTheme};
             }
-          `};
+          `
+          };
 
-          ${focus &&
-          css`
+          ${
+            focus &&
+            css`
             ${focusTheme};
-          `};
+          `
+          };
 
           /* -------------------------------------------------------- */
           /* ACTIVE / PRESSED STATE */
           /* -------------------------------------------------------- */
-          ${!disabled &&
-          isDynamic &&
-          css`
+          ${
+            !disabled &&
+            isDynamic &&
+            css`
             &:active {
               ${activeTheme};
             }
-          `};
+          `
+          };
 
-          ${!disabled &&
-          (active || pressed) &&
-          css`
+          ${
+            !disabled &&
+            (active || pressed) &&
+            css`
             ${activeTheme};
-          `};
+          `
+          };
         `
       }};
     `,
@@ -306,12 +316,9 @@ export const ButtonConsumer = rocketstyle()({
     `,
   )
 
-const newComponent = (props: any) => <Button {...props} />
-
 export const ButtonWithRocketstyle = Button.config({
   name: 'ButtonWithRocketstyle',
   provider: true,
-  component: newComponent,
 })
 
 export default Button

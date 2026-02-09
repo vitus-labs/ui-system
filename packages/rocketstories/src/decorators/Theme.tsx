@@ -1,7 +1,12 @@
-import React, { type ComponentType, type ReactElement } from 'react'
+/**
+ * Storybook decorator that wraps each story in the rocketstyle and unistyle
+ * theme providers. Reads the theme from the global window store and applies
+ * it in "light" mode so that all rocketstyle components receive proper theming.
+ */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Provider } from '@vitus-labs/rocketstyle'
 import { Provider as provider } from '@vitus-labs/unistyle'
+import type { ComponentType, ReactElement } from 'react'
 import getTheme from '~/utils/theme'
 
 type ThemeDecoratorType = (Story: ComponentType) => ReactElement

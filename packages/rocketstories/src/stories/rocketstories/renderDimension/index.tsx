@@ -1,37 +1,44 @@
+/**
+ * Renders a dimension story for a rocketstyle component. Iterates over all
+ * values of the specified dimension and renders each as an Item (or a
+ * PseudoList when pseudo-state visualization is enabled). Generates
+ * corresponding JSX code snippets and Storybook controls.
+ */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { Fragment } from 'react'
-import { pick, isEmpty } from '@vitus-labs/core'
+
+import { isEmpty, pick } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
-import NotFound from '~/components/NotFound'
+import { Fragment } from 'react'
 import { Heading } from '~/components/base'
-import getTheme from '~/utils/theme'
-import { createJSXCodeArray } from '~/utils/code'
-import {
-  createControls,
-  convertDimensionsToControls,
-  getDefaultVitusLabsControls,
-  makeStorybookControls,
-  disableDimensionControls,
-} from '~/utils/controls'
+import NotFound from '~/components/NotFound'
 import type {
   RocketDimensions,
-  StoryComponent,
   RocketStoryConfiguration,
+  StoryComponent,
 } from '~/types'
-import Provider from './context'
+import { createJSXCodeArray } from '~/utils/code'
+import {
+  convertDimensionsToControls,
+  createControls,
+  disableDimensionControls,
+  getDefaultVitusLabsControls,
+  makeStorybookControls,
+} from '~/utils/controls'
+import getTheme from '~/utils/theme'
 import Item from './components/Item'
 import PseudoList from './components/PseudoList'
+import Provider from './context'
 
 export type RenderDimension<P = {}> = (
   dimension: RocketDimensions,
   params: RocketStoryConfiguration & {
     ignore: any
-  }
+  },
 ) => StoryComponent<P>
 
 const renderDimension: RenderDimension = (
   dimension,
-  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] }
+  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] },
 ) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
@@ -99,20 +106,20 @@ const renderDimension: RenderDimension = (
       } as const)
     : {}
 
+  const innerGap = storyOptions.gap ? storyOptions.gap / 2 : 0
+
   const Enhanced: StoryComponent = (props) => (
     <WrapElement {...wrapperProps}>
       {Object.keys(currentDimension).map((item) => {
-        // const storyName = `${dimension}-${item}`
         const shouldBeIgnored = ignore.includes(item)
         const key = `${dimension}-${item}`
 
         const storyProps = {
-          key,
           'data-story': key,
           contentDirection: revertedDirection,
           contentAlignX: storyOptions.alignX,
           contentAlignY: storyOptions.alignY,
-          style: { gap: storyOptions.gap ? storyOptions.gap / 2 : 0 },
+          style: { gap: innerGap },
         } as const
 
         // do not render ignored dimension keys
@@ -120,7 +127,7 @@ const renderDimension: RenderDimension = (
 
         if (storyOptions.pseudo === true) {
           return (
-            <WrapElement contentDirection="rows" contentAlignY="top">
+            <WrapElement key={key} contentDirection="rows" contentAlignY="top">
               <Heading
                 level1
                 label={item.charAt(0).toUpperCase() + item.slice(1)}
@@ -144,7 +151,7 @@ const renderDimension: RenderDimension = (
         }
 
         return (
-          <WrapElement {...storyProps}>
+          <WrapElement key={key} {...storyProps}>
             <Provider component={component}>
               <Item
                 {...{
@@ -177,7 +184,7 @@ const renderDimension: RenderDimension = (
           dimension,
           currentDimension,
           useBooleans,
-          isMultiKey
+          isMultiKey,
         ),
       },
     },

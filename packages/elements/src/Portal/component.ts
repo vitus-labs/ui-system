@@ -1,4 +1,11 @@
-import { useEffect, useState, type ReactNode } from 'react'
+/**
+ * Portal component that creates a new DOM element on mount, appends it to
+ * the target location (defaults to document.body), and uses React's
+ * createPortal to render children into it. The DOM element is cleaned up
+ * on unmount. Accepts a custom DOMLocation for rendering into specific
+ * containers (e.g., a modal root).
+ */
+import { type ReactNode, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'

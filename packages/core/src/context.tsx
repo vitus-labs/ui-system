@@ -1,9 +1,13 @@
-import React, { createContext, useMemo } from 'react'
 import type { FC, ReactNode } from 'react'
+import { createContext, useMemo } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 import type { Breakpoints } from '~/types'
 
+/**
+ * Internal React context shared across all @vitus-labs packages.
+ * Carries the theme object plus any extra provider props.
+ */
 const context = createContext<any>({})
 const VitusLabsProvider = context.Provider
 
@@ -21,9 +25,18 @@ type ProviderType = Partial<
   } & Record<string, any>
 >
 
+/**
+ * Dual-layer provider that feeds both the internal VitusLabs context
+ * and an optional external styling provider (e.g. styled-components'
+ * ThemeProvider). When no theme is supplied, renders children directly.
+ */
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.ExternalProvider, [])
-  const context = useMemo(() => ({ theme, ...props }), [theme, props])
+  const context = useMemo(
+    () => ({ theme, ...props }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, ...Object.values(props), props],
+  )
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   if (isEmpty(theme) || !theme) return <>{children}</>

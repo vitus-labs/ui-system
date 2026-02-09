@@ -1,8 +1,9 @@
 import { isEmpty } from '@vitus-labs/core'
 
-// --------------------------------------------------------
-// helpers for create statics on component
-// --------------------------------------------------------
+/**
+ * Copies user-defined statics from `.statics()` into the component's
+ * `meta` object. These are accessible at `Component.meta.myStatic`.
+ */
 type CreateStaticsEnhancers = (params: {
   context: Record<string, any>
   options: Record<string, any>

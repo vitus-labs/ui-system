@@ -1,27 +1,52 @@
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { omitCtxKeys } from '~/utils'
-import useGridContext from '~/useContext'
 import { ContainerContext, RowContext } from '~/context'
 import type { ElementType } from '~/types'
+import useGridContext from '~/useContext'
+import { omitCtxKeys } from '~/utils'
 import Styled from './styled'
+
+/**
+ * Row component that reads inherited config from ContainerContext, merges
+ * it with its own props, and provides the resolved grid settings (columns,
+ * gap, gutter) to Col children via RowContext. Renders a flex-wrap container
+ * with negative margins to offset column gutters.
+ */
+
+const DEV_PROPS: Record<string, string> =
+  process.env.NODE_ENV !== 'production' ? { 'data-coolgrid': 'row' } : {}
 
 const Component: ElementType<
   ['containerWidth', 'width', 'rowComponent', 'rowCss']
 > = ({ children, component, css, contentAlignX: rowAlignX, ...props }) => {
   const parentCtx = useContext(ContainerContext)
 
-  const { columns, gap, gutter, rowComponent, rowCss, contentAlignX, ...ctx } =
-    useGridContext({ ...parentCtx, ...props })
+  const {
+    columns,
+    gap,
+    gutter,
+    rowComponent,
+    rowCss,
+    contentAlignX,
+    containerWidth,
+    size,
+    padding,
+    colCss,
+    colComponent,
+  } = useGridContext({ ...parentCtx, ...props })
 
   const context = useMemo(
-    () => ({ ...ctx, columns, gap, gutter }),
-    [ctx, columns, gap, gutter]
-  )
-
-  const finalComponent = useMemo(
-    () => component || rowComponent,
-    [component, rowComponent]
+    () => ({
+      containerWidth,
+      size,
+      padding,
+      colCss,
+      colComponent,
+      columns,
+      gap,
+      gutter,
+    }),
+    [containerWidth, size, padding, colCss, colComponent, columns, gap, gutter],
   )
 
   const finalProps = useMemo(
@@ -34,24 +59,15 @@ const Component: ElementType<
         extraStyles: css || rowCss,
       },
     }),
-    [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss]
+    [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss],
   )
-
-  const getDevProps = () => {
-    const result = {}
-    if (process.env.NODE_ENV !== 'production') {
-      result['data-coolgrid'] = 'row'
-    }
-
-    return result
-  }
 
   return (
     <Styled
       {...omitCtxKeys(props)}
-      as={finalComponent}
+      as={component || rowComponent}
       {...finalProps}
-      {...getDevProps()}
+      {...DEV_PROPS}
     >
       <RowContext.Provider value={context}>{children}</RowContext.Provider>
     </Styled>

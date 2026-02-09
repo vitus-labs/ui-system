@@ -19,35 +19,34 @@
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/unistyle",
   "description": "Universal styles",
   "scripts": {
-    "prepublish": "yarn build",
-    "build": "yarn vl_build",
-    "build:watch": "yarn vl_build-watch",
-    "lint:css": "stylelint src/*.ts src/*.tsx",
-    "lint:ts": "eslint src/*",
-    "lint": "yarn lint:css && yarn lint:ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
-    "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info"
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "cover": "coveralls < .coverage/lcov.info",
+    "typecheck": "tsc --noEmit"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitus-labs/ui-system.git"
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/unistyle"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 18"
+    "react": ">= 19"
   },
   "devDependencies": {
     "@vitus-labs/core": "1.2.2",
-    "@vitus-labs/tools-babel": "^1.5.1",
-    "@vitus-labs/tools-rollup": "^1.5.1",
-    "@vitus-labs/tools-typescript": "^1.5.1"
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0"
   }
 }

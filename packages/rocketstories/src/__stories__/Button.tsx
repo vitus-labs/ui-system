@@ -1,4 +1,3 @@
-import React from 'react'
 import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import rocketstyle from '@vitus-labs/rocketstyle'

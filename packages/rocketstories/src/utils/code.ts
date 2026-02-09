@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { get } from '@vitus-labs/core'
-import type { Control, SimpleValue, Obj } from '~/types'
+import type { Control, Obj, SimpleValue } from '~/types'
 
 // --------------------------------------------------------
 // parseProps
@@ -8,9 +8,9 @@ import type { Control, SimpleValue, Obj } from '~/types'
 type ObjValue = Control
 
 type ParseProps = <
-  T extends Record<string, SimpleValue | Array<SimpleValue> | ObjValue>
+  T extends Record<string, SimpleValue | SimpleValue[] | ObjValue>,
 >(
-  props: T
+  props: T,
 ) => Record<keyof T, unknown>
 
 const parseProps: ParseProps = (props) =>
@@ -46,7 +46,7 @@ const parseProps: ParseProps = (props) =>
 // --------------------------------------------------------
 // stringifyArray
 // --------------------------------------------------------
-type StringifyArray = (props: Array<unknown>) => string
+type StringifyArray = (props: unknown[]) => string
 
 const stringifyArray: StringifyArray = (props) => {
   let result = '['
@@ -147,7 +147,7 @@ const stringifyProps: StringifyProps = (props) => {
   }, '')
 }
 
-const parseComponentName = (name) => {
+const parseComponentName = (name: string) => {
   const helper = name.split('/')
 
   if (helper.length > 1) {
@@ -157,9 +157,10 @@ const parseComponentName = (name) => {
   return name
 }
 
-// --------------------------------------------------------
-// createJSXCode
-// --------------------------------------------------------
+/**
+ * Generates a single self-closing JSX tag string for the given component
+ * name and props, e.g. `<Button primary size="large" />`.
+ */
 type CreateJSXCode = (name: string, props: Obj) => string
 
 export const createJSXCode: CreateJSXCode = (name, props) =>
@@ -174,7 +175,7 @@ type CreateJSXCodeArray = (
   dimensionName: string,
   dimensions: Obj,
   useBooleans: boolean,
-  isMultiKey: boolean
+  isMultiKey: boolean,
 ) => string
 
 export const createJSXCodeArray: CreateJSXCodeArray = (
@@ -183,7 +184,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   dimensionName,
   dimensions,
   useBooleans,
-  isMultiKey
+  isMultiKey,
 ) => {
   if (!dimensions) return `// nothing here`
 
@@ -204,7 +205,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   if (useBooleans) {
     result += `\n\n`
     result += `// Or alternatively use boolean ${dimensionName} props (${Object.keys(
-      dimensions
+      dimensions,
     ).toString()})`
     result += `\n`
 
@@ -218,7 +219,7 @@ export const createJSXCodeArray: CreateJSXCodeArray = (
   return result
 }
 
-const addBooleanCodeComment = (values) => {
+const addBooleanCodeComment = (values: string[]) => {
   let result = `\n\n`
   result += `// Or alternatively use boolean props (e.g. ${values})`
   result += `\n`
@@ -226,9 +227,11 @@ const addBooleanCodeComment = (values) => {
   return result
 }
 
-// --------------------------------------------------------
-// createMainJSX
-// --------------------------------------------------------
+/**
+ * Generates the JSX code snippet shown in the Storybook docs panel for the
+ * main story. Includes the primary JSX tag and, when boolean dimension
+ * shorthand is available, an alternative boolean-prop usage example.
+ */
 type GenerateMainJSXCode = (params: {
   name: string
   props: Record<string, string>

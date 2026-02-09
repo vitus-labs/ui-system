@@ -1,128 +1,112 @@
-import { value } from '~/units'
 import type { PropertyValue } from '~/types'
+import { value } from '~/units'
 
-const isValidValue = (value) => !!value || value === 0
+const isValidValue = (v: unknown) => !!v || v === 0
+
+type PV = PropertyValue | null | undefined
+
+type CornerValues = {
+  full: PV
+  top: PV
+  bottom: PV
+  left: PV
+  right: PV
+  topLeft: PV
+  topRight: PV
+  bottomLeft: PV
+  bottomRight: PV
+}
+
+const hasAnyValue = (v: CornerValues) =>
+  isValidValue(v.full) ||
+  isValidValue(v.top) ||
+  isValidValue(v.bottom) ||
+  isValidValue(v.left) ||
+  isValidValue(v.right) ||
+  isValidValue(v.topLeft) ||
+  isValidValue(v.topRight) ||
+  isValidValue(v.bottomLeft) ||
+  isValidValue(v.bottomRight)
+
+// topLeft - topRight - bottomRight - bottomLeft
+const resolveCorners = (v: CornerValues) => {
+  const corners: PV[] = [v.full, v.full, v.full, v.full]
+
+  if (isValidValue(v.top)) {
+    corners[0] = v.top
+    corners[1] = v.top
+  }
+  if (isValidValue(v.bottom)) {
+    corners[2] = v.bottom
+    corners[3] = v.bottom
+  }
+  if (isValidValue(v.left)) {
+    corners[0] = v.left
+    corners[3] = v.left
+  }
+  if (isValidValue(v.right)) {
+    corners[1] = v.right
+    corners[2] = v.right
+  }
+
+  if (isValidValue(v.topLeft)) corners[0] = v.topLeft
+  if (isValidValue(v.topRight)) corners[1] = v.topRight
+  if (isValidValue(v.bottomRight)) corners[2] = v.bottomRight
+  if (isValidValue(v.bottomLeft)) corners[3] = v.bottomLeft
+
+  return corners
+}
+
+const formatShorthand = (corners: PV[], calc: (p: PV) => any) => {
+  const [tl, tr, br, bl] = corners
+
+  if (corners.every((val, _, arr) => val === arr[0]))
+    return `border-radius: ${calc(tl)};`
+
+  if (tl === br && tr === bl) return `border-radius: ${calc(tl)} ${calc(tr)};`
+
+  if (tl && tr === bl && br)
+    return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)};`
+
+  return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)} ${calc(bl)};`
+}
+
+const CORNER_CSS = [
+  'border-top-left-radius',
+  'border-top-right-radius',
+  'border-bottom-right-radius',
+  'border-bottom-left-radius',
+] as const
+
+const formatIndividual = (corners: PV[], calc: (p: PV) => any) => {
+  let output = ''
+  for (let i = 0; i < corners.length; i++) {
+    if (isValidValue(corners[i]))
+      output += `${CORNER_CSS[i]}: ${calc(corners[i])};`
+  }
+  return output
+}
 
 export type BorderRadius = (
   rootSize?: number,
-) => (props: {
-  full: PropertyValue | null | undefined
-  top: PropertyValue | null | undefined
-  bottom: PropertyValue | null | undefined
-  left: PropertyValue | null | undefined
-  right: PropertyValue | null | undefined
-  topLeft: PropertyValue | null | undefined
-  topRight: PropertyValue | null | undefined
-  bottomLeft: PropertyValue | null | undefined
-  bottomRight: PropertyValue | null | undefined
-}) => string | null
+) => (props: CornerValues) => string | null
 
-// eslint-disable-next-line import/prefer-default-export
-const borderRadius: BorderRadius =
-  (rootSize) =>
-  ({
-    full,
-    top,
-    bottom,
-    left,
-    right,
-    topLeft,
-    topRight,
-    bottomLeft,
-    bottomRight,
-  }) => {
-    if (
-      !isValidValue(full) &&
-      !isValidValue(top) &&
-      !isValidValue(bottom) &&
-      !isValidValue(left) &&
-      !isValidValue(right) &&
-      !isValidValue(topLeft) &&
-      !isValidValue(topRight) &&
-      !isValidValue(bottomLeft) &&
-      !isValidValue(bottomRight)
-    ) {
-      return null
-    }
+/**
+ * Border radius shorthand processor. Accepts full/top/bottom/left/right
+ * and individual corner values. Produces the most compact CSS output —
+ * single-value, two-value, three-value, or four-value shorthand
+ * when all corners are specified, or individual corner properties otherwise.
+ */
+const borderRadius: BorderRadius = (rootSize) => (props) => {
+  if (!hasAnyValue(props)) return null
 
-    const calc = (param) => value(param, rootSize)
+  const calc = (param: PV) => value(param as any, rootSize)
+  const corners = resolveCorners(props)
 
-    // topLeft - topRight - bottomRight - bottomLeft
-    const values = [full, full, full, full]
+  if (corners.every((val) => isValidValue(val)))
+    return formatShorthand(corners, calc)
 
-    if (isValidValue(top)) {
-      values[0] = top
-      values[1] = top
-    }
-
-    if (isValidValue(bottom)) {
-      values[2] = bottom
-      values[3] = bottom
-    }
-
-    if (isValidValue(left)) {
-      values[0] = left
-      values[3] = left
-    }
-
-    if (isValidValue(right)) {
-      values[1] = right
-      values[2] = right
-    }
-
-    if (isValidValue(topLeft)) {
-      values[0] = topLeft
-    }
-
-    if (isValidValue(topRight)) {
-      values[1] = topRight
-    }
-
-    if (isValidValue(bottomRight)) {
-      values[2] = bottomRight
-    }
-
-    if (isValidValue(bottomLeft)) {
-      values[3] = bottomLeft
-    }
-
-    const [tl, tr, br, bl] = values
-
-    if (values.every((val) => isValidValue(val))) {
-      if (values.every((val, _, arr) => val === arr[0])) {
-        return `border-radius: ${calc(tl)};`
-      }
-
-      if (tl === br && tr === bl) {
-        return `border-radius: ${calc(tl)} ${calc(tr)};`
-      }
-
-      if (tl && tr === bl && br) {
-        return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)};`
-      }
-
-      return `border-radius: ${calc(tl)} ${calc(tr)} ${calc(br)} ${calc(bl)};`
-    }
-
-    let output = ''
-
-    if (isValidValue(tl)) {
-      output += `border-top-left-radius: ${calc(tl)};`
-    }
-
-    if (isValidValue(tr)) {
-      output += `border-top-right-radius: ${calc(tr)};`
-    }
-
-    if (isValidValue(br)) {
-      output += `border-bottom-right-radius: ${calc(br)};`
-    }
-
-    if (isValidValue(bl)) {
-      output += `border-bottom-left-radius: ${calc(bl)};`
-    }
-
-    return output
-  }
+  return formatIndividual(corners, calc)
+}
 
 export default borderRadius

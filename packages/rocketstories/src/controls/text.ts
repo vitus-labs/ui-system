@@ -1,3 +1,8 @@
+/**
+ * Default Storybook control definitions for Text-based components.
+ * Provides controls for paragraph mode, HTML tag selection, children/label
+ * content, and CSS extension.
+ */
 import { HTML_TAGS } from '@vitus-labs/core'
 
 const group = 'Text (Vitus-Labs)'

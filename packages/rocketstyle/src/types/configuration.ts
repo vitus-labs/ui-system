@@ -1,8 +1,8 @@
-import type { TFn, ElementType, ArrayOfValues, ArrayOfKeys } from './utils'
+import type { ConsumerCb } from './config'
 import type { Dimensions, MultiKeys } from './dimensions'
 import type { PseudoProps } from './pseudo'
 import type { StylesCbArray } from './styles'
-import type { ConsumerCb } from './config'
+import type { ArrayOfKeys, ArrayOfValues, ElementType, TFn } from './utils'
 
 export type __ROCKETSTYLE__ = {
   dimensions: Record<string, string>
@@ -31,7 +31,7 @@ export type Configuration<
   consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
-  passProps?: Array<string>
+  passProps?: string[]
   styled?: boolean
 
   // array chaining options
@@ -52,7 +52,7 @@ export type ExtendedConfiguration<
   consumer?: ConsumerCb<D>
   DEBUG?: boolean
   inversed?: boolean
-  passProps?: Array<string>
+  passProps?: string[]
   styled?: boolean
 
   // array chaining options
@@ -65,7 +65,4 @@ export type ExtendedConfiguration<
   statics: Record<string, any>
 } & Record<string, any>
 
-export type DefaultProps<
-  // C extends ElementType = ElementType,
-  // D extends Dimensions = Dimensions
-> = Partial<PseudoProps>
+export type DefaultProps = Partial<PseudoProps>

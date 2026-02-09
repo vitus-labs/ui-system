@@ -1,5 +1,11 @@
+/**
+ * Styled text primitive that inherits color, font-weight, and line-height
+ * from its parent so it blends seamlessly into any context. Additional
+ * styles can be injected via the responsive `extraStyles` prop processed
+ * through makeItResponsive.
+ */
 import { config } from '@vitus-labs/core'
-import { makeItResponsive, extendCss } from '@vitus-labs/unistyle'
+import { extendCss, makeItResponsive } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
 
 const { styled, css, textComponent } = config

@@ -1,10 +1,17 @@
-import React, { forwardRef } from 'react'
-import { pick, omit } from '@vitus-labs/core'
+/**
+ * List component that combines Iterator (data-driven rendering) with an
+ * optional Element root wrapper. When `rootElement` is false (default),
+ * it renders a bare Iterator as a fragment. When true, the Iterator output
+ * is wrapped in an Element that receives all non-iterator props (e.g.,
+ * layout, alignment, css), allowing the list to be styled as a single block.
+ */
+import { omit, pick } from '@vitus-labs/core'
+import { forwardRef } from 'react'
 import { PKG_NAME } from '~/constants'
-import Element from '~/Element'
-import Iterator from '~/helpers/Iterator'
 import type { VLElement } from '~/Element'
+import Element from '~/Element'
 import type { Props as IteratorProps } from '~/helpers/Iterator'
+import Iterator from '~/helpers/Iterator'
 import type { MergeTypes } from '~/types'
 
 type ListProps = {

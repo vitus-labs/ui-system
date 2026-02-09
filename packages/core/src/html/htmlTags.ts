@@ -132,6 +132,8 @@ const HTML_TEXT_TAGS = [
   'blockquote',
   'cite',
   'code',
+  'del',
+  'div',
   'dl',
   'dt',
   'em',

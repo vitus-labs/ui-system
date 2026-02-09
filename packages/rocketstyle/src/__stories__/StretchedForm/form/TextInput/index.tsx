@@ -1,12 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import React, { FC } from 'react'
+import type { FC } from 'react'
 import FormGroup from '../FormGroup'
-import InputGroup from '../InputGroup'
 import FormText from '../FormText'
-import Label from '../Label'
 import Input from '../Input'
+import InputGroup from '../InputGroup'
 import InputIcon from '../InputIcon'
+import Label from '../Label'
 
 // const RESERVED_WORDS = [
 //   'readOnly',
@@ -32,7 +30,7 @@ const renderPseudoContent = ({ beforeContent, icon, identifier }) => {
   return null
 }
 
-const createdId = +new Date()
+const createdId = Date.now()
 
 type Props = Partial<{
   icon: string

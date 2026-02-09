@@ -30,38 +30,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitus-labs/ui-system.git"
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/attrs"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
-    "dev": "yarn vl_stories",
-    "prepublish": "yarn build",
-    "build": "yarn vl_build",
-    "build:watch": "yarn vl_build-watch",
-    "lint:css": "stylelint src/*.ts src/*.tsx",
-    "lint:ts": "eslint src/*",
-    "lint": "yarn lint:css && yarn lint:ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
-    "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info"
+    "dev": "bun run vl_stories",
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "cover": "coveralls < .coverage/lcov.info",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "@vitus-labs/core": "*",
-    "react": ">= 18"
-  },
-  "dependencies": {
-    "hoist-non-react-statics": "^3.3.2"
+    "react": ">= 19"
   },
   "devDependencies": {
-    "@types/hoist-non-react-statics": "^3.3.7",
     "@vitus-labs/core": "1.2.2",
-    "@vitus-labs/tools-babel": "^1.5.1",
-    "@vitus-labs/tools-rollup": "^1.5.1",
-    "@vitus-labs/tools-storybook": "^1.5.1",
-    "@vitus-labs/tools-types": "^1.5.1",
-    "@vitus-labs/tools-typescript": "^1.5.1"
+    "@vitus-labs/elements": "1.2.2",
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-storybook": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0"
   }
 }

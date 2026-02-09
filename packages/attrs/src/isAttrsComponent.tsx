@@ -1,11 +1,12 @@
 export type IsAttrsComponent = <T>(component: T) => boolean
 
+/** Runtime type guard — checks if a component was created by `attrs()`. */
 const isAttrsComponent: IsAttrsComponent = (component) => {
   if (
     component &&
     typeof component === 'object' &&
     component !== null &&
-    Object.prototype.hasOwnProperty.call(component, 'IS_ATTRS')
+    Object.hasOwn(component, 'IS_ATTRS')
   ) {
     return true
   }

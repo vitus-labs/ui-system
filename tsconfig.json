@@ -1,8 +1,6 @@
 {
-    "compilerOptions": {
-    "types": [
-      "@types/node"
-    ],
+  "compilerOptions": {
+    "types": ["@types/node"],
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -20,9 +18,5 @@
     "noEmit": true,
     "allowJs": true
   },
-  "include": [
-    "./*.js",
-    "./*.cjs",
-    "./*.mjs"
-  ]
+  "include": ["./*.js", "./*.cjs", "./*.mjs"]
 }

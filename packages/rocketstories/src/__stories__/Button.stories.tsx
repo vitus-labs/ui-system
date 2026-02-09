@@ -1,9 +1,8 @@
-import React from 'react'
-import { init } from '~/init'
 import Theme from '~/decorators/Theme'
-import { Button, HoistedButton, ElementExample } from './Button'
+import { init } from '~/init'
+import { Button, ElementExample, HoistedButton } from './Button'
 
-const test = () => ({
+const _test = () => ({
   name: 'Hello',
   component: Button,
 })

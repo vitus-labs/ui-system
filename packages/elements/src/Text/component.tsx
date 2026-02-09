@@ -1,11 +1,17 @@
-import React, {
-  forwardRef,
+/**
+ * Text component for rendering inline or block-level text. Supports a
+ * `paragraph` shorthand that automatically renders as a `<p>` tag, or
+ * a custom `tag` for semantic HTML (h1-h6, span, etc.). Marked with
+ * a static `isText` flag so other components can detect text children.
+ */
+import type { HTMLTextTags } from '@vitus-labs/core'
+import {
   type ForwardRefRenderFunction,
+  forwardRef,
   type ReactNode,
 } from 'react'
-import type { HTMLTextTags } from '@vitus-labs/core'
 import { PKG_NAME } from '~/constants'
-import type { VLForwardedComponent, ExtendCss } from '~/types'
+import type { ExtendCss, VLForwardedComponent } from '~/types'
 import Styled from './styled'
 
 export type Props = Partial<{
@@ -42,7 +48,7 @@ const Component: VLForwardedComponent<Props> & {
     </Styled>
   )
 
-  let finalTag
+  let finalTag: string | undefined
 
   if (__WEB__) {
     if (paragraph) finalTag = 'p'

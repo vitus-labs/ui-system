@@ -1,11 +1,11 @@
-import type { ElementType, TObj } from './utils'
 import type {
-  TDKP,
   DimensionBooleanAttrs,
   Dimensions,
   ExtractDimensions,
+  TDKP,
 } from './dimensions'
 import type { PseudoState } from './pseudo'
+import type { ElementType, TObj } from './utils'
 
 // --------------------------------------------------------
 // CONFIG

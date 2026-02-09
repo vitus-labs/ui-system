@@ -1,14 +1,14 @@
 import { Element, List, Text } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
-import theme from './theme'
+import type theme from './theme'
 
-type TTheme = typeof theme
+type _TTheme = typeof theme
 type TStyles = Parameters<typeof styles>[0]['theme']
 
 type ResponsiveStyles<T extends Record<string, unknown>> = Record<
   keyof T,
-  T[keyof T] | Record<string, T[keyof T]> | Array<T[keyof T]>
+  T[keyof T] | Record<string, T[keyof T]> | T[keyof T][]
 >
 
 type FinalStyles = ResponsiveStyles<TStyles>
@@ -90,66 +90,78 @@ export const element = rocketstyle()({
           /* ------------------------------------------------------ */
           ${baseTheme};
 
-          ${!disabled &&
-          isDynamic &&
-          css`
+          ${
+            !disabled &&
+            isDynamic &&
+            css`
             cursor: pointer;
-          `}
+          `
+          }
 
           /* ------------------------------------------------------ */
           /*  HOVER state */
           /* ------------------------------------------------------ */
-          ${!disabled &&
-          (isDynamic || useDefaultHover) &&
-          !active &&
-          css`
+          ${
+            !disabled &&
+            (isDynamic || useDefaultHover) &&
+            !active &&
+            css`
             &:hover {
               ${hoverTheme};
             }
-          `};
+          `
+          };
 
           /* ------------------------------------------------------ */
           /*  FOCUS state */
           /* ------------------------------------------------------ */
-          ${!disabled &&
-          (isDynamic || useDefaultFocus) &&
-          css`
+          ${
+            !disabled &&
+            (isDynamic || useDefaultFocus) &&
+            css`
             &:focus {
               ${focusTheme};
             }
-          `};
+          `
+          };
 
           /* ------------------------------------------------------ */
           /*  ACTIVE state */
           /* ------------------------------------------------------ */
-          ${!disabled &&
-          (isDynamic || useDefaultActive) &&
-          css`
+          ${
+            !disabled &&
+            (isDynamic || useDefaultActive) &&
+            css`
             &:active {
               ${activeTheme};
             }
-          `};
+          `
+          };
 
           /* ------------------------------------------------------ */
           /*  OUTLINE revert colors */
           /* ------------------------------------------------------ */
-          ${!disabled &&
-          outline &&
-          useDefaultOutline &&
-          css`
+          ${
+            !disabled &&
+            outline &&
+            useDefaultOutline &&
+            css`
             background-color: transparent;
             border-color: ${b.borderColor};
             color: ${b.bgColor || b.color};
 
-            ${isDynamic &&
-            css`
+            ${
+              isDynamic &&
+              css`
               &:hover {
                 background-color: ${b.bgColor};
                 border-color: ${b.bgColor};
                 color: ${b.color};
               }
-            `};
-          `}
+            `
+            };
+          `
+          }
         `
       }};
     `,

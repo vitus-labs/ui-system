@@ -1,8 +1,13 @@
-import React, {
-  type FC,
+/**
+ * Context for nested overlay coordination. When a child overlay opens, it
+ * sets the parent's blocked state to true, preventing the parent from
+ * closing in response to click/hover events that belong to the child.
+ */
+import {
   createContext,
-  useContext,
+  type FC,
   type ReactNode,
+  useContext,
   useMemo,
 } from 'react'
 

@@ -4,23 +4,10 @@ import type {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import type { ExtractProps, MergeTypes } from '@vitus-labs/tools-types'
-import type { TObj, ElementType } from './utils'
-import type { ConfigAttrs } from './config'
 import type { AttrsCb } from './attrs'
+import type { ConfigAttrs } from './config'
 import type { ComposeParam } from './hoc'
-
-export type InitAttrsComponent<C extends ElementType = ElementType> = (params: {
-  name: string
-  component: C
-}) => AttrsComponent<
-  // keep original component props + extract dimension props
-  ExtractProps<C>,
-  // set default extending props
-  {},
-  {},
-  {}
->
+import type { ElementType, ExtractProps, MergeTypes, TObj } from './utils'
 
 export type InnerComponentProps = {
   $attrsRef?: ForwardedRef<unknown>
@@ -173,9 +160,7 @@ export interface AttrsComponent<
       /**
        * filter props will be omitted when passing to final component
        */
-      filter: P extends TObj
-      ? Partial<keyof MergeTypes<[EA, P]>>[]
-      : Partial<keyof EA>[]
+      filter: unknown extends P ? string[] : (keyof MergeTypes<[EA, P]>)[]
     }>,
   ) => P extends TObj
     ? AttrsComponent<C, OA, MergeTypes<[EA, P]>, S, HOC>

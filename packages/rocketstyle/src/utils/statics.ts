@@ -4,6 +4,10 @@ import { STATIC_KEYS } from '~/constants'
 // --------------------------------------------------------
 // helpers for create statics chaining methods on component
 // --------------------------------------------------------
+/**
+ * Attaches chaining static methods (e.g. `.states()`, `.sizes()`, `.theme()`)
+ * to a component. Each method calls `cloneAndEnhance` with the corresponding key.
+ */
 type CreateStaticsChainingEnhancers = <
   O extends Record<string, any>,
   DK extends string[],
@@ -31,6 +35,7 @@ export const createStaticsChainingEnhancers: CreateStaticsChainingEnhancers = ({
 // --------------------------------------------------------
 // helpers for create statics on component
 // --------------------------------------------------------
+/** Copies user-defined static properties onto the component's `meta` object. */
 type CreateStaticsEnhancers = (params: {
   context: Record<string, any>
   options: Record<string, any>

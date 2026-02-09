@@ -1,7 +1,23 @@
+/**
+ * Core hook powering the Overlay component. Manages open/close state, DOM
+ * event listeners (click, hover, scroll, resize, ESC key), and dynamic
+ * positioning of overlay content relative to its trigger. Supports dropdown,
+ * tooltip, popover, and modal types with automatic edge-of-viewport flipping.
+ * Event handlers are throttled for performance, and nested overlay blocking
+ * is coordinated through the overlay context.
+ */
 /* eslint-disable no-console */
-import { useRef, useState, useEffect, useContext, useCallback } from 'react'
-import { throttle, context } from '@vitus-labs/core'
+
+import { context, throttle } from '@vitus-labs/core'
 import { value } from '@vitus-labs/unistyle'
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
 import Provider, { useOverlayContext } from './context'
 
@@ -111,6 +127,282 @@ export type UseOverlayProps = Partial<{
   onClose: () => void
 }>
 
+type PositionResult = {
+  pos: OverlayPosition
+  resolvedAlignX: AlignX
+  resolvedAlignY: AlignY
+}
+
+const sel = <T,>(cond: boolean, a: T, b: T): T => (cond ? a : b)
+
+const devWarn = (msg: string) => {
+  if (!IS_DEVELOPMENT) return
+  // biome-ignore lint/suspicious/noConsole: dev-mode warning
+  console.warn(msg)
+}
+
+const calcDropdownVertical = (
+  c: DOMRect,
+  t: DOMRect,
+  align: 'top' | 'bottom',
+  alignX: AlignX,
+  offsetX: number,
+  offsetY: number,
+): PositionResult => {
+  const pos: OverlayPosition = {}
+
+  const topPos = t.top - offsetY - c.height
+  const bottomPos = t.bottom + offsetY
+  const leftPos = t.left + offsetX
+  const rightPos = t.right - offsetX - c.width
+
+  const fitsTop = topPos >= 0
+  const fitsBottom = bottomPos + c.height <= window.innerHeight
+  const fitsLeft = leftPos + c.width <= window.innerWidth
+  const fitsRight = rightPos >= 0
+
+  const useTop = sel(align === 'top', fitsTop, !fitsBottom)
+  pos.top = sel(useTop, topPos, bottomPos)
+  const resolvedAlignY: AlignY = sel(useTop, 'top', 'bottom')
+
+  let resolvedAlignX: AlignX = alignX
+  if (alignX === 'left') {
+    pos.left = sel(fitsLeft, leftPos, rightPos)
+    resolvedAlignX = sel(fitsLeft, 'left', 'right')
+  } else if (alignX === 'right') {
+    pos.left = sel(fitsRight, rightPos, leftPos)
+    resolvedAlignX = sel(fitsRight, 'right', 'left')
+  } else {
+    const center = t.left + (t.right - t.left) / 2 - c.width / 2
+    const fitsCL = center >= 0
+    const fitsCR = center + c.width <= window.innerWidth
+
+    if (fitsCL && fitsCR) {
+      resolvedAlignX = 'center'
+      pos.left = center
+    } else if (fitsCL) {
+      resolvedAlignX = 'left'
+      pos.left = leftPos
+    } else if (fitsCR) {
+      resolvedAlignX = 'right'
+      pos.left = rightPos
+    }
+  }
+
+  return { pos, resolvedAlignX, resolvedAlignY }
+}
+
+const calcDropdownHorizontal = (
+  c: DOMRect,
+  t: DOMRect,
+  align: 'left' | 'right',
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+): PositionResult => {
+  const pos: OverlayPosition = {}
+
+  const leftPos = t.left - offsetX - c.width
+  const rightPos = t.right + offsetX
+  const topPos = t.top + offsetY
+  const bottomPos = t.bottom - offsetY - c.height
+
+  const fitsLeft = leftPos >= 0
+  const fitsRight = rightPos + c.width <= window.innerWidth
+  const fitsTop = topPos + c.height <= window.innerHeight
+  const fitsBottom = bottomPos >= 0
+
+  const useLeft = sel(align === 'left', fitsLeft, !fitsRight)
+  pos.left = sel(useLeft, leftPos, rightPos)
+  const resolvedAlignX: AlignX = sel(useLeft, 'left', 'right')
+
+  let resolvedAlignY: AlignY = alignY
+  if (alignY === 'top') {
+    pos.top = sel(fitsTop, topPos, bottomPos)
+    resolvedAlignY = sel(fitsTop, 'top', 'bottom')
+  } else if (alignY === 'bottom') {
+    pos.top = sel(fitsBottom, bottomPos, topPos)
+    resolvedAlignY = sel(fitsBottom, 'bottom', 'top')
+  } else {
+    const center = t.top + (t.bottom - t.top) / 2 - c.height / 2
+    const fitsCT = center >= 0
+    const fitsCB = center + c.height <= window.innerHeight
+
+    if (fitsCT && fitsCB) {
+      resolvedAlignY = 'center'
+      pos.top = center
+    } else if (fitsCT) {
+      resolvedAlignY = 'top'
+      pos.top = topPos
+    } else if (fitsCB) {
+      resolvedAlignY = 'bottom'
+      pos.top = bottomPos
+    }
+  }
+
+  return { pos, resolvedAlignX, resolvedAlignY }
+}
+
+const calcModalPos = (
+  c: DOMRect,
+  alignX: AlignX,
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+): OverlayPosition => {
+  const pos: OverlayPosition = {}
+
+  switch (alignX) {
+    case 'right':
+      pos.right = offsetX
+      break
+    case 'left':
+      pos.left = offsetX
+      break
+    case 'center':
+      pos.left = window.innerWidth / 2 - c.width / 2
+      break
+    default:
+      pos.right = offsetX
+  }
+
+  switch (alignY) {
+    case 'top':
+      pos.top = offsetY
+      break
+    case 'center':
+      pos.top = window.innerHeight / 2 - c.height / 2
+      break
+    case 'bottom':
+      pos.bottom = offsetY
+      break
+    default:
+      pos.top = offsetY
+  }
+
+  return pos
+}
+
+const adjustForAncestor = (
+  pos: OverlayPosition,
+  ancestor: { top: number; left: number },
+): OverlayPosition => {
+  if (ancestor.top === 0 && ancestor.left === 0) return pos
+
+  const result = { ...pos }
+  if (typeof result.top === 'number') result.top -= ancestor.top
+  if (typeof result.bottom === 'number') result.bottom += ancestor.top
+  if (typeof result.left === 'number') result.left -= ancestor.left
+  if (typeof result.right === 'number') result.right += ancestor.left
+
+  return result
+}
+
+type ComputeResult = {
+  pos: OverlayPosition
+  resolvedAlignX?: AlignX
+  resolvedAlignY?: AlignY
+}
+
+const computePosition = (
+  type: string,
+  align: Align,
+  alignX: AlignX,
+  alignY: AlignY,
+  offsetX: number,
+  offsetY: number,
+  triggerEl: HTMLElement | null,
+  contentEl: HTMLElement | null,
+  ancestorOffset: { top: number; left: number },
+): ComputeResult => {
+  const isDropdown = ['dropdown', 'tooltip', 'popover'].includes(type)
+
+  if (isDropdown && (!triggerEl || !contentEl)) {
+    devWarn(
+      `[@vitus-labs/elements] Overlay (${type}): ` +
+        `${triggerEl ? 'contentRef' : 'triggerRef'} is not attached. ` +
+        'Position cannot be calculated without both refs.',
+    )
+    return { pos: {} }
+  }
+
+  if (isDropdown && triggerEl && contentEl) {
+    const c = contentEl.getBoundingClientRect()
+    const t = triggerEl.getBoundingClientRect()
+    const result =
+      align === 'top' || align === 'bottom'
+        ? calcDropdownVertical(c, t, align, alignX, offsetX, offsetY)
+        : calcDropdownHorizontal(
+            c,
+            t,
+            align as 'left' | 'right',
+            alignY,
+            offsetX,
+            offsetY,
+          )
+
+    return {
+      pos: adjustForAncestor(result.pos, ancestorOffset),
+      resolvedAlignX: result.resolvedAlignX,
+      resolvedAlignY: result.resolvedAlignY,
+    }
+  }
+
+  if (type === 'modal') {
+    if (!contentEl) {
+      devWarn(
+        '[@vitus-labs/elements] Overlay (modal): contentRef is not attached. ' +
+          'Modal position cannot be calculated without a content element.',
+      )
+      return { pos: {} }
+    }
+    const c = contentEl.getBoundingClientRect()
+    return {
+      pos: adjustForAncestor(
+        calcModalPos(c, alignX, alignY, offsetX, offsetY),
+        ancestorOffset,
+      ),
+    }
+  }
+
+  return { pos: {} }
+}
+
+const processVisibilityEvent = (
+  e: Event,
+  active: boolean,
+  openOn: string,
+  closeOn: string,
+  isTrigger: (e: Event) => boolean,
+  isContent: (e: Event) => boolean,
+  showContent: () => void,
+  hideContent: () => void,
+) => {
+  // Open on click (hover is handled by dedicated mouseenter/mouseleave)
+  if (!active && openOn === 'click' && e.type === 'click' && isTrigger(e)) {
+    showContent()
+    return
+  }
+
+  if (!active) return
+
+  // Close handlers
+  if (closeOn === 'hover' && e.type === 'scroll') {
+    hideContent()
+    return
+  }
+
+  if (e.type !== 'click') return
+
+  if (closeOn === 'click') {
+    hideContent()
+  } else if (closeOn === 'clickOnTrigger' && isTrigger(e)) {
+    hideContent()
+  } else if (closeOn === 'clickOutsideContent' && !isContent(e)) {
+    hideContent()
+  }
+}
+
 const useOverlay = ({
   isOpen = false,
   openOn = 'click', // click | hover
@@ -153,187 +445,42 @@ const useOverlay = ({
     handleActive(false)
   }, [])
 
+  // For position: absolute, getBoundingClientRect() returns viewport-relative
+  // values but the element is positioned relative to its offsetParent.
+  // We need to subtract the offsetParent's viewport rect to get correct coords.
+  const getAncestorOffset = useCallback(() => {
+    if (position !== 'absolute' || !contentRef.current) {
+      return { top: 0, left: 0 }
+    }
+
+    const offsetParent = contentRef.current.offsetParent as HTMLElement | null
+    if (!offsetParent || offsetParent === document.body) {
+      return { top: 0, left: 0 }
+    }
+
+    const rect = offsetParent.getBoundingClientRect()
+    return { top: rect.top, left: rect.left }
+  }, [position])
+
   const calculateContentPosition = useCallback(() => {
-    const overlayPosition: OverlayPosition = {}
+    if (!active || !isContentLoaded) return {}
 
-    if (!active || !isContentLoaded) return overlayPosition
+    const result = computePosition(
+      type,
+      align,
+      alignX,
+      alignY,
+      offsetX,
+      offsetY,
+      triggerRef.current,
+      contentRef.current,
+      getAncestorOffset(),
+    )
 
-    if (type === 'modal' && !contentRef.current) {
-      if (IS_DEVELOPMENT) {
-        console.warn('Cannot access `ref` of `content` component.')
-      }
+    if (result.resolvedAlignX) setInnerAlignX(result.resolvedAlignX)
+    if (result.resolvedAlignY) setInnerAlignY(result.resolvedAlignY)
 
-      return overlayPosition
-    }
-
-    if (['dropdown', 'tooltip', 'popover'].includes(type)) {
-      // return empty object when refs are not available
-      if (!triggerRef.current || !contentRef.current) {
-        if (IS_DEVELOPMENT) {
-          console.warn('Cannot access `ref` of trigger or content component.')
-        }
-
-        return overlayPosition
-      }
-
-      const c = contentRef.current.getBoundingClientRect()
-      const t = triggerRef.current.getBoundingClientRect()
-      // align is top or bottom
-      if (['top', 'bottom'].includes(align)) {
-        // axe Y position
-        // (assigned as top position)
-        const top = t.top - offsetY - c.height
-        const bottom = t.bottom + offsetY
-
-        // axe X position
-        // content position to trigger position
-        // (assigned as left position)
-        const left = t.left + offsetX
-        const right = t.right - offsetX - c.width
-
-        // calculate possible position
-        const isTop = top >= 0 // represents window.height = 0
-        const isBottom = bottom + c.height <= window.innerHeight
-        const isLeft = left + c.width <= window.innerWidth
-        const isRight = right >= 0 // represents window.width = 0
-
-        if (align === 'top') {
-          setInnerAlignY(isTop ? 'top' : 'bottom')
-          overlayPosition.top = isTop ? top : bottom
-        } else if (align === 'bottom') {
-          setInnerAlignY(isBottom ? 'bottom' : 'top')
-          overlayPosition.top = isBottom ? bottom : top
-        }
-
-        // left
-        if (alignX === 'left') {
-          setInnerAlignX(isLeft ? 'left' : 'right')
-          overlayPosition.left = isLeft ? left : right
-        }
-        // center
-        else if (alignX === 'center') {
-          const center = t.left + (t.right - t.left) / 2 - c.width / 2
-          const isCenteredLeft = center >= 0
-          const isCenteredRight = center + c.width <= window.innerWidth
-
-          if (isCenteredLeft && isCenteredRight) {
-            setInnerAlignX('center')
-            overlayPosition.left = center
-          } else if (isCenteredLeft) {
-            setInnerAlignX('left')
-            overlayPosition.left = left
-          } else if (isCenteredRight) {
-            setInnerAlignX('right')
-            overlayPosition.left = right
-          }
-        }
-        // right
-        else if (alignX === 'right') {
-          setInnerAlignX(isRight ? 'right' : 'left')
-          overlayPosition.left = isRight ? right : left
-        }
-      }
-
-      // align is left or right
-      else if (['left', 'right'].includes(align)) {
-        // axe X position
-        // (assigned as left position)
-        const left = t.left - offsetX - c.width
-        const right = t.right + offsetX
-
-        // axe Y position
-        // content position to trigger position
-        // (assigned as top position)
-        const top = t.top + offsetY
-        const bottom = t.bottom - offsetY - c.height
-
-        const isLeft = left >= 0
-        const isRight = right + c.width <= window.innerWidth
-        const isTop = top + c.height <= window.innerHeight
-        const isBottom = bottom >= 0
-
-        if (align === 'left') {
-          setInnerAlignX(isLeft ? 'left' : 'right')
-          overlayPosition.left = isLeft ? left : right
-        } else if (align === 'right') {
-          setInnerAlignX(isRight ? 'right' : 'left')
-          overlayPosition.left = isRight ? right : left
-        }
-
-        // top
-        if (alignY === 'top') {
-          setInnerAlignY(isTop ? 'top' : 'bottom')
-          overlayPosition.top = isTop ? top : bottom
-        }
-        // center
-        else if (alignY === 'center') {
-          const center = t.top + (t.bottom - t.top) / 2 - c.height / 2
-          const isCenteredTop = center >= 0
-          const isCenteredBottom = center + c.height <= window.innerHeight
-
-          if (isCenteredTop && isCenteredBottom) {
-            setInnerAlignY('center')
-            overlayPosition.top = center
-          } else if (isCenteredTop) {
-            setInnerAlignY('top')
-            overlayPosition.top = top
-          } else if (isCenteredBottom) {
-            setInnerAlignY('bottom')
-            overlayPosition.top = bottom
-          }
-        }
-        // bottom
-        else if (alignY === 'bottom') {
-          setInnerAlignY(isBottom ? 'bottom' : 'top')
-          overlayPosition.top = isBottom ? bottom : top
-        }
-      }
-    }
-
-    // modal type
-    else if (type === 'modal') {
-      // return empty object when ref is not available
-      // triggerRef is not needed in this case
-      if (!contentRef.current) {
-        if (IS_DEVELOPMENT) {
-          console.warn('Cannot access `ref` of trigger or content component.')
-        }
-
-        return overlayPosition
-      }
-
-      const c = contentRef.current.getBoundingClientRect()
-
-      switch (alignX) {
-        case 'right':
-          overlayPosition.right = offsetX
-          break
-        case 'left':
-          overlayPosition.left = offsetX
-          break
-        case 'center':
-          overlayPosition.left = window.innerWidth / 2 - c.width / 2
-          break
-        default:
-          overlayPosition.right = offsetX
-      }
-
-      switch (alignY) {
-        case 'top':
-          overlayPosition.top = offsetY
-          break
-        case 'center':
-          overlayPosition.top = window.innerHeight / 2 - c.height / 2
-          break
-        case 'bottom':
-          overlayPosition.bottom = offsetY
-          break
-        default:
-          overlayPosition.top = offsetY
-      }
-    }
-
-    return overlayPosition
+    return result.pos
   }, [
     isContentLoaded,
     active,
@@ -343,40 +490,28 @@ const useOverlay = ({
     offsetX,
     offsetY,
     type,
-    triggerRef,
-    contentRef,
+    getAncestorOffset,
   ])
 
   const assignContentPosition = useCallback(
     (values: OverlayPosition = {}) => {
       if (!contentRef.current) return
 
-      const isValue = (value?: string | number) => {
-        if (typeof value === 'number') return true
-        if (Number.isFinite(value)) return true
-        return !!value
-      }
-
+      const el = contentRef.current
       const setValue = (param?: string | number) =>
         value(param, rootSize) as string
 
-      // ADD POSITION STYLES TO CONTENT
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(position)) contentRef.current.style.position = position
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.top))
-        contentRef.current.style.top = setValue(values.top)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.bottom))
-        contentRef.current.style.bottom = setValue(values.bottom)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.left))
-        contentRef.current.style.left = setValue(values.left)
-      // eslint-disable-next-line no-param-reassign
-      if (isValue(values.right))
-        contentRef.current.style.right = setValue(values.right)
+      el.style.position = position
+
+      // Reset all directional properties first, then apply only the ones
+      // present in `values`. This prevents stale values lingering when the
+      // overlay flips direction (e.g. top→bottom leaves old `top` behind).
+      el.style.top = values.top != null ? setValue(values.top) : ''
+      el.style.bottom = values.bottom != null ? setValue(values.bottom) : ''
+      el.style.left = values.left != null ? setValue(values.left) : ''
+      el.style.right = values.right != null ? setValue(values.right) : ''
     },
-    [position, rootSize, contentRef],
+    [position, rootSize],
   )
 
   const setContentPosition = useCallback(() => {
@@ -384,8 +519,8 @@ const useOverlay = ({
     assignContentPosition(currentPosition)
   }, [assignContentPosition, calculateContentPosition])
 
-  const isNodeOrChild =
-    (ref: typeof triggerRef /* | typeof contentRef */) => (e: Event) => {
+  const isNodeOrChild = useCallback(
+    (ref: { current: HTMLElement | null }) => (e: Event) => {
       if (e?.target && ref.current) {
         return (
           ref.current.contains(e.target as Element) || e.target === ref.current
@@ -393,58 +528,24 @@ const useOverlay = ({
       }
 
       return false
-    }
+    },
+    [],
+  )
 
   const handleVisibilityByEventType = useCallback(
     (e: Event) => {
       if (blocked || disabled) return
 
-      const isTrigger = isNodeOrChild(triggerRef)
-      const isContent = isNodeOrChild(contentRef)
-
-      // showing content observing
-      if (!active) {
-        if (
-          (openOn === 'hover' && e.type === 'mousemove') ||
-          (openOn === 'click' && e.type === 'click')
-        ) {
-          if (isTrigger(e)) {
-            showContent()
-          }
-        }
-      }
-
-      // hiding content observing
-      if (active) {
-        if (
-          closeOn === 'hover' &&
-          e.type === 'mousemove' &&
-          !isTrigger(e) &&
-          !isContent(e)
-        ) {
-          hideContent()
-        }
-
-        if (closeOn === 'hover' && e.type === 'scroll') {
-          hideContent()
-        }
-
-        if (closeOn === 'click' && e.type === 'click') {
-          hideContent()
-        }
-
-        if (closeOn === 'clickOnTrigger' && e.type === 'click') {
-          if (isTrigger(e)) {
-            hideContent()
-          }
-        }
-
-        if (closeOn === 'clickOutsideContent' && e.type === 'click') {
-          if (!isContent(e)) {
-            hideContent()
-          }
-        }
-      }
+      processVisibilityEvent(
+        e,
+        active,
+        openOn,
+        closeOn,
+        isNodeOrChild(triggerRef),
+        isNodeOrChild(contentRef),
+        showContent,
+        hideContent,
+      )
     },
     [
       active,
@@ -454,32 +555,32 @@ const useOverlay = ({
       closeOn,
       hideContent,
       showContent,
-      triggerRef,
-      contentRef,
+      isNodeOrChild,
     ],
   )
 
-  const handleContentPosition = useCallback(
-    throttle(setContentPosition, throttleDelay),
-    // same deps as `setContentPosition`
-    [assignContentPosition, calculateContentPosition],
+  // Use refs to avoid stale closures in throttled callbacks.
+  // The throttled wrappers are stable (only recreated if throttleDelay changes),
+  // but always call the latest version of the underlying function via the ref.
+  const latestSetContentPosition = useRef(setContentPosition)
+  latestSetContentPosition.current = setContentPosition
+
+  const latestHandleVisibility = useRef(handleVisibilityByEventType)
+  latestHandleVisibility.current = handleVisibilityByEventType
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleContentPosition = useMemo(
+    () => throttle(() => latestSetContentPosition.current(), throttleDelay),
+    [throttleDelay],
   )
+
   const handleClick = handleVisibilityByEventType
 
-  const handleVisibility = useCallback(
-    throttle(handleVisibilityByEventType, throttleDelay),
-    // same deps as `handleVisibilityByEventType`
-    [
-      active,
-      blocked,
-      disabled,
-      openOn,
-      closeOn,
-      hideContent,
-      showContent,
-      triggerRef,
-      contentRef,
-    ],
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleVisibility = useMemo(
+    () =>
+      throttle((e: Event) => latestHandleVisibility.current(e), throttleDelay),
+    [throttleDelay],
   )
 
   // --------------------------------------------------------------------------
@@ -497,27 +598,41 @@ const useOverlay = ({
   useEffect(() => {
     if (!active || !isContentLoaded) return undefined
 
+    // First call positions immediately; the rAF callback re-measures after
+    // the browser has had a chance to reflow, catching any geometry changes
+    // caused by the initial positioning (e.g. content becoming visible).
     setContentPosition()
-    setContentPosition()
+    const rafId = requestAnimationFrame(() => setContentPosition())
 
-    return undefined
+    return () => cancelAnimationFrame(rafId)
   }, [active, isContentLoaded, setContentPosition])
 
-  // if an Overlay has an Overlay child, this will prevent closing parent child
-  // and calculates correct position when an Overlay is opened
+  // Track previous active state so callbacks only fire on actual transitions,
+  // not on every dependency change or unmount-while-closed.
+  const prevActiveRef = useRef(false)
   useEffect(() => {
-    if (active) {
-      if (onOpen) onOpen()
-      if (ctx.setBlocked) ctx.setBlocked()
-    } else {
+    const wasActive = prevActiveRef.current
+    prevActiveRef.current = active
+
+    if (active && !wasActive) {
+      onOpen?.()
+      ctx.setBlocked?.()
+    } else if (!active && wasActive) {
+      setContentLoaded(false)
+      onClose?.()
+      ctx.setUnblocked?.()
+    } else if (!active) {
       setContentLoaded(false)
     }
 
     return () => {
-      if (onClose) onClose()
-      if (ctx.setUnblocked) ctx.setUnblocked()
+      // On unmount, only clean up if currently active
+      if (active) {
+        onClose?.()
+        ctx.setUnblocked?.()
+      }
     }
-  }, [active, showContent, ctx])
+  }, [active, ctx, onClose, onOpen])
 
   // handle closing only when content is active
   useEffect(() => {
@@ -549,7 +664,7 @@ const useOverlay = ({
 
     if (shouldSetOverflow) document.body.style.overflow = 'hidden'
     window.addEventListener('resize', handleContentPosition)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       if (shouldSetOverflow) document.body.style.overflow = ''
@@ -570,7 +685,7 @@ const useOverlay = ({
       handleVisibility(e)
     }
 
-    parentContainer.addEventListener('scroll', onScroll)
+    parentContainer.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       // eslint-disable-next-line no-param-reassign
@@ -585,12 +700,10 @@ const useOverlay = ({
     handleVisibility,
   ])
 
-  // enable overlay manipulation only when the state is NOT blocked
-  // nor in disabled state
+  // Click-based open/close: attach to window
   useEffect(() => {
     if (blocked || disabled) return undefined
 
-    const enabledMouseMove = openOn === 'hover' || closeOn === 'hover'
     const enabledClick =
       openOn === 'click' ||
       ['click', 'clickOnTrigger', 'clickOutsideContent'].includes(closeOn)
@@ -599,22 +712,83 @@ const useOverlay = ({
       window.addEventListener('click', handleClick)
     }
 
-    if (enabledMouseMove) {
-      window.addEventListener('mousemove', handleVisibility)
+    return () => {
+      window.removeEventListener('click', handleClick)
+    }
+  }, [openOn, closeOn, blocked, disabled, handleClick])
+
+  // Hover-based open/close: mouseenter/mouseleave on trigger + content
+  // instead of window-level mousemove (which fires on every pixel of movement).
+  // A short timeout bridges the gap between trigger and content elements.
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isContentLoaded signals contentRef.current is available so the effect re-runs to attach listeners
+  useEffect(() => {
+    const enabledHover = openOn === 'hover' || closeOn === 'hover'
+    if (blocked || disabled || !enabledHover) return undefined
+
+    const trigger = triggerRef.current
+    const content = contentRef.current
+
+    const clearHoverTimeout = () => {
+      if (hoverTimeoutRef.current != null) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
+    }
+
+    const scheduleHide = () => {
+      clearHoverTimeout()
+      hoverTimeoutRef.current = setTimeout(hideContent, 100)
+    }
+
+    const onTriggerEnter = () => {
+      clearHoverTimeout()
+      if (openOn === 'hover' && !active) showContent()
+    }
+
+    const onTriggerLeave = () => {
+      if (closeOn === 'hover' && active) scheduleHide()
+    }
+
+    const onContentEnter = () => {
+      clearHoverTimeout()
+    }
+
+    const onContentLeave = () => {
+      if (closeOn === 'hover' && active) scheduleHide()
+    }
+
+    if (trigger) {
+      trigger.addEventListener('mouseenter', onTriggerEnter)
+      trigger.addEventListener('mouseleave', onTriggerLeave)
+    }
+
+    if (content) {
+      content.addEventListener('mouseenter', onContentEnter)
+      content.addEventListener('mouseleave', onContentLeave)
     }
 
     return () => {
-      window.removeEventListener('click', handleClick)
-      window.removeEventListener('mousemove', handleVisibility)
+      clearHoverTimeout()
+      if (trigger) {
+        trigger.removeEventListener('mouseenter', onTriggerEnter)
+        trigger.removeEventListener('mouseleave', onTriggerLeave)
+      }
+      if (content) {
+        content.removeEventListener('mouseenter', onContentEnter)
+        content.removeEventListener('mouseleave', onContentLeave)
+      }
     }
   }, [
-    openOn,
-    closeOn,
+    active,
+    isContentLoaded,
     blocked,
     disabled,
-    active,
-    handleClick,
-    handleVisibility,
+    openOn,
+    closeOn,
+    showContent,
+    hideContent,
   ])
 
   // hack-ish way to load content correctly on the first load

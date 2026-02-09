@@ -1,0 +1,47 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "extends": ["@vitus-labs/tools-lint/biome"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "javascript": {
+    "globals": [
+      "__VITUS_LABS_STORIES__",
+      "__BROWSER__",
+      "__NATIVE__",
+      "__NODE__",
+      "__WEB__",
+      "__CLIENT__",
+      "__VERSION__",
+      "vi",
+      "describe",
+      "it",
+      "expect",
+      "beforeEach",
+      "afterEach",
+      "beforeAll",
+      "afterAll"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noBannedTypes": "off"
+      },
+      "style": {
+        "noParameterAssign": "off"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      },
+      "nursery": {
+        "noShadow": "off"
+      }
+    }
+  }
+}

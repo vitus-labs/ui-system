@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 export type UseHover = (initialValue?: boolean) => {
   hover: boolean
@@ -6,6 +6,10 @@ export type UseHover = (initialValue?: boolean) => {
   onMouseLeave: () => void
 }
 
+/**
+ * Simple hover-state hook that returns a boolean plus stable
+ * `onMouseEnter`/`onMouseLeave` handlers ready to spread onto an element.
+ */
 const useHover: UseHover = (initial = false) => {
   const [hover, handleHover] = useState(initial)
 

@@ -1,17 +1,23 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { config } from '@vitus-labs/core'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import {
+  ALIGN_CONTENT_MAP_X,
+  extendCss,
   makeItResponsive,
   value,
-  extendCss,
-  ALIGN_CONTENT_MAP_X,
 } from '@vitus-labs/unistyle'
-import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
-import { isNumber } from '~/utils'
 import type { CssOutput, StyledTypes } from '~/types'
+import { isNumber } from '~/utils'
 
 const { styled, css, component } = config
 
+/**
+ * Computes negative horizontal margins to compensate for column gap,
+ * and vertical margins that account for gutter (inter-row spacing).
+ * This creates the classic grid pattern where column gaps cancel out
+ * at the row edges.
+ */
 type SpacingStyles = (
   props: Pick<StyledTypes, 'gap' | 'gutter'>,
   { rootSize }: { rootSize?: number },
@@ -20,7 +26,7 @@ type SpacingStyles = (
 const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   if (!isNumber(gap)) return ''
 
-  const getValue = (param) => value(param, rootSize)
+  const getValue = (param: any) => value(param, rootSize)
 
   const spacingX = (gap! / 2) * -1
   const spacingY = isNumber(gutter) ? gutter! - gap! / 2 : gap! / 2
@@ -30,6 +36,7 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   `
 }
 
+/** Maps the contentAlignX prop to a CSS justify-content value. */
 const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   if (!align) return ''
 
@@ -38,6 +45,7 @@ const contentAlign = (align?: StyledTypes['contentAlignX']) => {
   `
 }
 
+/** Composes spacing, alignment, and extra CSS into a single responsive style block for the Row. */
 const styles: MakeItResponsiveStyles<
   Pick<StyledTypes, 'gap' | 'gutter' | 'contentAlignX' | 'extraStyles'>
 > = ({ theme, css, rootSize }) => {
@@ -51,10 +59,12 @@ const styles: MakeItResponsiveStyles<
 }
 
 export default styled(component)<any>`
-  ${__WEB__ &&
-  css`
+  ${
+    __WEB__ &&
+    css`
     box-sizing: border-box;
-  `};
+  `
+  };
 
   display: flex;
   flex-wrap: wrap;

@@ -1,8 +1,8 @@
 import {
-  useState,
-  useCallback,
-  type MouseEventHandler,
   type FocusEventHandler,
+  type MouseEventHandler,
+  useCallback,
+  useState,
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
@@ -18,6 +18,11 @@ type UsePseudoState = ({
   events: PseudoActions
 }
 
+/**
+ * Tracks hover, focus, and pressed pseudo-states via mouse and focus
+ * event handlers. Returns the current state flags and wrapped event
+ * callbacks that preserve any user-provided handlers.
+ */
 const usePseudoState: UsePseudoState = ({
   onBlur,
   onFocus,

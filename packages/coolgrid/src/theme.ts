@@ -1,3 +1,7 @@
+/**
+ * Default Bootstrap-like grid configuration. Provides 5 breakpoints (xs-xl),
+ * a 12-column grid, and responsive container max-widths matching Bootstrap 4.
+ */
 export default {
   rootSize: 16,
   breakpoints: {

@@ -1,8 +1,8 @@
-import React, {
-  forwardRef,
-  useMemo,
+import {
   type ComponentType,
   type ForwardRefExoticComponent,
+  forwardRef,
+  useMemo,
 } from 'react'
 import { usePseudoState } from '~/hooks'
 import type { PseudoProps } from '~/types/pseudo'
@@ -14,6 +14,11 @@ type HOC = (
   WrappedComponent: ComponentType<Props>,
 ) => ForwardRefExoticComponent<Props>
 
+/**
+ * Higher-order component that wraps a component with a LocalProvider,
+ * detecting pseudo-states (hover, focus, pressed) via mouse/focus events
+ * and broadcasting them through local context to child rocketstyle components.
+ */
 const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
   forwardRef(
     (

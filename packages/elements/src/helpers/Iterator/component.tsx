@@ -1,13 +1,54 @@
-import React, {
+/**
+ * Data-driven list renderer that supports three input modes: React children
+ * (including fragments), an array of primitives, or an array of objects.
+ * Each item receives positional metadata (first, last, odd, even, position)
+ * and optional injected props via `itemProps`. Items can be individually
+ * wrapped with `wrapComponent`. Children always take priority over the
+ * component+data prop pattern.
+ */
+import { isEmpty, render } from '@vitus-labs/core'
+import {
   Children,
   type FC,
+  type ReactElement,
   type ReactNode,
   useCallback,
   useMemo,
 } from 'react'
 import { isFragment } from 'react-is'
-import { render, isEmpty } from '@vitus-labs/core'
-import type { Props, ObjectValue, ExtendedProps, SimpleValue } from './types'
+import type { ExtendedProps, ObjectValue, Props, SimpleValue } from './types'
+
+type ClassifiedData =
+  | { type: 'simple'; data: SimpleValue[] }
+  | { type: 'complex'; data: ObjectValue[] }
+  | null
+
+const classifyData = (data: unknown[]): ClassifiedData => {
+  const items = data.filter(
+    (item) =>
+      item != null && !(typeof item === 'object' && isEmpty(item as any)),
+  )
+
+  if (items.length === 0) return null
+
+  let isSimple = true
+  let isComplex = true
+
+  for (const item of items) {
+    if (typeof item === 'string' || typeof item === 'number') {
+      isComplex = false
+    } else if (typeof item === 'object') {
+      isSimple = false
+    } else {
+      isSimple = false
+      isComplex = false
+    }
+  }
+
+  if (isSimple) return { type: 'simple', data: items as SimpleValue[] }
+  if (isComplex) return { type: 'complex', data: items as ObjectValue[] }
+  return null
+}
 
 const RESERVED_PROPS = [
   'children',
@@ -128,7 +169,9 @@ const Component: FC<Props> & Static = (props) => {
 
     // if children is Fragment
     if (isFragment(children)) {
-      const fragmentChildren = children?.props?.children as ReactNode[]
+      const fragmentChildren = (
+        children as ReactElement<{ children: ReactNode[] }>
+      ).props.children
       const childrenLength = fragmentChildren.length
 
       return fragmentChildren.map((item, i) =>
@@ -183,25 +226,23 @@ const Component: FC<Props> & Static = (props) => {
   // --------------------------------------------------------
   // render array of objects
   // --------------------------------------------------------
+  const getObjectKey = (item: ObjectValue, index: number) => {
+    if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
+    if (typeof itemKey === 'function') return itemKey(item, index)
+    if (typeof itemKey === 'string') return item[itemKey]
+
+    return index
+  }
+
   const renderComplexArray = (data: ObjectValue[]) => {
-    const renderData = data.filter((item) => !isEmpty(item)) // remove empty objects
-    const { length } = renderData
+    const { length } = data
 
-    // if it's empty
-    if (renderData.length === 0) return null
+    if (length === 0) return null
 
-    const getKey = (item: ObjectValue, index: number) => {
-      if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
-      if (typeof itemKey === 'function') return itemKey(item, index)
-      if (typeof itemKey === 'string') return item[itemKey]
-
-      return index
-    }
-
-    return renderData.map((item, i) => {
+    return data.map((item, i) => {
       const { component: itemComponent, ...restItem } = item
       const renderItem = itemComponent ?? component
-      const key = getKey(restItem, i)
+      const key = getObjectKey(restItem, i)
       const extendedProps = attachItemProps({
         i,
         length,
@@ -239,23 +280,14 @@ const Component: FC<Props> & Static = (props) => {
 
     // --------------------------------------------------------
     // render props component + data
+    // single pass: filter nullish/empty and determine array type
     // --------------------------------------------------------
     if (component && Array.isArray(data)) {
-      const clearData = data.filter(
-        (item) => item !== null && item !== undefined,
-      )
-
-      const isSimpleArray = clearData.every(
-        (item) => typeof item === 'string' || typeof item === 'number',
-      )
-
-      if (isSimpleArray) return renderSimpleArray(clearData as SimpleValue[])
-
-      const isComplexArray = clearData.every((item) => typeof item === 'object')
-
-      if (isComplexArray) return renderComplexArray(clearData as ObjectValue[])
-
-      return null
+      const classified = classifyData(data)
+      if (!classified) return null
+      if (classified.type === 'simple')
+        return renderSimpleArray(classified.data)
+      return renderComplexArray(classified.data)
     }
 
     // --------------------------------------------------------

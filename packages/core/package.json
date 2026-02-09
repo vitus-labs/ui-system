@@ -26,38 +26,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitus-labs/ui-system.git"
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/core"
   },
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
   "scripts": {
-    "dev": "yarn vl_stories",
-    "prepublish": "yarn build",
-    "build": "yarn vl_build",
-    "build:watch": "yarn vl_build-watch",
-    "lint:css": "stylelint src/*.ts src/*.tsx",
-    "lint:ts": "eslint src/*",
-    "lint": "yarn lint:ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
-    "test:watch": "jest --runInBand --watch",
-    "cover": "coveralls < .coverage/lcov.info"
+    "dev": "bun run vl_stories",
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "cover": "coveralls < .coverage/lcov.info",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": ">= 18",
+    "react": ">= 19",
     "styled-components": ">= 6"
   },
   "dependencies": {
-    "lodash-es": "^4.17.22",
-    "moize": "^6.1.7",
     "react-is": "^19.2.3"
   },
   "devDependencies": {
-    "@types/lodash-es": "^4.17.12",
-    "@vitus-labs/tools-babel": "^1.5.1",
-    "@vitus-labs/tools-rollup": "^1.5.1",
-    "@vitus-labs/tools-typescript": "^1.5.1",
-    "styled-components": "^6.2.0"
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0"
   }
 }

@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { context } from '~/context/context'
 import { THEME_MODES_INVERSED } from '~/constants'
+import { context } from '~/context/context'
 import type { ThemeModeKeys } from '~/types/theme'
 
 type Context = {
@@ -12,6 +12,11 @@ type Context = {
 
 type UseThemeAttrs = ({ inversed }: { inversed?: boolean }) => Context
 
+/**
+ * Retrieves the current theme object and resolved mode from context.
+ * Supports mode inversion so nested components can flip between
+ * light and dark without a new provider.
+ */
 const useThemeAttrs: UseThemeAttrs = ({ inversed }) => {
   const {
     theme = {},

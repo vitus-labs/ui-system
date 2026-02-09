@@ -1,19 +1,25 @@
-import React from 'react'
+/**
+ * Renders a list story for a regular non-rocketstyle component.
+ * Accepts list configuration (data, itemKey, etc.) and wraps the component
+ * through StoryHoc, rendering it inside a Vitus Labs List element.
+ */
+
 import { List } from '@vitus-labs/elements'
+import type { ComponentType } from 'react'
 import StoryHoc from '~/internal/StoryHoc'
 import type {
   ListStoryOptions,
-  StoryComponent,
   RocketStoryConfiguration,
+  StoryComponent,
 } from '~/types'
 
 export type RenderList<P = {}> = (
   render: ListStoryOptions,
-  params: RocketStoryConfiguration
+  params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
-export default (list) =>
-  StoryHoc((component) => (props) => (
+export default (list: ListStoryOptions) =>
+  StoryHoc((component: ComponentType) => (props: Record<string, unknown>) => (
     <List
       rootElement={false}
       {...list}

@@ -1,6 +1,9 @@
-// --------------------------------------------------------
-// extractDefaultBooleanProps
-// --------------------------------------------------------
+/**
+ * Extracts default boolean shorthand props from rocketstyle dimensions.
+ * For each single-key dimension, picks the first value key and maps it
+ * to `true`, enabling the boolean prop alternative in code snippets.
+ * Returns null when useBooleans is disabled.
+ */
 type ExtractDefaultBooleanProps = (params: {
   dimensions: Record<string, any>
   multiKeys: Record<string, true>

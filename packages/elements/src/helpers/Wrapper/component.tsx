@@ -1,8 +1,19 @@
-import React, { forwardRef } from 'react'
+/**
+ * Wrapper component that serves as the outermost styled container for Element.
+ * Uses forwardRef for ref forwarding to the underlying DOM node. On web, it
+ * detects button/fieldset/legend tags and applies a two-layer flex fix
+ * (parent + child Styled) because these HTML elements do not natively
+ * support `display: flex` consistently across browsers.
+ */
+import { forwardRef } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
-import { isWebFixNeeded } from './utils'
-import type { Props, Reference } from './types'
 import Styled from './styled'
+import type { Props, Reference } from './types'
+import { isWebFixNeeded } from './utils'
+
+const DEV_PROPS: Record<string, string> = IS_DEVELOPMENT
+  ? { 'data-vl-element': 'Element' }
+  : {}
 
 // eslint-disable-next-line react/display-name
 const Component = forwardRef<Reference, Partial<Props>>(
@@ -21,15 +32,9 @@ const Component = forwardRef<Reference, Partial<Props>>(
     },
     ref,
   ) => {
-    const debugProps = IS_DEVELOPMENT
-      ? {
-          'data-vl-element': 'Element',
-        }
-      : {}
-
     const COMMON_PROPS = {
       ...props,
-      ...debugProps,
+      ...DEV_PROPS,
       ref,
       as: tag,
     }

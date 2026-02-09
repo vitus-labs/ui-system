@@ -1,43 +1,42 @@
-import rocketstyle from '~/init'
-import type { Rocketstyle } from '~/init'
-import Provider, { context } from '~/context/context'
 import type { TProvider } from '~/context/context'
-import isRocketComponent from '~/isRocketComponent'
+import Provider, { context } from '~/context/context'
+import type { Rocketstyle } from '~/init'
+import rocketstyle from '~/init'
 import type { IsRocketComponent } from '~/isRocketComponent'
-
-import type {
-  ConfigAttrs,
-  RocketComponentType,
-  RocketProviderState,
-  ConsumerCtxCBValue,
-  ConsumerCtxCb,
-  ConsumerCb,
-} from '~/types/config'
-import type { TObj, ElementType, MergeTypes, ExtractProps } from '~/types/utils'
-import type {
-  Dimensions,
-  DimensionValue,
-  DimensionCallbackParam,
-  ExtractDimensionProps,
-  TDKP,
-  DimensionProps,
-  ExtractDimensions,
-} from '~/types/dimensions'
-import type { StylesCb, StylesDefault } from '~/types/styles'
+import isRocketComponent from '~/isRocketComponent'
 import type { AttrsCb } from '~/types/attrs'
 import type {
-  ThemeModeCallback,
-  ThemeCb,
-  ThemeModeKeys,
-  ThemeDefault,
-  ThemeMode,
-} from '~/types/theme'
-import type { GenericHoc, ComposeParam } from '~/types/hoc'
+  ConfigAttrs,
+  ConsumerCb,
+  ConsumerCtxCBValue,
+  ConsumerCtxCb,
+  RocketComponentType,
+  RocketProviderState,
+} from '~/types/config'
 import type { DefaultProps } from '~/types/configuration'
 import type {
-  RocketStyleComponent,
+  DimensionCallbackParam,
+  DimensionProps,
+  Dimensions,
+  DimensionValue,
+  ExtractDimensionProps,
+  ExtractDimensions,
+  TDKP,
+} from '~/types/dimensions'
+import type { ComposeParam, GenericHoc } from '~/types/hoc'
+import type {
   IRocketStyleComponent,
+  RocketStyleComponent,
 } from '~/types/rocketstyle'
+import type { StylesCb, StylesDefault } from '~/types/styles'
+import type {
+  ThemeCb,
+  ThemeDefault,
+  ThemeMode,
+  ThemeModeCallback,
+  ThemeModeKeys,
+} from '~/types/theme'
+import type { ElementType, ExtractProps, MergeTypes, TObj } from '~/types/utils'
 
 export type {
   StylesDefault,
