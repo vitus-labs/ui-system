@@ -15,7 +15,9 @@
   "types": "./lib/index.d.ts",
   "react-native": "./lib/vitus-labs-elements.native.js",
   "files": [
-    "lib/"
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
   ],
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/elements",
   "description": "Most basic react reusable components",

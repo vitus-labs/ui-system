@@ -14,7 +14,9 @@
   },
   "types": "./lib/index.d.ts",
   "files": [
-    "lib/"
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
   ],
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/rocketstories",
   "description": "Rocketstyle is ultra powerful and extensible styling system for building React components blazingly fast, easily and make them easily extensible and reusable.",

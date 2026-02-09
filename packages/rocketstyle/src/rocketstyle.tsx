@@ -73,7 +73,6 @@ type CloneAndEnhance = (
 
 /** Clones the current configuration and merges new options, returning a fresh rocketComponent. */
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
-  // @ts-expect-error
   rocketComponent({
     ...defaultOpts,
     attrs: chainOptions(opts.attrs, defaultOpts.attrs),
@@ -90,7 +89,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
       opts,
       defaultOpts,
     ),
-  })
+  } as Parameters<typeof rocketComponent>[0])
 
 // --------------------------------------------------------
 // styleComponent
@@ -393,63 +392,64 @@ const rocketComponent: RocketComponent = (options) => {
     options: options.statics,
   })
 
-  // @ts-expect-error
-  RocketComponent.attrs = (attrs, { priority, filter } = {}) => {
-    const result: Record<string, any> = {}
+  // Object.assign bypasses strict property-level type checking — the chain
+  // method implementations can't express the interface's conditional generic
+  // return types at the implementation level.
+  Object.assign(RocketComponent, {
+    attrs: (attrs: any, { priority, filter }: any = {}) => {
+      const result: Record<string, any> = {}
 
-    if (filter) {
-      result.filterAttrs = filter
-    }
+      if (filter) {
+        result.filterAttrs = filter
+      }
 
-    if (priority) {
-      result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+      if (priority) {
+        result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+
+        return cloneAndEnhance(options, result)
+      }
+
+      result.attrs = attrs as ExtendedConfiguration['attrs']
 
       return cloneAndEnhance(options, result)
-    }
+    },
 
-    result.attrs = attrs as ExtendedConfiguration['attrs']
+    config: (opts: any = {}) => {
+      const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
 
-    return cloneAndEnhance(options, result)
-  }
+      return cloneAndEnhance(options, result)
+    },
 
-  // @ts-expect-error
-  RocketComponent.config = (opts = {}) => {
-    const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
+    statics: (opts: any) => cloneAndEnhance(options, { statics: opts }),
 
-    return cloneAndEnhance(options, result)
-  }
+    getStaticDimensions: (theme: any) => {
+      const themes = getDimensionThemes(theme, options)
 
-  RocketComponent.statics = (opts) =>
-    // @ts-expect-error
-    cloneAndEnhance(options, { statics: opts })
+      const { keysMap, keywords } = getDimensionsMap({
+        themes,
+        useBooleans: options.useBooleans,
+      })
 
-  RocketComponent.getStaticDimensions = (theme) => {
-    const themes = getDimensionThemes(theme, options)
+      return {
+        dimensions: keysMap,
+        keywords,
+        useBooleans: options.useBooleans,
+        multiKeys: options.multiKeys,
+      }
+    },
 
-    const { keysMap, keywords } = getDimensionsMap({
-      themes,
-      useBooleans: options.useBooleans,
-    })
-
-    return {
-      dimensions: keysMap,
-      keywords,
-      useBooleans: options.useBooleans,
-      multiKeys: options.multiKeys,
-    }
-  }
-
-  RocketComponent.getDefaultAttrs = (props, theme, mode) =>
-    calculateChainOptions(options.attrs)([
-      props,
-      theme,
-      {
-        render,
-        mode,
-        isDark: mode === 'light',
-        isLight: mode === 'dark',
-      },
-    ])
+    getDefaultAttrs: (props: any, theme: any, mode: any) =>
+      calculateChainOptions(options.attrs)([
+        props,
+        theme,
+        {
+          render,
+          mode,
+          isDark: mode === 'light',
+          isLight: mode === 'dark',
+        },
+      ]),
+  })
 
   return RocketComponent
 }
