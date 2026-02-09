@@ -91,23 +91,7 @@ jobs:
       - name: Build all packages
         run: bunx lerna run build --stream
 
-      - name: Debug OIDC token
-        run: |
-          echo "npm: $(npm -v)"
-          echo "OIDC URL available: ${ACTIONS_ID_TOKEN_REQUEST_URL:+yes}"
-          # Request OIDC token and decode its claims (non-sensitive)
-          OIDC_TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm" 2>&1) || echo "OIDC request failed: $OIDC_TOKEN"
-          if echo "$OIDC_TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['value'])" 2>/dev/null; then
-            TOKEN=$(echo "$OIDC_TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['value'])")
-            # Decode JWT payload (middle part) — contains repo, workflow claims
-            echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | python3 -m json.tool 2>/dev/null | grep -E '"(iss|sub|aud|repository|workflow_ref|job_workflow_ref|environment)"'
-          else
-            echo "Could not extract OIDC token"
-            echo "$OIDC_TOKEN" | head -5
-          fi
-
       - name: Publish canary
-        run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes --loglevel verbose
+        run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes
         env:
           NPM_CONFIG_PROVENANCE: true
