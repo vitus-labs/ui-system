@@ -91,7 +91,14 @@ jobs:
       - name: Build all packages
         run: bunx lerna run build --stream
 
+      - name: Debug npm auth
+        run: |
+          echo "Node: $(node -v)"
+          echo "npm: $(npm -v)"
+          npm config list
+          npm whoami --registry https://registry.npmjs.org 2>&1 || echo "npm whoami failed (expected with OIDC)"
+
       - name: Publish canary
-        run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes
+        run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes --verbose
         env:
           NPM_CONFIG_PROVENANCE: true
