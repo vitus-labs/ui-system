@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'Version bump type'
+        description: "Version bump type"
         required: true
         type: choice
         options:
@@ -16,8 +16,8 @@ on:
   # Prereleases — automatic on feature/release branch pushes
   push:
     branches:
-      - 'feature/**'
-      - 'release/**'
+      - "feature/**"
+      - "release/**"
 
 concurrency:
   group: release-${{ github.ref }}
@@ -41,22 +41,17 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+          registry-url: "https://registry.npmjs.org"
 
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
 
       - name: Lint & Format
-        run: bun run lint
+        run: bunx biome check .
 
       - name: Build all packages
-        run: bun run pkgs:build
-
-      - name: Type check
-        run: bun run typecheck
-
-      - name: Test
-        run: bun run test
+        run: bunx lerna run build --stream
 
       - name: Configure git
         run: |
@@ -84,22 +79,17 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+          registry-url: "https://registry.npmjs.org"
 
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
 
       - name: Lint & Format
-        run: bun run lint
+        run: bunx biome check .
 
       - name: Build all packages
-        run: bun run pkgs:build
-
-      - name: Type check
-        run: bun run typecheck
-
-      - name: Test
-        run: bun run test
+        run: bunx lerna run build --stream
 
       - name: Publish canary
         run: bunx lerna publish --canary --preid alpha --dist-tag next --force-publish --yes
