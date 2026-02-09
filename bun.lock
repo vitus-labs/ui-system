@@ -28,19 +28,6 @@
         "vitest": "^3.1.1",
       },
     },
-    "examples/web": {
-      "name": "@vitus-labs/examples-web",
-      "version": "0.81.0",
-      "dependencies": {
-        "next": "^15.5.9",
-        "react": "^19.2.3",
-        "react-dom": "^19.2.3",
-        "styled-components": "^6.2.0",
-      },
-      "peerDependencies": {
-        "typescript": "*",
-      },
-    },
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
       "version": "1.2.2",
@@ -918,8 +905,6 @@
     "@vitus-labs/core": ["@vitus-labs/core@workspace:packages/core"],
 
     "@vitus-labs/elements": ["@vitus-labs/elements@workspace:packages/elements"],
-
-    "@vitus-labs/examples-web": ["@vitus-labs/examples-web@workspace:examples/web"],
 
     "@vitus-labs/hooks": ["@vitus-labs/hooks@workspace:packages/hooks"],
 
