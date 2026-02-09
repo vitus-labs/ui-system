@@ -34,9 +34,7 @@ const widthStyles: WidthStyles = (
   const g = gap as number
 
   // calculate % of width
-  const width = __WEB__
-    ? (s / c) * 100
-    : (RNparentWidth / c) * s
+  const width = __WEB__ ? (s / c) * 100 : (RNparentWidth / c) * s
 
   const hasGap = hasValue(gap)
 
