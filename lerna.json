@@ -8,11 +8,7 @@
       "ignoreChanges": ["ignored-file", "*.md"]
     },
     "version": {
-      "allowBranch": [
-        "main",
-        "feature/*",
-        "release/*"
-      ],
+      "allowBranch": ["main", "feature/*", "release/*"],
       "exact": true,
       "preid": "alpha"
     }
