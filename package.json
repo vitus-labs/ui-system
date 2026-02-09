@@ -31,14 +31,14 @@
     "@biomejs/biome": "^2.3.14",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/node": "25.0.3",
+    "@types/node": "25.2.2",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/react-is": "^19.2.0",
-    "@vitus-labs/tools-lint": "^1.5.2-alpha.5",
+    "@vitus-labs/tools-lint": "^1.5.1",
     "cpr": "^3.0.1",
     "csstype": "^3.2.3",
-    "jsdom": "^26.1.0",
+    "jsdom": "^28.0.0",
     "lerna": "^9.0.3",
     "react": "^19.2.4",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
@@ -48,6 +48,6 @@
     "ts-patch": "^3.3.0",
     "typescript": "5.9.3",
     "typescript-transform-paths": "^3.5.6",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.18"
   }
 }
