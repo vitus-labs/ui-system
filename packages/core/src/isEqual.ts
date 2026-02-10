@@ -3,6 +3,29 @@
  * Handles null, undefined, nested structures. Does not handle Date, RegExp,
  * Map, Set, or circular references — not needed for theme/props comparison.
  */
+
+const isArrayEqual = (a: unknown[], b: unknown[]): boolean => {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (!isEqual(a[i], b[i])) return false
+  }
+  return true
+}
+
+const isObjectEqual = (
+  a: Record<string, unknown>,
+  b: Record<string, unknown>,
+): boolean => {
+  const aKeys = Object.keys(a)
+  if (aKeys.length !== Object.keys(b).length) return false
+
+  for (const key of aKeys) {
+    if (!Object.hasOwn(b, key)) return false
+    if (!isEqual(a[key], b[key])) return false
+  }
+  return true
+}
+
 const isEqual = (a: unknown, b: unknown): boolean => {
   if (Object.is(a, b)) return true
   if (
@@ -15,28 +38,15 @@ const isEqual = (a: unknown, b: unknown): boolean => {
   }
 
   if (Array.isArray(a)) {
-    if (!Array.isArray(b) || a.length !== b.length) return false
-    for (let i = 0; i < a.length; i++) {
-      if (!isEqual(a[i], b[i])) return false
-    }
-    return true
+    return Array.isArray(b) && isArrayEqual(a, b)
   }
 
   if (Array.isArray(b)) return false
 
-  const aObj = a as Record<string, unknown>
-  const bObj = b as Record<string, unknown>
-  const aKeys = Object.keys(aObj)
-  const bKeys = Object.keys(bObj)
-
-  if (aKeys.length !== bKeys.length) return false
-
-  for (const key of aKeys) {
-    if (!Object.prototype.hasOwnProperty.call(bObj, key)) return false
-    if (!isEqual(aObj[key], bObj[key])) return false
-  }
-
-  return true
+  return isObjectEqual(
+    a as Record<string, unknown>,
+    b as Record<string, unknown>,
+  )
 }
 
 export default isEqual

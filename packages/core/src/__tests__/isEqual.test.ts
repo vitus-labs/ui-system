@@ -60,12 +60,9 @@ describe('isEqual', () => {
 
   // Nested objects
   it('should deeply compare nested objects', () => {
-    expect(isEqual({ a: { b: { c: 1 } } }, { a: { b: { c: 1 } } })).toBe(
-      true,
-    )
-    expect(isEqual({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } })).toBe(
-      false,
-    )
+    const a = { a: { b: { c: 1 } } }
+    expect(isEqual(a, { a: { b: { c: 1 } } })).toBe(true)
+    expect(isEqual(a, { a: { b: { c: 2 } } })).toBe(false)
   })
 
   it('should handle nested key order differences', () => {

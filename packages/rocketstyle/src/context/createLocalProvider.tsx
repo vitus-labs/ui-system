@@ -1,9 +1,9 @@
+import { useStableValue } from '@vitus-labs/core'
 import {
   type ComponentType,
   type ForwardRefExoticComponent,
   forwardRef,
 } from 'react'
-import { useStableValue } from '@vitus-labs/core'
 import { usePseudoState } from '~/hooks'
 import type { PseudoProps } from '~/types/pseudo'
 import { LocalProvider } from './localContext'
