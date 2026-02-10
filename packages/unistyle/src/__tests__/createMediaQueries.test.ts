@@ -1,5 +1,7 @@
-import { css } from '@vitus-labs/styler'
+import { config } from '@vitus-labs/core'
 import createMediaQueries from '../responsive/createMediaQueries'
+
+const { css } = config
 
 describe('createMediaQueries', () => {
   it('creates media query functions for each breakpoint', () => {

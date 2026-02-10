@@ -1,5 +1,7 @@
-import { css } from '@vitus-labs/styler'
+import { config } from '@vitus-labs/core'
 import makeItResponsive from '../responsive/makeItResponsive'
+
+const { css } = config
 
 describe('makeItResponsive', () => {
   const mockStyles = ({ theme, css: cssFn }: any) => {

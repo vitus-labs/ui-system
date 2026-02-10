@@ -1,5 +1,7 @@
-import { css } from '@vitus-labs/styler'
+import { config } from '@vitus-labs/core'
 import styles from '../styles/styles'
+
+const { css } = config
 
 describe('styles', () => {
   it('returns css output for simple properties', () => {
