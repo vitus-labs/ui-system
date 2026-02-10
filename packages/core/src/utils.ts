@@ -89,12 +89,14 @@ export const set = (
   value: any,
 ): Record<string, any> => {
   const keys = parsePath(path)
-  if (keys.some((k) => UNSAFE_KEYS.has(k))) return obj
 
   let current = obj
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i]!
+    if (UNSAFE_KEYS.has(key)) return obj
+
     const nextKey = keys[i + 1]!
+    if (UNSAFE_KEYS.has(nextKey)) return obj
 
     if (current[key] == null) {
       // create array if next key is numeric, otherwise object
@@ -105,7 +107,7 @@ export const set = (
   }
 
   const lastKey = keys[keys.length - 1]
-  if (lastKey != null) {
+  if (lastKey != null && !UNSAFE_KEYS.has(lastKey)) {
     current[lastKey] = value
   }
 
