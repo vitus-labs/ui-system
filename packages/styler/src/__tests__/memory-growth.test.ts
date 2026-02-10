@@ -108,7 +108,10 @@ describe('memory growth', () => {
       const s = createSheet({ maxCacheSize: 20 })
 
       for (let i = 0; i < 50; i++) {
-        s.insertKeyframes(`anim-${i}`, `from { opacity: ${i}; } to { opacity: 1; }`)
+        s.insertKeyframes(
+          `anim-${i}`,
+          `from { opacity: ${i}; } to { opacity: 1; }`,
+        )
       }
 
       expect(s.cacheSize).toBeLessThanOrEqual(50)

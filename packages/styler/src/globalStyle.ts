@@ -21,8 +21,8 @@
 import { useInsertionEffect, useRef } from 'react'
 
 import { type Interpolation, resolve } from './resolve'
-import { sheet } from './sheet'
 import { isDynamic } from './shared'
+import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
 
 export const createGlobalStyle = (

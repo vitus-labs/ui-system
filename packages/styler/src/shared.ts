@@ -1,7 +1,7 @@
 /**
  * Shared utilities used across multiple modules.
  */
-import { type Interpolation, CSSResult } from './resolve'
+import { CSSResult, type Interpolation } from './resolve'
 
 /** Check if an interpolation value is dynamic (contains functions or nested dynamic CSSResults). */
 export const isDynamic = (v: Interpolation): boolean => {

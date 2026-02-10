@@ -13,28 +13,22 @@
  * 7. SSR renderToString
  * 8. styled() component factory
  */
+
+// --- @emotion/react + @emotion/styled ---
+import { css as emotionCss } from '@emotion/react'
+import emotionStyled from '@emotion/styled'
+// --- goober ---
+import { css as gooberCss, styled as gooberStyled, setup } from 'goober'
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
+// --- styled-components ---
+import scStyled, { ServerStyleSheet, css as scCss } from 'styled-components'
 import { bench, describe } from 'vitest'
-
 // --- @vitus-labs/styler ---
 import { css as stylerCss } from '../css'
 import { hash as stylerHash } from '../hash'
 import { resolve as stylerResolve } from '../resolve'
 import { styled as stylerStyled } from '../styled'
-
-// --- styled-components ---
-import scStyled, {
-  css as scCss,
-  ServerStyleSheet,
-} from 'styled-components'
-
-// --- @emotion/react + @emotion/styled ---
-import { css as emotionCss } from '@emotion/react'
-import emotionStyled from '@emotion/styled'
-
-// --- goober ---
-import { css as gooberCss, styled as gooberStyled, setup } from 'goober'
 
 // Setup goober to use React.createElement
 setup(createElement)
@@ -189,9 +183,9 @@ describe('dynamic function interpolation', () => {
       (p: any) => p.theme.size,
       (p: any) => (p.active ? '1' : '0.5'),
     ]
-    let result = strings[0]!
+    let _result = strings[0]!
     for (let i = 0; i < values.length; i++) {
-      result += values[i]!(props) + strings[i + 1]!
+      _result += values[i]!(props) + strings[i + 1]!
     }
   })
 })
@@ -269,10 +263,14 @@ describe('nested css() composition', () => {
 // 7. SSR — renderToString with styled components
 // ============================================================================
 describe('SSR renderToString', () => {
-  const StylerDiv = stylerStyled('div')`display: flex; padding: 16px; color: blue;`
+  const StylerDiv = stylerStyled(
+    'div',
+  )`display: flex; padding: 16px; color: blue;`
   const SCDiv = scStyled.div`display: flex; padding: 16px; color: blue;`
   const EmotionDiv = emotionStyled.div`display: flex; padding: 16px; color: blue;`
-  const GooberDiv = gooberStyled('div')`display: flex; padding: 16px; color: blue;`
+  const GooberDiv = gooberStyled(
+    'div',
+  )`display: flex; padding: 16px; color: blue;`
 
   bench('@vitus-labs/styler', () => {
     renderToString(createElement(StylerDiv, null, 'Hello'))
@@ -281,9 +279,7 @@ describe('SSR renderToString', () => {
   bench('styled-components', () => {
     const sheet = new ServerStyleSheet()
     try {
-      renderToString(
-        sheet.collectStyles(createElement(SCDiv, null, 'Hello')),
-      )
+      renderToString(sheet.collectStyles(createElement(SCDiv, null, 'Hello')))
       sheet.getStyleTags()
     } finally {
       sheet.seal()
@@ -319,4 +315,3 @@ describe('styled() component factory', () => {
     gooberStyled('div')`display: flex; color: red; padding: 8px;`
   })
 })
-

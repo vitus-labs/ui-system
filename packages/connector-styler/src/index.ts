@@ -1,9 +1,9 @@
 import {
-  ThemeProvider,
   createGlobalStyle,
   css,
   keyframes,
   styled,
+  ThemeProvider,
   useTheme,
 } from '@vitus-labs/styler'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, type FC, type ReactNode } from 'react'
+import { createContext, type FC, type ReactNode, useContext } from 'react'
 
 /**
  * Extensible theme interface. Consumers can augment this via module
@@ -14,7 +14,7 @@ import { createContext, useContext, type FC, type ReactNode } from 'react'
  *   }
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface DefaultTheme {}
+export type DefaultTheme = {}
 
 type Theme = DefaultTheme & Record<string, unknown>
 

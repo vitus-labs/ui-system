@@ -15,15 +15,16 @@
  * function(props) → string (dynamic path) — both are natively handled by
  * Emotion's styled template processing.
  */
-import { createElement, type FC } from 'react'
-import emotionStyled from '@emotion/styled'
+
 import {
-  Global,
-  ThemeProvider,
   css as emotionCss,
+  Global,
   keyframes,
+  ThemeProvider,
   useTheme,
 } from '@emotion/react'
+import emotionStyled from '@emotion/styled'
+import { createElement, type FC } from 'react'
 
 // ---------------------------------------------------------------------------
 // resolveValue — recursively resolve css interpolation values to strings
@@ -52,10 +53,7 @@ const resolveValue = (value: any, props: Record<string, any>): string => {
  *
  * Both forms are natively handled by @emotion/styled's template processing.
  */
-export const css = (
-  strings: TemplateStringsArray,
-  ...values: any[]
-): any => {
+export const css = (strings: TemplateStringsArray, ...values: any[]): any => {
   // Fast path: no interpolation values → return plain string
   if (values.length === 0) return strings[0] ?? ''
 

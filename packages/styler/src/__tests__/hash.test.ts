@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hash, HASH_INIT, hashFinalize, hashUpdate } from '../hash'
+import { HASH_INIT, hash, hashFinalize, hashUpdate } from '../hash'
 
 describe('hash', () => {
   it('returns a string', () => {
@@ -67,7 +67,14 @@ describe('hash', () => {
     })
 
     it('many small segments equal hash(full string)', () => {
-      const parts = ['display:', ' flex;', ' color:', ' red;', ' padding:', ' 8px;']
+      const parts = [
+        'display:',
+        ' flex;',
+        ' color:',
+        ' red;',
+        ' padding:',
+        ' 8px;',
+      ]
       let h = HASH_INIT
       for (const part of parts) {
         h = hashUpdate(h, part)

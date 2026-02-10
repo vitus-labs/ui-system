@@ -1,10 +1,10 @@
 'use client'
 
 import {
-  createElement,
-  forwardRef,
   type ComponentType,
+  createElement,
   type FC,
+  forwardRef,
   type ReactNode,
 } from 'react'
 import type { HTMLTags } from '~/html'
@@ -87,9 +87,7 @@ const createStyledDelegate = (self: Configuration) => {
     })
 
     Lazy.displayName = `styled(${
-      typeof tag === 'string'
-        ? tag
-        : tag.displayName || tag.name || 'Component'
+      typeof tag === 'string' ? tag : tag.displayName || tag.name || 'Component'
     })`
 
     return Lazy
@@ -214,7 +212,8 @@ class Configuration {
     if (props.styled) this._styled = props.styled
     if (props.provider) this._provider = props.provider
     if (props.keyframes) this._keyframes = props.keyframes
-    if (props.createGlobalStyle) this._createGlobalStyle = props.createGlobalStyle
+    if (props.createGlobalStyle)
+      this._createGlobalStyle = props.createGlobalStyle
     if (props.useTheme) this._useTheme = props.useTheme
     if (props.component) this.component = props.component
     if (props.textComponent) this.textComponent = props.textComponent

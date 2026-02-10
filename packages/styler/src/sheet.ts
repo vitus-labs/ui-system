@@ -110,9 +110,7 @@ export class StyleSheet {
     this.cache.set(className, className)
 
     const baseRule = `.${className}{${cssText}}`
-    const rule = this.layer
-      ? `@layer ${this.layer}{${baseRule}}`
-      : baseRule
+    const rule = this.layer ? `@layer ${this.layer}{${baseRule}}` : baseRule
 
     if (this.isSSR) {
       this.ssrBuffer.push(rule)

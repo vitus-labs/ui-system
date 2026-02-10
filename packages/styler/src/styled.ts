@@ -20,8 +20,8 @@
  */
 import {
   type ComponentType,
-  Fragment,
   createElement,
+  Fragment,
   forwardRef,
   useInsertionEffect,
   useRef,
@@ -29,8 +29,8 @@ import {
 
 import { filterProps } from './forward'
 import { type Interpolation, resolve } from './resolve'
-import { sheet } from './sheet'
 import { isDynamic } from './shared'
+import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
 
 type Tag = string | ComponentType<any>
@@ -88,9 +88,7 @@ const createStyledComponent = (
     const cssText = resolve(strings, values, {})
     const staticClassName = cssText.trim() ? sheet.insert(cssText) : ''
 
-    const staticRule = staticClassName
-      ? `.${staticClassName}{${cssText}}`
-      : ''
+    const staticRule = staticClassName ? `.${staticClassName}{${cssText}}` : ''
 
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       ({ as: asProp, className: userCls, ...props }, ref) => {
@@ -146,9 +144,7 @@ const createStyledComponent = (
         className = lastClsRef.current
       } else {
         // Cache miss: compute new className
-        className = cssText.trim()
-          ? sheet.getClassName(cssText)
-          : ''
+        className = cssText.trim() ? sheet.getClassName(cssText) : ''
         lastCssRef.current = cssText
         lastClsRef.current = className
         insertedRef.current = false

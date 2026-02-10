@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react'
-import { type FC, createRef, forwardRef } from 'react'
+import { createRef, type FC, forwardRef } from 'react'
 import { describe, expect, it } from 'vitest'
-import { css } from '../css'
 import { styled } from '../styled'
 import { ThemeProvider } from '../ThemeProvider'
 
@@ -134,9 +133,7 @@ describe('styled', () => {
       const Inner: FC<{ className?: string; customProp?: string }> = ({
         className,
         customProp,
-      }) => (
-        <div className={className} data-custom={customProp} />
-      )
+      }) => <div className={className} data-custom={customProp} />
       const Comp = styled(Inner)`color: red;`
       const { container } = render(<Comp customProp="hello" />)
       const el = container.lastElementChild as HTMLElement

@@ -156,8 +156,7 @@ describe('integration', () => {
     it('function interpolation with prop-based conditional', () => {
       const Comp = styled('div')`
         display: flex;
-        ${({ $contentType }: any) =>
-          $contentType === 'content' && 'flex: 1;'};
+        ${({ $contentType }: any) => $contentType === 'content' && 'flex: 1;'};
       `
       const { container } = render(<Comp $contentType="content" />)
       const el = container.lastElementChild as HTMLElement

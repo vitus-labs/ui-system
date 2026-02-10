@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { css } from '../css'
-import { CSSResult, resolve } from '../resolve'
+import { resolve } from '../resolve'
 
 // Helper to create a TemplateStringsArray
-const tsa = (
-  strings: readonly string[],
-): TemplateStringsArray => {
+const tsa = (strings: readonly string[]): TemplateStringsArray => {
   const arr = [...strings] as string[] & { raw: readonly string[] }
   arr.raw = strings
   return arr

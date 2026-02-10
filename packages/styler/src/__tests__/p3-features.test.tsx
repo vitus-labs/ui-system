@@ -37,16 +37,22 @@ describe('P3 features', () => {
         shouldForwardProp: (prop) => prop === 'title',
       })`color: ${(p: any) => p.$color};`
 
-      const { container } = render(<Comp $color="red" title="yes" custom="no" />)
+      const { container } = render(
+        <Comp $color="red" title="yes" custom="no" />,
+      )
       const el = container.lastElementChild as HTMLElement
       expect(el.getAttribute('title')).toBe('yes')
       expect(el.getAttribute('custom')).toBeNull()
     })
 
     it('does not affect component wrapping (components receive all props)', () => {
-      const Inner = ({ className, myProp }: { className?: string; myProp?: string }) => (
-        <div className={className} data-my={myProp} />
-      )
+      const Inner = ({
+        className,
+        myProp,
+      }: {
+        className?: string
+        myProp?: string
+      }) => <div className={className} data-my={myProp} />
       // shouldForwardProp is only for HTML elements
       const Comp = styled(Inner, {
         shouldForwardProp: () => false,
@@ -178,7 +184,9 @@ describe('P3 features', () => {
         &::after { content: ""; display: block; }
       `
       const { container } = render(<Comp />)
-      expect((container.lastElementChild as HTMLElement).className).toMatch(/^vl-/)
+      expect((container.lastElementChild as HTMLElement).className).toMatch(
+        /^vl-/,
+      )
     })
   })
 
@@ -226,10 +234,15 @@ describe('P3 features', () => {
     })
 
     it('handles very large CSS strings', () => {
-      const bigCSS = Array.from({ length: 100 }, (_, i) => `prop${i}: val${i};`).join(' ')
+      const bigCSS = Array.from(
+        { length: 100 },
+        (_, i) => `prop${i}: val${i};`,
+      ).join(' ')
       const Comp = styled('div')`${bigCSS}`
       const { container } = render(<Comp />)
-      expect((container.lastElementChild as HTMLElement).className).toMatch(/^vl-/)
+      expect((container.lastElementChild as HTMLElement).className).toMatch(
+        /^vl-/,
+      )
     })
 
     it('theme change causes new className', () => {

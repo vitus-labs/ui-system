@@ -13,16 +13,13 @@
  * interpolations — keyframes are static by nature.
  */
 import { hash } from './hash'
-import { type Interpolation, CSSResult, resolve } from './resolve'
+import { type Interpolation, resolve } from './resolve'
 import { sheet } from './sheet'
 
 class KeyframesResult {
   readonly name: string
 
-  constructor(
-    strings: TemplateStringsArray,
-    values: Interpolation[],
-  ) {
+  constructor(strings: TemplateStringsArray, values: Interpolation[]) {
     const body = resolve(strings, values, {})
     const h = hash(body)
     this.name = `vl-kf-${h}`

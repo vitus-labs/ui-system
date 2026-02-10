@@ -29,4 +29,5 @@ export const hashUpdate = (h: number, str: string): number => {
 export const hashFinalize = (h: number): string => (h >>> 0).toString(36)
 
 /** Hash a complete string in one shot. Returns base-36 string. */
-export const hash = (str: string): string => hashFinalize(hashUpdate(HASH_INIT, str))
+export const hash = (str: string): string =>
+  hashFinalize(hashUpdate(HASH_INIT, str))

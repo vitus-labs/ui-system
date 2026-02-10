@@ -10,7 +10,7 @@ describe('StyleSheet', () => {
 
   beforeEach(async () => {
     // Clear any existing style tags
-    document.querySelectorAll('style[data-vl]').forEach((el) => el.remove())
+    for (const el of document.querySelectorAll('style[data-vl]')) el.remove()
 
     // Re-import to get fresh instance
     // Use dynamic import with cache busting
