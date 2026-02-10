@@ -8,7 +8,8 @@
   "type": "module",
   "homepage": "https://github.com/vitus-labs/ui-system#readme",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "release": "lerna publish --force-publish",

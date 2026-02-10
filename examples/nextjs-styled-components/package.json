@@ -1,0 +1,26 @@
+{
+  "name": "@vitus-labs/example-nextjs-styled-components",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "next": "^15.3.0",
+    "styled-components": "^6.1.0",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/connector-styled-components": "workspace:*",
+    "@vitus-labs/elements": "workspace:*",
+    "@vitus-labs/coolgrid": "workspace:*",
+    "@vitus-labs/unistyle": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.9.3"
+  }
+}
