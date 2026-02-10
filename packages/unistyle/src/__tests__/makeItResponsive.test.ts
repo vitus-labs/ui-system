@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css } from '@vitus-labs/styler'
 import makeItResponsive from '../responsive/makeItResponsive'
 
 describe('makeItResponsive', () => {

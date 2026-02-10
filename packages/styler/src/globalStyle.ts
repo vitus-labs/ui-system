@@ -20,7 +20,7 @@
  */
 import { useInsertionEffect, useRef } from 'react'
 
-import { type Interpolation, resolve } from './resolve'
+import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
@@ -33,7 +33,7 @@ export const createGlobalStyle = (
 
   // STATIC FAST PATH: inject once at creation time, component is a no-op
   if (!hasDynamicValues) {
-    const cssText = resolve(strings, values, {})
+    const cssText = normalizeCSS(resolve(strings, values, {}))
     if (cssText.trim()) sheet.insertGlobal(cssText)
 
     const StaticGlobal = () => null
@@ -45,7 +45,7 @@ export const createGlobalStyle = (
   const DynamicGlobal = (props: Record<string, any>) => {
     const theme = useTheme()
     const allProps = { ...props, theme }
-    const cssText = resolve(strings, values, allProps)
+    const cssText = normalizeCSS(resolve(strings, values, allProps))
     const prevCssRef = useRef('')
 
     // Use useInsertionEffect (React 18+) for CSS injection.

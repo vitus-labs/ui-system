@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css } from '@vitus-labs/styler'
 import styles from '../styles/styles'
 
 describe('styles', () => {

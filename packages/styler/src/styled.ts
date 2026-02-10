@@ -28,7 +28,7 @@ import {
 } from 'react'
 
 import { filterProps } from './forward'
-import { type Interpolation, resolve } from './resolve'
+import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
@@ -85,7 +85,7 @@ const createStyledComponent = (
 
   // STATIC FAST PATH: no function interpolations → compute class once at creation time
   if (!hasDynamicValues) {
-    const cssText = resolve(strings, values, {})
+    const cssText = normalizeCSS(resolve(strings, values, {}))
     const staticClassName = cssText.trim() ? sheet.insert(cssText) : ''
 
     const staticRule = staticClassName ? `.${staticClassName}{${cssText}}` : ''
@@ -132,7 +132,7 @@ const createStyledComponent = (
     ({ as: asProp, className: userCls, ...props }, ref) => {
       const theme = useTheme()
       const allProps = { ...props, theme }
-      const cssText = resolve(strings, values, allProps)
+      const cssText = normalizeCSS(resolve(strings, values, allProps))
 
       const lastCssRef = useRef('')
       const lastClsRef = useRef('')

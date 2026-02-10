@@ -44,6 +44,25 @@ export const resolve = (
   return result
 }
 
+/**
+ * Normalize resolved CSS text for strict `insertRule` compatibility.
+ * Removes double semicolons, empty declarations, and excess whitespace
+ * that arise from template interpolation (conditional expressions,
+ * empty CSSResult values, etc.).
+ */
+export const normalizeCSS = (css: string): string => {
+  let s = css.replace(/\s+/g, ' ').trim()
+  // Collapse multiple semicolons (;; or ; ;) into single semicolons
+  while (s.includes('; ;') || s.includes(';;')) {
+    s = s.replace(/;(\s*;)+/g, ';')
+  }
+  // Remove semicolons after { and before } that create empty rules
+  s = s.replace(/\{\s*;/g, '{').replace(/}\s*;/g, '}')
+  // Remove leading semicolons
+  s = s.replace(/^\s*;/, '').trim()
+  return s
+}
+
 export const resolveValue = (
   value: Interpolation,
   props: Record<string, any>,

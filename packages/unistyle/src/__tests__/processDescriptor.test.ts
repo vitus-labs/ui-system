@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css } from '@vitus-labs/styler'
 import borderRadius from '../styles/shorthands/borderRadius'
 import edge from '../styles/shorthands/edge'
 import processDescriptor from '../styles/styles/processDescriptor'

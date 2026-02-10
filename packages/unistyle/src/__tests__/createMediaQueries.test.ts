@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css } from '@vitus-labs/styler'
 import createMediaQueries from '../responsive/createMediaQueries'
 
 describe('createMediaQueries', () => {
