@@ -16,7 +16,7 @@ export default rocketstyle()({
   })
   .styles(
     (css) => css`
-      ${({ $rocketstyle }) => {
+      ${({ $rocketstyle }: any) => {
         const baseTheme = styles({ theme: $rocketstyle, css, rootSize: 16 })
 
         return css`
