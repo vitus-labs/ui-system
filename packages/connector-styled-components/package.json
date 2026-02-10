@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/connector-styled-components",
-  "version": "1.4.1",
+  "version": "2.0.0-alpha.0",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -49,12 +49,12 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "styled-components": ">= 6",
-    "react": ">= 19"
+    "react": ">= 19",
+    "styled-components": ">= 6"
   },
   "devDependencies": {
-    "styled-components": "^6.3.9",
     "@vitus-labs/tools-rolldown": "^1.6.0",
-    "@vitus-labs/tools-typescript": "^1.6.0"
+    "@vitus-labs/tools-typescript": "^1.6.0",
+    "styled-components": "^6.3.9"
   }
 }
