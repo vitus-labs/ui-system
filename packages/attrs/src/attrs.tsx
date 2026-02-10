@@ -29,7 +29,6 @@ type CloneAndEnhance = (
 ) => ReturnType<typeof attrsComponent>
 
 const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
-  // @ts-expect-error
   attrsComponent({
     ...defaultOpts,
     ...(opts.name ? { name: opts.name } : undefined),
@@ -42,7 +41,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
     priorityAttrs: chainOptions(opts.priorityAttrs, defaultOpts.priorityAttrs),
     statics: { ...defaultOpts.statics, ...opts.statics },
     compose: { ...defaultOpts.compose, ...opts.compose },
-  })
+  } as Parameters<typeof attrsComponent>[0])
 
 /**
  * Core factory that builds an attrs-enhanced React component.
@@ -125,43 +124,41 @@ const attrsComponent: InitAttrsComponent = (options) => {
   // ─── Chaining Methods ──────────────────────────────────
   // Each method creates a new component via cloneAndEnhance.
   // The original component is never mutated.
+  // Object.assign bypasses strict property-level type checking — the chain
+  // method implementations can't express the interface's conditional generic
+  // return types at the implementation level.
+  Object.assign(AttrsComponent, {
+    attrs: (attrs: any, { priority, filter }: any = {}) => {
+      const result: Record<string, any> = {}
 
-  // @ts-expect-error
-  AttrsComponent.attrs = (attrs, { priority, filter } = {}) => {
-    const result: Record<string, any> = {}
+      if (filter) {
+        result.filterAttrs = filter
+      }
 
-    if (filter) {
-      result.filterAttrs = filter
-    }
+      if (priority) {
+        result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
 
-    if (priority) {
-      result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+        return cloneAndEnhance(options, result)
+      }
+
+      result.attrs = attrs as ExtendedConfiguration['attrs']
 
       return cloneAndEnhance(options, result)
-    }
+    },
 
-    result.attrs = attrs as ExtendedConfiguration['attrs']
+    config: (opts: any = {}) => {
+      const result = pick(opts)
 
-    return cloneAndEnhance(options, result)
-  }
+      return cloneAndEnhance(options, result)
+    },
 
-  // @ts-expect-error
-  AttrsComponent.config = (opts = {}) => {
-    const result = pick(opts)
+    compose: (opts: any) => cloneAndEnhance(options, { compose: opts }),
 
-    return cloneAndEnhance(options, result)
-  }
+    statics: (opts: any) => cloneAndEnhance(options, { statics: opts }),
 
-  AttrsComponent.compose = (opts) =>
-    // @ts-expect-error
-    cloneAndEnhance(options, { compose: opts })
-
-  AttrsComponent.statics = (opts) =>
-    // @ts-expect-error
-    cloneAndEnhance(options, { statics: opts })
-
-  AttrsComponent.getDefaultAttrs = (props) =>
-    calculateChainOptions(options.attrs)([props])
+    getDefaultAttrs: (props: any) =>
+      calculateChainOptions(options.attrs)([props]),
+  })
 
   return AttrsComponent
 }

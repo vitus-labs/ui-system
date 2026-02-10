@@ -54,7 +54,7 @@ const calculateGap = ({
 }: {
   direction: keyof typeof gapDimensions
   type: ThemeProps['contentType']
-  value: any
+  value: string | number | null | undefined
 }) => {
   if (!direction || !type || type === 'content') return undefined
 

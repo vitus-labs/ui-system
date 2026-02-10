@@ -7,13 +7,16 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "types": "./lib/index.d.ts",
   "files": [
-    "lib/"
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
   ],
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/hooks",
   "description": "Universal styles",
@@ -40,8 +43,11 @@
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
+  "engines": {
+    "node": ">= 18"
+  },
   "peerDependencies": {
-    "@vitus-labs/core": "*",
+    "@vitus-labs/core": "workspace:*",
     "react": ">= 19"
   },
   "devDependencies": {

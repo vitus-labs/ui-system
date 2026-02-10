@@ -7,12 +7,15 @@
     "Vit Bokisch <vit@bokisch.cz>"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "files": [
-    "lib/"
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
   ],
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/attrs",
   "description": "Attrs hoc chaining for React components",
@@ -36,6 +39,9 @@
   "bugs": {
     "url": "https://github.com/vitus-labs/ui-system/issues"
   },
+  "engines": {
+    "node": ">= 18"
+  },
   "scripts": {
     "dev": "bun run vl_stories",
     "prepublish": "bun run build",
@@ -49,7 +55,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "*",
+    "@vitus-labs/core": "workspace:*",
     "react": ">= 19"
   },
   "devDependencies": {

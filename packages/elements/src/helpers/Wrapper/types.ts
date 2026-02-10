@@ -25,7 +25,7 @@ export interface Props {
   alignY: AlignY
   equalCols: ResponsiveBoolType
   extendCss: ExtendCss
-  dangerouslySetInnerHTML: any
+  dangerouslySetInnerHTML: { __html: string | TrustedHTML }
 }
 
 export interface StyledProps {

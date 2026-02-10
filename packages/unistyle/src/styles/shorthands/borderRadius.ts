@@ -100,7 +100,7 @@ export type BorderRadius = (
 const borderRadius: BorderRadius = (rootSize) => (props) => {
   if (!hasAnyValue(props)) return null
 
-  const calc = (param: PV) => value(param as any, rootSize)
+  const calc = (param: PV) => value(param, rootSize)
   const corners = resolveCorners(props)
 
   if (corners.every((val) => isValidValue(val)))

@@ -235,8 +235,8 @@ type GenerateMainJSXCode = (params: {
   name: string
   props: Record<string, string>
   dimensions: Record<string, string>
-  booleanDimensions: any
-}) => any
+  booleanDimensions: Record<string, boolean> | null | undefined
+}) => string
 
 export const generateMainJSXCode: GenerateMainJSXCode = ({
   name,

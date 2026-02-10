@@ -16,8 +16,8 @@ export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
 // Theme Mode Callback Check
 // --------------------------------------------------------
 /** Detects whether a value is a `themeModeCallback` function by comparing stringified signatures. */
-type IsModeCallback = (value: any) => boolean
-const isModeCallback: IsModeCallback = (value: any) =>
+type IsModeCallback = (value: unknown) => boolean
+const isModeCallback: IsModeCallback = (value: unknown) =>
   typeof value === 'function' &&
   //@ts-expect-error
   value.toString() === themeModeCallback().toString()

@@ -61,7 +61,7 @@ const validateInit = (
   } else {
     const definedDimensions = getKeys(dimensions)
     const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
-      definedDimensions.includes(item as any),
+      definedDimensions.some((d) => d === item),
     )
 
     if (invalidDimension) {
