@@ -58,8 +58,8 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/unistyle": "workspace:*",
+    "@vitus-labs/core": "^1.4.0",
+    "@vitus-labs/unistyle": "^1.4.0",
     "react": ">= 19",
     "styled-components": ">= 6"
   },
