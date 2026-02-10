@@ -166,10 +166,7 @@ describe('Element responsive props', () => {
 
     it('renders with alignY as breakpoint object', () => {
       render(
-        <Element
-          alignY={{ xs: 'top', lg: 'center' } as any}
-          data-testid="el"
-        >
+        <Element alignY={{ xs: 'top', lg: 'center' } as any} data-testid="el">
           content
         </Element>,
         { wrapper },
@@ -206,10 +203,7 @@ describe('Element responsive props', () => {
 
     it('renders with block as breakpoint object', () => {
       render(
-        <Element
-          block={{ xs: false, md: true } as any}
-          data-testid="el"
-        >
+        <Element block={{ xs: false, md: true } as any} data-testid="el">
           content
         </Element>,
         { wrapper },

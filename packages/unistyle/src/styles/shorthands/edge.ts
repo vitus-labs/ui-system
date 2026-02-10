@@ -133,8 +133,7 @@ const edge: Edge =
     if (!hasAnyValue(values)) return null
 
     const { unit, edgeCss } = definitions[property]
-    const calc = (param: Value) =>
-      unit ? value(param, rootSize, unit) : param
+    const calc = (param: Value) => (unit ? value(param, rootSize, unit) : param)
 
     const sides = resolveSides(values)
 

@@ -31,15 +31,7 @@ beforeAll(() => {
 
 // Base component that exposes internal props for testing
 const BaseComponent = forwardRef(
-  (
-    {
-      children,
-      $rocketstyle,
-      $rocketstate,
-      ...rest
-    }: any,
-    ref: any,
-  ) => (
+  ({ children, $rocketstyle, $rocketstate, ...rest }: any, ref: any) => (
     <div
       ref={ref}
       data-hover={$rocketstate?.pseudo?.hover ?? 'none'}
@@ -56,20 +48,10 @@ BaseComponent.displayName = 'BaseComponent'
 // Child component that reads consumer context
 const ChildComponent = forwardRef(
   (
-    {
-      children,
-      $rocketstyle,
-      $rocketstate,
-      parentHover,
-      ...rest
-    }: any,
+    { children, $rocketstyle, $rocketstate, parentHover, ...rest }: any,
     ref: any,
   ) => (
-    <div
-      ref={ref}
-      data-parent-hover={parentHover ?? 'none'}
-      {...rest}
-    >
+    <div ref={ref} data-parent-hover={parentHover ?? 'none'} {...rest}>
       {children}
     </div>
   ),
@@ -212,10 +194,7 @@ describe('Provider/Consumer integration', () => {
           })),
       })
 
-      render(
-        <Child data-testid="child">Orphan</Child>,
-        { wrapper },
-      )
+      render(<Child data-testid="child">Orphan</Child>, { wrapper })
 
       // Without a provider, context is empty — hover is falsy → 'no'
       expect(screen.getByTestId('child')).toHaveAttribute(
