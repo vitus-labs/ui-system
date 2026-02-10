@@ -9,6 +9,7 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
+    "source": "./src/index.ts",
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
@@ -54,7 +55,6 @@
     "react": ">= 19"
   },
   "dependencies": {
-    "@vitus-labs/styler": "workspace:*",
     "react-is": "^19.2.3"
   },
   "devDependencies": {

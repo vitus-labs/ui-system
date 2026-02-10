@@ -1,11 +1,14 @@
-import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
+import tildeResolve from '../../vitest.tilde-plugin'
 
 export default defineConfig({
+  plugins: [tildeResolve()],
+  define: {
+    __WEB__: true,
+    __NATIVE__: false,
+  },
   resolve: {
-    alias: {
-      '~': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+    conditions: ['source'],
   },
   test: {
     name: 'rocketstories',

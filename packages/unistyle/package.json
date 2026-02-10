@@ -9,6 +9,7 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
+    "source": "./src/index.ts",
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },

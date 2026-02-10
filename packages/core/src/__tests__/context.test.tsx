@@ -77,9 +77,9 @@ describe('Provider', () => {
   })
 
   it('renders without ExternalProvider', () => {
-    const original = config.ExternalProvider
-    // Temporarily remove ExternalProvider
-    config.ExternalProvider = undefined as any
+    const originalProvider = config._provider
+    // Temporarily remove ExternalProvider via internal ref
+    config._provider = null
     const theme = { rootSize: 16, breakpoints: { xs: 0 } }
     render(
       <Provider theme={theme}>
@@ -89,7 +89,7 @@ describe('Provider', () => {
     const consumer = screen.getByTestId('consumer')
     const ctxTheme = JSON.parse(consumer.getAttribute('data-theme')!)
     expect(ctxTheme.rootSize).toBe(16)
-    config.ExternalProvider = original
+    config._provider = originalProvider
   })
 })
 
