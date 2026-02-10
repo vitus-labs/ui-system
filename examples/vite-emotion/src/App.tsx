@@ -1,6 +1,8 @@
 import { config, Provider } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import { Row, Col } from '@vitus-labs/coolgrid'
+import rocketstyle from '@vitus-labs/rocketstyle'
+import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 
 const { styled } = config
 
@@ -65,7 +67,7 @@ const CardText = styled.p`
   font-size: 0.875rem;
   color: #555;
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 16px;
 `
 
 const ElementDemo = styled.div`
@@ -86,6 +88,121 @@ const IconBox = styled.div`
   justify-content: center;
   font-weight: 600;
 `
+
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+`
+
+// Rocketstyle button with dimension-based states and boolean prop shortcuts
+const RsButton = rocketstyle()({
+  name: 'RsButton',
+  component: Element,
+})
+  .attrs({ tag: 'button' })
+  .theme({
+    bgColor: '#0070f3',
+    color: '#fff',
+    hover: { bgColor: '#0060df' },
+  })
+  .states({
+    primary: {
+      bgColor: '#0070f3',
+      color: '#fff',
+      hover: { bgColor: '#0060df' },
+    },
+    secondary: {
+      bgColor: '#6c757d',
+      color: '#fff',
+      hover: { bgColor: '#5c636a' },
+    },
+    outline: {
+      bgColor: 'transparent',
+      color: '#0070f3',
+      hover: { bgColor: '#e8f4fd' },
+    },
+  })
+  .styles(
+    (css) => css`
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      ${({ $rocketstyle: t }: any) => css`
+        color: ${t.color};
+        background-color: ${t.bgColor};
+
+        &:hover {
+          background-color: ${t.hover?.bgColor};
+        }
+      `};
+    `,
+  )
+
+// Rocketstyle button using unistyle's data-driven CSS processor
+const UnistyleButton = rocketstyle()({
+  name: 'UnistyleButton',
+  component: Element,
+})
+  .attrs({ tag: 'button' })
+  .theme({
+    height: 40,
+    fontSize: 14,
+    paddingX: 20,
+    paddingY: 0,
+    backgroundColor: '#0070f3',
+    color: '#fff',
+    borderRadius: 6,
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    hover: { backgroundColor: '#0060df' },
+  })
+  .states({
+    primary: {
+      backgroundColor: '#0070f3',
+      color: '#fff',
+      hover: { backgroundColor: '#0060df' },
+    },
+    secondary: {
+      backgroundColor: '#6c757d',
+      color: '#fff',
+      hover: { backgroundColor: '#5c636a' },
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      color: '#0070f3',
+      border: '1px solid #0070f3',
+      hover: { backgroundColor: '#e8f4fd' },
+    },
+  })
+  .styles(
+    (css) => css`
+      font-weight: 500;
+
+      ${({ $rocketstyle, $rocketstate: { disabled, pseudo } }: any) => {
+        const { hover: hoverStyles = {}, ...restStyles } = $rocketstyle
+        const baseTheme = makeItResponsive({ theme: restStyles, styles, css })
+        const hoverTheme = makeItResponsive({ theme: hoverStyles, styles, css })
+
+        return css`
+          ${baseTheme};
+          ${!disabled &&
+          css`
+            &:hover {
+              ${hoverTheme};
+            }
+          `};
+          ${pseudo?.hover && css`${hoverTheme};`};
+        `
+      }};
+    `,
+  )
 
 export default function App() {
   return (
@@ -144,6 +261,35 @@ export default function App() {
             </span>
           </Element>
         </ElementDemo>
+
+        <SectionTitle>Rocketstyle</SectionTitle>
+        <Card>
+          <CardTitle>Stateful Button</CardTitle>
+          <CardText>
+            Rocketstyle component with dimension-based states. Boolean props
+            (primary, secondary, outline) select the active state.
+          </CardText>
+          <ButtonRow>
+            <RsButton primary>Primary</RsButton>
+            <RsButton secondary>Secondary</RsButton>
+            <RsButton outline>Outline</RsButton>
+          </ButtonRow>
+        </Card>
+        <SectionTitle>Rocketstyle + Unistyle</SectionTitle>
+        <Card>
+          <CardTitle>Data-Driven Styling</CardTitle>
+          <CardText>
+            Rocketstyle component using unistyle's makeItResponsive and styles
+            for data-driven CSS generation. Theme values use CSS property names
+            (height, fontSize, paddingX, backgroundColor) and are automatically
+            converted to CSS.
+          </CardText>
+          <ButtonRow>
+            <UnistyleButton primary>Primary</UnistyleButton>
+            <UnistyleButton secondary>Secondary</UnistyleButton>
+            <UnistyleButton outline>Outline</UnistyleButton>
+          </ButtonRow>
+        </Card>
       </Wrapper>
     </Provider>
   )

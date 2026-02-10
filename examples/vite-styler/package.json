@@ -16,7 +16,8 @@
     "@vitus-labs/styler": "workspace:*",
     "@vitus-labs/elements": "workspace:*",
     "@vitus-labs/coolgrid": "workspace:*",
-    "@vitus-labs/unistyle": "workspace:*"
+    "@vitus-labs/unistyle": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.2",
