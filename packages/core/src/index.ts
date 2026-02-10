@@ -9,11 +9,13 @@ import type {
   HTMLTextTags,
 } from '~/html'
 import { HTML_TAGS, HTML_TEXT_TAGS } from '~/html'
+import isEqual from '~/isEqual'
 import type { IsEmpty } from '~/isEmpty'
 import isEmpty from '~/isEmpty'
 import type { Render } from '~/render'
 import render from '~/render'
 import type { BreakpointKeys, Breakpoints } from '~/types'
+import useStableValue from '~/useStableValue'
 import { get, merge, omit, pick, set, throttle } from '~/utils'
 
 export type {
@@ -33,6 +35,7 @@ export {
   init,
   config,
   compose,
+  isEqual,
   isEmpty,
   render,
   omit,
@@ -41,6 +44,7 @@ export {
   get,
   throttle,
   merge,
+  useStableValue,
   HTML_TAGS,
   HTML_TEXT_TAGS,
   hoistNonReactStatics,
