@@ -1,10 +1,8 @@
 'use client'
 
-import { init, Provider } from '@vitus-labs/core'
-import * as connector from '@vitus-labs/connector-styler'
+import './setup'
+import { Provider } from '@vitus-labs/core'
 import type { ReactNode } from 'react'
-
-init(connector)
 
 const theme = {
   rootSize: 16,

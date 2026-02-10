@@ -13,7 +13,7 @@ describe('P3 features', () => {
       })`display: flex;`
 
       const { container } = render(<Comp color="red" title="hello" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.getAttribute('color')).toBeNull()
       expect(el.getAttribute('title')).toBe('hello')
     })
@@ -38,7 +38,7 @@ describe('P3 features', () => {
       })`color: ${(p: any) => p.$color};`
 
       const { container } = render(<Comp $color="red" title="yes" custom="no" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.getAttribute('title')).toBe('yes')
       expect(el.getAttribute('custom')).toBeNull()
     })
@@ -53,7 +53,7 @@ describe('P3 features', () => {
       })`color: red;`
 
       const { container } = render(<Comp myProp="hello" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       // Components always receive all props (no filtering)
       expect(el.getAttribute('data-my')).toBe('hello')
     })
@@ -65,7 +65,7 @@ describe('P3 features', () => {
       const Extended = styled(Base)`font-size: 20px;`
 
       const { container } = render(<Extended />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       // Extended wraps Base, so Base applies its own className
       // and Extended passes its className to Base as a prop
       expect(el.className).toContain('vl-')
@@ -76,7 +76,7 @@ describe('P3 features', () => {
       const Extended = styled(Base)`font-size: 20px;`
 
       const { container } = render(<Extended className="user-cls" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toContain('user-cls')
     })
 
@@ -86,7 +86,7 @@ describe('P3 features', () => {
       const L3 = styled(L2)`font-size: 14px;`
 
       const { container } = render(<L3 />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toContain('vl-')
       expect(el.nodeName).toBe('DIV')
     })
@@ -167,7 +167,7 @@ describe('P3 features', () => {
         &:hover { color: blue; }
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -178,7 +178,7 @@ describe('P3 features', () => {
         &::after { content: ""; display: block; }
       `
       const { container } = render(<Comp />)
-      expect((container.firstChild as HTMLElement).className).toMatch(/^vl-/)
+      expect((container.lastElementChild as HTMLElement).className).toMatch(/^vl-/)
     })
   })
 
@@ -186,7 +186,7 @@ describe('P3 features', () => {
     it('empty template with dynamic interpolation returning nothing', () => {
       const Comp = styled('div')`${(p: any) => p.$show && css`color: red;`}`
       const { container } = render(<Comp $show={false} />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       // When resolved CSS is empty/whitespace, no className
       expect(el.className).toBe('')
     })
@@ -194,7 +194,7 @@ describe('P3 features', () => {
     it('empty template with dynamic interpolation returning value', () => {
       const Comp = styled('div')`${(p: any) => p.$show && css`color: red;`}`
       const { container } = render(<Comp $show />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -229,7 +229,7 @@ describe('P3 features', () => {
       const bigCSS = Array.from({ length: 100 }, (_, i) => `prop${i}: val${i};`).join(' ')
       const Comp = styled('div')`${bigCSS}`
       const { container } = render(<Comp />)
-      expect((container.firstChild as HTMLElement).className).toMatch(/^vl-/)
+      expect((container.lastElementChild as HTMLElement).className).toMatch(/^vl-/)
     })
 
     it('theme change causes new className', () => {
@@ -243,14 +243,14 @@ describe('P3 features', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       rerender(
         <ThemeProvider theme={{ color: 'blue', size: '16px' }}>
           <Comp />
         </ThemeProvider>,
       )
-      const cls2 = (container.firstChild as HTMLElement).className
+      const cls2 = (container.lastElementChild as HTMLElement).className
 
       expect(cls1).not.toBe(cls2)
       expect(cls1).toMatch(/^vl-/)
@@ -265,7 +265,7 @@ describe('P3 features', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       // Re-render with same theme value
       rerender(
@@ -273,7 +273,7 @@ describe('P3 features', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const cls2 = (container.firstChild as HTMLElement).className
+      const cls2 = (container.lastElementChild as HTMLElement).className
 
       expect(cls1).toBe(cls2)
     })

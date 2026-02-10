@@ -15,7 +15,7 @@ describe('integration', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -30,7 +30,7 @@ describe('integration', () => {
           </ThemeProvider>
         </ThemeProvider>,
       )
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
   })
@@ -43,7 +43,7 @@ describe('integration', () => {
         color: red;
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -54,7 +54,7 @@ describe('integration', () => {
         display: flex;
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -65,7 +65,7 @@ describe('integration', () => {
         display: flex;
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
   })
@@ -84,7 +84,7 @@ describe('integration', () => {
         ${breakpointStyles};
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -107,7 +107,7 @@ describe('integration', () => {
       const { container } = render(
         <Comp $element={{ color: 'red', breakpoint: 'blue' }} />,
       )
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
   })
@@ -132,7 +132,7 @@ describe('integration', () => {
         ${result};
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -147,7 +147,7 @@ describe('integration', () => {
         ${result};
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
   })
@@ -160,7 +160,7 @@ describe('integration', () => {
           $contentType === 'content' && 'flex: 1;'};
       `
       const { container } = render(<Comp $contentType="content" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -173,7 +173,7 @@ describe('integration', () => {
         display: flex;
       `
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -183,14 +183,14 @@ describe('integration', () => {
         font-size: ${(p: any) => p.$size || '16px'};
       `
       const { container } = render(<Comp $color="red" $size="20px" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
     it('empty template produces no className', () => {
       const Comp = styled('div')``
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toBe('')
     })
   })

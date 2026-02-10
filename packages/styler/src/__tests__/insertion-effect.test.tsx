@@ -13,7 +13,7 @@ describe('useInsertionEffect (style injection timing)', () => {
       `
 
       const { container } = render(<Comp $color="red" />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
 
       // Class should be present and properly generated
       expect(el.className).toMatch(/^vl-[0-9a-z]+$/)
@@ -48,7 +48,7 @@ describe('useInsertionEffect (style injection timing)', () => {
 
       for (const color of colors) {
         rerender(<Comp $color={color} />)
-        const el = container.firstChild as HTMLElement
+        const el = container.lastElementChild as HTMLElement
         expect(el.className).toMatch(/^vl-/)
         classNames.add(el.className)
       }
@@ -61,11 +61,11 @@ describe('useInsertionEffect (style injection timing)', () => {
       const Comp = styled('div')`color: ${(p: any) => p.$color};`
 
       const { container, rerender } = render(<Comp $color="red" />)
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       rerender(<Comp $color="blue" />)
       rerender(<Comp $color="red" />) // back to red
-      const cls3 = (container.firstChild as HTMLElement).className
+      const cls3 = (container.lastElementChild as HTMLElement).className
 
       // Same resolved CSS → same className
       expect(cls1).toBe(cls3)
@@ -78,7 +78,7 @@ describe('useInsertionEffect (style injection timing)', () => {
       const Comp = styled('div')`display: flex; color: red;`
 
       const { container } = render(<Comp />)
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
 
       expect(el.className).toMatch(/^vl-[0-9a-z]+$/)
     })
@@ -87,11 +87,11 @@ describe('useInsertionEffect (style injection timing)', () => {
       const Comp = styled('div')`display: flex;`
 
       const { container, rerender } = render(<Comp />)
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       rerender(<Comp />)
       rerender(<Comp />)
-      const cls3 = (container.firstChild as HTMLElement).className
+      const cls3 = (container.lastElementChild as HTMLElement).className
 
       expect(cls1).toBe(cls3)
     })
@@ -108,14 +108,14 @@ describe('useInsertionEffect (style injection timing)', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       rerender(
         <ThemeProvider theme={{ bg: 'black' }}>
           <Comp />
         </ThemeProvider>,
       )
-      const cls2 = (container.firstChild as HTMLElement).className
+      const cls2 = (container.lastElementChild as HTMLElement).className
 
       expect(cls1).not.toBe(cls2)
       expect(cls1).toMatch(/^vl-/)

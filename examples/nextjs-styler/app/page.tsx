@@ -1,5 +1,6 @@
 'use client'
 
+import './setup'
 import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import { Row, Col } from '@vitus-labs/coolgrid'

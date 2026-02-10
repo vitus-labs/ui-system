@@ -20,6 +20,7 @@
  */
 import {
   type ComponentType,
+  Fragment,
   createElement,
   forwardRef,
   useInsertionEffect,
@@ -33,6 +34,8 @@ import { isDynamic } from './shared'
 import { useTheme } from './ThemeProvider'
 
 type Tag = string | ComponentType<any>
+
+const IS_SERVER = typeof document === 'undefined'
 
 export interface StyledOptions {
   /** Custom prop filter. Return true to forward the prop to the DOM element. */
@@ -85,6 +88,10 @@ const createStyledComponent = (
     const cssText = resolve(strings, values, {})
     const staticClassName = cssText.trim() ? sheet.insert(cssText) : ''
 
+    const staticRule = staticClassName
+      ? `.${staticClassName}{${cssText}}`
+      : ''
+
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       ({ as: asProp, className: userCls, ...props }, ref) => {
         const finalTag = asProp || tag
@@ -94,11 +101,26 @@ const createStyledComponent = (
             ? applyPropFilter(props, customFilter)
             : props
 
-        return createElement(finalTag, {
+        const el = createElement(finalTag, {
           ...finalProps,
           className: finalCls || undefined,
           ref,
         })
+
+        // Render inline <style> alongside element for SSR + hydration match
+        if (staticRule) {
+          return createElement(
+            Fragment,
+            null,
+            createElement('style', {
+              'data-vl': '',
+              dangerouslySetInnerHTML: { __html: staticRule },
+            }),
+            el,
+          )
+        }
+
+        return el
       },
     )
 
@@ -132,9 +154,21 @@ const createStyledComponent = (
         insertedRef.current = false
       }
 
-      // Inject CSS rule in useInsertionEffect (before DOM paint).
+      // SSR: insert immediately during render (useInsertionEffect doesn't run on server)
+      if (IS_SERVER) {
+        if (!insertedRef.current && cssText.trim()) {
+          sheet.insert(cssText)
+          insertedRef.current = true
+        }
+      }
+
+      // Track whether useInsertionEffect has run (client-only, after hydration)
+      const mountedRef = useRef(false)
+
+      // Client: inject in useInsertionEffect (before DOM paint, concurrent-mode safe).
       // Skip entirely when CSS hasn't changed (insertedRef stays true).
       useInsertionEffect(() => {
+        mountedRef.current = true
         if (!insertedRef.current && lastCssRef.current.trim()) {
           sheet.insert(lastCssRef.current)
           insertedRef.current = true
@@ -148,11 +182,29 @@ const createStyledComponent = (
           ? applyPropFilter(props, customFilter)
           : props
 
-      return createElement(finalTag, {
+      const el = createElement(finalTag, {
         ...finalProps,
         className: finalCls || undefined,
         ref,
       })
+
+      // Render inline <style> on first render (SSR + hydration match).
+      // After useInsertionEffect fires, the sheet handles styles.
+      if (!mountedRef.current && className) {
+        return createElement(
+          Fragment,
+          null,
+          createElement('style', {
+            'data-vl': '',
+            dangerouslySetInnerHTML: {
+              __html: `.${className}{${cssText}}`,
+            },
+          }),
+          el,
+        )
+      }
+
+      return el
     },
   )
 

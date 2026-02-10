@@ -91,7 +91,7 @@ describe('ThemeProvider + useTheme', () => {
           <Comp />
         </ThemeProvider>,
       )
-      const el = container.firstChild as HTMLElement
+      const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
     })
 
@@ -106,7 +106,7 @@ describe('ThemeProvider + useTheme', () => {
         </ThemeProvider>,
       )
 
-      const cls1 = (container.firstChild as HTMLElement).className
+      const cls1 = (container.lastElementChild as HTMLElement).className
 
       rerender(
         <ThemeProvider theme={{ color: 'blue' }}>
@@ -114,7 +114,7 @@ describe('ThemeProvider + useTheme', () => {
         </ThemeProvider>,
       )
 
-      const cls2 = (container.firstChild as HTMLElement).className
+      const cls2 = (container.lastElementChild as HTMLElement).className
 
       // Different theme values should produce different class names
       expect(cls1).not.toBe(cls2)
