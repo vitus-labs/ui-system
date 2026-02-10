@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { css, styled, ThemeProvider } from 'styled-components'
+import { css, styled, ThemeProvider } from '@vitus-labs/styler'
 import type { HTMLTags } from '~/html'
 
 /**

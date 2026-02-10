@@ -15,7 +15,7 @@ export default rocketstyle()({
     fontFamily: 'Arial',
   })
   .styles(
-    (css) => css<any>`
+    (css) => css`
       ${({ $rocketstyle }) => {
         const baseTheme = styles({ theme: $rocketstyle, css, rootSize: 16 })
 

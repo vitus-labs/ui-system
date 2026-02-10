@@ -51,10 +51,10 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": ">= 19",
-    "styled-components": ">= 6"
+    "react": ">= 19"
   },
   "dependencies": {
+    "@vitus-labs/styler": "workspace:*",
     "react-is": "^19.2.3"
   },
   "devDependencies": {

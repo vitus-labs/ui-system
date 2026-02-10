@@ -5,7 +5,7 @@
 import { config } from '@vitus-labs/core'
 import type { FC } from 'react'
 
-const Wrapper = config.styled.div`
+const Wrapper = config.styled('div')`
   display: flex;
   font-size: 32px;
 `

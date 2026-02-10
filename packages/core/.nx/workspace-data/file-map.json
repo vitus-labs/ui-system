@@ -1,0 +1,108 @@
+{
+  "version": "6.0",
+  "nxVersion": "22.4.5",
+  "pathMappings": {
+    "~/*": [
+      "src/*"
+    ]
+  },
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {},
+    "nonProjectFiles": [
+      {
+        "file": "README.md",
+        "hash": "10163808866463469160"
+      },
+      {
+        "file": "package.json",
+        "hash": "5516332401314020439"
+      },
+      {
+        "file": "src/__tests__/compose.test.ts",
+        "hash": "16309948851937552259"
+      },
+      {
+        "file": "src/__tests__/config.test.ts",
+        "hash": "10308167046283829061"
+      },
+      {
+        "file": "src/__tests__/context.test.tsx",
+        "hash": "772845635366488542"
+      },
+      {
+        "file": "src/__tests__/hoistNonReactStatics.test.tsx",
+        "hash": "6170850618517276208"
+      },
+      {
+        "file": "src/__tests__/isEmpty.test.ts",
+        "hash": "35483629053840405"
+      },
+      {
+        "file": "src/__tests__/render.test.tsx",
+        "hash": "12536041525140735966"
+      },
+      {
+        "file": "src/__tests__/utils.test.ts",
+        "hash": "4038661031182278244"
+      },
+      {
+        "file": "src/compose.ts",
+        "hash": "2442644874321472880"
+      },
+      {
+        "file": "src/config.ts",
+        "hash": "8759960274577197601"
+      },
+      {
+        "file": "src/context.tsx",
+        "hash": "3595393194699126632"
+      },
+      {
+        "file": "src/hoistNonReactStatics.ts",
+        "hash": "17802053240794667028"
+      },
+      {
+        "file": "src/html/htmlElementAttrs.ts",
+        "hash": "12017416319945108993"
+      },
+      {
+        "file": "src/html/htmlTags.ts",
+        "hash": "3190366618247041346"
+      },
+      {
+        "file": "src/html/index.ts",
+        "hash": "8400105884139417442"
+      },
+      {
+        "file": "src/index.ts",
+        "hash": "18171394446130173686"
+      },
+      {
+        "file": "src/isEmpty.ts",
+        "hash": "5117094180620411451"
+      },
+      {
+        "file": "src/render.ts",
+        "hash": "6879214760299780552"
+      },
+      {
+        "file": "src/types.ts",
+        "hash": "5530173934215570367"
+      },
+      {
+        "file": "src/utils.ts",
+        "hash": "6384074316872367289"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "548536858478574936"
+      },
+      {
+        "file": "vitest.config.ts",
+        "hash": "1381881776097304160"
+      }
+    ]
+  },
+  "externalNodesHash": "3244421341483603138"
+}

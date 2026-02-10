@@ -44,7 +44,6 @@
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^19.2.4",
     "react-icons-kit": "^2.0.0",
-    "styled-components": "^6.3.9",
     "ts-patch": "^3.3.0",
     "typescript": "5.9.3",
     "typescript-transform-paths": "^3.5.6",
