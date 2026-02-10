@@ -1,8 +1,8 @@
+import { useStableValue } from '@vitus-labs/core'
 import {
   type ComponentType,
   type ForwardRefExoticComponent,
   forwardRef,
-  useMemo,
 } from 'react'
 import { usePseudoState } from '~/hooks'
 import type { PseudoProps } from '~/types/pseudo'
@@ -35,7 +35,7 @@ const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
       ref,
     ) => {
       // pseudo hook to detect states hover / pressed / focus
-      const pseudo = usePseudoState({
+      const { state: pseudoState, events: pseudoEvents } = usePseudoState({
         onMouseEnter,
         onMouseLeave,
         onMouseUp,
@@ -44,19 +44,16 @@ const RocketStyleProviderComponent: HOC = (WrappedComponent) =>
         onBlur,
       })
 
-      const updatedState = useMemo(
-        () => ({
-          ...$rocketstate,
-          pseudo: { ...$rocketstate.pseudo, ...pseudo.state },
-        }),
-        [$rocketstate, pseudo],
-      )
+      const updatedState = useStableValue({
+        ...$rocketstate,
+        pseudo: { ...$rocketstate.pseudo, ...pseudoState },
+      })
 
       return (
         <LocalProvider value={updatedState}>
           <WrappedComponent
             {...props}
-            {...pseudo.events}
+            {...pseudoEvents}
             ref={ref}
             $rocketstate={updatedState}
           />

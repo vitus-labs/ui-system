@@ -2,6 +2,7 @@ import {
   type FocusEventHandler,
   type MouseEventHandler,
   useCallback,
+  useMemo,
   useState,
 } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
@@ -84,21 +85,31 @@ const usePseudoState: UsePseudoState = ({
     [onBlur],
   )
 
-  return {
-    state: {
-      hover,
-      focus,
-      pressed,
-    },
-    events: {
+  const state = useMemo(
+    () => ({ hover, focus, pressed }),
+    [hover, focus, pressed],
+  )
+
+  const events = useMemo(
+    () => ({
       onMouseEnter: handleOnMouseEnter,
       onMouseLeave: handleOnMouseLeave,
       onMouseDown: handleOnMouseDown,
       onMouseUp: handleOnMouseUp,
       onFocus: handleOnFocus,
       onBlur: handleOnBlur,
-    },
-  }
+    }),
+    [
+      handleOnMouseEnter,
+      handleOnMouseLeave,
+      handleOnMouseDown,
+      handleOnMouseUp,
+      handleOnFocus,
+      handleOnBlur,
+    ],
+  )
+
+  return { state, events }
 }
 
 export default usePseudoState

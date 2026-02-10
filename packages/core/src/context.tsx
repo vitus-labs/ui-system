@@ -3,6 +3,7 @@ import { createContext, useMemo } from 'react'
 import config from '~/config'
 import isEmpty from '~/isEmpty'
 import type { Breakpoints } from '~/types'
+import useStableValue from '~/useStableValue'
 
 /**
  * Internal React context shared across all @vitus-labs packages.
@@ -32,10 +33,7 @@ type ProviderType = Partial<
  */
 const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   const ExternalProvider = useMemo(() => config.ExternalProvider, [])
-  const context = useMemo(
-    () => ({ theme, ...props }),
-    [theme, ...Object.values(props), props],
-  )
+  const context = useStableValue({ theme, ...props })
 
   if (isEmpty(theme) || !theme) return <>{children}</>
 

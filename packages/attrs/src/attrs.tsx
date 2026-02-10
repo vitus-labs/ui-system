@@ -1,5 +1,5 @@
 import { compose, hoistNonReactStatics, omit, pick } from '@vitus-labs/core'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef } from 'react'
 import { attrsHoc } from '~/hoc'
 import { useRef } from '~/hooks'
 import type {
@@ -82,22 +82,15 @@ const attrsComponent: InitAttrsComponent = (options) => {
       const needsFiltering =
         options.filterAttrs && options.filterAttrs.length > 0
 
-      const finalProps = useMemo(() => {
-        // Only create new object if ref needs to be added
-        const baseProps = needsRef ? { ...props, ref: internalRef } : props
+      const baseProps = needsRef ? { ...props, ref: internalRef } : props
+      const filteredProps = needsFiltering
+        ? omit(baseProps, options.filterAttrs)
+        : baseProps
 
-        // Only filter if there are props to filter
-        const filteredProps = needsFiltering
-          ? omit(baseProps, options.filterAttrs)
-          : baseProps
-
-        // Add dev-only data attribute
-        if (process.env.NODE_ENV !== 'production') {
-          return { ...filteredProps, 'data-attrs': componentName }
-        }
-
-        return filteredProps
-      }, [props, needsRef, internalRef, needsFiltering])
+      const finalProps =
+        process.env.NODE_ENV !== 'production'
+          ? { ...filteredProps, 'data-attrs': componentName }
+          : filteredProps
 
       return <RenderComponent {...finalProps} />
     },
