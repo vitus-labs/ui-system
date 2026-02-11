@@ -6,15 +6,13 @@
  */
 /* eslint-disable no-console */
 import { render } from '@testing-library/react'
-import { Provider as CoreProvider } from '@vitus-labs/core'
+// Use config.styled directly (same as production code)
+import { Provider as CoreProvider, config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 import type { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
 import rocketstyle from '../init'
-
-// Use config.styled directly (same as production code)
-import { config } from '@vitus-labs/core'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <CoreProvider theme={{ rootSize: 16 }}>{children}</CoreProvider>

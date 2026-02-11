@@ -134,15 +134,16 @@ describe('resolve composition chain', () => {
       const unistyleStyles = ({
         theme: t,
         css: cssFn,
-      }: { theme: Record<string, any>; css: typeof css }) => {
+      }: {
+        theme: Record<string, any>
+        css: typeof css
+      }) => {
         const fragments = [
           t.position ? `position: ${t.position};` : '',
           t.display ? `display: ${t.display};` : '',
           t.height ? `height: ${t.height}rem;` : '',
           t.fontSize ? `font-size: ${t.fontSize}rem;` : '',
-          t.backgroundColor
-            ? `background-color: ${t.backgroundColor};`
-            : '',
+          t.backgroundColor ? `background-color: ${t.backgroundColor};` : '',
           t.color ? `color: ${t.color};` : '',
         ]
         return cssFn`${fragments}`
@@ -211,7 +212,10 @@ describe('resolve composition chain', () => {
       const unistyleStyles = ({
         theme: t,
         css: cssFn,
-      }: { theme: Record<string, any>; css: typeof css }) => {
+      }: {
+        theme: Record<string, any>
+        css: typeof css
+      }) => {
         const fragments = [
           t.position ? `position: ${t.position};` : '',
           t.height ? `height: ${t.height}rem;` : '',
@@ -382,9 +386,7 @@ describe('styled component composition', () => {
 
     const makeItResponsiveLike =
       (theme: Record<string, any>) => (_props: any) => {
-        const fragments = Object.entries(theme).map(
-          ([k, v]) => `${k}: ${v};`,
-        )
+        const fragments = Object.entries(theme).map(([k, v]) => `${k}: ${v};`)
         return css`${fragments}`
       }
 
@@ -418,9 +420,12 @@ describe('styled component composition', () => {
 
   it('wrapping a component: outer styled inherits inner className', () => {
     // Element is a React component wrapped by rocketstyle's styled()
-    const Inner = ({ className }: { className?: string; $rocketstyle?: any }) => (
-      <div className={className} data-testid="inner" />
-    )
+    const Inner = ({
+      className,
+    }: {
+      className?: string
+      $rocketstyle?: any
+    }) => <div className={className} data-testid="inner" />
 
     const Outer = styled(Inner)`
       ${(props: any) => {

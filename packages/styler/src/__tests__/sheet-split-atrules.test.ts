@@ -35,9 +35,7 @@ describe('StyleSheet — at-rule splitting', () => {
 
     it('CSS with @media splits into base + media rules', () => {
       const s = createSheet()
-      s.insert(
-        'color: red; @media (min-width: 768px){color: blue;}',
-      )
+      s.insert('color: red; @media (min-width: 768px){color: blue;}')
       const styles = s.getStyles()
 
       // Base rule: .vl-xxx{color: red;}
@@ -60,7 +58,9 @@ describe('StyleSheet — at-rule splitting', () => {
       // Base
       expect(styles).toContain('position: absolute; bottom: -4.375rem;')
       // Two separate media rules
-      expect(styles).toMatch(/@media \(min-width: 36em\)\{\.vl-[0-9a-z]+\{right: -11.25rem;\}\}/)
+      expect(styles).toMatch(
+        /@media \(min-width: 36em\)\{\.vl-[0-9a-z]+\{right: -11.25rem;\}\}/,
+      )
       expect(styles).toMatch(
         /@media \(min-width: 48em\)\{\.vl-[0-9a-z]+\{bottom: 0; height: 40rem;\}\}/,
       )
@@ -76,16 +76,17 @@ describe('StyleSheet — at-rule splitting', () => {
       // No base rule (or empty base)
       expect(styles).not.toMatch(/\.vl-[0-9a-z]+\{\}/)
       // Both media rules present
-      expect(styles).toMatch(/@media \(min-width: 768px\)\{\.vl-[0-9a-z]+\{color: blue;\}\}/)
-      expect(styles).toMatch(/@media \(min-width: 1024px\)\{\.vl-[0-9a-z]+\{color: green;\}\}/)
+      expect(styles).toMatch(
+        /@media \(min-width: 768px\)\{\.vl-[0-9a-z]+\{color: blue;\}\}/,
+      )
+      expect(styles).toMatch(
+        /@media \(min-width: 1024px\)\{\.vl-[0-9a-z]+\{color: green;\}\}/,
+      )
     })
 
     it('boost doubles selector in both base and media rules', () => {
       const s = createSheet()
-      s.insert(
-        'color: red; @media (min-width: 768px){color: blue;}',
-        true,
-      )
+      s.insert('color: red; @media (min-width: 768px){color: blue;}', true)
       const styles = s.getStyles()
 
       // Base: .vl-xxx.vl-xxx{color: red;}
@@ -98,9 +99,7 @@ describe('StyleSheet — at-rule splitting', () => {
 
     it('@supports blocks are also split out', () => {
       const s = createSheet()
-      s.insert(
-        'display: flex; @supports (display: grid){display: grid;}',
-      )
+      s.insert('display: flex; @supports (display: grid){display: grid;}')
       const styles = s.getStyles()
 
       expect(styles).toMatch(/\.vl-[0-9a-z]+\{display: flex;\}/)
@@ -124,13 +123,13 @@ describe('StyleSheet — at-rule splitting', () => {
 
     it('@layer wraps each split rule individually', () => {
       const s = createSheet({ layer: 'components' })
-      s.insert(
-        'color: red; @media (min-width: 768px){color: blue;}',
-      )
+      s.insert('color: red; @media (min-width: 768px){color: blue;}')
       const styles = s.getStyles()
 
       // Base wrapped in layer
-      expect(styles).toMatch(/@layer components\{\.vl-[0-9a-z]+\{color: red;\}\}/)
+      expect(styles).toMatch(
+        /@layer components\{\.vl-[0-9a-z]+\{color: red;\}\}/,
+      )
       // Media wrapped in layer
       expect(styles).toMatch(
         /@layer components\{@media \(min-width: 768px\)\{\.vl-[0-9a-z]+\{color: blue;\}\}\}/,
@@ -206,7 +205,9 @@ describe('StyleSheet — at-rule splitting', () => {
       s.insert('color: red; @media (min-width: 768px){color: blue;}')
 
       // Find the style element
-      const styleEl = document.querySelector('style[data-vl]') as HTMLStyleElement
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
       expect(styleEl).not.toBeNull()
       const sheet = styleEl.sheet!
 
@@ -216,7 +217,10 @@ describe('StyleSheet — at-rule splitting', () => {
 
       for (let i = 0; i < sheet.cssRules.length; i++) {
         const rule = sheet.cssRules[i]
-        if (rule instanceof CSSStyleRule && rule.selectorText.startsWith('.vl-')) {
+        if (
+          rule instanceof CSSStyleRule &&
+          rule.selectorText.startsWith('.vl-')
+        ) {
           hasStyleRule = true
         }
         if (rule instanceof CSSMediaRule) {
@@ -235,7 +239,9 @@ describe('StyleSheet — at-rule splitting', () => {
         true,
       )
 
-      const styleEl = document.querySelector('style[data-vl]') as HTMLStyleElement
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
       const sheet = styleEl.sheet!
       const boostedSelector = `.${className}.${className}`
 
@@ -373,7 +379,9 @@ describe('StyleSheet — at-rule splitting', () => {
       const styles = s.getStyles()
 
       // The &:hover block should stay inside the base rule
-      expect(styles).toMatch(/\.vl-[0-9a-z]+\{color: red; &:hover\{color: blue;\}\}/)
+      expect(styles).toMatch(
+        /\.vl-[0-9a-z]+\{color: red; &:hover\{color: blue;\}\}/,
+      )
     })
 
     it('preserves &:hover nesting alongside @media splitting', () => {
@@ -384,9 +392,13 @@ describe('StyleSheet — at-rule splitting', () => {
       const styles = s.getStyles()
 
       // Base rule has color + &:hover
-      expect(styles).toMatch(/\.vl-[0-9a-z]+\{color: red; &:hover\{color: blue;\}\}/)
+      expect(styles).toMatch(
+        /\.vl-[0-9a-z]+\{color: red; &:hover\{color: blue;\}\}/,
+      )
       // Media rule is separate
-      expect(styles).toMatch(/@media \(min-width: 768px\)\{\.vl-[0-9a-z]+\{font-size: 2rem;\}\}/)
+      expect(styles).toMatch(
+        /@media \(min-width: 768px\)\{\.vl-[0-9a-z]+\{font-size: 2rem;\}\}/,
+      )
     })
 
     it('handles consecutive @media blocks with no base CSS between them', () => {
