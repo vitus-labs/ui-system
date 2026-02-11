@@ -25,18 +25,25 @@ import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
 
+const IS_SERVER = typeof document === 'undefined'
+
 export const createGlobalStyle = (
   strings: TemplateStringsArray,
   ...values: Interpolation[]
 ) => {
   const hasDynamicValues = values.some(isDynamic)
 
-  // STATIC FAST PATH: inject once at creation time, component is a no-op
+  // STATIC FAST PATH: inject at creation time, re-inject during SSR render
   if (!hasDynamicValues) {
     const cssText = normalizeCSS(resolve(strings, values, {}))
     if (cssText.trim()) sheet.insertGlobal(cssText)
 
-    const StaticGlobal = () => null
+    const StaticGlobal = () => {
+      // SSR: re-insert every render (cache cleared by reset() between requests;
+      // deduplicates within the same request via cache)
+      if (IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
+      return null
+    }
     StaticGlobal.displayName = 'GlobalStyle'
     return StaticGlobal
   }
@@ -48,7 +55,10 @@ export const createGlobalStyle = (
     const cssText = normalizeCSS(resolve(strings, values, allProps))
     const prevCssRef = useRef('')
 
-    // Use useInsertionEffect (React 18+) for CSS injection.
+    // SSR: insert during render (useInsertionEffect doesn't run on server)
+    if (IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
+
+    // Client: use useInsertionEffect (React 18+) for CSS injection.
     // Only re-inject when the resolved CSS actually changes.
     useInsertionEffect(() => {
       if (cssText !== prevCssRef.current) {

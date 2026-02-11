@@ -96,6 +96,10 @@ const createStyledComponent = (
 
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       ({ as: asProp, className: userCls, ...props }, ref) => {
+        // SSR: re-insert every render (cache cleared by reset() between requests;
+        // deduplicates within the same request via cache)
+        if (IS_SERVER && staticClassName) sheet.insert(cssText, boost)
+
         const finalTag = asProp || tag
         const finalCls = mergeClassNames(staticClassName, userCls)
         const finalProps =
