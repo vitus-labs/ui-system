@@ -184,9 +184,11 @@ const UnistyleButton = rocketstyle()({
       font-weight: 500;
 
       ${({ $rocketstyle, $rocketstate: { pseudo } }) => {
-        const { hover: hoverStyles = {}, ...restStyles } = $rocketstyle
+        const { hover: hoverStyles, ...restStyles } = $rocketstyle
         const baseTheme = makeItResponsive({ theme: restStyles, styles, css })
-        const hoverTheme = makeItResponsive({ theme: hoverStyles, styles, css })
+        const hoverTheme = hoverStyles
+          ? makeItResponsive({ theme: hoverStyles, styles, css })
+          : null
 
         return css`
           ${baseTheme};

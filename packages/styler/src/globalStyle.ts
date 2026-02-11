@@ -13,19 +13,16 @@
  *   `
  *   // <GlobalStyle /> — renders nothing, injects global CSS
  *
- * Approach inspired by Goober's glob() + styled-components' API:
- * - Static templates: inject once at component creation (no React overhead)
- * - Dynamic templates: re-inject on prop/theme change via useInsertionEffect
- * - Hash-based dedup prevents duplicate injection
+ * Uses React 19's `<style precedence>` for FOUC-free SSR and static export.
+ * Hash-based `href` ensures deduplication across renders and components.
  */
-import { useInsertionEffect, useRef } from 'react'
+import { createElement } from 'react'
 
+import { hash } from './hash'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
-
-const IS_SERVER = typeof document === 'undefined'
 
 export const createGlobalStyle = (
   strings: TemplateStringsArray,
@@ -33,41 +30,33 @@ export const createGlobalStyle = (
 ) => {
   const hasDynamicValues = values.some(isDynamic)
 
-  // STATIC FAST PATH: inject at creation time, re-inject during SSR render
+  // STATIC FAST PATH: compute once at creation time
   if (!hasDynamicValues) {
     const cssText = normalizeCSS(resolve(strings, values, {}))
+    const href = cssText.trim() ? `g-${hash(cssText)}` : ''
+
+    // Populate sheet for legacy useServerInsertedHTML support
     if (cssText.trim()) sheet.insertGlobal(cssText)
 
     const StaticGlobal = () => {
-      // SSR: re-insert every render (cache cleared by reset() between requests;
-      // deduplicates within the same request via cache)
-      if (IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
-      return null
+      if (!href) return null
+      return createElement('style', { href, precedence: 'low' }, cssText)
     }
     StaticGlobal.displayName = 'GlobalStyle'
     return StaticGlobal
   }
 
-  // DYNAMIC PATH: resolve on every render, re-inject when CSS changes
+  // DYNAMIC PATH: resolve on every render. React 19's <style precedence>
+  // handles injection, dedup, and cleanup automatically.
   const DynamicGlobal = (props: Record<string, any>) => {
     const theme = useTheme()
     const allProps = { ...props, theme }
     const cssText = normalizeCSS(resolve(strings, values, allProps))
-    const prevCssRef = useRef('')
 
-    // SSR: insert during render (useInsertionEffect doesn't run on server)
-    if (IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
+    if (!cssText.trim()) return null
 
-    // Client: use useInsertionEffect (React 18+) for CSS injection.
-    // Only re-inject when the resolved CSS actually changes.
-    useInsertionEffect(() => {
-      if (cssText !== prevCssRef.current) {
-        prevCssRef.current = cssText
-        if (cssText.trim()) sheet.insertGlobal(cssText)
-      }
-    })
-
-    return null
+    const href = `g-${hash(cssText)}`
+    return createElement('style', { href, precedence: 'low' }, cssText)
   }
 
   DynamicGlobal.displayName = 'GlobalStyle'

@@ -12,20 +12,13 @@
  * - $-prefixed transient props (not forwarded to DOM)
  * - Custom shouldForwardProp for per-component prop filtering
  * - Static path optimization (templates with no dynamic interpolations)
- * - useInsertionEffect for safe concurrent-mode style injection
+ * - React 19 `<style precedence>` for FOUC-free SSR and static export
  *
  * CSS nesting (`&` selectors) works natively — the resolver passes CSS
  * through without transformation, so `&:hover`, `&::before`, etc. work
  * as-is in browsers supporting CSS Nesting (all modern browsers).
  */
-import {
-  type ComponentType,
-  createElement,
-  forwardRef,
-  useInsertionEffect,
-  useRef,
-} from 'react'
-
+import { type ComponentType, createElement, Fragment, forwardRef } from 'react'
 import { filterProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
@@ -33,8 +26,6 @@ import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
 
 type Tag = string | ComponentType<any>
-
-const IS_SERVER = typeof document === 'undefined'
 
 export interface StyledOptions {
   /** Custom prop filter. Return true to forward the prop to the DOM element. */
@@ -92,14 +83,15 @@ const createStyledComponent = (
   // STATIC FAST PATH: no function interpolations → compute class once at creation time
   if (!hasDynamicValues) {
     const cssText = normalizeCSS(resolve(strings, values, {}))
-    const staticClassName = cssText.trim() ? sheet.insert(cssText, boost) : ''
+    const { className: staticClassName, rules: staticRules } = cssText.trim()
+      ? sheet.prepare(cssText, boost)
+      : { className: '', rules: '' }
+
+    // Populate sheet cache for has() queries and legacy useServerInsertedHTML
+    if (cssText.trim()) sheet.insert(cssText, boost)
 
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       ({ as: asProp, className: userCls, ...props }, ref) => {
-        // SSR: re-insert every render (cache cleared by reset() between requests;
-        // deduplicates within the same request via cache)
-        if (IS_SERVER && staticClassName) sheet.insert(cssText, boost)
-
         const finalTag = asProp || tag
         const finalCls = mergeClassNames(staticClassName, userCls)
         const finalProps =
@@ -107,11 +99,22 @@ const createStyledComponent = (
             ? applyPropFilter(props, customFilter)
             : props
 
-        return createElement(finalTag, {
-          ...finalProps,
-          className: finalCls || undefined,
-          ref,
-        })
+        return createElement(
+          Fragment,
+          null,
+          staticClassName
+            ? createElement(
+                'style',
+                { href: staticClassName, precedence: 'medium' },
+                staticRules,
+              )
+            : null,
+          createElement(finalTag, {
+            ...finalProps,
+            className: finalCls || undefined,
+            ref,
+          }),
+        )
       },
     )
 
@@ -119,46 +122,21 @@ const createStyledComponent = (
     return StaticStyled
   }
 
-  // DYNAMIC PATH: resolve on every render, cache by CSS string identity.
-  // useInsertionEffect injects the rule before DOM paint.
+  // DYNAMIC PATH: resolve on every render. React 19's <style precedence>
+  // handles injection, dedup, and cleanup automatically.
   const DynamicStyled = forwardRef<unknown, Record<string, any>>(
     ({ as: asProp, className: userCls, ...props }, ref) => {
       const theme = useTheme()
       const allProps = { ...props, theme }
       const cssText = normalizeCSS(resolve(strings, values, allProps))
 
-      const lastCssRef = useRef('')
-      const lastClsRef = useRef('')
-      const insertedRef = useRef(false)
-
-      let className: string
-      if (cssText === lastCssRef.current) {
-        // Cache hit: same CSS string → reuse last className
-        className = lastClsRef.current
-      } else {
-        // Cache miss: compute new className
-        className = cssText.trim() ? sheet.getClassName(cssText) : ''
-        lastCssRef.current = cssText
-        lastClsRef.current = className
-        insertedRef.current = false
+      let className = ''
+      let rules = ''
+      if (cssText.trim()) {
+        const prepared = sheet.prepare(cssText, boost)
+        className = prepared.className
+        rules = prepared.rules
       }
-
-      // SSR: insert immediately during render (useInsertionEffect doesn't run on server)
-      if (IS_SERVER) {
-        if (!insertedRef.current && cssText.trim()) {
-          sheet.insert(cssText, boost)
-          insertedRef.current = true
-        }
-      }
-
-      // Client: inject in useInsertionEffect (before DOM paint, concurrent-mode safe).
-      // Skip entirely when CSS hasn't changed (insertedRef stays true).
-      useInsertionEffect(() => {
-        if (!insertedRef.current && lastCssRef.current.trim()) {
-          sheet.insert(lastCssRef.current, boost)
-          insertedRef.current = true
-        }
-      })
 
       const finalTag = asProp || tag
       const finalCls = mergeClassNames(className, userCls)
@@ -167,11 +145,22 @@ const createStyledComponent = (
           ? applyPropFilter(props, customFilter)
           : props
 
-      return createElement(finalTag, {
-        ...finalProps,
-        className: finalCls || undefined,
-        ref,
-      })
+      return createElement(
+        Fragment,
+        null,
+        className
+          ? createElement(
+              'style',
+              { href: className, precedence: 'medium' },
+              rules,
+            )
+          : null,
+        createElement(finalTag, {
+          ...finalProps,
+          className: finalCls || undefined,
+          ref,
+        }),
+      )
     },
   )
 

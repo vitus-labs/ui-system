@@ -369,6 +369,30 @@ export class StyleSheet {
     }
   }
 
+  /**
+   * Compute className and full CSS rule text without injecting.
+   * Used with React 19's `<style precedence>` for component-level injection.
+   */
+  prepare(
+    cssText: string,
+    boost = false,
+  ): { className: string; rules: string } {
+    const h = hash(cssText)
+    const className = `${PREFIX}-${h}`
+    const selector = boost ? `.${className}.${className}` : `.${className}`
+    const { base, atRules } = this.splitAtRules(cssText, selector)
+
+    const allRules: string[] = []
+    if (base) allRules.push(`${selector}{${base}}`)
+    allRules.push(...atRules)
+
+    const finalRules = this.layer
+      ? allRules.map((r) => `@layer ${this.layer}{${r}}`)
+      : allRules
+
+    return { className, rules: finalRules.join('') }
+  }
+
   /** Check if a className is already in the cache. O(1) Map lookup. */
   has(className: string): boolean {
     return this.cache.has(className)
