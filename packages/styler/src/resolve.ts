@@ -51,7 +51,15 @@ export const resolve = (
  * empty CSSResult values, etc.).
  */
 export const normalizeCSS = (css: string): string => {
-  let s = css.replace(/\s+/g, ' ').trim()
+  // Strip JS-style line comments (// ...) before collapsing newlines.
+  // These are NOT valid CSS but can leak in from tagged template literals
+  // where users write `// comment` thinking it's a JS comment.
+  // Negative lookbehind avoids stripping :// in URLs (e.g. https://...).
+  let s = css.replace(/(?<!:)\/\/[^\n]*/g, '')
+  // Strip CSS block comments (/* ... */) — they serve no purpose in CSSOM
+  // and inflate the CSS text / hash.
+  s = s.replace(/\/\*[\s\S]*?\*\//g, '')
+  s = s.replace(/\s+/g, ' ').trim()
   // Collapse multiple semicolons (;; or ; ;) into single semicolons
   while (s.includes('; ;') || s.includes(';;')) {
     s = s.replace(/;(\s*;)+/g, ';')

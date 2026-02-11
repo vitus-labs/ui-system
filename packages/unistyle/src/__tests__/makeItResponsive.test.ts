@@ -1,5 +1,6 @@
 import { config } from '@vitus-labs/core'
 import makeItResponsive from '../responsive/makeItResponsive'
+import realStyles from '../styles/styles'
 
 const { css } = config
 
@@ -98,6 +99,78 @@ describe('makeItResponsive', () => {
         : String(result)
       expect(flat).toContain('color: green')
     })
+  })
+
+  it('theme with pseudo-state objects (hover/active) still produces height CSS', () => {
+    // Exact $rocketstyle from user's Button component
+    const buttonTheme = {
+      transition: 'all .15s ease-in-out',
+      border: 'none',
+      backgroundColor: '#06B6D4',
+      textDecoration: 'none',
+      outline: 'none',
+      padding: 0,
+      margin: 0,
+      color: '#F8F8F8',
+      userSelect: 'none',
+      hover: {
+        color: '#F8F8F8',
+        backgroundColor: '#0891B2',
+        borderColor: '#0891B2',
+      },
+      active: {
+        color: '#F8F8F8',
+        backgroundColor: '#0E7490',
+        borderColor: '#0E7490',
+      },
+      height: 48,
+      fontSize: 16,
+      paddingX: 24,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      textAlign: 'center',
+      marginTop: 64,
+      borderColor: '#06B6D4',
+    }
+
+    const providerTheme = {
+      rootSize: 16,
+      breakpoints: { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200 },
+      __VITUS_LABS__: {
+        sortedBreakpoints: ['xs', 'sm', 'md', 'lg', 'xl'],
+        media: {
+          xs: (...args: any[]) => (css as any)(...args),
+          sm: (...args: any[]) =>
+            css`@media (min-width: 36em) { ${(css as any)(...args)} }`,
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
+          lg: (...args: any[]) =>
+            css`@media (min-width: 62em) { ${(css as any)(...args)} }`,
+          xl: (...args: any[]) =>
+            css`@media (min-width: 75em) { ${(css as any)(...args)} }`,
+        },
+      },
+    }
+
+    const fn = makeItResponsive({
+      theme: buttonTheme,
+      css,
+      styles: realStyles,
+    })
+    const result = fn({ theme: providerTheme })
+
+    // Flatten the result to a string
+    const flat = Array.isArray(result)
+      ? result.map((r: any) => String(r)).join(' ')
+      : String(result)
+
+    // height: 48 should produce height: 3rem (48/16)
+    expect(flat).toContain('height: 3rem')
+    // fontSize: 16 should produce font-size: 1rem (16/16)
+    expect(flat).toContain('font-size: 1rem')
+    // borderRadius: 8 should produce border-radius: 0.5rem
+    expect(flat).toContain('border-radius: 0.5rem')
   })
 
   it('returns empty when media is undefined in breakpoint map', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { css } from '../css'
-import { resolve } from '../resolve'
+import { normalizeCSS, resolve } from '../resolve'
 
 // Helper to create a TemplateStringsArray
 const tsa = (strings: readonly string[]): TemplateStringsArray => {
@@ -135,6 +135,76 @@ describe('resolve', () => {
       const conditionalCss = condition && css`color: red;`
       const result = resolve(tsa(['', '']), [conditionalCss], {})
       expect(result).toBe('')
+    })
+  })
+})
+
+describe('normalizeCSS', () => {
+  describe('comment stripping', () => {
+    it('strips CSS block comments', () => {
+      const result = normalizeCSS('/* comment */ color: red;')
+      expect(result).toBe('color: red;')
+    })
+
+    it('strips multiple block comments', () => {
+      const result = normalizeCSS(
+        '/* BASE */ color: red; /* HOVER */ font-size: 1rem;',
+      )
+      expect(result).toBe('color: red; font-size: 1rem;')
+    })
+
+    it('strips multiline block comments', () => {
+      const result = normalizeCSS(
+        '/* --------\n   BASE STATE\n   -------- */\nheight: 3rem;',
+      )
+      expect(result).toBe('height: 3rem;')
+    })
+
+    it('strips JS-style line comments from template literals', () => {
+      const result = normalizeCSS('// this is not valid CSS\ncolor: red;')
+      expect(result).toBe('color: red;')
+    })
+
+    it('preserves :// in URLs', () => {
+      const result = normalizeCSS(
+        'background: url(https://example.com/img.png);',
+      )
+      expect(result).toContain('https://example.com/img.png')
+    })
+
+    it('strips line comments but preserves URL protocols', () => {
+      const result = normalizeCSS(
+        '// comment\nbackground: url(https://example.com/img.png);',
+      )
+      expect(result).toContain('https://example.com/img.png')
+      expect(result).not.toContain('// comment')
+    })
+  })
+
+  describe('whitespace and semicolons', () => {
+    it('collapses whitespace', () => {
+      const result = normalizeCSS('  color:  red;   font-size:  1rem;  ')
+      expect(result).toBe('color: red; font-size: 1rem;')
+    })
+
+    it('collapses double semicolons', () => {
+      const result = normalizeCSS('color: red;; font-size: 1rem;')
+      expect(result).toBe('color: red; font-size: 1rem;')
+    })
+
+    it('removes semicolons after opening brace', () => {
+      const result = normalizeCSS('{ ; color: red; }')
+      expect(result).toBe('{ color: red; }')
+    })
+
+    it('removes semicolons before closing brace', () => {
+      const result = normalizeCSS('color: red; };')
+      expect(result).toBe('color: red; }')
+    })
+
+    it('removes leading semicolons', () => {
+      const result = normalizeCSS('; color: red;')
+      expect(result).toBe('color: red;')
     })
   })
 })

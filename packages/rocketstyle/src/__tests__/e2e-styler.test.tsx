@@ -120,6 +120,68 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
     expect(allCss).toContain('position: absolute')
   })
 
+  it('variant with width and height both produce CSS output', () => {
+    const wrapperWithBP = ({ children }: { children: ReactNode }) => (
+      <UnistyleProvider
+        theme={{
+          rootSize: 16,
+          breakpoints: { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200 },
+        }}
+      >
+        {children}
+      </UnistyleProvider>
+    )
+
+    const Comp = rocketstyle()({
+      name: 'VariantComp',
+      component: Element,
+      filterAttrs: [],
+    })
+      .theme({
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+      })
+      .variants({
+        box: {
+          height: { xs: 64, md: 100 },
+          padding: { xs: 8 },
+          backgroundColor: 'transparent',
+        },
+        circle: {
+          width: 72,
+          height: 72,
+          padding: 4,
+          backgroundColor: '#F0F0F0',
+          borderRadius: 180,
+        },
+      })
+      .styles(
+        (css) => css`
+          ${({ $rocketstyle }: any) => {
+            const baseTheme = makeItResponsive({
+              theme: $rocketstyle,
+              styles,
+              css,
+            })
+            return css`
+              ${baseTheme};
+            `
+          }};
+        `,
+      )
+
+    render(<Comp variant="circle" />, { wrapper: wrapperWithBP })
+
+    const allCss = getAllCSS()
+    console.log('=== VARIANT CIRCLE CSS ===')
+    console.log(allCss || '(empty)')
+
+    // Both width and height should produce CSS
+    expect(allCss).toContain('width: 4.5rem')
+    expect(allCss).toContain('height: 4.5rem')
+    expect(allCss).toContain('background-color: rgb(240, 240, 240)')
+  })
+
   it('scalar theme values persist across all responsive breakpoints', () => {
     const wrapperWithBP = ({ children }: { children: ReactNode }) => (
       <UnistyleProvider
