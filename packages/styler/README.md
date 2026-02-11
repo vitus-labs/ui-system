@@ -2,7 +2,7 @@
 
 A lightweight CSS-in-JS engine for React. Drop-in replacement for `styled-components` at a fraction of the size.
 
-**3.06 KB** gzipped | **React 18+** | **SSR ready** | **TypeScript strict**
+**3.81 KB** gzipped | **React 18+** | **SSR ready** | **TypeScript strict**
 
 ## Installation
 
@@ -296,6 +296,32 @@ const Card = styled('div')`
 `
 ```
 
+## Benchmarks
+
+All benchmarks run via Vitest bench on the same machine. React is externalized in all bundle measurements.
+
+### Bundle Size
+
+| Library | Minified | Gzipped |
+|---------|--------:|--------:|
+| goober | 2.32 KB | 1.31 KB |
+| **@vitus-labs/styler** | **9.16 KB** | **3.81 KB** |
+| styled-components | 44.93 KB | 17.89 KB |
+| @emotion/react + styled | 48.26 KB | 16.59 KB |
+
+### Performance (ops/sec, higher is better)
+
+| Benchmark | styler | styled-components | @emotion | goober |
+|-----------|-------:|-------------------:|---------:|-------:|
+| css() creation | **24.0M** | 8.5M | 2.1M | 21K |
+| css() with interpolations | **23.8M** | 5.5M | 2.2M | 23K |
+| Template resolution | **18.4M** | 3.7M | - | - |
+| Nested composition | **9.5M** | 2.1M | 1.3M | 6.2K |
+| SSR renderToString | **272K** | 61K | 187K | 16K |
+| styled() factory | 621K | 104K | 815K | 22.6M |
+
+Styler is **2.8-1541x faster** than alternatives across css creation, composition, and SSR. The only benchmark where styler isn't fastest is `styled()` factory creation, where goober defers all work (no-op wrapper) and Emotion defers to first render.
+
 ## Migrating from styled-components
 
 The API is intentionally compatible. Most code works by changing the import:
@@ -309,7 +335,7 @@ Key differences:
 
 | Feature | styled-components | @vitus-labs/styler |
 |---------|------------------|-------------------|
-| Bundle size | ~16 KB gz | **3.06 KB gz** |
+| Bundle size | ~16 KB gz | **3.81 KB gz** |
 | `styled.div` shorthand | Yes | Yes |
 | `as` prop | Yes | Yes |
 | Ref forwarding | Yes | Yes |
