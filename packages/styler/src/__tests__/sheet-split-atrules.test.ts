@@ -184,14 +184,14 @@ describe('StyleSheet — at-rule splitting', () => {
       expect(tag).toContain('@media (min-width: 768px)')
     })
 
-    it('reset clears all split rules from SSR buffer', () => {
+    it('reset clears all split rules from SSR buffer and cache', () => {
       const s = createSheet()
       s.insert('color: red; @media (min-width: 768px){color: blue;}')
       expect(s.getStyles()).not.toBe('')
 
       s.reset()
       expect(s.getStyles()).toBe('')
-      expect(s.cacheSize).toBe(1) // cache preserved
+      expect(s.cacheSize).toBe(0) // cache also cleared for SSR correctness
     })
   })
 

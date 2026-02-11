@@ -27,7 +27,7 @@ import { bench, describe } from 'vitest'
 // --- @vitus-labs/styler ---
 import { css as stylerCss } from '../css'
 import { hash as stylerHash } from '../hash'
-import { resolve as stylerResolve } from '../resolve'
+import { normalizeCSS, resolve as stylerResolve } from '../resolve'
 import { styled as stylerStyled } from '../styled'
 
 // Setup goober to use React.createElement
@@ -313,5 +313,56 @@ describe('styled() component factory', () => {
 
   bench('goober', () => {
     gooberStyled('div')`display: flex; color: red; padding: 8px;`
+  })
+})
+
+// ============================================================================
+// 9. normalizeCSS — Comment Stripping & Cleanup
+// ============================================================================
+describe('normalizeCSS', () => {
+  const plain =
+    '  display: flex;  align-items: center;  justify-content: center;  padding: 16px;  margin: 8px;  background-color: #f0f0f0;  border-radius: 4px;  '
+
+  const withBlockComments = `
+    /* -------------------------------------------------------- */
+    /* BASE STATE */
+    /* -------------------------------------------------------- */
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; margin: 8px; background-color: #f0f0f0;
+    /* -------------------------------------------------------- */
+    /* HOVER STATE */
+    /* -------------------------------------------------------- */
+    &:hover { color: red; background: blue; }
+    /* -------------------------------------------------------- */
+    /* ACTIVE STATE */
+    /* -------------------------------------------------------- */
+    &:active { color: green; }
+  `
+
+  const withLineComments = `
+    // base styles
+    display: flex; align-items: center;
+    // hover override
+    &:hover { color: red; }
+    background: url(https://example.com/img.png);
+  `
+
+  const withSemicolonJunk =
+    '  ; display: flex;; ; color: red; ; font-size: 1rem;; ;  '
+
+  bench('plain CSS (no comments)', () => {
+    normalizeCSS(plain)
+  })
+
+  bench('CSS with /* */ block comments', () => {
+    normalizeCSS(withBlockComments)
+  })
+
+  bench('CSS with // line comments', () => {
+    normalizeCSS(withLineComments)
+  })
+
+  bench('CSS with semicolon junk', () => {
+    normalizeCSS(withSemicolonJunk)
   })
 })

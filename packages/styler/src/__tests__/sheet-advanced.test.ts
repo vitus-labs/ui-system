@@ -298,14 +298,14 @@ describe('StyleSheet — advanced features', () => {
         expect(styles).toContain('color: blue;')
       })
 
-      it('reset clears SSR buffer but not cache', () => {
+      it('reset clears SSR buffer and cache', () => {
         const s = createSheet()
         s.insert('color: red;')
         expect(s.getStyles()).toContain('color: red;')
 
         s.reset()
         expect(s.getStyles()).toBe('')
-        expect(s.cacheSize).toBe(1) // cache preserved
+        expect(s.cacheSize).toBe(0) // cache also cleared for SSR correctness
       })
 
       it('insertKeyframes deduplicates in SSR', () => {

@@ -46,29 +46,73 @@ export const resolve = (
 
 /**
  * Normalize resolved CSS text for strict `insertRule` compatibility.
- * Removes double semicolons, empty declarations, and excess whitespace
- * that arise from template interpolation (conditional expressions,
- * empty CSSResult values, etc.).
+ *
+ * Single-pass scanner that handles all cleanup in one traversal:
+ * - Strips block comments and line comments (preserves :// in URLs)
+ * - Collapses whitespace to single spaces
+ * - Removes redundant semicolons
+ * - Trims leading/trailing whitespace
  */
 export const normalizeCSS = (css: string): string => {
-  // Strip JS-style line comments (// ...) before collapsing newlines.
-  // These are NOT valid CSS but can leak in from tagged template literals
-  // where users write `// comment` thinking it's a JS comment.
-  // Negative lookbehind avoids stripping :// in URLs (e.g. https://...).
-  let s = css.replace(/(?<!:)\/\/[^\n]*/g, '')
-  // Strip CSS block comments (/* ... */) — they serve no purpose in CSSOM
-  // and inflate the CSS text / hash.
-  s = s.replace(/\/\*[\s\S]*?\*\//g, '')
-  s = s.replace(/\s+/g, ' ').trim()
-  // Collapse multiple semicolons (;; or ; ;) into single semicolons
-  while (s.includes('; ;') || s.includes(';;')) {
-    s = s.replace(/;(\s*;)+/g, ';')
+  const len = css.length
+  let out = ''
+  let space = false // pending space to emit before next non-whitespace char
+  let last = 0 // charCode of last char written to output (0 = nothing yet)
+
+  for (let i = 0; i < len; i++) {
+    const c = css.charCodeAt(i)
+
+    // /* block comment */
+    if (c === 47 /* / */ && css.charCodeAt(i + 1) === 42 /* * */) {
+      const end = css.indexOf('*/', i + 2)
+      i = end === -1 ? len : end + 1
+      space = true
+      continue
+    }
+
+    // // line comment (but not :// in URLs)
+    if (
+      c === 47 /* / */ &&
+      css.charCodeAt(i + 1) === 47 /* / */ &&
+      last !== 58 /* : */
+    ) {
+      const nl = css.indexOf('\n', i + 2)
+      i = nl === -1 ? len : nl
+      space = true
+      continue
+    }
+
+    // Whitespace → collapse
+    if (c === 32 || c === 9 || c === 10 || c === 13 || c === 12) {
+      space = true
+      continue
+    }
+
+    // Semicolon → skip if redundant (after start, {, }, or another ;)
+    if (c === 59 /* ; */) {
+      if (
+        last === 0 ||
+        last === 123 /* { */ ||
+        last === 125 /* } */ ||
+        last === 59 /* ; */
+      ) {
+        continue
+      }
+      space = false
+      out += ';'
+      last = 59
+      continue
+    }
+
+    // Regular char — emit pending space (but not at start of output)
+    if (space && last !== 0) out += ' '
+    space = false
+
+    out += css[i]
+    last = c
   }
-  // Remove semicolons after { and before } that create empty rules
-  s = s.replace(/\{\s*;/g, '{').replace(/}\s*;/g, '}')
-  // Remove leading semicolons
-  s = s.replace(/^\s*;/, '').trim()
-  return s
+
+  return out
 }
 
 export const resolveValue = (
