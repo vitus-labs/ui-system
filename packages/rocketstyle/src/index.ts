@@ -28,7 +28,11 @@ import type {
   IRocketStyleComponent,
   RocketStyleComponent,
 } from '~/types/rocketstyle'
-import type { StylesCb, StylesDefault } from '~/types/styles'
+import type {
+  RocketStyleInterpolationProps,
+  StylesCb,
+  StylesDefault,
+} from '~/types/styles'
 import type {
   ThemeCb,
   ThemeDefault,
@@ -62,6 +66,7 @@ export type {
   DimensionProps,
   ExtractDimensions,
   StylesCb,
+  RocketStyleInterpolationProps,
   ConfigAttrs,
   AttrsCb,
   ThemeCb,

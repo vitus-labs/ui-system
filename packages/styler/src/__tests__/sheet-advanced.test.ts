@@ -90,6 +90,45 @@ describe('StyleSheet — advanced features', () => {
     })
   })
 
+  describe('insertGlobal — multi-rule splitting', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('injects multiple top-level rules from a single insertGlobal call', () => {
+      const s = createSheet()
+      s.insertGlobal('html { font-size: 16px; } body { margin: 0; }')
+      // Should not throw — both rules are injected individually
+      expect(s.cacheSize).toBe(1) // single cache entry for the whole CSS text
+    })
+
+    it('injects nested @media rules correctly', () => {
+      const s = createSheet()
+      s.insertGlobal(
+        'body { margin: 0; } @media (min-width: 768px) { body { font-size: 18px; } }',
+      )
+      expect(s.cacheSize).toBe(1)
+    })
+
+    it('handles three or more rules', () => {
+      const s = createSheet()
+      s.insertGlobal(
+        'html { box-sizing: border-box; } *, *::before, *::after { box-sizing: inherit; } body { margin: 0; font-family: sans-serif; }',
+      )
+      expect(s.cacheSize).toBe(1)
+    })
+
+    it('deduplicates identical multi-rule CSS', () => {
+      const s = createSheet()
+      const css = 'html { font-size: 16px; } body { margin: 0; }'
+      s.insertGlobal(css)
+      s.insertGlobal(css)
+      expect(s.cacheSize).toBe(1)
+    })
+  })
+
   // SSR-specific tests: mock document as undefined to simulate server
   describe('SSR mode (mocked)', () => {
     let originalDocument: typeof document

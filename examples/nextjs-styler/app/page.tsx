@@ -1,9 +1,9 @@
 'use client'
 
 import './setup'
+import { Col, Row } from '@vitus-labs/coolgrid'
 import { config } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
-import { Row, Col } from '@vitus-labs/coolgrid'
 import rocketstyle from '@vitus-labs/rocketstyle'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
 
@@ -131,7 +131,7 @@ const RsButton = rocketstyle()({
       cursor: pointer;
       transition: background-color 0.2s;
 
-      ${({ $rocketstyle: t }: any) => css`
+      ${({ $rocketstyle: t }) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
 
@@ -183,19 +183,21 @@ const UnistyleButton = rocketstyle()({
     (css) => css`
       font-weight: 500;
 
-      ${({ $rocketstyle, $rocketstate: { disabled, pseudo } }: any) => {
+      ${({ $rocketstyle, $rocketstate: { pseudo } }) => {
         const { hover: hoverStyles = {}, ...restStyles } = $rocketstyle
         const baseTheme = makeItResponsive({ theme: restStyles, styles, css })
         const hoverTheme = makeItResponsive({ theme: hoverStyles, styles, css })
 
         return css`
           ${baseTheme};
-          ${!disabled &&
-          css`
+          ${
+            !pseudo.disabled &&
+            css`
             &:hover {
               ${hoverTheme};
             }
-          `};
+          `
+          };
           ${pseudo?.hover && css`${hoverTheme};`};
         `
       }};
@@ -207,9 +209,7 @@ export default function Home() {
     <Wrapper>
       <Badge>Next.js + @vitus-labs/styler</Badge>
       <Title>UI System Examples</Title>
-      <Subtitle>
-        Pluggable CSS-in-JS with @vitus-labs packages
-      </Subtitle>
+      <Subtitle>Pluggable CSS-in-JS with @vitus-labs packages</Subtitle>
 
       <SectionTitle>Responsive Grid</SectionTitle>
       <Row gap={24}>
@@ -217,8 +217,8 @@ export default function Home() {
           <Card>
             <CardTitle>config.styled</CardTitle>
             <CardText>
-              Create styled components via config — engine-agnostic API
-              that works with styler, styled-components, or Emotion.
+              Create styled components via config — engine-agnostic API that
+              works with styler, styled-components, or Emotion.
             </CardText>
           </Card>
         </Col>
@@ -226,8 +226,8 @@ export default function Home() {
           <Card>
             <CardTitle>coolgrid</CardTitle>
             <CardText>
-              Responsive grid system with Container, Row, and Col.
-              Supports breakpoint-based sizing.
+              Responsive grid system with Container, Row, and Col. Supports
+              breakpoint-based sizing.
             </CardText>
           </Card>
         </Col>
@@ -235,8 +235,8 @@ export default function Home() {
           <Card>
             <CardTitle>Provider</CardTitle>
             <CardText>
-              Theme context passed to all styled components.
-              Supports breakpoints, rootSize, and custom values.
+              Theme context passed to all styled components. Supports
+              breakpoints, rootSize, and custom values.
             </CardText>
           </Card>
         </Col>
@@ -276,8 +276,8 @@ export default function Home() {
       <Card>
         <CardTitle>Data-Driven Styling</CardTitle>
         <CardText>
-          Rocketstyle component using unistyle's makeItResponsive and styles
-          for data-driven CSS generation. Theme values use CSS property names
+          Rocketstyle component using unistyle's makeItResponsive and styles for
+          data-driven CSS generation. Theme values use CSS property names
           (height, fontSize, paddingX, backgroundColor) and are automatically
           converted to CSS.
         </CardText>
