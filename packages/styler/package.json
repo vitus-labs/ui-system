@@ -1,0 +1,66 @@
+{
+  "name": "@vitus-labs/styler",
+  "version": "2.0.0-alpha.0",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "source": "./src/index.ts",
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/styler",
+  "description": "Lightweight CSS-in-JS engine for vitus-labs packages",
+  "keywords": [
+    "vitus-labs",
+    "css-in-js",
+    "styled-components",
+    "css",
+    "styling"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/styler"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "scripts": {
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">= 18"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0",
+    "goober": "^2.1.18",
+    "styled-components": "^6.3.9"
+  }
+}

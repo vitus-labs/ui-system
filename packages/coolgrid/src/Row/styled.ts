@@ -59,7 +59,7 @@ const styles: MakeItResponsiveStyles<
   `
 }
 
-export default styled(component)<any>`
+export default styled(component)`
   ${
     __WEB__ &&
     css`

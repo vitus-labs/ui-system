@@ -36,6 +36,7 @@ node_modules/
 jspm_packages/
 lib/
 dist/
+out/
 
 # Test
 .coverage/

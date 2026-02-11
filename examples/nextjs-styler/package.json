@@ -1,0 +1,27 @@
+{
+  "name": "@vitus-labs/example-nextjs-styler",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "next": "^15.3.0",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/connector-styler": "workspace:*",
+    "@vitus-labs/styler": "workspace:*",
+    "@vitus-labs/elements": "workspace:*",
+    "@vitus-labs/coolgrid": "workspace:*",
+    "@vitus-labs/unistyle": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.9.3"
+  }
+}

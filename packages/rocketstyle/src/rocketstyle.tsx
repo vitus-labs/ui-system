@@ -117,10 +117,12 @@ const rocketComponent: RocketComponent = (options) => {
     options.name ?? options.component.displayName ?? options.component.name
 
   // create styled component with all options.styles if available
+  // boost: true doubles the class selector (.vl-abc.vl-abc) so rocketstyle
+  // wrapper styles always override inner library component styles
   const STYLED_COMPONENT =
     (component.IS_ROCKETSTYLE ?? options.styled !== true)
       ? component
-      : styled(component)`
+      : styled(component, { boost: true })`
           ${calculateStyles(styles)};
         `
 

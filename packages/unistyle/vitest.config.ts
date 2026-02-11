@@ -1,20 +1,6 @@
-import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vitest/config'
+import createConfig from '../../vitest.shared'
 
-export default defineConfig({
-  define: {
-    __WEB__: true,
-  },
-  resolve: {
-    alias: {
-      '~': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  test: {
-    name: 'unistyle',
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['../../vitest.setup.ts'],
-    include: ['src/__tests__/**/*.test.{ts,tsx}'],
-  },
+export default createConfig({
+  name: 'unistyle',
+  define: { __WEB__: true },
 })

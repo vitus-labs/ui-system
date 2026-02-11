@@ -90,7 +90,7 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
 
 const platformCSS = __WEB__ ? `box-sizing: border-box;` : ''
 
-const StyledComponent = styled(component)<any>`
+const StyledComponent = styled(component)`
   ${platformCSS};
 
   display: flex;

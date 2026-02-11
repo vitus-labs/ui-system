@@ -250,15 +250,9 @@ export interface IRocketStyleComponent<
    * }))
    * ```
    */
-  theme: <P extends TObj | unknown = unknown>(
-    param: P extends TObj
-      ?
-          | Partial<MergeTypes<[Styles<CSS>, P]>>
-          | ThemeCb<MergeTypes<[Styles<CSS>, P]>, Theme<T>>
-      : Partial<Styles<CSS>> | ThemeCb<Styles<CSS>, Theme<T>>,
-  ) => P extends TObj
-    ? RocketStyleComponent<OA, EA, T, MergeTypes<[CSS, P]>, S, HOC, D, UB, DKP>
-    : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
+  theme: <P extends TObj = {}>(
+    param: Partial<P> | ThemeCb<P, Theme<T>>,
+  ) => RocketStyleComponent<OA, EA, T, MergeTypes<[CSS, P]>, S, HOC, D, UB, DKP>
 
   // STYLES chaining method
   // --------------------------------------------------------
@@ -275,7 +269,7 @@ export interface IRocketStyleComponent<
    * ```
    */
   styles: (
-    param: StylesCb,
+    param: StylesCb<CSS>,
   ) => RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
 
   // COMPOSE chaining method
