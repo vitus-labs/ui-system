@@ -13,11 +13,11 @@ on:
           - minor
           - major
 
-  # Prereleases — triggered automatically after CI succeeds on feature/release branches
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
-    branches: ['feature/**', 'release/**']
+  # Prereleases — automatic on feature/release branch pushes
+  push:
+    branches:
+      - "feature/**"
+      - "release/**"
 
 concurrency:
   group: release-${{ github.ref }}
@@ -76,11 +76,9 @@ jobs:
         env:
           NPM_CONFIG_PROVENANCE: true
 
-  # ── Prerelease (feature/release branches, after CI passes) ──────
+  # ── Prerelease (feature/release branches, automatic) ────────────
   prerelease:
-    if: >
-      github.event_name == 'workflow_run' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'push'
     name: Publish Prerelease
     runs-on: ubuntu-latest
     permissions:
@@ -90,7 +88,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_branch }}
 
       - uses: actions/setup-node@v6
         with:
