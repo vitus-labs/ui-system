@@ -340,9 +340,10 @@ export class StyleSheet {
     return this.ssrBuffer.join('')
   }
 
-  /** Reset SSR buffer (call between server requests). */
+  /** Reset SSR buffer and cache (call between server requests). */
   reset(): void {
     this.ssrBuffer = []
+    this.cache.clear()
   }
 
   /** Clear the dedup cache. Useful for HMR / dev-time reloads. */
