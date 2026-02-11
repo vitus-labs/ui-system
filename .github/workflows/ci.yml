@@ -11,43 +11,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint & Format
+  ci:
+    name: Lint → Build → Typecheck → Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run lint
 
-  typecheck:
-    name: Type Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - name: Build packages
-        run: bun run pkgs:build
-      - run: bun run typecheck
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - name: Build packages (needed for workspace resolution)
-        run: bun run pkgs:build
-      - run: bun run test
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+
+      - name: Lint & Format
+        run: bun run lint
+
       - name: Build all packages
         run: bun run pkgs:build
+
+      - name: Type Check
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
