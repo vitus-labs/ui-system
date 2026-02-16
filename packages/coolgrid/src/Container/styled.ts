@@ -14,7 +14,7 @@ const styles: MakeItResponsiveStyles<
 `
 
 /** Styled Container element. Centered via auto margins with responsive max-width. */
-export default styled(component)<any>`
+export default styled(component)`
   ${
     __WEB__ &&
     css`

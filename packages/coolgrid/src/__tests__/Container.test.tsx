@@ -41,7 +41,7 @@ describe('Container', () => {
       </Container>,
       { wrapper },
     )
-    const styledEl = container.firstChild as HTMLElement
+    const styledEl = container.lastElementChild as HTMLElement
     expect(styledEl.getAttribute('data-coolgrid')).toBe('container')
   })
 

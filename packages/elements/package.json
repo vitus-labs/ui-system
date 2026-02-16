@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/elements",
-  "version": "1.4.2",
+  "version": "2.0.0-alpha.0",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -9,6 +9,7 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
+    "source": "./src/index.ts",
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
@@ -57,16 +58,15 @@
     "@vitus-labs/core": "^1.4.0",
     "@vitus-labs/unistyle": "^1.4.0",
     "react": ">= 19",
-    "react-dom": ">= 19",
-    "styled-components": ">= 6"
+    "react-dom": ">= 19"
   },
   "devDependencies": {
-    "@vitus-labs/core": "1.4.2",
-    "@vitus-labs/rocketstyle": "1.4.2",
+    "@vitus-labs/core": "2.0.0-alpha.0",
+    "@vitus-labs/rocketstyle": "2.0.0-alpha.0",
     "@vitus-labs/tools-rolldown": "^1.6.0",
     "@vitus-labs/tools-storybook": "^1.6.0",
     "@vitus-labs/tools-typescript": "^1.6.0",
-    "@vitus-labs/unistyle": "1.4.2"
+    "@vitus-labs/unistyle": "2.0.0-alpha.0"
   },
   "dependencies": {
     "react-is": "^19.2.3"

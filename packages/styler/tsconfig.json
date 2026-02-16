@@ -1,0 +1,14 @@
+{
+  "extends": "@vitus-labs/tools-typescript/lib",
+  "include": ["src"],
+  "exclude": ["node_modules", "lib", "src/__tests__"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "rootDir": "src",
+    "outDir": "lib",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  }
+}

@@ -24,33 +24,35 @@ describe('Configuration', () => {
   })
 
   describe('init', () => {
-    const originalCss = config.css
-    const originalStyled = config.styled
-    const originalProvider = config.ExternalProvider
+    const originalCss = config._css
+    const originalStyled = config._styled
+    const originalProvider = config._provider
     const originalComponent = config.component
     const originalTextComponent = config.textComponent
 
     afterEach(() => {
       // restore defaults
       init({
-        css: originalCss,
-        styled: originalStyled,
-        provider: originalProvider,
+        css: originalCss as any,
+        styled: originalStyled as any,
+        provider: originalProvider as any,
         component: originalComponent,
         textComponent: originalTextComponent,
       })
     })
 
-    it('updates css', () => {
+    it('updates css engine', () => {
       const mockCss = (() => '') as any
       init({ css: mockCss })
-      expect(config.css).toBe(mockCss)
+      // config.css is a stable delegate; the internal engine ref is updated
+      expect(config._css).toBe(mockCss)
     })
 
-    it('updates styled', () => {
+    it('updates styled engine', () => {
       const mockStyled = (() => '') as any
       init({ styled: mockStyled })
-      expect(config.styled).toBe(mockStyled)
+      // config.styled is a stable Proxy delegate; the internal engine ref is updated
+      expect(config._styled).toBe(mockStyled)
     })
 
     it('updates provider', () => {
@@ -73,13 +75,26 @@ describe('Configuration', () => {
       init({ component: 'article' })
       expect(config.component).toBe('article')
       expect(config.textComponent).toBe('span')
-      expect(config.css).toBe(originalCss)
+      expect(config._css).toBe(originalCss)
     })
 
     it('does nothing with empty object', () => {
       init({})
       expect(config.component).toBe('div')
       expect(config.textComponent).toBe('span')
+    })
+
+    it('css delegate function is stable across init calls', () => {
+      const cssBefore = config.css
+      init({ css: (() => '') as any })
+      // The delegate function itself doesn't change — only the internal ref
+      expect(config.css).toBe(cssBefore)
+    })
+
+    it('styled delegate function is stable across init calls', () => {
+      const styledBefore = config.styled
+      init({ styled: (() => '') as any })
+      expect(config.styled).toBe(styledBefore)
     })
   })
 })

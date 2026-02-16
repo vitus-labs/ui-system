@@ -1,8 +1,10 @@
-import { css } from 'styled-components'
+import { config } from '@vitus-labs/core'
 import borderRadius from '../styles/shorthands/borderRadius'
 import edge from '../styles/shorthands/edge'
 import processDescriptor from '../styles/styles/processDescriptor'
 import { values } from '../units'
+
+const { css } = config
 
 const calc = (...params: any[]) => values(params, 16)
 const shorthand = edge(16)

@@ -59,7 +59,7 @@ export type MakeItResponsive = ({
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
 const makeItResponsive: MakeItResponsive =
-  ({ theme: customTheme, key = '', css, styles, normalize = false }) =>
+  ({ theme: customTheme, key = '', css, styles, normalize = true }) =>
   ({ theme = {}, ...props }) => {
     const internalTheme = customTheme || props[key]
 

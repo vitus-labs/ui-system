@@ -1,0 +1,60 @@
+{
+  "name": "@vitus-labs/connector-styler",
+  "version": "2.0.0-alpha.0",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "source": "./src/index.ts",
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/connector-styler",
+  "description": "CSS-in-JS connector for @vitus-labs/styler engine",
+  "keywords": [
+    "vitus-labs",
+    "connector",
+    "css-in-js",
+    "styler"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/connector-styler"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "scripts": {
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@vitus-labs/styler": "^1.3.0",
+    "react": ">= 19"
+  },
+  "devDependencies": {
+    "@vitus-labs/styler": "workspace:*",
+    "@vitus-labs/tools-rolldown": "^1.6.0",
+    "@vitus-labs/tools-typescript": "^1.6.0"
+  }
+}

@@ -104,7 +104,7 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
   `
 }
 
-export default styled(component)<any>`
+export default styled(component)`
   ${
     __WEB__ &&
     css`

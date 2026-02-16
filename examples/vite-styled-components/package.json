@@ -1,0 +1,29 @@
+{
+  "name": "@vitus-labs/example-vite-styled-components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "styled-components": "^6.1.0",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/connector-styled-components": "workspace:*",
+    "@vitus-labs/elements": "workspace:*",
+    "@vitus-labs/coolgrid": "workspace:*",
+    "@vitus-labs/unistyle": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.9.3",
+    "vite": "^6.3.0"
+  }
+}
