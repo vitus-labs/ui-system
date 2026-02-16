@@ -306,11 +306,25 @@ const rocketComponent: RocketComponent = (options) => {
       // to our styled component
       // passed as $rocketstyle prop
       // --------------------------------------------------
-      const rocketstyle = getTheme({
-        rocketstate,
-        themes: currentModeThemes,
-        baseTheme: currentModeBaseTheme,
-      })
+      // Content-based memoization: rocketstate is a fresh object each render,
+      // so serialize its values as a string key for useMemo comparison.
+      let rsKey = ''
+      for (const k in rocketstate) {
+        const v = rocketstate[k]
+        rsKey += k
+        rsKey += Array.isArray(v) ? v.join(',') : v
+      }
+
+      // biome-ignore lint/correctness/useExhaustiveDependencies: rsKey is a content-based serialization of rocketstate — replaces object reference in deps
+      const rocketstyle = useMemo(
+        () =>
+          getTheme({
+            rocketstate,
+            themes: currentModeThemes,
+            baseTheme: currentModeBaseTheme,
+          }),
+        [rsKey, currentModeThemes, currentModeBaseTheme],
+      )
 
       // --------------------------------------------------
       // final props

@@ -264,197 +264,20 @@ export type Props = Partial<{
   css: ExtendCss
 
   /**
-   * An additional prop for extending styling of the **content** wrapper element
-   *
-   * #### [A] Template literals
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [B] String
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css="text-color: red;"
-   *  />
-   * )
-   * ```
-   *
-   * #### [C] Css Function
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * import { css } from 'styled-components'
-   *
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [D] Css Callback
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css => css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
+   * An additional prop for extending styling of the **content** wrapper element.
+   * Accepts the same formats as `css` — template literal, string, css function, or callback.
    */
   contentCss: ExtendCss
 
   /**
-   * An additional prop for extending styling of the **beforeContent** wrapper element
-   *
-   * #### [A] Template literals
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [B] String
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css="text-color: red;"
-   *  />
-   * )
-   * ```
-   *
-   * #### [C] Css Function
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * import { css } from 'styled-components'
-   *
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [D] Css Callback
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css => css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
+   * An additional prop for extending styling of the **beforeContent** wrapper element.
+   * Accepts the same formats as `css` — template literal, string, css function, or callback.
    */
   beforeContentCss: ExtendCss
 
   /**
-   * An additional prop for extending styling of the **afterContent** wrapper element
-   *
-   * #### [A] Template literals
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [B] String
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css="text-color: red;"
-   *  />
-   * )
-   * ```
-   *
-   * #### [C] Css Function
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * import { css } from 'styled-components'
-   *
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
-   *
-   * #### [D] Css Callback
-   *
-   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-   *
-   * ```jsx
-   * export default () => (
-   *  <Element
-   *    label="This is an element"
-   *    css={css => css`
-   *      text-color: red;
-   *    `}
-   *  />
-   * )
-   * ```
+   * An additional prop for extending styling of the **afterContent** wrapper element.
+   * Accepts the same formats as `css` — template literal, string, css function, or callback.
    */
   afterContentCss: ExtendCss
 }>

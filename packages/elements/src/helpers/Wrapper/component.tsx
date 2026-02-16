@@ -5,7 +5,7 @@
  * (parent + child Styled) because these HTML elements do not natively
  * support `display: flex` consistently across browsers.
  */
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { IS_DEVELOPMENT } from '~/utils'
 import Styled from './styled'
 import type { Props, Reference } from './types'
@@ -42,19 +42,31 @@ const Component = forwardRef<Reference, Partial<Props>>(
       ? !props.dangerouslySetInnerHTML && isWebFixNeeded(tag)
       : false
 
+    const normalElement = useMemo(
+      () => ({
+        block,
+        direction,
+        alignX,
+        alignY,
+        equalCols,
+        extraStyles: extendCss,
+      }),
+      [block, direction, alignX, alignY, equalCols, extendCss],
+    )
+
+    const parentFixElement = useMemo(
+      () => ({ parentFix: true as const, block, extraStyles: extendCss }),
+      [block, extendCss],
+    )
+
+    const childFixElement = useMemo(
+      () => ({ childFix: true as const, direction, alignX, alignY, equalCols }),
+      [direction, alignX, alignY, equalCols],
+    )
+
     if (!needsFix || __NATIVE__) {
       return (
-        <Styled
-          {...COMMON_PROPS}
-          $element={{
-            block,
-            direction,
-            alignX,
-            alignY,
-            equalCols,
-            extraStyles: extendCss,
-          }}
-        >
+        <Styled {...COMMON_PROPS} $element={normalElement}>
           {children}
         </Styled>
       )
@@ -63,25 +75,8 @@ const Component = forwardRef<Reference, Partial<Props>>(
     const asTag = __WEB__ ? (isInline ? 'span' : 'div') : undefined
 
     return (
-      <Styled
-        {...COMMON_PROPS}
-        $element={{
-          parentFix: true,
-          block,
-          extraStyles: extendCss,
-        }}
-      >
-        <Styled
-          as={asTag}
-          $childFix
-          $element={{
-            childFix: true,
-            direction,
-            alignX,
-            alignY,
-            equalCols,
-          }}
-        >
+      <Styled {...COMMON_PROPS} $element={parentFixElement}>
+        <Styled as={asTag} $childFix $element={childFixElement}>
           {children}
         </Styled>
       </Styled>

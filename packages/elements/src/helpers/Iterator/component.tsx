@@ -10,6 +10,7 @@ import { isEmpty, render } from '@vitus-labs/core'
 import {
   Children,
   type FC,
+  memo,
   type ReactElement,
   type ReactNode,
   useCallback,
@@ -89,12 +90,7 @@ const attachItemProps: AttachItemProps = ({
   }
 }
 
-type Static = {
-  isIterator: true
-  RESERVED_PROPS: typeof RESERVED_PROPS
-}
-
-const Component: FC<Props> & Static = (props) => {
+const Component: FC<Props> = (props) => {
   const {
     itemKey,
     valueName,
@@ -301,7 +297,7 @@ const Component: FC<Props> & Static = (props) => {
   return renderItems()
 }
 
-Component.isIterator = true
-Component.RESERVED_PROPS = RESERVED_PROPS
-
-export default Component
+export default Object.assign(memo(Component), {
+  isIterator: true as const,
+  RESERVED_PROPS,
+})

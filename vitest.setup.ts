@@ -6,8 +6,9 @@ import {
   css,
   keyframes,
   styled,
+  useCSS,
   useTheme,
 } from './packages/styler/src/index'
 
 // Initialize the CSS-in-JS engine before any test modules load.
-init({ css, styled, provider: ThemeProvider, keyframes, createGlobalStyle, useTheme })
+init({ css, styled, provider: ThemeProvider, keyframes, createGlobalStyle, useTheme, useCSS })

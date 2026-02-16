@@ -39,6 +39,12 @@ export interface CSSEngineConnector {
   createGlobalStyle?: (strings: TemplateStringsArray, ...values: any[]) => any
   /** Hook to read the current theme from the engine's context. */
   useTheme?: () => any
+  /** Hook that resolves CSS template → className without a component wrapper. */
+  useCSS?: (
+    template: any,
+    props?: Record<string, any>,
+    boost?: boolean,
+  ) => string
 }
 
 interface PlatformConfig {
@@ -145,6 +151,7 @@ class Configuration {
   _keyframes: CSSEngineConnector['keyframes'] | null = null
   _createGlobalStyle: CSSEngineConnector['createGlobalStyle'] | null = null
   _useTheme: CSSEngineConnector['useTheme'] | null = null
+  _useCSS: CSSEngineConnector['useCSS'] | null = null
 
   // Platform defaults
   component: ComponentType | HTMLTags = 'div'
@@ -192,6 +199,21 @@ class Configuration {
     return this._useTheme ?? null
   }
 
+  /**
+   * Stable useCSS delegate. Delegates to the engine's useCSS hook at call
+   * time (render phase). Safe to destructure at module level — like `css`,
+   * reads the latest engine reference set by `init()`.
+   */
+  useCSS = (
+    template: any,
+    props?: Record<string, any>,
+    boost?: boolean,
+  ): string => {
+    const hook = this._useCSS
+    if (!hook) return notConfigured('useCSS')
+    return hook(template, props, boost)
+  }
+
   constructor() {
     this.styled = createStyledDelegate(this)
   }
@@ -215,6 +237,7 @@ class Configuration {
     if (props.createGlobalStyle)
       this._createGlobalStyle = props.createGlobalStyle
     if (props.useTheme) this._useTheme = props.useTheme
+    if (props.useCSS) this._useCSS = props.useCSS
     if (props.component) this.component = props.component
     if (props.textComponent) this.textComponent = props.textComponent
   }

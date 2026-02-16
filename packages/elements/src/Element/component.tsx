@@ -5,13 +5,19 @@
  * to avoid an unnecessary nesting layer. Handles HTML-specific edge cases
  * like void elements (input, img) and inline elements (span, a) by
  * skipping children or switching sub-tags accordingly.
+ *
+ * Slot elements (before/content/after) use `useCSS` for direct className
+ * injection — no styled component wrapper overhead per slot.
  */
-import { render } from '@vitus-labs/core'
-import { forwardRef, useMemo } from 'react'
+import { config, render } from '@vitus-labs/core'
+import { createElement, forwardRef, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
-import { Content, Wrapper } from '~/helpers'
+import { Wrapper } from '~/helpers'
+import { getSlotTemplate } from './slotStyles'
 import type { VLElement } from './types'
 import { getShouldBeEmpty, isInlineElement } from './utils'
+
+const { useCSS } = config
 
 const defaultDirection = 'inline'
 const defaultContentDirection = 'rows'
@@ -72,7 +78,7 @@ const Component: VLElement = forwardRef(
     const CHILDREN = children ?? content ?? label
 
     const isInline = __WEB__ ? isInlineElement(tag) : false
-    const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
+    const SUB_TAG = (__WEB__ && isInline ? 'span' : 'div') as 'div' | 'span'
 
     // --------------------------------------------------------
     // direction & alignX & alignY calculations
@@ -104,6 +110,52 @@ const Component: VLElement = forwardRef(
     ])
 
     // --------------------------------------------------------
+    // slot CSS via useCSS — always call all 3 (rules of hooks)
+    // --------------------------------------------------------
+    const slotTemplate = getSlotTemplate()
+
+    const beforeClass = useCSS(slotTemplate, {
+      $element: {
+        contentType: 'before',
+        parentDirection: wrapperDirection,
+        direction: beforeContentDirection,
+        alignX: beforeContentAlignX,
+        alignY: beforeContentAlignY,
+        equalCols,
+        gap,
+        extraStyles: beforeContentCss,
+      },
+      $contentType: 'before',
+    })
+
+    const contentClass = useCSS(slotTemplate, {
+      $element: {
+        contentType: 'content',
+        parentDirection: wrapperDirection,
+        direction: contentDirection,
+        alignX: contentAlignX,
+        alignY: contentAlignY,
+        equalCols,
+        extraStyles: contentCss,
+      },
+      $contentType: 'content',
+    })
+
+    const afterClass = useCSS(slotTemplate, {
+      $element: {
+        contentType: 'after',
+        parentDirection: wrapperDirection,
+        direction: afterContentDirection,
+        alignX: afterContentAlignX,
+        alignY: afterContentAlignY,
+        equalCols,
+        gap,
+        extraStyles: afterContentCss,
+      },
+      $contentType: 'after',
+    })
+
+    // --------------------------------------------------------
     // common wrapper props
     // --------------------------------------------------------
     const WRAPPER_PROPS = {
@@ -128,54 +180,27 @@ const Component: VLElement = forwardRef(
 
     return (
       <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
-        {beforeContent && (
-          <Content
-            tag={SUB_TAG}
-            contentType="before"
-            parentDirection={wrapperDirection}
-            extendCss={beforeContentCss}
-            direction={beforeContentDirection}
-            alignX={beforeContentAlignX}
-            alignY={beforeContentAlignY}
-            equalCols={equalCols}
-            gap={gap}
-          >
-            {render(beforeContent)}
-          </Content>
-        )}
+        {beforeContent &&
+          createElement(
+            SUB_TAG,
+            { className: beforeClass, 'data-vl-slot': 'before' },
+            render(beforeContent),
+          )}
 
-        {isSimpleElement ? (
-          contentRenderOutput
-        ) : (
-          <Content
-            tag={SUB_TAG}
-            contentType="content"
-            parentDirection={wrapperDirection}
-            extendCss={contentCss}
-            direction={contentDirection}
-            alignX={contentAlignX}
-            alignY={contentAlignY}
-            equalCols={equalCols}
-          >
-            {contentRenderOutput}
-          </Content>
-        )}
+        {isSimpleElement
+          ? contentRenderOutput
+          : createElement(
+              SUB_TAG,
+              { className: contentClass, 'data-vl-slot': 'content' },
+              contentRenderOutput,
+            )}
 
-        {afterContent && (
-          <Content
-            tag={SUB_TAG}
-            contentType="after"
-            parentDirection={wrapperDirection}
-            extendCss={afterContentCss}
-            direction={afterContentDirection}
-            alignX={afterContentAlignX}
-            alignY={afterContentAlignY}
-            equalCols={equalCols}
-            gap={gap}
-          >
-            {render(afterContent)}
-          </Content>
-        )}
+        {afterContent &&
+          createElement(
+            SUB_TAG,
+            { className: afterClass, 'data-vl-slot': 'after' },
+            render(afterContent),
+          )}
       </Wrapper>
     )
   },

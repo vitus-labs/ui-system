@@ -64,7 +64,7 @@ const withEqualBeforeAfter = (WrappedComponent: any) => {
       if (beforeEl && afterEl && beforeEl !== afterEl) {
         equalize(beforeEl, afterEl, direction === 'rows' ? 'height' : 'width')
       }
-    })
+    }, [equalBeforeAfter, beforeContent, afterContent, direction])
 
     return (
       <WrappedComponent
