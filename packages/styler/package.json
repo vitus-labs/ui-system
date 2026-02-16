@@ -8,10 +8,18 @@
   ],
   "type": "module",
   "sideEffects": false,
+  "module": "./lib/index.js",
   "exports": {
-    "source": "./src/index.ts",
-    "import": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./server": {
+      "source": "./src/server.ts",
+      "import": "./lib/server.js",
+      "types": "./lib/server.d.ts"
+    }
   },
   "types": "./lib/index.d.ts",
   "files": [
@@ -44,7 +52,7 @@
   },
   "scripts": {
     "prepublish": "bun run build",
-    "build": "bun run vl_rolldown_build",
+    "build": "bun run vl_rolldown_build && bun build src/server.ts --outdir=lib --format=esm --external=react --sourcemap=external && tsc -p tsconfig.server.json",
     "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
     "test": "vitest run",

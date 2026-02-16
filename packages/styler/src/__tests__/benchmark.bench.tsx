@@ -28,6 +28,7 @@ import { bench, describe } from 'vitest'
 import { css as stylerCss } from '../css'
 import { hash as stylerHash } from '../hash'
 import { normalizeCSS, resolve as stylerResolve } from '../resolve'
+import { renderToString as stylerRenderToString } from '../server'
 import { styled as stylerStyled } from '../styled'
 
 // Setup goober to use React.createElement
@@ -292,6 +293,10 @@ describe('SSR renderToString', () => {
 
   bench('goober', () => {
     renderToString(createElement(GooberDiv, null, 'Hello'))
+  })
+
+  bench('@vitus-labs/styler (custom serializer)', () => {
+    stylerRenderToString(createElement(StylerDiv, null, 'Hello'))
   })
 })
 

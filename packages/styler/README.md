@@ -304,6 +304,36 @@ const Card = styled('div')`
 `
 ```
 
+### Custom SSR Serializer (Advanced)
+
+A lightweight `renderToString` that bypasses React's fiber tree and reconciliation entirely, serializing the element tree directly to HTML. Available as a separate entry point to keep the client bundle small.
+
+```tsx
+import { renderToString } from '@vitus-labs/styler/server'
+
+const html = renderToString(<App />)
+// Returns: <style data-precedence="medium" data-href="vl-abc">...</style><div class="vl-abc">...</div>
+```
+
+**~1.7x faster** than `react-dom/server` renderToString for styled component trees. `<style precedence>` elements are automatically hoisted and deduplicated, matching React 19's resource behavior.
+
+**When to use it:**
+
+- Static site generation / pre-rendering at build time
+- Email template rendering
+- High-throughput SSR where every millisecond matters
+- Component trees you fully control (no third-party class components)
+
+**Limitations — read before using:**
+
+- **React 19 internals** — relies on undocumented React internal APIs that may change without notice in any React release. A runtime guard throws a clear error if the internals are missing or incompatible.
+- No Suspense / lazy / error boundaries / class components
+- No streaming (synchronous only)
+- `useId` returns static values (not unique across component instances)
+- No hydration coordination — use for full SSR or static HTML only, not partial hydration
+
+For production SSR with hydration, use `react-dom/server` renderToString instead — it's the safe default and works automatically with styler's `<style precedence>` pattern.
+
 ## Benchmarks
 
 All benchmarks run via Vitest bench on the same machine. React is externalized in all bundle measurements.
