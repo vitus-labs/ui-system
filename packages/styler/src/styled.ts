@@ -18,8 +18,14 @@
  * through without transformation, so `&:hover`, `&::before`, etc. work
  * as-is in browsers supporting CSS Nesting (all modern browsers).
  */
-import { type ComponentType, createElement, Fragment, forwardRef } from 'react'
-import { filterProps } from './forward'
+import {
+  type ComponentType,
+  createElement,
+  Fragment,
+  forwardRef,
+  useRef,
+} from 'react'
+import { buildProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
@@ -45,31 +51,6 @@ const getDisplayName = (tag: Tag): string =>
       (tag as ComponentType).name ||
       'Component'
 
-const mergeClassNames = (
-  generated: string,
-  user: string | undefined,
-): string => {
-  if (!user) return generated
-  if (!generated) return user
-  return `${generated} ${user}`
-}
-
-const applyPropFilter = (
-  props: Record<string, unknown>,
-  customFilter?: (prop: string) => boolean,
-): Record<string, unknown> => {
-  if (customFilter) {
-    const filtered: Record<string, unknown> = {}
-    for (const key in props) {
-      if (customFilter(key)) {
-        filtered[key] = props[key]
-      }
-    }
-    return filtered
-  }
-  return filterProps(props)
-}
-
 const createStyledComponent = (
   tag: Tag,
   strings: TemplateStringsArray,
@@ -90,31 +71,32 @@ const createStyledComponent = (
     // Populate sheet cache for has() queries and legacy useServerInsertedHTML
     if (cssText.trim()) sheet.insert(cssText, boost)
 
-    const StaticStyled = forwardRef<unknown, Record<string, any>>(
-      ({ as: asProp, className: userCls, ...props }, ref) => {
-        const finalTag = asProp || tag
-        const finalCls = mergeClassNames(staticClassName, userCls)
-        const finalProps =
-          typeof finalTag === 'string'
-            ? applyPropFilter(props, customFilter)
-            : props
-
-        return createElement(
-          Fragment,
-          null,
-          staticClassName
-            ? createElement(
-                'style',
-                { href: staticClassName, precedence: 'medium' },
-                staticRules,
-              )
-            : null,
-          createElement(finalTag, {
-            ...finalProps,
-            className: finalCls || undefined,
-            ref,
-          }),
+    // Pre-compute the <style> element once — it's immutable (same href/rules every render)
+    const cachedStyleEl = staticClassName
+      ? createElement(
+          'style',
+          { href: staticClassName, precedence: 'medium' },
+          staticRules,
         )
+      : null
+
+    const StaticStyled = forwardRef<unknown, Record<string, any>>(
+      (rawProps, ref) => {
+        const finalTag = rawProps.as || tag
+        const isDOM = typeof finalTag === 'string'
+        const finalProps = buildProps(
+          rawProps,
+          staticClassName,
+          ref,
+          isDOM,
+          customFilter,
+        )
+
+        const mainEl = createElement(finalTag, finalProps)
+
+        // Skip Fragment when there's no CSS to inject
+        if (!cachedStyleEl) return mainEl
+        return createElement(Fragment, null, cachedStyleEl, mainEl)
       },
     )
 
@@ -124,43 +106,58 @@ const createStyledComponent = (
 
   // DYNAMIC PATH: resolve on every render. React 19's <style precedence>
   // handles injection, dedup, and cleanup automatically.
+  // useRef cache avoids recomputing sheet.prepare() + createElement('style')
+  // when the resolved CSS text hasn't changed between renders.
   const DynamicStyled = forwardRef<unknown, Record<string, any>>(
-    ({ as: asProp, className: userCls, ...props }, ref) => {
+    (rawProps, ref) => {
       const theme = useTheme()
-      const allProps = { ...props, theme }
+      const allProps = { ...rawProps, theme }
       const cssText = normalizeCSS(resolve(strings, values, allProps))
 
-      let className = ''
-      let rules = ''
-      if (cssText.trim()) {
-        const prepared = sheet.prepare(cssText, boost)
-        className = prepared.className
-        rules = prepared.rules
+      const cacheRef = useRef<{
+        css: string
+        className: string
+        styleEl: ReturnType<typeof createElement> | null
+      }>({ css: '', className: '', styleEl: null })
+
+      let className: string
+      let styleEl: ReturnType<typeof createElement> | null
+
+      if (cssText === cacheRef.current.css) {
+        // Cache hit — reuse className and pre-built style element
+        className = cacheRef.current.className
+        styleEl = cacheRef.current.styleEl
+      } else {
+        // Cache miss — recompute
+        if (cssText.trim()) {
+          const prepared = sheet.prepare(cssText, boost)
+          className = prepared.className
+          styleEl = createElement(
+            'style',
+            { href: prepared.className, precedence: 'medium' },
+            prepared.rules,
+          )
+        } else {
+          className = ''
+          styleEl = null
+        }
+        cacheRef.current = { css: cssText, className, styleEl }
       }
 
-      const finalTag = asProp || tag
-      const finalCls = mergeClassNames(className, userCls)
-      const finalProps =
-        typeof finalTag === 'string'
-          ? applyPropFilter(props, customFilter)
-          : props
-
-      return createElement(
-        Fragment,
-        null,
-        className
-          ? createElement(
-              'style',
-              { href: className, precedence: 'medium' },
-              rules,
-            )
-          : null,
-        createElement(finalTag, {
-          ...finalProps,
-          className: finalCls || undefined,
-          ref,
-        }),
+      const finalTag = rawProps.as || tag
+      const isDOM = typeof finalTag === 'string'
+      const finalProps = buildProps(
+        rawProps,
+        className,
+        ref,
+        isDOM,
+        customFilter,
       )
+
+      const mainEl = createElement(finalTag, finalProps)
+
+      if (!styleEl) return mainEl
+      return createElement(Fragment, null, styleEl, mainEl)
     },
   )
 

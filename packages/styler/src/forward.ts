@@ -222,3 +222,59 @@ export const filterProps = (
 
   return filtered
 }
+
+/**
+ * Build final props for a styled component in a single pass.
+ * Combines className merging, ref injection, and prop filtering into one
+ * allocation and one iteration — avoids the rest spread + filterProps +
+ * createElement spread chain (3 allocations → 1).
+ */
+export const buildProps = (
+  rawProps: Record<string, any>,
+  generatedCls: string,
+  ref: unknown,
+  isDOM: boolean,
+  customFilter?: (prop: string) => boolean,
+): Record<string, any> => {
+  const result: Record<string, any> = {}
+
+  // Merge generated + user className
+  const userCls = rawProps.className
+  if (generatedCls) {
+    result.className = userCls ? `${generatedCls} ${userCls}` : generatedCls
+  } else if (userCls) {
+    result.className = userCls
+  }
+
+  result.ref = ref
+
+  // Component target — forward all props except as/className
+  if (!isDOM) {
+    for (const key in rawProps) {
+      if (key === 'as' || key === 'className') continue
+      result[key] = rawProps[key]
+    }
+    return result
+  }
+
+  // DOM element with custom shouldForwardProp
+  if (customFilter) {
+    for (const key in rawProps) {
+      if (key === 'as' || key === 'className') continue
+      if (customFilter(key)) result[key] = rawProps[key]
+    }
+    return result
+  }
+
+  // DOM element with default filtering
+  for (const key in rawProps) {
+    if (key === 'as' || key === 'className') continue
+    if (key.charCodeAt(0) === 36) continue // $-prefixed transient
+    if (key.startsWith('data-') || key.startsWith('aria-')) {
+      result[key] = rawProps[key]
+      continue
+    }
+    if (HTML_PROPS.has(key)) result[key] = rawProps[key]
+  }
+  return result
+}

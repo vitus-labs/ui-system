@@ -2,7 +2,7 @@
 
 A lightweight CSS-in-JS engine for React. Drop-in replacement for `styled-components` at a fraction of the size.
 
-**3.81 KB** gzipped | **React 18+** | **SSR ready** | **TypeScript strict**
+**3.81 KB** gzipped | **React 19+** | **SSR & static export ready** | **TypeScript strict**
 
 ## Installation
 
@@ -12,7 +12,7 @@ npm install @vitus-labs/styler
 bun add @vitus-labs/styler
 ```
 
-React 18+ is required as a peer dependency.
+React 19+ is required as a peer dependency.
 
 ## Quick Start
 
@@ -258,12 +258,16 @@ if (import.meta.hot) {
 
 ## How It Works
 
+### FOUC-free SSR & Static Export
+
+Styler uses React 19's `<style precedence>` resource system. Each styled component renders an inline `<style href="..." precedence="medium">` element alongside its markup. React automatically hoists these to `<head>`, deduplicates by `href`, and preserves them during hydration. This eliminates Flash of Unstyled Content (FOUC) for both SSR streaming and static export (e.g. `next export`) with zero configuration.
+
 ### Static path (zero runtime cost)
 
-Templates with no function interpolations are resolved **once at component creation time**. The CSS class is computed and injected immediately, and the React component is a thin `forwardRef` wrapper with no hooks.
+Templates with no function interpolations are resolved **once at component creation time**. The CSS class, rules, and `<style>` element are pre-computed and cached. The React component is a thin `forwardRef` wrapper that reuses the same cached element reference on every render.
 
 ```tsx
-// Class computed once at import time, not on every render
+// Class + <style> element computed once at import time, not on every render
 const Box = styled('div')`
   display: flex;
   padding: 16px;
@@ -272,7 +276,11 @@ const Box = styled('div')`
 
 ### Dynamic path
 
-Templates with function interpolations resolve on every render. The engine caches the last CSS string and skips re-hashing and re-injection when props haven't changed. Style injection uses `useInsertionEffect` for concurrent-mode safety.
+Templates with function interpolations resolve on every render. A `useRef` cache skips `sheet.prepare()` and `<style>` element creation when the resolved CSS text hasn't changed between renders.
+
+### Single-pass prop builder
+
+Styled components build the final props object in a single allocation and loop — className merging, ref injection, and prop filtering (transient `$` props, DOM validation) happen in one pass instead of three separate object spreads.
 
 ### CSS Nesting
 
@@ -305,7 +313,7 @@ All benchmarks run via Vitest bench on the same machine. React is externalized i
 | Library | Minified | Gzipped |
 |---------|--------:|--------:|
 | goober | 2.32 KB | 1.31 KB |
-| **@vitus-labs/styler** | **9.16 KB** | **3.81 KB** |
+| **@vitus-labs/styler** | **10.13 KB** | **3.81 KB** |
 | styled-components | 44.93 KB | 17.89 KB |
 | @emotion/react + styled | 48.26 KB | 16.59 KB |
 
@@ -313,14 +321,14 @@ All benchmarks run via Vitest bench on the same machine. React is externalized i
 
 | Benchmark | styler | styled-components | @emotion | goober |
 |-----------|-------:|-------------------:|---------:|-------:|
-| css() creation | **24.0M** | 8.5M | 2.1M | 21K |
-| css() with interpolations | **23.8M** | 5.5M | 2.2M | 23K |
-| Template resolution | **18.4M** | 3.7M | - | - |
-| Nested composition | **9.5M** | 2.1M | 1.3M | 6.2K |
-| SSR renderToString | **272K** | 61K | 187K | 16K |
-| styled() factory | 621K | 104K | 815K | 22.6M |
+| css() creation | **25.0M** | 9.3M | 2.3M | 24K |
+| css() with interpolations | **24.7M** | 5.5M | 2.3M | 25K |
+| Template resolution | **19.1M** | 4.0M | - | - |
+| Nested composition | **9.0M** | 2.2M | 1.4M | 7.1K |
+| SSR renderToString | **208K** | 68K | 194K | 17K |
+| styled() factory | 378K | 113K | 999K | 19.9M |
 
-Styler is **2.8-1541x faster** than alternatives across css creation, composition, and SSR. The only benchmark where styler isn't fastest is `styled()` factory creation, where goober defers all work (no-op wrapper) and Emotion defers to first render.
+Styler is **2.7-1270x faster** than alternatives across css creation, composition, and SSR. The only benchmark where styler isn't fastest is `styled()` factory creation, where goober defers all work (no-op wrapper) and Emotion defers to first render. Styler trades creation speed for render speed — CSS is pre-computed at creation time so every subsequent render is faster.
 
 ## Migrating from styled-components
 
@@ -341,7 +349,8 @@ Key differences:
 | Ref forwarding | Yes | Yes |
 | Transient `$` props | Yes | Yes |
 | `shouldForwardProp` | `.withConfig()` | Second argument |
-| SSR | `ServerStyleSheet` | `createSheet()` |
+| SSR | `ServerStyleSheet` | Automatic (React 19 resources) |
+| Static export | Manual setup | FOUC-free out of the box |
 | CSS nesting | Preprocessed | Native (no transform) |
 | `attrs()` | Yes | Use `@vitus-labs/attrs` |
 
