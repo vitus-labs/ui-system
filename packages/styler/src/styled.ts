@@ -12,7 +12,8 @@
  * - $-prefixed transient props (not forwarded to DOM)
  * - Custom shouldForwardProp for per-component prop filtering
  * - Static path optimization (templates with no dynamic interpolations)
- * - React 19 `<style precedence>` for FOUC-free SSR and static export
+ * - Hybrid injection: useInsertionEffect on client (1 shared sheet),
+ *   React 19 `<style precedence>` on SSR (FOUC-free, zero config)
  *
  * CSS nesting (`&` selectors) works natively — the resolver passes CSS
  * through without transformation, so `&:hover`, `&::before`, etc. work
@@ -23,6 +24,7 @@ import {
   createElement,
   Fragment,
   forwardRef,
+  useInsertionEffect,
   useRef,
 } from 'react'
 import { buildProps } from './forward'
@@ -30,6 +32,10 @@ import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
+
+// SSR vs client detection — computed once at module load time.
+// In Node.js (SSR): true. In browser/jsdom: false.
+const IS_SERVER = typeof document === 'undefined'
 
 type Tag = string | ComponentType<any>
 
@@ -68,17 +74,21 @@ const createStyledComponent = (
       ? sheet.prepare(cssText, boost)
       : { className: '', rules: '' }
 
-    // Populate sheet cache for has() queries and legacy useServerInsertedHTML
+    // Populate sheet cache + inject CSS.
+    // Client: insertRule() into shared <style data-vl> element (1 DOM node for all components).
+    // SSR: pushes to ssrBuffer for getStyleTag().
     if (cssText.trim()) sheet.insert(cssText, boost)
 
-    // Pre-compute the <style> element once — it's immutable (same href/rules every render)
-    const cachedStyleEl = staticClassName
-      ? createElement(
-          'style',
-          { href: staticClassName, precedence: 'medium' },
-          staticRules,
-        )
-      : null
+    // SSR only: pre-compute <style precedence> for FOUC-free delivery.
+    // Client: CSS already injected via sheet.insert() above — no per-component <style> needed.
+    const cachedStyleEl =
+      IS_SERVER && staticClassName
+        ? createElement(
+            'style',
+            { href: staticClassName, precedence: 'medium' },
+            staticRules,
+          )
+        : null
 
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       (rawProps, ref) => {
@@ -94,7 +104,6 @@ const createStyledComponent = (
 
         const mainEl = createElement(finalTag, finalProps)
 
-        // Skip Fragment when there's no CSS to inject
         if (!cachedStyleEl) return mainEl
         return createElement(Fragment, null, cachedStyleEl, mainEl)
       },
@@ -104,10 +113,10 @@ const createStyledComponent = (
     return StaticStyled
   }
 
-  // DYNAMIC PATH: resolve on every render. React 19's <style precedence>
-  // handles injection, dedup, and cleanup automatically.
-  // useRef cache avoids recomputing sheet.prepare() + createElement('style')
-  // when the resolved CSS text hasn't changed between renders.
+  // DYNAMIC PATH: resolve CSS on every render with theme/props.
+  // Client: useInsertionEffect injects into shared sheet (1 DOM node, scales to any size).
+  // SSR: <style precedence> for FOUC-free delivery (useInsertionEffect is a no-op on server).
+  // useRef cache avoids recomputing when CSS text hasn't changed between renders.
   const DynamicStyled = forwardRef<unknown, Record<string, any>>(
     (rawProps, ref) => {
       const theme = useTheme()
@@ -121,28 +130,39 @@ const createStyledComponent = (
       }>({ css: '', className: '', styleEl: null })
 
       let className: string
-      let styleEl: ReturnType<typeof createElement> | null
+      let styleEl: ReturnType<typeof createElement> | null = null
 
       if (cssText === cacheRef.current.css) {
-        // Cache hit — reuse className and pre-built style element
+        // Cache hit — reuse className and style element (if SSR)
         className = cacheRef.current.className
         styleEl = cacheRef.current.styleEl
       } else {
         // Cache miss — recompute
         if (cssText.trim()) {
-          const prepared = sheet.prepare(cssText, boost)
-          className = prepared.className
-          styleEl = createElement(
-            'style',
-            { href: prepared.className, precedence: 'medium' },
-            prepared.rules,
-          )
+          if (IS_SERVER) {
+            // SSR: compute rules for <style precedence>, inject into ssrBuffer
+            const prepared = sheet.prepare(cssText, boost)
+            className = prepared.className
+            sheet.insert(cssText, boost)
+            styleEl = createElement(
+              'style',
+              { href: prepared.className, precedence: 'medium' },
+              prepared.rules,
+            )
+          } else {
+            // Client: just compute className (injection via useInsertionEffect below)
+            className = sheet.getClassName(cssText)
+          }
         } else {
           className = ''
-          styleEl = null
         }
         cacheRef.current = { css: cssText, className, styleEl }
       }
+
+      // Client: inject CSS synchronously before paint (no-op on server)
+      useInsertionEffect(() => {
+        if (cssText.trim()) sheet.insert(cssText, boost)
+      }, [cssText])
 
       const finalTag = rawProps.as || tag
       const isDOM = typeof finalTag === 'string'
