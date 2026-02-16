@@ -217,9 +217,9 @@ describe('hybrid injection — boost option at component level', () => {
     const rules = findRulesFor(className)
     expect(rules.length).toBeGreaterThanOrEqual(1)
     // Boost doubles the selector: .vl-abc.vl-abc
-    expect(
-      rules.some((r) => r.includes(`.${className}.${className}`)),
-    ).toBe(true)
+    expect(rules.some((r) => r.includes(`.${className}.${className}`))).toBe(
+      true,
+    )
   })
 
   it('dynamic boosted component produces doubled selector in CSSOM', () => {
@@ -231,9 +231,9 @@ describe('hybrid injection — boost option at component level', () => {
 
     const rules = findRulesFor(className)
     expect(rules.length).toBeGreaterThanOrEqual(1)
-    expect(
-      rules.some((r) => r.includes(`.${className}.${className}`)),
-    ).toBe(true)
+    expect(rules.some((r) => r.includes(`.${className}.${className}`))).toBe(
+      true,
+    )
   })
 
   it('non-boosted component produces single selector', () => {
