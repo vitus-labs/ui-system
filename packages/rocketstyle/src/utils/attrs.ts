@@ -10,7 +10,7 @@ type RemoveUndefinedProps = <T extends Record<string, any>>(
 ) => Partial<T>
 
 export const removeUndefinedProps: RemoveUndefinedProps = (props) => {
-  const result: Record<string, any> = {}
+  const result: Partial<typeof props> = {}
   for (const key in props) {
     if (props[key] !== undefined) result[key] = props[key]
   }
