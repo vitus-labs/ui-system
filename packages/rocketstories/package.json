@@ -64,20 +64,20 @@
   },
   "peerDependencies": {
     "@storybook/react": "10.2.8",
-    "@vitus-labs/core": "^1.4.0",
-    "@vitus-labs/rocketstyle": "^1.4.0",
-    "@vitus-labs/unistyle": "^1.4.0",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*",
+    "@vitus-labs/unistyle": "workspace:*",
     "react": ">= 19"
   },
   "dependencies": {
-    "@vitus-labs/elements": "2.0.0-alpha.20"
+    "@vitus-labs/elements": "workspace:*"
   },
   "devDependencies": {
-    "@vitus-labs/core": "2.0.0-alpha.20",
-    "@vitus-labs/rocketstyle": "2.0.0-alpha.20",
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*",
     "@vitus-labs/tools-rolldown": "^1.7.0",
     "@vitus-labs/tools-storybook": "^1.7.0",
     "@vitus-labs/tools-typescript": "^1.7.0",
-    "@vitus-labs/unistyle": "2.0.0-alpha.20"
+    "@vitus-labs/unistyle": "workspace:*"
   }
 }
