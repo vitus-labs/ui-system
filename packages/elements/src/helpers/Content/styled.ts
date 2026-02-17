@@ -1,7 +1,9 @@
 /**
- * Slot styling logic extracted from Content/styled.ts for use with the
- * useCSS hook. Handles responsive flex alignment, gap spacing, equalCols,
- * and extendCss injection for before/content/after slots.
+ * Styled component for content areas (before/content/after). Applies
+ * responsive flex alignment, gap spacing between slots based on parent
+ * direction (margin-right for inline, margin-bottom for rows), and
+ * equalCols flex distribution. The "content" slot gets `flex: 1` to
+ * fill remaining space between before and after.
  */
 import { config } from '@vitus-labs/core'
 import {
@@ -11,9 +13,20 @@ import {
   value,
 } from '@vitus-labs/unistyle'
 import type { ResponsiveStylesCallback } from '~/types'
+import type { StyledProps, ThemeProps } from './types'
+
+const { styled, css, component } = config
+
+const equalColsCSS = `
+  flex: 1;
+`
+
+const typeContentCSS = `
+  flex: 1;
+`
 
 // --------------------------------------------------------
-// gap spacing between before / content / after
+// calculate spacing between before / content / after
 // --------------------------------------------------------
 const gapDimensions = {
   inline: {
@@ -37,28 +50,30 @@ const gapDimensions = {
 const calculateGap = ({
   direction,
   type,
-  value: v,
+  value,
 }: {
   direction: keyof typeof gapDimensions
-  type: 'before' | 'content' | 'after'
+  type: ThemeProps['contentType']
   value: string | number | null | undefined
 }) => {
   if (!direction || !type || type === 'content') return undefined
-  return `${gapDimensions[direction][type]}: ${v};`
+
+  const finalStyles = `${gapDimensions[direction][type]}: ${value};`
+
+  return finalStyles
 }
 
 // --------------------------------------------------------
-// responsive styles callback (used by makeItResponsive)
+// calculations of styles to be rendered
 // --------------------------------------------------------
-const slotStyles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) =>
-  css`
+const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
   ${alignContent({
     direction: t.direction,
     alignX: t.alignX,
     alignY: t.alignY,
   })};
 
-  ${t.equalCols && 'flex: 1;'};
+  ${t.equalCols && equalColsCSS};
 
   ${
     t.gap &&
@@ -73,27 +88,24 @@ const slotStyles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) =>
   ${t.extraStyles && extendCss(t.extraStyles as any)};
 `
 
-// --------------------------------------------------------
-// lazy CSSResult template — created on first call (after init)
-// --------------------------------------------------------
-let _template: any = null
+const platformCSS = __WEB__ ? `box-sizing: border-box;` : ''
 
-export const getSlotTemplate = () => {
-  if (!_template) {
-    const { css } = config
-    _template = css`
-      ${__WEB__ ? 'box-sizing: border-box;' : ''};
-      display: flex;
-      align-self: stretch;
-      flex-wrap: wrap;
-      ${({ $contentType }: any) => $contentType === 'content' && 'flex: 1;'};
-      ${makeItResponsive({
-        key: '$element',
-        styles: slotStyles,
-        css,
-        normalize: true,
-      })};
-    `
-  }
-  return _template
-}
+const StyledComponent = styled(component)`
+  ${platformCSS};
+
+  display: flex;
+  align-self: stretch;
+  flex-wrap: wrap;
+
+  ${({ $contentType }: StyledProps) =>
+    $contentType === 'content' && typeContentCSS};
+
+  ${makeItResponsive({
+    key: '$element',
+    styles,
+    css,
+    normalize: true,
+  })};
+`
+
+export default StyledComponent
