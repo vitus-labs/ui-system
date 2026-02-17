@@ -91,6 +91,15 @@ export type Props = Partial<{
   equalCols: ResponsiveBoolType
 
   /**
+   * When true, measures the `beforeContent` and `afterContent` slot wrappers
+   * after render and sets both to the larger dimension so they match.
+   * Uses width for inline direction and height for rows direction.
+   * Useful for centering the main content when before/after slots have
+   * different intrinsic sizes.
+   */
+  equalBeforeAfter: boolean
+
+  /**
    * Defines a `gap` spacing between inner wrappers between `beforeContent` and `children`
    * and `children` and `afterContent`
    */

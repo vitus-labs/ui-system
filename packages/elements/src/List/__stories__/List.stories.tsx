@@ -1,13 +1,11 @@
 import type { FC } from 'react'
 import Element from '~/Element'
-import List, { withActiveState } from '~/List'
+import List from '~/List'
 
 export default {
   name: 'List',
   component: List,
 }
-
-const ActiveList = withActiveState(List)
 
 const Item = (props) => (
   <Element
@@ -153,74 +151,3 @@ export const renderWihoutRootElement = () => (
     itemProps={{ primary: true }}
   />
 )
-
-export const withSingleActiveState = () => {
-  const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
-  const itemProps = {
-    onClick: () => ({}),
-    surname: 'hello',
-  }
-
-  const Item = ({
-    onClick,
-    active,
-    name,
-    surname,
-    handleItemActive,
-    ...props
-  }) => (
-    <button
-      type="button"
-      {...props}
-      onClick={(e) => {
-        onClick(e)
-        handleItemActive()
-      }}
-    >
-      {name} {surname} {active ? 'yes' : 'no'}
-    </button>
-  )
-
-  return (
-    <ActiveList
-      type="single"
-      activeItems={3}
-      activeItemRequired
-      data={data}
-      component={Item}
-      itemProps={itemProps}
-    />
-  )
-}
-
-export const withMultipleActiveState = () => {
-  const data = [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }]
-  const itemProps = () => ({
-    onClick: () => ({}),
-    surname: 'hello',
-  })
-
-  const Item = ({ onClick, active, name, surname, ...props }) => (
-    <button
-      type="button"
-      {...props}
-      onClick={(e) => {
-        onClick(e)
-        props.handleItemActive()
-      }}
-    >
-      {name} {surname} {active ? 'yes' : 'no'}
-    </button>
-  )
-
-  return (
-    <ActiveList
-      type="multi"
-      activeItems={3}
-      activeItemRequired
-      data={data}
-      component={Item}
-      itemProps={itemProps}
-    />
-  )
-}
