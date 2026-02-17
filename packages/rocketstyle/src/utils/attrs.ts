@@ -9,12 +9,13 @@ type RemoveUndefinedProps = <T extends Record<string, any>>(
   props: T,
 ) => Partial<T>
 
-export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
-  Object.keys(props).reduce((acc, key) => {
-    const currentValue = props[key]
-    if (currentValue !== undefined) return { ...acc, [key]: currentValue }
-    return acc
-  }, {})
+export const removeUndefinedProps: RemoveUndefinedProps = (props) => {
+  const result: Partial<typeof props> = {}
+  for (const key in props) {
+    if (props[key] !== undefined) result[key] = props[key]
+  }
+  return result
+}
 
 // --------------------------------------------------------
 // pick styled props
@@ -86,7 +87,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
     // object with possible options
     Object.keys(dimensions).forEach((item) => {
       const pickedProp = props[item]
-      const valueTypes = ['number', 'string']
+      const t = typeof pickedProp
 
       // if the property is multi key, allow assign array as well
       if (multiKeys?.[item] && Array.isArray(pickedProp)) {
@@ -94,7 +95,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       }
       // assign when it's only a string or number otherwise it's considered
       // as invalid param
-      else if (valueTypes.includes(typeof pickedProp)) {
+      else if (t === 'string' || t === 'number') {
         result[item] = pickedProp
       } else {
         result[item] = undefined

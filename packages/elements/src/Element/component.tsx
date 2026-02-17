@@ -7,11 +7,35 @@
  * skipping children or switching sub-tags accordingly.
  */
 import { render } from '@vitus-labs/core'
-import { forwardRef, useMemo } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { PKG_NAME } from '~/constants'
 import { Content, Wrapper } from '~/helpers'
 import type { VLElement } from './types'
 import { getShouldBeEmpty, isInlineElement } from './utils'
+
+const equalize = (el: HTMLElement, direction: unknown) => {
+  const beforeEl = el.firstElementChild as HTMLElement | null
+  const afterEl = el.lastElementChild as HTMLElement | null
+
+  if (beforeEl && afterEl && beforeEl !== afterEl) {
+    const type: 'height' | 'width' = direction === 'rows' ? 'height' : 'width'
+    const prop = type === 'height' ? 'offsetHeight' : 'offsetWidth'
+    const beforeSize = beforeEl[prop]
+    const afterSize = afterEl[prop]
+
+    if (Number.isInteger(beforeSize) && Number.isInteger(afterSize)) {
+      const maxSize = `${Math.max(beforeSize, afterSize)}px`
+      beforeEl.style[type] = maxSize
+      afterEl.style[type] = maxSize
+    }
+  }
+}
 
 const defaultDirection = 'inline'
 const defaultContentDirection = 'rows'
@@ -28,6 +52,7 @@ const Component: VLElement = forwardRef(
       children,
       beforeContent,
       afterContent,
+      equalBeforeAfter,
 
       block,
       equalCols,
@@ -104,10 +129,32 @@ const Component: VLElement = forwardRef(
     ])
 
     // --------------------------------------------------------
+    // equalBeforeAfter: measure & equalize slot dimensions
+    // --------------------------------------------------------
+    const equalizeRef = useRef<HTMLElement | null>(null)
+    const externalRef = ref ?? innerRef
+
+    const mergedRef = useCallback(
+      (node: HTMLElement | null) => {
+        equalizeRef.current = node
+        if (typeof externalRef === 'function') externalRef(node)
+        else if (externalRef != null) {
+          ;(externalRef as { current: HTMLElement | null }).current = node
+        }
+      },
+      [externalRef],
+    )
+
+    useLayoutEffect(() => {
+      if (!equalBeforeAfter || !beforeContent || !afterContent) return
+      if (equalizeRef.current) equalize(equalizeRef.current, direction)
+    }, [equalBeforeAfter, beforeContent, afterContent, direction])
+
+    // --------------------------------------------------------
     // common wrapper props
     // --------------------------------------------------------
     const WRAPPER_PROPS = {
-      ref: ref ?? innerRef,
+      ref: mergedRef,
       extendCss: css,
       tag,
       block,
@@ -124,8 +171,6 @@ const Component: VLElement = forwardRef(
       return <Wrapper {...props} {...WRAPPER_PROPS} />
     }
 
-    const contentRenderOutput = render(CHILDREN)
-
     return (
       <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
         {beforeContent && (
@@ -140,12 +185,12 @@ const Component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {render(beforeContent)}
+            {beforeContent}
           </Content>
         )}
 
         {isSimpleElement ? (
-          contentRenderOutput
+          render(CHILDREN)
         ) : (
           <Content
             tag={SUB_TAG}
@@ -157,7 +202,7 @@ const Component: VLElement = forwardRef(
             alignY={contentAlignY}
             equalCols={equalCols}
           >
-            {contentRenderOutput}
+            {CHILDREN}
           </Content>
         )}
 
@@ -173,7 +218,7 @@ const Component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {render(afterContent)}
+            {afterContent}
           </Content>
         )}
       </Wrapper>

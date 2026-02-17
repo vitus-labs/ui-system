@@ -1,8 +1,8 @@
 import type { HTMLTags } from '@vitus-labs/core'
-import type { ReactNode } from 'react'
 import type {
   AlignX,
   AlignY,
+  Content,
   ContentAlignX,
   ContentAlignY,
   ContentBoolean,
@@ -19,7 +19,7 @@ export interface Props {
   parentDirection: Direction
   gap: Responsive
   contentType: 'before' | 'content' | 'after'
-  children: ReactNode
+  children: Content
   tag: HTMLTags
   direction: Direction
   alignX: AlignX

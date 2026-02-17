@@ -58,12 +58,17 @@ export type MakeItResponsive = ({
  *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
+const themeCache = new WeakMap<
+  object,
+  { breakpoints: unknown; optimized: Record<string, Record<string, unknown>> }
+>()
+
 const makeItResponsive: MakeItResponsive =
   ({ theme: customTheme, key = '', css, styles, normalize = true }) =>
   ({ theme = {}, ...props }) => {
     const internalTheme = customTheme || props[key]
 
-    // if no theme is defined, return empty objct
+    // if no theme is defined, return empty object
     if (isEmpty(internalTheme)) return ''
 
     const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } =
@@ -83,24 +88,36 @@ const makeItResponsive: MakeItResponsive =
 
     const { media, sortedBreakpoints } = __VITUS_LABS__!
 
-    let helperTheme = internalTheme
+    let optimizedTheme: Record<string, Record<string, unknown>>
 
-    if (normalize) {
-      helperTheme = normalizeTheme({
-        theme: internalTheme,
+    const cached = themeCache.get(internalTheme)
+    if (cached && cached.breakpoints === sortedBreakpoints) {
+      optimizedTheme = cached.optimized
+    } else {
+      let helperTheme = internalTheme
+
+      if (normalize) {
+        helperTheme = normalizeTheme({
+          theme: internalTheme,
+          breakpoints: sortedBreakpoints,
+        })
+      }
+
+      const transformedTheme = transformTheme({
+        theme: helperTheme,
         breakpoints: sortedBreakpoints,
       })
+
+      optimizedTheme = optimizeTheme({
+        theme: transformedTheme,
+        breakpoints: sortedBreakpoints,
+      })
+
+      themeCache.set(internalTheme, {
+        breakpoints: sortedBreakpoints,
+        optimized: optimizedTheme,
+      })
     }
-
-    const transformedTheme = transformTheme({
-      theme: helperTheme,
-      breakpoints: sortedBreakpoints,
-    })
-
-    const optimizedTheme = optimizeTheme({
-      theme: transformedTheme,
-      breakpoints: sortedBreakpoints,
-    })
 
     return sortedBreakpoints.map((item: string) => {
       const breakpointTheme = optimizedTheme[item]

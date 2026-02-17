@@ -1,6 +1,6 @@
 import { Provider } from '@vitus-labs/unistyle'
 import type { Props as ElementProps } from '~/Element'
-import Element, { withEqualSizeBeforeAfter } from '~/Element'
+import Element from '~/Element'
 import type {
   ElementType,
   ExtendedProps,
@@ -9,7 +9,7 @@ import type {
   PropsCallback,
 } from '~/helpers/Iterator'
 import type { Props as ListProps } from '~/List'
-import List, { withActiveState } from '~/List'
+import List from '~/List'
 import type { Props as OverlayProps, UseOverlayProps } from '~/Overlay'
 import Overlay, { OverlayProvider, useOverlay } from '~/Overlay'
 import type { Props as PortalProps } from '~/Portal'
@@ -60,8 +60,6 @@ export type {
 
 export {
   Element,
-  withEqualSizeBeforeAfter,
-  withActiveState,
   List,
   Overlay,
   useOverlay,

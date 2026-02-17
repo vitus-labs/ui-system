@@ -1,5 +1,5 @@
 import { config } from '@vitus-labs/core'
-import Element, { withEqualSizeBeforeAfter } from '../../Element'
+import Element from '../../Element'
 import Overlay from '..'
 
 const { styled, css } = config
@@ -57,8 +57,6 @@ const ScrollX = styled.div`
   height: 200px;
   background-color: papayawhip;
 `
-
-const EqualElement = withEqualSizeBeforeAfter(Element)
 
 export const exampleDropdown = () => (
   <Overlay alignX="right" trigger={Trigger}>
@@ -184,8 +182,9 @@ export const DropdownRight = () => (
 )
 
 export const DropdownInsideElement = () => (
-  <EqualElement
+  <Element
     block
+    equalBeforeAfter
     beforeContent={
       <Overlay
         triggerRefName="innerRef"
@@ -208,7 +207,7 @@ export const DropdownInsideElement = () => (
     }
   >
     some content here
-  </EqualElement>
+  </Element>
 )
 
 export const DropdownEdgePositions = () => (

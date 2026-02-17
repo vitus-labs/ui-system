@@ -28,7 +28,8 @@ const render: Render = (content, attachProps) => {
   const render = (child: Parameters<typeof createElement>[0]) =>
     attachProps ? createElement(child, attachProps) : createElement(child)
 
-  if (['number', 'boolean', 'bigint', 'string'].includes(typeof content)) {
+  const t = typeof content
+  if (t === 'string' || t === 'number' || t === 'boolean' || t === 'bigint') {
     return content
   }
 
