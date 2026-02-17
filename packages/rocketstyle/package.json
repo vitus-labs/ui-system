@@ -69,9 +69,9 @@
   "devDependencies": {
     "@vitus-labs/core": "2.0.0-alpha.20",
     "@vitus-labs/elements": "2.0.0-alpha.20",
-    "@vitus-labs/tools-rolldown": "^1.6.0",
-    "@vitus-labs/tools-storybook": "^1.6.0",
-    "@vitus-labs/tools-typescript": "^1.6.0",
+    "@vitus-labs/tools-rolldown": "^1.7.0",
+    "@vitus-labs/tools-storybook": "^1.7.0",
+    "@vitus-labs/tools-typescript": "^1.7.0",
     "@vitus-labs/unistyle": "2.0.0-alpha.20"
   }
 }
