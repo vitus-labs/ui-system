@@ -16,7 +16,7 @@ Five composable components for building buttons, cards, lists, dropdowns, toolti
 - **Portal** — React Portal wrapper for DOM appending
 - **Util** — non-rendering utility for injecting className and style
 - **Responsive everything** — single value, array, or breakpoint object on every layout prop
-- **Selection state** — `withActiveState` HOC for single/multi item selection on List
+- **Equal before/after** — `equalBeforeAfter` prop on Element to equalize slot dimensions
 
 ## Installation
 
@@ -160,33 +160,6 @@ import { List, Element } from '@vitus-labs/elements'
 **Positional metadata** passed to `itemProps` callback:
 
 `index`, `first`, `last`, `odd`, `even`, `position` (1-based)
-
-### withActiveState
-
-HOC that adds selection state management to List.
-
-```tsx
-import { List, withActiveState } from '@vitus-labs/elements'
-
-const SelectableList = withActiveState(List)
-
-<SelectableList
-  type="single"
-  component={ListItem}
-  data={items}
-  activeItems="item-1"
-/>
-
-<SelectableList
-  type="multi"
-  component={ListItem}
-  data={items}
-  activeItems={['item-1', 'item-3']}
-  activeItemRequired
-/>
-```
-
-Each item receives: `active`, `handleItemActive`, `setItemActive`, `unsetItemActive`, `toggleItemActive`.
 
 ### Overlay
 

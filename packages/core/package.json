@@ -55,10 +55,10 @@
     "react": ">= 19"
   },
   "dependencies": {
-    "react-is": "^19.2.3"
+    "react-is": "^19.2.4"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rolldown": "^1.6.0",
-    "@vitus-labs/tools-typescript": "^1.6.0"
+    "@vitus-labs/tools-rolldown": "^1.7.0",
+    "@vitus-labs/tools-typescript": "^1.7.0"
   }
 }
