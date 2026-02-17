@@ -58,16 +58,17 @@ export type MakeItResponsive = ({
  *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
-let lastThemeRef: unknown = null
-let lastBreakpointsRef: unknown = null
-let lastOptimized: Record<string, Record<string, unknown>> | null = null
+const themeCache = new WeakMap<
+  object,
+  { breakpoints: unknown; optimized: Record<string, Record<string, unknown>> }
+>()
 
 const makeItResponsive: MakeItResponsive =
   ({ theme: customTheme, key = '', css, styles, normalize = true }) =>
   ({ theme = {}, ...props }) => {
     const internalTheme = customTheme || props[key]
 
-    // if no theme is defined, return empty objct
+    // if no theme is defined, return empty object
     if (isEmpty(internalTheme)) return ''
 
     const { rootSize, breakpoints, __VITUS_LABS__, ...restTheme } =
@@ -89,12 +90,9 @@ const makeItResponsive: MakeItResponsive =
 
     let optimizedTheme: Record<string, Record<string, unknown>>
 
-    if (
-      internalTheme === lastThemeRef &&
-      sortedBreakpoints === lastBreakpointsRef &&
-      lastOptimized
-    ) {
-      optimizedTheme = lastOptimized
+    const cached = themeCache.get(internalTheme)
+    if (cached && cached.breakpoints === sortedBreakpoints) {
+      optimizedTheme = cached.optimized
     } else {
       let helperTheme = internalTheme
 
@@ -115,9 +113,10 @@ const makeItResponsive: MakeItResponsive =
         breakpoints: sortedBreakpoints,
       })
 
-      lastThemeRef = internalTheme
-      lastBreakpointsRef = sortedBreakpoints
-      lastOptimized = optimizedTheme
+      themeCache.set(internalTheme, {
+        breakpoints: sortedBreakpoints,
+        optimized: optimizedTheme,
+      })
     }
 
     return sortedBreakpoints.map((item: string) => {

@@ -124,8 +124,6 @@ const Component: VLElement = forwardRef(
       return <Wrapper {...props} {...WRAPPER_PROPS} />
     }
 
-    const contentRenderOutput = render(CHILDREN)
-
     return (
       <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
         {beforeContent && (
@@ -140,12 +138,12 @@ const Component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {render(beforeContent)}
+            {beforeContent}
           </Content>
         )}
 
         {isSimpleElement ? (
-          contentRenderOutput
+          render(CHILDREN)
         ) : (
           <Content
             tag={SUB_TAG}
@@ -157,7 +155,7 @@ const Component: VLElement = forwardRef(
             alignY={contentAlignY}
             equalCols={equalCols}
           >
-            {contentRenderOutput}
+            {CHILDREN}
           </Content>
         )}
 
@@ -173,7 +171,7 @@ const Component: VLElement = forwardRef(
             equalCols={equalCols}
             gap={gap}
           >
-            {render(afterContent)}
+            {afterContent}
           </Content>
         )}
       </Wrapper>
