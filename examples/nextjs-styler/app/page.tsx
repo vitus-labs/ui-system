@@ -136,7 +136,7 @@ const RsButton = rocketstyle()({
         background-color: ${t.bgColor};
 
         &:hover {
-          background-color: ${t.hover?.bgColor};
+          background-color: ${t.hover?.bgColor ?? ''};
         }
       `};
     `,

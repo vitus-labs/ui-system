@@ -222,7 +222,6 @@ describe('P3 features', () => {
     })
 
     it('anonymous component gets fallback displayName', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const Anon = (() => {
         const fn = () => null
         Object.defineProperty(fn, 'name', { value: '' })

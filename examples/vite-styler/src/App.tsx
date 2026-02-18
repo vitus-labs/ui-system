@@ -133,7 +133,7 @@ const RsButton = rocketstyle()({
       cursor: pointer;
       transition: background-color 0.2s;
 
-      ${({ $rocketstyle: t }: any) => css`
+      ${({ $rocketstyle: t }) => css`
         color: ${t.color};
         background-color: ${t.bgColor};
 
@@ -185,14 +185,14 @@ const UnistyleButton = rocketstyle()({
     (css) => css`
       font-weight: 500;
 
-      ${({ $rocketstyle, $rocketstate: { disabled, pseudo } }: any) => {
-        const { hover: hoverStyles = {}, ...restStyles } = $rocketstyle
+      ${({ $rocketstyle, $rocketstate: { pseudo } }) => {
+        const { hover: hoverStyles, ...restStyles } = $rocketstyle
         const baseTheme = makeItResponsive({ theme: restStyles, styles, css })
         const hoverTheme = makeItResponsive({ theme: hoverStyles, styles, css })
 
         return css`
           ${baseTheme};
-          ${!disabled &&
+          ${!pseudo?.disabled &&
           css`
             &:hover {
               ${hoverTheme};

@@ -4,6 +4,8 @@
  * primitive values.
  */
 
+import type { DefaultTheme } from './ThemeProvider'
+
 export type Interpolation =
   | string
   | number
@@ -12,7 +14,10 @@ export type Interpolation =
   | undefined
   | CSSResult
   | Interpolation[]
-  | ((props: any) => Interpolation)
+  | ((props: {
+      theme?: DefaultTheme & Record<string, any>
+      [key: string]: any
+    }) => Interpolation)
 
 /**
  * Lazy representation of a `css` tagged template. Stores the raw template

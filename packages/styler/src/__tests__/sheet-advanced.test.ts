@@ -77,7 +77,6 @@ describe('StyleSheet — advanced features', () => {
 
   describe('dev-mode warnings', () => {
     it('warns on invalid CSS in dev mode', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       document.querySelectorAll('style[data-vl]').forEach((el) => {
         el.remove()

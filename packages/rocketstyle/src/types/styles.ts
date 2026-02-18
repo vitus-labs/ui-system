@@ -1,13 +1,12 @@
 import type { config } from '@vitus-labs/core'
 import type { PseudoState } from './pseudo'
-import type { MergeTypes, TObj } from './utils'
+import type { TObj } from './utils'
 
 // biome-ignore lint/suspicious/noEmptyInterface: this is an interface to be extended in consuming projects
 export interface StylesDefault {}
 
-export type Styles<S> = S extends unknown
-  ? StylesDefault
-  : MergeTypes<[StylesDefault, S]>
+// biome-ignore lint/correctness/noUnusedVariables: S kept for backward compatibility
+export type Styles<S = unknown> = StylesDefault
 
 export type Css = typeof config.css
 export type Style = ReturnType<Css>
