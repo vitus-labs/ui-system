@@ -2,19 +2,16 @@
  * Syncs peerDependency versions for internal @vitus-labs/* packages.
  *
  * Called from each package's "version" npm lifecycle during `lerna version`.
- * Reads the new version from lerna.json and writes it into any @vitus-labs/*
- * peerDependencies in the current package.json.
+ * Reads the new version from the package's own package.json (already updated
+ * by Lerna) and writes it into any @vitus-labs/* peerDependencies.
  */
 
 import { readFileSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 
-const root = resolve(import.meta.dirname, "..")
-const lerna = JSON.parse(readFileSync(resolve(root, "lerna.json"), "utf8"))
-const version = lerna.version
-
 const pkgPath = resolve(process.cwd(), "package.json")
 const pkg = JSON.parse(readFileSync(pkgPath, "utf8"))
+const version = pkg.version
 
 const internalScope = "@vitus-labs/"
 let changed = false
@@ -29,5 +26,5 @@ if (pkg.peerDependencies) {
 }
 
 if (changed) {
-	writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n")
+	writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
 }
