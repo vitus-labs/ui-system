@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/connector-styler",
-  "version": "2.0.0-alpha.21",
+  "version": "2.0.0-alpha.22",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -46,10 +46,11 @@
     "build": "bun run vl_rolldown_build",
     "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
-    "@vitus-labs/styler": "workspace:*",
+    "@vitus-labs/styler": "2.0.0-alpha.22",
     "react": ">= 19"
   },
   "devDependencies": {
