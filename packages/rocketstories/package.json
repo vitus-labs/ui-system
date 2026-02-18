@@ -60,13 +60,14 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "cover": "coveralls < .coverage/lcov.info",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
     "@storybook/react": "10.2.8",
-    "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/rocketstyle": "workspace:*",
-    "@vitus-labs/unistyle": "workspace:*",
+    "@vitus-labs/core": "2.0.0-alpha.21",
+    "@vitus-labs/rocketstyle": "2.0.0-alpha.21",
+    "@vitus-labs/unistyle": "2.0.0-alpha.21",
     "react": ">= 19"
   },
   "dependencies": {

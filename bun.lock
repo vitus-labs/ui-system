@@ -160,7 +160,7 @@
     },
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -169,13 +169,13 @@
         "@vitus-labs/tools-typescript": "^1.7.0",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/connector-emotion": {
       "name": "@vitus-labs/connector-emotion",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -190,7 +190,7 @@
     },
     "packages/connector-styled-components": {
       "name": "@vitus-labs/connector-styled-components",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/tools-rolldown": "^1.7.0",
         "@vitus-labs/tools-typescript": "^1.7.0",
@@ -203,20 +203,20 @@
     },
     "packages/connector-styler": {
       "name": "@vitus-labs/connector-styler",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/styler": "workspace:*",
         "@vitus-labs/tools-rolldown": "^1.7.0",
         "@vitus-labs/tools-typescript": "^1.7.0",
       },
       "peerDependencies": {
-        "@vitus-labs/styler": "workspace:*",
+        "@vitus-labs/styler": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/coolgrid": {
       "name": "@vitus-labs/coolgrid",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "^1.7.0",
@@ -225,14 +225,14 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
+        "@vitus-labs/unistyle": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/core": {
       "name": "@vitus-labs/core",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -246,7 +246,7 @@
     },
     "packages/elements": {
       "name": "@vitus-labs/elements",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -259,15 +259,15 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
+        "@vitus-labs/unistyle": "2.0.0-alpha.21",
         "react": ">= 19",
         "react-dom": ">= 19",
       },
     },
     "packages/hooks": {
       "name": "@vitus-labs/hooks",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "^1.7.0",
@@ -275,13 +275,13 @@
         "@vitus-labs/tools-typescript": "^1.7.0",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/rocketstories": {
       "name": "@vitus-labs/rocketstories",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "dependencies": {
         "@vitus-labs/elements": "workspace:*",
       },
@@ -295,15 +295,15 @@
       },
       "peerDependencies": {
         "@storybook/react": "10.2.8",
-        "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/rocketstyle": "workspace:*",
-        "@vitus-labs/unistyle": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
+        "@vitus-labs/rocketstyle": "2.0.0-alpha.21",
+        "@vitus-labs/unistyle": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/rocketstyle": {
       "name": "@vitus-labs/rocketstyle",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -313,13 +313,13 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
     "packages/styler": {
       "name": "@vitus-labs/styler",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -334,14 +334,14 @@
     },
     "packages/unistyle": {
       "name": "@vitus-labs/unistyle",
-      "version": "2.0.0-alpha.20",
+      "version": "2.0.0-alpha.21",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "^1.7.0",
         "@vitus-labs/tools-typescript": "^1.7.0",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/core": "2.0.0-alpha.21",
         "react": ">= 19",
       },
     },
