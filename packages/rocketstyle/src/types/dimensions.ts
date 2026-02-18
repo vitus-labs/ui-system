@@ -47,7 +47,10 @@ type DeepPartial<T> = {
       : T[K]
 }
 
-export type DimensionResult<CT> = Record<string, boolean | null | DeepPartial<CT>>
+export type DimensionResult<CT> = Record<
+  string,
+  boolean | null | DeepPartial<CT>
+>
 export type DimensionObj<CT> = DimensionResult<CT>
 
 export type DimensionCb<T, CT> = (
