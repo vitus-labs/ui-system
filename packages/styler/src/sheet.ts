@@ -8,7 +8,6 @@
  * reliance on CSS Nesting for at-rules (which has CSSOM specification gaps
  * per W3C csswg-drafts#7850).
  */
-/* eslint-disable no-console */
 import { hash } from './hash'
 
 const PREFIX = 'vl'

@@ -4,7 +4,6 @@
  * Renders real components through the full chain and verifies
  * the actual CSS injected into the DOM contains expected declarations.
  */
-/* eslint-disable no-console */
 import { render } from '@testing-library/react'
 // Use config.styled directly (same as production code)
 import { Provider as CoreProvider, config } from '@vitus-labs/core'
