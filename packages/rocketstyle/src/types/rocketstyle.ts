@@ -251,7 +251,7 @@ export interface IRocketStyleComponent<
    * ```
    */
   theme: <P extends TObj = {}>(
-    param: Partial<P> | ThemeCb<P, Theme<T>>,
+    param: Partial<P> | Partial<Styles<CSS>> | ThemeCb<P, Theme<T>>,
   ) => RocketStyleComponent<OA, EA, T, MergeTypes<[CSS, P]>, S, HOC, D, UB, DKP>
 
   // STYLES chaining method

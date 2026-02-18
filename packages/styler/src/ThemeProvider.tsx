@@ -13,8 +13,8 @@ import { createContext, type FC, type ReactNode, useContext } from 'react'
  *     }
  *   }
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type DefaultTheme = {}
+// biome-ignore lint/suspicious/noEmptyInterface: augmentable via module declaration merging
+export interface DefaultTheme {}
 
 type Theme = DefaultTheme & Record<string, unknown>
 

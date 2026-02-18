@@ -39,7 +39,15 @@ export type MultiKeys<T extends Dimensions = Dimensions> = Partial<
   Record<ExtractDimensionKey<T[keyof T]>, true>
 >
 
-export type DimensionResult<CT> = Record<string, boolean | null | Partial<CT>>
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends (...args: any[]) => any
+    ? T[K]
+    : NonNullable<T[K]> extends Record<string, any>
+      ? DeepPartial<NonNullable<T[K]>>
+      : T[K]
+}
+
+export type DimensionResult<CT> = Record<string, boolean | null | DeepPartial<CT>>
 export type DimensionObj<CT> = DimensionResult<CT>
 
 export type DimensionCb<T, CT> = (

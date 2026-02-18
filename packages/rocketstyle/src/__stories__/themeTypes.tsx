@@ -2,15 +2,21 @@ import { Element } from '@vitus-labs/elements'
 import type { styles } from '@vitus-labs/unistyle'
 import rocketstyle from '~/init'
 
+type Theme = Parameters<typeof styles>[0]['theme']
+type _ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
+
+// Augment StylesDefault so .theme() and dimension callbacks
+// suggest CSS properties from unistyle ITheme
+declare module '~/types/styles' {
+  interface StylesDefault extends _ThemeDefinition {}
+}
+
 const _theme = {
   fontSize: {
     a: 12,
     b: 12,
   },
 }
-
-type Theme = Parameters<typeof styles>[0]['theme']
-type _ThemeDefinition = Theme & { hover: Theme } & { active: Theme }
 
 const defaultDimensions = {
   gaps: 'gap',
