@@ -14,7 +14,10 @@ export type Interpolation =
   | undefined
   | CSSResult
   | Interpolation[]
-  | ((props: { theme?: DefaultTheme & Record<string, any>; [key: string]: any }) => Interpolation)
+  | ((props: {
+      theme?: DefaultTheme & Record<string, any>
+      [key: string]: any
+    }) => Interpolation)
 
 /**
  * Lazy representation of a `css` tagged template. Stores the raw template
