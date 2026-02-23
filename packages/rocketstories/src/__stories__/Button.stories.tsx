@@ -8,6 +8,7 @@ const _test = () => ({
 })
 
 const storyOf = init({
+  theme: { rootSize: 16 },
   decorators: [Theme],
 })
 

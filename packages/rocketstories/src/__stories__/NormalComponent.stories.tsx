@@ -3,6 +3,7 @@ import { init } from '~/init'
 import NormalComponent from './NormalComponent'
 
 const storyOf = init({
+  theme: { rootSize: 16 },
   decorators: [Theme],
 })
 
