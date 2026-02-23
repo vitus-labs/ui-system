@@ -1,15 +1,21 @@
 import type { IRocketStories } from '~/rocketstories'
 import createRocketStories from '~/rocketstories'
 import type { Configuration, ExtractProps, RocketType } from '~/types'
+import { setTheme } from '~/utils/theme'
+
+type InitParams = Partial<Omit<Configuration, 'component' | 'attrs'>> & {
+  theme?: Record<string, unknown>
+}
 
 /**
  * Curried factory that accepts shared configuration options first,
  * then a component, producing a fully configured IRocketStories builder.
  * Useful for pre-configuring decorators or storyOptions across many stories.
+ *
+ * Pass `theme` to set the global theme at runtime (alternative to
+ * configuring it via `vl-tools.config`).
  */
-export type Init = <
-  P extends Partial<Omit<Configuration, 'component' | 'attrs'>>,
->(
+export type Init = <P extends InitParams>(
   params: P,
 ) => <T extends Configuration['component']>(
   component: T,
@@ -18,10 +24,12 @@ export type Init = <
   : IRocketStories<ExtractProps<T>, unknown, false>
 
 /** @see {@link Init} */
-const init: Init =
-  ({ decorators = [], storyOptions = {}, ...rest }) =>
-  (component) =>
+const init: Init = ({ decorators = [], storyOptions = {}, theme, ...rest }) => {
+  if (theme) setTheme(theme)
+
+  return (component) =>
     rocketstories(component, { decorators, storyOptions, ...rest })
+}
 
 /**
  * One-shot factory that takes a component and optional configuration,
