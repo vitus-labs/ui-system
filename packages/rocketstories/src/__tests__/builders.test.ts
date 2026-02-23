@@ -2,13 +2,10 @@ import { CONTROL_TYPES } from '../constants/controls'
 import { init, rocketstories } from '../init'
 import renderMainBase from '../stories/base/renderMain'
 import renderRenderBase from '../stories/base/renderRender'
-import getTheme from '../utils/theme'
+import getTheme, { setTheme } from '../utils/theme'
 
-// Mock window.__VITUS_LABS_STORIES__ for getTheme
 beforeAll(() => {
-  ;(window as any).__VITUS_LABS_STORIES__ = {
-    decorators: { theme: { rootSize: 16 } },
-  }
+  setTheme({ rootSize: 16 })
 })
 
 describe('CONTROL_TYPES', () => {

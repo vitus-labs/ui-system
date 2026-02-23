@@ -10,12 +10,10 @@ import DimensionProvider, {
 import renderList from '../stories/rocketstories/renderList'
 import renderMain from '../stories/rocketstories/renderMain'
 import renderRender from '../stories/rocketstories/renderRender'
+import { setTheme } from '../utils/theme'
 
-// Mock window.__VITUS_LABS_STORIES__ for getTheme
 beforeAll(() => {
-  ;(window as any).__VITUS_LABS_STORIES__ = {
-    decorators: { theme: { rootSize: 16 } },
-  }
+  setTheme({ rootSize: 16 })
 })
 
 // ---------------------------------------------------------------------------
