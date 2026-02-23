@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/unistyle",
-  "version": "2.0.0-alpha.24",
+  "version": "2.0.0-alpha.25",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -49,7 +49,7 @@
     "node": ">= 18"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.0.0-alpha.24",
+    "@vitus-labs/core": "2.0.0-alpha.25",
     "react": ">= 19"
   },
   "devDependencies": {
