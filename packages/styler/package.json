@@ -61,9 +61,9 @@
   "devDependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@vitus-labs/tools-rolldown": "^1.7.0",
-    "@vitus-labs/tools-typescript": "^1.7.0",
+    "@vitus-labs/tools-rolldown": "^1.9.0",
+    "@vitus-labs/tools-typescript": "^1.9.0",
     "goober": "^2.1.18",
-    "styled-components": "^6.3.9"
+    "styled-components": "^6.3.11"
   }
 }

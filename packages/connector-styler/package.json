@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@vitus-labs/styler": "workspace:*",
-    "@vitus-labs/tools-rolldown": "^1.7.0",
-    "@vitus-labs/tools-typescript": "^1.7.0"
+    "@vitus-labs/tools-rolldown": "^1.9.0",
+    "@vitus-labs/tools-typescript": "^1.9.0"
   }
 }
