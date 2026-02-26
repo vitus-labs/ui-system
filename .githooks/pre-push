@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "==> pre-push: running lint..."
+bun run lint
+echo "==> pre-push: running typecheck..."
+bun run typecheck
+echo "==> pre-push: all checks passed."

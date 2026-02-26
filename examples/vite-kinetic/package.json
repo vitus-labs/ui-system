@@ -1,0 +1,26 @@
+{
+  "name": "@vitus-labs/example-vite-kinetic",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitus-labs/hooks": "workspace:*",
+    "@vitus-labs/kinetic": "workspace:*",
+    "@vitus-labs/kinetic-presets": "workspace:*",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sugar-high": "^0.9.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
+  }
+}

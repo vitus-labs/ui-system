@@ -36,6 +36,9 @@
       "suspicious": {
         "noAssignInExpressions": "off"
       },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
       "correctness": {
         "useExhaustiveDependencies": "error"
       },

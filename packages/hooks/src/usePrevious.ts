@@ -7,7 +7,7 @@ export type UsePrevious = <T>(value: T) => T | undefined
  * Returns `undefined` on the first render.
  */
 const usePrevious: UsePrevious = (value) => {
-  const ref = useRef<typeof value>()
+  const ref = useRef<typeof value | undefined>(undefined)
 
   useEffect(() => {
     ref.current = value
