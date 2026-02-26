@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { createVitestConfig } from '@vitus-labs/tools-vitest'
 import tildeResolve from './vitest.tilde-plugin'
 
 type Options = {
@@ -6,18 +6,24 @@ type Options = {
   define?: Record<string, unknown>
 }
 
-export default ({ name, define }: Options) =>
-  defineConfig({
+export default ({ name, define }: Options) => {
+  const config = createVitestConfig({
+    environment: 'jsdom',
+    setupFiles: ['../../vitest.setup.ts'],
     plugins: [tildeResolve()],
+  })
+
+  return {
+    ...config,
     ...(define ? { define } : {}),
     resolve: {
+      ...config.resolve,
       conditions: ['source'],
     },
     test: {
+      ...config.test,
       name,
-      environment: 'jsdom',
-      globals: true,
-      setupFiles: ['../../vitest.setup.ts'],
       include: ['src/__tests__/**/*.test.{ts,tsx}'],
     },
-  })
+  }
+}

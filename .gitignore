@@ -44,6 +44,10 @@ coverage/
 test/
 junit.xml
 
+# Atlas
+atlas.html
+atlas-report.md
+
 # Output
 *.js.map
 
