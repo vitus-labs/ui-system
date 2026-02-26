@@ -10,7 +10,6 @@ export type UseMergedRef = <T>(
  * Handles null, callback refs, and object refs with `.current`.
  */
 const useMergedRef = <T>(...refs: (Ref<T> | undefined)[]) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(
     (node: T | null) => {
       for (const ref of refs) {

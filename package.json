@@ -12,6 +12,7 @@
     "examples/*"
   ],
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "release": "lerna publish --force-publish",
     "lint": "biome check packages/*/src/",
     "pkgs:clean": "rm -rf node_modules/ bun.lock && bun install",

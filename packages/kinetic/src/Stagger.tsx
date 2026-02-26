@@ -12,7 +12,6 @@ const Stagger = ({
   onAfterLeave,
   ...transitionProps
 }: StaggerProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const childArray = Children.toArray(children).filter(
     isValidElement,
   ) as React.ReactElement<any>[]
