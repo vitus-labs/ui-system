@@ -160,7 +160,7 @@ export const reverse = (preset: Preset): Preset => ({
  * Handles: "all 300ms ease-out" → "all 500ms ease-out"
  */
 const replaceDuration = (transition: string, newDuration: string): string =>
-  transition.replace(/\d+m?s/, newDuration)
+  transition.replace(/\d+ms|\d+s/, newDuration)
 
 /**
  * Replace the easing in a CSS transition string.
@@ -169,7 +169,7 @@ const replaceDuration = (transition: string, newDuration: string): string =>
  */
 const replaceEasing = (transition: string, newEasing: string): string =>
   transition.replace(
-    /(?:ease(?:-in)?(?:-out)?|linear|cubic-bezier\([^)]+\))\s*$/,
+    /(?:ease-in-out|ease-in|ease-out|ease|linear|cubic-bezier\([^)]+\))\s*$/,
     newEasing,
   )
 
@@ -178,4 +178,4 @@ const replaceEasing = (transition: string, newEasing: string): string =>
  * "all 300ms ease-out" → "all 300ms 100ms ease-out"
  */
 const addDelay = (transition: string, delay: string): string =>
-  transition.replace(/(\d+m?s)(\s)/, `$1 ${delay}$2`)
+  transition.replace(/(\d+ms|\d+s)(\s)/, `$1 ${delay}$2`)
