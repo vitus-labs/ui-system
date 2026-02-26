@@ -59,7 +59,7 @@ export type TransitionProps = ClassTransitionProps &
     /** Safety timeout in ms. Default: 5000. */
     timeout?: number
     /** Single child element. Must accept className, style, and ref. */
-    children: ReactElement
+    children: ReactElement<any>
   }
 
 export type TransitionGroupProps = ClassTransitionProps &
@@ -70,7 +70,7 @@ export type TransitionGroupProps = ClassTransitionProps &
     /** Safety timeout in ms. Default: 5000. */
     timeout?: number
     /** Children with unique keys. */
-    children: ReactElement[]
+    children: ReactElement<any>[]
   }
 
 export type StaggerProps = ClassTransitionProps &
@@ -87,7 +87,7 @@ export type StaggerProps = ClassTransitionProps &
     /** Safety timeout in ms. Default: 5000. */
     timeout?: number
     /** Children to stagger. */
-    children: ReactElement[]
+    children: ReactElement<any>[]
   }
 
 export type CollapseProps = TransitionCallbacks & {
@@ -100,7 +100,7 @@ export type CollapseProps = TransitionCallbacks & {
   /** Safety timeout in ms. Default: 5000. */
   timeout?: number
   /** The content to collapse. */
-  children: ReactElement
+  children: ReactElement<any>
 }
 
 export type TransitionStateResult = {

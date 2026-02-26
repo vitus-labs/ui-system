@@ -9,10 +9,10 @@ export type UseMergedRef = <T>(
  * Merges multiple refs (callback or object) into a single stable callback ref.
  * Handles null, callback refs, and object refs with `.current`.
  */
-const useMergedRef: UseMergedRef = (...refs) => {
+const useMergedRef = <T>(...refs: (Ref<T> | undefined)[]) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(
-    (node: unknown) => {
+    (node: T | null) => {
       for (const ref of refs) {
         if (!ref) continue
         if (typeof ref === 'function') {

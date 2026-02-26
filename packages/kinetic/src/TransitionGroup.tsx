@@ -12,12 +12,12 @@ export type TransitionGroupProps = ClassTransitionProps &
   TransitionCallbacks & {
     appear?: boolean
     timeout?: number
-    children: ReactElement[]
+    children: ReactElement<any>[]
   }
 
-type KeyedChild = { key: string | number; element: ReactElement }
+type KeyedChild = { key: string | number; element: ReactElement<any> }
 
-const getKeyedChildren = (children: ReactElement[]): KeyedChild[] => {
+const getKeyedChildren = (children: ReactElement<any>[]): KeyedChild[] => {
   const result: KeyedChild[] = []
   Children.forEach(children, (child) => {
     if (isValidElement(child) && child.key != null) {
@@ -34,14 +34,14 @@ const TransitionGroup = ({
   onAfterLeave,
   ...transitionProps
 }: TransitionGroupProps) => {
-  const prevRef = useRef<Map<string | number, ReactElement>>(new Map())
-  const leavingRef = useRef<Map<string | number, ReactElement>>(new Map())
+  const prevRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
+  const leavingRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const initialKeysRef = useRef<Set<string | number> | null>(null)
   const [, forceUpdate] = useState(0)
 
   // Build current keyed children map
   const currentKeyed = getKeyedChildren(children)
-  const currentMap = new Map<string | number, ReactElement>()
+  const currentMap = new Map<string | number, ReactElement<any>>()
   for (const { key, element } of currentKeyed) {
     currentMap.set(key, element)
   }

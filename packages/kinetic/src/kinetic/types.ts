@@ -111,13 +111,13 @@ export type KineticStaggerProps<Tag extends ElementType> =
     timeout?: number
     interval?: number
     reverseLeave?: boolean
-    children: ReactElement[]
+    children: ReactElement<any>[]
   } & Partial<TransitionCallbacks>
 
 export type KineticGroupProps<Tag extends ElementType> = BaseHTMLProps<Tag> & {
   appear?: boolean
   timeout?: number
-  children: ReactElement[]
+  children: ReactElement<any>[]
 } & Partial<TransitionCallbacks>
 
 // ─── Conditional props based on mode ─────────────────────

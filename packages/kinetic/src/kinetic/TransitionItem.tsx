@@ -21,7 +21,7 @@ type TransitionItemProps = ClassTransitionProps &
     appear?: boolean
     unmount?: boolean
     timeout?: number
-    children: React.ReactElement
+    children: React.ReactElement<any>
   }
 
 const applyEnter = (

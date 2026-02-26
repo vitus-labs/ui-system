@@ -12,7 +12,10 @@ const Stagger = ({
   onAfterLeave,
   ...transitionProps
 }: StaggerProps) => {
-  const childArray = Children.toArray(children).filter(isValidElement)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const childArray = Children.toArray(children).filter(
+    isValidElement,
+  ) as React.ReactElement<any>[]
   const count = childArray.length
 
   return (
@@ -36,7 +39,7 @@ const Stagger = ({
           >
             {cloneElement(child, {
               style: {
-                ...(child.props as Record<string, unknown>).style,
+                ...child.props.style,
                 '--stagger-index': staggerIndex,
                 '--stagger-interval': `${interval}ms`,
                 transitionDelay: `${delay}ms`,

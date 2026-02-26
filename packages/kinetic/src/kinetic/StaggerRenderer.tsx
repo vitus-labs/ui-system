@@ -12,7 +12,7 @@ type StaggerRendererProps = {
   interval?: number
   reverseLeave?: boolean
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactElement[]
+  children: React.ReactElement<any>[]
   forwardedRef: React.ForwardedRef<unknown>
 }
 
@@ -38,7 +38,9 @@ const StaggerRenderer = ({
   const effectiveInterval = interval ?? config.interval ?? 50
   const effectiveReverseLeave = reverseLeave ?? config.reverseLeave ?? false
 
-  const childArray = Children.toArray(children).filter(isValidElement)
+  const childArray = Children.toArray(children).filter(
+    isValidElement,
+  ) as React.ReactElement<any>[]
   const count = childArray.length
 
   const staggeredChildren = childArray.map((child, index) => {
@@ -72,7 +74,7 @@ const StaggerRenderer = ({
       >
         {cloneElement(child, {
           style: {
-            ...(child.props as Record<string, unknown>).style,
+            ...child.props.style,
             '--stagger-index': staggerIndex,
             '--stagger-interval': `${effectiveInterval}ms`,
             transitionDelay: `${delay}ms`,

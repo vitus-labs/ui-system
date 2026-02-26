@@ -16,13 +16,13 @@ type GroupRendererProps = {
   appear?: boolean
   timeout?: number
   callbacks: Partial<TransitionCallbacks>
-  children: ReactElement[]
+  children: ReactElement<any>[]
   forwardedRef: React.ForwardedRef<unknown>
 }
 
-type KeyedChild = { key: string | number; element: ReactElement }
+type KeyedChild = { key: string | number; element: ReactElement<any> }
 
-const getKeyedChildren = (children: ReactElement[]): KeyedChild[] => {
+const getKeyedChildren = (children: ReactElement<any>[]): KeyedChild[] => {
   const result: KeyedChild[] = []
   Children.forEach(children, (child) => {
     if (isValidElement(child) && child.key != null) {
@@ -50,13 +50,13 @@ const GroupRenderer = ({
   const effectiveAppear = appear ?? config.appear ?? false
   const effectiveTimeout = timeout ?? config.timeout ?? 5000
 
-  const prevRef = useRef<Map<string | number, ReactElement>>(new Map())
-  const leavingRef = useRef<Map<string | number, ReactElement>>(new Map())
+  const prevRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
+  const leavingRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const initialKeysRef = useRef<Set<string | number> | null>(null)
   const [, forceUpdate] = useState(0)
 
   const currentKeyed = getKeyedChildren(children)
-  const currentMap = new Map<string | number, ReactElement>()
+  const currentMap = new Map<string | number, ReactElement<any>>()
   for (const { key, element } of currentKeyed) {
     currentMap.set(key, element)
   }

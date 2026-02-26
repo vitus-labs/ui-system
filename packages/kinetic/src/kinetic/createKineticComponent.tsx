@@ -115,7 +115,7 @@ const createKineticComponent = <
             callbacks={callbacks}
             forwardedRef={ref}
           >
-            {childrenNode as React.ReactElement[]}
+            {childrenNode as React.ReactElement<any>[]}
           </StaggerRenderer>
         )
       }
@@ -130,7 +130,7 @@ const createKineticComponent = <
             callbacks={callbacks}
             forwardedRef={ref}
           >
-            {childrenNode as React.ReactElement[]}
+            {childrenNode as React.ReactElement<any>[]}
           </GroupRenderer>
         )
       }
