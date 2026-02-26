@@ -1,0 +1,66 @@
+{
+  "name": "@vitus-labs/kinetic",
+  "version": "2.0.0-alpha.25",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "maintainers": [
+    "Vit Bokisch <vit@bokisch.cz>"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "source": "./src/index.ts",
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
+  ],
+  "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/kinetic",
+  "description": "Lightweight CSS-transition-based animation components for React",
+  "keywords": [
+    "vitus-labs",
+    "animation",
+    "transition",
+    "css",
+    "react",
+    "kinetic"
+  ],
+  "scripts": {
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "version": "node ../../scripts/sync-peer-deps.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/kinetic"
+  },
+  "bugs": {
+    "url": "https://github.com/vitus-labs/ui-system/issues"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "peerDependencies": {
+    "@vitus-labs/hooks": "2.0.0-alpha.25",
+    "react": ">= 19"
+  },
+  "devDependencies": {
+    "@vitus-labs/hooks": "workspace:*",
+    "@vitus-labs/tools-rolldown": "^1.7.0",
+    "@vitus-labs/tools-typescript": "^1.7.0"
+  }
+}

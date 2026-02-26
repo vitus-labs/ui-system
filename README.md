@@ -12,13 +12,15 @@ UI System is not a component library. It's a set of composable packages for buil
                      core
                    /      \
                attrs      unistyle      hooks
-              /    \        |    \
-       rocketstyle  \   elements  coolgrid
-            |        \
-       rocketstories  \
+              /    \        |    \        |
+       rocketstyle  \   elements  coolgrid  kinetic
+            |        \                       |
+       rocketstories  \              kinetic-presets
 ```
 
 ## Packages
+
+### Styling & Layout
 
 | Package | Description |
 | ------- | ----------- |
@@ -27,9 +29,16 @@ UI System is not a component library. It's a set of composable packages for buil
 | [@vitus-labs/elements](./packages/elements) | Layout primitives — Element, Text, List, Overlay, Portal |
 | [@vitus-labs/unistyle](./packages/unistyle) | Responsive CSS engine — media queries, unit conversion, style processing |
 | [@vitus-labs/coolgrid](./packages/coolgrid) | Bootstrap-inspired responsive grid with context-cascading config |
-| [@vitus-labs/hooks](./packages/hooks) | Lightweight React hooks — useHover, useWindowResize |
+| [@vitus-labs/hooks](./packages/hooks) | Lightweight React hooks — useHover, useWindowResize, useFocusTrap |
 | [@vitus-labs/rocketstyle](./packages/rocketstyle) | Multi-dimensional styling system with type-safe chains |
 | [@vitus-labs/rocketstories](./packages/rocketstories) | Auto-generated Storybook stories from rocketstyle components |
+
+### Animation
+
+| Package | Size (gzip) | Description |
+| ------- | ----------- | ----------- |
+| [@vitus-labs/kinetic](./packages/kinetic) | 3.2 KB | CSS-first animation — enter/exit, stagger, collapse, list reconciliation |
+| [@vitus-labs/kinetic-presets](./packages/kinetic-presets) | 2.3 KB | 122 presets, 5 factories, 5 composition utilities for kinetic |
 
 ## Quick Start
 
