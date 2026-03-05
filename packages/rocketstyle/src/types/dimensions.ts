@@ -30,6 +30,8 @@ export type DimensionValuePrimitive = string
 export type DimensionValueObj = {
   propName: string
   multi?: boolean
+  /** When true, this dimension is evaluated last and its values receive the accumulated theme as argument. */
+  transform?: boolean
 }
 
 export type DimensionValue = DimensionValuePrimitive | DimensionValueObj
@@ -47,20 +49,28 @@ type DeepPartial<T> = {
       : T[K]
 }
 
-export type DimensionResult<CT> = Record<
+export type DimensionResult<CT, T = any> = Record<
   string,
-  boolean | null | DeepPartial<CT>
+  | boolean
+  | null
+  | DeepPartial<CT>
+  | ((
+      theme: CT,
+      appTheme: T,
+      mode: ThemeModeCallback,
+      css: Css,
+    ) => DeepPartial<CT>)
 >
-export type DimensionObj<CT> = DimensionResult<CT>
+export type DimensionObj<CT, T = any> = DimensionResult<CT, T>
 
 export type DimensionCb<T, CT> = (
   theme: T,
   mode: ThemeModeCallback,
   css: Css,
-) => DimensionResult<CT>
+) => DimensionResult<CT, T>
 
 export type DimensionCallbackParam<T, CT> =
-  | DimensionObj<CT>
+  | DimensionObj<CT, T>
   | DimensionCb<T, CT>
 
 export type DimensionReturn<P, A> = P extends TObj ? A & P : A

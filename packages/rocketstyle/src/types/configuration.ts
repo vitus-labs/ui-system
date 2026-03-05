@@ -21,6 +21,7 @@ export type InitConfiguration<C, D> = {
   dimensionKeys: ArrayOfKeys<D>
   dimensionValues: ArrayOfValues<D>
   multiKeys: MultiKeys
+  transformKeys: Partial<Record<string, true>>
 }
 
 export type Configuration<

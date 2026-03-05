@@ -10,6 +10,7 @@ import {
   getDimensionsValues,
   getKeys,
   getMultipleDimensions,
+  getTransformDimensions,
 } from '~/utils/dimensions'
 
 export type Rocketstyle = <
@@ -90,6 +91,7 @@ const rocketstyle: Rocketstyle =
       dimensionKeys: getKeys(dimensions),
       dimensionValues: getDimensionsValues(dimensions),
       multiKeys: getMultipleDimensions(dimensions),
+      transformKeys: getTransformDimensions(dimensions),
       styled: true,
     })
   }

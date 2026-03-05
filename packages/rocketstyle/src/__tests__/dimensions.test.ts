@@ -3,6 +3,7 @@ import {
   getDimensionsValues,
   getKeys,
   getMultipleDimensions,
+  getTransformDimensions,
   getValues,
   isMultiKey,
   isValidKey,
@@ -123,5 +124,63 @@ describe('getDimensionsMap', () => {
     const result = getDimensionsMap({ themes: {} })
     expect(result.keysMap).toEqual({})
     expect(result.keywords).toEqual({})
+  })
+
+  it('includes function values (transform modifiers) as valid keys', () => {
+    const themes = {
+      modifier: {
+        outlined: (theme: any) => ({ color: theme.bg }),
+        ghost: () => ({ bg: 'transparent' }),
+      },
+    }
+    const result = getDimensionsMap({ themes })
+    expect(result.keysMap).toEqual({
+      modifier: { outlined: true, ghost: true },
+    })
+    expect(result.keywords.modifier).toBe(true)
+  })
+
+  it('includes function values as boolean keywords when useBooleans', () => {
+    const themes = {
+      modifier: {
+        outlined: (theme: any) => ({ color: theme.bg }),
+      },
+    }
+    const result = getDimensionsMap({ themes, useBooleans: true })
+    expect(result.keywords.outlined).toBe(true)
+  })
+})
+
+describe('getTransformDimensions', () => {
+  it('identifies transform dimensions', () => {
+    const dimensions = {
+      states: 'state',
+      modifiers: { propName: 'modifier', multi: true, transform: true },
+    }
+    expect(getTransformDimensions(dimensions)).toEqual({ modifier: true })
+  })
+
+  it('returns empty when no transform dimensions exist', () => {
+    const dimensions = {
+      states: 'state',
+      sizes: 'size',
+      multiple: { propName: 'multiple', multi: true },
+    }
+    expect(getTransformDimensions(dimensions)).toEqual({})
+  })
+
+  it('skips dimensions without transform flag', () => {
+    const dimensions = {
+      states: 'state',
+      tags: { propName: 'tags', multi: true },
+    }
+    expect(getTransformDimensions(dimensions)).toEqual({})
+  })
+
+  it('skips transform=false', () => {
+    const dimensions = {
+      modifiers: { propName: 'modifier', multi: true, transform: false },
+    }
+    expect(getTransformDimensions(dimensions)).toEqual({})
   })
 })
