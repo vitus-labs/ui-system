@@ -123,7 +123,12 @@ export const getTheme: GetTheme = ({
 }) => {
   let finalTheme = { ...baseTheme }
   const deferredTransforms: Array<
-    (theme: Record<string, any>) => Record<string, any>
+    (
+      theme: Record<string, any>,
+      appTheme: Record<string, any>,
+      mode: typeof themeModeCallback,
+      css: typeof config.css,
+    ) => Record<string, any>
   > = []
 
   Object.entries(rocketstate).forEach(
