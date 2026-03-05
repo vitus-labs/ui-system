@@ -9,6 +9,7 @@
  * per W3C csswg-drafts#7850).
  */
 import { hash } from './hash'
+import { clearNormCache } from './resolve'
 
 const PREFIX = 'vl'
 const ATTR = `data-${PREFIX}`
@@ -23,6 +24,7 @@ export interface StyleSheetOptions {
 
 export class StyleSheet {
   private cache = new Map<string, string>()
+  private insertCache = new Map<string, string>()
   private sheet: CSSStyleSheet | null = null
   private ssrBuffer: string[] = []
   private isSSR: boolean
@@ -180,6 +182,9 @@ export class StyleSheet {
    * Used with useInsertionEffect pattern: compute class during render, inject in effect.
    */
   getClassName(cssText: string): string {
+    // Check insertCache (populated by insert()) to avoid hashing
+    const cached = this.insertCache.get(cssText)
+    if (cached) return cached
     const h = hash(cssText)
     return `${PREFIX}-${h}`
   }
@@ -197,10 +202,18 @@ export class StyleSheet {
    * rule wins over single-class selectors regardless of source order.
    */
   insert(cssText: string, boost = false): string {
+    // Fast path: skip hash computation on repeated insertions of same CSS text
+    const icKey = boost ? `${cssText}\0` : cssText
+    const icHit = this.insertCache.get(icKey)
+    if (icHit) return icHit
+
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
 
-    if (this.cache.has(className)) return className
+    if (this.cache.has(className)) {
+      this.insertCache.set(icKey, className)
+      return className
+    }
 
     this.evictIfNeeded()
     this.cache.set(className, className)
@@ -241,6 +254,7 @@ export class StyleSheet {
       }
     }
 
+    this.insertCache.set(icKey, className)
     return className
   }
 
@@ -343,11 +357,14 @@ export class StyleSheet {
   reset(): void {
     this.ssrBuffer = []
     this.cache.clear()
+    this.insertCache.clear()
   }
 
   /** Clear the dedup cache. Useful for HMR / dev-time reloads. */
   clearCache(): void {
     this.cache.clear()
+    this.insertCache.clear()
+    clearNormCache()
   }
 
   /**
@@ -360,6 +377,8 @@ export class StyleSheet {
    */
   clearAll(): void {
     this.cache.clear()
+    this.insertCache.clear()
+    clearNormCache()
     this.ssrBuffer = []
     if (this.sheet) {
       while (this.sheet.cssRules.length > 0) {

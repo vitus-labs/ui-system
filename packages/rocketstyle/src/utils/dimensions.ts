@@ -109,3 +109,22 @@ export const getMultipleDimensions: GetMultipleDimensions = (obj) =>
     },
     {} as Record<string, true>,
   )
+
+// --------------------------------------------------------
+// get transform dimensions map
+// --------------------------------------------------------
+/** Builds a lookup of dimension prop names that are transform dimensions (evaluated last with function values). */
+type TransformKeys = Partial<Record<string, true>>
+type GetTransformDimensions = <T extends Dimensions>(obj: T) => TransformKeys
+
+export const getTransformDimensions: GetTransformDimensions = (obj) =>
+  getValues(obj).reduce(
+    (accumulator, value: DimensionValue) => {
+      if (typeof value === 'object') {
+        if (value.transform === true) accumulator[value.propName] = true
+      }
+
+      return accumulator
+    },
+    {} as Record<string, true>,
+  )

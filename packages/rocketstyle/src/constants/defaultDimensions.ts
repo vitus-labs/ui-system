@@ -11,6 +11,11 @@ const DEFAULT_DIMENSIONS = {
     propName: 'multiple',
     multi: true,
   },
+  modifiers: {
+    propName: 'modifier',
+    multi: true,
+    transform: true,
+  },
 } as const
 
 export type DefaultDimensions = typeof DEFAULT_DIMENSIONS

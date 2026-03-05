@@ -197,13 +197,14 @@ describe('buildProps', () => {
   })
 
   describe('isDOM=false (component target)', () => {
-    it('forwards all props except as and className', () => {
+    it('forwards all props except as, className, and $-prefixed', () => {
       const result = buildProps(
         {
           as: 'button',
           className: 'user',
           customProp: 'hello',
           $rocketstyle: {},
+          $rocketstate: { hover: true },
           'data-x': 'y',
           onClick: () => undefined,
         },
@@ -213,7 +214,8 @@ describe('buildProps', () => {
       )
 
       expect(result.customProp).toBe('hello')
-      expect(result.$rocketstyle).toEqual({})
+      expect(result.$rocketstyle).toBeUndefined()
+      expect(result.$rocketstate).toBeUndefined()
       expect(result['data-x']).toBe('y')
       expect(result.onClick).toBeDefined()
       // as and className are not forwarded from rawProps (className is merged separately)

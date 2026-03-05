@@ -100,30 +100,67 @@ export const calculateChainOptions: CalculateChainOptions = (options, args) => {
  * Generates the final theme object by starting with the base theme
  * and merging in dimension-specific theme slices based on the current
  * rocketstate (active dimension values). Supports multi-key dimensions.
+ *
+ * Transform dimensions (marked with `transform: true`) are evaluated last.
+ * Their values are functions that receive the fully accumulated theme and
+ * return overrides — enabling derived styles like "outlined" or "inversed".
  */
 export type GetTheme = (params: {
   rocketstate: Record<string, string | string[]>
   themes: Record<string, Record<string, any>>
   baseTheme: Record<string, any>
+  transformKeys?: Partial<Record<string, true>>
+  /** App theme from context — passed to transform dimension callbacks. */
+  appTheme?: Record<string, any>
 }) => Record<string, unknown>
 
-export const getTheme: GetTheme = ({ rocketstate, themes, baseTheme }) => {
-  // generate final theme which will be passed to styled component
+export const getTheme: GetTheme = ({
+  rocketstate,
+  themes,
+  baseTheme,
+  transformKeys,
+  appTheme,
+}) => {
   let finalTheme = { ...baseTheme }
+  const deferredTransforms: Array<
+    (
+      theme: Record<string, any>,
+      appTheme: Record<string, any>,
+      mode: typeof themeModeCallback,
+      css: typeof config.css,
+    ) => Record<string, any>
+  > = []
 
   Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | string[]]) => {
       const keyTheme: Record<string, any> = themes[key]!
+      const isTransform = transformKeys?.[key]
+
+      const mergeValue = (item: string) => {
+        const val = keyTheme[item]
+        if (isTransform && typeof val === 'function') {
+          deferredTransforms.push(val)
+        } else {
+          finalTheme = merge({}, finalTheme, val)
+        }
+      }
 
       if (Array.isArray(value)) {
-        value.forEach((item) => {
-          finalTheme = merge({}, finalTheme, keyTheme[item])
-        })
+        value.forEach(mergeValue)
       } else {
-        finalTheme = merge({}, finalTheme, keyTheme[value])
+        mergeValue(value)
       }
     },
   )
+
+  // Apply transform dimension values last with the fully accumulated theme
+  for (const transform of deferredTransforms) {
+    finalTheme = merge(
+      {},
+      finalTheme,
+      transform(finalTheme, appTheme ?? {}, themeModeCallback, config.css),
+    )
+  }
 
   return finalTheme
 }

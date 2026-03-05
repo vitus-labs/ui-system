@@ -42,9 +42,31 @@ export const resolve = (
   values: Interpolation[],
   props: Record<string, any>,
 ): string => {
-  let result = strings[0] ?? ''
+  // Tagged templates guarantee strings.length === values.length + 1,
+  // so strings[0] and strings[i+1] are always defined — no ?? needed.
+  let result = strings[0]!
   for (let i = 0; i < values.length; i++) {
-    result += resolveValue(values[i], props) + (strings[i + 1] ?? '')
+    const v = values[i]
+    const s = strings[i + 1]!
+    // Inline the most common value types to avoid function call overhead.
+    // Using if/else (no continue) for better V8 JIT optimization.
+    if (typeof v === 'function') {
+      const r = v(props)
+      result +=
+        (typeof r === 'string'
+          ? r
+          : r == null || r === false || r === true
+            ? ''
+            : resolveValue(r as Interpolation, props)) + s
+    } else if (v == null || v === false || v === true) {
+      result += s
+    } else if (typeof v === 'string') {
+      result += v + s
+    } else if (typeof v === 'number') {
+      result += v + s
+    } else {
+      result += resolveValue(v, props) + s
+    }
   }
   return result
 }
@@ -58,7 +80,14 @@ export const resolve = (
  * - Removes redundant semicolons
  * - Trims leading/trailing whitespace
  */
+const normCache = new Map<string, string>()
+/** Clear the normalizeCSS cache (called during HMR cleanup). */
+export const clearNormCache = () => normCache.clear()
+
 export const normalizeCSS = (css: string): string => {
+  const cached = normCache.get(css)
+  if (cached !== undefined) return cached
+
   const len = css.length
   let out = ''
   let space = false // pending space to emit before next non-whitespace char
@@ -116,6 +145,10 @@ export const normalizeCSS = (css: string): string => {
     out += css[i]
     last = c
   }
+
+  // Bound cache size to prevent memory leaks
+  if (normCache.size > 2000) normCache.clear()
+  normCache.set(css, out)
 
   return out
 }

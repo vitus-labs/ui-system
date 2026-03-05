@@ -232,4 +232,88 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
     // Responsive values must appear in @media rules
     expect(allCss).toMatch(/@media/)
   })
+
+  it('modifier transform derives styles from accumulated state theme', () => {
+    const Comp = rocketstyle()({
+      name: 'ModifierComp',
+      component: Element,
+    })
+      .theme({
+        backgroundColor: '#0070f3',
+        color: '#fff',
+      })
+      .states({
+        danger: {
+          backgroundColor: '#dc3545',
+          color: '#fff',
+        },
+      })
+      .modifiers({
+        outlined: (theme: any) => ({
+          color: theme.backgroundColor,
+          backgroundColor: 'transparent',
+        }),
+      })
+      .styles(
+        (css) => css`
+          ${({ $rocketstyle }: any) => {
+            const baseTheme = makeItResponsive({
+              theme: $rocketstyle,
+              styles,
+              css,
+            })
+            return css`
+              ${baseTheme};
+            `
+          }};
+        `,
+      )
+
+    // Render with danger state + outlined modifier
+    render(<Comp state="danger" modifier="outlined" />, { wrapper })
+
+    const allCss = getAllCSS()
+
+    // outlined modifier should flip: color becomes the danger backgroundColor
+    expect(allCss).toContain('color: rgb(220, 53, 69)') // #dc3545
+    expect(allCss).toContain('background-color: transparent')
+  })
+
+  it('modifier without active rocketstate uses base theme only', () => {
+    const Comp = rocketstyle()({
+      name: 'ModifierBaseComp',
+      component: Element,
+    })
+      .theme({
+        backgroundColor: '#0070f3',
+        color: '#fff',
+      })
+      .modifiers({
+        outlined: (theme: any) => ({
+          color: theme.backgroundColor,
+          backgroundColor: 'transparent',
+        }),
+      })
+      .styles(
+        (css) => css`
+          ${({ $rocketstyle }: any) => {
+            const baseTheme = makeItResponsive({
+              theme: $rocketstyle,
+              styles,
+              css,
+            })
+            return css`
+              ${baseTheme};
+            `
+          }};
+        `,
+      )
+
+    // Render with just outlined (no state), should derive from base theme
+    render(<Comp modifier="outlined" />, { wrapper })
+
+    const allCss = getAllCSS()
+    expect(allCss).toContain('color: rgb(0, 112, 243)') // #0070f3
+    expect(allCss).toContain('background-color: transparent')
+  })
 })

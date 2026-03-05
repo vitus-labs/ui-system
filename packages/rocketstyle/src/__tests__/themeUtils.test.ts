@@ -211,6 +211,227 @@ describe('getTheme', () => {
   })
 })
 
+describe('getTheme with transform dimensions', () => {
+  it('applies transform function values after all static dimensions', () => {
+    const result = getTheme({
+      rocketstate: { state: 'primary', modifier: 'outlined' },
+      themes: {
+        state: { primary: { backgroundColor: 'blue', color: 'white' } },
+        modifier: {
+          outlined: (theme: any) => ({
+            color: theme.backgroundColor,
+            backgroundColor: 'transparent',
+          }),
+        },
+      },
+      baseTheme: { border: 'none' },
+      transformKeys: { modifier: true },
+    })
+    // outlined transform should flip bg → text color and clear bg
+    expect(result.color).toBe('blue')
+    expect(result.backgroundColor).toBe('transparent')
+    expect(result.border).toBe('none')
+  })
+
+  it('transform receives accumulated theme, appTheme, mode, and css', () => {
+    const transformFn = vi.fn((theme: any) => ({ derived: theme.color }))
+    const appTheme = { colors: { primary: 'blue' } }
+    getTheme({
+      rocketstate: { state: 'primary', modifier: 'test' },
+      themes: {
+        state: { primary: { color: 'red' } },
+        modifier: { test: transformFn },
+      },
+      baseTheme: { bg: 'white' },
+      transformKeys: { modifier: true },
+      appTheme,
+    })
+    // transform should receive (rocketstyleTheme, appTheme, themeModeCallback, css)
+    expect(transformFn).toHaveBeenCalledWith(
+      expect.objectContaining({ bg: 'white', color: 'red' }),
+      appTheme,
+      expect.any(Function), // themeModeCallback
+      expect.anything(), // css
+    )
+  })
+
+  it('transform can use appTheme values', () => {
+    const appTheme = { spacing: { lg: '2rem' } }
+    const result = getTheme({
+      rocketstate: { modifier: 'withSpacing' },
+      themes: {
+        modifier: {
+          withSpacing: (_theme: any, app: any) => ({
+            padding: app.spacing.lg,
+          }),
+        },
+      },
+      baseTheme: { color: 'red' },
+      transformKeys: { modifier: true },
+      appTheme,
+    })
+    expect(result.padding).toBe('2rem')
+    expect(result.color).toBe('red')
+  })
+
+  it('supports multiple transform values (multi dimension)', () => {
+    const result = getTheme({
+      rocketstate: { modifier: ['outlined', 'rounded'] },
+      themes: {
+        modifier: {
+          outlined: (theme: any) => ({
+            color: theme.backgroundColor,
+            backgroundColor: 'transparent',
+          }),
+          rounded: () => ({ borderRadius: '999px' }),
+        },
+      },
+      baseTheme: { backgroundColor: 'blue', color: 'white' },
+      transformKeys: { modifier: true },
+    })
+    expect(result.color).toBe('blue')
+    expect(result.backgroundColor).toBe('transparent')
+    expect(result.borderRadius).toBe('999px')
+  })
+
+  it('transforms compose — later transform sees earlier transform results', () => {
+    const result = getTheme({
+      rocketstate: { modifier: ['first', 'second'] },
+      themes: {
+        modifier: {
+          first: () => ({ step: 'one' }),
+          second: (theme: any) => ({ sawStep: theme.step }),
+        },
+      },
+      baseTheme: {},
+      transformKeys: { modifier: true },
+    })
+    expect(result.step).toBe('one')
+    expect(result.sawStep).toBe('one')
+  })
+
+  it('works without transformKeys (backward compatible)', () => {
+    const result = getTheme({
+      rocketstate: { state: 'primary' },
+      themes: { state: { primary: { color: 'red' } } },
+      baseTheme: { bg: 'white' },
+    })
+    expect(result.color).toBe('red')
+    expect(result.bg).toBe('white')
+  })
+
+  it('non-transform dimension treats function values as regular merge (not called as transform)', () => {
+    const fn = vi.fn(() => ({ color: 'red' }))
+    getTheme({
+      rocketstate: { state: 'primary' },
+      themes: { state: { primary: fn } },
+      baseTheme: {},
+      transformKeys: {},
+    })
+    // Without transformKeys for 'state', the function should NOT be called
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('transform dimension not in rocketstate is ignored', () => {
+    const transformFn = vi.fn(() => ({ color: 'red' }))
+    const result = getTheme({
+      rocketstate: { state: 'primary' },
+      themes: {
+        state: { primary: { color: 'blue' } },
+        modifier: { outlined: transformFn },
+      },
+      baseTheme: {},
+      transformKeys: { modifier: true },
+    })
+    // modifier is not in rocketstate, so transform should not be called
+    expect(transformFn).not.toHaveBeenCalled()
+    expect(result.color).toBe('blue')
+  })
+
+  it('transform does not mutate baseTheme', () => {
+    const baseTheme = { color: 'blue', bg: 'white' }
+    getTheme({
+      rocketstate: { modifier: 'flip' },
+      themes: {
+        modifier: {
+          flip: (theme: any) => ({ color: theme.bg, bg: theme.color }),
+        },
+      },
+      baseTheme,
+      transformKeys: { modifier: true },
+    })
+    expect(baseTheme.color).toBe('blue')
+    expect(baseTheme.bg).toBe('white')
+  })
+
+  it('transform with deep nested theme values', () => {
+    const result = getTheme({
+      rocketstate: { state: 'primary', modifier: 'outlined' },
+      themes: {
+        state: {
+          primary: {
+            backgroundColor: 'blue',
+            color: 'white',
+            hover: { backgroundColor: 'darkblue' },
+          },
+        },
+        modifier: {
+          outlined: (theme: any) => ({
+            color: theme.backgroundColor,
+            backgroundColor: 'transparent',
+            hover: {
+              backgroundColor: theme.backgroundColor,
+              color: theme.color,
+            },
+          }),
+        },
+      },
+      baseTheme: {},
+      transformKeys: { modifier: true },
+    })
+    expect(result.color).toBe('blue')
+    expect(result.backgroundColor).toBe('transparent')
+    // hover should be merged from state + modifier
+    const hover = result.hover as Record<string, any>
+    expect(hover.backgroundColor).toBe('blue')
+    expect(hover.color).toBe('white')
+  })
+
+  it('appTheme defaults to empty object when not provided', () => {
+    const transformFn = vi.fn(() => ({}))
+    getTheme({
+      rocketstate: { modifier: 'test' },
+      themes: { modifier: { test: transformFn } },
+      baseTheme: {},
+      transformKeys: { modifier: true },
+    })
+    // second argument should be empty object (not undefined)
+    expect(transformFn).toHaveBeenCalledWith(
+      expect.any(Object),
+      {},
+      expect.any(Function),
+      expect.anything(),
+    )
+  })
+
+  it('transform with mode callback produces light/dark values', () => {
+    const result = getTheme({
+      rocketstate: { modifier: 'themed' },
+      themes: {
+        modifier: {
+          themed: (_theme: any, _app: any, mode: any) => ({
+            shadow: mode('0 2px 4px rgba(0,0,0,0.1)', 'none'),
+          }),
+        },
+      },
+      baseTheme: {},
+      transformKeys: { modifier: true },
+    })
+    // mode callback returns a function, which is the expected value
+    expect(typeof result.shadow).toBe('function')
+  })
+})
+
 describe('getThemeByMode', () => {
   it('returns scalar values as-is', () => {
     const result = getThemeByMode({ color: 'red', size: 16 }, 'light')

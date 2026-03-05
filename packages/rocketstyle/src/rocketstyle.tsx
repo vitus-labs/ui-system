@@ -322,8 +322,10 @@ const rocketComponent: RocketComponent = (options) => {
             rocketstate,
             themes: currentModeThemes,
             baseTheme: currentModeBaseTheme,
+            transformKeys: options.transformKeys,
+            appTheme: theme,
           }),
-        [rsKey, currentModeThemes, currentModeBaseTheme],
+        [rsKey, currentModeThemes, currentModeBaseTheme, theme],
       )
 
       // --------------------------------------------------

@@ -57,38 +57,73 @@ const getDisplayName = (tag: Tag): string =>
       (tag as ComponentType).name ||
       'Component'
 
+// Component cache: same template literal + tag + no options → same component.
+// WeakMap on `strings` (TemplateStringsArray is object-identity per source location).
+const staticComponentCache = new WeakMap<
+  TemplateStringsArray,
+  Map<Tag, ReturnType<typeof forwardRef>>
+>()
+
+// Single-entry hot cache — just 3 reference comparisons, no Map/WeakMap overhead.
+// Covers the most common pattern: same styled component created repeatedly.
+let _hotStrings: TemplateStringsArray | null = null
+let _hotTag: Tag | null = null
+let _hotComponent: ReturnType<typeof forwardRef> | null = null
+
 const createStyledComponent = (
   tag: Tag,
   strings: TemplateStringsArray,
   values: Interpolation[],
   options?: StyledOptions,
 ) => {
-  const hasDynamicValues = values.some(isDynamic)
-  const customFilter = options?.shouldForwardProp
-  const boost = options?.boost ?? false
+  // Ultra-fast hot cache: 3 reference comparisons → return immediately
+  if (values.length === 0 && !options) {
+    if (strings === _hotStrings && tag === _hotTag) return _hotComponent!
+
+    // WeakMap fallback for alternating patterns
+    const tagMap = staticComponentCache.get(strings)
+    if (tagMap) {
+      const cached = tagMap.get(tag)
+      if (cached) {
+        _hotStrings = strings
+        _hotTag = tag
+        _hotComponent = cached
+        return cached
+      }
+    }
+  }
+
+  // Fast check: no values means no dynamic interpolations — avoids .some() scan
+  const hasDynamicValues = values.length > 0 && values.some(isDynamic)
+  const customFilter = options ? options.shouldForwardProp : undefined
+  const boost = options ? (options.boost ?? false) : false
 
   // STATIC FAST PATH: no function interpolations → compute class once at creation time
   if (!hasDynamicValues) {
-    const cssText = normalizeCSS(resolve(strings, values, {}))
-    const { className: staticClassName, rules: staticRules } = cssText.trim()
-      ? sheet.prepare(cssText, boost)
-      : { className: '', rules: '' }
+    // Inline resolve for the common no-values case (avoids function call overhead)
+    const raw = values.length === 0 ? strings[0]! : resolve(strings, values, {})
+    const cssText = normalizeCSS(raw)
+    const hasCss = cssText.length > 0 && cssText.trim().length > 0
 
-    // Populate sheet cache + inject CSS.
-    // Client: insertRule() into shared <style data-vl> element (1 DOM node for all components).
-    // SSR: pushes to ssrBuffer for getStyleTag().
-    if (cssText.trim()) sheet.insert(cssText, boost)
+    let staticClassName: string
+    let cachedStyleEl: ReturnType<typeof createElement> | null = null
 
-    // SSR only: pre-compute <style precedence> for FOUC-free delivery.
-    // Client: CSS already injected via sheet.insert() above — no per-component <style> needed.
-    const cachedStyleEl =
-      IS_SERVER && staticClassName
-        ? createElement(
-            'style',
-            { href: staticClassName, precedence: 'medium' },
-            staticRules,
-          )
-        : null
+    if (!hasCss) {
+      staticClassName = ''
+    } else if (IS_SERVER) {
+      // SSR: need both className + rules for <style precedence> element
+      const prepared = sheet.prepare(cssText, boost)
+      staticClassName = prepared.className
+      sheet.insert(cssText, boost)
+      cachedStyleEl = createElement(
+        'style',
+        { href: staticClassName, precedence: 'medium' },
+        prepared.rules,
+      )
+    } else {
+      // Client: insert() returns className and handles caching — skip prepare() entirely
+      staticClassName = sheet.insert(cssText, boost)
+    }
 
     const StaticStyled = forwardRef<unknown, Record<string, any>>(
       (rawProps, ref) => {
@@ -110,6 +145,20 @@ const createStyledComponent = (
     )
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
+
+    // Store in component cache + hot cache for future reuse
+    if (!options && values.length === 0) {
+      let tagMap = staticComponentCache.get(strings)
+      if (!tagMap) {
+        tagMap = new Map()
+        staticComponentCache.set(strings, tagMap)
+      }
+      tagMap.set(tag, StaticStyled)
+      _hotStrings = strings
+      _hotTag = tag
+      _hotComponent = StaticStyled
+    }
+
     return StaticStyled
   }
 
@@ -201,6 +250,9 @@ const styledFactory = (tag: Tag, options?: StyledOptions) => {
  * - `styled('div', { shouldForwardProp })` → with custom prop filtering
  * - `styled.div` → shorthand via Proxy (no options)
  */
+// Cache template functions per tag to avoid closure allocation on every Proxy get
+const proxyCache = new Map<string, Function>()
+
 export const styled: typeof styledFactory &
   Record<
     string,
@@ -209,7 +261,12 @@ export const styled: typeof styledFactory &
   get(_target: unknown, prop: string) {
     if (prop === 'prototype' || prop === '$$typeof') return undefined
     // styled.div`...`, styled.span`...`, etc.
-    return (strings: TemplateStringsArray, ...values: Interpolation[]) =>
-      createStyledComponent(prop, strings, values)
+    let fn = proxyCache.get(prop)
+    if (!fn) {
+      fn = (strings: TemplateStringsArray, ...values: Interpolation[]) =>
+        createStyledComponent(prop, strings, values)
+      proxyCache.set(prop, fn)
+    }
+    return fn
   },
 })
