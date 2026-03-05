@@ -100,10 +100,8 @@ const createStyledComponent = (
 
   // STATIC FAST PATH: no function interpolations → compute class once at creation time
   if (!hasDynamicValues) {
-
     // Inline resolve for the common no-values case (avoids function call overhead)
-    const raw =
-      values.length === 0 ? strings[0]! : resolve(strings, values, {})
+    const raw = values.length === 0 ? strings[0]! : resolve(strings, values, {})
     const cssText = normalizeCSS(raw)
     const hasCss = cssText.length > 0 && cssText.trim().length > 0
 
