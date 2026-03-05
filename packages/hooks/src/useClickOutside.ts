@@ -16,7 +16,8 @@ const useClickOutside: UseClickOutside = (ref, handler) => {
   useEffect(() => {
     const listener = (event: Event) => {
       const el = ref.current
-      if (!el || el.contains(event.target as Node)) return
+      const target = event.target as Node | null
+      if (!el || !target || el.contains(target)) return
       handlerRef.current(event)
     }
 

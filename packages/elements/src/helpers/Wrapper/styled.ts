@@ -23,16 +23,13 @@ const parentFixCSS = `
   flex-direction: column;
 `
 
-const parentFixBlockCSS = `
-  width: 100%;
-`
-
 const fullHeightCSS = `
   height: 100%;
 `
 
 const blockCSS = `
   align-self: stretch;
+  width: 100%;
 `
 
 const childFixPosition = (isBlock?: boolean) =>
@@ -48,9 +45,9 @@ const styles: ResponsiveStylesCallback = ({ theme: t, css }) => css`
   })};
 
   ${t.block && blockCSS};
+  ${__WEB__ && t.alignY === 'block' && t.block && fullHeightCSS};
 
   ${__WEB__ && !t.childFix && childFixPosition(t.block)};
-  ${__WEB__ && t.parentFix && t.block && parentFixBlockCSS};
   ${__WEB__ && t.parentFix && parentFixCSS};
 
   ${t.extraStyles && extendCss(t.extraStyles as any)};

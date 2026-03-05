@@ -6,21 +6,25 @@ import { isMultiKey } from './dimensions'
 // --------------------------------------------------------
 // Theme Mode Callback
 // --------------------------------------------------------
+const MODE_CALLBACK_BRAND = Symbol.for('vl.themeModeCallback')
+
 /** Creates a mode-switching function that returns the light or dark value based on the active mode. */
-export const themeModeCallback: ThemeModeCallback = (light, dark) => (mode) => {
-  if (!mode || mode === 'light') return light
-  return dark
+export const themeModeCallback: ThemeModeCallback = (light, dark) => {
+  const fn = (mode: string) => {
+    if (!mode || mode === 'light') return light
+    return dark
+  }
+  ;(fn as any).__brand = MODE_CALLBACK_BRAND
+  return fn
 }
 
 // --------------------------------------------------------
 // Theme Mode Callback Check
 // --------------------------------------------------------
-/** Detects whether a value is a `themeModeCallback` function by comparing stringified signatures. */
+/** Detects whether a value is a `themeModeCallback` function via Symbol brand. */
 type IsModeCallback = (value: unknown) => boolean
 const isModeCallback: IsModeCallback = (value: unknown) =>
-  typeof value === 'function' &&
-  //@ts-expect-error
-  value.toString() === themeModeCallback().toString()
+  typeof value === 'function' && (value as any).__brand === MODE_CALLBACK_BRAND
 
 // --------------------------------------------------------
 // Get Theme From Chain
