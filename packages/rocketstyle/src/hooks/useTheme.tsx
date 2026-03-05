@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { THEME_MODES_INVERSED } from '~/constants'
 import { context } from '~/context/context'
 import type { ThemeModeKeys } from '~/types/theme'
@@ -28,7 +28,10 @@ const useThemeAttrs: UseThemeAttrs = ({ inversed }) => {
   const isDark = inversed ? !ctxDark : ctxDark
   const isLight = !isDark
 
-  return { theme, mode, isDark, isLight }
+  return useMemo(
+    () => ({ theme, mode, isDark, isLight }),
+    [theme, mode, isDark, isLight],
+  )
 }
 
 export default useThemeAttrs
