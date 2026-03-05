@@ -8,6 +8,12 @@ export type UseFocusTrap = (
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
+const wrapFocus = (e: KeyboardEvent, target: HTMLElement | undefined) => {
+  if (!target) return
+  e.preventDefault()
+  target.focus()
+}
+
 /**
  * Traps keyboard focus within the referenced container.
  * Tab and Shift+Tab cycle through focusable elements inside.
@@ -25,17 +31,12 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true) => {
 
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
+      const active = document.activeElement
 
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault()
-          last?.focus()
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault()
-          first?.focus()
-        }
+      if (e.shiftKey && active === first) {
+        wrapFocus(e, last)
+      } else if (!e.shiftKey && active === last) {
+        wrapFocus(e, first)
       }
     }
 
