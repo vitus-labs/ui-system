@@ -248,10 +248,11 @@ export const buildProps = (
 
   result.ref = ref
 
-  // Component target — forward all props except as/className
+  // Component target — forward all props except as/className and $-prefixed
   if (!isDOM) {
     for (const key in rawProps) {
       if (key === 'as' || key === 'className') continue
+      if (key.charCodeAt(0) === 36) continue // $-prefixed transient
       result[key] = rawProps[key]
     }
     return result
