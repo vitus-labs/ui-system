@@ -1,16 +1,26 @@
 import type { CSSProperties } from 'react'
 
+const splitCache = new Map<string, string[]>()
+const splitClasses = (classes: string): string[] => {
+  let cached = splitCache.get(classes)
+  if (!cached) {
+    cached = classes.split(/\s+/).filter(Boolean)
+    splitCache.set(classes, cached)
+  }
+  return cached
+}
+
 /** Adds space-separated CSS classes to an element. */
 export const addClasses = (el: HTMLElement, classes: string | undefined) => {
   if (!classes) return
-  const list = classes.split(/\s+/).filter(Boolean)
+  const list = splitClasses(classes)
   if (list.length > 0) el.classList.add(...list)
 }
 
 /** Removes space-separated CSS classes from an element. */
 export const removeClasses = (el: HTMLElement, classes: string | undefined) => {
   if (!classes) return
-  const list = classes.split(/\s+/).filter(Boolean)
+  const list = splitClasses(classes)
   if (list.length > 0) el.classList.remove(...list)
 }
 

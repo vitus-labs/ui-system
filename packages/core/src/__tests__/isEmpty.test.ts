@@ -42,4 +42,11 @@ describe('isEmpty', () => {
     obj.a = 1
     expect(isEmpty(obj)).toBe(false)
   })
+
+  it('should return true for non-object truthy primitives', () => {
+    // Covers typeof param !== 'object' branch (line 23-24)
+    expect(isEmpty(42 as any)).toBe(true)
+    expect(isEmpty('hello' as any)).toBe(true)
+    expect(isEmpty(true as any)).toBe(true)
+  })
 })

@@ -42,7 +42,8 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
 
   const media = useMemo(() => {
     if (breakpoints && !isEmpty(breakpoints)) {
-      return createMediaQueries({
+      const factory = config.createMediaQueries ?? createMediaQueries
+      return factory({
         breakpoints,
         css: config.css,
         rootSize,

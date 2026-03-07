@@ -127,6 +127,36 @@ describe('useCSS', () => {
     })
   })
 
+  describe('cache hit path', () => {
+    it('reuses cached className on re-render with identical resolved CSS', () => {
+      const template = css`color: ${(p: any) => p.color};`
+      const { result, rerender } = renderHook(() =>
+        useCSS(template, { color: 'red' }),
+      )
+
+      const cls1 = result.current
+      // Re-render with same props → cache hit (cssText === cacheRef.current.css)
+      rerender()
+      const cls2 = result.current
+
+      expect(cls1).toBe(cls2)
+      expect(cls1).toMatch(/^vl-/)
+    })
+
+    it('updates className when resolved CSS changes', () => {
+      let color = 'red'
+      const template = css`color: ${(p: any) => p.color};`
+      const { result, rerender } = renderHook(() => useCSS(template, { color }))
+
+      const cls1 = result.current
+      color = 'blue'
+      rerender()
+      const cls2 = result.current
+
+      expect(cls1).not.toBe(cls2)
+    })
+  })
+
   describe('boost parameter', () => {
     it('does not throw when boost is true', () => {
       const template = css`display: flex;`
@@ -153,6 +183,41 @@ describe('useCSS', () => {
       const { container } = render(<Comp />)
       const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-[0-9a-z]+$/)
+    })
+  })
+
+  describe('without ThemeProvider and without props', () => {
+    it('uses empty object when no props and no theme', () => {
+      const template = css`display: flex;`
+      // No props argument, no ThemeProvider → hits (props ?? {}) fallback
+      const { result } = renderHook(() => useCSS(template))
+      expect(result.current).toMatch(/^vl-[0-9a-z]+$/)
+    })
+
+    it('handles dynamic template without theme or props', () => {
+      const template = css`color: ${(p: any) => p.color ?? 'red'};`
+      // Pass undefined as props → hits (props ?? {}) fallback
+      const { result } = renderHook(() => useCSS(template, undefined))
+      expect(result.current).toMatch(/^vl-/)
+    })
+  })
+
+  describe('cache miss with empty CSS', () => {
+    it('returns empty className when dynamic CSS changes from non-empty to empty', () => {
+      // First render: non-empty CSS → cache is { css: 'color:red;', className: 'vl-xxx' }
+      // Second render: empty CSS → cache miss (different cssText) + empty branch (line 40)
+      let color: string | undefined = 'red'
+      const template = css`${(p: any) => (p.color ? `color: ${p.color};` : '')}`
+
+      const { result, rerender } = renderHook(() => useCSS(template, { color }))
+
+      // First render produces a className
+      expect(result.current).toMatch(/^vl-/)
+
+      // Change to empty CSS — triggers cache miss + empty CSS path
+      color = undefined
+      rerender()
+      expect(result.current).toBe('')
     })
   })
 })

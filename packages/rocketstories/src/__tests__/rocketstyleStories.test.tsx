@@ -418,6 +418,29 @@ describe('renderDimension', () => {
     expect(story).toBeDefined()
   })
 
+  it('ignore list causes ignored dimension values to not render', () => {
+    const story = renderDimension('state' as any, {
+      name: 'IgnoreRender',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      ignore: ['primary'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    // 'primary' is ignored so only 'secondary' should render
+    expect(
+      container.querySelector('[data-story="state-secondary"]'),
+    ).toBeTruthy()
+    expect(container.querySelector('[data-story="state-primary"]')).toBeNull()
+  })
+
   it('renders story component with items', () => {
     const story = renderDimension('state' as any, {
       name: 'RenderTest',
@@ -435,6 +458,85 @@ describe('renderDimension', () => {
 
     // Render the story component
     const { container } = render(createElement(story, { label: 'test' }))
+    expect(container.innerHTML).toBeTruthy()
+  })
+
+  it('renders story with inline direction', () => {
+    const story = renderDimension('state' as any, {
+      name: 'InlineDir',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'inline',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      ignore: [],
+    })
+
+    const { container } = render(createElement(story, {}))
+    expect(container.innerHTML).toBeTruthy()
+  })
+
+  it('renders story with pseudo and inline direction (reverted to rows)', () => {
+    const story = renderDimension('state' as any, {
+      name: 'PseudoInline',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'inline',
+        alignX: 'left',
+        alignY: 'top',
+        pseudo: true,
+      },
+      ignore: [],
+    })
+
+    const { container } = render(createElement(story, {}))
+    expect(container.innerHTML).toBeTruthy()
+    expect(story.parameters.docs.description.story).toContain('pseudo')
+  })
+
+  it('renders multi-key dimension story with items', () => {
+    const story = renderDimension('tags' as any, {
+      name: 'MultiKeyRender',
+      component: MockMultiKeyComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      ignore: [],
+    })
+
+    const { container } = render(createElement(story, {}))
+    expect(container.innerHTML).toBeTruthy()
+  })
+
+  it('renders multi-key dimension story with pseudo states', () => {
+    const story = renderDimension('tags' as any, {
+      name: 'MultiKeyPseudo',
+      component: MockMultiKeyComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+        pseudo: true,
+      },
+      ignore: [],
+    })
+
+    const { container } = render(createElement(story, {}))
     expect(container.innerHTML).toBeTruthy()
   })
 

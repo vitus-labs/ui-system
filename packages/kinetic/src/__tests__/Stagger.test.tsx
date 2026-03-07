@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import Stagger from '../Stagger'
 
 // Mock matchMedia
@@ -205,6 +205,57 @@ describe('Stagger', () => {
     expect(screen.getByTestId('c').style.transitionDelay).toBe('0ms')
   })
 
+  it('uses index as key when children have no explicit key', () => {
+    const children = [
+      // biome-ignore lint/correctness/useJsxKeyInIterable: intentionally testing keyless children
+      <div data-testid="a">A</div>,
+      // biome-ignore lint/correctness/useJsxKeyInIterable: intentionally testing keyless children
+      <div data-testid="b">B</div>,
+    ]
+    render(
+      <Stagger show appear interval={100}>
+        {children}
+      </Stagger>,
+    )
+
+    expect(screen.getByTestId('a').style.transitionDelay).toBe('0ms')
+    expect(screen.getByTestId('b').style.transitionDelay).toBe('100ms')
+  })
+
+  it('renders keyless children with index fallback and applies stagger styles', () => {
+    const children = [
+      // biome-ignore lint/correctness/useJsxKeyInIterable: intentionally testing keyless children
+      <div data-testid="x">X</div>,
+      // biome-ignore lint/correctness/useJsxKeyInIterable: intentionally testing keyless children
+      <div data-testid="y">Y</div>,
+      // biome-ignore lint/correctness/useJsxKeyInIterable: intentionally testing keyless children
+      <div data-testid="z">Z</div>,
+    ]
+    render(
+      <Stagger show appear interval={75}>
+        {children}
+      </Stagger>,
+    )
+
+    expect(screen.getByTestId('x')).toBeInTheDocument()
+    expect(screen.getByTestId('y')).toBeInTheDocument()
+    expect(screen.getByTestId('z')).toBeInTheDocument()
+
+    expect(screen.getByTestId('x').style.transitionDelay).toBe('0ms')
+    expect(screen.getByTestId('y').style.transitionDelay).toBe('75ms')
+    expect(screen.getByTestId('z').style.transitionDelay).toBe('150ms')
+
+    expect(
+      screen.getByTestId('x').style.getPropertyValue('--stagger-index'),
+    ).toBe('0')
+    expect(
+      screen.getByTestId('y').style.getPropertyValue('--stagger-index'),
+    ).toBe('1')
+    expect(
+      screen.getByTestId('z').style.getPropertyValue('--stagger-index'),
+    ).toBe('2')
+  })
+
   it('preserves child existing styles', () => {
     render(
       <Stagger show appear>
@@ -219,5 +270,79 @@ describe('Stagger', () => {
     const el = screen.getByTestId('a')
     expect(el.style.color).toBe('red')
     expect(el.style.transitionDelay).toBe('0ms')
+  })
+
+  it('fires onAfterLeave on last child (normal order)', () => {
+    const onAfterLeave = vi.fn()
+
+    const { rerender } = render(
+      <Stagger show onAfterLeave={onAfterLeave}>
+        {[
+          <div key="a" data-testid="a">
+            A
+          </div>,
+          <div key="b" data-testid="b">
+            B
+          </div>,
+        ]}
+      </Stagger>,
+    )
+
+    rerender(
+      <Stagger show={false} onAfterLeave={onAfterLeave}>
+        {[
+          <div key="a" data-testid="a">
+            A
+          </div>,
+          <div key="b" data-testid="b">
+            B
+          </div>,
+        ]}
+      </Stagger>,
+    )
+
+    // The last child (b) should receive the onAfterLeave
+    // Timeout fallback completes the transitions
+    act(() => {
+      vi.advanceTimersByTime(5100)
+    })
+
+    expect(onAfterLeave).toHaveBeenCalled()
+  })
+
+  it('fires onAfterLeave on first child when reverseLeave=true', () => {
+    const onAfterLeave = vi.fn()
+
+    const { rerender } = render(
+      <Stagger show reverseLeave onAfterLeave={onAfterLeave}>
+        {[
+          <div key="a" data-testid="a">
+            A
+          </div>,
+          <div key="b" data-testid="b">
+            B
+          </div>,
+        ]}
+      </Stagger>,
+    )
+
+    rerender(
+      <Stagger show={false} reverseLeave onAfterLeave={onAfterLeave}>
+        {[
+          <div key="a" data-testid="a">
+            A
+          </div>,
+          <div key="b" data-testid="b">
+            B
+          </div>,
+        ]}
+      </Stagger>,
+    )
+
+    act(() => {
+      vi.advanceTimersByTime(5100)
+    })
+
+    expect(onAfterLeave).toHaveBeenCalled()
   })
 })

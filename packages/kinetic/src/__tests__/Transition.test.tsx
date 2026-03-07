@@ -391,6 +391,212 @@ describe('Transition', () => {
     expect(el.classList.contains('existing')).toBe(true)
     expect(el.classList.contains('t-enter')).toBe(true)
   })
+
+  it('applies leave style-object transitions', () => {
+    const { rerender } = render(
+      <Transition
+        show
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition
+        show={false}
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+    expect(el.style.opacity).toBe('1')
+    expect(el.style.transition).toBe('opacity 200ms ease-in')
+
+    act(() => flushRaf())
+    act(() => flushRaf())
+
+    expect(el.style.opacity).toBe('0')
+  })
+
+  it('unmount=false hides with display:none after leave completes', () => {
+    const { rerender } = render(
+      <Transition show unmount={false}>
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition show={false} unmount={false}>
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(el))
+
+    // After leave completes with unmount=false, should have display:none
+    expect(el.style.display).toBe('none')
+  })
+
+  it('unmount=false preserves existing child style', () => {
+    render(
+      <Transition show={false} unmount={false}>
+        <div data-testid="child" style={{ color: 'red' }}>
+          Hello
+        </div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+    expect(el.style.display).toBe('none')
+    expect(el.style.color).toBe('red')
+  })
+
+  it('cleans up transition style and enter class on entered stage', () => {
+    const { rerender } = render(
+      <Transition
+        show={false}
+        enter="t-enter"
+        enterTransition="opacity 300ms ease"
+        enterStyle={{ opacity: 0 }}
+        enterToStyle={{ opacity: 1 }}
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition
+        show
+        enter="t-enter"
+        enterTransition="opacity 300ms ease"
+        enterStyle={{ opacity: 0 }}
+        enterToStyle={{ opacity: 1 }}
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+    expect(el.style.transition).toBe('opacity 300ms ease')
+    expect(el.classList.contains('t-enter')).toBe(true)
+
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(el))
+
+    // After entering -> entered, transition reset and enter class removed
+    expect(el.style.transition).toBe('')
+    expect(el.classList.contains('t-enter')).toBe(false)
+  })
+})
+
+describe('Transition — leaveStyle and leaveToStyle', () => {
+  it('applies leaveStyle on the first frame of leaving', () => {
+    const { rerender } = render(
+      <Transition
+        show
+        leaveStyle={{ opacity: 1, transform: 'scale(1)' }}
+        leaveToStyle={{ opacity: 0, transform: 'scale(0.95)' }}
+        leaveTransition="all 300ms ease"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition
+        show={false}
+        leaveStyle={{ opacity: 1, transform: 'scale(1)' }}
+        leaveToStyle={{ opacity: 0, transform: 'scale(0.95)' }}
+        leaveTransition="all 300ms ease"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+    expect(el.style.opacity).toBe('1')
+    expect(el.style.transform).toBe('scale(1)')
+    expect(el.style.transition).toBe('all 300ms ease')
+  })
+
+  it('applies leaveToStyle after double rAF', () => {
+    const { rerender } = render(
+      <Transition
+        show
+        leaveStyle={{ opacity: 1, transform: 'scale(1)' }}
+        leaveToStyle={{ opacity: 0, transform: 'scale(0.95)' }}
+        leaveTransition="all 300ms ease"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition
+        show={false}
+        leaveStyle={{ opacity: 1, transform: 'scale(1)' }}
+        leaveToStyle={{ opacity: 0, transform: 'scale(0.95)' }}
+        leaveTransition="all 300ms ease"
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    act(() => flushRaf())
+    act(() => flushRaf())
+
+    const el = screen.getByTestId('child')
+    expect(el.style.opacity).toBe('0')
+    expect(el.style.transform).toBe('scale(0.95)')
+  })
+
+  it('unmounts after leaveToStyle animation completes', () => {
+    const onAfterLeave = vi.fn()
+
+    const { rerender } = render(
+      <Transition
+        show
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    rerender(
+      <Transition
+        show={false}
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </Transition>,
+    )
+
+    const el = screen.getByTestId('child')
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(el))
+
+    expect(onAfterLeave).toHaveBeenCalledTimes(1)
+    expect(screen.queryByTestId('child')).not.toBeInTheDocument()
+  })
 })
 
 describe('Transition with reducedMotion', () => {

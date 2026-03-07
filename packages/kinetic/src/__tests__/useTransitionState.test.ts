@@ -117,6 +117,21 @@ describe('useTransitionState', () => {
     expect(result.current.stage).toBe('entering')
   })
 
+  it('handles rapid toggling false->true->false (entering to leaving)', () => {
+    const { result, rerender } = renderHook(
+      ({ show }) => useTransitionState({ show }),
+      { initialProps: { show: false } },
+    )
+
+    // Start enter
+    rerender({ show: true })
+    expect(result.current.stage).toBe('entering')
+
+    // Interrupt with leave before enter completes
+    rerender({ show: false })
+    expect(result.current.stage).toBe('leaving')
+  })
+
   it('provides a ref object', () => {
     const { result } = renderHook(() => useTransitionState({ show: false }))
     expect(result.current.ref).toBeDefined()

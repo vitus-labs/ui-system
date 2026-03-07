@@ -44,6 +44,11 @@ export interface CSSEngineConnector {
 interface PlatformConfig {
   component: ComponentType | HTMLTags
   textComponent: ComponentType | HTMLTags
+  createMediaQueries?: (props: {
+    breakpoints: Record<string, number>
+    rootSize: number
+    css: CSSEngineConnector['css']
+  }) => Record<string, (...args: any[]) => any>
 }
 
 type InitConfig = Partial<CSSEngineConnector & PlatformConfig>
@@ -149,6 +154,7 @@ class Configuration {
   // Platform defaults
   component: ComponentType | HTMLTags = 'div'
   textComponent: ComponentType | HTMLTags = 'span'
+  createMediaQueries: PlatformConfig['createMediaQueries'] = undefined
 
   /**
    * Stable CSS delegate. When the engine is available, delegates immediately.
@@ -217,6 +223,8 @@ class Configuration {
     if (props.useTheme) this._useTheme = props.useTheme
     if (props.component) this.component = props.component
     if (props.textComponent) this.textComponent = props.textComponent
+    if (props.createMediaQueries)
+      this.createMediaQueries = props.createMediaQueries
   }
 }
 

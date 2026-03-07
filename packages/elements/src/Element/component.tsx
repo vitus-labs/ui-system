@@ -146,6 +146,7 @@ const Component: VLElement = forwardRef(
     )
 
     useLayoutEffect(() => {
+      if (!__WEB__) return
       if (!equalBeforeAfter || !beforeContent || !afterContent) return
       if (equalizeRef.current) equalize(equalizeRef.current, direction)
     }, [equalBeforeAfter, beforeContent, afterContent, direction])

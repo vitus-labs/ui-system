@@ -167,6 +167,19 @@ describe('calculateStylingAttrs', () => {
     expect(result).toEqual({ state: 'secondary' })
   })
 
+  it('skips boolean keyword when prop value is falsy', () => {
+    const calc = calculateStylingAttrs({
+      useBooleans: true,
+      multiKeys: {},
+    })
+    const result = calc({
+      // primary is a known keyword but its value is false — should not resolve
+      props: { primary: false },
+      dimensions: { state: { primary: true, secondary: true } },
+    })
+    expect(result.state).toBeUndefined()
+  })
+
   it('skips boolean resolution when value is already set', () => {
     const calc = calculateStylingAttrs({
       useBooleans: true,

@@ -196,4 +196,53 @@ describe('hoistNonReactStatics', () => {
 
     expect(Target.displayName).toBe('TargetName')
   })
+
+  it('hoists from memo source to memo target — uses MEMO_STATICS for both', () => {
+    const SourceInner = () => null
+    const Source = memo(SourceInner)
+    ;(Source as any).customProp = 'from memo source'
+
+    const TargetInner = () => null
+    const Target = memo(TargetInner)
+
+    hoistNonReactStatics(Target, Source)
+
+    expect((Target as any).customProp).toBe('from memo source')
+    // memo statics like compare, type should not be copied (memo sets compare to null by default)
+    expect((Target as any).compare).toBeNull()
+  })
+
+  it('hoists from forwardRef source to forwardRef target', () => {
+    const Source = forwardRef((_props: any, _ref: any) => null)
+    ;(Source as any).customProp = 'from fwdRef source'
+
+    const Target = forwardRef((_props: any, _ref: any) => null)
+
+    hoistNonReactStatics(Target, Source)
+
+    expect((Target as any).customProp).toBe('from fwdRef source')
+  })
+
+  it('does not copy target FORWARD_REF_STATICS when target is forwardRef', () => {
+    const Source = () => null
+    ;(Source as any).render = 'should not overwrite'
+
+    const Target = forwardRef((_props: any, _ref: any) => null)
+
+    hoistNonReactStatics(Target, Source)
+
+    // render is in FORWARD_REF_STATICS for target, so it should be skipped
+    expect((Target as any).render).not.toBe('should not overwrite')
+  })
+
+  it('stops prototype recursion at Object.prototype', () => {
+    const Source = () => null
+    ;(Source as any).custom = 'value'
+    // Source's prototype is Function.prototype which has proto Object.prototype
+    // The recursion should walk up and stop at Object.prototype
+
+    const Target = () => null
+    expect(() => hoistNonReactStatics(Target, Source)).not.toThrow()
+    expect((Target as any).custom).toBe('value')
+  })
 })

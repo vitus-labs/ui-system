@@ -103,7 +103,7 @@ const createStyledComponent = (
     // Inline resolve for the common no-values case (avoids function call overhead)
     const raw = values.length === 0 ? strings[0]! : resolve(strings, values, {})
     const cssText = normalizeCSS(raw)
-    const hasCss = cssText.length > 0 && cssText.trim().length > 0
+    const hasCss = cssText.length > 0
 
     let staticClassName: string
     let cachedStyleEl: ReturnType<typeof createElement> | null = null
@@ -187,7 +187,7 @@ const createStyledComponent = (
         styleEl = cacheRef.current.styleEl
       } else {
         // Cache miss — recompute
-        if (cssText.trim()) {
+        if (cssText.length > 0) {
           if (IS_SERVER) {
             // SSR: compute rules for <style precedence>, inject into ssrBuffer
             const prepared = sheet.prepare(cssText, boost)
@@ -210,7 +210,7 @@ const createStyledComponent = (
 
       // Client: inject CSS synchronously before paint (no-op on server)
       useInsertionEffect(() => {
-        if (cssText.trim()) sheet.insert(cssText, boost)
+        if (cssText.length > 0) sheet.insert(cssText, boost)
       }, [cssText])
 
       const finalTag = rawProps.as || tag

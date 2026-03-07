@@ -34,9 +34,13 @@ const useElementSize: UseElementSize = () => {
     observer.observe(node)
     observerRef.current = observer
 
-    // Read initial size
+    // Read initial size with bail-out to avoid double setState
     const rect = node.getBoundingClientRect()
-    setSize({ width: rect.width, height: rect.height })
+    setSize((prev) =>
+      prev.width === rect.width && prev.height === rect.height
+        ? prev
+        : { width: rect.width, height: rect.height },
+    )
   }, [])
 
   return [ref, size]

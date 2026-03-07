@@ -45,4 +45,13 @@ describe('value', () => {
   it('returns "0" string for string "0"', () => {
     expect(value('0')).toBe('0')
   })
+
+  it('falls through to default output when rootSize is 0', () => {
+    // rootSize=0 makes canConvert falsy, hitting the final fallback (line 53)
+    expect(value(16, 0)).toBe('16rem')
+  })
+
+  it('returns null for NaN input', () => {
+    expect(value(Number.NaN)).toBeNull()
+  })
 })

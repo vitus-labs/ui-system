@@ -9,7 +9,8 @@
   "homepage": "https://github.com/vitus-labs/ui-system#readme",
   "workspaces": [
     "packages/*",
-    "examples/*"
+    "examples/nextjs-*",
+    "examples/vite-*"
   ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",

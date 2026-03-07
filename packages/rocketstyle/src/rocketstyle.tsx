@@ -311,8 +311,8 @@ const rocketComponent: RocketComponent = (options) => {
       let rsKey = ''
       for (const k in rocketstate) {
         const v = rocketstate[k]
-        rsKey += k
-        rsKey += Array.isArray(v) ? v.join(',') : v
+        rsKey += `${k}=`
+        rsKey += `${Array.isArray(v) ? v.join(',') : v}|`
       }
 
       // biome-ignore lint/correctness/useExhaustiveDependencies: rsKey is a content-based serialization of rocketstate — replaces object reference in deps

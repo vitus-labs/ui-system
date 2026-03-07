@@ -156,6 +156,19 @@ describe('useThemeAttrs', () => {
     expect(result.current.isLight).toBe(true)
   })
 
+  it('returns default values when context value is null (|| {} fallback)', () => {
+    // Provide null as the context value to trigger the || {} fallback on line 25
+    const nullWrapper = ({ children }: { children: ReactNode }) => (
+      <context.Provider value={null as any}>{children}</context.Provider>
+    )
+    const { result } = renderHook(() => useThemeAttrs({ inversed: false }), {
+      wrapper: nullWrapper,
+    })
+    expect(result.current.theme).toEqual({})
+    expect(result.current.mode).toBe('light')
+    expect(result.current.isLight).toBe(true)
+  })
+
   it('reads theme from context', () => {
     const wrapper = createWrapper({
       theme: { rootSize: 16 },

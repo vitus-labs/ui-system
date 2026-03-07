@@ -137,6 +137,150 @@ describe('withDelay', () => {
   })
 })
 
+describe('compose — edge cases', () => {
+  it('handles presets with only class-based fields (no styles)', () => {
+    const a: Preset = { enter: 'e-a', leave: 'l-a' }
+    const b: Preset = { enterFrom: 'ef-b', leaveFrom: 'lf-b' }
+    const result = compose(a, b)
+    expect(result.enter).toBe('e-a')
+    expect(result.enterFrom).toBe('ef-b')
+    expect(result.leave).toBe('l-a')
+    expect(result.leaveFrom).toBe('lf-b')
+  })
+
+  it('does not concatenate when first preset has no class', () => {
+    const a: Preset = {}
+    const b: Preset = { enter: 'enter-b' }
+    const result = compose(a, b)
+    expect(result.enter).toBe('enter-b')
+  })
+
+  it('preserves first preset class when second has none', () => {
+    const a: Preset = { enter: 'enter-a' }
+    const b: Preset = {}
+    const result = compose(a, b)
+    expect(result.enter).toBe('enter-a')
+  })
+
+  it('mergeStyle returns a when b is undefined', () => {
+    const a: Preset = { enterStyle: { opacity: 0 } }
+    const b: Preset = {}
+    const result = compose(a, b)
+    expect(result.enterStyle).toEqual({ opacity: 0 })
+  })
+
+  it('transitions from last preset override earlier', () => {
+    const a: Preset = { enterTransition: 'all 100ms ease' }
+    const b: Preset = { enterTransition: 'all 500ms linear' }
+    const result = compose(a, b)
+    expect(result.enterTransition).toBe('all 500ms linear')
+  })
+
+  it('does not override transitions when later preset omits them', () => {
+    const a: Preset = { enterTransition: 'all 100ms ease' }
+    const b: Preset = {}
+    const result = compose(a, b)
+    expect(result.enterTransition).toBe('all 100ms ease')
+  })
+})
+
+describe('withDuration — edge cases', () => {
+  it('handles preset with empty transition string', () => {
+    const preset: Preset = { enterTransition: '', leaveTransition: '' }
+    const result = withDuration(preset, 500)
+    // replaceDuration on empty string — no match, returns unchanged
+    expect(result.enterTransition).toBeDefined()
+    expect(result.leaveTransition).toBeDefined()
+  })
+
+  it('handles preset with no transition (undefined ?? fallback)', () => {
+    const preset: Preset = {}
+    const result = withDuration(preset, 500)
+    expect(result.enterTransition).toBeDefined()
+    expect(result.leaveTransition).toBeDefined()
+  })
+})
+
+describe('withEasing — undefined transitions', () => {
+  it('handles preset with no transition (undefined ?? fallback)', () => {
+    const preset: Preset = {}
+    const result = withEasing(preset, 'ease-out')
+    expect(result.enterTransition).toBeDefined()
+    expect(result.leaveTransition).toBeDefined()
+  })
+})
+
+describe('withEasing — edge cases', () => {
+  it('handles original cubic-bezier easing', () => {
+    const preset: Preset = {
+      enterTransition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+      leaveTransition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+    }
+    const result = withEasing(preset, 'ease-out')
+    expect(result.enterTransition).toContain('ease-out')
+    expect(result.enterTransition).not.toContain('cubic-bezier')
+  })
+
+  it('uses leaveEasing when provided', () => {
+    const result = withEasing(fade, 'ease-out', 'ease-in')
+    expect(result.enterTransition).toContain('ease-out')
+    expect(result.leaveTransition).toContain('ease-in')
+  })
+})
+
+describe('withDelay — edge cases', () => {
+  it('uses leaveDelayMs when provided', () => {
+    const result = withDelay(fade, 100, 50)
+    expect(result.enterTransition).toContain('100ms')
+    expect(result.leaveTransition).toContain('50ms')
+  })
+
+  it('handles preset with no transition string', () => {
+    const preset: Preset = {}
+    const result = withDelay(preset, 100)
+    expect(result.enterTransition).toBeDefined()
+    expect(result.leaveTransition).toBeDefined()
+  })
+
+  it('inserts delay between duration and easing', () => {
+    const preset: Preset = {
+      enterTransition: 'opacity 300ms ease-out',
+      leaveTransition: 'opacity 200ms ease-in',
+    }
+    const result = withDelay(preset, 150)
+    expect(result.enterTransition).toBe('opacity 300ms 150ms ease-out')
+  })
+})
+
+describe('withEasing — replaceEasing edge cases', () => {
+  it('replaces ease-in-out easing', () => {
+    const preset: Preset = {
+      enterTransition: 'all 300ms ease-in-out',
+      leaveTransition: 'all 200ms ease-in-out',
+    }
+    const result = withEasing(preset, 'linear')
+    expect(result.enterTransition).toBe('all 300ms linear')
+  })
+
+  it('replaces linear easing', () => {
+    const preset: Preset = {
+      enterTransition: 'all 300ms linear',
+      leaveTransition: 'all 200ms linear',
+    }
+    const result = withEasing(preset, 'ease-out')
+    expect(result.enterTransition).toBe('all 300ms ease-out')
+  })
+
+  it('replaces ease easing', () => {
+    const preset: Preset = {
+      enterTransition: 'all 300ms ease',
+      leaveTransition: 'all 200ms ease',
+    }
+    const result = withEasing(preset, 'ease-in')
+    expect(result.enterTransition).toBe('all 300ms ease-in')
+  })
+})
+
 describe('reverse', () => {
   it('swaps enter and leave styles', () => {
     const reversed = reverse(fadeUp)
@@ -177,5 +321,66 @@ describe('reverse', () => {
     expect(doubleReversed.enterToStyle).toEqual(original.enterToStyle)
     expect(doubleReversed.leaveStyle).toEqual(original.leaveStyle)
     expect(doubleReversed.leaveToStyle).toEqual(original.leaveToStyle)
+  })
+
+  it('handles preset with undefined fields', () => {
+    const sparse: Preset = { enterStyle: { opacity: 0 } }
+    const reversed = reverse(sparse)
+    expect(reversed.leaveStyle).toEqual({ opacity: 0 })
+    expect(reversed.enterStyle).toBeUndefined()
+    expect(reversed.enterToStyle).toBeUndefined()
+    expect(reversed.leaveToStyle).toBeUndefined()
+    expect(reversed.enterTransition).toBeUndefined()
+    expect(reversed.leaveTransition).toBeUndefined()
+    expect(reversed.enter).toBeUndefined()
+    expect(reversed.leave).toBeUndefined()
+  })
+})
+
+describe('compose — mergeStyles transitions', () => {
+  it('does not override leaveTransition when later preset omits it', () => {
+    const a: Preset = {
+      leaveTransition: 'all 200ms ease',
+    }
+    const b: Preset = {}
+    const result = compose(a, b)
+    expect(result.leaveTransition).toBe('all 200ms ease')
+  })
+
+  it('later preset leaveTransition overrides earlier', () => {
+    const a: Preset = { leaveTransition: 'all 200ms ease' }
+    const b: Preset = { leaveTransition: 'all 500ms linear' }
+    const result = compose(a, b)
+    expect(result.leaveTransition).toBe('all 500ms linear')
+  })
+
+  it('merges leaveStyle and leaveToStyle', () => {
+    const a: Preset = {
+      leaveStyle: { opacity: 1 },
+      leaveToStyle: { opacity: 0 },
+    }
+    const b: Preset = {
+      leaveStyle: { transform: 'scale(1)' },
+      leaveToStyle: { transform: 'scale(0)' },
+    }
+    const result = compose(a, b)
+    expect(result.leaveStyle).toEqual({ opacity: 1, transform: 'scale(1)' })
+    expect(result.leaveToStyle).toEqual({ opacity: 0, transform: 'scale(0)' })
+  })
+
+  it('concatenates all leave class fields', () => {
+    const a: Preset = { leave: 'l-a', leaveFrom: 'lf-a', leaveTo: 'lt-a' }
+    const b: Preset = { leave: 'l-b', leaveFrom: 'lf-b', leaveTo: 'lt-b' }
+    const result = compose(a, b)
+    expect(result.leave).toBe('l-a l-b')
+    expect(result.leaveFrom).toBe('lf-a lf-b')
+    expect(result.leaveTo).toBe('lt-a lt-b')
+  })
+
+  it('concatenates enterTo classes', () => {
+    const a: Preset = { enterTo: 'et-a' }
+    const b: Preset = { enterTo: 'et-b' }
+    const result = compose(a, b)
+    expect(result.enterTo).toBe('et-a et-b')
   })
 })

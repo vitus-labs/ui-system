@@ -33,6 +33,15 @@ describe('List', () => {
       expect(items[2]).toHaveTextContent('c')
     })
 
+    it('renders items as fragment with explicit rootElement={false}', () => {
+      render(
+        <List rootElement={false} component={TextItem} data={['a', 'b']} />,
+        { wrapper },
+      )
+      const items = screen.getAllByTestId('item')
+      expect(items).toHaveLength(2)
+    })
+
     it('renders children directly', () => {
       render(
         <List>
