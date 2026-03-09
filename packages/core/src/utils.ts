@@ -64,7 +64,8 @@ const parsePath = (path: string | string[]): string[] => {
 // Blocked keys for prototype-pollution prevention.
 // Used by both get() and set().
 // --------------------------------------------------------
-const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor'])
+const isUnsafeKey = (key: string): boolean =>
+  key === '__proto__' || key === 'prototype' || key === 'constructor'
 
 export const get = (
   obj: any,
@@ -75,7 +76,7 @@ export const get = (
   let result = obj
 
   for (const key of keys) {
-    if (result == null || UNSAFE_KEYS.has(key)) return defaultValue
+    if (result == null || isUnsafeKey(key)) return defaultValue
     result = result[key]
   }
 
@@ -98,10 +99,10 @@ export const set = (
   let current = obj
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i]!
-    if (UNSAFE_KEYS.has(key)) return obj
+    if (isUnsafeKey(key)) return obj
 
     const nextKey = keys[i + 1]!
-    if (UNSAFE_KEYS.has(nextKey)) return obj
+    if (isUnsafeKey(nextKey)) return obj
 
     if (current[key] == null) {
       // create array if next key is numeric, otherwise object
@@ -112,7 +113,7 @@ export const set = (
   }
 
   const lastKey = keys[keys.length - 1]
-  if (lastKey != null && !UNSAFE_KEYS.has(lastKey)) {
+  if (lastKey != null && !isUnsafeKey(lastKey)) {
     current[lastKey] = value
   }
 
