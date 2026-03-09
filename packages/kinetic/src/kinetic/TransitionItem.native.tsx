@@ -1,13 +1,13 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
 import { cloneElement, useMemo, useRef } from 'react'
 import { Animated } from 'react-native'
+import { buildAnimatedStyle, getPrimaryTransition } from '../nativeAnimations'
 import type {
   ClassTransitionProps,
   StyleTransitionProps,
   TransitionCallbacks,
 } from '../types'
 import useTransitionState from '../useTransitionState'
-import { buildAnimatedStyle, getPrimaryTransition } from '../utils'
 
 type TransitionItemProps = ClassTransitionProps &
   StyleTransitionProps &
@@ -143,7 +143,7 @@ const TransitionItem = ({
     })
   }
 
-  return <Animated.View style={animatedStyle}>{children}</Animated.View>
+  return <Animated.View style={animatedStyle as any}>{children}</Animated.View>
 }
 
 export default TransitionItem

@@ -55,9 +55,11 @@ export const getPrimaryTransitionConfig = (
   if (!transition) return { duration: 300, easingName: 'ease' }
 
   const configs = parseTransitionString(transition)
-  let best = configs[0]
+  if (configs.length === 0) return { duration: 300, easingName: 'ease' }
+
+  let best = configs[0]!
   for (let i = 1; i < configs.length; i++) {
-    if (configs[i].duration > best.duration) best = configs[i]
+    if (configs[i]!.duration > best.duration) best = configs[i]!
   }
   return { duration: best.duration, easingName: best.easingName }
 }
@@ -79,10 +81,10 @@ export const parseTransformString = (transform: string): ParsedTransform[] => {
   let match: RegExpExecArray | null
 
   while ((match = regex.exec(transform)) !== null) {
-    const type = match[1]
-    const raw = match[2].trim()
+    const type = match[1] ?? ''
+    const raw = (match[2] ?? '').trim()
     const value = Number.parseFloat(raw)
-    if (!Number.isNaN(value)) {
+    if (type && !Number.isNaN(value)) {
       result.push({ type, value })
     }
   }

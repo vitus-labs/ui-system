@@ -1,9 +1,9 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
 import { createElement, useMemo, useRef } from 'react'
 import { Animated } from 'react-native'
+import { buildAnimatedStyle, getPrimaryTransition } from '../nativeAnimations'
 import type { TransitionCallbacks } from '../types'
 import useTransitionState from '../useTransitionState'
-import { buildAnimatedStyle, getPrimaryTransition } from '../utils'
 import type { KineticConfig } from './types'
 
 type TransitionRendererProps = {

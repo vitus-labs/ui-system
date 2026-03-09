@@ -19,9 +19,9 @@ type CollapseRendererProps = {
 const parseDuration = (transition?: string): number => {
   if (!transition) return 300
   const match = transition.match(/(\d+)\s*ms/)
-  if (match) return Number.parseInt(match[1], 10)
+  if (match?.[1]) return Number.parseInt(match[1], 10)
   const secMatch = transition.match(/([\d.]+)\s*s(?!e)/)
-  if (secMatch) return Number.parseFloat(secMatch[1]) * 1000
+  if (secMatch?.[1]) return Number.parseFloat(secMatch[1]) * 1000
   return 300
 }
 
@@ -137,7 +137,7 @@ const CollapseRenderer = ({
   return createElement(
     Animated.View,
     {
-      ref: forwardedRef,
+      ref: forwardedRef as any,
       ...htmlProps,
       style: [htmlProps.style, wrapperStyle],
     },
