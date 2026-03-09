@@ -111,13 +111,13 @@ export type KineticStaggerProps<Tag extends ElementType> =
     timeout?: number
     interval?: number
     reverseLeave?: boolean
-    children: ReactElement<any>[]
+    children: ReactElement<any>[] | ReactElement<any>
   } & Partial<TransitionCallbacks>
 
 export type KineticGroupProps<Tag extends ElementType> = BaseHTMLProps<Tag> & {
   appear?: boolean
   timeout?: number
-  children: ReactElement<any>[]
+  children: ReactElement<any>[] | ReactElement<any>
 } & Partial<TransitionCallbacks>
 
 // ─── Conditional props based on mode ─────────────────────
@@ -159,9 +159,7 @@ export type KineticChain<Tag extends ElementType, Mode extends KineticMode> = {
   leaveClass: (opts: ClassConfig) => KineticComponent<Tag, Mode>
   config: (opts: ConfigOpts<Mode>) => KineticComponent<Tag, Mode>
   on: (callbacks: Partial<TransitionCallbacks>) => KineticComponent<Tag, Mode>
-  collapse: (opts?: {
-    transition?: string
-  }) => KineticComponent<Tag, 'collapse'>
+  collapse: (opts?: CollapseConfigOpts) => KineticComponent<Tag, 'collapse'>
   stagger: (opts?: {
     interval?: number
     reverseLeave?: boolean

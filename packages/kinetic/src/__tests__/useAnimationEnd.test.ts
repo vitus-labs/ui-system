@@ -165,15 +165,25 @@ describe('useAnimationEnd', () => {
   })
 
   it('always calls the latest onEnd callback', () => {
-    let value = 0
+    let value: number = 0
     const ref = createMockRef()
 
     const { rerender } = renderHook(
       ({ cb }) => useAnimationEnd({ ref, onEnd: cb, active: true }),
-      { initialProps: { cb: () => (value = 1) } },
+      {
+        initialProps: {
+          cb: () => {
+            value = 1
+          },
+        },
+      },
     )
 
-    rerender({ cb: () => (value = 2) })
+    rerender({
+      cb: () => {
+        value = 2
+      },
+    })
 
     act(() => {
       const event = new Event('transitionend', { bubbles: true })

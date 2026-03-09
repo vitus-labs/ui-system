@@ -131,12 +131,12 @@ describe('nextFrame', () => {
     expect(fn).not.toHaveBeenCalled()
 
     // Execute first rAF — queues second
-    callbacks[0]()
+    callbacks[0]!()
     expect(callbacks.length).toBe(2)
     expect(fn).not.toHaveBeenCalled()
 
     // Execute second rAF — callback fires
-    callbacks[1]()
+    callbacks[1]!()
     expect(fn).toHaveBeenCalledTimes(1)
 
     globalThis.requestAnimationFrame = originalRaf

@@ -33,12 +33,12 @@ describe('parseTransitionString', () => {
 
   it('defaults duration to 300ms', () => {
     const result = parseTransitionString('opacity ease')
-    expect(result[0].duration).toBe(300)
+    expect(result[0]!.duration).toBe(300)
   })
 
   it('defaults easing to ease', () => {
     const result = parseTransitionString('opacity 200ms')
-    expect(result[0].easingName).toBe('ease')
+    expect(result[0]!.easingName).toBe('ease')
   })
 
   it('handles ease-in-out', () => {
@@ -127,27 +127,27 @@ describe('parseTransitionString — edge cases', () => {
   it('defaults property to "all" when first token is empty string', () => {
     // An empty string produces tokens[0] === '' which is falsy
     const result = parseTransitionString('')
-    expect(result[0].property).toBe('all')
-    expect(result[0].duration).toBe(300)
-    expect(result[0].easingName).toBe('ease')
+    expect(result[0]!.property).toBe('all')
+    expect(result[0]!.duration).toBe(300)
+    expect(result[0]!.easingName).toBe('ease')
   })
 
   it('defaults property to "all" when token is empty', () => {
     // A single space-only part
     const result = parseTransitionString('  300ms ease')
-    expect(result[0].property).toBeDefined()
-    expect(result[0].duration).toBe(300)
+    expect(result[0]!.property).toBeDefined()
+    expect(result[0]!.duration).toBe(300)
   })
 
   it('handles transitions without any easing keyword', () => {
     const result = parseTransitionString('opacity 500ms')
-    expect(result[0].easingName).toBe('ease')
+    expect(result[0]!.easingName).toBe('ease')
   })
 
   it('handles transitions with only property and easing (no duration token)', () => {
     const result = parseTransitionString('all linear')
-    expect(result[0].duration).toBe(300) // default
-    expect(result[0].easingName).toBe('linear')
+    expect(result[0]!.duration).toBe(300) // default
+    expect(result[0]!.easingName).toBe('linear')
   })
 })
 
