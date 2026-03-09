@@ -15,6 +15,8 @@ export default function RootLayout() {
         <Stack.Screen name="coolgrid" options={{ title: 'Coolgrid' }} />
         <Stack.Screen name="kinetic" options={{ title: 'Kinetic' }} />
         <Stack.Screen name="hooks" options={{ title: 'Hooks' }} />
+        <Stack.Screen name="rocketstyle" options={{ title: 'Rocketstyle' }} />
+        <Stack.Screen name="attrs" options={{ title: 'Attrs' }} />
       </Stack>
     </Provider>
   )

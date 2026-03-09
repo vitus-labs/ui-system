@@ -16,12 +16,14 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
 ]
 
-// Resolve via built lib/ output (react-native condition picks native bundles)
-config.resolver.unstable_conditionNames = ['react-native', 'import']
+// Use traditional field resolution: react-native → main (no package exports)
+// VL packages have top-level "react-native" and "main" fields pointing to lib/
+config.resolver.resolverMainFields = ['react-native', 'main']
 
-// Block Metro from traversing up to monorepo root's node_modules
+// Block monorepo root + packages node_modules (avoid duplicate react/react-native)
 config.resolver.blockList = [
   new RegExp(path.resolve(monorepoRoot, 'node_modules').replace(/[/\\]/g, '[/\\\\]')),
+  new RegExp(path.resolve(monorepoRoot, 'packages', '.*', 'node_modules').replace(/[/\\]/g, '[/\\\\]')),
 ]
 
 module.exports = config

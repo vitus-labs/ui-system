@@ -54,6 +54,12 @@ export default function HomeScreen() {
         <Link href="/hooks" style={styles.link}>
           <Text style={styles.linkText}>Hooks Demo</Text>
         </Link>
+        <Link href="/rocketstyle" style={styles.link}>
+          <Text style={styles.linkText}>Rocketstyle Demo</Text>
+        </Link>
+        <Link href="/attrs" style={styles.link}>
+          <Text style={styles.linkText}>Attrs Demo</Text>
+        </Link>
       </View>
     </View>
   )
