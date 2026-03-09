@@ -91,7 +91,7 @@ describe('styled', () => {
 
     render(<StyledSpy data-info="test" />)
     // The styled wrapper should NOT forward data-info to the inner component
-    expect(spy.mock.calls[0][0]).not.toHaveProperty('data-info')
+    expect(spy.mock.calls[0]?.[0]).not.toHaveProperty('data-info')
   })
 
   it('filters out as prop', () => {

@@ -33,6 +33,9 @@ const widthStyles: WidthStyles = (
   const c = columns as number
   const g = gap as number
 
+  // On native, skip width calculation until onLayout provides RNparentWidth
+  if (!__WEB__ && !RNparentWidth) return ''
+
   // calculate % of width
   const width = __WEB__ ? (s / c) * 100 : (RNparentWidth / c) * s
 
@@ -43,14 +46,25 @@ const widthStyles: WidthStyles = (
       ? `calc(${width}% - ${g}px)`
       : `${width}%`
     : hasGap
-      ? width - g
+      ? Math.max(0, width - g)
       : width
+
+  const v = value(val, rootSize)
 
   return css`
     flex-grow: 0;
     flex-shrink: 0;
-    max-width: ${value(val, rootSize)};
-    flex-basis: ${value(val, rootSize)};
+    ${
+      __WEB__
+        ? css`
+      max-width: ${v};
+      flex-basis: ${v};
+    `
+        : css`
+      width: ${v};
+      flex-basis: auto;
+    `
+    }
   `
 }
 
@@ -87,7 +101,7 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
 
   if (renderStyles) {
     return css`
-      left: initial;
+      ${__WEB__ ? 'left: initial;' : ''}
       position: relative;
       ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })};
       ${spacingStyles('padding', padding, rootSize)};
@@ -98,7 +112,7 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
 
   return css`
     left: -9999px;
-    position: fixed;
+    position: ${__WEB__ ? 'fixed' : 'absolute'};
     margin: 0;
     padding: 0;
   `
@@ -109,15 +123,15 @@ export default styled(component)`
     __WEB__ &&
     css`
     box-sizing: border-box;
+    justify-content: stretch;
   `
-  };
+  }
 
   position: relative;
   display: flex;
   flex-basis: 0;
   flex-grow: 1;
   flex-direction: column;
-  justify-content: stretch;
 
   ${makeItResponsive({
     key: '$coolgrid',

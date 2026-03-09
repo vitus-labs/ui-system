@@ -24,7 +24,7 @@ const Component: ElementType<['containerWidth']> = ({
   ...props
 }) => {
   const {
-    containerWidth = {},
+    containerWidth,
     columns,
     size,
     gap,

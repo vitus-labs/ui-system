@@ -72,8 +72,10 @@ const Component: ElementType<
   )
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
-    const newWidth = e.nativeEvent.layout.width
-    setParentWidth((prev) => (prev === newWidth ? prev : newWidth))
+    const newWidth = e?.nativeEvent?.layout?.width
+    if (newWidth != null) {
+      setParentWidth((prev) => (prev === newWidth ? prev : newWidth))
+    }
   }, [])
 
   return (

@@ -15,9 +15,14 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t }) => css`
 `
 
 export default styled(textComponent)`
-  color: inherit;
-  font-weight: inherit;
-  line-height: 1;
+  ${
+    __WEB__ &&
+    css`
+    color: inherit;
+    font-weight: inherit;
+    line-height: 1;
+  `
+  };
 
   ${makeItResponsive({
     key: '$text',

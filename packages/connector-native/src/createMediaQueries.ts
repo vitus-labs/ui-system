@@ -20,12 +20,13 @@ const createMediaQueries: CreateMediaQueries = ({ breakpoints, css }) =>
 
     if (breakpointValue === 0) {
       // Base breakpoint — always apply
-      acc[key] = (...args: any[]) => css(...args)
+      acc[key] = (strings: TemplateStringsArray, ...values: any[]) =>
+        css(strings, ...values)
     } else if (breakpointValue != null) {
       // Conditional — only apply when screen width >= breakpoint px value
-      acc[key] = (...args: any[]) => {
+      acc[key] = (strings: TemplateStringsArray, ...values: any[]) => {
         const { width } = Dimensions.get('window')
-        if (width >= breakpointValue) return css(...args)
+        if (width >= breakpointValue) return css(strings, ...values)
         return ''
       }
     }

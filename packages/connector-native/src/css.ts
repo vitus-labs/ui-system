@@ -8,6 +8,7 @@ type Interpolation =
   | null
   | undefined
   | StyleObject
+  | CSSResult
   | ((props: any) => any)
 
 /**
@@ -74,9 +75,9 @@ export const css = (
 
   // Static fast path: no functions, parse once
   if (!hasDynamics) {
-    let cssText = strings[0]
+    let cssText = strings[0] ?? ''
     for (let i = 0; i < values.length; i++) {
-      cssText += resolveInterpolation(values[i], {}) + strings[i + 1]
+      cssText += resolveInterpolation(values[i], {}) + (strings[i + 1] ?? '')
     }
     const statics = parseCSS(cssText)
 
@@ -91,9 +92,9 @@ export const css = (
   // Dynamic path: resolve at render time, cache by assembled CSS text
   const resolveCache = new Map<string, StyleObject>()
   const resolve = (props: any): StyleObject => {
-    let cssText = strings[0]
+    let cssText = strings[0] ?? ''
     for (let i = 0; i < values.length; i++) {
-      cssText += resolveInterpolation(values[i], props) + strings[i + 1]
+      cssText += resolveInterpolation(values[i], props) + (strings[i + 1] ?? '')
     }
     let cached = resolveCache.get(cssText)
     if (!cached) {
