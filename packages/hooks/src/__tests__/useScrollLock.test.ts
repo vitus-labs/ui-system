@@ -34,4 +34,77 @@ describe('useScrollLock', () => {
     rerender({ on: false })
     expect(document.body.style.overflow).toBe('')
   })
+
+  it('handles concurrent scroll locks (reference counting)', () => {
+    const { unmount: unmount1 } = renderHook(() => useScrollLock(true))
+    expect(document.body.style.overflow).toBe('hidden')
+
+    const { unmount: unmount2 } = renderHook(() => useScrollLock(true))
+    expect(document.body.style.overflow).toBe('hidden')
+
+    // Unmounting first lock should NOT restore overflow (still 1 lock active)
+    unmount1()
+    expect(document.body.style.overflow).toBe('hidden')
+
+    // Unmounting second lock should restore overflow
+    unmount2()
+    expect(document.body.style.overflow).toBe('')
+  })
+
+  it('preserves original overflow across concurrent locks', () => {
+    document.body.style.overflow = 'scroll'
+
+    const { unmount: unmount1 } = renderHook(() => useScrollLock(true))
+    expect(document.body.style.overflow).toBe('hidden')
+
+    const { unmount: unmount2 } = renderHook(() => useScrollLock(true))
+    expect(document.body.style.overflow).toBe('hidden')
+
+    unmount1()
+    expect(document.body.style.overflow).toBe('hidden')
+
+    // Last unlock restores original
+    unmount2()
+    expect(document.body.style.overflow).toBe('scroll')
+  })
+
+  it('restores empty string when originalOverflow is undefined', () => {
+    // When body has no explicit overflow set
+    document.body.style.overflow = ''
+    const { unmount } = renderHook(() => useScrollLock(true))
+    expect(document.body.style.overflow).toBe('hidden')
+
+    unmount()
+    expect(document.body.style.overflow).toBe('')
+  })
+
+  it('restores empty string via nullish coalescing when originalOverflow is nullish', () => {
+    // Temporarily make document.body.style.overflow return undefined
+    // so that originalOverflow is stored as undefined, triggering the ?? '' fallback
+    const descriptor = Object.getOwnPropertyDescriptor(
+      CSSStyleDeclaration.prototype,
+      'overflow',
+    )
+
+    const setter = descriptor?.set
+
+    Object.defineProperty(document.body.style, 'overflow', {
+      get: () => undefined,
+      set: setter
+        ? setter.bind(document.body.style)
+        : (_v: string) => {
+            // noop fallback
+          },
+      configurable: true,
+    })
+
+    const { unmount } = renderHook(() => useScrollLock(true))
+
+    // Restore the real property so subsequent set calls work
+    Object.defineProperty(document.body.style, 'overflow', descriptor)
+
+    unmount()
+    // originalOverflow was undefined, so ?? '' should produce ''
+    expect(document.body.style.overflow).toBe('')
+  })
 })

@@ -64,6 +64,26 @@ describe('useIntersection', () => {
     expect(result.current[1]).toMatchObject(mockEntry)
   })
 
+  it('sets entry to null when IntersectionObserver fires with empty entries', () => {
+    const { result } = renderHook(() => useIntersection())
+
+    const el = document.createElement('div')
+    act(() => result.current[0](el))
+
+    const observer = MockIntersectionObserver.instances.at(-1)!
+
+    // First, trigger with a real entry so entry is non-null
+    const mockEntry = { isIntersecting: true, intersectionRatio: 1 }
+    act(() => observer.trigger(mockEntry))
+    expect(result.current[1]).toMatchObject(mockEntry)
+
+    // Now trigger with empty entries array — entries[0] is undefined, ?? null kicks in
+    act(() => {
+      observer.callback([], observer as any)
+    })
+    expect(result.current[1]).toBeNull()
+  })
+
   it('disconnects when ref is set to null', () => {
     const { result } = renderHook(() => useIntersection())
 

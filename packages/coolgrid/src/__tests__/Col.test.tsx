@@ -123,4 +123,42 @@ describe('Col', () => {
     // Element still renders but should be positioned off-screen
     expect(screen.getByTestId('hidden')).toBeInTheDocument()
   })
+
+  it('renders with explicit size and columns but no gap', () => {
+    render(
+      <Container columns={12}>
+        <Row>
+          <Col size={6}>
+            <div data-testid="no-gap">No Gap</div>
+          </Col>
+        </Row>
+      </Container>,
+      { wrapper },
+    )
+    expect(screen.getByTestId('no-gap')).toBeInTheDocument()
+  })
+
+  it('renders without explicit size (auto width)', () => {
+    render(
+      <Container columns={12}>
+        <Row>
+          <Col>
+            <div data-testid="auto">Auto</div>
+          </Col>
+        </Row>
+      </Container>,
+      { wrapper },
+    )
+    expect(screen.getByTestId('auto')).toBeInTheDocument()
+  })
+
+  it('renders with size but no columns (standalone without Container)', () => {
+    render(
+      <Col size={6}>
+        <div data-testid="no-cols">No Columns</div>
+      </Col>,
+      { wrapper },
+    )
+    expect(screen.getByTestId('no-cols')).toBeInTheDocument()
+  })
 })

@@ -75,5 +75,16 @@ describe('Portal', () => {
       const divsAfter = document.body.querySelectorAll(':scope > div').length
       expect(divsAfter).toBeLessThan(divsBefore)
     })
+
+    it('renders nothing when tag is empty string', () => {
+      const { container } = render(
+        <Portal tag="">
+          <span data-testid="no-render">Should not appear</span>
+        </Portal>,
+      )
+      // tag="" is falsy, so useEffect returns early and element is never set
+      expect(screen.queryByTestId('no-render')).not.toBeInTheDocument()
+      expect(container.innerHTML).toBe('')
+    })
   })
 })

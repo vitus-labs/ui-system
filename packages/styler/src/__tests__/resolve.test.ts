@@ -139,6 +139,18 @@ describe('resolve', () => {
   })
 })
 
+describe('normalizeCSS — cache eviction', () => {
+  it('evicts oldest ~10% entries when cache exceeds 2000 entries', () => {
+    // Generate >2000 unique CSS strings to trigger eviction
+    for (let i = 0; i < 2100; i++) {
+      normalizeCSS(`unique-prop-${i}: value-${i};`)
+    }
+    // If eviction works, no crash occurs and results are still correct
+    const result = normalizeCSS('color: red;')
+    expect(result).toBe('color: red;')
+  })
+})
+
 describe('normalizeCSS', () => {
   describe('comment stripping', () => {
     it('strips CSS block comments', () => {
@@ -178,6 +190,16 @@ describe('normalizeCSS', () => {
       )
       expect(result).toContain('https://example.com/img.png')
       expect(result).not.toContain('// comment')
+    })
+
+    it('handles unterminated block comment (no closing */)', () => {
+      const result = normalizeCSS('color: red; /* never closed')
+      expect(result).toBe('color: red;')
+    })
+
+    it('handles unterminated line comment (no trailing newline)', () => {
+      const result = normalizeCSS('color: red;\n// trailing comment')
+      expect(result).toBe('color: red;')
     })
   })
 

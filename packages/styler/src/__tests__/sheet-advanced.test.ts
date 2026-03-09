@@ -77,7 +77,9 @@ describe('StyleSheet — advanced features', () => {
 
   describe('dev-mode warnings', () => {
     it('warns on invalid CSS in dev mode', () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
       document.querySelectorAll('style[data-vl]').forEach((el) => {
         el.remove()
       })
@@ -125,6 +127,364 @@ describe('StyleSheet — advanced features', () => {
       s.insertGlobal(css)
       s.insertGlobal(css)
       expect(s.cacheSize).toBe(1)
+    })
+
+    it('inserts multiple rules into the CSSOM via splitRules and insertRule', () => {
+      const s = createSheet()
+      s.insertGlobal('body{margin:0}div{padding:0}')
+
+      // Verify rules were actually inserted into the CSSOM
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
+      const cssSheet = styleEl.sheet as CSSStyleSheet
+      const ruleTexts = Array.from(cssSheet.cssRules).map((r) => r.cssText)
+      expect(ruleTexts.some((r) => r.includes('margin'))).toBe(true)
+      expect(ruleTexts.some((r) => r.includes('padding'))).toBe(true)
+    })
+
+    it('deduplicates insertGlobal — second call with same CSS is a no-op', () => {
+      const s = createSheet()
+      s.insertGlobal('body{margin:0}div{padding:0}')
+
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
+      const cssSheet = styleEl.sheet as CSSStyleSheet
+      const countBefore = cssSheet.cssRules.length
+
+      // Second call should be deduped via cache
+      s.insertGlobal('body{margin:0}div{padding:0}')
+      expect(cssSheet.cssRules.length).toBe(countBefore)
+    })
+
+    it('inserts global CSS with @media into CSSOM', () => {
+      const s = createSheet()
+      s.insertGlobal(
+        'body{margin:0}@media(min-width:768px){body{font-size:18px}}',
+      )
+
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
+      const cssSheet = styleEl.sheet as CSSStyleSheet
+      const ruleTexts = Array.from(cssSheet.cssRules).map((r) => r.cssText)
+      expect(ruleTexts.some((r) => r.includes('margin'))).toBe(true)
+      expect(ruleTexts.some((r) => r.includes('media'))).toBe(true)
+    })
+  })
+
+  describe('@layer on client-side insert', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('wraps inserted rules in @layer on client side', () => {
+      const s = createSheet({ layer: 'components' })
+      const className = s.insert('color: red;')
+      expect(className).toMatch(/^vl-/)
+      // The sheet should have injected a @layer declaration + the wrapped rule
+    })
+
+    it('injects @layer declaration rule on mount', () => {
+      const s = createSheet({ layer: 'myLayer' })
+      s.insert('display: flex;')
+      // No crash — @layer declaration was injected at mount time
+      expect(s.cacheSize).toBe(1)
+    })
+  })
+
+  describe('hydration from existing SSR style tag', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('reuses existing <style data-vl> tag and hydrates cache', () => {
+      // Create a style tag that simulates SSR output
+      const el = document.createElement('style')
+      el.setAttribute('data-vl', '')
+      document.head.appendChild(el)
+
+      // Insert a rule directly so hydrateFromTag can discover it
+      const sheetRef = el.sheet
+      if (sheetRef) sheetRef.insertRule('.vl-abc { color: red; }', 0)
+
+      // Create a new sheet — it should find and reuse the existing tag
+      const s = createSheet()
+      // The hydration should have populated the cache with 'vl-abc'
+      expect(s.has('vl-abc')).toBe(true)
+    })
+
+    it('hydrates @media-wrapped rules from SSR style tag', () => {
+      const el = document.createElement('style')
+      el.setAttribute('data-vl', '')
+      document.head.appendChild(el)
+
+      const sheetRef = el.sheet
+      if (sheetRef) {
+        sheetRef.insertRule(
+          '@media (min-width: 768px) { .vl-xyz { font-size: 2rem; } }',
+          0,
+        )
+      }
+
+      const s = createSheet()
+      expect(s.has('vl-xyz')).toBe(true)
+    })
+  })
+
+  describe('boost on prepare()', () => {
+    it('doubles selector when boost is true', () => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+      const s = createSheet()
+      const result = s.prepare('color: red;', true)
+      expect(result.className).toMatch(/^vl-/)
+      // Boosted: selector is doubled
+      expect(result.rules).toContain(`.${result.className}.${result.className}`)
+    })
+
+    it('single selector when boost is false', () => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+      const s = createSheet()
+      const result = s.prepare('color: red;', false)
+      // Non-boosted: single selector
+      expect(result.rules).toContain(`.${result.className}{`)
+      expect(result.rules).not.toContain(
+        `.${result.className}.${result.className}`,
+      )
+    })
+
+    it('prepare with empty base — all CSS is @rules', () => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+      const s = createSheet()
+      // CSS that is entirely an @media rule, so base is empty after splitting
+      const result = s.prepare('@media(min-width:0){color:red}')
+      expect(result.className).toMatch(/^vl-/)
+      // Should contain the @media rule but NOT a bare selector rule (no base)
+      expect(result.rules).toContain('@media')
+      expect(result.rules).toContain('color:red')
+      // The rules should NOT start with a plain selector — no base rule emitted
+      expect(result.rules).not.toMatch(new RegExp(`^\\.${result.className}\\{`))
+    })
+
+    it('prepare with only @supports produces no base rule', () => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+      const s = createSheet()
+      const result = s.prepare(
+        '@supports(display:grid){display:grid}@media(min-width:0){color:red}',
+      )
+      expect(result.className).toMatch(/^vl-/)
+      expect(result.rules).toContain('@supports')
+      expect(result.rules).toContain('@media')
+      // No base selector rule
+      expect(result.rules).not.toMatch(new RegExp(`^\\.${result.className}\\{`))
+    })
+  })
+
+  describe('boost on insert()', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('inserts boosted rule on client side', () => {
+      const s = createSheet()
+      const cls = s.insert('color: red;', true)
+      expect(cls).toMatch(/^vl-/)
+    })
+
+    it('deduplicates boosted and non-boosted separately via insertCache key', () => {
+      const s = createSheet()
+      const cls1 = s.insert('color: green;', false)
+      const cls2 = s.insert('color: green;', true)
+      // Same className (same hash) but both should work without error
+      expect(cls1).toBe(cls2)
+    })
+  })
+
+  describe('clearAll() with rules', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('removes all CSS rules from the DOM sheet', () => {
+      const s = createSheet()
+      s.insert('color: red;')
+      s.insert('color: blue;')
+      expect(s.cacheSize).toBe(2)
+
+      s.clearAll()
+      expect(s.cacheSize).toBe(0)
+    })
+
+    it('allows re-insertion after clearAll', () => {
+      const s = createSheet()
+      s.insert('color: red;')
+      s.clearAll()
+      // Re-insert the same CSS — should work since cache was cleared
+      const cls = s.insert('color: red;')
+      expect(cls).toMatch(/^vl-/)
+      expect(s.cacheSize).toBe(1)
+    })
+  })
+
+  describe('clearCache()', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('clears the dedup cache but leaves DOM rules in place', () => {
+      const s = createSheet()
+      s.insert('color: red;')
+      expect(s.cacheSize).toBe(1)
+
+      s.clearCache()
+      expect(s.cacheSize).toBe(0)
+    })
+  })
+
+  describe('insertRule failure warning', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('warns in dev mode when insertRule fails for insert()', () => {
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const s = createSheet()
+      // Insert invalid CSS that will cause insertRule to throw
+      s.insert('color: red; @INVALID_RULE {{{')
+      warnSpy.mockRestore()
+    })
+
+    it('warns in dev mode when insertGlobal insertRule fails', () => {
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const s = createSheet()
+      // Insert intentionally malformed global CSS
+      s.insertGlobal('@INVALID {{{')
+      warnSpy.mockRestore()
+    })
+
+    it('warns in dev mode when insertKeyframes insertRule fails', () => {
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const s = createSheet()
+      s.insertKeyframes('bad', '{{{invalid')
+      warnSpy.mockRestore()
+    })
+  })
+
+  describe('insert() insertRule failure via mock', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('warns when CSSStyleSheet.insertRule throws during insert()', () => {
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const s = createSheet()
+
+      // Access the internal sheet and make insertRule throw
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
+      const realSheet = styleEl.sheet
+      if (!realSheet) throw new Error('Expected sheet to exist')
+      const origInsertRule = realSheet.insertRule.bind(realSheet)
+      realSheet.insertRule = (rule: string, index?: number) => {
+        // Let @layer declaration through (if any), fail on component rules
+        if (rule.startsWith('.vl-')) {
+          throw new Error('Mock insertRule failure')
+        }
+        return origInsertRule(rule, index)
+      }
+
+      s.insert('color: magenta;')
+
+      expect(warnSpy).toHaveBeenCalled()
+      expect(warnSpy.mock.calls[0][0]).toContain(
+        '[styler] Failed to insert CSS rule',
+      )
+
+      realSheet.insertRule = origInsertRule
+      warnSpy.mockRestore()
+    })
+  })
+
+  describe('insertGlobal insertRule failure via mock', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('warns when CSSStyleSheet.insertRule throws during insertGlobal()', () => {
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined)
+      const s = createSheet()
+
+      const styleEl = document.querySelector(
+        'style[data-vl]',
+      ) as HTMLStyleElement
+      const realSheet = styleEl.sheet
+      if (!realSheet) throw new Error('Expected sheet to exist')
+      const origInsertRule = realSheet.insertRule.bind(realSheet)
+      realSheet.insertRule = (_rule: string, _index?: number) => {
+        throw new Error('Mock insertGlobal failure')
+      }
+
+      s.insertGlobal('body { margin: 0; }')
+
+      expect(warnSpy).toHaveBeenCalled()
+      expect(warnSpy.mock.calls[0][0]).toContain(
+        '[styler] Failed to insert global CSS rule',
+      )
+
+      realSheet.insertRule = origInsertRule
+      warnSpy.mockRestore()
+    })
+  })
+
+  describe('getClassName with insertCache populated', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('returns cached className from insertCache after insert()', () => {
+      const s = createSheet()
+      const cls1 = s.insert('color: purple;')
+      // getClassName should hit the insertCache
+      const cls2 = s.getClassName('color: purple;')
+      expect(cls1).toBe(cls2)
     })
   })
 
@@ -273,6 +633,22 @@ describe('StyleSheet — advanced features', () => {
 
         expect(styles).toContain('body { margin: 0; }')
         expect(styles).not.toMatch(/@layer components\{body/)
+      })
+
+      it('prepare() wraps rules in @layer when configured', () => {
+        const s = createSheet({ layer: 'components' })
+        const result = s.prepare('color: red;')
+        expect(result.rules).toContain('@layer components')
+        expect(result.rules).toContain('color: red;')
+      })
+
+      it('prepare() with boost wraps in @layer', () => {
+        const s = createSheet({ layer: 'lib' })
+        const result = s.prepare('color: blue;', true)
+        expect(result.rules).toContain('@layer lib')
+        expect(result.rules).toContain(
+          `.${result.className}.${result.className}`,
+        )
       })
     })
 

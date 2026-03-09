@@ -345,7 +345,8 @@ export class StyleSheet {
 
   /** Returns collected CSS for SSR as a complete `<style>` tag string. */
   getStyleTag(): string {
-    return `<style ${ATTR}="">${this.ssrBuffer.join('')}</style>`
+    const css = this.ssrBuffer.join('').replace(/<\/style/gi, '<\\/style')
+    return `<style ${ATTR}="">${css}</style>`
   }
 
   /** Returns collected CSS rules as a raw string (useful for streaming SSR). */

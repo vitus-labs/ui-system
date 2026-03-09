@@ -64,4 +64,11 @@ describe('render', () => {
     )
     expect(renderFn(frag as any)).toBe(frag)
   })
+
+  it('should return plain object as-is (fallback branch)', () => {
+    // Plain objects are not valid elements, not primitives, not arrays
+    // This covers the final fallback `return content` (line 52)
+    const obj = { foo: 'bar' }
+    expect(renderFn(obj as any)).toBe(obj)
+  })
 })

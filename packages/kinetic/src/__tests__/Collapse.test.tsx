@@ -340,6 +340,88 @@ describe('Collapse with reducedMotion', () => {
 
 // ─── Additional coverage: leave animation, rapid toggle, timeout, kinetic API ─
 
+describe('Collapse — leaving stage height animation detail', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    mockScrollHeight(150)
+  })
+
+  afterEach(() => vi.useRealTimers())
+
+  it('sets height from scrollHeight then animates to 0 with transition during leave', () => {
+    const { container, rerender } = render(
+      <Collapse show>
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    const wrapper = container.firstChild as HTMLElement
+    expect(wrapper.style.height).toBe('auto')
+
+    // Trigger leave
+    rerender(
+      <Collapse show={false}>
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    // During leaving stage:
+    // 1. transition set to 'none' initially, height set to scrollHeight (150px)
+    // 2. overflow set to 'hidden'
+    // 3. After reflow, transition applied and height set to 0px
+    expect(wrapper.style.height).toBe('0px')
+    expect(wrapper.style.overflow).toBe('hidden')
+    expect(wrapper.style.transition).toBe('height 300ms ease')
+
+    // Content should still be rendered during leaving
+    expect(screen.getByTestId('content')).toBeInTheDocument()
+  })
+
+  it('transitions to hidden stage and unmounts content after leave transitionend', () => {
+    const onAfterLeave = vi.fn()
+
+    const { container, rerender } = render(
+      <Collapse show onAfterLeave={onAfterLeave}>
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    rerender(
+      <Collapse show={false} onAfterLeave={onAfterLeave}>
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    const wrapper = container.firstChild as HTMLElement
+
+    // Fire transitionend to complete the leave
+    act(() => fireTransitionEnd(wrapper))
+
+    // After leave completes: stage → hidden, content unmounted
+    expect(onAfterLeave).toHaveBeenCalledTimes(1)
+    expect(screen.queryByTestId('content')).not.toBeInTheDocument()
+    expect(wrapper.style.height).toBe('0px')
+  })
+
+  it('uses custom transition string during leave animation', () => {
+    const { container, rerender } = render(
+      <Collapse show transition="height 500ms ease-in-out">
+        <div>Hello</div>
+      </Collapse>,
+    )
+
+    rerender(
+      <Collapse show={false} transition="height 500ms ease-in-out">
+        <div>Hello</div>
+      </Collapse>,
+    )
+
+    const wrapper = container.firstChild as HTMLElement
+    expect(wrapper.style.transition).toBe('height 500ms ease-in-out')
+    expect(wrapper.style.height).toBe('0px')
+  })
+})
+
 describe('Collapse — leave animation via transitionend', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -448,6 +530,69 @@ describe('Collapse — appear=true with show=false', () => {
     const wrapper = container.firstChild as HTMLElement
     expect(wrapper.style.height).toBe('0px')
     expect(screen.queryByTestId('content')).not.toBeInTheDocument()
+  })
+})
+
+describe('Collapse — rapid toggle (leaving to entering)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    mockScrollHeight(200)
+  })
+
+  afterEach(() => vi.useRealTimers())
+
+  it('interrupts leave and starts entering when toggled back to show', () => {
+    const onEnter = vi.fn()
+    const onLeave = vi.fn()
+    const onAfterEnter = vi.fn()
+
+    const { container, rerender } = render(
+      <Collapse
+        show
+        onEnter={onEnter}
+        onLeave={onLeave}
+        onAfterEnter={onAfterEnter}
+      >
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    // Start leaving
+    rerender(
+      <Collapse
+        show={false}
+        onEnter={onEnter}
+        onLeave={onLeave}
+        onAfterEnter={onAfterEnter}
+      >
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    expect(onLeave).toHaveBeenCalledTimes(1)
+
+    // Immediately toggle back to show before leave completes
+    // This hits stage === 'leaving' branch in the show=true check
+    rerender(
+      <Collapse
+        show
+        onEnter={onEnter}
+        onLeave={onLeave}
+        onAfterEnter={onAfterEnter}
+      >
+        <div data-testid="content">Hello</div>
+      </Collapse>,
+    )
+
+    expect(onEnter).toHaveBeenCalledTimes(1)
+
+    const wrapper = container.firstChild as HTMLElement
+    expect(wrapper.style.height).toBe('200px')
+
+    // Complete the enter animation
+    act(() => fireTransitionEnd(wrapper))
+    expect(onAfterEnter).toHaveBeenCalledTimes(1)
+    expect(wrapper.style.height).toBe('auto')
   })
 })
 

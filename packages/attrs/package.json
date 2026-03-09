@@ -13,6 +13,8 @@
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
+  "types": "./lib/index.d.ts",
+  "main": "./lib/index.js",
   "files": [
     "lib",
     "!lib/**/*.map",

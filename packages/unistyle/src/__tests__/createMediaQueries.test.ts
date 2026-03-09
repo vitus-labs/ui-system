@@ -64,4 +64,24 @@ describe('createMediaQueries', () => {
     // 768 / 10 = 76.8em
     expect(flat).toContain('76.8em')
   })
+
+  it('skips breakpoint when value is null', () => {
+    const result = createMediaQueries({
+      breakpoints: { xs: 0, broken: null as any },
+      rootSize: 16,
+      css,
+    })
+    expect(result.xs).toBeDefined()
+    expect((result as any).broken).toBeUndefined()
+  })
+
+  it('skips breakpoint when value is undefined', () => {
+    const result = createMediaQueries({
+      breakpoints: { xs: 0, broken: undefined as any },
+      rootSize: 16,
+      css,
+    })
+    expect(result.xs).toBeDefined()
+    expect((result as any).broken).toBeUndefined()
+  })
 })

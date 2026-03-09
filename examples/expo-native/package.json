@@ -1,0 +1,34 @@
+{
+  "name": "@vitus-labs/example-expo-native",
+  "private": true,
+  "version": "0.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo start --ios",
+    "android": "expo start --android"
+  },
+  "dependencies": {
+    "@vitus-labs/attrs": "file:../../packages/attrs",
+    "@vitus-labs/connector-native": "file:../../packages/connector-native",
+    "@vitus-labs/coolgrid": "file:../../packages/coolgrid",
+    "@vitus-labs/core": "file:../../packages/core",
+    "@vitus-labs/elements": "file:../../packages/elements",
+    "@vitus-labs/hooks": "file:../../packages/hooks",
+    "@vitus-labs/kinetic": "file:../../packages/kinetic",
+    "@vitus-labs/kinetic-presets": "file:../../packages/kinetic-presets",
+    "@vitus-labs/rocketstyle": "file:../../packages/rocketstyle",
+    "@vitus-labs/unistyle": "file:../../packages/unistyle",
+    "expo": "~53.0.0",
+    "expo-router": "~5.1.11",
+    "expo-status-bar": "~2.2.0",
+    "react": "19.0.0",
+    "react-native": "0.79.6",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "typescript": "~5.9.3"
+  }
+}

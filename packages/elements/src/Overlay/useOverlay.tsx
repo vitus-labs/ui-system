@@ -663,6 +663,8 @@ const useOverlay = ({
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
+      handleContentPosition.cancel()
+      handleVisibility.cancel()
       if (shouldSetOverflow) document.body.style.overflow = ''
       window.removeEventListener('resize', handleContentPosition)
       window.removeEventListener('scroll', onScroll)
@@ -787,11 +789,9 @@ const useOverlay = ({
 
   // hack-ish way to load content correctly on the first load
   // as `contentRef` is loaded dynamically
-  const contentRefCallback = useCallback((node: HTMLElement) => {
-    if (node) {
-      contentRef.current = node
-      setContentLoaded(true)
-    }
+  const contentRefCallback = useCallback((node: HTMLElement | null) => {
+    contentRef.current = node
+    setContentLoaded(!!node)
   }, [])
 
   return {

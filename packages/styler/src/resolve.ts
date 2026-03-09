@@ -146,8 +146,15 @@ export const normalizeCSS = (css: string): string => {
     last = c
   }
 
-  // Bound cache size to prevent memory leaks
-  if (normCache.size > 2000) normCache.clear()
+  // Evict oldest ~10% to prevent memory leaks without cliff-edge drop
+  if (normCache.size > 2000) {
+    let count = 0
+    for (const key of normCache.keys()) {
+      if (count >= 200) break
+      normCache.delete(key)
+      count++
+    }
+  }
   normCache.set(css, out)
 
   return out

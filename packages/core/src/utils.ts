@@ -60,6 +60,12 @@ const parsePath = (path: string | string[]): string[] => {
   return parts ?? []
 }
 
+// --------------------------------------------------------
+// Blocked keys for prototype-pollution prevention.
+// Used by both get() and set().
+// --------------------------------------------------------
+const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor'])
+
 export const get = (
   obj: any,
   path: string | string[],
@@ -69,7 +75,7 @@ export const get = (
   let result = obj
 
   for (const key of keys) {
-    if (result == null) return defaultValue
+    if (result == null || UNSAFE_KEYS.has(key)) return defaultValue
     result = result[key]
   }
 
@@ -81,7 +87,6 @@ export const get = (
 // Auto-creates intermediate objects/arrays as needed.
 // Blocks prototype-pollution keys (__proto__, constructor, prototype).
 // --------------------------------------------------------
-const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor'])
 
 export const set = (
   obj: Record<string, any>,

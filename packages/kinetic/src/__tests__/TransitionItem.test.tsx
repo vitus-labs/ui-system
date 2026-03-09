@@ -677,6 +677,94 @@ describe('TransitionItem — timeout fallback', () => {
   })
 })
 
+// ─── Unmount branch ──────────────────────────────────────────
+
+describe('TransitionItem — unmount branch', () => {
+  it('returns null when unmount=true (default) and show transitions from true to false', () => {
+    const onAfterLeave = vi.fn()
+
+    const { rerender } = render(
+      <TransitionItem
+        show
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </TransitionItem>,
+    )
+
+    expect(screen.getByTestId('child')).toBeInTheDocument()
+
+    // Trigger leave
+    rerender(
+      <TransitionItem
+        show={false}
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </TransitionItem>,
+    )
+
+    // Still mounted during leave animation
+    expect(screen.getByTestId('child')).toBeInTheDocument()
+
+    const el = screen.getByTestId('child')
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(el))
+
+    // After leave completes, unmount=true removes from DOM completely
+    expect(screen.queryByTestId('child')).not.toBeInTheDocument()
+    expect(onAfterLeave).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps element with display:none when unmount=false after leave completes', () => {
+    const onAfterLeave = vi.fn()
+
+    const { rerender } = render(
+      <TransitionItem
+        show
+        unmount={false}
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </TransitionItem>,
+    )
+
+    // Trigger leave
+    rerender(
+      <TransitionItem
+        show={false}
+        unmount={false}
+        leaveStyle={{ opacity: 1 }}
+        leaveToStyle={{ opacity: 0 }}
+        leaveTransition="opacity 200ms ease-in"
+        onAfterLeave={onAfterLeave}
+      >
+        <div data-testid="child">Hello</div>
+      </TransitionItem>,
+    )
+
+    const el = screen.getByTestId('child')
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(el))
+
+    // After leave completes, unmount=false keeps element but hidden
+    expect(screen.getByTestId('child')).toBeInTheDocument()
+    expect(screen.getByTestId('child').style.display).toBe('none')
+    expect(onAfterLeave).toHaveBeenCalledTimes(1)
+  })
+})
+
 // ─── Reduced motion ─────────────────────────────────────────
 
 describe('TransitionItem — reduced motion', () => {

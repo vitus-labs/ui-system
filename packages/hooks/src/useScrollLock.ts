@@ -2,19 +2,32 @@ import { useEffect } from 'react'
 
 export type UseScrollLock = (enabled: boolean) => void
 
+// Reference counter to handle concurrent scroll locks safely.
+// When multiple overlays/modals lock scroll simultaneously,
+// the original overflow is only restored when the last one unlocks.
+let lockCount = 0
+let originalOverflow: string | undefined
+
 /**
  * Locks page scroll by setting `overflow: hidden` on `document.body`.
- * Restores the original overflow value on disable or unmount.
+ * Uses a reference counter so concurrent locks don't clobber each other.
  */
 const useScrollLock: UseScrollLock = (enabled) => {
   useEffect(() => {
     if (!enabled) return undefined
 
-    const original = document.body.style.overflow
+    if (lockCount === 0) {
+      originalOverflow = document.body.style.overflow
+    }
+    lockCount++
     document.body.style.overflow = 'hidden'
 
     return () => {
-      document.body.style.overflow = original
+      lockCount--
+      if (lockCount === 0) {
+        document.body.style.overflow = originalOverflow ?? ''
+        originalOverflow = undefined
+      }
     }
   }, [enabled])
 }

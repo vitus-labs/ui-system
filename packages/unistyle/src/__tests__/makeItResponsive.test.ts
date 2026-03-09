@@ -173,6 +173,96 @@ describe('makeItResponsive', () => {
     expect(flat).toContain('border-radius: 0.5rem')
   })
 
+  it('skips normalize when normalize is false', () => {
+    const fn = makeItResponsive({
+      key: '$test',
+      css,
+      styles: mockStyles,
+      normalize: false,
+    })
+    const theme = {
+      rootSize: 16,
+      breakpoints: { xs: 0, md: 768 },
+      __VITUS_LABS__: {
+        sortedBreakpoints: ['xs', 'md'],
+        media: {
+          xs: (...args: any[]) => (css as any)(...args),
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
+        },
+      },
+    }
+    // When normalize is false, theme is passed directly to transformTheme
+    const result = fn({
+      theme,
+      $test: { color: { xs: 'red', md: 'blue' } },
+    })
+    expect(result).toBeDefined()
+    expect(Array.isArray(result)).toBe(true)
+  })
+
+  it('returns empty string for breakpoints not in optimized theme', () => {
+    const fn = makeItResponsive({
+      key: '$test',
+      css,
+      styles: mockStyles,
+      normalize: true,
+    })
+    const theme = {
+      rootSize: 16,
+      breakpoints: { xs: 0, md: 768, lg: 1024 },
+      __VITUS_LABS__: {
+        sortedBreakpoints: ['xs', 'md', 'lg'],
+        media: {
+          xs: (...args: any[]) => (css as any)(...args),
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
+          lg: (...args: any[]) =>
+            css`@media (min-width: 64em) { ${(css as any)(...args)} }`,
+        },
+      },
+    }
+    // Only xs has a value, md and lg will be optimized away
+    const result = fn({
+      theme,
+      $test: { color: 'red' },
+    })
+    expect(Array.isArray(result)).toBe(true)
+    // Some entries in the array should be empty strings (optimized-out breakpoints)
+    const emptyEntries = result.filter((r: any) => r === '')
+    expect(emptyEntries.length).toBeGreaterThan(0)
+  })
+
+  it('uses cache on second call with same theme object', () => {
+    const fn = makeItResponsive({
+      key: '$test',
+      css,
+      styles: mockStyles,
+      normalize: true,
+    })
+    const theme = {
+      rootSize: 16,
+      breakpoints: { xs: 0, md: 768 },
+      __VITUS_LABS__: {
+        sortedBreakpoints: ['xs', 'md'],
+        media: {
+          xs: (...args: any[]) => (css as any)(...args),
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
+        },
+      },
+    }
+    const internalTheme = { color: { xs: 'red', md: 'blue' } }
+    const props = { theme, $test: internalTheme }
+
+    const result1 = fn(props)
+    const result2 = fn(props)
+
+    // Both should produce valid results (cache hit on second call)
+    expect(result1).toBeDefined()
+    expect(result2).toBeDefined()
+  })
+
   it('returns empty when media is undefined in breakpoint map', () => {
     const fn = makeItResponsive({
       key: '$test',

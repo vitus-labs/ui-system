@@ -156,6 +156,35 @@ describe('createJSXCodeArray', () => {
   })
 })
 
+describe('createJSXCode edge cases', () => {
+  it('filters function values from props', () => {
+    // parseProps line 42: function type falls through to `return acc`
+    const fn = () => undefined
+    const result = createJSXCode('Button', { onClick: fn as any })
+    expect(result).not.toContain('onClick')
+  })
+
+  it('filters undefined values from props', () => {
+    // undefined is not string/number/boolean/bigint/array/object → falls through to `return acc`
+    const result = createJSXCode('Button', { value: undefined })
+    expect(result).not.toContain('value=')
+  })
+
+  it('handles object with single key (no trailing comma)', () => {
+    // stringifyObject: when arrayLength === i + 1, no comma
+    const result = createJSXCode('Button', { style: { color: 'red' } })
+    expect(result).not.toMatch(/red"\s*,\s*}/)
+  })
+
+  it('handles control object where defaultValue is falsy', () => {
+    // parseProps: `defaultValue || options` falls back to options when defaultValue is falsy
+    const result = createJSXCode('Button', {
+      size: { type: 'select', options: ['sm', 'lg'], value: '' },
+    })
+    expect(result).toContain('size=')
+  })
+})
+
 describe('generateMainJSXCode extended', () => {
   it('includes boolean dimension comment when booleanDimensions provided', () => {
     const result = generateMainJSXCode({

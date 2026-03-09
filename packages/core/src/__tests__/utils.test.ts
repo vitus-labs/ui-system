@@ -146,6 +146,33 @@ describe('get', () => {
   it('should use defaultValue only when result is undefined', () => {
     expect(get({ a: undefined }, 'a', 'default')).toBe('default')
   })
+
+  // UNSAFE_KEYS guard
+  it('should return defaultValue for __proto__ key', () => {
+    const obj = { a: 1 }
+    expect(get(obj, '__proto__', 'safe')).toBe('safe')
+  })
+
+  it('should return defaultValue for prototype key', () => {
+    const obj = { a: 1 }
+    expect(get(obj, 'prototype', 'safe')).toBe('safe')
+  })
+
+  it('should return defaultValue for constructor key', () => {
+    const obj = { a: 1 }
+    expect(get(obj, 'constructor', 'safe')).toBe('safe')
+  })
+
+  it('should return defaultValue for __proto__ in nested path', () => {
+    const obj = { a: { b: 1 } }
+    expect(get(obj, 'a.__proto__.c', 'safe')).toBe('safe')
+  })
+
+  it('should return obj itself for empty string path (no keys parsed)', () => {
+    // parsePath('') returns [] → no iteration → result stays as obj
+    // obj is not undefined → returned as-is
+    expect(get({ a: 1 }, '')).toEqual({ a: 1 })
+  })
 })
 
 // --------------------------------------------------------
@@ -206,6 +233,40 @@ describe('set', () => {
     const obj = {}
     set(obj, 'constructor.prototype.polluted', true)
     expect(({} as any).polluted).toBeUndefined()
+  })
+
+  it('should bail out when intermediate key is __proto__', () => {
+    const obj: any = { a: 1 }
+    const result = set(obj, '__proto__.polluted', true)
+    expect(result).toBe(obj)
+    expect(({} as any).polluted).toBeUndefined()
+  })
+
+  it('should bail out when next key in path is unsafe', () => {
+    const obj: any = {}
+    const result = set(obj, 'a.__proto__', 'bad')
+    expect(result).toBe(obj)
+    expect(obj.a).toBeUndefined()
+  })
+
+  it('should bail out when last key is unsafe', () => {
+    const obj: any = {}
+    set(obj, 'prototype', 'bad')
+    // prototype is in UNSAFE_KEYS, so the set should be blocked
+    expect(obj.prototype).toBeUndefined()
+  })
+
+  it('should handle bracket notation in paths', () => {
+    const obj: any = {}
+    set(obj, 'items[0].name', 'first')
+    expect(obj.items[0].name).toBe('first')
+  })
+
+  it('should not overwrite existing intermediate objects', () => {
+    const obj: any = { a: { existing: true } }
+    set(obj, 'a.b', 'new')
+    expect(obj.a.existing).toBe(true)
+    expect(obj.a.b).toBe('new')
   })
 })
 
@@ -336,6 +397,36 @@ describe('throttle', () => {
     expect(fn).toHaveBeenCalledTimes(2)
     expect(fn).toHaveBeenLastCalledWith('second')
   })
+
+  it('should not fire trailing call when cancelled before timer fires', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100)
+
+    // Leading call fires immediately
+    throttled('first')
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // Call again within wait period — queues trailing
+    throttled('second')
+
+    // Cancel before trailing timer fires
+    throttled.cancel()
+
+    vi.advanceTimersByTime(200)
+    // Should not have fired the trailing call
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should handle leading: false with trailing: false (no calls fire)', () => {
+    const fn = vi.fn()
+    const throttled = throttle(fn, 100, { leading: false, trailing: false })
+
+    throttled('a')
+    expect(fn).toHaveBeenCalledTimes(0)
+
+    vi.advanceTimersByTime(200)
+    expect(fn).toHaveBeenCalledTimes(0)
+  })
 })
 
 // --------------------------------------------------------
@@ -406,5 +497,42 @@ describe('merge', () => {
     )
     merge({}, malicious)
     expect(({} as any).polluted).toBeUndefined()
+  })
+
+  it('should not pollute via prototype key', () => {
+    const malicious = { prototype: { polluted: true } }
+    merge({}, malicious)
+    expect(({} as any).polluted).toBeUndefined()
+  })
+
+  it('should overwrite target plain object with source array', () => {
+    const target = { a: { b: 1 } }
+    const source = { a: [1, 2, 3] }
+    const result = merge({ ...target }, source as any)
+    expect(result.a).toEqual([1, 2, 3])
+  })
+
+  it('should overwrite target array with source plain object', () => {
+    const target = { a: [1, 2] } as any
+    const source = { a: { key: 'value' } }
+    const result = merge({ ...target }, source)
+    expect(result.a).toEqual({ key: 'value' })
+  })
+
+  it('should handle source with class instances (non-plain objects)', () => {
+    class MyClass {
+      x = 1
+    }
+    const instance = new MyClass()
+    const target = { a: { old: true } }
+    const result = merge({ ...target }, { a: instance } as any)
+    // class instances are not plain objects, so they replace (not deep merge)
+    expect(result.a).toBe(instance)
+  })
+
+  it('should handle empty sources array', () => {
+    const target = { a: 1 }
+    const result = merge(target)
+    expect(result).toEqual({ a: 1 })
   })
 })

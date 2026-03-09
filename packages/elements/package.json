@@ -10,11 +10,13 @@
   "sideEffects": false,
   "exports": {
     "source": "./src/index.ts",
+    "react-native": "./lib/vitus-labs-elements.native.js",
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "types": "./lib/index.d.ts",
   "react-native": "./lib/vitus-labs-elements.native.js",
+  "main": "./lib/index.js",
   "files": [
     "lib",
     "!lib/**/*.map",
@@ -59,7 +61,16 @@
     "@vitus-labs/core": "2.0.0-alpha.27",
     "@vitus-labs/unistyle": "2.0.0-alpha.27",
     "react": ">= 19",
-    "react-dom": ">= 19"
+    "react-dom": ">= 19",
+    "react-native": ">= 0.76"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",

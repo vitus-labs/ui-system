@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React, { createRef } from 'react'
+import attrsComponent from '~/attrs'
 import attrs from '~/init'
 import isAttrsComponent from '~/isAttrsComponent'
 
@@ -343,6 +344,55 @@ describe('isAttrsComponent', () => {
 
   it('should return true for objects with IS_ATTRS property', () => {
     expect(isAttrsComponent({ IS_ATTRS: true })).toBe(true)
+  })
+})
+
+// --------------------------------------------------------
+// displayName fallback
+// --------------------------------------------------------
+describe('displayName resolution', () => {
+  it('should fall back to component.displayName when name is not provided', () => {
+    const NamedComponent = (props: any) => (
+      <div data-testid="named" {...props}>
+        {props.children}
+      </div>
+    )
+    NamedComponent.displayName = 'MyDisplayName'
+
+    // Use attrsComponent directly to bypass init validation
+    const Component = attrsComponent({
+      name: undefined as any,
+      component: NamedComponent,
+      attrs: [],
+      priorityAttrs: [],
+      filterAttrs: [],
+      compose: {},
+      statics: {},
+    })
+    // componentName = options.name ?? options.component.displayName ?? options.component.name
+    expect(Component.displayName).toBe('MyDisplayName')
+  })
+
+  it('should fall back to component.name when name and displayName are not provided', () => {
+    function ExplicitNameComponent(props: any) {
+      return (
+        <div data-testid="fn" {...props}>
+          {props.children}
+        </div>
+      )
+    }
+
+    // Use attrsComponent directly to bypass init validation
+    const Component = attrsComponent({
+      name: undefined as any,
+      component: ExplicitNameComponent,
+      attrs: [],
+      priorityAttrs: [],
+      filterAttrs: [],
+      compose: {},
+      statics: {},
+    })
+    expect(Component.displayName).toBe('ExplicitNameComponent')
   })
 })
 

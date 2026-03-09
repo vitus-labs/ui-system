@@ -32,9 +32,16 @@ const spacingStyles: SpacingStyles = ({ gap, gutter }, { rootSize }) => {
   const spacingX = (g / 2) * -1
   const spacingY = isNumber(gutter) ? (gutter as number) - g / 2 : g / 2
 
-  return css`
-    margin: ${getValue(spacingY)} ${getValue(spacingX)};
-  `
+  return __WEB__
+    ? css`
+        margin: ${getValue(spacingY)} ${getValue(spacingX)};
+      `
+    : css`
+        margin-top: ${getValue(spacingY)};
+        margin-bottom: ${getValue(spacingY)};
+        margin-left: ${getValue(spacingX)};
+        margin-right: ${getValue(spacingX)};
+      `
 }
 
 /** Maps the contentAlignX prop to a CSS justify-content value. */

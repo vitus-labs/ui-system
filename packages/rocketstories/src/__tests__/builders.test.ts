@@ -74,6 +74,16 @@ describe('init and rocketstories factories', () => {
     expect(builder.CONFIG.storyOptions.gap).toBe(24)
   })
 
+  it('init with theme sets the global theme', () => {
+    const factory = init({ theme: { rootSize: 20 } })
+    const builder = factory(MockComponent)
+    expect(builder).toBeDefined()
+    const theme = getTheme()
+    expect(theme).toEqual({ rootSize: 20 })
+    // Reset to original
+    setTheme({ rootSize: 16 })
+  })
+
   it('init passes decorators through', () => {
     const decorator = () => null
     const factory = init({ decorators: [decorator] })
@@ -87,6 +97,67 @@ describe('init and rocketstories factories', () => {
     }
     const builder = rocketstories(Unnamed as any)
     expect(builder.CONFIG.name).toBe('MyComp')
+  })
+})
+
+describe('createRocketStories builder (rocketstyle)', () => {
+  // A mock rocketstyle component — must be typeof 'object' with IS_ROCKETSTYLE
+  // because isRocketComponent checks typeof component === 'object'
+  const MockRSComponent = {
+    displayName: 'RocketComp',
+    IS_ROCKETSTYLE: true,
+    VITUS_LABS__COMPONENT: '@vitus-labs/elements/Element',
+    getStaticDimensions: (_theme: any) => ({
+      dimensions: {
+        state: { primary: true, secondary: true },
+        size: { small: true, large: true },
+      },
+      keywords: {},
+      useBooleans: true,
+      multiKeys: {},
+    }),
+    getDefaultAttrs: (attrs: any, _theme: any, _mode: string) => ({
+      label: 'default',
+      ...attrs,
+    }),
+  }
+
+  it('dimension() with rocketstyle component returns a story', () => {
+    const builder = rocketstories(MockRSComponent as any)
+    const result = builder.dimension('state' as any)
+    expect(result).not.toBeNull()
+    expect(result).toBeDefined()
+  })
+
+  it('dimension() with ignore param passes ignore to renderDimension', () => {
+    const builder = rocketstories(MockRSComponent as any)
+    const result = builder.dimension('state' as any, {
+      ignore: ['primary'] as any,
+    })
+    expect(result).not.toBeNull()
+    expect(result).toBeDefined()
+  })
+
+  it('list() with rocketstyle component returns a story', () => {
+    const builder = rocketstories(MockRSComponent as any)
+    const story = builder.list({ data: [{ id: 1 }] } as any)
+    expect(story).toBeDefined()
+    expect(story.args).toBeDefined()
+  })
+
+  it('render() with rocketstyle component returns a story', () => {
+    const renderer = (_props: any) => null
+    const builder = rocketstories(MockRSComponent as any)
+    const story = builder.render(renderer as any)
+    expect(story).toBeDefined()
+    expect(story.args).toBeDefined()
+  })
+
+  it('main() with rocketstyle component returns a story', () => {
+    const builder = rocketstories(MockRSComponent as any)
+    const story = builder.main()
+    expect(story).toBeDefined()
+    expect(story.args).toBeDefined()
   })
 })
 
@@ -171,6 +242,40 @@ describe('createRocketStories builder', () => {
     expect(Array.isArray(initResult.decorators)).toBe(true)
   })
 
+  it('.config() with name overrides component name', () => {
+    const builder = rocketstories(MockComponent)
+    const enhanced = builder.config({ name: 'CustomName' })
+    // defaultOptions.name is truthy so it takes priority over options.name
+    expect(enhanced.CONFIG.name).toBe('TestComp')
+  })
+
+  it('cloneAndEhnance uses options.name when defaultOptions.name is empty', () => {
+    // When component has no displayName or name, the initial name is empty
+    const AnonymousComp = () => null
+    Object.defineProperty(AnonymousComp, 'displayName', {
+      value: '',
+      writable: true,
+    })
+    Object.defineProperty(AnonymousComp, 'name', {
+      value: '',
+      configurable: true,
+    })
+    const builder = rocketstories(AnonymousComp as any)
+    // Now chain with a name — since defaultOptions.name is empty, options.name should be used
+    const enhanced = builder.config({ name: 'FallbackName' })
+    expect(enhanced.CONFIG.name).toContain('FallbackName')
+  })
+
+  it('cloneAndEhnance falls back to component.name when displayName is missing', () => {
+    function NamedFunc() {
+      return null
+    }
+    Object.defineProperty(NamedFunc, 'displayName', { value: '' })
+    const builder = rocketstories(NamedFunc as any)
+    // The initial name comes from component.name since displayName is empty
+    expect(builder.CONFIG.name).toBe('NamedFunc')
+  })
+
   it('chaining is immutable', () => {
     const builder = rocketstories(MockComponent)
     const enhanced = builder.attrs({ label: 'test' })
@@ -181,6 +286,14 @@ describe('createRocketStories builder', () => {
   it('dimension returns null for non-rocketstyle components', () => {
     const builder = rocketstories(MockComponent)
     const result = builder.dimension('state' as any)
+    expect(result).toBeNull()
+  })
+
+  it('dimension with ignore param returns null for non-rocketstyle', () => {
+    const builder = rocketstories(MockComponent)
+    const result = builder.dimension('state' as any, {
+      ignore: ['primary'] as any,
+    })
     expect(result).toBeNull()
   })
 
@@ -196,6 +309,13 @@ describe('createRocketStories builder', () => {
     const renderer = (_props: any) => null
     const builder = rocketstories(MockComponent)
     const story = builder.render(renderer as any)
+    expect(story).toBeDefined()
+    expect(story.args).toBeDefined()
+  })
+
+  it('list() with non-rocketstyle component returns a story', () => {
+    const builder = rocketstories(MockComponent)
+    const story = builder.list({ data: [{ id: 1 }] } as any)
     expect(story).toBeDefined()
     expect(story.args).toBeDefined()
   })

@@ -104,7 +104,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
     // (2) if booleans are being used let's find the rest
     if (useBooleans) {
-      const propsKeys = Object.keys(props).reverse()
+      const propsKeys = Object.keys(props)
 
       Object.entries(result).forEach(([key, value]) => {
         // @ts-expect-error
@@ -113,21 +113,22 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
         // when value in result is not assigned yet
         if (!value) {
           let newDimensionValue: string | string[] | undefined
-          const keywords = Object.keys(
-            dimensions[key] as Record<string, unknown>,
+          const keywordSet = new Set(
+            Object.keys(dimensions[key] as Record<string, unknown>),
           )
 
           if (isMultiKey) {
-            newDimensionValue = propsKeys.filter((key) =>
-              keywords.includes(key),
-            )
+            newDimensionValue = propsKeys.filter((key) => keywordSet.has(key))
           } else {
-            // reverse props to guarantee the last one will have
+            // iterate backwards to guarantee the last one will have
             // a priority over previous ones
-            newDimensionValue = propsKeys.find((key) => {
-              if (keywords.includes(key) && props[key]) return key
-              return false
-            })
+            for (let i = propsKeys.length - 1; i >= 0; i--) {
+              const k = propsKeys[i]!
+              if (keywordSet.has(k) && props[k]) {
+                newDimensionValue = k
+                break
+              }
+            }
           }
 
           result[key] = newDimensionValue

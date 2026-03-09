@@ -10,11 +10,13 @@
   "sideEffects": false,
   "exports": {
     "source": "./src/index.ts",
+    "react-native": "./lib/vitus-labs-coolgrid.native.js",
     "import": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "types": "./lib/index.d.ts",
   "react-native": "./lib/vitus-labs-coolgrid.native.js",
+  "main": "./lib/index.js",
   "files": [
     "lib",
     "!lib/**/*.map",
@@ -62,13 +64,20 @@
   "peerDependencies": {
     "@vitus-labs/core": "2.0.0-alpha.27",
     "@vitus-labs/unistyle": "2.0.0-alpha.27",
-    "react": ">= 19"
+    "react": ">= 19",
+    "react-native": ">= 0.76"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/tools-rolldown": "1.9.1-alpha.19",
     "@vitus-labs/tools-storybook": "1.9.1-alpha.19",
     "@vitus-labs/tools-typescript": "1.9.1-alpha.19",
-    "@vitus-labs/unistyle": "workspace:*"
+    "@vitus-labs/unistyle": "workspace:*",
+    "react-native": ">=0.76.0"
   }
 }

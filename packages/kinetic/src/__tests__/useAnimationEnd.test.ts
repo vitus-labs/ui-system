@@ -183,4 +183,109 @@ describe('useAnimationEnd', () => {
 
     expect(value).toBe(2)
   })
+
+  it('does not fire when active=true but ref.current is null', () => {
+    const onEnd = vi.fn()
+    const ref = { current: null }
+
+    renderHook(() =>
+      useAnimationEnd({
+        ref: ref as React.RefObject<HTMLElement | null>,
+        onEnd,
+        active: true,
+        timeout: 100,
+      }),
+    )
+
+    // No timer should be set when ref is null
+    act(() => {
+      vi.advanceTimersByTime(200)
+    })
+
+    expect(onEnd).not.toHaveBeenCalled()
+  })
+
+  it('does not call onEnd twice when transitionend fires and then timeout fires', () => {
+    const onEnd = vi.fn()
+    const ref = createMockRef()
+
+    renderHook(() =>
+      useAnimationEnd({ ref, onEnd, active: true, timeout: 1000 }),
+    )
+
+    // First: transitionend fires — calls done()
+    act(() => {
+      const event = new Event('transitionend', { bubbles: true })
+      Object.defineProperty(event, 'target', { value: ref.current })
+      ref.current.dispatchEvent(event)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(1)
+
+    // Second: timeout fires — should be no-op because calledRef.current is true
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not call onEnd twice when timeout fires and then transitionend fires', () => {
+    const onEnd = vi.fn()
+    const ref = createMockRef()
+
+    renderHook(() =>
+      useAnimationEnd({ ref, onEnd, active: true, timeout: 500 }),
+    )
+
+    // First: timeout fires — calls done()
+    act(() => {
+      vi.advanceTimersByTime(500)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(1)
+
+    // Second: transitionend fires — should be no-op via calledRef guard
+    act(() => {
+      const event = new Event('transitionend', { bubbles: true })
+      Object.defineProperty(event, 'target', { value: ref.current })
+      ref.current.dispatchEvent(event)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('resets calledRef when active transitions from true to false', () => {
+    const onEnd = vi.fn()
+    const ref = createMockRef()
+
+    const { rerender } = renderHook(
+      ({ active }) => useAnimationEnd({ ref, onEnd, active, timeout: 1000 }),
+      { initialProps: { active: true } },
+    )
+
+    // Fire to set calledRef = true
+    act(() => {
+      const event = new Event('transitionend', { bubbles: true })
+      Object.defineProperty(event, 'target', { value: ref.current })
+      ref.current.dispatchEvent(event)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(1)
+
+    // Deactivate — resets calledRef
+    rerender({ active: false })
+
+    // Re-activate
+    rerender({ active: true })
+
+    // Should be able to fire again
+    act(() => {
+      const event = new Event('transitionend', { bubbles: true })
+      Object.defineProperty(event, 'target', { value: ref.current })
+      ref.current.dispatchEvent(event)
+    })
+
+    expect(onEnd).toHaveBeenCalledTimes(2)
+  })
 })

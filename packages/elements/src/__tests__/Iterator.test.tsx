@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { Fragment } from 'react'
 import Iterator from '../helpers/Iterator/component'
 
 const TextItem = ({ children, ...props }: any) => (
@@ -60,6 +61,42 @@ describe('Iterator', () => {
       )
       expect(screen.getByTestId('frag-1')).toBeInTheDocument()
       expect(screen.getByTestId('frag-2')).toBeInTheDocument()
+    })
+
+    it('renders React.Fragment children with itemProps', () => {
+      const itemPropsFn = vi.fn((_item, extended) => ({
+        'data-pos': String(extended.position),
+      }))
+      render(
+        <Iterator itemProps={itemPropsFn}>
+          {/* biome-ignore lint/complexity/noUselessFragments: intentionally testing Fragment detection */}
+          <Fragment>
+            <span data-testid="frag-a">A</span>
+            <span data-testid="frag-b">B</span>
+          </Fragment>
+        </Iterator>,
+      )
+      expect(itemPropsFn).toHaveBeenCalled()
+      expect(screen.getByTestId('frag-a')).toBeInTheDocument()
+      expect(screen.getByTestId('frag-b')).toBeInTheDocument()
+    })
+
+    it('renders React.Fragment children with wrapComponent', () => {
+      const Wrap = ({ children }: any) => (
+        <div data-testid="wrap">{children}</div>
+      )
+      render(
+        <Iterator wrapComponent={Wrap}>
+          {/* biome-ignore lint/complexity/noUselessFragments: intentionally testing Fragment detection */}
+          <Fragment>
+            <span data-testid="frag-a">A</span>
+            <span data-testid="frag-b">B</span>
+          </Fragment>
+        </Iterator>,
+      )
+      expect(screen.getAllByTestId('wrap')).toHaveLength(2)
+      expect(screen.getByTestId('frag-a')).toBeInTheDocument()
+      expect(screen.getByTestId('frag-b')).toBeInTheDocument()
     })
 
     it('children take priority over data', () => {
@@ -327,6 +364,51 @@ describe('Iterator', () => {
       expect(wraps[1]).toHaveAttribute('data-pos', '2')
     })
 
+    it('wraps object array items with wrapComponent and wrapProps callback', () => {
+      const wrapPropsFn = vi.fn((_item, extended) => ({
+        'data-pos': String(extended.position),
+      }))
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
+      const Wrap = ({ children, ...rest }: any) => (
+        <div data-testid="wrap" {...rest}>
+          {children}
+        </div>
+      )
+      render(
+        <Iterator
+          component={Item}
+          data={[{ name: 'Alice' }, { name: 'Bob' }]}
+          wrapComponent={Wrap}
+          wrapProps={wrapPropsFn}
+        />,
+      )
+      const wraps = screen.getAllByTestId('wrap')
+      expect(wraps).toHaveLength(2)
+      expect(wraps[0]).toHaveAttribute('data-pos', '1')
+      expect(wraps[1]).toHaveAttribute('data-pos', '2')
+    })
+
+    it('passes itemProps callback to object array items', () => {
+      const itemPropsFn = vi.fn((_item, extended) => ({
+        'data-first': String(extended.first),
+      }))
+      const Item = ({ name, ...rest }: any) => (
+        <span data-testid="item" {...rest}>
+          {name}
+        </span>
+      )
+      render(
+        <Iterator
+          component={Item}
+          data={[{ name: 'Alice' }, { name: 'Bob' }]}
+          itemProps={itemPropsFn}
+        />,
+      )
+      const items = screen.getAllByTestId('item')
+      expect(items[0]).toHaveAttribute('data-first', 'true')
+      expect(items[1]).toHaveAttribute('data-first', 'false')
+    })
+
     it('skips wrapComponent for items with custom component in object array', () => {
       const Default = ({ label }: any) => (
         <span data-testid="default">{label}</span>
@@ -368,6 +450,145 @@ describe('Iterator', () => {
         </Iterator>,
       )
       expect(itemPropsFn).toHaveBeenCalled()
+    })
+  })
+
+  describe('simple array without wrapComponent or itemProps', () => {
+    it('renders simple array items without wrapComponent or itemProps', () => {
+      render(<Iterator component={TextItem} data={['x', 'y', 'z']} />)
+      const items = screen.getAllByTestId('item')
+      expect(items).toHaveLength(3)
+      expect(items[0]).toHaveTextContent('x')
+      expect(items[2]).toHaveTextContent('z')
+    })
+  })
+
+  describe('simple array with wrapComponent but no wrapProps', () => {
+    it('wraps simple array items without wrapProps', () => {
+      const Wrap = ({ children }: any) => (
+        <div data-testid="wrap">{children}</div>
+      )
+      render(
+        <Iterator
+          component={TextItem}
+          data={['a', 'b']}
+          wrapComponent={Wrap}
+        />,
+      )
+      expect(screen.getAllByTestId('wrap')).toHaveLength(2)
+      expect(screen.getAllByTestId('item')).toHaveLength(2)
+    })
+  })
+
+  describe('simple array with wrapComponent and static wrapProps', () => {
+    it('passes static wrapProps to wrapComponent for simple array', () => {
+      const Wrap = ({ children, extra }: any) => (
+        <div data-testid="wrap" data-extra={extra}>
+          {children}
+        </div>
+      )
+      render(
+        <Iterator
+          component={TextItem}
+          data={['a']}
+          wrapComponent={Wrap}
+          wrapProps={{ extra: 'static' }}
+        />,
+      )
+      expect(screen.getByTestId('wrap')).toHaveAttribute('data-extra', 'static')
+    })
+  })
+
+  describe('object array without wrapComponent', () => {
+    it('renders object array items without wrapComponent', () => {
+      const Item = ({ name }: any) => <span data-testid="item">{name}</span>
+      render(
+        <Iterator
+          component={Item}
+          data={[{ name: 'Alice' }, { name: 'Bob' }]}
+        />,
+      )
+      const items = screen.getAllByTestId('item')
+      expect(items).toHaveLength(2)
+    })
+  })
+
+  describe('object array with static itemProps', () => {
+    it('passes static itemProps object to object array items', () => {
+      const Item = ({ name, extra, ...rest }: any) => (
+        <span data-testid="item" data-extra={extra} {...rest}>
+          {name}
+        </span>
+      )
+      render(
+        <Iterator
+          component={Item}
+          data={[{ name: 'Alice' }]}
+          itemProps={{ extra: 'val' }}
+        />,
+      )
+      expect(screen.getByTestId('item')).toHaveAttribute('data-extra', 'val')
+    })
+  })
+
+  describe('children rendering paths', () => {
+    it('renders single child without itemProps or wrapComponent (direct passthrough)', () => {
+      render(
+        <Iterator>
+          <span data-testid="single">Single</span>
+        </Iterator>,
+      )
+      expect(screen.getByTestId('single')).toHaveTextContent('Single')
+    })
+
+    it('renders array children without itemProps or wrapComponent', () => {
+      render(
+        <Iterator>
+          <span data-testid="a">A</span>
+          <span data-testid="b">B</span>
+        </Iterator>,
+      )
+      expect(screen.getByTestId('a')).toBeInTheDocument()
+      expect(screen.getByTestId('b')).toBeInTheDocument()
+    })
+
+    it('renders single child with wrapComponent', () => {
+      const Wrap = ({ children }: any) => (
+        <div data-testid="wrap">{children}</div>
+      )
+      render(
+        <Iterator wrapComponent={Wrap}>
+          <span data-testid="only">Only</span>
+        </Iterator>,
+      )
+      expect(screen.getByTestId('wrap')).toBeInTheDocument()
+      expect(screen.getByTestId('only')).toBeInTheDocument()
+    })
+
+    it('renders single child with itemProps function', () => {
+      const itemPropsFn = vi.fn((_item, extended) => ({
+        'data-pos': String(extended.position),
+      }))
+      render(
+        <Iterator itemProps={itemPropsFn}>
+          <span data-testid="only">Only</span>
+        </Iterator>,
+      )
+      expect(itemPropsFn).toHaveBeenCalledTimes(1)
+    })
+
+    it('renders Fragment children with neither itemProps nor wrapComponent', () => {
+      const Frag = Fragment
+      render(
+        <Iterator>
+          <Frag>
+            <span data-testid="a">A</span>
+            <span data-testid="b">B</span>
+          </Frag>
+        </Iterator>,
+      )
+      expect(screen.getByTestId('a')).toBeInTheDocument()
+      expect(screen.getByTestId('b')).toBeInTheDocument()
     })
   })
 

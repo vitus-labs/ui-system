@@ -75,4 +75,4 @@ export type ElementType<O extends string[]> = FC<
   VITUS_LABS__COMPONENT: string
 }
 
-export type Context = Partial<ConfigurationProps>
+export type Context = Partial<ConfigurationProps> & { RNparentWidth?: number }

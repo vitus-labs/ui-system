@@ -272,6 +272,53 @@ describe('Provider/Consumer integration', () => {
     })
   })
 
+  describe('Provider inversed prop', () => {
+    it('inversed prop on Provider flips mode from light to dark', () => {
+      const Button: any = rocketstyle()({
+        name: 'InvProvBtn',
+        component: BaseComponent,
+      }).config({})
+
+      render(
+        <Provider theme={{ rootSize: 16 }} mode="light" inversed>
+          <Button data-testid="btn">Inversed provider</Button>
+        </Provider>,
+      )
+
+      expect(screen.getByTestId('btn')).toBeInTheDocument()
+    })
+
+    it('inversed prop on Provider flips mode from dark to light', () => {
+      const Button: any = rocketstyle()({
+        name: 'InvProvBtn2',
+        component: BaseComponent,
+      }).config({})
+
+      render(
+        <Provider theme={{ rootSize: 16 }} mode="dark" inversed>
+          <Button data-testid="btn">Dark inversed</Button>
+        </Provider>,
+      )
+
+      expect(screen.getByTestId('btn')).toBeInTheDocument()
+    })
+
+    it('Provider without mode uses default mode', () => {
+      const Button: any = rocketstyle()({
+        name: 'NoModeBtn',
+        component: BaseComponent,
+      }).config({})
+
+      render(
+        <Provider theme={{ rootSize: 16 }}>
+          <Button data-testid="btn">No mode</Button>
+        </Provider>,
+      )
+
+      expect(screen.getByTestId('btn')).toBeInTheDocument()
+    })
+  })
+
   describe('nested providers', () => {
     it('supports nested provider components', () => {
       const Outer: any = rocketstyle()({

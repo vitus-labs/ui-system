@@ -21,6 +21,7 @@ type TransitionItemProps = ClassTransitionProps &
     appear?: boolean
     unmount?: boolean
     timeout?: number
+    delay?: number
     children: React.ReactElement<any>
   }
 
