@@ -1,6 +1,6 @@
 # @vitus-labs/coolgrid
 
-Responsive grid system for React and styled-components.
+Responsive grid system for React.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/coolgrid)](https://www.npmjs.com/package/@vitus-labs/coolgrid)
 [![license](https://img.shields.io/npm/l/@vitus-labs/coolgrid)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
@@ -20,7 +20,7 @@ Bootstrap-inspired Container / Row / Col grid with context-cascading configurati
 ## Installation
 
 ```bash
-npm install @vitus-labs/coolgrid @vitus-labs/core @vitus-labs/unistyle styled-components
+npm install @vitus-labs/coolgrid @vitus-labs/core @vitus-labs/unistyle
 ```
 
 ## Quick Start
@@ -213,6 +213,10 @@ All numeric props support three formats:
 <Col size={{ xs: 12, md: 6, lg: 4 }} />
 ```
 
+## React Native
+
+Coolgrid includes native components (`Col.native.tsx`, `Row.native.tsx`) that use `onLayout` measurement instead of CSS `calc()`. Works automatically when initialized with `@vitus-labs/connector-native`.
+
 ## Peer Dependencies
 
 | Package | Version |
@@ -220,7 +224,7 @@ All numeric props support three formats:
 | react | >= 19 |
 | @vitus-labs/core | * |
 | @vitus-labs/unistyle | * |
-| styled-components | >= 6 |
+| react-native | >= 0.76 (optional) |
 
 ## License
 
