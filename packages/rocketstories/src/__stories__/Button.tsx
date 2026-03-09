@@ -23,7 +23,7 @@ const RightContent = styled.span`
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
 
-  ${({ hover }) =>
+  ${({ hover }: any) =>
     hover &&
     config.css`
         &:hover {
@@ -96,9 +96,9 @@ export const Button = rocketstyle()({ name: 'Button', component: Element })
     `,
   )
 
-const ExtendedButtonA = (props) => <Button {...props} />
+const ExtendedButtonA = (props: any) => <Button {...props} />
 
-const ExampleComponent = (props) => <span {...props} />
+const ExampleComponent = (props: any) => <span {...props} />
 
 export const ElementExample = rocketstyle()({
   name: 'Button',
@@ -114,7 +114,7 @@ export const ElementExample = rocketstyle()({
   })
   .styles(
     (css) => css`
-      ${({ $rocketstyle: t }) => css`
+      ${({ $rocketstyle: t }: any) => css`
         color: ${t.color};
       `};
     `,
