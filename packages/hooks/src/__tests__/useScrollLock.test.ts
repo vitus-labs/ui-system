@@ -101,7 +101,11 @@ describe('useScrollLock', () => {
     const { unmount } = renderHook(() => useScrollLock(true))
 
     // Restore the real property so subsequent set calls work
-    Object.defineProperty(document.body.style, 'overflow', descriptor)
+    Object.defineProperty(
+      document.body.style,
+      'overflow',
+      descriptor as PropertyDescriptor,
+    )
 
     unmount()
     // originalOverflow was undefined, so ?? '' should produce ''
