@@ -87,16 +87,20 @@ describe('RocketStoryHoc', () => {
       name: 'TestButton',
       component: MockRSComponent as any,
       attrs: { label: 'Click me' },
-      controls: { label: 'text' },
+      controls: { label: 'text' as any },
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story).toBeDefined()
     expect(story.args).toBeDefined()
-    expect(story.args.label).toBe('Click me')
+    expect(story.args!.label).toBe('Click me')
     expect(story.argTypes).toBeDefined()
     expect(story.parameters).toBeDefined()
-    expect(story.parameters.docs.description.story).toContain('TestButton')
-    expect(story.parameters.docs.source.code).toBeDefined()
+    expect((story.parameters as any).docs.description.story).toContain(
+      'TestButton',
+    )
+    expect((story.parameters as any).docs.source.code).toBeDefined()
   })
 
   it('includes dimension controls in argTypes', () => {
@@ -109,11 +113,13 @@ describe('RocketStoryHoc', () => {
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     // dimension controls should be present
-    expect(story.argTypes.state).toBeDefined()
-    expect(story.argTypes.size).toBeDefined()
+    expect(story.argTypes!.state).toBeDefined()
+    expect(story.argTypes!.size).toBeDefined()
   })
 
   it('disables individual dimension value controls', () => {
@@ -126,13 +132,15 @@ describe('RocketStoryHoc', () => {
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     // individual dimension value keys should be disabled
-    expect(story.argTypes.primary).toEqual({ table: { disable: true } })
-    expect(story.argTypes.secondary).toEqual({ table: { disable: true } })
-    expect(story.argTypes.small).toEqual({ table: { disable: true } })
-    expect(story.argTypes.large).toEqual({ table: { disable: true } })
+    expect(story.argTypes!.primary).toEqual({ table: { disable: true } })
+    expect(story.argTypes!.secondary).toEqual({ table: { disable: true } })
+    expect(story.argTypes!.small).toEqual({ table: { disable: true } })
+    expect(story.argTypes!.large).toEqual({ table: { disable: true } })
   })
 
   it('generates boolean dimension code', () => {
@@ -145,9 +153,11 @@ describe('RocketStoryHoc', () => {
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
-    expect(story.parameters.docs.source.code).toBeDefined()
+    expect((story.parameters as any).docs.source.code).toBeDefined()
   })
 })
 
@@ -161,12 +171,16 @@ describe('rocketstories renderMain', () => {
       component: MockRSComponent as any,
       attrs: { label: 'Hello' },
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story).toBeDefined()
     expect(story.args).toBeDefined()
     expect(story.argTypes).toBeDefined()
-    expect(story.parameters.docs.description.story).toContain('RocketButton')
+    expect((story.parameters as any).docs.description.story).toContain(
+      'RocketButton',
+    )
   })
 })
 
@@ -182,6 +196,8 @@ describe('rocketstories renderRender', () => {
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story).toBeDefined()
@@ -201,6 +217,8 @@ describe('rocketstories renderList', () => {
       component: MockRSComponent as any,
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story).toBeDefined()
@@ -327,6 +345,7 @@ describe('renderDimension', () => {
       attrs: {},
       controls: {},
       storyOptions: {},
+      decorators: [],
       ignore: [],
     })
 
@@ -338,23 +357,24 @@ describe('renderDimension', () => {
       name: 'DimButton',
       component: MockRSComponent as any,
       attrs: { label: 'Hi' },
-      controls: { label: 'text' },
+      controls: { label: 'text' as any },
       storyOptions: {
         gap: 16,
         direction: 'rows',
         alignX: 'left',
         alignY: 'top',
       },
+      decorators: [],
       ignore: [],
     })
 
     expect(story.args).toBeDefined()
-    expect(story.args.label).toBe('Hi')
+    expect(story.args!.label).toBe('Hi')
     expect(story.argTypes).toBeDefined()
     // dimension state should be disabled in controls (since we're showing all states)
-    expect(story.argTypes.state).toEqual({ table: { disable: true } })
-    expect(story.parameters.docs.description.story).toContain('state')
-    expect(story.parameters.docs.source.code).toBeDefined()
+    expect(story.argTypes!.state).toEqual({ table: { disable: true } })
+    expect((story.parameters as any).docs.description.story).toContain('state')
+    expect((story.parameters as any).docs.source.code).toBeDefined()
   })
 
   it('creates story without storyOptions', () => {
@@ -364,6 +384,7 @@ describe('renderDimension', () => {
       attrs: {},
       controls: {},
       storyOptions: {},
+      decorators: [],
       ignore: [],
     })
 
@@ -384,11 +405,12 @@ describe('renderDimension', () => {
         alignY: 'top',
         pseudo: true,
       },
+      decorators: [],
       ignore: [],
     })
 
     expect(story).toBeDefined()
-    expect(story.parameters.docs.description.story).toContain('pseudo')
+    expect((story.parameters as any).docs.description.story).toContain('pseudo')
   })
 
   it('handles multi-key dimensions', () => {
@@ -398,6 +420,7 @@ describe('renderDimension', () => {
       attrs: {},
       controls: {},
       storyOptions: { gap: 16, direction: 'rows' },
+      decorators: [],
       ignore: [],
     })
 
@@ -412,6 +435,7 @@ describe('renderDimension', () => {
       attrs: {},
       controls: {},
       storyOptions: { gap: 16, direction: 'rows' },
+      decorators: [],
       ignore: ['primary'],
     })
 
@@ -430,6 +454,7 @@ describe('renderDimension', () => {
         alignX: 'left',
         alignY: 'top',
       },
+      decorators: [],
       ignore: ['primary'],
     })
 
@@ -453,11 +478,12 @@ describe('renderDimension', () => {
         alignX: 'left',
         alignY: 'top',
       },
+      decorators: [],
       ignore: [],
     })
 
     // Render the story component
-    const { container } = render(createElement(story, { label: 'test' }))
+    const { container } = render(createElement(story, { label: 'test' } as any))
     expect(container.innerHTML).toBeTruthy()
   })
 
@@ -473,6 +499,7 @@ describe('renderDimension', () => {
         alignX: 'left',
         alignY: 'top',
       },
+      decorators: [],
       ignore: [],
     })
 
@@ -493,12 +520,13 @@ describe('renderDimension', () => {
         alignY: 'top',
         pseudo: true,
       },
+      decorators: [],
       ignore: [],
     })
 
     const { container } = render(createElement(story, {}))
     expect(container.innerHTML).toBeTruthy()
-    expect(story.parameters.docs.description.story).toContain('pseudo')
+    expect((story.parameters as any).docs.description.story).toContain('pseudo')
   })
 
   it('renders multi-key dimension story with items', () => {
@@ -513,6 +541,7 @@ describe('renderDimension', () => {
         alignX: 'left',
         alignY: 'top',
       },
+      decorators: [],
       ignore: [],
     })
 
@@ -533,6 +562,7 @@ describe('renderDimension', () => {
         alignY: 'top',
         pseudo: true,
       },
+      decorators: [],
       ignore: [],
     })
 
@@ -553,10 +583,11 @@ describe('renderDimension', () => {
         alignY: 'top',
         pseudo: true,
       },
+      decorators: [],
       ignore: [],
     })
 
-    const { container } = render(createElement(story, { label: 'test' }))
+    const { container } = render(createElement(story, { label: 'test' } as any))
     expect(container.innerHTML).toBeTruthy()
   })
 })

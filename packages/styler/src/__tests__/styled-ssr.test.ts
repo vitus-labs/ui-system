@@ -46,7 +46,7 @@ describe('styled — SSR mode', () => {
 
   it('static: styled.div shorthand in SSR', async () => {
     const { styled } = await import('../styled')
-    const Comp = styled.div`color: green;`
+    const Comp = styled.div!`color: green;`
     expect(Comp.displayName).toBe('styled(div)')
   })
 
@@ -55,7 +55,7 @@ describe('styled — SSR mode', () => {
     const GlobalStyle = createGlobalStyle`body { margin: 0; }`
     expect(GlobalStyle.displayName).toBe('GlobalStyle')
     // Static SSR path: cachedStyleEl is created via createElement('style', ...)
-    const result = GlobalStyle()
+    const result = GlobalStyle({})
     expect(result).not.toBeNull()
   })
 
@@ -63,7 +63,7 @@ describe('styled — SSR mode', () => {
     const { createGlobalStyle } = await import('../globalStyle')
     const GlobalStyle = createGlobalStyle``
     expect(GlobalStyle.displayName).toBe('GlobalStyle')
-    const result = GlobalStyle()
+    const result = GlobalStyle({})
     expect(result).toBeNull()
   })
 })

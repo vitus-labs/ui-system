@@ -42,16 +42,26 @@ describe('useThrottledCallback', () => {
   })
 
   it('always calls the latest callback', () => {
-    let value = 0
+    let value: number = 0
     const { result, rerender } = renderHook(
       ({ cb }) => useThrottledCallback(cb, 100),
-      { initialProps: { cb: () => (value = 1) } },
+      {
+        initialProps: {
+          cb: () => {
+            value = 1
+          },
+        },
+      },
     )
 
     result.current()
     expect(value).toBe(1)
 
-    rerender({ cb: () => (value = 2) })
+    rerender({
+      cb: () => {
+        value = 2
+      },
+    })
     vi.advanceTimersByTime(100)
     result.current()
     expect(value).toBe(2)

@@ -413,7 +413,7 @@ describe('passProps option', () => {
         primary: { color: 'blue' },
         secondary: { color: 'green' },
       }))
-      .config({ passProps: ['state'] })
+      .config({ passProps: ['state'] } as any)
 
     render(
       <Button data-testid="btn" state="primary">

@@ -43,16 +43,24 @@ describe('useClickOutside', () => {
   })
 
   it('always calls the latest handler', () => {
-    let value = 0
+    let value: number = 0
     const el = document.createElement('div')
     document.body.appendChild(el)
     const ref = { current: el }
 
     const { rerender } = renderHook(({ cb }) => useClickOutside(ref, cb), {
-      initialProps: { cb: () => (value = 1) },
+      initialProps: {
+        cb: () => {
+          value = 1
+        },
+      },
     })
 
-    rerender({ cb: () => (value = 2) })
+    rerender({
+      cb: () => {
+        value = 2
+      },
+    })
     document.dispatchEvent(new Event('mousedown'))
     expect(value).toBe(2)
 

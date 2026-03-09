@@ -4,6 +4,7 @@
   "exclude": ["node_modules", "lib"],
   "compilerOptions": {
     "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",

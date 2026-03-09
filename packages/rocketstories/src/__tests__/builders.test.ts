@@ -124,15 +124,15 @@ describe('createRocketStories builder (rocketstyle)', () => {
 
   it('dimension() with rocketstyle component returns a story', () => {
     const builder = rocketstories(MockRSComponent as any)
-    const result = builder.dimension('state' as any)
+    const result = (builder.dimension as any)('state')
     expect(result).not.toBeNull()
     expect(result).toBeDefined()
   })
 
   it('dimension() with ignore param passes ignore to renderDimension', () => {
     const builder = rocketstories(MockRSComponent as any)
-    const result = builder.dimension('state' as any, {
-      ignore: ['primary'] as any,
+    const result = (builder.dimension as any)('state', {
+      ignore: ['primary'],
     })
     expect(result).not.toBeNull()
     expect(result).toBeDefined()
@@ -236,7 +236,7 @@ describe('createRocketStories builder', () => {
 
   it('.init returns component, title, and decorators', () => {
     const builder = rocketstories(MockComponent)
-    const initResult = builder.init
+    const initResult = builder.init as any
     expect(initResult.component).toBe(MockComponent)
     expect(initResult.title).toBe('TestComp')
     expect(Array.isArray(initResult.decorators)).toBe(true)
@@ -285,14 +285,14 @@ describe('createRocketStories builder', () => {
 
   it('dimension returns null for non-rocketstyle components', () => {
     const builder = rocketstories(MockComponent)
-    const result = builder.dimension('state' as any)
+    const result = (builder.dimension as any)('state')
     expect(result).toBeNull()
   })
 
   it('dimension with ignore param returns null for non-rocketstyle', () => {
     const builder = rocketstories(MockComponent)
-    const result = builder.dimension('state' as any, {
-      ignore: ['primary'] as any,
+    const result = (builder.dimension as any)('state', {
+      ignore: ['primary'],
     })
     expect(result).toBeNull()
   })
@@ -331,12 +331,14 @@ describe('StoryHoc (base)', () => {
       component: MockComp,
       name: 'Mock',
       attrs: { label: 'Hello' },
-      controls: { label: 'text' },
+      controls: { label: 'text' as any },
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story.args).toEqual({ label: 'Hello' })
     expect(story.argTypes).toBeDefined()
-    expect(story.argTypes.label).toBeDefined()
+    expect(story.argTypes!.label).toBeDefined()
   })
 })
 
@@ -351,6 +353,8 @@ describe('base renderRender', () => {
       name: 'Test',
       attrs: {},
       controls: {},
+      storyOptions: {},
+      decorators: [],
     })
 
     expect(story).toBeDefined()

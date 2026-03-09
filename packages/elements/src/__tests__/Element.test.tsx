@@ -94,7 +94,11 @@ describe('Element', () => {
 
     it('renders img without children', () => {
       render(
-        <Element tag="img" data-testid="img" alt="test" src="test.png" />,
+        <Element
+          tag="img"
+          data-testid="img"
+          {...({ alt: 'test', src: 'test.png' } as any)}
+        />,
         { wrapper },
       )
       expect(screen.getByTestId('img')).toBeInTheDocument()

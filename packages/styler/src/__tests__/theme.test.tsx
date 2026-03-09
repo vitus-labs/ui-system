@@ -76,8 +76,8 @@ describe('ThemeProvider + useTheme', () => {
 
       expect(theme).toEqual({ primary: 'blue', spacing: 8 })
       // TypeScript should allow typed access:
-      expect(theme?.primary).toBe('blue')
-      expect(theme?.spacing).toBe(8)
+      expect((theme as any)?.primary).toBe('blue')
+      expect((theme as any)?.spacing).toBe(8)
     })
   })
 
