@@ -2,7 +2,7 @@ import Col from '../Col'
 import Container from '../Container'
 import Row from '../Row'
 
-const colCss = (css) => css`
+const colCss = (css: any) => css`
   background-color: #e0e0eb;
   border: 1px solid #b3b3cc;
   padding: 20px;

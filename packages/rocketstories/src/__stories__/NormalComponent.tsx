@@ -1,10 +1,10 @@
-import type { VFC } from 'react'
+import type { FC } from 'react'
 
 type Props = {
   label: string
 }
 
-const component: VFC<Props> = ({ label }) => <div>{label}</div>
+const component: FC<Props> = ({ label }) => <div>{label}</div>
 
 component.displayName = 'NormalComponent'
 

@@ -12,12 +12,12 @@ const Wrapper = styled(Util)`
   color: red;
 `
 
-const Item = (props) => (
+const Item = (props: any) => (
   <Element
     {...props}
     css={`
       font-size: 36px;
-      color: ${({ primary }) => (primary ? 'blue' : 'black')};
+      color: ${({ primary }: any) => (primary ? 'blue' : 'black')};
     `}
   />
 )

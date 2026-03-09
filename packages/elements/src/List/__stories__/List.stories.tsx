@@ -7,12 +7,12 @@ export default {
   component: List,
 }
 
-const Item = (props) => (
+const Item = (props: any) => (
   <Element
     {...props}
     css={`
       font-size: 36px;
-      color: ${({ primary }) => (primary ? 'blue' : 'black')};
+      color: ${({ primary }: any) => (primary ? 'blue' : 'black')};
     `}
   />
 )
@@ -52,7 +52,7 @@ export const listWithSingleChildren = () => (
 )
 
 export const listUsingWrappComponent = () => {
-  const Wrapper = ({ children }) => <li>{children}</li>
+  const Wrapper = ({ children }: any) => <li>{children}</li>
   return (
     <List tag="ul" wrapComponent={Wrapper}>
       <Item>Label</Item>
@@ -66,7 +66,7 @@ export const listUsingWrappComponent = () => {
 
 export const dataAsAnArrayOfStrings = () => {
   const data = ['a', 'b', null, undefined, 'c', 'd']
-  const Item = ({ label, ...props }) => <span {...props}>{label}</span>
+  const Item = ({ label, ...props }: any) => <span {...props}>{label}</span>
 
   return <List data={data} component={Item} valueName="label" />
 }
@@ -82,7 +82,7 @@ export const dataAsAnArrayOfObjects = () => {
     { name: 'd' },
   ]
 
-  const Item = ({ name, surname, ...props }) => (
+  const Item = ({ name, surname, ...props }: any) => (
     <span {...props}>
       {name} - {surname}
     </span>
@@ -98,13 +98,13 @@ export const ItemPropsAsAnObject = () => {
   }
   const Item =
     () =>
-    ({ name, surname, ...props }) => (
+    ({ name, surname, ...props }: any) => (
       <span {...props}>
         | {name} - {surname} |
       </span>
     )
 
-  return <List data={data} component={Item} itemProps={itemProps} />
+  return <List data={data} component={Item as any} itemProps={itemProps} />
 }
 
 export const ItemPropsAsAFunction = () => {
@@ -112,7 +112,7 @@ export const ItemPropsAsAFunction = () => {
   const itemProps = () => ({
     surname: 'hello',
   })
-  const Item = ({ name, surname, ...props }) => (
+  const Item = ({ name, surname, ...props }: any) => (
     <span {...props}>
       {name} - {surname}
     </span>
@@ -123,7 +123,7 @@ export const ItemPropsAsAFunction = () => {
 
 export const renderCustomComponentInItem = () => {
   const CustomComponent: FC = () => <span>I&apos;m custom component</span>
-  const Item: FC = ({ name, surname, ...props }) => (
+  const Item: FC<any> = ({ name, surname, ...props }: any) => (
     <span {...props}>
       {name} {surname}
     </span>

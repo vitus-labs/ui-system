@@ -142,8 +142,8 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
       })
       .variants({
         box: {
-          height: { xs: 64, md: 100 },
-          padding: { xs: 8 },
+          height: { xs: 64, md: 100 } as any,
+          padding: { xs: 8 } as any,
           backgroundColor: 'transparent',
         },
         circle: {
@@ -169,7 +169,7 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
         `,
       )
 
-    render(<Comp variant="circle" />, { wrapper: wrapperWithBP })
+    render(<Comp variant={'circle' as any} />, { wrapper: wrapperWithBP })
 
     const allCss = getAllCSS()
     console.log('=== VARIANT CIRCLE CSS ===')

@@ -1,16 +1,16 @@
+/**
+ * Overlay dropdown examples.
+ *
+ * Demonstrates: Overlay with various alignments, open/close modes,
+ * manual triggers, and nested overlays within Element.
+ */
 import { config } from '@vitus-labs/core'
 import Element from '../../Element'
 import Overlay from '..'
 
 const { styled, css } = config
 
-export default {
-  component: Overlay,
-}
-
-const Menu = styled('div').attrs({
-  children: 'some content here',
-})`
+const MenuBox = styled.div`
   width: 300px;
   height: 300px;
   background-color: #fff;
@@ -18,16 +18,14 @@ const Menu = styled('div').attrs({
   border: 1px solid #555555;
 `
 
-const Trigger = styled('button').attrs({
-  type: 'button',
-  children: 'Click on me',
-})`
+const Menu = () => <MenuBox>some content here</MenuBox>
+
+const TriggerButton = styled.button`
   background-color: #4caf50;
   border: none;
   color: #ffffff;
   padding: 15px 32px;
   text-align: center;
-  -webkit-transition-duration: 0.4s;
   transition-duration: 0.4s;
   margin: 16px 0 !important;
   text-decoration: none;
@@ -46,6 +44,12 @@ const Trigger = styled('button').attrs({
     `}
 `
 
+const Trigger = (props: any) => (
+  <TriggerButton type="button" {...props}>
+    Click on me
+  </TriggerButton>
+)
+
 const ScrollY = styled.div`
   width: 800px;
   height: 1000px;
@@ -57,6 +61,10 @@ const ScrollX = styled.div`
   height: 200px;
   background-color: papayawhip;
 `
+
+export default {
+  component: Overlay,
+}
 
 export const exampleDropdown = () => (
   <Overlay alignX="right" trigger={Trigger}>
@@ -77,18 +85,16 @@ export const exampleDropdownOnTriggerClick = () => (
 )
 
 export const exampleDropdownManual = () => {
-  const ManualTrigger: (typeof Overlay)['$$types']['trigger'] = ({
-    showContent,
-    ...props
-  }) => (
-    <Trigger
+  const ManualTrigger = ({ showContent, ...props }: any) => (
+    <TriggerButton
+      type="button"
       {...props}
-      onClick={(e) => {
+      onClick={(e: any) => {
         if (e.detail === 2) showContent()
       }}
     >
       double click on me
-    </Trigger>
+    </TriggerButton>
   )
 
   return (
