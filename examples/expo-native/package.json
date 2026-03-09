@@ -9,6 +9,7 @@
     "android": "expo start --android"
   },
   "dependencies": {
+    "@vitus-labs/attrs": "file:../../packages/attrs",
     "@vitus-labs/connector-native": "file:../../packages/connector-native",
     "@vitus-labs/coolgrid": "file:../../packages/coolgrid",
     "@vitus-labs/core": "file:../../packages/core",
