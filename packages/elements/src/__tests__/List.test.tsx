@@ -68,7 +68,7 @@ describe('List', () => {
       const items = screen.getAllByTestId('item')
       expect(items).toHaveLength(2)
       // Items should be inside a styled element container
-      expect(items[0].parentElement).not.toBeNull()
+      expect(items[0]!.parentElement).not.toBeNull()
     })
 
     it('passes non-iterator props to Element wrapper', () => {
