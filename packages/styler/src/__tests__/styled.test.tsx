@@ -36,7 +36,7 @@ describe('styled', () => {
 
   describe('styled.tag shorthand', () => {
     it('works with styled.div', () => {
-      const Comp = styled.div`color: red;`
+      const Comp = styled.div!`color: red;`
       const { container } = render(<Comp />)
       expect(container.lastElementChild?.nodeName).toBe('DIV')
       const el = container.lastElementChild as HTMLElement
@@ -44,7 +44,7 @@ describe('styled', () => {
     })
 
     it('works with styled.span', () => {
-      const Comp = styled.span`font-size: 16px;`
+      const Comp = styled.span!`font-size: 16px;`
       const { container } = render(<Comp />)
       expect(container.lastElementChild?.nodeName).toBe('SPAN')
     })

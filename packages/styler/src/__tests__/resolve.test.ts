@@ -84,7 +84,7 @@ describe('resolve', () => {
     })
 
     it('resolves CSSResult with function interpolations', () => {
-      const inner = css`color: ${(p: Record<string, unknown>) => p.color};`
+      const inner = css`color: ${((p: Record<string, unknown>) => p.color) as any};`
       const result = resolve(tsa(['', '']), [inner], { color: 'green' })
       expect(result).toBe('color: green;')
     })

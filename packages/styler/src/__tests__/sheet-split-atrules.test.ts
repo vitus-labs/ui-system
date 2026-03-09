@@ -197,7 +197,8 @@ describe('StyleSheet — at-rule splitting', () => {
 
   describe('DOM mode (insertRule verification)', () => {
     beforeEach(() => {
-      for (const el of document.querySelectorAll('style[data-vl]')) el.remove()
+      for (const el of Array.from(document.querySelectorAll('style[data-vl]')))
+        el.remove()
     })
 
     it('inserts base + media as separate CSSRules', () => {
@@ -276,7 +277,8 @@ describe('StyleSheet — at-rule splitting', () => {
 
   describe('hydration with split rules', () => {
     beforeEach(() => {
-      for (const el of document.querySelectorAll('style[data-vl]')) el.remove()
+      for (const el of Array.from(document.querySelectorAll('style[data-vl]')))
+        el.remove()
     })
 
     it('hydrates className from CSSMediaRule inner selectors', () => {

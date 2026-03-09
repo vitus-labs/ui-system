@@ -232,12 +232,12 @@ describe('resolve composition chain', () => {
         const media: Record<string, (...args: any[]) => any> = {}
         for (const [key, value] of Object.entries(breakpoints)) {
           if (value === 0) {
-            media[key] = (...args: any[]) => cssFn(...args)
+            media[key] = (...args: any[]) => (cssFn as any)(...args)
           } else {
             const emSize = value / rootSize
             media[key] = (...args: any[]) => cssFn`
               @media only screen and (min-width: ${emSize}em) {
-                ${cssFn(...args)};
+                ${(cssFn as any)(...args)};
               }
             `
           }

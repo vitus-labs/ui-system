@@ -24,10 +24,10 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 /** Collect all CSS text from all stylesheets in the document. */
 const getAllCSS = () => {
   let allCss = ''
-  for (const sheet of document.styleSheets) {
+  for (const sheet of Array.from(document.styleSheets)) {
     try {
-      for (let i = 0; i < sheet.cssRules.length; i++) {
-        allCss += `${sheet.cssRules[i].cssText}\n`
+      for (const rule of Array.from(sheet.cssRules)) {
+        allCss += `${rule.cssText}\n`
       }
     } catch {
       // cross-origin sheets can't be read
@@ -83,7 +83,7 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
       name: 'TestComp',
       component: Element,
       filterAttrs: [],
-    })
+    } as any)
       .theme({
         position: 'absolute',
         backgroundColor: '#0070f3',
@@ -135,7 +135,7 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
       name: 'VariantComp',
       component: Element,
       filterAttrs: [],
-    })
+    } as any)
       .theme({
         backgroundColor: '#FFFFFF',
         borderRadius: 8,
@@ -197,7 +197,7 @@ describe('e2e: rocketstyle + styler CSS generation', () => {
       name: 'ResponsiveComp',
       component: Element,
       filterAttrs: [],
-    })
+    } as any)
       .theme({
         position: 'absolute',
         width: 'auto',

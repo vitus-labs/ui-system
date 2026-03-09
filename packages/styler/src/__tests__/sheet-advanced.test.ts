@@ -428,7 +428,7 @@ describe('StyleSheet — advanced features', () => {
       s.insert('color: magenta;')
 
       expect(warnSpy).toHaveBeenCalled()
-      expect(warnSpy.mock.calls[0][0]).toContain(
+      expect(warnSpy.mock.calls[0]![0]).toContain(
         '[styler] Failed to insert CSS rule',
       )
 
@@ -463,7 +463,7 @@ describe('StyleSheet — advanced features', () => {
       s.insertGlobal('body { margin: 0; }')
 
       expect(warnSpy).toHaveBeenCalled()
-      expect(warnSpy.mock.calls[0][0]).toContain(
+      expect(warnSpy.mock.calls[0]![0]).toContain(
         '[styler] Failed to insert global CSS rule',
       )
 
@@ -585,7 +585,7 @@ describe('StyleSheet — advanced features', () => {
         })
 
         for (let i = 0; i < requests.length; i++) {
-          const styles = requests[i].getStyles()
+          const styles = requests[i]!.getStyles()
           expect(styles).toContain(`color: color-${i};`)
           const otherIdx = (i + 1) % requests.length
           expect(styles).not.toContain(`color: color-${otherIdx};`)

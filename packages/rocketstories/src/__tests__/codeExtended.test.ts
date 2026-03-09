@@ -14,7 +14,7 @@ describe('createJSXCode extended', () => {
   })
 
   it('handles object props', () => {
-    const result = createJSXCode('Button', { style: { color: 'red' } })
+    const result = createJSXCode('Button', { style: { color: 'red' } } as any)
     expect(result).toContain('style={')
     expect(result).toContain('color: "red"')
   })
@@ -22,13 +22,13 @@ describe('createJSXCode extended', () => {
   it('handles nested object props', () => {
     const result = createJSXCode('Button', {
       config: { nested: { deep: 'value' } },
-    })
+    } as any)
     expect(result).toContain('config={')
     expect(result).toContain('deep: "value"')
   })
 
   it('handles number values in objects', () => {
-    const result = createJSXCode('Button', { style: { size: 16 } })
+    const result = createJSXCode('Button', { style: { size: 16 } } as any)
     expect(result).toContain('size: 16')
   })
 
@@ -44,7 +44,7 @@ describe('createJSXCode extended', () => {
   })
 
   it('handles null/undefined string props', () => {
-    const result = createJSXCode('Button', { value: null })
+    const result = createJSXCode('Button', { value: null } as any)
     // null is filtered out by parseProps
     expect(result).toContain('Button')
   })
@@ -52,14 +52,14 @@ describe('createJSXCode extended', () => {
   it('handles nested arrays in objects', () => {
     const result = createJSXCode('Button', {
       style: { sizes: [1, 2] },
-    })
+    } as any)
     expect(result).toContain('sizes:')
   })
 
   it('handles array with nested objects', () => {
     const result = createJSXCode('Button', {
       data: [{ id: 1 }, { id: 2 }],
-    })
+    } as any)
     expect(result).toContain('data={')
     expect(result).toContain('id: 1')
   })
@@ -70,14 +70,14 @@ describe('createJSXCode extended', () => {
         [1, 2],
         [3, 4],
       ],
-    })
+    } as any)
     expect(result).toContain('matrix={')
   })
 
   it('handles control object with type/options/value', () => {
     const result = createJSXCode('Button', {
       size: { type: 'select', options: ['sm', 'lg'], value: 'sm' },
-    })
+    } as any)
     // parseProps extracts defaultValue from control config
     expect(result).toContain('size=')
   })
@@ -166,13 +166,13 @@ describe('createJSXCode edge cases', () => {
 
   it('filters undefined values from props', () => {
     // undefined is not string/number/boolean/bigint/array/object → falls through to `return acc`
-    const result = createJSXCode('Button', { value: undefined })
+    const result = createJSXCode('Button', { value: undefined } as any)
     expect(result).not.toContain('value=')
   })
 
   it('handles object with single key (no trailing comma)', () => {
     // stringifyObject: when arrayLength === i + 1, no comma
-    const result = createJSXCode('Button', { style: { color: 'red' } })
+    const result = createJSXCode('Button', { style: { color: 'red' } } as any)
     expect(result).not.toMatch(/red"\s*,\s*}/)
   })
 
@@ -180,7 +180,7 @@ describe('createJSXCode edge cases', () => {
     // parseProps: `defaultValue || options` falls back to options when defaultValue is falsy
     const result = createJSXCode('Button', {
       size: { type: 'select', options: ['sm', 'lg'], value: '' },
-    })
+    } as any)
     expect(result).toContain('size=')
   })
 })

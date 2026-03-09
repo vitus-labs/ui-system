@@ -59,8 +59,8 @@ describe('convertDimensionsToControls', () => {
       options: ['primary', 'secondary'],
       group: 'Dimensions [Rocketstyle (Vitus-Labs)]',
     })
-    expect(result.size.type).toBe('select')
-    expect(result.size.options).toEqual(['small', 'large'])
+    expect(result.size!.type).toBe('select')
+    expect(result.size!.options).toEqual(['small', 'large'])
   })
 
   it('uses multi-select for multi-key dimensions', () => {
@@ -70,7 +70,7 @@ describe('convertDimensionsToControls', () => {
       },
       multiKeys: { multiple: true },
     })
-    expect(result.multiple.type).toBe('multi-select')
+    expect(result.multiple!.type).toBe('multi-select')
   })
 
   it('handles empty dimensions', () => {
@@ -144,7 +144,7 @@ describe('getDefaultVitusLabsControls', () => {
 describe('makeStorybookControls', () => {
   it('converts controls to storybook argTypes format', () => {
     const controls = {
-      name: { type: 'text', description: 'The name', group: 'Props' },
+      name: { type: 'text' as const, description: 'The name', group: 'Props' },
     }
     const result = makeStorybookControls(controls, { name: 'default' })
 
@@ -171,30 +171,30 @@ describe('makeStorybookControls', () => {
 
   it('uses control value when no prop default', () => {
     const controls = {
-      name: { type: 'text', value: 'fallback' },
+      name: { type: 'text' as const, value: 'fallback' },
     }
     const result = makeStorybookControls(controls, {})
-    expect(result.name.table.defaultValue.summary).toBe('fallback')
+    expect(result.name!.table.defaultValue!.summary).toBe('fallback')
   })
 
   it('skips function prop values', () => {
     const controls = {
-      onClick: { type: 'function', value: 'handler' },
+      onClick: { type: 'function' as const, value: 'handler' },
     }
     const result = makeStorybookControls(controls, { onClick: () => undefined })
-    expect(result.onClick.table.defaultValue.summary).toBe('handler')
+    expect(result.onClick!.table.defaultValue!.summary).toBe('handler')
   })
 
   it('includes options when provided', () => {
     const controls = {
       size: {
-        type: 'select',
+        type: 'select' as const,
         options: ['sm', 'md', 'lg'],
         group: 'Sizing',
       },
     }
     const result = makeStorybookControls(controls, {})
-    expect(result.size.options).toEqual(['sm', 'md', 'lg'])
+    expect(result.size!.options).toEqual(['sm', 'md', 'lg'])
   })
 
   it('handles empty input', () => {

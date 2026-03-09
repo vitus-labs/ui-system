@@ -134,7 +134,7 @@ describe('hybrid injection — no <style> elements in client React tree', () => 
 
       // Should render exactly one child: the <div>
       expect(container.children.length).toBe(1)
-      expect(container.children[0].nodeName).toBe('DIV')
+      expect(container.children[0]!.nodeName).toBe('DIV')
       // No <style> elements in the rendered tree
       expect(container.querySelector('style')).toBeNull()
     })
@@ -144,7 +144,7 @@ describe('hybrid injection — no <style> elements in client React tree', () => 
       const { container } = render(<Comp $color="red" />)
 
       expect(container.children.length).toBe(1)
-      expect(container.children[0].nodeName).toBe('DIV')
+      expect(container.children[0]!.nodeName).toBe('DIV')
       expect(container.querySelector('style')).toBeNull()
     })
 
@@ -244,10 +244,10 @@ describe('hybrid injection — boost option at component level', () => {
     const rules = findRulesFor(className)
     expect(rules.length).toBeGreaterThanOrEqual(1)
     // Single selector: .vl-abc { ... } — NOT .vl-abc.vl-abc
-    const baseRule = rules[0]
+    const baseRule = rules[0]!
     expect(baseRule).toContain(`.${className}`)
     // Count occurrences of the className in the selector portion
-    const selectorPart = baseRule.split('{')[0]
+    const selectorPart = baseRule.split('{')[0]!
     const occurrences = selectorPart.split(`.${className}`).length - 1
     expect(occurrences).toBe(1)
   })

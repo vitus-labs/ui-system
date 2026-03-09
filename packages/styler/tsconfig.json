@@ -1,9 +1,10 @@
 {
   "extends": "@vitus-labs/tools-typescript/lib",
   "include": ["src"],
-  "exclude": ["node_modules", "lib", "src/__tests__"],
+  "exclude": ["node_modules", "lib"],
   "compilerOptions": {
     "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "@types/node"],
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",
