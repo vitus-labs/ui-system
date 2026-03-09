@@ -1,6 +1,6 @@
 # @vitus-labs/unistyle
 
-Responsive CSS engine for React and styled-components.
+Responsive CSS engine for React.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/unistyle)](https://www.npmjs.com/package/@vitus-labs/unistyle)
 [![license](https://img.shields.io/npm/l/@vitus-labs/unistyle)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
@@ -186,12 +186,17 @@ Every property in the theme object supports three formats:
 
 When using `normalize: true` (default), missing breakpoints inherit from the previous one.
 
+## React Native
+
+On React Native, CSS `@media` queries are not available. When initialized with `@vitus-labs/connector-native`, unistyle uses `Dimensions.get('window').width` to evaluate breakpoints at render time (mobile-first). This is handled automatically via `createMediaQueries` passed to `init()`.
+
 ## Peer Dependencies
 
 | Package | Version |
 | ------- | ------- |
 | react | >= 19 |
 | @vitus-labs/core | * |
+| react-native | >= 0.76 (optional) |
 
 ## License
 

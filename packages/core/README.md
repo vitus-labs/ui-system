@@ -21,7 +21,7 @@ npm install @vitus-labs/core
 import { Provider, context, config, init } from '@vitus-labs/core'
 ```
 
-**Provider** wraps your app with a theme context. It bridges styled-components' `ThemeProvider` with the internal context system.
+**Provider** wraps your app with a theme context. It bridges the active CSS-in-JS connector's `ThemeProvider` with the internal context system.
 
 ```tsx
 import { Provider } from '@vitus-labs/core'
@@ -31,13 +31,20 @@ import { Provider } from '@vitus-labs/core'
 </Provider>
 ```
 
-**config / init** — configure the styling engine. By default wired to `styled-components`, but can be swapped for another CSS-in-JS library.
+**config / init** — configure the styling engine via a connector package. The `init()` function accepts the connector's exports and sets up the CSS-in-JS bridge.
 
 ```tsx
-import { config } from '@vitus-labs/core'
+import { init, config } from '@vitus-labs/core'
+import connector from '@vitus-labs/connector-styler'
 
+// Initialize once at app startup
+init({ ...connector, component: 'div', textComponent: 'span' })
+
+// Access the engine from anywhere
 const { styled, css } = config
 ```
+
+Available connectors: `connector-styler` (recommended), `connector-emotion`, `connector-styled-components`, `connector-native` (React Native).
 
 ### Utilities
 
@@ -140,7 +147,6 @@ Both have corresponding TypeScript union types: `HTMLTags` and `HTMLTextTags`.
 | Package | Version |
 | ------- | ------- |
 | react | >= 19 |
-| styled-components | >= 6 |
 
 ## License
 

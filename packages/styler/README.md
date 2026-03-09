@@ -321,13 +321,15 @@ All benchmarks run via Vitest bench on the same machine. React is externalized i
 
 | Benchmark | styler | styled-components | @emotion | goober |
 |-----------|-------:|-------------------:|---------:|-------:|
-| css() creation | **25.0M** | 9.3M | 2.3M | 24K |
-| css() with interpolations | **24.7M** | 5.5M | 2.3M | 25K |
-| Template resolution | **19.1M** | 4.0M | - | - |
-| Nested composition | **9.0M** | 2.2M | 1.4M | 7.1K |
-| styled() factory | 378K | 113K | 999K | 19.9M |
+| css() creation | **25.2M** | 9.0M | 2.2M | 26K |
+| css() with interpolations | **24.9M** | 5.6M | 2.3M | 28K |
+| Template resolution | **21.4M** | 3.9M | — | — |
+| Dynamic interpolation | 12.4M | **13.4M** | — | — |
+| Nested composition | **8.3M** | 2.2M | 1.4M | 8K |
+| SSR renderToString | **307K** | 69K | 192K | 18K |
+| styled() factory | **17.3M** | 109K | 933K | 18.2M |
 
-Styler is **2.7-1270x faster** than alternatives across css creation and composition. The only benchmark where styler isn't fastest is `styled()` factory creation, where goober defers all work (no-op wrapper) and Emotion defers to first render. Styler trades creation speed for render speed — CSS is pre-computed at creation time so every subsequent render is faster.
+Styler is **2.8–1034x faster** than alternatives across css creation, composition, and SSR. The `styled()` factory is now essentially tied with goober (17.3M vs 18.2M ops/s) while being 158x faster than styled-components and 18x faster than Emotion. The only benchmark where styler doesn't lead is dynamic function interpolation, where styled-components' manual flatten is ~8% faster.
 
 ## Migrating from styled-components
 

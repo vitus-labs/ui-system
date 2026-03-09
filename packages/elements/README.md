@@ -21,7 +21,7 @@ Five composable components for building buttons, cards, lists, dropdowns, toolti
 ## Installation
 
 ```bash
-npm install @vitus-labs/elements @vitus-labs/core @vitus-labs/unistyle styled-components
+npm install @vitus-labs/elements @vitus-labs/core @vitus-labs/unistyle
 ```
 
 ## Components
@@ -271,6 +271,10 @@ Every layout prop (direction, alignX, alignY, gap, block, equalCols) supports th
 <Element direction={{ xs: 'rows', md: 'inline', lg: 'inline' }} />
 ```
 
+## React Native
+
+Elements includes a native entry point (`index.native.ts`) that excludes Portal and Overlay (which depend on `react-dom`). Element, Text, List, and Util work on React Native when initialized with `@vitus-labs/connector-native`.
+
 ## Peer Dependencies
 
 | Package | Version |
@@ -279,7 +283,7 @@ Every layout prop (direction, alignX, alignY, gap, block, equalCols) supports th
 | react-dom | >= 19 |
 | @vitus-labs/core | * |
 | @vitus-labs/unistyle | * |
-| styled-components | >= 6 |
+| react-native | >= 0.76 (optional) |
 
 ## License
 

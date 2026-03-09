@@ -1,6 +1,6 @@
 # UI System
 
-A composable toolkit for building React UI systems with styled-components.
+A composable toolkit for building React UI systems.
 
 [![license](https://img.shields.io/npm/l/@vitus-labs/core)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
 
@@ -25,11 +25,12 @@ UI System is not a component library. It's a set of composable packages for buil
 | Package | Description |
 | ------- | ----------- |
 | [@vitus-labs/core](./packages/core) | Shared utilities, styling engine bridge, theme context |
+| [@vitus-labs/styler](./packages/styler) | Lightweight CSS-in-JS engine (3.81 KB gz) — drop-in styled-components replacement |
 | [@vitus-labs/attrs](./packages/attrs) | Immutable chainable default-props factory for React components |
 | [@vitus-labs/elements](./packages/elements) | Layout primitives — Element, Text, List, Overlay, Portal |
 | [@vitus-labs/unistyle](./packages/unistyle) | Responsive CSS engine — media queries, unit conversion, style processing |
 | [@vitus-labs/coolgrid](./packages/coolgrid) | Bootstrap-inspired responsive grid with context-cascading config |
-| [@vitus-labs/hooks](./packages/hooks) | Lightweight React hooks — useHover, useWindowResize, useFocusTrap |
+| [@vitus-labs/hooks](./packages/hooks) | 28 React hooks — useHover, useBreakpoint, useFocusTrap, and more |
 | [@vitus-labs/rocketstyle](./packages/rocketstyle) | Multi-dimensional styling system with type-safe chains |
 | [@vitus-labs/rocketstories](./packages/rocketstories) | Auto-generated Storybook stories from rocketstyle components |
 
@@ -40,27 +41,28 @@ UI System is not a component library. It's a set of composable packages for buil
 | [@vitus-labs/kinetic](./packages/kinetic) | 3.2 KB | CSS-first animation — enter/exit, stagger, collapse, list reconciliation |
 | [@vitus-labs/kinetic-presets](./packages/kinetic-presets) | 2.3 KB | 122 presets, 5 factories, 5 composition utilities for kinetic |
 
+### Connectors
+
+| Package | Description |
+| ------- | ----------- |
+| [@vitus-labs/connector-styler](./packages/connector-styler) | Connector for `@vitus-labs/styler` (recommended) |
+| [@vitus-labs/connector-emotion](./packages/connector-emotion) | Connector for Emotion |
+| [@vitus-labs/connector-styled-components](./packages/connector-styled-components) | Connector for styled-components |
+| [@vitus-labs/connector-native](./packages/connector-native) | Connector for React Native |
+
 ## Quick Start
 
 ```bash
-npm install @vitus-labs/elements @vitus-labs/rocketstyle @vitus-labs/unistyle @vitus-labs/core styled-components
+npm install @vitus-labs/core @vitus-labs/styler @vitus-labs/connector-styler @vitus-labs/elements @vitus-labs/rocketstyle
 ```
 
-Set up the provider:
+Initialize the CSS-in-JS engine at your app entry point:
 
 ```tsx
-import { Provider } from '@vitus-labs/unistyle'
+import { init } from '@vitus-labs/core'
+import connector from '@vitus-labs/connector-styler'
 
-const theme = {
-  rootSize: 16,
-  breakpoints: { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200 },
-}
-
-const App = () => (
-  <Provider theme={theme}>
-    {/* your app */}
-  </Provider>
-)
+init({ ...connector, component: 'div', textComponent: 'span' })
 ```
 
 Create a styled button using rocketstyle:
@@ -104,10 +106,25 @@ const Button = rocketstyle()({
 - **Type-safe chains** — full TypeScript inference through `.attrs()`, `.theme()`, `.states()`, and other chain methods
 - **Zero-config defaults** — sensible defaults everywhere, override only what you need
 
+## React Native
+
+For React Native support, use `@vitus-labs/connector-native` instead of `connector-styler`:
+
+```bash
+npm install @vitus-labs/core @vitus-labs/connector-native @vitus-labs/elements @vitus-labs/rocketstyle
+```
+
+```tsx
+import { init } from '@vitus-labs/core'
+import { View, Text } from 'react-native'
+import { css, styled, provider, useTheme, createMediaQueries } from '@vitus-labs/connector-native'
+
+init({ css, styled, provider, useTheme, component: View, textComponent: Text, createMediaQueries })
+```
+
 ## Requirements
 
 - React >= 19
-- styled-components >= 6
 - TypeScript >= 5 (recommended)
 
 ## License

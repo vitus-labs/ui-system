@@ -5,7 +5,7 @@ Multi-dimensional styling system for React.
 [![npm](https://img.shields.io/npm/v/@vitus-labs/rocketstyle)](https://www.npmjs.com/package/@vitus-labs/rocketstyle)
 [![license](https://img.shields.io/npm/l/@vitus-labs/rocketstyle)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
 
-Organize component styles by dimensions — states, sizes, variants — instead of flat props. Chain theme values, attach styled-components CSS, and get full TypeScript inference. Built-in pseudo-state handling, light/dark mode, and provider/consumer patterns for parent-child state propagation.
+Organize component styles by dimensions — states, sizes, variants — instead of flat props. Chain theme values, attach CSS via the active connector, and get full TypeScript inference. Built-in pseudo-state handling, light/dark mode, and provider/consumer patterns for parent-child state propagation.
 
 ## Features
 
@@ -21,7 +21,7 @@ Organize component styles by dimensions — states, sizes, variants — instead 
 ## Installation
 
 ```bash
-npm install @vitus-labs/rocketstyle @vitus-labs/core styled-components
+npm install @vitus-labs/rocketstyle @vitus-labs/core
 ```
 
 ## Quick Start
@@ -110,7 +110,7 @@ Pseudo-state keys nest directly in the theme object:
 
 ### Styles Function
 
-The `.styles()` method defines the styled-components template that receives the computed theme:
+The `.styles()` method defines the CSS template that receives the computed theme:
 
 ```tsx
 .styles((css) => css`
@@ -200,7 +200,7 @@ Button.states((theme, mode, css) => ({
 
 ### .styles(callback)
 
-Define the styled-components CSS template.
+Define the CSS template using the active connector's `css` tagged template.
 
 ```tsx
 Button.styles((css) => css`
