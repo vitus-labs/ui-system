@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,8 +46,15 @@ jobs:
       - name: Type Check
         run: bun run typecheck
 
-      - name: Test
-        run: bun run test
+      - name: Test with coverage
+        run: bun run test -- --coverage
+
+      - name: Coverage report
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
 
   audit:
     name: Security Audit
