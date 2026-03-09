@@ -1,50 +1,47 @@
 import { Element, Text as VLText } from '@vitus-labs/elements'
 import { Link } from 'expo-router'
 import { StyleSheet, Text, View } from 'react-native'
-
-const Box = ({ color, label }: { color: string; label: string }) => (
-  <View style={[styles.box, { backgroundColor: color }]}>
-    <Text style={styles.boxText}>{label}</Text>
-  </View>
-)
+import { Cell, Screen, Section } from '../src/components'
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Vitus Labs - React Native</Text>
-      <Text style={styles.subtitle}>
-        Testing connector-native + all packages
-      </Text>
+    <Screen
+      title="Vitus Labs - React Native"
+      subtitle="Testing connector-native + all packages"
+    >
+      <Section title="1. Basic Element">
+        <Element direction="inline" alignY="center" gap={12} block>
+          <Text>Element with direction=inline, gap=12, block</Text>
+        </Element>
+      </Section>
 
-      <Text style={styles.sectionTitle}>1. Basic Element</Text>
-      <Element direction="inline" alignY="center" gap={12} block>
-        <Text>Element with direction=inline, gap=12, block</Text>
-      </Element>
+      <Section title="2. Element with slots">
+        <Element
+          direction="inline"
+          alignY="center"
+          gap={12}
+          block
+          beforeContent={<Cell color="#0070f3" label="B" height={40} />}
+          afterContent={<Cell color="#e74c3c" label="A" height={40} />}
+        >
+          <Text>Content between before/after</Text>
+        </Element>
+      </Section>
 
-      <Text style={styles.sectionTitle}>2. Element with slots</Text>
-      <Element
-        direction="inline"
-        alignY="center"
-        gap={12}
-        block
-        beforeContent={<Box color="#0070f3" label="B" />}
-        afterContent={<Box color="#e74c3c" label="A" />}
-      >
-        <Text>Content between before/after</Text>
-      </Element>
+      <Section title="3. VL Text">
+        <VLText>This is a VLText component</VLText>
+      </Section>
 
-      <Text style={styles.sectionTitle}>3. VL Text</Text>
-      <VLText>This is a VLText component</VLText>
-
-      <Text style={styles.sectionTitle}>4. Vertical Element</Text>
-      <Element direction="rows" alignX="center" gap={8} block>
-        <Box color="#2ecc71" label="1" />
-        <Box color="#3498db" label="2" />
-        <Box color="#9b59b6" label="3" />
-      </Element>
+      <Section title="4. Vertical Element">
+        <Element direction="rows" alignX="center" gap={8} block>
+          <Cell color="#2ecc71" label="1" height={40} />
+          <Cell color="#3498db" label="2" height={40} />
+          <Cell color="#9b59b6" label="3" height={40} />
+        </Element>
+      </Section>
 
       <View style={styles.nav}>
-        <Text style={styles.sectionTitle}>More Examples</Text>
+        <Text style={styles.navTitle}>More Examples</Text>
         <Link href="/coolgrid" style={styles.link}>
           <Text style={styles.linkText}>Coolgrid Demo</Text>
         </Link>
@@ -61,48 +58,13 @@ export default function HomeScreen() {
           <Text style={styles.linkText}>Attrs Demo</Text>
         </Link>
       </View>
-    </View>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 24,
-    marginBottom: 12,
-    color: '#333',
-  },
-  box: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  boxText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  nav: {
-    marginTop: 32,
-  },
+  nav: { marginTop: 32 },
+  navTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12, color: '#333' },
   link: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -110,9 +72,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
   },
-  linkText: {
-    fontSize: 16,
-    color: '#0070f3',
-    fontWeight: '500',
-  },
+  linkText: { fontSize: 16, color: '#0070f3', fontWeight: '500' },
 })
