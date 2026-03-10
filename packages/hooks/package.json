@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/hooks",
-  "version": "2.0.0-alpha.27",
+  "version": "2.0.0-beta.0",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -52,7 +52,7 @@
     "node": ">= 18"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.0.0-alpha.27",
+    "@vitus-labs/core": "2.0.0-beta.0",
     "react": ">= 19",
     "react-native": ">= 0.76"
   },
