@@ -26,7 +26,7 @@ const useIntersection: UseIntersection = (options = {}) => {
         observerRef.current = null
       }
 
-      if (!node) return
+      if (!node || typeof IntersectionObserver === 'undefined') return
 
       const observer = new IntersectionObserver(
         (entries) => {

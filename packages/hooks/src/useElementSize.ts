@@ -18,7 +18,7 @@ const useElementSize: UseElementSize = () => {
       observerRef.current = null
     }
 
-    if (!node) return
+    if (!node || typeof ResizeObserver === 'undefined') return
 
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
