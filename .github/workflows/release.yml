@@ -12,6 +12,14 @@ on:
           - patch
           - minor
           - major
+      preid:
+        description: "Prerelease identifier (only used with prerelease type)"
+        required: false
+        type: choice
+        default: alpha
+        options:
+          - alpha
+          - beta
 
 concurrency:
   group: release-${{ github.ref }}
@@ -130,6 +138,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Publish prerelease
-        run: bunx lerna publish prerelease --dist-tag next --force-publish --yes
+        run: bunx lerna publish prerelease --preid ${{ inputs.preid }} --dist-tag next --force-publish --yes
         env:
           NPM_CONFIG_PROVENANCE: true
