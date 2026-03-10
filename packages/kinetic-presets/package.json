@@ -6,6 +6,9 @@
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "type": "module",
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     "source": "./src/index.ts",
     "import": "./lib/index.js",
