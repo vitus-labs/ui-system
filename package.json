@@ -41,7 +41,7 @@
     "@types/react-is": "^19.2.0",
     "@vitus-labs/tools-atlas": "1.10.0",
     "@vitus-labs/tools-lint": "1.10.0",
-    "@vitus-labs/tools-vitest": "1.10.0",
+    "@vitus-labs/tools-vitest": "1.11.0",
     "cpr": "^3.0.1",
     "csstype": "^3.2.3",
     "jsdom": "^28.1.0",
