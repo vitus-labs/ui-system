@@ -1,4 +1,5 @@
 import type { HTMLTags } from '@vitus-labs/core'
+import type { ReactElement } from 'react'
 import type {
   AlignX,
   AlignY,
@@ -288,5 +289,5 @@ export type Props = Partial<{
 
 export type VLElement<P extends Record<string, unknown> = {}> = ((
   props: Props & P & { ref?: any },
-) => React.ReactElement | null) &
+) => ReactElement | null) &
   VLStatic

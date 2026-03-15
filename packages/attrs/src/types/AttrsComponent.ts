@@ -1,4 +1,4 @@
-import type { ForwardedRef } from 'react'
+import type { ForwardedRef, ReactElement } from 'react'
 import type { AttrsCb } from './attrs'
 import type { ConfigAttrs } from './config'
 import type { ComposeParam } from './hoc'
@@ -30,7 +30,7 @@ export interface AttrsComponent<
   // calculated final props
   DFP extends Record<string, any> = MergeTypes<[OA, EA]>,
 > {
-  (props: DFP & { ref?: any }): React.ReactElement | null
+  (props: DFP & { ref?: any }): ReactElement | null
   // CONFIG chaining method
   // --------------------------------------------------------
   /**

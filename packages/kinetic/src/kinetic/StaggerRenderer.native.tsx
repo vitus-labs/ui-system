@@ -1,4 +1,10 @@
-import { Children, createElement, isValidElement } from 'react'
+import {
+  Children,
+  createElement,
+  type ForwardedRef,
+  isValidElement,
+  type ReactElement,
+} from 'react'
 import type { TransitionCallbacks } from '../types'
 import TransitionItem from './TransitionItem'
 import type { KineticConfig } from './types'
@@ -12,8 +18,8 @@ type StaggerRendererProps = {
   interval?: number
   reverseLeave?: boolean
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactElement<any>[]
-  forwardedRef: React.ForwardedRef<unknown>
+  children: ReactElement<any>[]
+  forwardedRef: ForwardedRef<unknown>
 }
 
 const StaggerRenderer = ({
@@ -35,7 +41,7 @@ const StaggerRenderer = ({
 
   const childArray = Children.toArray(children).filter(
     isValidElement,
-  ) as React.ReactElement<any>[]
+  ) as ReactElement<any>[]
   const count = childArray.length
 
   const staggeredChildren = childArray.map((child, index) => {

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type {
   BlurOptions,
   Direction,
@@ -200,11 +201,11 @@ export const createBlur = ({
   }
 
   return {
-    enterStyle: hidden as React.CSSProperties,
-    enterToStyle: visible as React.CSSProperties,
+    enterStyle: hidden as CSSProperties,
+    enterToStyle: visible as CSSProperties,
     enterTransition: `all ${duration}ms ${easing}`,
-    leaveStyle: visible as React.CSSProperties,
-    leaveToStyle: hidden as React.CSSProperties,
+    leaveStyle: visible as CSSProperties,
+    leaveToStyle: hidden as CSSProperties,
     leaveTransition: `all ${leaveDuration}ms ${leaveEasing}`,
   }
 }

@@ -1,5 +1,11 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
-import { createElement, useMemo, useRef } from 'react'
+import {
+  createElement,
+  type ForwardedRef,
+  type ReactNode,
+  useMemo,
+  useRef,
+} from 'react'
 import { Animated } from 'react-native'
 import { buildAnimatedStyle, getPrimaryTransition } from '../nativeAnimations'
 import type { TransitionCallbacks } from '../types'
@@ -14,8 +20,8 @@ type TransitionRendererProps = {
   unmount?: boolean
   timeout?: number
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactNode
-  forwardedRef: React.ForwardedRef<unknown>
+  children: ReactNode
+  forwardedRef: ForwardedRef<unknown>
 }
 
 const animatedComponentCache = new WeakMap<any, any>()

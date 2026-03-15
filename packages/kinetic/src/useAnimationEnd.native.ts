@@ -1,10 +1,10 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
-import { useRef } from 'react'
+import { type RefObject, useRef } from 'react'
 
 const DEFAULT_TIMEOUT = 5000
 
 export type UseAnimationEnd = (options: {
-  ref: React.RefObject<any>
+  ref: RefObject<any>
   onEnd: () => void
   active: boolean
   timeout?: number

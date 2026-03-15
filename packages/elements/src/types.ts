@@ -6,8 +6,7 @@
  */
 import type { BreakpointKeys, config, render } from '@vitus-labs/core'
 import type { MakeItResponsive } from '@vitus-labs/unistyle'
-import type React from 'react'
-import type { ComponentType, FC, ForwardedRef } from 'react'
+import type { ComponentType, FC, ForwardedRef, ReactElement } from 'react'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
@@ -109,7 +108,7 @@ export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
 
 export type VLComponent<P extends Record<string, any> = {}> = ((
   props: P & { ref?: any },
-) => React.ReactElement | null) &
+) => ReactElement | null) &
   VLStatic
 
 export interface VLStatic {

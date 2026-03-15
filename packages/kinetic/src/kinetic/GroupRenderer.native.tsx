@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import type { ForwardedRef, ReactElement } from 'react'
 import {
   Children,
   createElement,
@@ -17,7 +17,7 @@ type GroupRendererProps = {
   timeout?: number
   callbacks: Partial<TransitionCallbacks>
   children: ReactElement<any>[]
-  forwardedRef: React.ForwardedRef<unknown>
+  forwardedRef: ForwardedRef<unknown>
 }
 
 type KeyedChild = { key: string | number; element: ReactElement<any> }

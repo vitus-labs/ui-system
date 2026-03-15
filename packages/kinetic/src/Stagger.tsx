@@ -1,4 +1,10 @@
-import { Children, cloneElement, isValidElement } from 'react'
+import {
+  Children,
+  type CSSProperties,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+} from 'react'
 import Transition from './Transition'
 import type { StaggerProps } from './types'
 
@@ -14,7 +20,7 @@ const Stagger = ({
 }: StaggerProps) => {
   const childArray = Children.toArray(children).filter(
     isValidElement,
-  ) as React.ReactElement<any>[]
+  ) as ReactElement<any>[]
   const count = childArray.length
 
   return (
@@ -42,7 +48,7 @@ const Stagger = ({
                 '--stagger-index': staggerIndex,
                 '--stagger-interval': `${interval}ms`,
                 transitionDelay: `${delay}ms`,
-              } as React.CSSProperties,
+              } as CSSProperties,
             })}
           </Transition>
         )

@@ -2,6 +2,7 @@ import type {
   ComponentPropsWithRef,
   CSSProperties,
   ElementType,
+  FC,
   ReactElement,
   ReactNode,
 } from 'react'
@@ -172,4 +173,4 @@ export type KineticChain<Tag extends ElementType, Mode extends KineticMode> = {
 export type KineticComponent<
   Tag extends ElementType,
   Mode extends KineticMode = 'transition',
-> = React.FC<KineticComponentProps<Tag, Mode>> & KineticChain<Tag, Mode>
+> = FC<KineticComponentProps<Tag, Mode>> & KineticChain<Tag, Mode>

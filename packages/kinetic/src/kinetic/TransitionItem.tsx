@@ -4,6 +4,7 @@ import {
   useMergedRef,
   useReducedMotion,
 } from '@vitus-labs/hooks'
+import type { CSSProperties, ReactElement, Ref, RefObject } from 'react'
 import { cloneElement, useRef } from 'react'
 import type {
   ClassTransitionProps,
@@ -22,7 +23,7 @@ type TransitionItemProps = ClassTransitionProps &
     unmount?: boolean
     timeout?: number
     delay?: number
-    children: React.ReactElement<any>
+    children: ReactElement<any>
   }
 
 const applyEnter = (
@@ -62,7 +63,7 @@ const applyLeave = (
 
 const applyReducedMotion = (
   stage: string,
-  callbacks: React.RefObject<Partial<TransitionCallbacks>>,
+  callbacks: RefObject<Partial<TransitionCallbacks>>,
   complete: () => void,
 ) => {
   if (stage === 'entering') {
@@ -117,7 +118,7 @@ const TransitionItem = ({
   const mergedRef = useMergedRef(
     elementRef,
     stateRef,
-    (children.props as Record<string, unknown>).ref as React.Ref<HTMLElement>,
+    (children.props as Record<string, unknown>).ref as Ref<HTMLElement>,
   )
 
   const callbacksRef = useLatest({
@@ -190,7 +191,7 @@ const TransitionItem = ({
       ref: mergedRef,
       style: mergeStyles(
         (children.props as Record<string, unknown>).style as
-          | React.CSSProperties
+          | CSSProperties
           | undefined,
         { display: 'none' },
       ),

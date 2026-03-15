@@ -1,4 +1,4 @@
-import type { ElementType } from 'react'
+import type { CSSProperties, ElementType, ReactElement, ReactNode } from 'react'
 import type { TransitionCallbacks } from '../types'
 import CollapseRenderer from './CollapseRenderer'
 import GroupRenderer from './GroupRenderer'
@@ -81,7 +81,7 @@ const createKineticComponent = <
 
     // Extract children from htmlProps (it's not an HTML attribute)
     const { children, ...restHtml } = htmlProps
-    const childrenNode = children as React.ReactNode
+    const childrenNode = children as ReactNode
 
     if (config.mode === 'collapse') {
       return (
@@ -113,7 +113,7 @@ const createKineticComponent = <
           callbacks={callbacks}
           forwardedRef={ref}
         >
-          {childrenNode as React.ReactElement<any>[]}
+          {childrenNode as ReactElement<any>[]}
         </StaggerRenderer>
       )
     }
@@ -128,7 +128,7 @@ const createKineticComponent = <
           callbacks={callbacks}
           forwardedRef={ref}
         >
-          {childrenNode as React.ReactElement<any>[]}
+          {childrenNode as ReactElement<any>[]}
         </GroupRenderer>
       )
     }
@@ -166,19 +166,19 @@ const createKineticComponent = <
         ...preset,
       } as KineticConfig),
 
-    enter: (styles: React.CSSProperties) =>
+    enter: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, enterStyle: styles }),
 
-    enterTo: (styles: React.CSSProperties) =>
+    enterTo: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, enterToStyle: styles }),
 
     enterTransition: (value: string) =>
       createKineticComponent<Tag, Mode>({ ...config, enterTransition: value }),
 
-    leave: (styles: React.CSSProperties) =>
+    leave: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, leaveStyle: styles }),
 
-    leaveTo: (styles: React.CSSProperties) =>
+    leaveTo: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, leaveToStyle: styles }),
 
     leaveTransition: (value: string) =>

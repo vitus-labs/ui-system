@@ -4,7 +4,7 @@ import {
   useMergedRef,
   useReducedMotion,
 } from '@vitus-labs/hooks'
-import { cloneElement, useRef } from 'react'
+import { type CSSProperties, cloneElement, type Ref, useRef } from 'react'
 import type {
   ClassTransitionProps,
   StyleTransitionProps,
@@ -124,7 +124,7 @@ const Transition = ({
   const mergedRef = useMergedRef(
     elementRef,
     stateRef,
-    (children.props as Record<string, unknown>).ref as React.Ref<HTMLElement>,
+    (children.props as Record<string, unknown>).ref as Ref<HTMLElement>,
   )
 
   const callbacksRef = useLatest({
@@ -196,7 +196,7 @@ const Transition = ({
       ref: mergedRef,
       style: mergeStyles(
         (children.props as Record<string, unknown>).style as
-          | React.CSSProperties
+          | CSSProperties
           | undefined,
         { display: 'none' },
       ),
