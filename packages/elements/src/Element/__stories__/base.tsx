@@ -6,7 +6,7 @@ import Element, { type Props } from '~/Element'
 const { css, styled } = config
 const rs = rocketstyle()
 
-export { css, styled, rs }
+export { css, rs, styled }
 
 export const Inner: FC<Props> = (props) => (
   <Element

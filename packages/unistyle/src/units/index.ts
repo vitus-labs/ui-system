@@ -5,6 +5,6 @@ import value from './value'
 import type { Values } from './values'
 import values from './values'
 
-export type { Value, StripUnit, Values }
+export type { StripUnit, Value, Values }
 
-export { value, stripUnit, values }
+export { stripUnit, value, values }

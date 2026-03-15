@@ -55,7 +55,7 @@
     "react-native": ">= 0.76"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rolldown": "1.10.0",
-    "@vitus-labs/tools-typescript": "1.10.0"
+    "@vitus-labs/tools-rolldown": "1.11.0",
+    "@vitus-labs/tools-typescript": "1.11.0"
   }
 }

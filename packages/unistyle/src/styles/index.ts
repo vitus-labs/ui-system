@@ -15,20 +15,20 @@ import type { Styles, StylesTheme } from './styles'
 import styles from './styles'
 
 export type {
-  Styles,
-  StylesTheme,
   AlignContent,
   AlignContentAlignXKeys,
   AlignContentAlignYKeys,
   AlignContentDirectionKeys,
   ExtendCss,
+  Styles,
+  StylesTheme,
 }
 
 export {
-  styles,
-  alignContent,
   ALIGN_CONTENT_DIRECTION,
   ALIGN_CONTENT_MAP_X,
   ALIGN_CONTENT_MAP_Y,
+  alignContent,
   extendCss,
+  styles,
 }

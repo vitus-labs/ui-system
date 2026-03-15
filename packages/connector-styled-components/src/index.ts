@@ -6,5 +6,5 @@ import styled, {
   useTheme,
 } from 'styled-components'
 
-export { css, styled, keyframes, createGlobalStyle, useTheme }
+export { createGlobalStyle, css, keyframes, styled, useTheme }
 export const provider = ThemeProvider

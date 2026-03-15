@@ -6,6 +6,6 @@ type HTMLTagAttrsByTag<T extends HTMLTags> = T extends HTMLTags
   ? HTMLElementAttrs[T]
   : {}
 
-export type { HTMLTags, HTMLTextTags, HTMLElementAttrs, HTMLTagAttrsByTag }
+export type { HTMLElementAttrs, HTMLTagAttrsByTag, HTMLTags, HTMLTextTags }
 
 export { HTML_TAGS, HTML_TEXT_TAGS }
