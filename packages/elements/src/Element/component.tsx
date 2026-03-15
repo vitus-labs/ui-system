@@ -7,13 +7,7 @@
  * skipping children or switching sub-tags accordingly.
  */
 import { render } from '@vitus-labs/core'
-import {
-  forwardRef,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from 'react'
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { PKG_NAME } from '~/constants'
 import { Content, Wrapper } from '~/helpers'
 import type { VLElement } from './types'
@@ -42,190 +36,186 @@ const defaultContentDirection = 'rows'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
 
-const Component: VLElement = forwardRef(
-  (
-    {
-      innerRef,
-      tag,
-      label,
-      content,
-      children,
-      beforeContent,
-      afterContent,
-      equalBeforeAfter,
+const Component: VLElement = ({
+  innerRef,
+  ref,
+  tag,
+  label,
+  content,
+  children,
+  beforeContent,
+  afterContent,
+  equalBeforeAfter,
 
-      block,
-      equalCols,
-      gap,
+  block,
+  equalCols,
+  gap,
 
-      direction,
-      alignX = defaultAlignX,
-      alignY = defaultAlignY,
+  direction,
+  alignX = defaultAlignX,
+  alignY = defaultAlignY,
 
-      css,
-      contentCss,
-      beforeContentCss,
-      afterContentCss,
+  css,
+  contentCss,
+  beforeContentCss,
+  afterContentCss,
 
-      contentDirection = defaultContentDirection,
-      contentAlignX = defaultAlignX,
-      contentAlignY = defaultAlignY,
+  contentDirection = defaultContentDirection,
+  contentAlignX = defaultAlignX,
+  contentAlignY = defaultAlignY,
 
-      beforeContentDirection = defaultDirection,
-      beforeContentAlignX = defaultAlignX,
-      beforeContentAlignY = defaultAlignY,
+  beforeContentDirection = defaultDirection,
+  beforeContentAlignX = defaultAlignX,
+  beforeContentAlignY = defaultAlignY,
 
-      afterContentDirection = defaultDirection,
-      afterContentAlignX = defaultAlignX,
-      afterContentAlignY = defaultAlignY,
+  afterContentDirection = defaultDirection,
+  afterContentAlignX = defaultAlignX,
+  afterContentAlignY = defaultAlignY,
 
-      ...props
-    },
-    ref,
-  ) => {
-    // --------------------------------------------------------
-    // check if should render only single element
-    // --------------------------------------------------------
-    const shouldBeEmpty = __WEB__
-      ? !!props.dangerouslySetInnerHTML || getShouldBeEmpty(tag)
-      : false
+  ...props
+}) => {
+  // --------------------------------------------------------
+  // check if should render only single element
+  // --------------------------------------------------------
+  const shouldBeEmpty = __WEB__
+    ? !!props.dangerouslySetInnerHTML || getShouldBeEmpty(tag)
+    : false
 
-    // --------------------------------------------------------
-    // if not single element, calculate values
-    // --------------------------------------------------------
-    const isSimpleElement = !beforeContent && !afterContent
-    const CHILDREN = children ?? content ?? label
+  // --------------------------------------------------------
+  // if not single element, calculate values
+  // --------------------------------------------------------
+  const isSimpleElement = !beforeContent && !afterContent
+  const CHILDREN = children ?? content ?? label
 
-    const isInline = __WEB__ ? isInlineElement(tag) : false
-    const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
+  const isInline = __WEB__ ? isInlineElement(tag) : false
+  const SUB_TAG = __WEB__ && isInline ? 'span' : undefined
 
-    // --------------------------------------------------------
-    // direction & alignX & alignY calculations
-    // --------------------------------------------------------
-    const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
-      let wrapperDirection: typeof direction = direction
-      let wrapperAlignX: typeof alignX = alignX
-      let wrapperAlignY: typeof alignY = alignY
+  // --------------------------------------------------------
+  // direction & alignX & alignY calculations
+  // --------------------------------------------------------
+  const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
+    let wrapperDirection: typeof direction = direction
+    let wrapperAlignX: typeof alignX = alignX
+    let wrapperAlignY: typeof alignY = alignY
 
-      if (isSimpleElement) {
-        if (contentDirection) wrapperDirection = contentDirection
-        if (contentAlignX) wrapperAlignX = contentAlignX
-        if (contentAlignY) wrapperAlignY = contentAlignY
-      } else if (direction) {
-        wrapperDirection = direction
-      } else {
-        wrapperDirection = defaultDirection
+    if (isSimpleElement) {
+      if (contentDirection) wrapperDirection = contentDirection
+      if (contentAlignX) wrapperAlignX = contentAlignX
+      if (contentAlignY) wrapperAlignY = contentAlignY
+    } else if (direction) {
+      wrapperDirection = direction
+    } else {
+      wrapperDirection = defaultDirection
+    }
+
+    return { wrapperDirection, wrapperAlignX, wrapperAlignY }
+  }, [
+    isSimpleElement,
+    contentDirection,
+    contentAlignX,
+    contentAlignY,
+    alignX,
+    alignY,
+    direction,
+  ])
+
+  // --------------------------------------------------------
+  // equalBeforeAfter: measure & equalize slot dimensions
+  // --------------------------------------------------------
+  const equalizeRef = useRef<HTMLElement | null>(null)
+  const externalRef = ref ?? innerRef
+
+  const mergedRef = useCallback(
+    (node: HTMLElement | null) => {
+      equalizeRef.current = node
+      if (typeof externalRef === 'function') externalRef(node)
+      else if (externalRef != null) {
+        ;(externalRef as { current: HTMLElement | null }).current = node
       }
+    },
+    [externalRef],
+  )
 
-      return { wrapperDirection, wrapperAlignX, wrapperAlignY }
-    }, [
-      isSimpleElement,
-      contentDirection,
-      contentAlignX,
-      contentAlignY,
-      alignX,
-      alignY,
-      direction,
-    ])
+  useLayoutEffect(() => {
+    if (!__WEB__) return
+    if (!equalBeforeAfter || !beforeContent || !afterContent) return
+    if (equalizeRef.current) equalize(equalizeRef.current, direction)
+  }, [equalBeforeAfter, beforeContent, afterContent, direction])
 
-    // --------------------------------------------------------
-    // equalBeforeAfter: measure & equalize slot dimensions
-    // --------------------------------------------------------
-    const equalizeRef = useRef<HTMLElement | null>(null)
-    const externalRef = ref ?? innerRef
+  // --------------------------------------------------------
+  // common wrapper props
+  // --------------------------------------------------------
+  const WRAPPER_PROPS = {
+    ref: mergedRef,
+    extendCss: css,
+    tag,
+    block,
+    direction: wrapperDirection,
+    alignX: wrapperAlignX,
+    alignY: wrapperAlignY,
+    as: undefined, // reset styled-components `as` prop
+  }
 
-    const mergedRef = useCallback(
-      (node: HTMLElement | null) => {
-        equalizeRef.current = node
-        if (typeof externalRef === 'function') externalRef(node)
-        else if (externalRef != null) {
-          ;(externalRef as { current: HTMLElement | null }).current = node
-        }
-      },
-      [externalRef],
-    )
+  // --------------------------------------------------------
+  // return simple/empty element like input or image etc.
+  // --------------------------------------------------------
+  if (shouldBeEmpty) {
+    return <Wrapper {...props} {...WRAPPER_PROPS} />
+  }
 
-    useLayoutEffect(() => {
-      if (!__WEB__) return
-      if (!equalBeforeAfter || !beforeContent || !afterContent) return
-      if (equalizeRef.current) equalize(equalizeRef.current, direction)
-    }, [equalBeforeAfter, beforeContent, afterContent, direction])
+  return (
+    <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
+      {beforeContent && (
+        <Content
+          tag={SUB_TAG}
+          contentType="before"
+          parentDirection={wrapperDirection}
+          extendCss={beforeContentCss}
+          direction={beforeContentDirection}
+          alignX={beforeContentAlignX}
+          alignY={beforeContentAlignY}
+          equalCols={equalCols}
+          gap={gap}
+        >
+          {beforeContent}
+        </Content>
+      )}
 
-    // --------------------------------------------------------
-    // common wrapper props
-    // --------------------------------------------------------
-    const WRAPPER_PROPS = {
-      ref: mergedRef,
-      extendCss: css,
-      tag,
-      block,
-      direction: wrapperDirection,
-      alignX: wrapperAlignX,
-      alignY: wrapperAlignY,
-      as: undefined, // reset styled-components `as` prop
-    }
+      {isSimpleElement ? (
+        render(CHILDREN)
+      ) : (
+        <Content
+          tag={SUB_TAG}
+          contentType="content"
+          parentDirection={wrapperDirection}
+          extendCss={contentCss}
+          direction={contentDirection}
+          alignX={contentAlignX}
+          alignY={contentAlignY}
+          equalCols={equalCols}
+        >
+          {CHILDREN}
+        </Content>
+      )}
 
-    // --------------------------------------------------------
-    // return simple/empty element like input or image etc.
-    // --------------------------------------------------------
-    if (shouldBeEmpty) {
-      return <Wrapper {...props} {...WRAPPER_PROPS} />
-    }
-
-    return (
-      <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
-        {beforeContent && (
-          <Content
-            tag={SUB_TAG}
-            contentType="before"
-            parentDirection={wrapperDirection}
-            extendCss={beforeContentCss}
-            direction={beforeContentDirection}
-            alignX={beforeContentAlignX}
-            alignY={beforeContentAlignY}
-            equalCols={equalCols}
-            gap={gap}
-          >
-            {beforeContent}
-          </Content>
-        )}
-
-        {isSimpleElement ? (
-          render(CHILDREN)
-        ) : (
-          <Content
-            tag={SUB_TAG}
-            contentType="content"
-            parentDirection={wrapperDirection}
-            extendCss={contentCss}
-            direction={contentDirection}
-            alignX={contentAlignX}
-            alignY={contentAlignY}
-            equalCols={equalCols}
-          >
-            {CHILDREN}
-          </Content>
-        )}
-
-        {afterContent && (
-          <Content
-            tag={SUB_TAG}
-            contentType="after"
-            parentDirection={wrapperDirection}
-            extendCss={afterContentCss}
-            direction={afterContentDirection}
-            alignX={afterContentAlignX}
-            alignY={afterContentAlignY}
-            equalCols={equalCols}
-            gap={gap}
-          >
-            {afterContent}
-          </Content>
-        )}
-      </Wrapper>
-    )
-  },
-)
+      {afterContent && (
+        <Content
+          tag={SUB_TAG}
+          contentType="after"
+          parentDirection={wrapperDirection}
+          extendCss={afterContentCss}
+          direction={afterContentDirection}
+          alignX={afterContentAlignX}
+          alignY={afterContentAlignY}
+          equalCols={equalCols}
+          gap={gap}
+        >
+          {afterContent}
+        </Content>
+      )}
+    </Wrapper>
+  )
+}
 
 const name = `${PKG_NAME}/Element` as const
 

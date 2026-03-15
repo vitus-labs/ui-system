@@ -5,13 +5,9 @@
  * a static `isText` flag so other components can detect text children.
  */
 import type { HTMLTextTags } from '@vitus-labs/core'
-import {
-  type ForwardRefRenderFunction,
-  forwardRef,
-  type ReactNode,
-} from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { PKG_NAME } from '~/constants'
-import type { ExtendCss, VLForwardedComponent } from '~/types'
+import type { ExtendCss, VLComponent } from '~/types'
 import Styled from './styled'
 
 export type Props = Partial<{
@@ -37,11 +33,11 @@ export type Props = Partial<{
   css: ExtendCss
 }>
 
-type RenderContent = (as?: any) => ReturnType<ForwardRefRenderFunction<Props>>
+type RenderContent = (as?: any) => ReactElement | null
 
-const Component: VLForwardedComponent<Props> & {
+const Component: VLComponent<Props> & {
   isText?: true
-} = forwardRef(({ paragraph, label, children, tag, css, ...props }, ref) => {
+} = ({ paragraph, label, children, tag, css, ref, ...props }: any) => {
   const renderContent: RenderContent = (as = undefined) => (
     <Styled ref={ref} as={as} $text={{ extraStyles: css }} {...props}>
       {children ?? label}
@@ -58,7 +54,7 @@ const Component: VLForwardedComponent<Props> & {
   }
 
   return renderContent(finalTag)
-})
+}
 
 // ----------------------------------------------
 // DEFINE STATICS

@@ -24,9 +24,16 @@ describe('isRocketComponent', () => {
     expect(isRocketComponent(true)).toBe(false)
   })
 
-  it('returns false for functions', () => {
+  it('returns false for plain functions without IS_ROCKETSTYLE', () => {
     // biome-ignore lint/suspicious/noEmptyBlockStatements: test fixture
     expect(isRocketComponent(() => {})).toBe(false)
+  })
+
+  it('returns true for functions with IS_ROCKETSTYLE', () => {
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: test fixture
+    const fn = () => {}
+    ;(fn as any).IS_ROCKETSTYLE = true
+    expect(isRocketComponent(fn)).toBe(true)
   })
 
   it('returns true even if IS_ROCKETSTYLE is falsy', () => {

@@ -1,13 +1,12 @@
-import type { ComponentType, FC, ForwardRefExoticComponent } from 'react'
+import type { ComponentType, FC } from 'react'
 
 export type TObj = Record<string, unknown>
 export type TFn = (...args: any) => any
 export type CallBackParam = TObj | TFn
 export type DisplayName = string
 
-export type ElementType<T extends TObj | unknown = any> =
-  | (ComponentType<T> & Partial<{ [key: string]: any }>)
-  | (ForwardRefExoticComponent<T> & { [key: string]: any })
+export type ElementType<T extends TObj | unknown = any> = ComponentType<T> &
+  Partial<{ [key: string]: any }>
 
 export type ValueOf<T> = T[keyof T]
 
@@ -60,6 +59,4 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
 export type ExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps
-    : TComponentOrTProps extends ForwardRefExoticComponent<infer TProps>
-      ? TProps
-      : TComponentOrTProps
+    : TComponentOrTProps

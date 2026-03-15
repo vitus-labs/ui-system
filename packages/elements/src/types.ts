@@ -6,14 +6,7 @@
  */
 import type { BreakpointKeys, config, render } from '@vitus-labs/core'
 import type { MakeItResponsive } from '@vitus-labs/unistyle'
-import type {
-  ComponentType,
-  FC,
-  ForwardedRef,
-  ForwardRefExoticComponent,
-  PropsWithoutRef,
-  RefAttributes,
-} from 'react'
+import type { ComponentType, FC, ForwardedRef } from 'react'
 
 export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
 
@@ -109,8 +102,9 @@ export type ExtractProps<TComponentOrTProps> =
 
 // export type HTMLTagProps<T extends HTMLTags> = JSX.IntrinsicElements[T];
 
+/** @deprecated Use VLComponent instead — forwardRef is no longer needed with React 19 */
 export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
-  ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & VLStatic
+  FC<P> & VLStatic
 
 export type VLComponent<P extends Record<string, any> = {}> = FC<P> & VLStatic
 

@@ -1,4 +1,4 @@
-import type { ForwardedRef, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { AttrsCb } from './attrs'
 import type { ConfigAttrs } from './config'
 import type { DefaultProps } from './configuration'
@@ -18,13 +18,9 @@ import type { Theme, ThemeCb, ThemeModeKeys } from './theme'
 import type { ElementType, ExtractProps, MergeTypes, TObj } from './utils'
 
 export type InnerComponentProps = {
-  $rocketstyleRef?: ForwardedRef<unknown>
+  $rocketstyleRef?: any
+  ref?: any
   'data-rocketstyle': string
-}
-
-export interface ExoticComponent<P = {}> {
-  (props: P): ReactNode
-  readonly $$typeof: symbol
 }
 
 export type RocketStyleComponent<
@@ -93,7 +89,8 @@ export interface IRocketStyleComponent<
   DKP extends TDKP = TDKP,
   // calculated final props
   DFP = MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>,
-> extends ExoticComponent<DFP> {
+> {
+  (props: DFP & { ref?: any }): ReactNode
   // CONFIG chaining method
   // --------------------------------------------------------
   /**

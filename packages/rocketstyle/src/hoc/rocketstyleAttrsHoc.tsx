@@ -1,9 +1,5 @@
 import { render } from '@vitus-labs/core'
-import {
-  type ComponentType,
-  type ForwardRefExoticComponent,
-  forwardRef,
-} from 'react'
+import type { ComponentType, FC } from 'react'
 import { useTheme } from '~/hooks'
 import type { Configuration } from '~/types/configuration'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
@@ -14,7 +10,7 @@ export type RocketStyleHOC = ({
   priorityAttrs,
 }: Pick<Configuration, 'inversed' | 'attrs' | 'priorityAttrs'>) => (
   WrappedComponent: ComponentType<any>,
-) => ForwardRefExoticComponent<any>
+) => FC<any>
 
 /**
  * HOC that resolves the `.attrs()` chain before the inner component renders.
@@ -31,8 +27,8 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
   const calculateAttrs = calculateChainOptions(attrs)
   const calculatePriorityAttrs = calculateChainOptions(priorityAttrs)
 
-  const Enhanced = (WrappedComponent: ComponentType<any>) =>
-    forwardRef<any, any>((props, ref) => {
+  const Enhanced = (WrappedComponent: ComponentType<any>) => {
+    const HOC = ({ ref, ...props }: any) => {
       const { theme, mode, isDark, isLight } = useTheme({
         inversed,
       })
@@ -66,7 +62,9 @@ const rocketStyleHOC: RocketStyleHOC = ({ inversed, attrs, priorityAttrs }) => {
           {...filteredProps}
         />
       )
-    })
+    }
+    return HOC
+  }
 
   return Enhanced
 }

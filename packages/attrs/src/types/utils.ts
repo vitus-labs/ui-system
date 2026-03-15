@@ -1,4 +1,4 @@
-import type { ComponentType, FC, ForwardRefExoticComponent } from 'react'
+import type { ComponentType, FC } from 'react'
 
 // ─── Base Types ───────────────────────────────────────────────
 
@@ -11,9 +11,8 @@ export type DisplayName = string
  * A React component type that accepts additional static properties.
  * Supports both class/function components and forwardRef components.
  */
-export type ElementType<T extends TObj | unknown = any> =
-  | (ComponentType<T> & Partial<Record<string, any>>)
-  | (ForwardRefExoticComponent<T> & Partial<Record<string, any>>)
+export type ElementType<T extends TObj | unknown = any> = ComponentType<T> &
+  Partial<Record<string, any>>
 
 export type ValueOf<T> = T[keyof T]
 
@@ -107,10 +106,8 @@ export type MergeTypes<A extends readonly [...any]> =
 
 // ─── ExtractProps ─────────────────────────────────────────────
 
-/** Extracts the props type from a React component type (class, function, or forwardRef). */
+/** Extracts the props type from a React component type (class or function). */
 export type ExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps
-    : TComponentOrTProps extends ForwardRefExoticComponent<infer TProps>
-      ? TProps
-      : TComponentOrTProps
+    : TComponentOrTProps
