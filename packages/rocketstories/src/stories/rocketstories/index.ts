@@ -3,6 +3,6 @@ import renderList, { type RenderList } from './renderList'
 import renderMain, { type RenderMain } from './renderMain'
 import renderRender, { type RenderRender } from './renderRender'
 
-export type { RenderDimension, RenderList, RenderRender, RenderMain }
+export type { RenderDimension, RenderList, RenderMain, RenderRender }
 
 export { renderDimension, renderList, renderMain, renderRender }

@@ -9,16 +9,16 @@ import type { ComposeParam, GenericHoc } from '~/types/hoc'
 import type { ElementType, TObj } from '~/types/utils'
 
 export type {
-  AttrsComponent,
   Attrs,
-  AttrsComponentType,
-  TObj,
-  ElementType,
-  ConfigAttrs,
   AttrsCb,
-  GenericHoc,
+  AttrsComponent,
+  AttrsComponentType,
   ComposeParam,
+  ConfigAttrs,
+  ElementType,
+  GenericHoc,
   IsAttrsComponent,
+  TObj,
 }
 
 export { attrs, isAttrsComponent }

@@ -7,6 +7,6 @@ import type {
   PropsCallback,
 } from './types'
 
-export type { Props, PropsCallback, ObjectValue, ExtendedProps, ElementType }
+export type { ElementType, ExtendedProps, ObjectValue, Props, PropsCallback }
 
 export default component

@@ -81,17 +81,16 @@ describe('useScrollLock', () => {
   it('restores empty string via nullish coalescing when originalOverflow is nullish', () => {
     // Temporarily make document.body.style.overflow return undefined
     // so that originalOverflow is stored as undefined, triggering the ?? '' fallback
-    const descriptor = Object.getOwnPropertyDescriptor(
-      CSSStyleDeclaration.prototype,
-      'overflow',
-    )
-
-    const setter = descriptor?.set
+    const descriptor =
+      Object.getOwnPropertyDescriptor(
+        CSSStyleDeclaration.prototype,
+        'overflow',
+      ) ?? Object.getOwnPropertyDescriptor(document.body.style, 'overflow')
 
     Object.defineProperty(document.body.style, 'overflow', {
       get: () => undefined,
-      set: setter
-        ? setter.bind(document.body.style)
+      set: descriptor?.set
+        ? descriptor.set.bind(document.body.style)
         : (_v: string) => {
             // noop fallback
           },
@@ -101,11 +100,12 @@ describe('useScrollLock', () => {
     const { unmount } = renderHook(() => useScrollLock(true))
 
     // Restore the real property so subsequent set calls work
-    Object.defineProperty(
-      document.body.style,
-      'overflow',
-      descriptor as PropertyDescriptor,
-    )
+    if (descriptor) {
+      Object.defineProperty(document.body.style, 'overflow', descriptor)
+    } else {
+      // jsdom 29+: just delete the override to restore default behavior
+      delete (document.body.style as any).overflow
+    }
 
     unmount()
     // originalOverflow was undefined, so ?? '' should produce ''

@@ -4,4 +4,4 @@ import Container from './Container'
 import Row from './Row'
 import theme from './theme'
 
-export { Container, Row, Col, Provider, theme }
+export { Col, Container, Provider, Row, theme }

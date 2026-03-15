@@ -18,23 +18,23 @@ import type {
 } from '~/types'
 
 export type {
-  IRocketStories,
-  Init,
-  Rocketstories,
+  Configuration,
+  Control,
+  Controls,
+  ControlTypes,
+  ElementType,
   ExtractDimensions,
   ExtractProps,
-  ElementType,
-  StoryComponent,
-  StorybookControl,
-  RocketType,
-  Configuration,
-  RocketStoryConfiguration,
-  StoryConfiguration,
-  Control,
-  ControlTypes,
-  Controls,
+  Init,
+  IRocketStories,
   PartialControls,
+  RocketStoryConfiguration,
+  Rocketstories,
+  RocketType,
+  StorybookControl,
+  StoryComponent,
+  StoryConfiguration,
 }
 
-export { rocketstories, init }
+export { init, rocketstories }
 export default init

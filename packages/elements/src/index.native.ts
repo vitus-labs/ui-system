@@ -28,25 +28,25 @@ import type { Props as UtilProps } from '~/Util'
 import Util from '~/Util'
 
 export type {
-  ElementProps,
-  ListProps,
-  TextProps,
-  UtilProps,
-  IteratorProps,
   AlignX,
   AlignY,
   Content,
-  Direction,
-  ResponsiveBoolType,
   ContentBoolean,
-  Responsive,
-  ExtendCss,
-  InnerRef,
-  VLStatic,
-  PropsCallback,
-  ObjectValue,
-  ExtendedProps,
+  Direction,
+  ElementProps,
   ElementType,
+  ExtendCss,
+  ExtendedProps,
+  InnerRef,
+  IteratorProps,
+  ListProps,
+  ObjectValue,
+  PropsCallback,
+  Responsive,
+  ResponsiveBoolType,
+  TextProps,
+  UtilProps,
+  VLStatic,
 }
 
-export { Element, List, Text, Util, Provider }
+export { Element, List, Provider, Text, Util }

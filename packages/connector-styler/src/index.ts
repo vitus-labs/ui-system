@@ -8,5 +8,5 @@ import {
   useTheme,
 } from '@vitus-labs/styler'
 
-export { css, styled, keyframes, createGlobalStyle, useTheme, useCSS }
+export { createGlobalStyle, css, keyframes, styled, useCSS, useTheme }
 export const provider = ThemeProvider
