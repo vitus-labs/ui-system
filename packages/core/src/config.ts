@@ -4,7 +4,6 @@ import {
   type ComponentType,
   createElement,
   type FC,
-  forwardRef,
   type ReactNode,
 } from 'react'
 import type { HTMLTags } from '~/html'
@@ -80,7 +79,7 @@ const createStyledDelegate = (self: Configuration) => {
   ) => {
     let Real: any = null
 
-    const Lazy = forwardRef<unknown, Record<string, any>>((props, ref) => {
+    const Lazy = (props: Record<string, any>) => {
       if (!Real) {
         const engine = self._styled
         if (!engine) return notConfigured('styled')
@@ -88,8 +87,8 @@ const createStyledDelegate = (self: Configuration) => {
           ? engine(tag, options)(strings, ...values)
           : engine(tag)(strings, ...values)
       }
-      return createElement(Real, { ...props, ref })
-    })
+      return createElement(Real, props)
+    }
 
     Lazy.displayName = `styled(${
       typeof tag === 'string' ? tag : tag.displayName || tag.name || 'Component'
@@ -173,7 +172,7 @@ class Configuration {
 
   /**
    * Stable styled delegate (Proxy). Supports `styled(tag)` and `styled.div`.
-   * When the engine is not yet available, returns a lazy forwardRef component
+   * When the engine is not yet available, returns a lazy component
    * that creates the real styled component on first render.
    */
   styled: CSSEngineConnector['styled']

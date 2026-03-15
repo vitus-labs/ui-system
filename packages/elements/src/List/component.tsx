@@ -6,7 +6,6 @@
  * layout, alignment, css), allowing the list to be styled as a single block.
  */
 import { omit, pick } from '@vitus-labs/core'
-import { forwardRef } from 'react'
 import { PKG_NAME } from '~/constants'
 import type { VLElement } from '~/Element'
 import Element from '~/Element'
@@ -33,19 +32,21 @@ type ListProps = {
 
 export type Props = MergeTypes<[IteratorProps, ListProps]>
 
-const Component: VLElement<Props> = forwardRef(
-  ({ rootElement = false, ...props }, ref) => {
-    const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
+const Component: VLElement<Props> = ({
+  rootElement = false,
+  ref,
+  ...props
+}: any) => {
+  const renderedList = <Iterator {...pick(props, Iterator.RESERVED_PROPS)} />
 
-    if (!rootElement) return renderedList
+  if (!rootElement) return renderedList
 
-    return (
-      <Element ref={ref} {...omit(props, Iterator.RESERVED_PROPS)}>
-        {renderedList}
-      </Element>
-    )
-  },
-)
+  return (
+    <Element ref={ref} {...omit(props, Iterator.RESERVED_PROPS)}>
+      {renderedList}
+    </Element>
+  )
+}
 
 const name = `${PKG_NAME}/List` as const
 

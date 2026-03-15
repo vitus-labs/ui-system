@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactElement } from 'react'
+import type { CSSProperties, ReactElement, RefObject } from 'react'
 
 /** Internal lifecycle stages of a transition. */
 export type TransitionStage = 'hidden' | 'entering' | 'entered' | 'leaving'
@@ -107,7 +107,7 @@ export type TransitionStateResult = {
   /** Current lifecycle stage */
   stage: TransitionStage
   /** Ref to attach to the transitioning element */
-  ref: React.RefObject<HTMLElement | null>
+  ref: RefObject<HTMLElement | null>
   /** Whether the element should be rendered */
   shouldMount: boolean
   /** Call when the current animation finishes */

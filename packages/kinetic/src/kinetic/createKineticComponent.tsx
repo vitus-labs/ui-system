@@ -1,5 +1,4 @@
-import type { ElementType } from 'react'
-import { forwardRef } from 'react'
+import type { CSSProperties, ElementType, ReactElement, ReactNode } from 'react'
 import type { TransitionCallbacks } from '../types'
 import CollapseRenderer from './CollapseRenderer'
 import GroupRenderer from './GroupRenderer'
@@ -28,7 +27,7 @@ const KINETIC_KEYS = new Set([
 ])
 
 /**
- * Core factory. Creates a forwardRef React component that delegates to
+ * Core factory. Creates a React component that delegates to
  * the appropriate renderer based on config.mode, then attaches immutable
  * chain methods via Object.assign (same pattern as rocketstyle/attrs).
  */
@@ -38,120 +37,118 @@ const createKineticComponent = <
 >(
   config: KineticConfig,
 ): KineticComponent<Tag, Mode> => {
-  const Component = forwardRef<unknown, Record<string, unknown>>(
-    (props, ref) => {
-      // Separate kinetic-specific props from HTML pass-through props
-      const htmlProps: Record<string, unknown> = {}
-      const kineticProps: Record<string, unknown> = {}
+  const Component = ({ ref, ...props }: Record<string, any>) => {
+    // Separate kinetic-specific props from HTML pass-through props
+    const htmlProps: Record<string, unknown> = {}
+    const kineticProps: Record<string, unknown> = {}
 
-      for (const key in props) {
-        if (KINETIC_KEYS.has(key)) {
-          kineticProps[key] = props[key]
-        } else {
-          htmlProps[key] = props[key]
-        }
+    for (const key in props) {
+      if (KINETIC_KEYS.has(key)) {
+        kineticProps[key] = props[key]
+      } else {
+        htmlProps[key] = props[key]
       }
+    }
 
-      const {
-        show,
-        appear,
-        unmount,
-        timeout,
-        transition,
-        interval,
-        reverseLeave,
-        onEnter,
-        onAfterEnter,
-        onLeave,
-        onAfterLeave,
-      } = kineticProps as {
-        show?: boolean
-        appear?: boolean
-        unmount?: boolean
-        timeout?: number
-        transition?: string
-        interval?: number
-        reverseLeave?: boolean
-      } & Partial<TransitionCallbacks>
+    const {
+      show,
+      appear,
+      unmount,
+      timeout,
+      transition,
+      interval,
+      reverseLeave,
+      onEnter,
+      onAfterEnter,
+      onLeave,
+      onAfterLeave,
+    } = kineticProps as {
+      show?: boolean
+      appear?: boolean
+      unmount?: boolean
+      timeout?: number
+      transition?: string
+      interval?: number
+      reverseLeave?: boolean
+    } & Partial<TransitionCallbacks>
 
-      const callbacks: Partial<TransitionCallbacks> = {
-        onEnter: onEnter ?? config.onEnter,
-        onAfterEnter: onAfterEnter ?? config.onAfterEnter,
-        onLeave: onLeave ?? config.onLeave,
-        onAfterLeave: onAfterLeave ?? config.onAfterLeave,
-      }
+    const callbacks: Partial<TransitionCallbacks> = {
+      onEnter: onEnter ?? config.onEnter,
+      onAfterEnter: onAfterEnter ?? config.onAfterEnter,
+      onLeave: onLeave ?? config.onLeave,
+      onAfterLeave: onAfterLeave ?? config.onAfterLeave,
+    }
 
-      // Extract children from htmlProps (it's not an HTML attribute)
-      const { children, ...restHtml } = htmlProps
-      const childrenNode = children as React.ReactNode
+    // Extract children from htmlProps (it's not an HTML attribute)
+    const { children, ...restHtml } = htmlProps
+    const childrenNode = children as ReactNode
 
-      if (config.mode === 'collapse') {
-        return (
-          <CollapseRenderer
-            config={config}
-            htmlProps={restHtml}
-            show={show as boolean}
-            appear={appear}
-            timeout={timeout}
-            transition={transition}
-            callbacks={callbacks}
-            forwardedRef={ref}
-          >
-            {childrenNode}
-          </CollapseRenderer>
-        )
-      }
-
-      if (config.mode === 'stagger') {
-        return (
-          <StaggerRenderer
-            config={config}
-            htmlProps={restHtml}
-            show={show as boolean}
-            appear={appear}
-            timeout={timeout}
-            interval={interval}
-            reverseLeave={reverseLeave}
-            callbacks={callbacks}
-            forwardedRef={ref}
-          >
-            {childrenNode as React.ReactElement<any>[]}
-          </StaggerRenderer>
-        )
-      }
-
-      if (config.mode === 'group') {
-        return (
-          <GroupRenderer
-            config={config}
-            htmlProps={restHtml}
-            appear={appear}
-            timeout={timeout}
-            callbacks={callbacks}
-            forwardedRef={ref}
-          >
-            {childrenNode as React.ReactElement<any>[]}
-          </GroupRenderer>
-        )
-      }
-
-      // Default: transition mode
+    if (config.mode === 'collapse') {
       return (
-        <TransitionRenderer
+        <CollapseRenderer
           config={config}
           htmlProps={restHtml}
           show={show as boolean}
           appear={appear}
-          unmount={unmount}
           timeout={timeout}
+          transition={transition}
           callbacks={callbacks}
           forwardedRef={ref}
         >
           {childrenNode}
-        </TransitionRenderer>
+        </CollapseRenderer>
       )
-    },
-  )
+    }
+
+    if (config.mode === 'stagger') {
+      return (
+        <StaggerRenderer
+          config={config}
+          htmlProps={restHtml}
+          show={show as boolean}
+          appear={appear}
+          timeout={timeout}
+          interval={interval}
+          reverseLeave={reverseLeave}
+          callbacks={callbacks}
+          forwardedRef={ref}
+        >
+          {childrenNode as ReactElement<any>[]}
+        </StaggerRenderer>
+      )
+    }
+
+    if (config.mode === 'group') {
+      return (
+        <GroupRenderer
+          config={config}
+          htmlProps={restHtml}
+          appear={appear}
+          timeout={timeout}
+          callbacks={callbacks}
+          forwardedRef={ref}
+        >
+          {childrenNode as ReactElement<any>[]}
+        </GroupRenderer>
+      )
+    }
+
+    // Default: transition mode
+    return (
+      <TransitionRenderer
+        config={config}
+        htmlProps={restHtml}
+        show={show as boolean}
+        appear={appear}
+        unmount={unmount}
+        timeout={timeout}
+        callbacks={callbacks}
+        forwardedRef={ref}
+      >
+        {childrenNode}
+      </TransitionRenderer>
+    )
+  }
 
   Component.displayName = `kinetic(${
     typeof config.tag === 'string'
@@ -169,19 +166,19 @@ const createKineticComponent = <
         ...preset,
       } as KineticConfig),
 
-    enter: (styles: React.CSSProperties) =>
+    enter: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, enterStyle: styles }),
 
-    enterTo: (styles: React.CSSProperties) =>
+    enterTo: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, enterToStyle: styles }),
 
     enterTransition: (value: string) =>
       createKineticComponent<Tag, Mode>({ ...config, enterTransition: value }),
 
-    leave: (styles: React.CSSProperties) =>
+    leave: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, leaveStyle: styles }),
 
-    leaveTo: (styles: React.CSSProperties) =>
+    leaveTo: (styles: CSSProperties) =>
       createKineticComponent<Tag, Mode>({ ...config, leaveToStyle: styles }),
 
     leaveTransition: (value: string) =>

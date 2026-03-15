@@ -1,9 +1,4 @@
-import type {
-  ForwardedRef,
-  ForwardRefExoticComponent,
-  PropsWithoutRef,
-  RefAttributes,
-} from 'react'
+import type { ForwardedRef, ReactElement } from 'react'
 import type { AttrsCb } from './attrs'
 import type { ConfigAttrs } from './config'
 import type { ComposeParam } from './hoc'
@@ -11,21 +6,9 @@ import type { ElementType, ExtractProps, MergeTypes, TObj } from './utils'
 
 export type InnerComponentProps = {
   $attrsRef?: ForwardedRef<unknown>
+  ref?: any
   'data-attrs': string
 }
-
-export type ExoticComponent<P extends Record<string, unknown> = {}> =
-  ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<any>> & {
-    readonly $$typeof: symbol
-  }
-
-// export interface ExoticComponent<P = {}> {
-//   (
-//     props: P & { $attrsRef?: ForwardedRef<unknown> },
-//   ): ReactElement<
-//     P & { $attrsRef?: ForwardedRef<unknown>; 'data-attrs': string }
-//   > | null
-// }
 
 /**
  * @param OA   Origin component props params.
@@ -46,7 +29,8 @@ export interface AttrsComponent<
   HOC extends TObj = {},
   // calculated final props
   DFP extends Record<string, any> = MergeTypes<[OA, EA]>,
-> extends ExoticComponent<DFP> {
+> {
+  (props: DFP & { ref?: any }): ReactElement | null
   // CONFIG chaining method
   // --------------------------------------------------------
   /**

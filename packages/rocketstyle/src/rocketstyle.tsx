@@ -6,7 +6,7 @@ import {
   pick,
   render,
 } from '@vitus-labs/core'
-import { forwardRef, useMemo } from 'react'
+import { useMemo } from 'react'
 import { LocalThemeManager } from '~/cache'
 import {
   CONFIG_KEYS,
@@ -24,7 +24,6 @@ import type {
 } from '~/types/configuration'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type {
-  ExoticComponent,
   InnerComponentProps,
   RocketStyleComponent,
 } from '~/types/rocketstyle'
@@ -150,229 +149,225 @@ const rocketComponent: RocketComponent = (options) => {
   // ENHANCED COMPONENT (returned component)
   // --------------------------------------------------------
   // .attrs() chaining option is calculated in HOC and passed as props already
-  const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
-    (
-      {
-        $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
-        ...props
-      },
-      ref,
-    ) => {
-      // --------------------------------------------------
-      // handle refs
-      // (1) one is passed from inner HOC - $rocketstyleRef
-      // (2) second one is used to be used directly (e.g. inside hocs)
-      // --------------------------------------------------
-      const internalRef = useRef({ $rocketstyleRef, ref })
+  const EnhancedComponent = ({
+    $rocketstyleRef, // it's forwarded from HOC which is always on top of all hocs
+    ref,
+    ...props
+  }: InnerComponentProps) => {
+    // --------------------------------------------------
+    // handle refs
+    // (1) one is passed from inner HOC - $rocketstyleRef
+    // (2) second one is used to be used directly (e.g. inside hocs)
+    // --------------------------------------------------
+    const internalRef = useRef({ $rocketstyleRef, ref })
 
-      // --------------------------------------------------
-      // hover - focus - pressed state passed via context from parent component
-      // --------------------------------------------------
-      const localCtx = useLocalContext(options.consumer)
+    // --------------------------------------------------
+    // hover - focus - pressed state passed via context from parent component
+    // --------------------------------------------------
+    const localCtx = useLocalContext(options.consumer)
 
-      // --------------------------------------------------
-      // general theme and theme mode dark / light passed in context
-      // --------------------------------------------------
-      const { theme, mode } = useTheme(options)
+    // --------------------------------------------------
+    // general theme and theme mode dark / light passed in context
+    // --------------------------------------------------
+    const { theme, mode } = useTheme(options)
 
-      // --------------------------------------------------
-      // calculate themes for all defined styling dimensions
-      // .theme(...) + defined dimensions like .states(...), .sizes(...), etc.
-      // --------------------------------------------------
+    // --------------------------------------------------
+    // calculate themes for all defined styling dimensions
+    // .theme(...) + defined dimensions like .states(...), .sizes(...), etc.
+    // --------------------------------------------------
 
-      // --------------------------------------------------
-      // BASE / DEFAULT THEME Object
-      // --------------------------------------------------
-      const baseTheme = useMemo(
-        () => {
-          const helper = ThemeManager.baseTheme
+    // --------------------------------------------------
+    // BASE / DEFAULT THEME Object
+    // --------------------------------------------------
+    const baseTheme = useMemo(
+      () => {
+        const helper = ThemeManager.baseTheme
 
-          if (!helper.has(theme)) {
-            helper.set(theme, getThemeFromChain(options.theme, theme))
-          }
-
-          return helper.get(theme)
-        },
-        // recalculate this only when theme mode changes dark / light
-        [theme],
-      )
-
-      // --------------------------------------------------
-      // DIMENSION(S) THEMES Object
-      // --------------------------------------------------
-      const themes = useMemo(
-        () => {
-          const helper = ThemeManager.dimensionsThemes
-
-          if (!helper.has(theme)) {
-            helper.set(theme, getDimensionThemes(theme, options))
-          }
-
-          return helper.get(theme)
-        },
-        // recalculate this only when theme object changes
-        [theme],
-      )
-
-      // --------------------------------------------------
-      // BASE / DEFAULT MODE THEME Object
-      // --------------------------------------------------
-      const currentModeBaseTheme = useMemo(
-        () => {
-          const helper = ThemeManager.modeBaseTheme[mode]
-
-          if (!helper.has(baseTheme)) {
-            helper.set(baseTheme, getThemeByMode(baseTheme, mode))
-          }
-
-          return helper.get(baseTheme)
-        },
-        // recalculate this only when theme mode changes dark / light
-        [mode, baseTheme],
-      )
-
-      // --------------------------------------------------
-      // DIMENSION(S) MODE THEMES Object
-      // --------------------------------------------------
-      const currentModeThemes = useMemo(
-        () => {
-          const helper = ThemeManager.modeDimensionTheme[mode]
-
-          if (!helper.has(themes)) {
-            helper.set(themes, getThemeByMode(themes, mode))
-          }
-
-          return helper.get(themes)
-        },
-        // recalculate this only when theme mode changes dark / light
-        [mode, themes],
-      )
-
-      // --------------------------------------------------
-      // calculate reserved Keys defined in dimensions as styling keys
-      // there is no need to calculate this each time - keys are based on
-      // dimensions definitions
-      // --------------------------------------------------
-      const { keysMap: dimensions, keywords: reservedPropNames } = useMemo(
-        () =>
-          getDimensionsMap({
-            themes,
-            useBooleans: options.useBooleans,
-          }),
-        [themes],
-      )
-
-      const RESERVED_STYLING_PROPS_KEYS = useMemo(
-        () => Object.keys(reservedPropNames),
-        [reservedPropNames],
-      )
-
-      // --------------------------------------------------
-      // get final props which are (latest has the highest priority):
-      // (1) merged styling from context,
-      // (2) `attrs` chaining method, and from
-      // (3) passing them directly to component
-      // --------------------------------------------------
-      const { pseudo, ...mergeProps } = {
-        ...localCtx,
-        ...props,
-      }
-
-      // --------------------------------------------------
-      // pseudo rocket state
-      // calculate final component pseudo state including pseudo state
-      // from props and override by pseudo props from context
-      // --------------------------------------------------
-      const pseudoRocketstate = {
-        ...pseudo,
-        ...pick(props, [...PSEUDO_KEYS, ...PSEUDO_META_KEYS]),
-      }
-
-      // --------------------------------------------------
-      // rocketstate
-      // calculate final component state including pseudo state
-      // passed as $rocketstate prop
-      // --------------------------------------------------
-      const rocketstate = _calculateStylingAttrs({
-        props: pickStyledAttrs(mergeProps, reservedPropNames),
-        dimensions,
-      })
-
-      const finalRocketstate = { ...rocketstate, pseudo: pseudoRocketstate }
-
-      // --------------------------------------------------
-      // rocketstyle
-      // calculated (based on styling props) final theme which will be passed
-      // to our styled component
-      // passed as $rocketstyle prop
-      // --------------------------------------------------
-      // Content-based memoization: rocketstate is a fresh object each render,
-      // so serialize its values as a string key for useMemo comparison.
-      let rsKey = ''
-      for (const k in rocketstate) {
-        const v = rocketstate[k]
-        rsKey += `${k}=`
-        rsKey += `${Array.isArray(v) ? v.join(',') : v}|`
-      }
-
-      // biome-ignore lint/correctness/useExhaustiveDependencies: rsKey is a content-based serialization of rocketstate — replaces object reference in deps
-      const rocketstyle = useMemo(
-        () =>
-          getTheme({
-            rocketstate,
-            themes: currentModeThemes,
-            baseTheme: currentModeBaseTheme,
-            transformKeys: options.transformKeys,
-            appTheme: theme,
-          }),
-        [rsKey, currentModeThemes, currentModeBaseTheme, theme],
-      )
-
-      // --------------------------------------------------
-      // final props
-      // final props passed to WrappedComponent
-      // excluding: styling props
-      // including: $rocketstyle, $rocketstate
-      // --------------------------------------------------
-      const finalProps: Record<string, any> = {
-        // this removes styling state from props and passes its state
-        // under rocketstate key only
-        ...omit(mergeProps, [
-          ...RESERVED_STYLING_PROPS_KEYS,
-          ...PSEUDO_KEYS,
-          ...options.filterAttrs,
-        ]),
-        // if enforced to pass styling props, we pass them directly
-        ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
-        ref: (ref ?? $rocketstyleRef) ? internalRef : undefined,
-        // state props passed to styled component only, therefore the `$` symbol
-        $rocketstyle: rocketstyle,
-        $rocketstate: finalRocketstate,
-      }
-
-      // all the development stuff injected
-      if (process.env.NODE_ENV !== 'production') {
-        finalProps['data-rocketstyle'] = componentName
-
-        if (options.DEBUG) {
-          const debugPayload = {
-            component: componentName,
-            rocketstate: finalRocketstate,
-            rocketstyle,
-            dimensions,
-            mode,
-            reservedPropNames: RESERVED_STYLING_PROPS_KEYS,
-            filteredAttrs: options.filterAttrs,
-          }
-
-          // biome-ignore lint/suspicious/noConsole: debug logging controlled by DEBUG option
-          console.debug(`[rocketstyle] ${componentName} render:`, debugPayload)
+        if (!helper.has(theme)) {
+          helper.set(theme, getThemeFromChain(options.theme, theme))
         }
-      }
 
-      return <RenderComponent {...finalProps} />
-    },
-  )
+        return helper.get(theme)
+      },
+      // recalculate this only when theme mode changes dark / light
+      [theme],
+    )
+
+    // --------------------------------------------------
+    // DIMENSION(S) THEMES Object
+    // --------------------------------------------------
+    const themes = useMemo(
+      () => {
+        const helper = ThemeManager.dimensionsThemes
+
+        if (!helper.has(theme)) {
+          helper.set(theme, getDimensionThemes(theme, options))
+        }
+
+        return helper.get(theme)
+      },
+      // recalculate this only when theme object changes
+      [theme],
+    )
+
+    // --------------------------------------------------
+    // BASE / DEFAULT MODE THEME Object
+    // --------------------------------------------------
+    const currentModeBaseTheme = useMemo(
+      () => {
+        const helper = ThemeManager.modeBaseTheme[mode]
+
+        if (!helper.has(baseTheme)) {
+          helper.set(baseTheme, getThemeByMode(baseTheme, mode))
+        }
+
+        return helper.get(baseTheme)
+      },
+      // recalculate this only when theme mode changes dark / light
+      [mode, baseTheme],
+    )
+
+    // --------------------------------------------------
+    // DIMENSION(S) MODE THEMES Object
+    // --------------------------------------------------
+    const currentModeThemes = useMemo(
+      () => {
+        const helper = ThemeManager.modeDimensionTheme[mode]
+
+        if (!helper.has(themes)) {
+          helper.set(themes, getThemeByMode(themes, mode))
+        }
+
+        return helper.get(themes)
+      },
+      // recalculate this only when theme mode changes dark / light
+      [mode, themes],
+    )
+
+    // --------------------------------------------------
+    // calculate reserved Keys defined in dimensions as styling keys
+    // there is no need to calculate this each time - keys are based on
+    // dimensions definitions
+    // --------------------------------------------------
+    const { keysMap: dimensions, keywords: reservedPropNames } = useMemo(
+      () =>
+        getDimensionsMap({
+          themes,
+          useBooleans: options.useBooleans,
+        }),
+      [themes],
+    )
+
+    const RESERVED_STYLING_PROPS_KEYS = useMemo(
+      () => Object.keys(reservedPropNames),
+      [reservedPropNames],
+    )
+
+    // --------------------------------------------------
+    // get final props which are (latest has the highest priority):
+    // (1) merged styling from context,
+    // (2) `attrs` chaining method, and from
+    // (3) passing them directly to component
+    // --------------------------------------------------
+    const { pseudo, ...mergeProps } = {
+      ...localCtx,
+      ...props,
+    }
+
+    // --------------------------------------------------
+    // pseudo rocket state
+    // calculate final component pseudo state including pseudo state
+    // from props and override by pseudo props from context
+    // --------------------------------------------------
+    const pseudoRocketstate = {
+      ...pseudo,
+      ...pick(props, [...PSEUDO_KEYS, ...PSEUDO_META_KEYS]),
+    }
+
+    // --------------------------------------------------
+    // rocketstate
+    // calculate final component state including pseudo state
+    // passed as $rocketstate prop
+    // --------------------------------------------------
+    const rocketstate = _calculateStylingAttrs({
+      props: pickStyledAttrs(mergeProps, reservedPropNames),
+      dimensions,
+    })
+
+    const finalRocketstate = { ...rocketstate, pseudo: pseudoRocketstate }
+
+    // --------------------------------------------------
+    // rocketstyle
+    // calculated (based on styling props) final theme which will be passed
+    // to our styled component
+    // passed as $rocketstyle prop
+    // --------------------------------------------------
+    // Content-based memoization: rocketstate is a fresh object each render,
+    // so serialize its values as a string key for useMemo comparison.
+    let rsKey = ''
+    for (const k in rocketstate) {
+      const v = rocketstate[k]
+      rsKey += `${k}=`
+      rsKey += `${Array.isArray(v) ? v.join(',') : v}|`
+    }
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: rsKey is a content-based serialization of rocketstate — replaces object reference in deps
+    const rocketstyle = useMemo(
+      () =>
+        getTheme({
+          rocketstate,
+          themes: currentModeThemes,
+          baseTheme: currentModeBaseTheme,
+          transformKeys: options.transformKeys,
+          appTheme: theme,
+        }),
+      [rsKey, currentModeThemes, currentModeBaseTheme, theme],
+    )
+
+    // --------------------------------------------------
+    // final props
+    // final props passed to WrappedComponent
+    // excluding: styling props
+    // including: $rocketstyle, $rocketstate
+    // --------------------------------------------------
+    const finalProps: Record<string, any> = {
+      // this removes styling state from props and passes its state
+      // under rocketstate key only
+      ...omit(mergeProps, [
+        ...RESERVED_STYLING_PROPS_KEYS,
+        ...PSEUDO_KEYS,
+        ...options.filterAttrs,
+      ]),
+      // if enforced to pass styling props, we pass them directly
+      ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
+      ref: (ref ?? $rocketstyleRef) ? internalRef : undefined,
+      // state props passed to styled component only, therefore the `$` symbol
+      $rocketstyle: rocketstyle,
+      $rocketstate: finalRocketstate,
+    }
+
+    // all the development stuff injected
+    if (process.env.NODE_ENV !== 'production') {
+      finalProps['data-rocketstyle'] = componentName
+
+      if (options.DEBUG) {
+        const debugPayload = {
+          component: componentName,
+          rocketstate: finalRocketstate,
+          rocketstyle,
+          dimensions,
+          mode,
+          reservedPropNames: RESERVED_STYLING_PROPS_KEYS,
+          filteredAttrs: options.filterAttrs,
+        }
+
+        // biome-ignore lint/suspicious/noConsole: debug logging controlled by DEBUG option
+        console.debug(`[rocketstyle] ${componentName} render:`, debugPayload)
+      }
+    }
+
+    return <RenderComponent {...finalProps} />
+  }
 
   // ------------------------------------------------------
   // This will hoist and generate dynamically next static methods

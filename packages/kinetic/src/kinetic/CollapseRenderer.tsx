@@ -4,7 +4,14 @@ import {
   useMergedRef,
   useReducedMotion,
 } from '@vitus-labs/hooks'
-import { createElement, useRef, useState } from 'react'
+import {
+  type CSSProperties,
+  createElement,
+  type ForwardedRef,
+  type ReactNode,
+  useRef,
+  useState,
+} from 'react'
 import type { TransitionCallbacks, TransitionStage } from '../types'
 import useAnimationEnd from '../useAnimationEnd'
 import type { KineticConfig } from './types'
@@ -17,8 +24,8 @@ type CollapseRendererProps = {
   timeout?: number
   transition?: string
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactNode
-  forwardedRef: React.ForwardedRef<unknown>
+  children: ReactNode
+  forwardedRef: ForwardedRef<unknown>
 }
 
 /**
@@ -143,8 +150,8 @@ const CollapseRenderer = ({
 
   const shouldRender = stage !== 'hidden'
 
-  const wrapperStyle: React.CSSProperties = {
-    ...((htmlProps.style as React.CSSProperties) ?? {}),
+  const wrapperStyle: CSSProperties = {
+    ...((htmlProps.style as CSSProperties) ?? {}),
     overflow: stage === 'entered' ? undefined : 'hidden',
     height: stage === 'hidden' ? 0 : stage === 'entered' ? 'auto' : undefined,
   }

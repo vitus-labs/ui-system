@@ -1,5 +1,12 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
-import { createElement, useCallback, useRef, useState } from 'react'
+import {
+  createElement,
+  type ForwardedRef,
+  type ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
 import { Animated, Easing, type LayoutChangeEvent, View } from 'react-native'
 import type { TransitionCallbacks, TransitionStage } from '../types'
 import type { KineticConfig } from './types'
@@ -12,8 +19,8 @@ type CollapseRendererProps = {
   timeout?: number
   transition?: string
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactNode
-  forwardedRef: React.ForwardedRef<unknown>
+  children: ReactNode
+  forwardedRef: ForwardedRef<unknown>
 }
 
 const parseDuration = (transition?: string): number => {

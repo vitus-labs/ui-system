@@ -6,7 +6,7 @@
  * a dropdown inside another dropdown) via blocked-state propagation.
  */
 import { render } from '@vitus-labs/core'
-import { type ReactNode, useMemo } from 'react'
+import { type ReactNode, useId, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { Content, VLComponent } from '~/types'
@@ -89,7 +89,8 @@ const Component: VLComponent<Props> = ({
     ...ctx
   } = useOverlay(props)
 
-  const { openOn, closeOn } = props
+  const { openOn, closeOn, type } = props
+  const contentId = useId()
 
   const passHandlers = useMemo(
     () =>
@@ -99,11 +100,25 @@ const Component: VLComponent<Props> = ({
     [openOn, closeOn],
   )
 
+  const ariaHasPopup = useMemo(() => {
+    switch (type) {
+      case 'modal':
+        return 'dialog' as const
+      case 'tooltip':
+        return 'true' as const
+      default:
+        return 'menu' as const
+    }
+  }, [type])
+
   return (
     <>
       {render(trigger, {
         [triggerRefName]: triggerRef,
         active,
+        'aria-expanded': active,
+        'aria-haspopup': ariaHasPopup,
+        'aria-controls': active ? contentId : undefined,
         ...(passHandlers ? { showContent, hideContent } : {}),
       })}
 
@@ -112,6 +127,9 @@ const Component: VLComponent<Props> = ({
           <Provider {...ctx}>
             {render(children, {
               [contentRefName]: contentRef,
+              id: contentId,
+              role: type === 'modal' ? 'dialog' : undefined,
+              'aria-modal': type === 'modal' ? true : undefined,
               active,
               align,
               alignX,

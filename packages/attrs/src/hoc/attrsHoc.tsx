@@ -1,9 +1,4 @@
-import {
-  type ComponentType,
-  type ForwardRefExoticComponent,
-  forwardRef,
-  useMemo,
-} from 'react'
+import { type ComponentType, type FC, useMemo } from 'react'
 import type { Configuration } from '~/types/configuration'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
 
@@ -12,7 +7,7 @@ export type AttrsStyleHOC = ({
   priorityAttrs,
 }: Pick<Configuration, 'attrs' | 'priorityAttrs'>) => (
   WrappedComponent: ComponentType<any>,
-) => ForwardRefExoticComponent<any>
+) => FC<any>
 
 /**
  * Creates the core HOC that computes default props from the `.attrs()` chain.
@@ -31,11 +26,16 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
   const calculateAttrs = calculateChainOptions(attrs)
   const calculatePriorityAttrs = calculateChainOptions(priorityAttrs)
 
-  const attrsHoc = (WrappedComponent: ComponentType<any>) =>
-    forwardRef<any, any>((props, ref) => {
+  const attrsHoc = (WrappedComponent: ComponentType<any>) => {
+    const HOC = (allProps: any) => {
+      const { ref, ...props } = allProps
       // Strip undefined values so they don't shadow defaults from attrs callbacks.
       // Only explicitly set values (including `null`) should override defaults.
-      const filteredProps = useMemo(() => removeUndefinedProps(props), [props])
+      // biome-ignore lint/correctness/useExhaustiveDependencies: rest spread creates new object but content is stable when allProps is stable
+      const filteredProps = useMemo(
+        () => removeUndefinedProps(props),
+        [allProps],
+      )
 
       const finalProps = useMemo(() => {
         // 1. Resolve priority attrs (lowest precedence defaults).
@@ -58,7 +58,9 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
       }, [filteredProps, ref])
 
       return <WrappedComponent {...finalProps} />
-    })
+    }
+    return HOC
+  }
 
   return attrsHoc
 }

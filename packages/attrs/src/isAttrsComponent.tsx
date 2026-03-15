@@ -4,9 +4,8 @@ export type IsAttrsComponent = <T>(component: T) => boolean
 const isAttrsComponent: IsAttrsComponent = (component) => {
   if (
     component &&
-    typeof component === 'object' &&
-    component !== null &&
-    Object.hasOwn(component, 'IS_ATTRS')
+    (typeof component === 'object' || typeof component === 'function') &&
+    Object.hasOwn(component as object, 'IS_ATTRS')
   ) {
     return true
   }

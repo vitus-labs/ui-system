@@ -109,6 +109,12 @@ export type UseOverlayProps = Partial<{
    */
   closeOnEsc: boolean
   /**
+   * Delay in milliseconds before hiding content on hover leave. Bridges the
+   * gap between trigger and content elements to prevent flicker.
+   * @defaultValue `100`
+   */
+  hoverDelay: number
+  /**
    * When set to `true`, **Overlay** is automatically closed and is blocked for
    * being opened.
    */
@@ -130,6 +136,10 @@ type PositionResult = {
   resolvedAlignX: AlignX
   resolvedAlignY: AlignY
 }
+
+// Reference counter for nested modals sharing document.body overflow lock.
+// Only the first modal sets overflow:hidden; only the last restores it.
+let modalOverflowCount = 0
 
 const sel = <T,>(cond: boolean, a: T, b: T): T => (cond ? a : b)
 
@@ -415,6 +425,7 @@ const useOverlay = ({
   throttleDelay = 200,
   parentContainer,
   closeOnEsc = true,
+  hoverDelay = 100,
   disabled,
   onOpen,
   onClose,
@@ -426,14 +437,19 @@ const useOverlay = ({
   const [innerAlignX, setInnerAlignX] = useState(alignX)
   const [innerAlignY, setInnerAlignY] = useState(alignY)
 
-  const [blocked, handleBlocked] = useState(false)
+  const [blockedCount, setBlockedCount] = useState(0)
+  const blocked = blockedCount > 0
   const [active, handleActive] = useState(isOpen)
 
   const triggerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLElement>(null)
+  const prevFocusRef = useRef<HTMLElement | null>(null)
 
-  const setBlocked = useCallback(() => handleBlocked(true), [])
-  const setUnblocked = useCallback(() => handleBlocked(false), [])
+  const setBlocked = useCallback(() => setBlockedCount((c) => c + 1), [])
+  const setUnblocked = useCallback(
+    () => setBlockedCount((c) => Math.max(0, c - 1)),
+    [],
+  )
 
   const showContent = useCallback(() => {
     handleActive(true)
@@ -571,7 +587,11 @@ const useOverlay = ({
     [throttleDelay],
   )
 
-  const handleClick = handleVisibilityByEventType
+  // Stable click handler — uses ref so the window listener is never re-attached.
+  const handleClick = useCallback(
+    (e: Event) => latestHandleVisibility.current(e),
+    [],
+  )
 
   const handleVisibility = useMemo(
     () =>
@@ -630,6 +650,25 @@ const useOverlay = ({
     }
   }, [active, ctx, onClose, onOpen])
 
+  // Focus management for modals: save active element on open, restore on close.
+  useEffect(() => {
+    if (type !== 'modal') return
+
+    if (active && isContentLoaded && contentRef.current) {
+      prevFocusRef.current = document.activeElement as HTMLElement | null
+      // Make content focusable if it isn't already, then focus it.
+      if (contentRef.current.tabIndex < 0) {
+        contentRef.current.tabIndex = -1
+      }
+      contentRef.current.focus()
+    }
+
+    if (!active && prevFocusRef.current) {
+      prevFocusRef.current.focus()
+      prevFocusRef.current = null
+    }
+  }, [active, isContentLoaded, type])
+
   // handle closing only when content is active
   useEffect(() => {
     if (!closeOnEsc || !active || blocked) return undefined
@@ -658,14 +697,20 @@ const useOverlay = ({
       handleVisibility(e)
     }
 
-    if (shouldSetOverflow) document.body.style.overflow = 'hidden'
+    if (shouldSetOverflow) {
+      modalOverflowCount++
+      if (modalOverflowCount === 1) document.body.style.overflow = 'hidden'
+    }
     window.addEventListener('resize', handleContentPosition)
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       handleContentPosition.cancel()
       handleVisibility.cancel()
-      if (shouldSetOverflow) document.body.style.overflow = ''
+      if (shouldSetOverflow) {
+        modalOverflowCount--
+        if (modalOverflowCount === 0) document.body.style.overflow = ''
+      }
       window.removeEventListener('resize', handleContentPosition)
       window.removeEventListener('scroll', onScroll)
     }
@@ -735,7 +780,7 @@ const useOverlay = ({
 
     const scheduleHide = () => {
       clearHoverTimeout()
-      hoverTimeoutRef.current = setTimeout(hideContent, 100)
+      hoverTimeoutRef.current = setTimeout(hideContent, hoverDelay)
     }
 
     const onTriggerEnter = () => {

@@ -8,7 +8,7 @@
  * - styled('div')`...` and styled(Component)`...`
  * - styled.div`...` (via Proxy)
  * - `as` prop for polymorphic rendering
- * - forwardRef for ref forwarding
+ * - React 19 `ref` as regular prop (no forwardRef wrapper)
  * - $-prefixed transient props (not forwarded to DOM)
  * - Custom shouldForwardProp for per-component prop filtering
  * - Static path optimization (templates with no dynamic interpolations)
@@ -23,7 +23,6 @@ import {
   type ComponentType,
   createElement,
   Fragment,
-  forwardRef,
   useInsertionEffect,
   useRef,
 } from 'react'
@@ -61,14 +60,14 @@ const getDisplayName = (tag: Tag): string =>
 // WeakMap on `strings` (TemplateStringsArray is object-identity per source location).
 const staticComponentCache = new WeakMap<
   TemplateStringsArray,
-  Map<Tag, ReturnType<typeof forwardRef>>
+  Map<Tag, ComponentType<any>>
 >()
 
 // Single-entry hot cache — just 3 reference comparisons, no Map/WeakMap overhead.
 // Covers the most common pattern: same styled component created repeatedly.
 let _hotStrings: TemplateStringsArray | null = null
 let _hotTag: Tag | null = null
-let _hotComponent: ReturnType<typeof forwardRef> | null = null
+let _hotComponent: ComponentType<any> | null = null
 
 const createStyledComponent = (
   tag: Tag,
@@ -125,24 +124,22 @@ const createStyledComponent = (
       staticClassName = sheet.insert(cssText, boost)
     }
 
-    const StaticStyled = forwardRef<unknown, Record<string, any>>(
-      (rawProps, ref) => {
-        const finalTag = rawProps.as || tag
-        const isDOM = typeof finalTag === 'string'
-        const finalProps = buildProps(
-          rawProps,
-          staticClassName,
-          ref,
-          isDOM,
-          customFilter,
-        )
+    const StaticStyled = ({ ref, ...rawProps }: Record<string, any>) => {
+      const finalTag = rawProps.as || tag
+      const isDOM = typeof finalTag === 'string'
+      const finalProps = buildProps(
+        rawProps,
+        staticClassName,
+        ref,
+        isDOM,
+        customFilter,
+      )
 
-        const mainEl = createElement(finalTag, finalProps)
+      const mainEl = createElement(finalTag, finalProps)
 
-        if (!cachedStyleEl) return mainEl
-        return createElement(Fragment, null, cachedStyleEl, mainEl)
-      },
-    )
+      if (!cachedStyleEl) return mainEl
+      return createElement(Fragment, null, cachedStyleEl, mainEl)
+    }
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
 
@@ -166,69 +163,61 @@ const createStyledComponent = (
   // Client: useInsertionEffect injects into shared sheet (1 DOM node, scales to any size).
   // SSR: <style precedence> for FOUC-free delivery (useInsertionEffect is a no-op on server).
   // useRef cache avoids recomputing when CSS text hasn't changed between renders.
-  const DynamicStyled = forwardRef<unknown, Record<string, any>>(
-    (rawProps, ref) => {
-      const theme = useTheme()
-      const allProps = { ...rawProps, theme }
-      const cssText = normalizeCSS(resolve(strings, values, allProps))
+  const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
+    const theme = useTheme()
+    const allProps = { ...rawProps, theme }
+    const cssText = normalizeCSS(resolve(strings, values, allProps))
 
-      const cacheRef = useRef<{
-        css: string
-        className: string
-        styleEl: ReturnType<typeof createElement> | null
-      }>({ css: '', className: '', styleEl: null })
+    const cacheRef = useRef<{
+      css: string
+      className: string
+      styleEl: ReturnType<typeof createElement> | null
+    }>({ css: '', className: '', styleEl: null })
 
-      let className: string
-      let styleEl: ReturnType<typeof createElement> | null = null
+    let className: string
+    let styleEl: ReturnType<typeof createElement> | null = null
 
-      if (cssText === cacheRef.current.css) {
-        // Cache hit — reuse className and style element (if SSR)
-        className = cacheRef.current.className
-        styleEl = cacheRef.current.styleEl
-      } else {
-        // Cache miss — recompute
-        if (cssText.length > 0) {
-          if (IS_SERVER) {
-            // SSR: compute rules for <style precedence>, inject into ssrBuffer
-            const prepared = sheet.prepare(cssText, boost)
-            className = prepared.className
-            sheet.insert(cssText, boost)
-            styleEl = createElement(
-              'style',
-              { href: prepared.className, precedence: 'medium' },
-              prepared.rules,
-            )
-          } else {
-            // Client: just compute className (injection via useInsertionEffect below)
-            className = sheet.getClassName(cssText)
-          }
+    if (cssText === cacheRef.current.css) {
+      // Cache hit — reuse className and style element (if SSR)
+      className = cacheRef.current.className
+      styleEl = cacheRef.current.styleEl
+    } else {
+      // Cache miss — recompute
+      if (cssText.length > 0) {
+        if (IS_SERVER) {
+          // SSR: compute rules for <style precedence>, inject into ssrBuffer
+          const prepared = sheet.prepare(cssText, boost)
+          className = prepared.className
+          sheet.insert(cssText, boost)
+          styleEl = createElement(
+            'style',
+            { href: prepared.className, precedence: 'medium' },
+            prepared.rules,
+          )
         } else {
-          className = ''
+          // Client: just compute className (injection via useInsertionEffect below)
+          className = sheet.getClassName(cssText)
         }
-        cacheRef.current = { css: cssText, className, styleEl }
+      } else {
+        className = ''
       }
+      cacheRef.current = { css: cssText, className, styleEl }
+    }
 
-      // Client: inject CSS synchronously before paint (no-op on server)
-      useInsertionEffect(() => {
-        if (cssText.length > 0) sheet.insert(cssText, boost)
-      }, [cssText])
+    // Client: inject CSS synchronously before paint (no-op on server)
+    useInsertionEffect(() => {
+      if (cssText.length > 0) sheet.insert(cssText, boost)
+    }, [cssText])
 
-      const finalTag = rawProps.as || tag
-      const isDOM = typeof finalTag === 'string'
-      const finalProps = buildProps(
-        rawProps,
-        className,
-        ref,
-        isDOM,
-        customFilter,
-      )
+    const finalTag = rawProps.as || tag
+    const isDOM = typeof finalTag === 'string'
+    const finalProps = buildProps(rawProps, className, ref, isDOM, customFilter)
 
-      const mainEl = createElement(finalTag, finalProps)
+    const mainEl = createElement(finalTag, finalProps)
 
-      if (!styleEl) return mainEl
-      return createElement(Fragment, null, styleEl, mainEl)
-    },
-  )
+    if (!styleEl) return mainEl
+    return createElement(Fragment, null, styleEl, mainEl)
+  }
 
   DynamicStyled.displayName = `styled(${getDisplayName(tag)})`
   return DynamicStyled

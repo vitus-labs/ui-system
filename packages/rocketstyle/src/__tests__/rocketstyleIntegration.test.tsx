@@ -53,7 +53,7 @@ describe('rocketstyle factory', () => {
       component: BaseComponent,
     })
     expect(Button).toBeDefined()
-    expect(typeof Button).toBe('object') // forwardRef returns object
+    expect(typeof Button).toBe('function')
   })
 
   it('sets IS_ROCKETSTYLE on the component', () => {

@@ -1,9 +1,5 @@
 import type { HTMLTags } from '@vitus-labs/core'
-import type {
-  ForwardRefExoticComponent,
-  PropsWithoutRef,
-  RefAttributes,
-} from 'react'
+import type { ReactElement } from 'react'
 import type {
   AlignX,
   AlignY,
@@ -291,12 +287,7 @@ export type Props = Partial<{
   afterContentCss: ExtendCss
 }>
 
-export type VLElement<P extends Record<string, unknown> = {}> =
-  ForwardRefExoticComponent<PropsWithoutRef<Props & P> & RefAttributes<any>> &
-    VLStatic
-
-// export type VLElement<P extends Record<string, unknown> = {}> = {
-//   <T extends Record<string, unknown> = {}>(
-//     props: Props & P & T & { ref?: ForwardedRef<any> },
-//   ): ReactElement | null
-// } & VLStatic
+export type VLElement<P extends Record<string, unknown> = {}> = ((
+  props: Props & P & { ref?: any },
+) => ReactElement | null) &
+  VLStatic

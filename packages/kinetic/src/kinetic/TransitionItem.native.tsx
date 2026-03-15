@@ -1,5 +1,5 @@
 import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
-import { cloneElement, useMemo, useRef } from 'react'
+import { cloneElement, type ReactElement, useMemo, useRef } from 'react'
 import { Animated } from 'react-native'
 import { buildAnimatedStyle, getPrimaryTransition } from '../nativeAnimations'
 import type {
@@ -17,7 +17,7 @@ type TransitionItemProps = ClassTransitionProps &
     unmount?: boolean
     timeout?: number
     delay?: number
-    children: React.ReactElement<any>
+    children: ReactElement<any>
   }
 
 /**

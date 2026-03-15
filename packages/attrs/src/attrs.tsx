@@ -1,10 +1,8 @@
 import { compose, hoistNonReactStatics, omit, pick } from '@vitus-labs/core'
-import { forwardRef } from 'react'
 import { attrsHoc } from '~/hoc'
 import { useRef } from '~/hooks'
 import type {
   AttrsComponent as AttrsComponentType,
-  ExoticComponent,
   InnerComponentProps,
 } from '~/types/AttrsComponent'
 import type {
@@ -46,7 +44,7 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 /**
  * Core factory that builds an attrs-enhanced React component.
  *
- * Creates a `forwardRef` component that:
+ * Creates a component that:
  * 1. Wraps the original with attrsHoc (default props) + user HOCs from `.compose()`.
  * 2. Manages ref forwarding through the HOC chain via `$attrsRef`.
  * 3. Filters out internal props listed in `filterAttrs`.
@@ -67,34 +65,29 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
   // The inner component receives already-computed props from the HOC chain.
   // It handles ref merging, prop filtering, and final rendering.
-  const EnhancedComponent: ExoticComponent<InnerComponentProps> = forwardRef(
-    (
-      {
-        $attrsRef, // consumer's original ref, forwarded through attrsHoc
-        ...props
-      },
-      ref, // ref from any intermediate HOC in the compose chain
-    ) => {
-      // Merge both ref sources into a single internal ref so that
-      // both the consumer's ref and intermediate HOC refs point to the same node.
-      const internalRef = useRef({ $attrsRef, ref })
-      const needsRef = ref ?? $attrsRef
-      const needsFiltering =
-        options.filterAttrs && options.filterAttrs.length > 0
+  const EnhancedComponent = ({
+    $attrsRef, // consumer's original ref, forwarded through attrsHoc
+    ref, // ref from any intermediate HOC in the compose chain
+    ...props
+  }: InnerComponentProps) => {
+    // Merge both ref sources into a single internal ref so that
+    // both the consumer's ref and intermediate HOC refs point to the same node.
+    const internalRef = useRef({ $attrsRef, ref })
+    const needsRef = ref ?? $attrsRef
+    const needsFiltering = options.filterAttrs && options.filterAttrs.length > 0
 
-      const baseProps = needsRef ? { ...props, ref: internalRef } : props
-      const filteredProps = needsFiltering
-        ? omit(baseProps, options.filterAttrs)
-        : baseProps
+    const baseProps = needsRef ? { ...props, ref: internalRef } : props
+    const filteredProps = needsFiltering
+      ? omit(baseProps, options.filterAttrs)
+      : baseProps
 
-      const finalProps =
-        process.env.NODE_ENV !== 'production'
-          ? { ...filteredProps, 'data-attrs': componentName }
-          : filteredProps
+    const finalProps =
+      process.env.NODE_ENV !== 'production'
+        ? { ...filteredProps, 'data-attrs': componentName }
+        : filteredProps
 
-      return <RenderComponent {...finalProps} />
-    },
-  )
+    return <RenderComponent {...finalProps} />
+  }
 
   // Apply the full HOC chain: compose(attrsHoc, ...userHocs)(EnhancedComponent)
   const AttrsComponent: AttrsComponentType = compose(...hocsFuncs)(

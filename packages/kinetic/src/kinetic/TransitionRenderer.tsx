@@ -4,7 +4,13 @@ import {
   useMergedRef,
   useReducedMotion,
 } from '@vitus-labs/hooks'
-import { createElement, useRef } from 'react'
+import {
+  type CSSProperties,
+  createElement,
+  type ForwardedRef,
+  type ReactNode,
+  useRef,
+} from 'react'
 import type { TransitionCallbacks } from '../types'
 import useAnimationEnd from '../useAnimationEnd'
 import useTransitionState from '../useTransitionState'
@@ -19,8 +25,8 @@ type TransitionRendererProps = {
   unmount?: boolean
   timeout?: number
   callbacks: Partial<TransitionCallbacks>
-  children: React.ReactNode
-  forwardedRef: React.ForwardedRef<unknown>
+  children: ReactNode
+  forwardedRef: ForwardedRef<unknown>
 }
 
 const applyEnter = (el: HTMLElement, config: KineticConfig) => {
@@ -151,7 +157,7 @@ const TransitionRenderer = ({
         ref: mergedRef,
         ...htmlProps,
         style: {
-          ...((htmlProps.style as React.CSSProperties) ?? {}),
+          ...((htmlProps.style as CSSProperties) ?? {}),
           display: 'none',
         },
       },

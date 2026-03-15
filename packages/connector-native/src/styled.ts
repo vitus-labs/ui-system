@@ -1,4 +1,4 @@
-import { type ComponentType, createElement, forwardRef } from 'react'
+import { type ComponentType, createElement } from 'react'
 
 import { type CSSResult, css as cssFactory } from '~/css'
 import { mergeStyles } from '~/parse'
@@ -29,7 +29,7 @@ const createStyledComponent = (
 ) => {
   const template = cssFactory(strings, ...values)
 
-  const Styled = forwardRef<unknown, Record<string, any>>((props, ref) => {
+  const Styled = ({ ref, ...props }: Record<string, any>) => {
     const resolvedStyles = isCSSResult(template)
       ? template.resolve(props)
       : template
@@ -51,7 +51,7 @@ const createStyledComponent = (
       ref,
       style: mergedStyle,
     })
-  })
+  }
 
   const name =
     typeof tag === 'string'
