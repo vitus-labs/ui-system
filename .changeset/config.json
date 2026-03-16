@@ -1,0 +1,30 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "vitus-labs/ui-system" }
+  ],
+  "commit": false,
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "fixed": [
+    [
+      "@vitus-labs/attrs",
+      "@vitus-labs/connector-emotion",
+      "@vitus-labs/connector-native",
+      "@vitus-labs/connector-styled-components",
+      "@vitus-labs/connector-styler",
+      "@vitus-labs/coolgrid",
+      "@vitus-labs/core",
+      "@vitus-labs/elements",
+      "@vitus-labs/hooks",
+      "@vitus-labs/kinetic",
+      "@vitus-labs/kinetic-presets",
+      "@vitus-labs/rocketstories",
+      "@vitus-labs/rocketstyle",
+      "@vitus-labs/styler",
+      "@vitus-labs/unistyle"
+    ]
+  ]
+}
