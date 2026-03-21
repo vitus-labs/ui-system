@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "@vitus-labs/hooks": "workspace:*",
-    "@vitus-labs/tools-rolldown": "1.13.0",
+    "@vitus-labs/tools-rolldown": "1.15.3",
     "@vitus-labs/tools-typescript": "1.13.0",
     "react-native": ">=0.84.1"
   }
