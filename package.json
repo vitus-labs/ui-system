@@ -46,7 +46,7 @@
     "@vitest/coverage-v8": "^4.1.0",
     "@vitus-labs/tools-atlas": "1.13.0",
     "@vitus-labs/tools-lint": "1.13.0",
-    "@vitus-labs/tools-vitest": "1.13.0",
+    "@vitus-labs/tools-vitest": "1.15.3",
     "cpr": "^3.0.1",
     "csstype": "^3.2.3",
     "jsdom": "^29.0.0",
