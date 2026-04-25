@@ -128,7 +128,9 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
  * dimension mapping, pseudo-state context, HOC composition, and
  * chainable static enhancers attached to the returned component.
  */
-// @ts-expect-error
+// @ts-expect-error — `RocketComponent` is mutually recursive with the chain
+// methods built up by `cloneAndEnhance`. The impl returns the right runtime
+// shape but TS can't prove the structural equality of the recursive generics.
 const rocketComponent: RocketComponent = (options) => {
   const { component, styles } = options
   const { styled } = config

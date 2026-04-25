@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { isEmpty } from '@vitus-labs/core'
 import { ALL_RESERVED_KEYS } from '~/constants'
 import defaultDimensions from '~/constants/defaultDimensions'
@@ -76,13 +75,39 @@ const validateInit = (
   }
 }
 
-const rocketstyle: Rocketstyle =
-  ({ dimensions = defaultDimensions, useBooleans = true } = {}) =>
-  ({ name, component }) => {
+/**
+ * Generic implementation. The `D | DefaultDimensions` runtime fallback is
+ * narrowed to `D` via a single cast — semantically correct because when no
+ * user dimensions are supplied, `D` *is* the default (its type-parameter
+ * default is `DefaultDimensions`). This single boundary cast replaces the
+ * file-wide `@ts-nocheck` previously used here.
+ */
+const rocketstyle = <
+  D extends Dimensions = DefaultDimensions,
+  UB extends boolean = true,
+>(params?: {
+  dimensions?: D
+  useBooleans?: UB
+}) => {
+  const dimensions = (params?.dimensions ?? defaultDimensions) as D
+  const useBooleans = (params?.useBooleans ?? true) as UB
+
+  return <C extends ElementType>({
+    name,
+    component,
+  }: {
+    name: string
+    component: C
+  }) => {
     if (process.env.NODE_ENV !== 'production') {
       validateInit(name, component, dimensions)
     }
 
+    // `rocketComponent` is annotated with the generic `RocketComponent` type
+    // but its implementation isn't itself generic — `const x: GenericFn = impl`
+    // collapses the generics down to their defaults at the call site. We
+    // therefore cast through `unknown` at this single boundary so the public
+    // `Rocketstyle` API remains generic over `D`/`UB` for consumers.
     return rocketComponent({
       name,
       component,
@@ -93,7 +118,12 @@ const rocketstyle: Rocketstyle =
       multiKeys: getMultipleDimensions(dimensions),
       transformKeys: getTransformDimensions(dimensions),
       styled: true,
-    })
+    } as unknown as Parameters<RocketComponent>[0]) as unknown as ReturnType<
+      RocketComponent<C, {}, {}, D, UB>
+    >
   }
+}
 
-export default rocketstyle
+const typedRocketstyle: Rocketstyle = rocketstyle
+
+export default typedRocketstyle
