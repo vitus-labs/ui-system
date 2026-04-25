@@ -125,7 +125,11 @@ export const getTheme: GetTheme = ({
   transformKeys,
   appTheme,
 }) => {
-  let finalTheme = { ...baseTheme }
+  // Top-level shallow clone is safe — `merge()` does copy-on-write for nested
+  // plain objects (see core/utils.ts), so mutating `finalTheme` directly will
+  // never mutate `baseTheme`'s nested values. Avoiding `merge({}, finalTheme, val)`
+  // skips an empty-object alloc + a full deep clone of `finalTheme` per iteration.
+  const finalTheme = { ...baseTheme }
   const deferredTransforms: Array<
     (
       theme: Record<string, any>,
@@ -142,10 +146,11 @@ export const getTheme: GetTheme = ({
 
       const mergeValue = (item: string) => {
         const val = keyTheme[item]
+        if (val == null) return
         if (isTransform && typeof val === 'function') {
           deferredTransforms.push(val)
         } else {
-          finalTheme = merge({}, finalTheme, val)
+          merge(finalTheme, val)
         }
       }
 
@@ -159,8 +164,7 @@ export const getTheme: GetTheme = ({
 
   // Apply transform dimension values last with the fully accumulated theme
   for (const transform of deferredTransforms) {
-    finalTheme = merge(
-      {},
+    merge(
       finalTheme,
       transform(finalTheme, appTheme ?? {}, themeModeCallback, config.css),
     )

@@ -139,7 +139,17 @@ const Component: VLElement = ({
   useLayoutEffect(() => {
     if (!__WEB__) return
     if (!equalBeforeAfter || !beforeContent || !afterContent) return
-    if (equalizeRef.current) equalize(equalizeRef.current, direction)
+    const node = equalizeRef.current
+    if (!node) return
+
+    // Run once for the current props, then keep slot widths balanced when the
+    // element resizes (instead of forcing a layout flush on every re-render).
+    equalize(node, direction)
+
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => equalize(node, direction))
+    observer.observe(node)
+    return () => observer.disconnect()
   }, [equalBeforeAfter, beforeContent, afterContent, direction])
 
   // --------------------------------------------------------

@@ -25,6 +25,7 @@ export interface StyleSheetOptions {
 export class StyleSheet {
   private cache = new Map<string, string>()
   private insertCache = new Map<string, string>()
+  private prepareCache = new Map<string, { className: string; rules: string }>()
   private sheet: CSSStyleSheet | null = null
   private ssrBuffer: string[] = []
   private isSSR: boolean
@@ -359,12 +360,14 @@ export class StyleSheet {
     this.ssrBuffer = []
     this.cache.clear()
     this.insertCache.clear()
+    this.prepareCache.clear()
   }
 
   /** Clear the dedup cache. Useful for HMR / dev-time reloads. */
   clearCache(): void {
     this.cache.clear()
     this.insertCache.clear()
+    this.prepareCache.clear()
     clearNormCache()
   }
 
@@ -391,11 +394,17 @@ export class StyleSheet {
   /**
    * Compute className and full CSS rule text without injecting.
    * Used with React 19's `<style precedence>` for component-level injection.
+   * Result is cached so repeated calls (per render until cssText changes) skip
+   * the hash + splitAtRules + join work.
    */
   prepare(
     cssText: string,
     boost = false,
   ): { className: string; rules: string } {
+    const prepKey = boost ? `${cssText}\0` : cssText
+    const cached = this.prepareCache.get(prepKey)
+    if (cached) return cached
+
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
     const selector = boost ? `.${className}.${className}` : `.${className}`
@@ -409,7 +418,9 @@ export class StyleSheet {
       ? allRules.map((r) => `@layer ${this.layer}{${r}}`)
       : allRules
 
-    return { className, rules: finalRules.join('') }
+    const result = { className, rules: finalRules.join('') }
+    this.prepareCache.set(prepKey, result)
+    return result
   }
 
   /** Check if a className is already in the cache. O(1) Map lookup. */

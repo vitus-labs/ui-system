@@ -6,6 +6,8 @@ export type StripUnit = <V extends string | number, UR extends boolean = false>(
   unitReturn?: UR,
 ) => UR extends true ? [Value<V>, Unit<V>] : Value<V>
 
+const CSS_UNIT_REGEX = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/
+
 /**
  * Strips the CSS unit suffix from a value.
  * With `unitReturn=true`, returns a `[number, unit]` tuple.
@@ -13,11 +15,9 @@ export type StripUnit = <V extends string | number, UR extends boolean = false>(
  * Non-string inputs are passed through unchanged.
  */
 const stripUnit: StripUnit = (value, unitReturn) => {
-  const cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/
-
   if (typeof value !== 'string') return unitReturn ? [value, undefined] : value
 
-  const matchedValue = value.match(cssRegex)
+  const matchedValue = value.match(CSS_UNIT_REGEX)
 
   if (unitReturn) {
     if (matchedValue) return [parseFloat(value), matchedValue[2]]
