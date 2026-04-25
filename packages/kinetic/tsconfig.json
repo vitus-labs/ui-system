@@ -7,9 +7,8 @@
     "types": ["@vitus-labs/tools-rolldown/global", "vitest/globals", "@testing-library/jest-dom/vitest"],
     "rootDir": "src",
     "outDir": "lib",
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     }
   }
 }
