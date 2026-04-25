@@ -42,6 +42,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
     // array
     if (Array.isArray(value) && value.length > 0) {
       value.forEach((child, i) => {
+        // biome-ignore lint/style/noNonNullAssertion: caller guarantees breakpoints array spans all responsive values
         const indexBreakpoint = breakpoints[i]!
         set(result, [indexBreakpoint, key], child)
       })
@@ -54,6 +55,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
     }
     // normal value
     else if (value != null) {
+      // biome-ignore lint/style/noNonNullAssertion: caller guarantees breakpoints[] is non-empty (mobile-first base breakpoint always present)
       const firstBreakpoint = breakpoints[0]!
       set(result, [firstBreakpoint, key], value)
     }

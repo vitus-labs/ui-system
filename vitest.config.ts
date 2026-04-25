@@ -11,6 +11,15 @@ export default defineConfig({
         json: { file: 'coverage-final.json' },
       },
       reportsDirectory: './coverage',
+      // Thresholds set at the current baseline — any drop fails CI.
+      // Bump these up when coverage improves so we never silently lose
+      // what we've gained.
+      thresholds: {
+        statements: 98.42,
+        branches: 94.1,
+        functions: 98.45,
+        lines: 99.1,
+      },
     },
   },
 })

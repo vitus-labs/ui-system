@@ -27,7 +27,8 @@ type PickStyledAttrs = <
 >(
   props: T,
   keywords: K,
-  // @ts-expect-error
+  // @ts-expect-error — `keyof K` is a subset of `keyof T` by the `K extends { [I in keyof T]?: true }`
+  // constraint, but TS doesn't carry that invariant into the mapped type
 ) => { [I in keyof K]: T[I] }
 
 export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
@@ -53,7 +54,7 @@ export const calculateChainOptions: CalculateChainOptions =
     const result = {}
     if (isEmpty(options)) return result
 
-    // @ts-expect-error
+    // @ts-expect-error — isEmpty narrows runtime but doesn't narrow `options` to non-undefined here
     return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }
 
@@ -106,8 +107,10 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
     if (useBooleans) {
       const propsKeys = Object.keys(props)
 
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dimension matching algo — branches by multi/single + boolean keyword detection
       Object.entries(result).forEach(([key, value]) => {
-        // @ts-expect-error
+        // @ts-expect-error — `multiKeys` is typed `MultiKeys` (specific dimension prop names),
+        // but `key` here is `string` from `Object.entries`. They overlap by construction at the call site.
         const isMultiKey = multiKeys[key]
 
         // when value in result is not assigned yet
@@ -123,6 +126,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
             // iterate backwards to guarantee the last one will have
             // a priority over previous ones
             for (let i = propsKeys.length - 1; i >= 0; i--) {
+              // biome-ignore lint/style/noNonNullAssertion: loop bound `i >= 0 && i < propsKeys.length` guarantees propsKeys[i] exists
               const k = propsKeys[i]!
               if (keywordSet.has(k) && props[k]) {
                 newDimensionValue = k

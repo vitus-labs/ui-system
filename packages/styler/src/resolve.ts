@@ -42,12 +42,15 @@ export const resolve = (
   strings: TemplateStringsArray,
   values: Interpolation[],
   props: Record<string, any>,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path interpolation resolver — type branches inlined for V8 JIT
 ): string => {
   // Tagged templates guarantee strings.length === values.length + 1,
   // so strings[0] and strings[i+1] are always defined — no ?? needed.
+  // biome-ignore lint/style/noNonNullAssertion: tagged template guarantee — strings.length >= 1
   let result = strings[0]!
   for (let i = 0; i < values.length; i++) {
     const v = values[i]
+    // biome-ignore lint/style/noNonNullAssertion: tagged template guarantee — strings.length === values.length + 1, so strings[i+1] exists
     const s = strings[i + 1]!
     // Inline the most common value types to avoid function call overhead.
     // Using if/else (no continue) for better V8 JIT optimization.
@@ -85,6 +88,7 @@ const normCache = new Map<string, string>()
 /** Clear the normalizeCSS cache (called during HMR cleanup). */
 export const clearNormCache = () => normCache.clear()
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
 export const normalizeCSS = (css: string): string => {
   const cached = normCache.get(css)
   if (cached !== undefined) return cached

@@ -41,6 +41,7 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
         [allProps],
       )
 
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fast-path branching deliberately inlined for hot render path
       const finalProps = useMemo(() => {
         // Fast path: no attrs configured — skip the 3 spread allocations.
         if (!hasAnyChain) {

@@ -74,6 +74,7 @@ export class StyleSheet {
   }
 
   /** Parse existing rules from SSR-rendered <style> tag into cache. */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: SSR hydration walker — branches by CSSRule subtype
   private hydrateFromTag(el: HTMLStyleElement) {
     const sheet = el.sheet
     if (!sheet) return
@@ -116,6 +117,7 @@ export class StyleSheet {
    *
    * Non-at-rule brace blocks (like &:hover{...}) are preserved in the base CSS.
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass at-rule scanner — depth tracking + position bookkeeping is essential
   private splitAtRules(
     cssText: string,
     selector: string,
@@ -195,6 +197,7 @@ export class StyleSheet {
    * to raise specificity from (0,1,0) to (0,2,0). This ensures the
    * rule wins over single-class selectors regardless of source order.
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path CSS rule insertion — cache check + hash + split + SSR vs client + @layer wrapping inlined for perf
   insert(cssText: string, boost = false): string {
     // Fast path: skip hash computation on repeated insertions of same CSS text
     const icKey = boost ? `${cssText}\0` : cssText
@@ -237,6 +240,7 @@ export class StyleSheet {
           this.sheet.insertRule(rule, this.sheet.cssRules.length)
         } catch (e) {
           if (process.env.NODE_ENV !== 'production') {
+            // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
             console.warn(
               `[styler] Failed to insert CSS rule for .${className}:`,
               (e as Error).message,
@@ -268,6 +272,7 @@ export class StyleSheet {
         this.sheet.insertRule(rule, this.sheet.cssRules.length)
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
+          // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
           console.warn(
             `[styler] Failed to insert @keyframes "${name}":`,
             (e as Error).message,
@@ -325,6 +330,7 @@ export class StyleSheet {
           this.sheet.insertRule(rule, this.sheet.cssRules.length)
         } catch (e) {
           if (process.env.NODE_ENV !== 'production') {
+            // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
             console.warn(
               '[styler] Failed to insert global CSS rule:',
               (e as Error).message,

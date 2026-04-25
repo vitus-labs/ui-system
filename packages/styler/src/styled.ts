@@ -74,9 +74,11 @@ const createStyledComponent = (
   strings: TemplateStringsArray,
   values: Interpolation[],
   options?: StyledOptions,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path styled factory — static/dynamic split + hot cache + SSR/client branches inlined for perf
 ) => {
   // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
+    // biome-ignore lint/style/noNonNullAssertion: invariant — when _hotStrings/_hotTag match, _hotComponent was assigned in the prior call
     if (strings === _hotStrings && tag === _hotTag) return _hotComponent!
 
     // WeakMap fallback for alternating patterns
@@ -100,6 +102,7 @@ const createStyledComponent = (
   // STATIC FAST PATH: no function interpolations → compute class once at creation time
   if (!hasDynamicValues) {
     // Inline resolve for the common no-values case (avoids function call overhead)
+    // biome-ignore lint/style/noNonNullAssertion: tagged template guarantee — strings.length >= 1 (length === values.length + 1, and values.length === 0 here)
     const raw = values.length === 0 ? strings[0]! : resolve(strings, values, {})
     const cssText = normalizeCSS(raw)
     const hasCss = cssText.length > 0

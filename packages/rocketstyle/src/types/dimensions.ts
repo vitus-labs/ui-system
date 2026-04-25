@@ -98,7 +98,9 @@ type DimensionTypesHelper<DKP extends TDKP> = {
 }
 
 export type DimensionObjAttrs<D extends Dimensions, DKP extends TDKP> = {
-  // @ts-expect-error
+  // @ts-expect-error — `I` from `keyof DKP` is not provably a key of `D`; the
+  // shapes match at runtime (DKP keys mirror D's prop names) but TS can't
+  // express the cross-key invariant
   [I in keyof DKP]: ExtractDimensionMulti<D[I]> extends true
     ? Array<keyof DKP[I]>
     : keyof DKP[I]

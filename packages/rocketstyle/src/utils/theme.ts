@@ -141,6 +141,7 @@ export const getTheme: GetTheme = ({
 
   Object.entries(rocketstate).forEach(
     ([key, value]: [string, string | string[]]) => {
+      // biome-ignore lint/style/noNonNullAssertion: rocketstate is built from themes (see calculateStylingAttrs), so themes[key] is guaranteed to exist
       const keyTheme: Record<string, any> = themes[key]!
       const isTransform = transformKeys?.[key]
 
