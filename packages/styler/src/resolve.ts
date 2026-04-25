@@ -4,6 +4,7 @@
  * primitive values.
  */
 
+import { evictMapByPercent } from './evict'
 import type { DefaultTheme } from './ThemeProvider'
 
 export type Interpolation =
@@ -148,12 +149,7 @@ export const normalizeCSS = (css: string): string => {
 
   // Evict oldest ~10% to prevent memory leaks without cliff-edge drop
   if (normCache.size > 2000) {
-    let count = 0
-    for (const key of normCache.keys()) {
-      if (count >= 200) break
-      normCache.delete(key)
-      count++
-    }
+    evictMapByPercent(normCache, 0.1)
   }
   normCache.set(css, out)
 

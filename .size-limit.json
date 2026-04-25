@@ -1,0 +1,92 @@
+[
+  {
+    "name": "@vitus-labs/attrs",
+    "path": "packages/attrs/lib/index.js",
+    "limit": "3 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/connector-emotion",
+    "path": "packages/connector-emotion/lib/index.js",
+    "limit": "1.4 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/connector-native",
+    "path": "packages/connector-native/lib/index.js",
+    "limit": "3.5 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/connector-styled-components",
+    "path": "packages/connector-styled-components/lib/index.js",
+    "limit": "300 B",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/connector-styler",
+    "path": "packages/connector-styler/lib/index.js",
+    "limit": "300 B",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/coolgrid",
+    "path": "packages/coolgrid/lib/index.js",
+    "limit": "4.5 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/core",
+    "path": "packages/core/lib/index.js",
+    "limit": "6 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/elements",
+    "path": "packages/elements/lib/index.js",
+    "limit": "15 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/hooks",
+    "path": "packages/hooks/lib/index.js",
+    "limit": "6.5 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/kinetic",
+    "path": "packages/kinetic/lib/index.js",
+    "limit": "6.5 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/kinetic-presets",
+    "path": "packages/kinetic-presets/lib/index.js",
+    "limit": "8 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/rocketstories",
+    "path": "packages/rocketstories/lib/index.js",
+    "limit": "10 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/rocketstyle",
+    "path": "packages/rocketstyle/lib/index.js",
+    "limit": "9 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/styler",
+    "path": "packages/styler/lib/index.js",
+    "limit": "12 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/unistyle",
+    "path": "packages/unistyle/lib/index.js",
+    "limit": "12 KB",
+    "gzip": true
+  }
+]
