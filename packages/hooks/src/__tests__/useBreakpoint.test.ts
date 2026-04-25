@@ -4,40 +4,43 @@ import type { ReactNode } from 'react'
 import { createElement } from 'react'
 import useBreakpoint from '../useBreakpoint'
 
-// ── matchMedia mock ──────────────────────────────────────────────────
-// Each call to window.matchMedia registers a listener set keyed by query.
-// We can later trigger change events by invoking handlers in the set.
-const listeners: Map<string, Set<() => void>> = new Map()
-const removedListeners: Map<string, Set<() => void>> = new Map()
+// ── window resize listener mock ──────────────────────────────────────
+// Each render of the hook attaches a single rAF-throttled `resize` listener
+// to `window`. We track those handlers so tests can dispatch a resize.
+const resizeHandlers: Set<EventListener> = new Set()
+const removedResizeHandlers: Set<EventListener> = new Set()
+const originalAdd = window.addEventListener.bind(window)
+const originalRemove = window.removeEventListener.bind(window)
 
 const installMatchMedia = () => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    configurable: true,
-    value: vi.fn((query: string) => {
-      const set = new Set<() => void>()
-      listeners.set(query, set)
+  resizeHandlers.clear()
+  removedResizeHandlers.clear()
 
-      const removed = new Set<() => void>()
-      removedListeners.set(query, removed)
-
-      return {
-        matches: false,
-        media: query,
-        addEventListener: vi.fn((_event: string, handler: () => void) => {
-          set.add(handler)
-        }),
-        removeEventListener: vi.fn((_event: string, handler: () => void) => {
-          set.delete(handler)
-          removed.add(handler)
-        }),
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+  window.addEventListener = vi.fn(
+    (type: string, listener: EventListenerOrEventListenerObject, opts?) => {
+      if (type === 'resize' && typeof listener === 'function') {
+        resizeHandlers.add(listener as EventListener)
       }
-    }),
-  })
+      return originalAdd(type as any, listener as any, opts as any)
+    },
+  ) as typeof window.addEventListener
+
+  window.removeEventListener = vi.fn(
+    (type: string, listener: EventListenerOrEventListenerObject, opts?) => {
+      if (type === 'resize' && typeof listener === 'function') {
+        resizeHandlers.delete(listener as EventListener)
+        removedResizeHandlers.add(listener as EventListener)
+      }
+      return originalRemove(type as any, listener as any, opts as any)
+    },
+  ) as typeof window.removeEventListener
+
+  // Make rAF synchronous in tests so resize updates flush immediately
+  ;(window as any).requestAnimationFrame = (cb: FrameRequestCallback) => {
+    cb(0)
+    return 1
+  }
+  ;(window as any).cancelAnimationFrame = () => undefined
 }
 
 // ── window.innerWidth helper ─────────────────────────────────────────
@@ -60,8 +63,6 @@ const createWrapper =
 
 // ── Test suite ───────────────────────────────────────────────────────
 beforeEach(() => {
-  listeners.clear()
-  removedListeners.clear()
   installMatchMedia()
   // Reset to a sane default width
   setWindowWidth(1024)
@@ -136,78 +137,42 @@ describe('useBreakpoint', () => {
     expect(result.current).toBe('xl')
   })
 
-  // 6. Sets up matchMedia listeners
-  it('sets up matchMedia listeners when breakpoints are provided', () => {
+  // 6. Sets up a single resize listener
+  it('sets up a single resize listener when breakpoints are provided', () => {
     setWindowWidth(800)
     const wrapper = createWrapper({ breakpoints })
     renderHook(() => useBreakpoint(), { wrapper })
 
-    // Should create one matchMedia listener per breakpoint
-    const breakpointCount = Object.keys(breakpoints).length
-    expect(listeners.size).toBe(breakpointCount)
-
-    // Each listener set should have exactly one handler
-    for (const [, set] of listeners) {
-      expect(set.size).toBe(1)
-    }
+    expect(resizeHandlers.size).toBe(1)
   })
 
-  it('creates matchMedia queries with correct min-width values', () => {
-    setWindowWidth(800)
-    const wrapper = createWrapper({ breakpoints })
-    renderHook(() => useBreakpoint(), { wrapper })
-
-    const queries = Array.from(listeners.keys())
-    for (const value of Object.values(breakpoints)) {
-      expect(queries).toContain(`(min-width: ${value}px)`)
-    }
-  })
-
-  // 7. Cleans up listeners on unmount
-  it('cleans up all matchMedia listeners on unmount', () => {
+  // 7. Cleans up resize listener on unmount
+  it('cleans up the resize listener on unmount', () => {
     setWindowWidth(800)
     const wrapper = createWrapper({ breakpoints })
     const { unmount } = renderHook(() => useBreakpoint(), { wrapper })
 
-    // Verify listeners are registered before unmount
-    for (const [, set] of listeners) {
-      expect(set.size).toBe(1)
-    }
+    expect(resizeHandlers.size).toBe(1)
 
     unmount()
 
-    // After unmount, all listener sets should be empty (handlers removed)
-    for (const [, set] of listeners) {
-      expect(set.size).toBe(0)
-    }
-
-    // All handlers should have been passed to removeEventListener
-    for (const [, removed] of removedListeners) {
-      expect(removed.size).toBe(1)
-    }
+    expect(resizeHandlers.size).toBe(0)
+    expect(removedResizeHandlers.size).toBe(1)
   })
 
-  // 8. Updates when matchMedia fires change event
-  it('updates the breakpoint when matchMedia fires a change event', () => {
+  // 8. Updates when window resizes
+  const fireResize = () => {
+    for (const handler of resizeHandlers) handler(new Event('resize'))
+  }
+
+  it('updates the breakpoint when window resizes upward', () => {
     setWindowWidth(800)
     const wrapper = createWrapper({ breakpoints })
     const { result } = renderHook(() => useBreakpoint(), { wrapper })
     expect(result.current).toBe('md')
 
-    // Simulate a viewport resize to 1300px by changing innerWidth
-    // and triggering one of the matchMedia handlers
     setWindowWidth(1300)
-    act(() => {
-      // Trigger any one handler — the update() function reads window.innerWidth
-      const firstSet = listeners.values().next().value as
-        | Set<() => void>
-        | undefined
-      if (firstSet) {
-        for (const handler of firstSet) {
-          handler()
-        }
-      }
-    })
+    act(fireResize)
 
     expect(result.current).toBe('xl')
   })
@@ -219,16 +184,7 @@ describe('useBreakpoint', () => {
     expect(result.current).toBe('xl')
 
     setWindowWidth(400)
-    act(() => {
-      const firstSet = listeners.values().next().value as
-        | Set<() => void>
-        | undefined
-      if (firstSet) {
-        for (const handler of firstSet) {
-          handler()
-        }
-      }
-    })
+    act(fireResize)
 
     expect(result.current).toBe('xs')
   })
@@ -241,10 +197,10 @@ describe('useBreakpoint', () => {
     expect(result.current).toBeUndefined()
   })
 
-  it('does not set up matchMedia listeners when breakpoints are empty', () => {
+  it('does not set up a resize listener when breakpoints are empty', () => {
     const wrapper = createWrapper({ breakpoints: {} })
     renderHook(() => useBreakpoint(), { wrapper })
-    expect(listeners.size).toBe(0)
+    expect(resizeHandlers.size).toBe(0)
   })
 
   // Edge case: single breakpoint

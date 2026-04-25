@@ -1,6 +1,6 @@
 import { get, pick } from '@vitus-labs/core'
 import { context } from '@vitus-labs/unistyle'
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { CONTEXT_KEYS } from '~/constants'
 import type { Context, Obj, ValueType } from '~/types'
 
@@ -46,10 +46,14 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
 type UseGridContext = (props: Obj) => Context
 const useGridContext: UseGridContext = (props) => {
   const { theme } = useContext(context)
-  const ctxProps = pickThemeProps(props, CONTEXT_KEYS)
-  const gridContext = getGridContext(ctxProps, theme as Record<string, unknown>)
-
-  return { ...gridContext, ...ctxProps }
+  return useMemo(() => {
+    const ctxProps = pickThemeProps(props, CONTEXT_KEYS)
+    const gridContext = getGridContext(
+      ctxProps,
+      theme as Record<string, unknown>,
+    )
+    return { ...gridContext, ...ctxProps }
+  }, [props, theme])
 }
 
 export default useGridContext

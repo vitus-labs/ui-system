@@ -39,12 +39,9 @@ const useBreakpoint: UseBreakpoint = () => {
   useEffect(() => {
     if (sorted.length === 0) return undefined
 
-    const mqls: {
-      mql: MediaQueryList
-      handler: (e: MediaQueryListEvent) => void
-    }[] = []
-
+    let raf = 0
     const update = () => {
+      raf = 0
       const width = window.innerWidth
       let match = sorted[0]?.[0]
       for (const [name, min] of sorted) {
@@ -53,17 +50,17 @@ const useBreakpoint: UseBreakpoint = () => {
       setCurrent(match)
     }
 
-    for (const [, min] of sorted) {
-      const mql = window.matchMedia(`(min-width: ${min}px)`)
-      const handler = () => update()
-      mql.addEventListener('change', handler)
-      mqls.push({ mql, handler })
+    // Single rAF-throttled resize listener instead of one matchMedia listener
+    // per breakpoint. With 5-8 breakpoints this saves 4-7 listener registrations
+    // per hook instance.
+    const onResize = () => {
+      if (raf === 0) raf = requestAnimationFrame(update)
     }
 
+    window.addEventListener('resize', onResize, { passive: true })
     return () => {
-      for (const { mql, handler } of mqls) {
-        mql.removeEventListener('change', handler)
-      }
+      if (raf !== 0) cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
     }
   }, [sorted])
 

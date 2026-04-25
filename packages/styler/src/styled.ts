@@ -165,8 +165,15 @@ const createStyledComponent = (
   // useRef cache avoids recomputing when CSS text hasn't changed between renders.
   const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
     const theme = useTheme()
-    const allProps = { ...rawProps, theme }
-    const cssText = normalizeCSS(resolve(strings, values, allProps))
+    // Mutate rawProps to inject theme for resolve(), restore afterwards.
+    // rawProps is freshly created by the destructure spread above — no caller
+    // holds its reference yet, so mutation is safe. Avoids a second n-key spread.
+    const hadTheme = 'theme' in rawProps
+    const prevTheme = rawProps.theme
+    rawProps.theme = theme
+    const cssText = normalizeCSS(resolve(strings, values, rawProps))
+    if (hadTheme) rawProps.theme = prevTheme
+    else delete rawProps.theme
 
     const cacheRef = useRef<{
       css: string

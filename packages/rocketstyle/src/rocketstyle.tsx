@@ -6,7 +6,7 @@ import {
   pick,
   render,
 } from '@vitus-labs/core'
-import { useMemo } from 'react'
+import { useMemo, useRef as useReactRef } from 'react'
 import { LocalThemeManager } from '~/cache'
 import {
   CONFIG_KEYS,
@@ -58,6 +58,32 @@ import {
  * chainable static methods (`.attrs()`, `.theme()`, `.styles()`, `.config()`, etc.).
  * @module rocketstyle
  */
+
+const arraysEqual = (a: unknown[], b: unknown[]): boolean => {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false
+  }
+  return true
+}
+
+const isShallowEqualRocketstate = (
+  a: Record<string, unknown> | null | undefined,
+  b: Record<string, unknown> | null | undefined,
+): boolean => {
+  if (a === b) return true
+  if (!a || !b) return false
+  const aKeys = Object.keys(a)
+  if (aKeys.length !== Object.keys(b).length) return false
+  for (const k of aKeys) {
+    const av = a[k]
+    const bv = b[k]
+    if (av === bv) continue
+    if (Array.isArray(av) && Array.isArray(bv) && arraysEqual(av, bv)) continue
+    return false
+  }
+  return true
+}
 
 // --------------------------------------------------------
 // cloneAndEnhance
@@ -302,26 +328,26 @@ const rocketComponent: RocketComponent = (options) => {
     // to our styled component
     // passed as $rocketstyle prop
     // --------------------------------------------------
-    // Content-based memoization: rocketstate is a fresh object each render,
-    // so serialize its values as a string key for useMemo comparison.
-    let rsKey = ''
-    for (const k in rocketstate) {
-      const v = rocketstate[k]
-      rsKey += `${k}=`
-      rsKey += `${Array.isArray(v) ? v.join(',') : v}|`
+    // Content-based memoization: rocketstate is a fresh object each render
+    // but its values are usually stable. Use a ref to keep the prior identity
+    // when the values are shallow-equal, so useMemo can skip recomputation.
+    const rocketstateRef = useReactRef(rocketstate)
+    if (!isShallowEqualRocketstate(rocketstateRef.current, rocketstate)) {
+      rocketstateRef.current = rocketstate
     }
+    const stableRocketstate = rocketstateRef.current
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: rsKey is a content-based serialization of rocketstate — replaces object reference in deps
+    // biome-ignore lint/correctness/useExhaustiveDependencies: options.transformKeys is captured from the factory closure and stable for the lifetime of the component
     const rocketstyle = useMemo(
       () =>
         getTheme({
-          rocketstate,
+          rocketstate: stableRocketstate,
           themes: currentModeThemes,
           baseTheme: currentModeBaseTheme,
           transformKeys: options.transformKeys,
           appTheme: theme,
         }),
-      [rsKey, currentModeThemes, currentModeBaseTheme, theme],
+      [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme],
     )
 
     // --------------------------------------------------
