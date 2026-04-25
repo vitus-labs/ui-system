@@ -1,47 +1,9 @@
 import { act, render, screen } from '@testing-library/react'
 import Stagger from '../Stagger'
+import { setupMatchMedia, setupRaf } from './setupFixtures'
 
-// Mock matchMedia
-beforeAll(() => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    configurable: true,
-    value: vi.fn((query: string) => ({
-      matches: false,
-      media: query,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  })
-})
-
-let rafCallbacks: (() => void)[] = []
-const originalRaf = globalThis.requestAnimationFrame
-const originalCaf = globalThis.cancelAnimationFrame
-
-beforeEach(() => {
-  vi.useFakeTimers()
-  rafCallbacks = []
-
-  vi.stubGlobal(
-    'requestAnimationFrame',
-    vi.fn((cb: () => void) => {
-      rafCallbacks.push(cb)
-      return rafCallbacks.length
-    }),
-  )
-  vi.stubGlobal('cancelAnimationFrame', vi.fn())
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-  vi.stubGlobal('requestAnimationFrame', originalRaf)
-  vi.stubGlobal('cancelAnimationFrame', originalCaf)
-})
+setupMatchMedia()
+setupRaf()
 
 describe('Stagger', () => {
   it('renders all children when show=true', () => {

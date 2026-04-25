@@ -46,6 +46,9 @@ jobs:
       - name: Type Check
         run: bun run typecheck
 
+      - name: Bundle size budget
+        run: bun run size
+
       - name: Test with coverage
         run: bun run test -- --coverage
 

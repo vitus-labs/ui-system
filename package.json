@@ -22,6 +22,7 @@
     "pkgs:build": "bun run --filter './packages/*' build",
     "test": "vitest run",
     "typecheck": "bun run --filter './packages/*' typecheck",
+    "size": "size-limit",
     "format": "biome format --write .",
     "atlas": "vl_atlas"
   },
@@ -37,6 +38,7 @@
     "@biomejs/biome": "^2.4.13",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.31.0",
+    "@size-limit/file": "^12.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "25.6.0",
@@ -54,6 +56,7 @@
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^19.2.5",
     "react-icons-kit": "^2.0.0",
+    "size-limit": "^12.1.0",
     "ts-patch": "^3.3.0",
     "typescript": "6.0.3",
     "typescript-transform-paths": "^3.5.6",

@@ -1,24 +1,9 @@
 import { act, render, screen } from '@testing-library/react'
 import Collapse from '../Collapse'
 import { kinetic } from '../index'
+import { fireTransitionEnd, setupMatchMedia } from './setupFixtures'
 
-// Mock matchMedia
-beforeAll(() => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    configurable: true,
-    value: vi.fn((query: string) => ({
-      matches: false,
-      media: query,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  })
-})
+setupMatchMedia()
 
 // Mock scrollHeight
 const mockScrollHeight = (value: number) => {
@@ -28,12 +13,6 @@ const mockScrollHeight = (value: number) => {
       return value
     },
   })
-}
-
-const fireTransitionEnd = (el: HTMLElement) => {
-  const event = new Event('transitionend', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: el })
-  el.dispatchEvent(event)
 }
 
 describe('Collapse', () => {

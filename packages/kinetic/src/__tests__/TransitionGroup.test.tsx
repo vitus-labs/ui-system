@@ -1,59 +1,9 @@
 import { act, render, screen } from '@testing-library/react'
 import TransitionGroup from '../TransitionGroup'
+import { fireTransitionEnd, setupMatchMedia, setupRaf } from './setupFixtures'
 
-// Mock matchMedia
-beforeAll(() => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    configurable: true,
-    value: vi.fn((query: string) => ({
-      matches: false,
-      media: query,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  })
-})
-
-let rafCallbacks: (() => void)[] = []
-const originalRaf = globalThis.requestAnimationFrame
-const originalCaf = globalThis.cancelAnimationFrame
-
-beforeEach(() => {
-  vi.useFakeTimers()
-  rafCallbacks = []
-
-  vi.stubGlobal(
-    'requestAnimationFrame',
-    vi.fn((cb: () => void) => {
-      rafCallbacks.push(cb)
-      return rafCallbacks.length
-    }),
-  )
-  vi.stubGlobal('cancelAnimationFrame', vi.fn())
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-  vi.stubGlobal('requestAnimationFrame', originalRaf)
-  vi.stubGlobal('cancelAnimationFrame', originalCaf)
-})
-
-const flushRaf = () => {
-  const cbs = [...rafCallbacks]
-  rafCallbacks = []
-  for (const cb of cbs) cb()
-}
-
-const fireTransitionEnd = (el: HTMLElement) => {
-  const event = new Event('transitionend', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: el })
-  el.dispatchEvent(event)
-}
+setupMatchMedia()
+const { flushRaf } = setupRaf()
 
 describe('TransitionGroup', () => {
   it('renders all children initially', () => {

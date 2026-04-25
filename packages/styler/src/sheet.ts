@@ -8,6 +8,7 @@
  * reliance on CSS Nesting for at-rules (which has CSSOM specification gaps
  * per W3C csswg-drafts#7850).
  */
+import { evictMapByPercent } from './evict'
 import { hash } from './hash'
 import { clearNormCache } from './resolve'
 
@@ -101,15 +102,7 @@ export class StyleSheet {
   /** Evict oldest entries when cache exceeds max size. */
   private evictIfNeeded() {
     if (this.cache.size <= this.maxCacheSize) return
-
-    // Map iteration order is insertion order — delete oldest 10%
-    const toDelete = Math.floor(this.maxCacheSize * 0.1)
-    let count = 0
-    for (const key of this.cache.keys()) {
-      if (count >= toDelete) break
-      this.cache.delete(key)
-      count++
-    }
+    evictMapByPercent(this.cache, 0.1)
   }
 
   /**
