@@ -13,44 +13,17 @@ import {
   memo,
   type ReactElement,
   type ReactNode,
-  useCallback,
-  useMemo,
 } from 'react'
 import { isFragment } from 'react-is'
-import type { ExtendedProps, ObjectValue, Props, SimpleValue } from './types'
-
-type ClassifiedData =
-  | { type: 'simple'; data: SimpleValue[] }
-  | { type: 'complex'; data: ObjectValue[] }
-  | null
-
-const classifyData = (data: unknown[]): ClassifiedData => {
-  const items = data.filter(
-    (item) =>
-      item != null &&
-      !(typeof item === 'object' && isEmpty(item as Record<string, unknown>)),
-  )
-
-  if (items.length === 0) return null
-
-  let isSimple = true
-  let isComplex = true
-
-  for (const item of items) {
-    if (typeof item === 'string' || typeof item === 'number') {
-      isComplex = false
-    } else if (typeof item === 'object') {
-      isSimple = false
-    } else {
-      isSimple = false
-      isComplex = false
-    }
-  }
-
-  if (isSimple) return { type: 'simple', data: items as SimpleValue[] }
-  if (isComplex) return { type: 'complex', data: items as ObjectValue[] }
-  return null
-}
+import type {
+  ElementType,
+  ExtendedProps,
+  ObjectValue,
+  Props,
+  PropsCallback,
+  SimpleValue,
+  TObj,
+} from './types'
 
 const RESERVED_PROPS = [
   'children',
@@ -63,23 +36,8 @@ const RESERVED_PROPS = [
   'wrapProps',
 ] as const
 
-type AttachItemProps = ({
-  i,
-  length,
-}: {
-  i: number
-  length: number
-}) => ExtendedProps
-
-const attachItemProps: AttachItemProps = ({
-  i,
-  length,
-}: {
-  i: number
-  length: number
-}) => {
+const buildExtendedProps = (i: number, length: number): ExtendedProps => {
   const position = i + 1
-
   return {
     index: i,
     first: position === 1,
@@ -90,211 +48,217 @@ const attachItemProps: AttachItemProps = ({
   }
 }
 
-const Component: FC<Props> = (props) => {
-  const {
-    itemKey,
-    valueName,
-    children,
-    component,
-    data,
-    wrapComponent: Wrapper,
-    wrapProps,
-    itemProps,
-  } = props
+const resolveCallback = (
+  cb: PropsCallback | undefined,
+  source: TObj,
+  ext: ExtendedProps,
+): TObj => {
+  if (!cb) return {}
+  return typeof cb === 'function' ? cb(source as any, ext) : cb
+}
 
-  const injectItemProps = useMemo(
-    () => (typeof itemProps === 'function' ? itemProps : () => itemProps),
-    [itemProps],
+/**
+ * Internal render specification — one per item, regardless of input mode.
+ * Lets the three input shapes (children / simple array / object array) share
+ * a single rendering pass.
+ */
+type ItemSpec = {
+  key: SimpleValue
+  /** What to render — either a ReactNode (children mode) or a component (data mode). */
+  target: ReactNode | ElementType
+  /** Source object passed to itemProps/wrapProps callbacks (caller-defined shape). */
+  source: TObj
+  /** Base props merged with the itemProps callback result for the rendered item. */
+  base: TObj
+  /** When true, `target` is a ReactNode and should be rendered via `render(child, props)`. */
+  isNode: boolean
+  /** When set, overrides `wrapComponent` (object-array items can ship their own `component`). */
+  skipWrap: boolean
+}
+
+const renderSpec = (
+  spec: ItemSpec,
+  ext: ExtendedProps,
+  itemProps: PropsCallback | undefined,
+  wrapProps: PropsCallback | undefined,
+  Wrapper: ElementType | undefined,
+): ReactNode => {
+  const injected = resolveCallback(itemProps, spec.source, ext)
+  const finalItemProps = { ...injected, ...spec.base }
+
+  if (Wrapper && !spec.skipWrap) {
+    const finalWrapProps = resolveCallback(wrapProps, spec.source, ext)
+    return (
+      <Wrapper key={spec.key} {...finalWrapProps}>
+        {spec.isNode
+          ? render(spec.target as ReactNode, finalItemProps)
+          : render(spec.target as ElementType, finalItemProps)}
+      </Wrapper>
+    )
+  }
+
+  const propsWithKey = { key: spec.key, ...finalItemProps }
+  return spec.isNode
+    ? render(spec.target as ReactNode, propsWithKey)
+    : render(spec.target as ElementType, propsWithKey)
+}
+
+/** Normalize children (single, array, or fragment) into an array of nodes. */
+const flattenChildren = (children: ReactNode): ReactNode[] => {
+  if (Array.isArray(children)) return children
+  if (isFragment(children)) {
+    return (children as ReactElement<{ children: ReactNode[] }>).props.children
+  }
+  return [children]
+}
+
+/** Drop nullish entries and empty objects (matches legacy behavior). */
+const filterValidItems = (data: unknown[]): unknown[] =>
+  data.filter(
+    (item) =>
+      item != null &&
+      !(typeof item === 'object' && isEmpty(item as Record<string, unknown>)),
   )
 
-  const injectWrapItemProps = useMemo(
-    () => (typeof wrapProps === 'function' ? wrapProps : () => wrapProps),
-    [wrapProps],
+type DataKind = 'simple' | 'complex' | null
+
+/** Determine if the array is uniformly simple (string/number) or complex (object). Mixed → null. */
+const detectKind = (items: unknown[]): DataKind => {
+  let kind: DataKind = null
+  for (const item of items) {
+    const t =
+      typeof item === 'string' || typeof item === 'number'
+        ? 'simple'
+        : typeof item === 'object'
+          ? 'complex'
+          : null
+    if (t === null) return null
+    if (kind === null) kind = t
+    else if (kind !== t) return null
+  }
+  return kind
+}
+
+const objectKey = (
+  item: ObjectValue,
+  index: number,
+  itemKey: Props['itemKey'],
+): SimpleValue => {
+  if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
+  if (typeof itemKey === 'function') return itemKey(item, index)
+  if (typeof itemKey === 'string')
+    return (item[itemKey] as SimpleValue) ?? index
+  return index
+}
+
+const buildChildrenSpecs = (children: ReactNode): ItemSpec[] =>
+  flattenChildren(children).map<ItemSpec>((node, i) => ({
+    key: i,
+    target: node,
+    source: {},
+    base: {},
+    isNode: true,
+    skipWrap: false,
+  }))
+
+const buildSimpleSpecs = (
+  items: SimpleValue[],
+  component: ElementType,
+  valueName: string | undefined,
+  itemKey: Props['itemKey'],
+): ItemSpec[] => {
+  const keyName = valueName ?? 'children'
+  return items.map((value, i) => ({
+    key: typeof itemKey === 'function' ? itemKey(value, i) : i,
+    target: component,
+    source: { [keyName]: value },
+    base: { [keyName]: value },
+    isNode: false,
+    skipWrap: false,
+  }))
+}
+
+const buildObjectSpecs = (
+  items: ObjectValue[],
+  component: ElementType,
+  itemKey: Props['itemKey'],
+): ItemSpec[] =>
+  items.map((item, i) => {
+    const { component: itemComponent, ...rest } = item
+    return {
+      key: objectKey(rest, i, itemKey),
+      target: itemComponent ?? component,
+      source: item as TObj,
+      base: rest as TObj,
+      isNode: false,
+      // Object-array items that ship their own component bypass the wrapper.
+      skipWrap: Boolean(itemComponent),
+    }
+  })
+
+const buildDataSpecs = (
+  data: unknown[],
+  component: ElementType,
+  valueName: string | undefined,
+  itemKey: Props['itemKey'],
+): ItemSpec[] | null => {
+  const items = filterValidItems(data)
+  if (items.length === 0) return null
+  const kind = detectKind(items)
+  if (!kind) return null
+  return kind === 'simple'
+    ? buildSimpleSpecs(items as SimpleValue[], component, valueName, itemKey)
+    : buildObjectSpecs(items as ObjectValue[], component, itemKey)
+}
+
+const Component: FC<Props> = ({
+  itemKey,
+  valueName,
+  children,
+  component,
+  data,
+  wrapComponent: Wrapper,
+  wrapProps,
+  itemProps,
+}) => {
+  // ----------------------------------------------------------------------
+  // Build a uniform list of ItemSpecs from whichever input mode is active.
+  // Children always take priority over component + data.
+  // ----------------------------------------------------------------------
+  let specs: ItemSpec[] | null = null
+
+  if (children) {
+    // Single-child fast path: skip metadata work entirely if no extension is needed.
+    if (
+      !Array.isArray(children) &&
+      !isFragment(children) &&
+      !itemProps &&
+      !Wrapper
+    ) {
+      return children
+    }
+    specs = buildChildrenSpecs(children)
+  } else if (component && Array.isArray(data)) {
+    specs = buildDataSpecs(data, component, valueName, itemKey)
+  }
+
+  if (!specs || specs.length === 0) return null
+
+  // ----------------------------------------------------------------------
+  // Single rendering pass — works for all three input modes.
+  // ----------------------------------------------------------------------
+  const total = specs.length
+  return Children.toArray(
+    specs.map((spec, i) =>
+      renderSpec(
+        spec,
+        buildExtendedProps(i, total),
+        itemProps,
+        wrapProps,
+        Wrapper,
+      ),
+    ),
   )
-
-  const getKey = useCallback(
-    (item: string | number, index: number) => {
-      if (typeof itemKey === 'function') return itemKey(item, index)
-
-      return index
-    },
-    [itemKey],
-  )
-
-  const renderChild = (child: ReactNode, total = 1, i = 0) => {
-    if (!itemProps && !Wrapper) return child
-
-    const extendedProps = attachItemProps({
-      i,
-      length: total,
-    })
-
-    const finalItemProps = itemProps ? injectItemProps({}, extendedProps) : {}
-
-    // if no props extension is required, just return children
-
-    if (Wrapper) {
-      const finalWrapProps = wrapProps
-        ? injectWrapItemProps({}, extendedProps)
-        : {}
-
-      return (
-        <Wrapper key={i} {...finalWrapProps}>
-          {render(child, finalItemProps)}
-        </Wrapper>
-      )
-    }
-
-    return render(child, {
-      key: i,
-      ...finalItemProps,
-    })
-  }
-
-  // --------------------------------------------------------
-  // render children
-  // --------------------------------------------------------
-  const renderChildren = () => {
-    if (!children) return null
-
-    // if children is Array
-    if (Array.isArray(children)) {
-      return Children.map(children, (item, i) =>
-        renderChild(item, children.length, i),
-      )
-    }
-
-    // if children is Fragment
-    if (isFragment(children)) {
-      const fragmentChildren = (
-        children as ReactElement<{ children: ReactNode[] }>
-      ).props.children
-      const childrenLength = fragmentChildren.length
-
-      return fragmentChildren.map((item, i) =>
-        renderChild(item, childrenLength, i),
-      )
-    }
-
-    // if single child
-    return renderChild(children)
-  }
-
-  // --------------------------------------------------------
-  // render array of strings or numbers
-  // --------------------------------------------------------
-  const renderSimpleArray = (data: SimpleValue[]) => {
-    const { length } = data
-
-    // if the data array is empty
-    if (length === 0) return null
-
-    return data.map((item, i) => {
-      const key = getKey(item, i)
-      const keyName = valueName ?? 'children'
-      const extendedProps = attachItemProps({
-        i,
-        length,
-      })
-
-      const finalItemProps = {
-        ...(itemProps
-          ? injectItemProps({ [keyName]: item }, extendedProps)
-          : {}),
-        [keyName]: item,
-      }
-
-      if (Wrapper) {
-        const finalWrapProps = wrapProps
-          ? injectWrapItemProps({ [keyName]: item }, extendedProps)
-          : {}
-
-        return (
-          <Wrapper key={key} {...finalWrapProps}>
-            {render(component, finalItemProps)}
-          </Wrapper>
-        )
-      }
-
-      return render(component, { key, ...finalItemProps })
-    })
-  }
-
-  // --------------------------------------------------------
-  // render array of objects
-  // --------------------------------------------------------
-  const getObjectKey = (item: ObjectValue, index: number) => {
-    if (!itemKey) return item.key ?? item.id ?? item.itemId ?? index
-    if (typeof itemKey === 'function') return itemKey(item, index)
-    if (typeof itemKey === 'string') return item[itemKey]
-
-    return index
-  }
-
-  const renderComplexArray = (data: ObjectValue[]) => {
-    const { length } = data
-
-    if (length === 0) return null
-
-    return data.map((item, i) => {
-      const { component: itemComponent, ...restItem } = item
-      const renderItem = itemComponent ?? component
-      const key = getObjectKey(restItem, i)
-      const extendedProps = attachItemProps({
-        i,
-        length,
-      })
-
-      const finalItemProps = {
-        ...(itemProps ? injectItemProps(item, extendedProps) : {}),
-        ...restItem,
-      }
-
-      if (Wrapper && !itemComponent) {
-        const finalWrapProps = wrapProps
-          ? injectWrapItemProps(item, extendedProps)
-          : {}
-
-        return (
-          <Wrapper key={key} {...finalWrapProps}>
-            {render(renderItem, finalItemProps)}
-          </Wrapper>
-        )
-      }
-
-      return render(renderItem, { key, ...finalItemProps })
-    })
-  }
-
-  // --------------------------------------------------------
-  // render list items
-  // --------------------------------------------------------
-  const renderItems = () => {
-    // --------------------------------------------------------
-    // children have priority over props component + data
-    // --------------------------------------------------------
-    if (children) return renderChildren()
-
-    // --------------------------------------------------------
-    // render props component + data
-    // single pass: filter nullish/empty and determine array type
-    // --------------------------------------------------------
-    if (component && Array.isArray(data)) {
-      const classified = classifyData(data)
-      if (!classified) return null
-      if (classified.type === 'simple')
-        return renderSimpleArray(classified.data)
-      return renderComplexArray(classified.data)
-    }
-
-    // --------------------------------------------------------
-    // if there are no children or valid react component and data as an array,
-    // return null to prevent error
-    // --------------------------------------------------------
-    return null
-  }
-
-  return renderItems()
 }
 
 export default Object.assign(memo(Component), {
