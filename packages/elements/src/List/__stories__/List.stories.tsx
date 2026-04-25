@@ -136,7 +136,6 @@ export const renderCustomComponentInItem = () => {
     { name: 'd' },
   ]
   const itemProps = () => ({
-    // biome-ignore lint/suspicious/noEmptyBlockStatements: story demo
     onClick: () => {},
   })
 

@@ -139,7 +139,9 @@ export interface IRocketStories<
  * depending on whether the component is a rocketstyle component.
  */
 type CreateRocketStories = (options: Configuration) => IRocketStories
-// @ts-expect-error
+// @ts-expect-error — `IRocketStories` is built up via Object.assign of chain
+// methods; the impl satisfies the runtime shape but TS can't verify the
+// recursive-builder return-type structure at the assignment site
 const createRocketStories: CreateRocketStories = (options) => {
   const isRocket = isRocketComponent(options.component)
 

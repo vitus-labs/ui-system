@@ -134,7 +134,10 @@ const cloneAndEnhance: CloneAndEnhance = (defaultOpts, opts) =>
 // methods built up by `cloneAndEnhance`. The impl returns the right runtime
 // shape but TS can't prove the structural equality of the recursive generics.
 const rocketComponent: RocketComponent = (options) => {
-  const { component, styles } = options
+  // Hoist factory-stable values to outer-scope locals so the inner component's
+  // useMemo deps reference clearly-stable closure variables (no member access),
+  // which both biome CLI and IDE-bound rule engines agree don't need re-listing.
+  const { component, styles, transformKeys } = options
   const { styled } = config
 
   const _calculateStylingAttrs = calculateStylingAttrs({
@@ -341,14 +344,13 @@ const rocketComponent: RocketComponent = (options) => {
     }
     const stableRocketstate = rocketstateRef.current
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: options.transformKeys is captured from the factory closure and stable for the lifetime of the component
     const rocketstyle = useMemo(
       () =>
         getTheme({
           rocketstate: stableRocketstate,
           themes: currentModeThemes,
           baseTheme: currentModeBaseTheme,
-          transformKeys: options.transformKeys,
+          transformKeys,
           appTheme: theme,
         }),
       [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme],

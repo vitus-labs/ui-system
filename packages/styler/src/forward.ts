@@ -235,6 +235,7 @@ export const buildProps = (
   ref: unknown,
   isDOM: boolean,
   customFilter?: (prop: string) => boolean,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path single-loop prop filter — splitting adds function call overhead per render
 ): Record<string, any> => {
   const result: Record<string, any> = {}
 

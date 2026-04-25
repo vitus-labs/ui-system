@@ -62,6 +62,7 @@ export const chainReservedKeyOptions: ChainReservedKeyOptions = (
   keys.reduce(
     (acc, item) => ({
       ...acc,
+      // biome-ignore lint/style/noNonNullAssertion: defaultOpts is initialized with empty arrays for all reserved keys at factory time, so defaultOpts[item] is always defined here
       [item]: chainOptions(opts[item], defaultOpts[item]!),
     }),
     {},

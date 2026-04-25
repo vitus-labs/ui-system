@@ -57,8 +57,10 @@ export const getPrimaryTransitionConfig = (
   const configs = parseTransitionString(transition)
   if (configs.length === 0) return { duration: 300, easingName: 'ease' }
 
+  // biome-ignore lint/style/noNonNullAssertion: configs.length === 0 already returned above, so configs[0] exists
   let best = configs[0]!
   for (let i = 1; i < configs.length; i++) {
+    // biome-ignore lint/style/noNonNullAssertion: loop bound `i < configs.length` guarantees configs[i] exists
     if (configs[i]!.duration > best.duration) best = configs[i]!
   }
   return { duration: best.duration, easingName: best.easingName }

@@ -346,7 +346,7 @@ describe('styled', () => {
     })
 
     it('sets displayName for named components', () => {
-      const MyButton: FC = () => <button />
+      const MyButton: FC = () => <button type="button" />
       const Comp = styled(MyButton)`color: red;`
       expect(Comp.displayName).toBe('styled(MyButton)')
     })

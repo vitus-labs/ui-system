@@ -48,6 +48,7 @@ export const buildAnimatedStyle = (
   progress: Animated.Value,
   from: AnimatableStyle | undefined,
   to: AnimatableStyle | undefined,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: handles 4 input shape combinations × transform vs. regular style branches — splitting just shifts complexity to a dispatcher
 ): Record<string, any> => {
   if (!from && !to) return {}
 

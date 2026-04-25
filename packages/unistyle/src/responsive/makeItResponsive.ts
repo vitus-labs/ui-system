@@ -86,6 +86,7 @@ const makeItResponsive: MakeItResponsive =
       `
     }
 
+    // biome-ignore lint/style/noNonNullAssertion: __VITUS_LABS__ global is set in unistyle Provider before any styled components render
     const { media, sortedBreakpoints } = __VITUS_LABS__!
 
     let optimizedTheme: Record<string, Record<string, unknown>>

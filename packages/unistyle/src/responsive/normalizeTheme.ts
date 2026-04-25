@@ -41,6 +41,7 @@ const handleObjectCb =
   (obj: Record<string, unknown>) =>
   (bp: string, i: number, bps: string[], res: Record<string, unknown>) => {
     const currentValue = obj[bp]
+    // biome-ignore lint/style/noNonNullAssertion: callsite (bps.reduce) starts at i=1 in normalize loop, so bps[i-1] always exists
     const previousValue = res[bps[i - 1]!]
 
     // check for non-nullable values

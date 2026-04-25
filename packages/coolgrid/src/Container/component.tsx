@@ -66,7 +66,8 @@ const Component: ElementType<['containerWidth']> = ({
 
   const finalWidth = useMemo(() => {
     if (!width) return containerWidth
-    // @ts-expect-error
+    // @ts-expect-error — width is `ContainerWidth | ((widths: Record<...>) => ContainerWidth)`
+    // but TS can't narrow the function signature inside useMemo's closure
     return typeof width === 'function' ? width(containerWidth) : width
   }, [width, containerWidth])
 

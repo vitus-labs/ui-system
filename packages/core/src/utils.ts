@@ -98,9 +98,11 @@ export const set = (
 
   let current = obj
   for (let i = 0; i < keys.length - 1; i++) {
+    // biome-ignore lint/style/noNonNullAssertion: loop bound `i < keys.length - 1` guarantees keys[i] and keys[i+1] exist
     const key = keys[i]!
     if (isUnsafeKey(key)) return obj
 
+    // biome-ignore lint/style/noNonNullAssertion: loop bound `i < keys.length - 1` guarantees keys[i+1] exists
     const nextKey = keys[i + 1]!
     if (isUnsafeKey(nextKey)) return obj
 

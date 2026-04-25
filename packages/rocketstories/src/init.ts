@@ -44,7 +44,8 @@ export type Rocketstories = <C extends Configuration['component']>(
   : IRocketStories<ExtractProps<C>, unknown, false>
 
 /** @see {@link Rocketstories} */
-//@ts-expect-error
+// @ts-expect-error — `Rocketstories` is a conditional generic over `C extends RocketType`;
+// the impl returns the right runtime shape but TS can't unify both branches at the value level
 const rocketstories: Rocketstories = (component, options = {}) => {
   const { decorators = [], storyOptions = {} } = options
 

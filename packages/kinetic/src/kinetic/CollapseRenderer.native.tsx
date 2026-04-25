@@ -64,6 +64,7 @@ const CollapseRenderer = ({
   }, [])
 
   // State machine transitions
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: collapse lifecycle state machine — branching by stage is essential
   useIsomorphicLayoutEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false
