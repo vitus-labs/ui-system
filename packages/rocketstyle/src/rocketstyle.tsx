@@ -27,6 +27,8 @@ import type {
   InnerComponentProps,
   RocketStyleComponent,
 } from '~/types/rocketstyle'
+import type { ThemeModeKeys } from '~/types/theme'
+import type { ElementType, TObj } from '~/types/utils'
 import {
   calculateChainOptions,
   calculateStylingAttrs,
@@ -435,35 +437,53 @@ const rocketComponent: RocketComponent = (options) => {
 
   // Object.assign bypasses strict property-level type checking — the chain
   // method implementations can't express the interface's conditional generic
-  // return types at the implementation level.
+  // return types at the implementation level. The per-parameter input types,
+  // however, can be precise — they mirror the public `RocketStyleComponent`
+  // interface and forward through `cloneAndEnhance` unchanged.
   Object.assign(RocketComponent, {
-    attrs: (attrs: any, { priority, filter }: any = {}) => {
-      const result: Record<string, any> = {}
+    attrs: (
+      attrs: ExtendedConfiguration['attrs'],
+      { priority, filter }: { priority?: boolean; filter?: string[] } = {},
+    ) => {
+      const result: Partial<ExtendedConfiguration> = {}
 
       if (filter) {
         result.filterAttrs = filter
       }
 
       if (priority) {
-        result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+        result.priorityAttrs = attrs
 
         return cloneAndEnhance(options, result)
       }
 
-      result.attrs = attrs as ExtendedConfiguration['attrs']
+      result.attrs = attrs
 
       return cloneAndEnhance(options, result)
     },
 
-    config: (opts: any = {}) => {
-      const result = pick(opts, CONFIG_KEYS) as ExtendedConfiguration
+    config: (
+      opts: Partial<{
+        name: string
+        component: ElementType
+        provider: boolean
+        DEBUG: boolean
+        inversed: boolean
+        passProps: string[]
+      }> = {},
+    ) => {
+      const result = pick(opts, CONFIG_KEYS) as Partial<ExtendedConfiguration>
 
       return cloneAndEnhance(options, result)
     },
 
-    statics: (opts: any) => cloneAndEnhance(options, { statics: opts }),
+    // .theme(), .styles(), .compose() are attached dynamically by
+    // createStaticsChainingEnhancers above (driven by STATIC_KEYS) — don't
+    // duplicate them here or they'd shadow the dynamically-attached ones.
 
-    getStaticDimensions: (theme: any) => {
+    statics: (opts: TObj) => cloneAndEnhance(options, { statics: opts }),
+
+    getStaticDimensions: (theme: TObj) => {
       const themes = getDimensionThemes(theme, options)
 
       const { keysMap, keywords } = getDimensionsMap({
@@ -479,7 +499,7 @@ const rocketComponent: RocketComponent = (options) => {
       }
     },
 
-    getDefaultAttrs: (props: any, theme: any, mode: any) =>
+    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) =>
       calculateChainOptions(options.attrs)([
         props,
         theme,

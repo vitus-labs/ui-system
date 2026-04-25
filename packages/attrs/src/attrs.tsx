@@ -5,11 +5,14 @@ import type {
   AttrsComponent as AttrsComponentType,
   InnerComponentProps,
 } from '~/types/AttrsComponent'
+import type { ConfigAttrs } from '~/types/config'
 import type {
   Configuration,
   ExtendedConfiguration,
 } from '~/types/configuration'
+import type { ComposeParam } from '~/types/hoc'
 import type { InitAttrsComponent } from '~/types/InitAttrsComponent'
+import type { ElementType, TObj } from '~/types/utils'
 import { calculateChainOptions } from '~/utils/attrs'
 import { chainOptions } from '~/utils/chaining'
 import { calculateHocsFuncs } from '~/utils/compose'
@@ -112,37 +115,43 @@ const attrsComponent: InitAttrsComponent = (options) => {
   // The original component is never mutated.
   // Object.assign bypasses strict property-level type checking — the chain
   // method implementations can't express the interface's conditional generic
-  // return types at the implementation level.
+  // return types at the implementation level. The per-parameter input types,
+  // however, can be precise — they mirror the public `AttrsComponent` interface
+  // and forward through `cloneAndEnhance` unchanged.
   Object.assign(AttrsComponent, {
-    attrs: (attrs: any, { priority, filter }: any = {}) => {
-      const result: Record<string, any> = {}
+    attrs: (
+      attrs: ExtendedConfiguration['attrs'],
+      { priority, filter }: { priority?: boolean; filter?: string[] } = {},
+    ) => {
+      const result: Partial<ExtendedConfiguration> = {}
 
       if (filter) {
         result.filterAttrs = filter
       }
 
       if (priority) {
-        result.priorityAttrs = attrs as ExtendedConfiguration['priorityAttrs']
+        result.priorityAttrs = attrs
 
         return cloneAndEnhance(options, result)
       }
 
-      result.attrs = attrs as ExtendedConfiguration['attrs']
+      result.attrs = attrs
 
       return cloneAndEnhance(options, result)
     },
 
-    config: (opts: any = {}) => {
-      const result = pick(opts)
+    config: (opts: ConfigAttrs<ElementType | unknown> = {}) => {
+      const result = pick(opts) as Partial<ExtendedConfiguration>
 
       return cloneAndEnhance(options, result)
     },
 
-    compose: (opts: any) => cloneAndEnhance(options, { compose: opts }),
+    compose: (opts: ComposeParam) =>
+      cloneAndEnhance(options, { compose: opts }),
 
-    statics: (opts: any) => cloneAndEnhance(options, { statics: opts }),
+    statics: (opts: TObj) => cloneAndEnhance(options, { statics: opts }),
 
-    getDefaultAttrs: (props: any) =>
+    getDefaultAttrs: (props: TObj) =>
       calculateChainOptions(options.attrs)([props]),
   })
 
