@@ -22,7 +22,6 @@ import type {
   Configuration,
   ExtendedConfiguration,
 } from '~/types/configuration'
-import type { ComposeParam } from '~/types/hoc'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type {
   InnerComponentProps,
@@ -478,8 +477,9 @@ const rocketComponent: RocketComponent = (options) => {
       return cloneAndEnhance(options, result)
     },
 
-    compose: (opts: ComposeParam) =>
-      cloneAndEnhance(options, { compose: opts }),
+    // .theme(), .styles(), .compose() are attached dynamically by
+    // createStaticsChainingEnhancers above (driven by STATIC_KEYS) — don't
+    // duplicate them here or they'd shadow the dynamically-attached ones.
 
     statics: (opts: TObj) => cloneAndEnhance(options, { statics: opts }),
 
