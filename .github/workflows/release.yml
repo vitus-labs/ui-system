@@ -106,7 +106,8 @@ jobs:
       - name: Build all packages
         run: bun run pkgs:build
 
-      - name: Publish snapshot
-        run: |
-          bunx changeset version --snapshot alpha
-          bunx changeset publish --tag next
+      - name: Publish prerelease
+        # Versions in `package.json` are bumped manually in the branch (e.g.
+        # 2.0.0-alpha.28). Skip `changeset version` so we don't auto-bump or
+        # rewrite versions; just publish whatever the branch already declares.
+        run: bunx changeset publish --tag next

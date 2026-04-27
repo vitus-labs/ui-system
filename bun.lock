@@ -185,7 +185,7 @@
     },
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -194,13 +194,13 @@
         "@vitus-labs/tools-typescript": "2.0.0",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
         "react": ">= 19",
       },
     },
     "packages/connector-emotion": {
       "name": "@vitus-labs/connector-emotion",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -215,7 +215,7 @@
     },
     "packages/connector-native": {
       "name": "@vitus-labs/connector-native",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/tools-rolldown": "2.0.0",
         "@vitus-labs/tools-typescript": "2.0.0",
@@ -227,7 +227,7 @@
     },
     "packages/connector-styled-components": {
       "name": "@vitus-labs/connector-styled-components",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/tools-rolldown": "2.0.0",
         "@vitus-labs/tools-typescript": "2.0.0",
@@ -240,20 +240,20 @@
     },
     "packages/connector-styler": {
       "name": "@vitus-labs/connector-styler",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/styler": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.0.0",
         "@vitus-labs/tools-typescript": "2.0.0",
       },
       "peerDependencies": {
-        "@vitus-labs/styler": "2.0.0-beta.0",
+        "@vitus-labs/styler": "2.0.0-alpha.28",
         "react": ">= 19",
       },
     },
     "packages/coolgrid": {
       "name": "@vitus-labs/coolgrid",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.0.0",
@@ -263,8 +263,8 @@
         "react-native": ">=0.84.1",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
-        "@vitus-labs/unistyle": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
+        "@vitus-labs/unistyle": "2.0.0-alpha.28",
         "react": ">= 19",
         "react-native": ">= 0.76",
       },
@@ -274,7 +274,7 @@
     },
     "packages/core": {
       "name": "@vitus-labs/core",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -288,7 +288,7 @@
     },
     "packages/elements": {
       "name": "@vitus-labs/elements",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -301,8 +301,8 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
-        "@vitus-labs/unistyle": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
+        "@vitus-labs/unistyle": "2.0.0-alpha.28",
         "react": ">= 19",
         "react-dom": ">= 19",
         "react-native": ">= 0.76",
@@ -314,7 +314,7 @@
     },
     "packages/hooks": {
       "name": "@vitus-labs/hooks",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.0.0",
@@ -323,7 +323,7 @@
         "react-native": ">=0.84.1",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
         "react": ">= 19",
         "react-native": ">= 0.76",
       },
@@ -333,7 +333,7 @@
     },
     "packages/kinetic": {
       "name": "@vitus-labs/kinetic",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/hooks": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.0.0",
@@ -341,7 +341,7 @@
         "react-native": ">=0.84.1",
       },
       "peerDependencies": {
-        "@vitus-labs/hooks": "2.0.0-beta.0",
+        "@vitus-labs/hooks": "2.0.0-alpha.28",
         "react": ">= 19",
         "react-native": ">= 0.76",
       },
@@ -351,7 +351,7 @@
     },
     "packages/kinetic-presets": {
       "name": "@vitus-labs/kinetic-presets",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/tools-rolldown": "2.0.0",
         "@vitus-labs/tools-typescript": "2.0.0",
@@ -362,7 +362,7 @@
     },
     "packages/rocketstories": {
       "name": "@vitus-labs/rocketstories",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "dependencies": {
         "@vitus-labs/elements": "workspace:*",
       },
@@ -376,15 +376,15 @@
       },
       "peerDependencies": {
         "@storybook/react": "10.2.8",
-        "@vitus-labs/core": "2.0.0-beta.0",
-        "@vitus-labs/rocketstyle": "2.0.0-beta.0",
-        "@vitus-labs/unistyle": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
+        "@vitus-labs/rocketstyle": "2.0.0-alpha.28",
+        "@vitus-labs/unistyle": "2.0.0-alpha.28",
         "react": ">= 19",
       },
     },
     "packages/rocketstyle": {
       "name": "@vitus-labs/rocketstyle",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -394,13 +394,13 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
         "react": ">= 19",
       },
     },
     "packages/styler": {
       "name": "@vitus-labs/styler",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -415,14 +415,14 @@
     },
     "packages/unistyle": {
       "name": "@vitus-labs/unistyle",
-      "version": "2.0.0-beta.0",
+      "version": "2.0.0-alpha.28",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.0.0",
         "@vitus-labs/tools-typescript": "2.0.0",
       },
       "peerDependencies": {
-        "@vitus-labs/core": "2.0.0-beta.0",
+        "@vitus-labs/core": "2.0.0-alpha.28",
         "react": ">= 19",
         "react-native": ">= 0.76",
       },

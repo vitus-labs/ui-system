@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/attrs",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-alpha.28",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -59,7 +59,7 @@
     "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.0.0-beta.0",
+    "@vitus-labs/core": "2.0.0-alpha.28",
     "react": ">= 19"
   },
   "devDependencies": {
