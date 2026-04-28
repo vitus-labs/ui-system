@@ -4,13 +4,19 @@
     "slug": "vl-native-example",
     "version": "1.0.0",
     "scheme": "vl-native",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.vituslabs.nativeexample"
     },
     "android": {
       "package": "com.vituslabs.nativeexample"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
