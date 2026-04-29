@@ -38,11 +38,14 @@ export const createGlobalStyle = (
     const cssText = normalizeCSS(resolve(strings, values, {}))
     const href = cssText.trim() ? `g-${hash(cssText)}` : ''
 
-    // Inject into sheet. Client: insertRule() into shared sheet. SSR: ssrBuffer.
-    if (cssText.trim()) sheet.insertGlobal(cssText)
+    // Client only: inject into shared sheet. On SSR we deliberately do NOT
+    // call sheet.insertGlobal() — that would push duplicates into ssrBuffer
+    // and the same rule would also re-insert via insertRule() on hydration
+    // (cache miss → DOM duplication). React 19 dedupes <style precedence>
+    // emissions automatically, so a single precedence tag is sufficient.
+    if (!IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
 
     // SSR: pre-compute <style precedence> for FOUC-free delivery.
-    // Client: CSS already injected via sheet.insertGlobal() above.
     const cachedStyleEl =
       IS_SERVER && href
         ? createElement('style', { href, precedence: 'low' }, cssText)
@@ -69,9 +72,9 @@ export const createGlobalStyle = (
 
     if (!href) return null
 
-    // SSR: render <style precedence> for FOUC-free delivery
+    // SSR: render <style precedence> for FOUC-free delivery. We deliberately
+    // do NOT push to ssrBuffer here — see static-path comment above.
     if (IS_SERVER) {
-      sheet.insertGlobal(cssText)
       return createElement('style', { href, precedence: 'low' }, cssText)
     }
 
