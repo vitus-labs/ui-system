@@ -382,4 +382,106 @@ describe('Element responsive props', () => {
       })
     }
   })
+
+  // Regression coverage for the bug where the responsive `block` prop flipped
+  // `display: flex ↔ inline-flex` correctly but never reset the companion
+  // `align-self: stretch` / `width: 100%` / `height: 100%` set by the truthy
+  // branch — leaving an "inline-flex" element still pegged to full width via
+  // CSS cascade. The fix in Wrapper/styled.ts now always emits a value for
+  // each property (auto when block is false), so non-matching breakpoints
+  // override the prior breakpoint cleanly.
+  describe('responsive block resets companion props at non-matching breakpoints', () => {
+    /**
+     * Walk the rendered element + all descendants and collect every CSS rule
+     * (top-level + nested in @media) whose selector targets one of the
+     * tree's own classes. This isolates the inspection from leftover rules
+     * inserted by other tests in this suite, since the styler stylesheet
+     * persists across renders. Wrapper styles live a couple levels deep,
+     * so the descendants must be included.
+     */
+    const collectCssForTree = (root: HTMLElement) => {
+      const seen = new Set<string>()
+      const all = [root, ...Array.from(root.querySelectorAll<HTMLElement>('*'))]
+      for (const el of all) {
+        for (const cls of Array.from(el.classList)) seen.add(cls)
+      }
+      const matches: string[] = []
+      for (const styleEl of Array.from(
+        document.querySelectorAll<HTMLStyleElement>('style[data-vl]'),
+      )) {
+        const sheet = styleEl.sheet
+        if (!sheet) continue
+        const visit = (rules: CSSRuleList) => {
+          for (const rule of Array.from(rules)) {
+            if (rule instanceof CSSStyleRule) {
+              const cls =
+                rule.selectorText.replace(/^\./, '').split(/[.:\s]/)[0] ?? ''
+              if (seen.has(cls)) matches.push(rule.cssText)
+            } else if (
+              typeof CSSMediaRule !== 'undefined' &&
+              rule instanceof CSSMediaRule
+            ) {
+              visit(rule.cssRules)
+            }
+          }
+        }
+        visit(sheet.cssRules)
+      }
+      return matches.join('\n')
+    }
+
+    it('block={{ xs: true, md: false }} emits explicit auto resets at md', () => {
+      const { container } = render(
+        <Element block={{ xs: true, md: false } as any} data-testid="el">
+          content
+        </Element>,
+        { wrapper },
+      )
+      const css = collectCssForTree(container as HTMLElement)
+      // Both branches of the responsive cascade must appear in the inserted CSS.
+      // The `block: false` branch must include the explicit auto resets so
+      // it overrides the `block: true` declarations from the smaller breakpoint.
+      expect(css).toMatch(/align-self:\s*auto/)
+      expect(css).toMatch(/width:\s*auto/)
+      // And the `block: true` branch still emits the stretch/full-width values.
+      expect(css).toMatch(/align-self:\s*stretch/)
+      expect(css).toMatch(/width:\s*100%/)
+    })
+
+    it('block={{ xs: false, md: true }} emits both display values + paired sizing', () => {
+      const { container } = render(
+        <Element block={{ xs: false, md: true } as any} data-testid="el">
+          content
+        </Element>,
+        { wrapper },
+      )
+      const css = collectCssForTree(container as HTMLElement)
+      // Both display values present (the existing-correct behavior).
+      expect(css).toMatch(/display:\s*inline-flex/)
+      expect(css).toMatch(/display:\s*flex/)
+      // Both branches of the auto/stretch reset must appear.
+      expect(css).toMatch(/align-self:\s*stretch/)
+      expect(css).toMatch(/align-self:\s*auto/)
+      expect(css).toMatch(/width:\s*100%/)
+      expect(css).toMatch(/width:\s*auto/)
+    })
+
+    it('block + alignY="block" together emit both stretch and full-height values', () => {
+      // Covers the simultaneous-truthy branch of all three ternaries
+      // (`align-self: stretch`, `width: 100%`, `height: 100%`) in a single
+      // render. Note: for simple-element children Element overrides
+      // wrapperAlignY with contentAlignY, so we set it on `contentAlignY`
+      // for the `t.alignY === 'block'` branch to actually reach the wrapper.
+      const { container } = render(
+        <Element block contentAlignY="block" data-testid="el">
+          content
+        </Element>,
+        { wrapper },
+      )
+      const css = collectCssForTree(container as HTMLElement)
+      expect(css).toMatch(/align-self:\s*stretch/)
+      expect(css).toMatch(/width:\s*100%/)
+      expect(css).toMatch(/height:\s*100%/)
+    })
+  })
 })
