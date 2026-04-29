@@ -113,10 +113,14 @@ const createStyledComponent = (
     if (!hasCss) {
       staticClassName = ''
     } else if (IS_SERVER) {
-      // SSR: need both className + rules for <style precedence> element
+      // SSR: emit a single <style precedence> element. We deliberately do NOT
+      // call `sheet.insert()` here — that would push duplicate rules into the
+      // ssrBuffer and, after the client hydrates from <style data-precedence>
+      // tags, the same rule would also get re-inserted via insertRule() on
+      // first render (cache miss → DOM duplication). React 19 collects and
+      // dedupes <style precedence> emissions automatically.
       const prepared = sheet.prepare(cssText, boost)
       staticClassName = prepared.className
-      sheet.insert(cssText, boost)
       cachedStyleEl = createElement(
         'style',
         { href: staticClassName, precedence: 'medium' },
@@ -195,10 +199,11 @@ const createStyledComponent = (
       // Cache miss — recompute
       if (cssText.length > 0) {
         if (IS_SERVER) {
-          // SSR: compute rules for <style precedence>, inject into ssrBuffer
+          // SSR: emit a <style precedence> element only. See the matching
+          // comment in the static path above for why we don't push to
+          // ssrBuffer here — TL;DR: it would duplicate on hydration.
           const prepared = sheet.prepare(cssText, boost)
           className = prepared.className
-          sheet.insert(cssText, boost)
           styleEl = createElement(
             'style',
             { href: prepared.className, precedence: 'medium' },

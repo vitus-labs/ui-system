@@ -56,6 +56,13 @@ export class StyleSheet {
       this.sheet = el.sheet ?? null
     }
 
+    // Hydrate from React 19 `<style precedence data-href="…">` tags emitted
+    // during SSR. The default SSR path is precedence-only, so without this
+    // step the cache would miss on first client render and `insert()` would
+    // duplicate every rule into the `data-vl` sheet — visible as doubled
+    // styles in the DOM.
+    this.hydrateFromPrecedenceTags()
+
     // Inject @layer declaration if configured
     if (this.layer && this.sheet) {
       try {
@@ -64,6 +71,25 @@ export class StyleSheet {
         // skip if @layer not supported
       }
     }
+  }
+
+  /**
+   * Populate the dedup cache from React 19's `<style data-precedence data-href>`
+   * tags. The `data-href` is the same shape we'd compute client-side
+   * (`vl-<hash>` for component styles, `g-<hash>` for globals), so a Map
+   * pre-population is sufficient — no need to re-parse the cssText.
+   */
+  private hydrateFromPrecedenceTags() {
+    const tags = document.querySelectorAll<HTMLStyleElement>(
+      'style[data-precedence][data-href]',
+    )
+    tags.forEach((el) => {
+      const href = el.getAttribute('data-href')
+      if (!href) return
+      if (href.startsWith(`${PREFIX}-`) || href.startsWith('g-')) {
+        this.cache.set(href, href)
+      }
+    })
   }
 
   /** Extract className from a selector like ".vl-abc" or ".vl-abc.vl-abc" → "vl-abc" */
@@ -311,7 +337,10 @@ export class StyleSheet {
   /** Insert global CSS rules (no wrapper selector). Deduplicates by hash. */
   insertGlobal(cssText: string): void {
     const h = hash(cssText)
-    const key = `global-${h}`
+    // Cache key matches the `data-href` shape emitted by createGlobalStyle's
+    // <style precedence> tag, so SSR hydration via `hydrateFromPrecedenceTags`
+    // can populate this same key and prevent duplicate insertion on the client.
+    const key = `g-${h}`
 
     if (this.cache.has(key)) return
 
@@ -343,13 +372,25 @@ export class StyleSheet {
     }
   }
 
-  /** Returns collected CSS for SSR as a complete `<style>` tag string. */
+  /**
+   * Returns collected CSS for SSR as a complete `<style>` tag string.
+   *
+   * NOTE: With the default React 19 `<style precedence>` SSR path, this
+   * buffer is **empty** — components emit their own precedence tags inline,
+   * which React collects and dedupes automatically. This API is retained as
+   * an opt-in "manual mode" for callers that explicitly push rules into the
+   * buffer (e.g. legacy SSR pipelines via direct `sheet.insert(cssText)`
+   * calls outside of render).
+   */
   getStyleTag(): string {
     const css = this.ssrBuffer.join('').replace(/<\/style/gi, '<\\/style')
     return `<style ${ATTR}="">${css}</style>`
   }
 
-  /** Returns collected CSS rules as a raw string (useful for streaming SSR). */
+  /**
+   * Returns collected CSS rules as a raw string (useful for streaming SSR).
+   * See `getStyleTag` for caveats — empty unless rules were pushed manually.
+   */
   getStyles(): string {
     return this.ssrBuffer.join('')
   }
