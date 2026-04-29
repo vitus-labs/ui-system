@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/kinetic",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -58,7 +58,7 @@
     "node": ">= 18"
   },
   "peerDependencies": {
-    "@vitus-labs/hooks": "2.0.0-beta.1",
+    "@vitus-labs/hooks": "2.0.0-beta.2",
     "react": ">= 19",
     "react-native": ">= 0.76"
   },
