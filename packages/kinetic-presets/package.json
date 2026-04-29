@@ -35,7 +35,7 @@
     "react": ">= 19"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rolldown": "2.0.0",
-    "@vitus-labs/tools-typescript": "2.0.0"
+    "@vitus-labs/tools-rolldown": "2.2.0",
+    "@vitus-labs/tools-typescript": "2.1.0"
   }
 }
