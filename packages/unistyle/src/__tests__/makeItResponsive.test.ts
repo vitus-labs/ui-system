@@ -284,4 +284,80 @@ describe('makeItResponsive', () => {
     // Should return array with empty string since media is undefined
     expect(Array.isArray(result)).toBe(true)
   })
+
+  describe('per-breakpoint delta optimization', () => {
+    const providerTheme = {
+      rootSize: 16,
+      breakpoints: { xs: 0, sm: 576, md: 768 },
+      __VITUS_LABS__: {
+        sortedBreakpoints: ['xs', 'sm', 'md'],
+        media: {
+          xs: (...args: any[]) => (css as any)(...args),
+          sm: (...args: any[]) =>
+            css`@media (min-width: 36em) { ${(css as any)(...args)} }`,
+          md: (...args: any[]) =>
+            css`@media (min-width: 48em) { ${(css as any)(...args)} }`,
+        },
+      },
+    }
+
+    it('drops unchanged declarations in subsequent breakpoints (mobile-first cascade)', () => {
+      // styles callback that emits 2 declarations from theme values
+      const stringStyles = ({ theme: t }: any) =>
+        `color: ${t.color}; padding: ${t.padding};`
+
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: stringStyles as any,
+      })
+      const result = fn({
+        theme: providerTheme,
+        $test: {
+          // color same across all breakpoints; padding changes only at md
+          color: 'red',
+          padding: { xs: '0', sm: '0', md: '1rem' },
+        },
+      })
+      expect(Array.isArray(result)).toBe(true)
+      const flat = (result as any[]).map((r) => String(r)).join(' ')
+
+      // The xs (base) breakpoint emits both declarations
+      expect(flat).toContain('color: red')
+      expect(flat).toContain('padding: 0')
+
+      // padding: 1rem appears for md (changed)
+      expect(flat).toContain('padding: 1rem')
+
+      // color: red should appear exactly once — sm/md should not re-emit it
+      const colorOccurrences = flat.match(/color:\s*red/g) ?? []
+      expect(colorOccurrences.length).toBe(1)
+
+      // padding: 0 should also appear exactly once (xs only — sm dropped)
+      const paddingZeroOccurrences =
+        flat.match(/padding:\s*0(?![.\drem%])/g) ?? []
+      expect(paddingZeroOccurrences.length).toBe(1)
+    })
+
+    it('falls back to unoptimized path when a styles callback result is not stringifiable', () => {
+      // Styles callback returning a plain object whose default toString
+      // resolves to "[object Object]" — triggers the safety bail-out and
+      // exercises the engine-agnostic fallback.
+      const opaqueStyles = () => ({ notACssResult: true }) as any
+
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: opaqueStyles,
+      })
+      const result = fn({
+        theme: providerTheme,
+        $test: { color: 'red' },
+      })
+      // Even on the fallback path the function still returns an array
+      // (one entry per breakpoint, possibly engine-wrapped).
+      expect(Array.isArray(result)).toBe(true)
+      expect((result as any[]).length).toBe(3)
+    })
+  })
 })

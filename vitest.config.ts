@@ -15,10 +15,10 @@ export default defineConfig({
       // Bump these up when coverage improves so we never silently lose
       // what we've gained.
       thresholds: {
-        statements: 98.56,
-        branches: 94.31,
-        functions: 98.46,
-        lines: 99.29,
+        statements: 98.58,
+        branches: 94.32,
+        functions: 98.47,
+        lines: 99.31,
       },
     },
   },
