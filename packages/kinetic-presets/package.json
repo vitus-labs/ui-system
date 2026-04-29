@@ -4,6 +4,11 @@
   "description": "65+ animation presets, factories, and composition utilities for @vitus-labs/kinetic",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/kinetic-presets"
+  },
   "type": "module",
   "sideEffects": false,
   "publishConfig": {
