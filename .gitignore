@@ -95,3 +95,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# Claude Code runtime state (locks). Versioned settings stay tracked.
+.claude/scheduled_tasks.lock
