@@ -465,5 +465,23 @@ describe('Element responsive props', () => {
       expect(css).toMatch(/width:\s*100%/)
       expect(css).toMatch(/width:\s*auto/)
     })
+
+    it('block + alignY="block" together emit both stretch and full-height values', () => {
+      // Covers the simultaneous-truthy branch of all three ternaries
+      // (`align-self: stretch`, `width: 100%`, `height: 100%`) in a single
+      // render. Note: for simple-element children Element overrides
+      // wrapperAlignY with contentAlignY, so we set it on `contentAlignY`
+      // for the `t.alignY === 'block'` branch to actually reach the wrapper.
+      const { container } = render(
+        <Element block contentAlignY="block" data-testid="el">
+          content
+        </Element>,
+        { wrapper },
+      )
+      const css = collectCssForTree(container as HTMLElement)
+      expect(css).toMatch(/align-self:\s*stretch/)
+      expect(css).toMatch(/width:\s*100%/)
+      expect(css).toMatch(/height:\s*100%/)
+    })
   })
 })
