@@ -17,6 +17,7 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "changeset publish",
+    "promote-latest": "node scripts/promote-latest.mjs",
     "lint": "biome check packages/*/src/",
     "pkgs:clean": "rm -rf node_modules/ bun.lock && bun install",
     "pkgs:build": "bun run --filter './packages/*' build",
