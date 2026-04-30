@@ -72,6 +72,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # When releases are driven by hand-bumped versions (no .changeset/* files),
+      # the changesets action above is a no-op — but the package was still
+      # published earlier under the `next` tag by the prerelease job on the
+      # release/** branch. Promote it to `latest` here so `npm install`
+      # resolves to the freshly-merged version instead of stale code.
+      - name: Promote workspace packages to npm latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun run promote-latest
+
   # ── Prerelease (feature/release branches) ───────────────────────
   prerelease:
     if: github.ref != 'refs/heads/main'
