@@ -14,7 +14,7 @@
     "@vitus-labs/kinetic-presets": "workspace:*",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "sugar-high": "^0.9.5"
+    "sugar-high": "^1.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
