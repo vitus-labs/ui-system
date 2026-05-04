@@ -1,4 +1,4 @@
-import { get, pick } from '@vitus-labs/core'
+import { get, pick, useStableValue } from '@vitus-labs/core'
 import { context } from '@vitus-labs/unistyle'
 import { useContext, useMemo } from 'react'
 import { CONTEXT_KEYS } from '~/constants'
@@ -42,18 +42,27 @@ export const getGridContext: GetGridContext = (props = {}, theme = {}) => ({
  * Hook that reads the unistyle theme context and merges it with the
  * component's own props to produce the final grid configuration.
  * Applies the three-layer resolution (props -> grid.* -> coolgrid.*).
+ *
+ * Most call sites pass an inline-spread object (`{ ...parentCtx, ...props }`)
+ * so the input reference is fresh every render. `useStableValue` collapses
+ * that to a content-stable reference so downstream `useMemo` actually
+ * caches; without it the returned object would be a fresh ref every render
+ * and any consumer keying off identity (e.g. native `RNparentWidth`-driven
+ * layout) would churn.
  */
 type UseGridContext = (props: Obj) => Context
 const useGridContext: UseGridContext = (props) => {
   const { theme } = useContext(context)
+  const stableCtxProps = useStableValue(
+    pickThemeProps(props, CONTEXT_KEYS) as Obj,
+  )
   return useMemo(() => {
-    const ctxProps = pickThemeProps(props, CONTEXT_KEYS)
     const gridContext = getGridContext(
-      ctxProps,
+      stableCtxProps,
       theme as Record<string, unknown>,
     )
-    return { ...gridContext, ...ctxProps }
-  }, [props, theme])
+    return { ...gridContext, ...stableCtxProps }
+  }, [stableCtxProps, theme])
 }
 
 export default useGridContext

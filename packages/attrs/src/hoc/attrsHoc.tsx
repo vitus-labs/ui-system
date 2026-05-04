@@ -1,3 +1,4 @@
+import { useStableValue } from '@vitus-labs/core'
 import { type ComponentType, type FC, useMemo } from 'react'
 import type { Configuration } from '~/types/configuration'
 import { calculateChainOptions, removeUndefinedProps } from '~/utils/attrs'
@@ -33,12 +34,15 @@ const createAttrsHOC: AttrsStyleHOC = ({ attrs, priorityAttrs }) => {
   const attrsHoc = (WrappedComponent: ComponentType<any>) => {
     const HOC = (allProps: any) => {
       const { ref, ...props } = allProps
-      // Strip undefined values so they don't shadow defaults from attrs callbacks.
-      // Only explicitly set values (including `null`) should override defaults.
-      // biome-ignore lint/correctness/useExhaustiveDependencies: rest spread creates new object but content is stable when allProps is stable
+
+      // React produces a fresh props object on every render — using `[props]`
+      // as a useMemo dep array therefore never hits and downstream memos
+      // cascade-invalidate. Stabilize by deep-equal content so the dep stays
+      // referentially identical across content-equal re-renders.
+      const stableProps = useStableValue(props)
       const filteredProps = useMemo(
-        () => removeUndefinedProps(props),
-        [allProps],
+        () => removeUndefinedProps(stableProps),
+        [stableProps],
       )
 
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fast-path branching deliberately inlined for hot render path

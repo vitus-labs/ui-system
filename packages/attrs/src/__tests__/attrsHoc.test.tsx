@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
+import { vi } from 'vitest'
 import createAttrsHOC from '~/hoc/attrsHoc'
 
 const Receiver = (props: any) => (
@@ -140,5 +141,49 @@ describe('attrsHoc - ref forwarding', () => {
     // The ref is passed as $attrsRef
     const el = screen.getByTestId('receiver')
     expect(el).toBeDefined()
+  })
+})
+
+// --------------------------------------------------------
+// attrsHoc - filteredProps stability across renders
+// React produces a fresh props object on every parent render even when the
+// content is identical. The HOC must absorb that and only recompute when
+// content actually changes; otherwise the downstream `finalProps` useMemo
+// (which holds the attrs-callback evaluation) cascade-invalidates.
+// --------------------------------------------------------
+describe('attrsHoc - filteredProps reference stability', () => {
+  it('skips the attrs-chain memo on content-equal re-renders', () => {
+    const attrsCallback = vi.fn(() => ({ defaulted: true }))
+    const hoc = createAttrsHOC({ attrs: [attrsCallback], priorityAttrs: [] })
+    const Enhanced = hoc(Receiver)
+
+    // Parent re-renders (different `tick` each time on its own div) but
+    // Enhanced's prop content is unchanged — memo should hit.
+    const Parent = ({ tick }: { tick: number }) => (
+      <div data-tick={tick}>
+        <Enhanced label="hello" color="red" />
+      </div>
+    )
+
+    const { rerender } = render(<Parent tick={0} />)
+    expect(attrsCallback).toHaveBeenCalledTimes(1)
+
+    rerender(<Parent tick={1} />)
+    expect(attrsCallback).toHaveBeenCalledTimes(1)
+
+    rerender(<Parent tick={2} />)
+    expect(attrsCallback).toHaveBeenCalledTimes(1)
+  })
+
+  it('re-runs the attrs chain when prop content actually changes', () => {
+    const attrsCallback = vi.fn(() => ({ defaulted: true }))
+    const hoc = createAttrsHOC({ attrs: [attrsCallback], priorityAttrs: [] })
+    const Enhanced = hoc(Receiver)
+
+    const { rerender } = render(<Enhanced label="hello" />)
+    expect(attrsCallback).toHaveBeenCalledTimes(1)
+
+    rerender(<Enhanced label="world" />)
+    expect(attrsCallback).toHaveBeenCalledTimes(2)
   })
 })
