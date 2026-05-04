@@ -414,6 +414,8 @@ export class StyleSheet {
   /**
    * Full cleanup: clear cache and remove all CSS rules from the DOM.
    * Intended for HMR / dev-time reloads where stale styles must be purged.
+   * Also fires every callback registered via `onClear` so other modules
+   * (e.g. styled.ts's static-component cache) can purge their own state.
    *
    *   if (import.meta.hot) {
    *     import.meta.hot.accept(() => sheet.clearAll())
@@ -422,6 +424,7 @@ export class StyleSheet {
   clearAll(): void {
     this.cache.clear()
     this.insertCache.clear()
+    this.prepareCache.clear()
     clearNormCache()
     this.ssrBuffer = []
     if (this.sheet) {
@@ -429,6 +432,7 @@ export class StyleSheet {
         this.sheet.deleteRule(0)
       }
     }
+    for (const cb of clearCallbacks) cb()
   }
 
   /**
@@ -472,6 +476,18 @@ export class StyleSheet {
   get cacheSize(): number {
     return this.cache.size
   }
+}
+
+/**
+ * Subscribers fired by `clearAll()`. Other modules (e.g. styled.ts's
+ * static-component caches) register here so a single `sheet.clearAll()`
+ * resets every layer of state — useful for HMR.
+ */
+const clearCallbacks: Array<() => void> = []
+
+/** Register a callback to be invoked on `sheet.clearAll()`. */
+export const onSheetClear = (cb: () => void): void => {
+  clearCallbacks.push(cb)
 }
 
 /** Default singleton sheet for client-side use. */

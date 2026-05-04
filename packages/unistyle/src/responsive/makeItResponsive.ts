@@ -21,8 +21,16 @@ import transformTheme from './transformTheme'
 const stringifyResult = (result: unknown): string | null => {
   if (result == null) return ''
   if (typeof result === 'string') return result
+  // CSSResult duck-type fast path: has `strings` (TemplateStringsArray) and
+  // `values`. We know its toString() resolves to clean CSS, so we can skip
+  // the "[object Foo]" validation for the common path.
+  if (typeof result === 'object' && 'strings' in result && 'values' in result) {
+    return String(result)
+  }
+  // Foreign engine result — coerce and validate. Default
+  // Object.prototype.toString → "[object Foo]" → bail out so caller can fall
+  // back to the unoptimized path.
   const text = String(result)
-  // Default Object.prototype.toString → "[object Foo]" — bail out.
   return text.includes('[object ') ? null : text
 }
 
@@ -78,13 +86,24 @@ export type MakeItResponsive = ({
  *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
-const themeCache = new WeakMap<
-  object,
-  { breakpoints: unknown; optimized: Record<string, Record<string, unknown>> }
->()
+interface ThemeCacheEntry {
+  breakpoints: unknown
+  optimized: Record<string, Record<string, unknown>>
+  /**
+   * Memoized final responsive output (array of media-wrapped CSSResults),
+   * keyed by the outer `theme` reference. Hit when the same internal theme
+   * AND the same outer theme render again — which is the common case when
+   * the ThemeProvider value is stable. Avoids re-running renderStyles +
+   * optimizeBreakpointDeltas on every parent re-render.
+   */
+  rendered?: WeakMap<object, unknown[]>
+}
+
+const themeCache = new WeakMap<object, ThemeCacheEntry>()
 
 const makeItResponsive: MakeItResponsive =
   ({ theme: customTheme, key = '', css, styles, normalize = true }) =>
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path responsive engine — theme cache + render cache + breakpoint pipeline + optimizer dispatch all inlined per render
   ({ theme = {}, ...props }) => {
     const internalTheme = customTheme || props[key]
 
@@ -110,10 +129,19 @@ const makeItResponsive: MakeItResponsive =
     const { media, sortedBreakpoints } = __VITUS_LABS__!
 
     let optimizedTheme: Record<string, Record<string, unknown>>
+    const entry = themeCache.get(internalTheme)
+    const breakpointsMatch = entry?.breakpoints === sortedBreakpoints
 
-    const cached = themeCache.get(internalTheme)
-    if (cached && cached.breakpoints === sortedBreakpoints) {
-      optimizedTheme = cached.optimized
+    // Full-render cache: same internal theme + same outer theme → return
+    // the previous render's output verbatim. CSSResult instances are immutable
+    // so reusing them is safe.
+    if (entry && breakpointsMatch && entry.rendered) {
+      const memoized = entry.rendered.get(theme as object)
+      if (memoized) return memoized
+    }
+
+    if (entry && breakpointsMatch) {
+      optimizedTheme = entry.optimized
     } else {
       let helperTheme = internalTheme
 
@@ -137,6 +165,11 @@ const makeItResponsive: MakeItResponsive =
       themeCache.set(internalTheme, {
         breakpoints: sortedBreakpoints,
         optimized: optimizedTheme,
+        // Preserve any pre-existing rendered cache when re-entering with a
+        // changed sortedBreakpoints reference — usually this is unreachable
+        // because breakpoints come from a stable Provider value, but the
+        // explicit handling avoids a memory cliff in tests / HMR.
+        rendered: entry?.rendered,
       })
     }
 
@@ -153,26 +186,36 @@ const makeItResponsive: MakeItResponsive =
     )
 
     const canOptimize = renderedTexts.every((t) => t !== null)
+    let result: unknown[]
     if (canOptimize) {
       const deltas = optimizeBreakpointDeltas(renderedTexts as string[])
-      return sortedBreakpoints.map((item: string, i: number) => {
+      result = sortedBreakpoints.map((item: string, i: number) => {
         const css = deltas[i]
         if (!css || !media) return ''
         return (media as Record<string, any>)[item]`${css}`
       })
+    } else {
+      result = sortedBreakpoints.map((item: string) => {
+        const breakpointTheme = optimizedTheme[item]
+        if (!breakpointTheme || !media) return ''
+        const r = renderStyles(breakpointTheme)
+        return (media as Record<string, any>)[item]`
+          ${r};
+        `
+      })
     }
 
-    return sortedBreakpoints.map((item: string) => {
-      const breakpointTheme = optimizedTheme[item]
+    // Memoize the final rendered output by outer theme reference. Stable
+    // theme + stable internal theme => future renders return immediately.
+    // Invariant: by this point themeCache always has an entry for
+    // internalTheme — earlier paths either hit the rendered-cache and
+    // returned, or wrote one via themeCache.set above.
+    // biome-ignore lint/style/noNonNullAssertion: invariant — see comment above
+    const cacheEntry = themeCache.get(internalTheme)!
+    if (!cacheEntry.rendered) cacheEntry.rendered = new WeakMap()
+    cacheEntry.rendered.set(theme as object, result)
 
-      if (!breakpointTheme || !media) return ''
-
-      const result = renderStyles(breakpointTheme)
-
-      return (media as Record<string, any>)[item]`
-        ${result};
-      `
-    })
+    return result
   }
 
 export default makeItResponsive
