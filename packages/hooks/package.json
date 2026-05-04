@@ -63,8 +63,8 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/tools-rolldown": "2.2.0",
-    "@vitus-labs/tools-storybook": "2.2.0",
+    "@vitus-labs/tools-rolldown": "2.3.0",
+    "@vitus-labs/tools-storybook": "2.3.0",
     "@vitus-labs/tools-typescript": "2.1.0",
     "react-native": ">=0.84.1"
   }
