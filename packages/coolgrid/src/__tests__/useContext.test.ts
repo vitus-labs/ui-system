@@ -82,3 +82,40 @@ describe('getContainerWidth', () => {
     expect(result).toBeFalsy()
   })
 })
+
+// --------------------------------------------------------
+// useGridContext - reference stability across renders
+// Most call sites pass an inline-spread object (`{ ...parentCtx, ...props }`)
+// so the input is a fresh reference on every render even when content is
+// stable. The hook must absorb that and return the same object reference
+// when nothing relevant changed; otherwise downstream layout work churns.
+// --------------------------------------------------------
+import { renderHook } from '@testing-library/react'
+import useGridContext from '../useContext'
+
+describe('useGridContext - reference stability', () => {
+  it('returns the SAME reference when called with content-equal inputs', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useGridContext(props),
+      { initialProps: { props: { columns: 12 } } },
+    )
+    const first = result.current
+    // Content-equal but reference-different (caller does inline-spread).
+    rerender({ props: { columns: 12 } })
+    rerender({ props: { columns: 12 } })
+
+    expect(result.current).toBe(first)
+  })
+
+  it('returns a NEW reference when content actually changes', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useGridContext(props),
+      { initialProps: { props: { columns: 12 } } },
+    )
+    const first = result.current
+    rerender({ props: { columns: 6 } })
+
+    expect(result.current).not.toBe(first)
+    expect(result.current.columns).toBe(6)
+  })
+})

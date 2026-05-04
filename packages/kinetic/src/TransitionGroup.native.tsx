@@ -37,6 +37,9 @@ const TransitionGroup = ({
   const prevRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const leavingRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const initialKeysRef = useRef<Set<string | number> | null>(null)
+  const callbackCache = useRef<Map<string | number, () => void>>(new Map())
+  const onAfterLeaveRef = useRef(onAfterLeave)
+  onAfterLeaveRef.current = onAfterLeave
   const [, forceUpdate] = useState(0)
 
   const currentKeyed = getKeyedChildren(children)
@@ -61,10 +64,22 @@ const TransitionGroup = ({
 
   prevRef.current = currentMap
 
-  const handleAfterLeave = (key: string | number) => {
-    leavingRef.current.delete(key)
-    onAfterLeave?.()
-    forceUpdate((c) => c + 1)
+  // Cache one stable callback per key. Without this, every render produces
+  // fresh `onAfterLeave={() => handleAfterLeave(key)}` props which forces
+  // every child <Transition> to re-render when a single leaf finishes leaving.
+  // (Mirrors TransitionGroup.tsx — keep in sync.)
+  const getOnAfterLeave = (key: string | number) => {
+    let cb = callbackCache.current.get(key)
+    if (!cb) {
+      cb = () => {
+        leavingRef.current.delete(key)
+        callbackCache.current.delete(key)
+        onAfterLeaveRef.current?.()
+        forceUpdate((c) => c + 1)
+      }
+      callbackCache.current.set(key, cb)
+    }
+    return cb
   }
 
   const allEntries: KeyedChild[] = [...currentKeyed]
@@ -84,7 +99,7 @@ const TransitionGroup = ({
             appear={isInitial ? appear : true}
             timeout={timeout}
             {...transitionProps}
-            onAfterLeave={() => handleAfterLeave(key)}
+            onAfterLeave={getOnAfterLeave(key)}
           >
             {element}
           </Transition>
