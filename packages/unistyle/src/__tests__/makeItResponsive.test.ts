@@ -339,6 +339,61 @@ describe('makeItResponsive', () => {
       expect(paddingZeroOccurrences.length).toBe(1)
     })
 
+    it('returns the SAME array on repeat call (cache hit) when both internalTheme and outer theme are stable', () => {
+      // Stability guarantee — used by parent styled-component caching paths
+      // to avoid re-running renderStyles + optimizeBreakpointDeltas when
+      // nothing has changed.
+      const stringStyles = ({ theme: t }: any) =>
+        `color: ${t.color}; padding: ${t.padding};`
+
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: stringStyles as any,
+      })
+
+      const internalTheme = {
+        color: 'red',
+        padding: { xs: '0', md: '1rem' },
+      }
+      const props = { theme: providerTheme, $test: internalTheme }
+
+      const first = fn(props)
+      const second = fn(props)
+      expect(second).toBe(first)
+    })
+
+    it('cache misses when the outer theme changes (dark/light toggle)', () => {
+      const stringStyles = ({ theme: t }: any) => `color: ${t.color};`
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: stringStyles as any,
+      })
+
+      const internalTheme = { color: 'red' }
+      // Two distinct outer-theme references, identical content
+      const themeA = { ...providerTheme }
+      const themeB = { ...providerTheme }
+
+      const a = fn({ theme: themeA, $test: internalTheme })
+      const b = fn({ theme: themeB, $test: internalTheme })
+      expect(b).not.toBe(a) // different outer theme reference → cache miss
+    })
+
+    it('cache misses when the internal theme reference changes', () => {
+      const stringStyles = ({ theme: t }: any) => `color: ${t.color};`
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: stringStyles as any,
+      })
+
+      const a = fn({ theme: providerTheme, $test: { color: 'red' } })
+      const b = fn({ theme: providerTheme, $test: { color: 'red' } })
+      expect(b).not.toBe(a) // fresh internalTheme reference → cache miss
+    })
+
     it('falls back to unoptimized path when a styles callback result is not stringifiable', () => {
       // Styles callback returning a plain object whose default toString
       // resolves to "[object Object]" — triggers the safety bail-out and

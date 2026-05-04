@@ -29,7 +29,7 @@ import {
 import { buildProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
-import { sheet } from './sheet'
+import { onSheetClear, sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
 
 // SSR vs client detection — computed once at module load time.
@@ -58,16 +58,28 @@ const getDisplayName = (tag: Tag): string =>
 
 // Component cache: same template literal + tag + no options → same component.
 // WeakMap on `strings` (TemplateStringsArray is object-identity per source location).
-const staticComponentCache = new WeakMap<
+let staticComponentCache = new WeakMap<
   TemplateStringsArray,
   Map<Tag, ComponentType<any>>
 >()
 
 // Single-entry hot cache — just 3 reference comparisons, no Map/WeakMap overhead.
 // Covers the most common pattern: same styled component created repeatedly.
-let _hotStrings: TemplateStringsArray | null = null
-let _hotTag: Tag | null = null
-let _hotComponent: ComponentType<any> | null = null
+// Wrapped in an object so `sheet.clearAll()` can reset every field together
+// (HMR scenario: stale references to old components must be purged).
+const hotCache: {
+  strings: TemplateStringsArray | null
+  tag: Tag | null
+  component: ComponentType<any> | null
+} = { strings: null, tag: null, component: null }
+
+// Subscribe to `sheet.clearAll()` so HMR reloads don't leak stale components.
+onSheetClear(() => {
+  staticComponentCache = new WeakMap()
+  hotCache.strings = null
+  hotCache.tag = null
+  hotCache.component = null
+})
 
 const createStyledComponent = (
   tag: Tag,
@@ -78,17 +90,18 @@ const createStyledComponent = (
 ) => {
   // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
-    // biome-ignore lint/style/noNonNullAssertion: invariant — when _hotStrings/_hotTag match, _hotComponent was assigned in the prior call
-    if (strings === _hotStrings && tag === _hotTag) return _hotComponent!
+    if (strings === hotCache.strings && tag === hotCache.tag)
+      // biome-ignore lint/style/noNonNullAssertion: invariant — when hotCache.strings/tag match, hotCache.component was assigned in the prior call
+      return hotCache.component!
 
     // WeakMap fallback for alternating patterns
     const tagMap = staticComponentCache.get(strings)
     if (tagMap) {
       const cached = tagMap.get(tag)
       if (cached) {
-        _hotStrings = strings
-        _hotTag = tag
-        _hotComponent = cached
+        hotCache.strings = strings
+        hotCache.tag = tag
+        hotCache.component = cached
         return cached
       }
     }
@@ -158,9 +171,9 @@ const createStyledComponent = (
         staticComponentCache.set(strings, tagMap)
       }
       tagMap.set(tag, StaticStyled)
-      _hotStrings = strings
-      _hotTag = tag
-      _hotComponent = StaticStyled
+      hotCache.strings = strings
+      hotCache.tag = tag
+      hotCache.component = StaticStyled
     }
 
     return StaticStyled

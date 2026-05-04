@@ -315,6 +315,31 @@ describe('StyleSheet — advanced features', () => {
     })
   })
 
+  describe('clearAll() resets styled.ts component caches (HMR safety)', () => {
+    beforeEach(() => {
+      document.querySelectorAll('style[data-vl]').forEach((el) => {
+        el.remove()
+      })
+    })
+
+    it('sheet.clearAll() purges the static-component cache', async () => {
+      // Re-import the singleton + styled together so the subscription wires up.
+      const { sheet: liveSheet } = await import('../sheet')
+      const { styled } = await import('../styled')
+
+      // Same source location each call → same TemplateStringsArray identity →
+      // styled returns the cached component on the second call.
+      const make = () => styled('div')`color: red;`
+      const A = make()
+      const B = make()
+      expect(B).toBe(A) // hot/WeakMap cache hit
+
+      liveSheet.clearAll()
+      const C = make()
+      expect(C).not.toBe(A) // cache was reset — fresh component
+    })
+  })
+
   describe('clearAll() with rules', () => {
     beforeEach(() => {
       document.querySelectorAll('style[data-vl]').forEach((el) => {
