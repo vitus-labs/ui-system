@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/rocketstories",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
   "maintainers": [
@@ -66,9 +66,9 @@
   },
   "peerDependencies": {
     "@storybook/react": "10.3.6",
-    "@vitus-labs/core": "2.0.0",
-    "@vitus-labs/rocketstyle": "2.0.0",
-    "@vitus-labs/unistyle": "2.0.0",
+    "@vitus-labs/core": "2.1.0",
+    "@vitus-labs/rocketstyle": "2.1.0",
+    "@vitus-labs/unistyle": "2.1.0",
     "react": ">= 19"
   },
   "dependencies": {
