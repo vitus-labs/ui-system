@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@vitus-labs/tools-rolldown": "2.3.0",
-    "@vitus-labs/tools-typescript": "2.1.0",
+    "@vitus-labs/tools-typescript": "2.3.0",
     "styled-components": "^6.3.11"
   }
 }
