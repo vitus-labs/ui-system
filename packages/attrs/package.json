@@ -67,6 +67,6 @@
     "@vitus-labs/elements": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.3.0",
     "@vitus-labs/tools-storybook": "2.3.0",
-    "@vitus-labs/tools-typescript": "2.1.0"
+    "@vitus-labs/tools-typescript": "2.3.0"
   }
 }
