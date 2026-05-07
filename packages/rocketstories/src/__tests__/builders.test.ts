@@ -283,6 +283,28 @@ describe('createRocketStories builder', () => {
     expect(same.CONFIG.attrs).toEqual({ label: 'keep' })
   })
 
+  // End-to-end proof: not just CONFIG shape — the rendered story.args
+  // must not carry the prior component's attrs after a swap.
+  it('main().args do not leak attrs from the prior component (non-rocketstyle)', () => {
+    const NewComponent = (_props: any) => null
+    NewComponent.displayName = 'NewComp'
+    const story = rocketstories(MockComponent)
+      .attrs({ legacyProp: 'old' })
+      .replaceComponent(NewComponent as any)
+      .main()
+    expect(story.args).not.toHaveProperty('legacyProp')
+  })
+
+  it('main().args do not leak attrs across .config({ component }) swap', () => {
+    const NewComponent = (_props: any) => null
+    NewComponent.displayName = 'NewComp'
+    const story = rocketstories(MockComponent)
+      .attrs({ legacyProp: 'old' })
+      .config({ component: NewComponent as any })
+      .main()
+    expect(story.args).not.toHaveProperty('legacyProp')
+  })
+
   it('.decorators() appends decorators', () => {
     const dec1 = () => null
     const dec2 = () => null
