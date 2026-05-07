@@ -29,7 +29,11 @@ npm-debug.log*
 # Editors & OS
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
 
 # Dependency directories
 node_modules/
