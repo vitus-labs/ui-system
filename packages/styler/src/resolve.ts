@@ -4,6 +4,7 @@
  * primitive values.
  */
 
+import type { CSSEngineResult } from '@vitus-labs/core'
 import { evictMapByPercent } from './evict'
 import type { DefaultTheme } from './ThemeProvider'
 
@@ -14,6 +15,11 @@ export type Interpolation =
   | null
   | undefined
   | CSSResult
+  // Engine result from `@vitus-labs/core`. When connector-styler is in use,
+  // it's augmented to extend CSSResult — but we list it explicitly so that
+  // values flowing through from `config.css` (e.g. unistyle's `styles()`)
+  // type-check at interpolation sites without casts.
+  | CSSEngineResult
   | Interpolation[]
   | ((props: {
       theme?: DefaultTheme & Record<string, any>

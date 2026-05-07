@@ -31,6 +31,10 @@ export type RocketStyleInterpolationProps<CSS extends TObj = TObj> = {
  *
  * When used via `.styles()`, `CSS` is inferred from the chain's
  * accumulated `.theme()` calls, so both props are typed automatically.
+ *
+ * `Style` (= `ReturnType<typeof config.css>`) is included so that nested
+ * css results — e.g. `${styles({ ... })}` from unistyle — interpolate
+ * cleanly without casts.
  */
 export type RocketCss<CSS extends TObj = TObj> = (
   strings: TemplateStringsArray,
@@ -40,6 +44,7 @@ export type RocketCss<CSS extends TObj = TObj> = (
     | boolean
     | null
     | undefined
+    | Style
     | ((props: RocketStyleInterpolationProps<CSS>) => any)
     | any[]
   >

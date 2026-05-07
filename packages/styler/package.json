@@ -57,11 +57,13 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
+    "@vitus-labs/core": "2.1.0",
     "react": ">= 19"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@vitus-labs/core": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.3.0",
     "@vitus-labs/tools-typescript": "2.3.0",
     "goober": "^2.1.18",

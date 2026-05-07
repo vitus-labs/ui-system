@@ -218,10 +218,12 @@
       "name": "@vitus-labs/connector-native",
       "version": "2.1.0",
       "devDependencies": {
+        "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.3.0",
         "@vitus-labs/tools-typescript": "2.3.0",
       },
       "peerDependencies": {
+        "@vitus-labs/core": "2.1.0",
         "react": ">= 19",
         "react-native": ">= 0.76",
       },
@@ -230,11 +232,13 @@
       "name": "@vitus-labs/connector-styled-components",
       "version": "2.1.0",
       "devDependencies": {
+        "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.3.0",
         "@vitus-labs/tools-typescript": "2.3.0",
         "styled-components": "^6.3.11",
       },
       "peerDependencies": {
+        "@vitus-labs/core": "2.1.0",
         "react": ">= 19",
         "styled-components": ">= 6",
       },
@@ -243,11 +247,13 @@
       "name": "@vitus-labs/connector-styler",
       "version": "2.1.0",
       "devDependencies": {
+        "@vitus-labs/core": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.3.0",
         "@vitus-labs/tools-typescript": "2.3.0",
       },
       "peerDependencies": {
+        "@vitus-labs/core": "2.1.0",
         "@vitus-labs/styler": "2.1.0",
         "react": ">= 19",
       },
@@ -405,12 +411,14 @@
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
+        "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.3.0",
         "@vitus-labs/tools-typescript": "2.3.0",
         "goober": "^2.1.18",
         "styled-components": "^6.3.11",
       },
       "peerDependencies": {
+        "@vitus-labs/core": "2.1.0",
         "react": ">= 19",
       },
     },

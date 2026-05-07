@@ -51,10 +51,12 @@
     "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
+    "@vitus-labs/core": "2.1.0",
     "@vitus-labs/styler": "2.1.0",
     "react": ">= 19"
   },
   "devDependencies": {
+    "@vitus-labs/core": "workspace:*",
     "@vitus-labs/styler": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.3.0",
     "@vitus-labs/tools-typescript": "2.3.0"
