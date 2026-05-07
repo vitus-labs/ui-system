@@ -1,9 +1,11 @@
 import type { IRocketStories } from '~/rocketstories'
 import createRocketStories from '~/rocketstories'
 import type { Configuration, ExtractProps, RocketType } from '~/types'
-import { setTheme } from '~/utils/theme'
+import getTheme, { setTheme } from '~/utils/theme'
 
-type InitParams = Partial<Omit<Configuration, 'component' | 'attrs'>> & {
+type InitParams = Partial<
+  Omit<Configuration, 'component' | 'attrs' | 'theme'>
+> & {
   theme?: Record<string, unknown>
 }
 
@@ -28,7 +30,7 @@ const init: Init = ({ decorators = [], storyOptions = {}, theme, ...rest }) => {
   if (theme) setTheme(theme)
 
   return (component) =>
-    rocketstories(component, { decorators, storyOptions, ...rest })
+    rocketstories(component, { decorators, storyOptions, theme, ...rest })
 }
 
 /**
@@ -38,7 +40,9 @@ const init: Init = ({ decorators = [], storyOptions = {}, theme, ...rest }) => {
  */
 export type Rocketstories = <C extends Configuration['component']>(
   component: C,
-  options?: Partial<Omit<Configuration, 'component' | 'attrs'>>,
+  options?: Partial<Omit<Configuration, 'component' | 'attrs' | 'theme'>> & {
+    theme?: Record<string, unknown>
+  },
 ) => C extends RocketType
   ? IRocketStories<ExtractProps<C>, C['$$rocketstyle'], true>
   : IRocketStories<ExtractProps<C>, unknown, false>
@@ -47,7 +51,7 @@ export type Rocketstories = <C extends Configuration['component']>(
 // @ts-expect-error — `Rocketstories` is a conditional generic over `C extends RocketType`;
 // the impl returns the right runtime shape but TS can't unify both branches at the value level
 const rocketstories: Rocketstories = (component, options = {}) => {
-  const { decorators = [], storyOptions = {} } = options
+  const { decorators = [], storyOptions = {}, theme } = options
 
   const result: Configuration = {
     component,
@@ -62,6 +66,12 @@ const rocketstories: Rocketstories = (component, options = {}) => {
     },
     decorators,
     controls: {},
+    // Snapshot the theme at construction time. Prefer the explicit
+    // `options.theme`; fall back to the singleton so legacy callers that
+    // only set `setTheme(...)` still work. Either way, this storyOf
+    // instance now owns its theme — later `setTheme` calls or competing
+    // `init({ theme })` invocations don't affect it.
+    theme: theme ?? getTheme(),
   }
 
   return createRocketStories(result)

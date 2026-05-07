@@ -22,7 +22,6 @@ import {
   getDefaultVitusLabsControls,
   makeStorybookControls,
 } from '~/utils/controls'
-import getTheme from '~/utils/theme'
 import Item from './components/Item'
 import PseudoList from './components/PseudoList'
 import Provider from './context'
@@ -36,12 +35,19 @@ export type RenderDimension<P = {}> = (
 
 const renderDimension: RenderDimension = (
   dimension,
-  { name, component, attrs = {}, controls, storyOptions = {}, ignore = [] },
+  {
+    name,
+    component,
+    attrs = {},
+    controls,
+    storyOptions = {},
+    ignore = [],
+    theme = {},
+  },
 ) => {
   // ------------------------------------------------------
   // ROCKETSTYLE COMPONENT INFO
   // ------------------------------------------------------
-  const theme = getTheme()
   const statics = component.getStaticDimensions(theme)
   const defaultAttrs = component.getDefaultAttrs(attrs, theme, 'light')
   const { dimensions, useBooleans, multiKeys } = statics

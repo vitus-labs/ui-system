@@ -84,6 +84,50 @@ describe('init and rocketstories factories', () => {
     setTheme({ rootSize: 16 })
   })
 
+  it('init snapshots theme into builder.CONFIG (no singleton dependency at story time)', () => {
+    const themeA = { rootSize: 16, brand: 'A' }
+    const themeB = { rootSize: 24, brand: 'B' }
+
+    // First storyOf instance with themeA
+    const factoryA = init({ theme: themeA })
+    const builderA = factoryA(MockComponent)
+    expect(builderA.CONFIG.theme).toEqual(themeA)
+
+    // Second storyOf with themeB — must NOT retroactively
+    // affect builderA's theme.
+    const factoryB = init({ theme: themeB })
+    const builderB = factoryB(MockComponent)
+    expect(builderB.CONFIG.theme).toEqual(themeB)
+    expect(builderA.CONFIG.theme).toEqual(themeA)
+
+    // Reset
+    setTheme({ rootSize: 16 })
+  })
+
+  it('rocketstories factory snapshots singleton when no explicit theme is passed', () => {
+    setTheme({ rootSize: 18, brand: 'singleton' })
+    const builder = rocketstories(MockComponent)
+    expect(builder.CONFIG.theme).toEqual({ rootSize: 18, brand: 'singleton' })
+
+    // Mutate singleton afterwards — builder's snapshot must not change.
+    setTheme({ rootSize: 99, brand: 'mutated' })
+    expect(builder.CONFIG.theme).toEqual({ rootSize: 18, brand: 'singleton' })
+
+    // Reset
+    setTheme({ rootSize: 16 })
+  })
+
+  it('rocketstories factory prefers explicit theme over singleton', () => {
+    setTheme({ rootSize: 18, brand: 'singleton' })
+    const builder = rocketstories(MockComponent, {
+      theme: { rootSize: 32, brand: 'explicit' },
+    })
+    expect(builder.CONFIG.theme).toEqual({ rootSize: 32, brand: 'explicit' })
+
+    // Reset
+    setTheme({ rootSize: 16 })
+  })
+
   it('init passes decorators through', () => {
     const decorator = () => null
     const factory = init({ decorators: [decorator] })
