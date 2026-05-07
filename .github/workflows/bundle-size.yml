@@ -193,6 +193,17 @@ jobs:
         if: steps.detect.outputs.has_changesets == 'true'
         run: bun install --frozen-lockfile
 
+      # `changeset status` calls `git merge-base HEAD <baseBranch>` and
+      # needs the base branch as a *local* ref, not just `origin/<base>`.
+      # actions/checkout in PR mode only sets up the merge ref, so we have
+      # to materialise the base branch ourselves. `|| true` covers the
+      # case where the local branch already exists.
+      - name: Materialise base branch ref for changeset status
+        if: steps.detect.outputs.has_changesets == 'true'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: git fetch origin "${BASE_REF}:${BASE_REF}" || true
+
       - name: Run changeset status
         if: steps.detect.outputs.has_changesets == 'true'
         run: bunx changeset status --output=/tmp/status.json
