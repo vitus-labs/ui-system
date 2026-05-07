@@ -47,11 +47,10 @@
     "build": "bun run vl_rolldown_build",
     "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
-    "typecheck": "tsc --noEmit",
-    "version": "node ../../scripts/sync-peer-deps.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.1.0",
+    "@vitus-labs/core": "workspace:^",
     "react": ">= 19",
     "react-native": ">= 0.76"
   },

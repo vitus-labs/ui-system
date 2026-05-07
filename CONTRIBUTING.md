@@ -124,10 +124,6 @@ npm install @vitus-labs/styler@next
 
 Useful for testing a PR's effect on downstream apps before merging to `main`.
 
-### Manual fallback (rare)
-
-`scripts/promote-latest.mjs` and `bun run promote-latest` exist as a manual escape hatch in case dist-tags ever drift (e.g., a hand-bumped release where the prerelease branch published before the stable job ran). Run locally with `npm login` if needed — not wired into CI to keep the secret surface zero.
-
 ## Conventions
 
 - **TypeScript** — all source code is TypeScript
