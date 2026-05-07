@@ -205,7 +205,7 @@ describe('Configuration', () => {
       const strings = Object.assign(['color: red'] as any, {
         raw: ['color: red'],
       })
-      const thunk = config.css(strings)
+      const thunk = config.css(strings) as unknown as () => unknown
 
       // Now set the engine
       const mockCss = vi.fn((..._args: any[]) => 'resolved-css')
@@ -221,7 +221,7 @@ describe('Configuration', () => {
       const strings = Object.assign(['color: red'] as any, {
         raw: ['color: red'],
       })
-      const thunk = config.css(strings)
+      const thunk = config.css(strings) as unknown as () => unknown
 
       expect(() => thunk()).toThrow('CSS engine not configured')
     })

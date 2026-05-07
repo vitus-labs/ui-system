@@ -14,6 +14,13 @@
  * So our `css` returns either a plain string (static fast path) or a
  * function(props) → string (dynamic path) — both are natively handled by
  * Emotion's styled template processing.
+ *
+ * Type note: `css(...)` returns `string | ((props) => string)`. Because
+ * core's `CSSEngineResult` is augmented via `interface` declaration merging
+ * (which only supports object shapes), we don't augment from this connector
+ * — `CSSEngineResult` stays empty for Emotion users, and consumer code
+ * passes the result as a string-or-function interpolation, which is what
+ * Emotion's styled template processor already expects.
  */
 
 import {

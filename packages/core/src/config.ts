@@ -13,6 +13,24 @@ import type { HTMLTags } from '~/html'
 // ---------------------------------------------------------------------------
 
 /**
+ * Augmentable interface representing the result of the engine's `css`
+ * tagged template. Empty by default — each connector package narrows it
+ * via module declaration merging:
+ *
+ * ```ts
+ * // @vitus-labs/connector-styler
+ * declare module '@vitus-labs/core' {
+ *   interface CSSEngineResult extends StylerCSSResult {}
+ * }
+ * ```
+ *
+ * Consumers' types automatically resolve to the engine they `init()`'d with,
+ * without core depending on any specific engine package.
+ */
+// biome-ignore lint/suspicious/noEmptyInterface: augmentable via module declaration merging — see comment above
+export interface CSSEngineResult {}
+
+/**
  * Describes the shape of a CSS-in-JS engine connector.
  * Packages like `@vitus-labs/connector-styler`, `@vitus-labs/connector-emotion`,
  * and `@vitus-labs/connector-styled-components` export this shape.
@@ -23,7 +41,7 @@ import type { HTMLTags } from '~/html'
  */
 export interface CSSEngineConnector {
   /** Tagged template for composable CSS fragments. */
-  css: (strings: TemplateStringsArray, ...values: any[]) => any
+  css: (strings: TemplateStringsArray, ...values: any[]) => CSSEngineResult
   /** Component factory: `styled(tag)`\`...\`` → React component. */
   styled: ((
     tag: any,
@@ -160,14 +178,16 @@ class Configuration {
    * When not (module load time before init), returns a thunk that resolves
    * at render time — all CSS-in-JS engines treat functions as interpolations.
    */
-  css = (strings: TemplateStringsArray, ...values: any[]): any => {
+  css = (strings: TemplateStringsArray, ...values: any[]): CSSEngineResult => {
     if (this._css) return this._css(strings, ...values)
-    // Thunk — resolved at render time by the engine's interpolation handler
-    return () => {
+    // Thunk — resolved at render time by the engine's interpolation handler.
+    // Cast to CSSEngineResult; engines treat functions as interpolations and
+    // resolve them at use-site, so the thunk shape is compatible structurally.
+    return (() => {
       const engine = this._css
       if (!engine) return notConfigured('css')
       return engine(strings, ...values)
-    }
+    }) as unknown as CSSEngineResult
   }
 
   /**
