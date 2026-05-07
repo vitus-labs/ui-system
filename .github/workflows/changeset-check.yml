@@ -27,8 +27,20 @@ jobs:
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
           HAS_SKIP_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'skip-changeset') }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           set -euo pipefail
+
+          # 0. Auto-bypass for the changesets/action-generated Version PR.
+          # That PR bumps every package.json (touches packages/**) but
+          # *deletes* changesets instead of adding new ones — so a literal
+          # reading of the gate fails it. The PR is signed by github-actions
+          # and titled "chore: version packages" — recognise both.
+          if [ "$PR_AUTHOR" = "github-actions[bot]" ] && [[ "$PR_TITLE" == "chore: version packages"* ]]; then
+            echo "::notice::Auto-generated Version PR — bypassing the gate."
+            exit 0
+          fi
 
           # 1. PRs that don't touch packages/ never need a changeset.
           PACKAGE_FILES=$(git diff --name-only "origin/${BASE_REF}...HEAD" -- 'packages/**' || true)

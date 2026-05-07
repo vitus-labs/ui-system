@@ -69,9 +69,63 @@ jobs:
           publish: bun run release
           title: 'chore: version packages'
           commit: 'chore: version packages'
-          createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer a fine-grained PAT (`RELEASE_PAT`) when present so
+          # commits the action pushes to the Version PR's branch trigger
+          # downstream workflows (CI on the Version PR). Falls back to
+          # the default token, which works for everything except trigger
+          # propagation. See CONTRIBUTING.md → Releases → Setup.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+
+      # The changesets/action's built-in `createGithubReleases: true`
+      # iterates per-package and was observed hanging mid-run on the 2.2.0
+      # release after npm publish had already succeeded. Replaced with a
+      # single umbrella Release for the suite — matches how other fixed-
+      # group monorepos (React, Apollo, Babel) ship.
+      - name: Create umbrella GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./packages/core/package.json').version")
+          TAG="v${VERSION}"
+
+          # Idempotent tag: skip if it already exists (e.g. retried run).
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "::notice::Tag ${TAG} already exists — skipping tag step."
+          else
+            git tag "${TAG}"
+            git push origin "${TAG}"
+          fi
+
+          # Build a markdown list of every published package@version from
+          # the action's structured output.
+          PACKAGES=$(echo '${{ steps.changesets.outputs.publishedPackages }}' \
+            | jq -r '[.[] | "- `\(.name)@\(.version)`"] | join("\n")')
+
+          BODY=$(cat <<EOF
+          All packages in the \`@vitus-labs/*\` suite at **${VERSION}**.
+
+          ## Published
+
+          ${PACKAGES}
+
+          ## Per-package detail
+
+          See each \`packages/*/CHANGELOG.md\` for the package-specific entry generated from the changesets that bumped it.
+          EOF
+          )
+
+          # Create the Release. `--verify-tag` ensures we point at a real
+          # ref. Idempotent via `|| true` if a Release already exists for
+          # this tag (manual retry scenario).
+          gh release create "${TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${TAG}" \
+            --notes "${BODY}" \
+            --verify-tag \
+            || echo "::warning::Release for ${TAG} already exists — skipping creation."
 
   # ── Prerelease (feature/release branches) ───────────────────────
   prerelease:
