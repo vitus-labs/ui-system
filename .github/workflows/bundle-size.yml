@@ -1,0 +1,265 @@
+name: PR Comments
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: pr-comments-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────
+  # Bundle-size diff — builds base + PR, posts sticky comment with deltas
+  # ─────────────────────────────────────────────────────────────────
+  bundle-size:
+    name: Bundle size diff
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      - name: Cache bun dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install (PR head)
+        run: bun install --frozen-lockfile
+
+      - name: Build (PR head)
+        run: bun run pkgs:build
+
+      - name: Measure (PR head)
+        run: bun run size --json > /tmp/pr.json
+
+      - name: Checkout base
+        run: |
+          git fetch origin "${{ github.event.pull_request.base.ref }}"
+          git checkout "origin/${{ github.event.pull_request.base.ref }}"
+
+      - name: Install (base)
+        run: bun install --frozen-lockfile
+
+      - name: Build (base)
+        run: bun run pkgs:build
+
+      - name: Measure (base)
+        run: bun run size --json > /tmp/base.json
+
+      - name: Diff and comment
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v8.0.0
+        with:
+          script: |
+            const fs = require('fs')
+            const base = JSON.parse(fs.readFileSync('/tmp/base.json', 'utf8'))
+            const pr = JSON.parse(fs.readFileSync('/tmp/pr.json', 'utf8'))
+
+            const formatBytes = (n) => {
+              if (n < 1024) return `${n} B`
+              return `${(n / 1024).toFixed(2)} KB`
+            }
+
+            const formatDelta = (delta, basePct) => {
+              if (delta === 0) return '—'
+              const sign = delta > 0 ? '+' : ''
+              const pct = basePct === 0 ? 'new' : `${sign}${((delta / basePct) * 100).toFixed(2)}%`
+              const emoji = delta > 0 ? '🔴' : '🟢'
+              return `${emoji} ${sign}${formatBytes(delta)} (${pct})`
+            }
+
+            const baseByName = Object.fromEntries(base.map((p) => [p.name, p]))
+
+            const rows = pr.map((p) => {
+              const b = baseByName[p.name]
+              const baseSize = b ? b.size : 0
+              const delta = p.size - baseSize
+              return {
+                name: p.name,
+                base: formatBytes(baseSize),
+                pr: formatBytes(p.size),
+                delta: formatDelta(delta, baseSize),
+                changed: delta !== 0,
+              }
+            })
+
+            const totalDelta = rows.reduce((sum, r) => {
+              const prSize = pr.find((p) => p.name === r.name).size
+              const baseSize = (baseByName[r.name] || { size: 0 }).size
+              return sum + (prSize - baseSize)
+            }, 0)
+
+            const anyChange = rows.some((r) => r.changed)
+
+            const tableRows = rows.map((r) =>
+              `| ${r.name} | ${r.base} | ${r.pr} | ${r.delta} |`
+            ).join('\n')
+
+            const summary = anyChange
+              ? `**Total delta: ${formatBytes(Math.abs(totalDelta))}** ${totalDelta > 0 ? '🔴 increase' : '🟢 decrease'}`
+              : '_No bundle size changes._'
+
+            const body = [
+              '<!-- bundle-size-bot -->',
+              '### 📦 Bundle size',
+              '',
+              summary,
+              '',
+              '| Package | Base | This PR | Δ |',
+              '|---|---:|---:|---:|',
+              tableRows,
+              '',
+              '_Sizes are gzipped. Budgets are enforced separately by `size-limit` in CI._',
+            ].join('\n')
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const existing = comments.find((c) => c.body && c.body.includes('<!-- bundle-size-bot -->'))
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
+
+  # ─────────────────────────────────────────────────────────────────
+  # Changeset preview — sticky comment showing projected version bumps
+  # Skips silently if no .changeset/*.md files are added in the PR.
+  # ─────────────────────────────────────────────────────────────────
+  changeset-preview:
+    name: Changeset preview
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Detect changesets in this PR
+        id: detect
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          ADDED=$(git diff --name-only --diff-filter=A "origin/${BASE_REF}...HEAD" -- '.changeset/*.md' || true)
+          ADDED=$(echo "$ADDED" | grep -v -E '\.changeset/(README|config)\.(md|json)$' || true)
+          if [ -z "$ADDED" ]; then
+            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+            echo "Changesets in this PR:"
+            echo "$ADDED"
+          fi
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        if: steps.detect.outputs.has_changesets == 'true'
+
+      - name: Cache bun dependencies
+        if: steps.detect.outputs.has_changesets == 'true'
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install
+        if: steps.detect.outputs.has_changesets == 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Run changeset status
+        if: steps.detect.outputs.has_changesets == 'true'
+        run: bunx changeset status --output=/tmp/status.json
+
+      - name: Post preview comment
+        if: steps.detect.outputs.has_changesets == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v8.0.0
+        with:
+          script: |
+            const fs = require('fs')
+            const status = JSON.parse(fs.readFileSync('/tmp/status.json', 'utf8'))
+
+            const releases = status.releases || []
+            if (releases.length === 0) {
+              console.log('No releases planned by the present changesets — skipping comment.')
+              return
+            }
+
+            const bumpRank = { patch: 0, minor: 1, major: 2 }
+            const overall = releases.reduce(
+              (acc, r) => (bumpRank[r.type] > bumpRank[acc] ? r.type : acc),
+              'patch',
+            )
+
+            const tableRows = releases
+              .map((r) => `| ${r.name} | ${r.oldVersion} | ${r.newVersion} |`)
+              .join('\n')
+
+            const changesetSummaries = (status.changesets || [])
+              .map((c) => `- ${c.summary.split('\n')[0]}`)
+              .join('\n')
+
+            const body = [
+              '<!-- changeset-preview-bot -->',
+              '### 🦋 Changeset preview',
+              '',
+              `If merged, this PR will produce a **${overall}** release across all 15 packages (fixed group):`,
+              '',
+              '| Package | From | To |',
+              '|---|---|---|',
+              tableRows,
+              '',
+              '**Changesets in this PR:**',
+              '',
+              changesetSummaries || '_(no summaries)_',
+            ].join('\n')
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const existing = comments.find((c) => c.body && c.body.includes('<!-- changeset-preview-bot -->'))
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
