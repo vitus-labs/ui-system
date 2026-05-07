@@ -109,9 +109,11 @@ export interface IRocketStories<
     ? ReturnType<rocketstory.RenderList<OA>>
     : ReturnType<simplestory.RenderList<OA>>
 
-  // INIT chaining method
+  // INIT — Storybook default-export object
   // --------------------------------------------------------
-  init: () => {
+  // A property literal, NOT a method. Use as `export default stories.init`
+  // (no parens) — calling it as a function fails at runtime.
+  init: {
     component: Configuration['component']
     title: Configuration['name']
     decorators: Configuration['decorators']
