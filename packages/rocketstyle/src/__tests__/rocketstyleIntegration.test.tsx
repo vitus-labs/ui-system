@@ -738,3 +738,140 @@ describe('ref handling', () => {
     expect(screen.getByTestId('btn')).toBeInTheDocument()
   })
 })
+
+// --------------------------------------------------------------------------
+// Component-swap reset: when `.config({ component })` replaces the component,
+// the prior `attrs`, `priorityAttrs`, and `compose` are dropped because they
+// were tailored to the previous component's prop shape and would silently
+// leak invalid props onto the new component.
+//
+// Callers who want to preserve them must re-chain explicitly:
+//   const NewBtn = OldBtn.config({ component: X }).attrs(...)
+// --------------------------------------------------------------------------
+
+const AlternateBase = forwardRef(
+  ({ children, $rocketstyle, $rocketstate, ...rest }: any, ref: any) => (
+    <section ref={ref} data-alt="true" {...rest}>
+      {children}
+    </section>
+  ),
+)
+AlternateBase.displayName = 'AlternateBase'
+
+describe('component-swap resets attrs / priorityAttrs / compose', () => {
+  it('clears attrs when .config({ component }) replaces the component', () => {
+    const Original: any = rocketstyle()({
+      name: 'Original',
+      component: BaseComponent,
+    }).attrs((() => ({ 'data-old': 'yes' })) as any)
+
+    const Swapped: any = Original.config({ component: AlternateBase })
+
+    render(<Swapped data-testid="btn">x</Swapped>, { wrapper })
+    expect(screen.getByTestId('btn')).not.toHaveAttribute('data-old')
+    expect(screen.getByTestId('btn')).toHaveAttribute('data-alt', 'true')
+  })
+
+  it('clears priorityAttrs when .config({ component }) replaces the component', () => {
+    const Original: any = rocketstyle()({
+      name: 'Original',
+      component: BaseComponent,
+    }).attrs((() => ({ 'data-priority': 'old' })) as any, { priority: true })
+
+    const Swapped: any = Original.config({ component: AlternateBase })
+
+    render(<Swapped data-testid="btn">x</Swapped>, { wrapper })
+    expect(screen.getByTestId('btn')).not.toHaveAttribute('data-priority')
+  })
+
+  it('preserves attrs when .config() does NOT change the component', () => {
+    const Button: any = rocketstyle()({
+      name: 'Renamed',
+      component: BaseComponent,
+    })
+      .attrs((() => ({ 'data-keep': 'yes' })) as any)
+      .config({ name: 'StillSame' })
+
+    render(<Button data-testid="btn">x</Button>, { wrapper })
+    expect(screen.getByTestId('btn')).toHaveAttribute('data-keep', 'yes')
+  })
+
+  it('preserves attrs when .config({ component }) passes the SAME component', () => {
+    const Button: any = rocketstyle()({
+      name: 'Same',
+      component: BaseComponent,
+    })
+      .attrs((() => ({ 'data-keep': 'yes' })) as any)
+      .config({ component: BaseComponent })
+
+    render(<Button data-testid="btn">x</Button>, { wrapper })
+    expect(screen.getByTestId('btn')).toHaveAttribute('data-keep', 'yes')
+  })
+
+  it('allows re-chaining attrs after component swap (escape hatch)', () => {
+    const Original: any = rocketstyle()({
+      name: 'Original',
+      component: BaseComponent,
+    }).attrs((() => ({ 'data-old': 'yes' })) as any)
+
+    const Swapped: any = Original.config({ component: AlternateBase }).attrs(
+      (() => ({ 'data-new': 'yes' })) as any,
+    )
+
+    render(<Swapped data-testid="btn">x</Swapped>, { wrapper })
+    expect(screen.getByTestId('btn')).not.toHaveAttribute('data-old')
+    expect(screen.getByTestId('btn')).toHaveAttribute('data-new', 'yes')
+  })
+
+  it('clears compose HOCs on component swap', () => {
+    // HOC that wraps the rendered component with an extra div carrying a marker.
+    const markerHoc = (Inner: any) => (props: any) => (
+      <div data-hoc-marker="from-original">
+        <Inner {...props} />
+      </div>
+    )
+
+    const Original: any = rocketstyle()({
+      name: 'WithHoc',
+      component: BaseComponent,
+    }).compose({ markerHoc })
+
+    // Sanity check: HOC applies on the original
+    const { unmount } = render(<Original data-testid="orig">x</Original>, {
+      wrapper,
+    })
+    expect(document.querySelector('[data-hoc-marker]')).toBeTruthy()
+    unmount()
+
+    // After component swap, HOC should be gone
+    const Swapped: any = Original.config({ component: AlternateBase })
+    render(<Swapped data-testid="swap">x</Swapped>, { wrapper })
+    expect(document.querySelector('[data-hoc-marker]')).toBeFalsy()
+  })
+
+  it('clears filterAttrs on component swap', () => {
+    // Set a filter that strips `data-secret`, then add an attrs callback
+    // that produces it. With the filter active, it should be stripped.
+    const Original: any = rocketstyle()({
+      name: 'Filtered',
+      component: BaseComponent,
+    }).attrs((() => ({ 'data-secret': 'old' })) as any, {
+      filter: ['data-secret'] as any,
+    })
+
+    // Sanity check: the filter strips 'data-secret' from the original
+    const { unmount } = render(<Original data-testid="orig">x</Original>, {
+      wrapper,
+    })
+    expect(screen.getByTestId('orig')).not.toHaveAttribute('data-secret')
+    unmount()
+
+    // After component swap + re-chain: filter is cleared, so a new attrs
+    // callback emitting 'data-secret' should now flow through.
+    const Swapped: any = Original.config({ component: AlternateBase }).attrs(
+      (() => ({ 'data-secret': 'new' })) as any,
+    )
+    render(<Swapped data-testid="swap">x</Swapped>, { wrapper })
+    expect(screen.getByTestId('swap')).toHaveAttribute('data-secret', 'new')
+  })
+})
