@@ -4,7 +4,10 @@
  * component type guards (RocketType vs ElementType), and rendering option types.
  */
 import type { ListProps } from '@vitus-labs/elements'
-import type { RocketComponentType } from '@vitus-labs/rocketstyle'
+import type {
+  RocketComponentType,
+  ThemeModeKeys,
+} from '@vitus-labs/rocketstyle'
 import type {
   ComponentType,
   FC,
@@ -33,8 +36,12 @@ export type ElementType<T extends TObj | unknown = any> =
 
 export type RocketType = RocketComponentType & {
   VITUS_LABS__COMPONENT?: string
-  getStaticDimensions: any
-  getDefaultAttrs: any
+  getStaticDimensions: (theme: TObj) => {
+    dimensions: Record<string, any>
+    useBooleans: boolean
+    multiKeys: Record<string, true>
+  }
+  getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => TObj
   displayName?: string
 }
 

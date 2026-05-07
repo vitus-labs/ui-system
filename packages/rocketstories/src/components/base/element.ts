@@ -7,6 +7,8 @@ import { Element } from '@vitus-labs/elements'
 import rocketstyle from '@vitus-labs/rocketstyle'
 import { styles } from '@vitus-labs/unistyle'
 
+type StylesTheme = Parameters<typeof styles>[0]['theme']
+
 export default rocketstyle()({
   component: Element,
   name: 'element',
@@ -18,7 +20,7 @@ export default rocketstyle()({
     (css) => css`
       ${({ $rocketstyle }) => {
         const baseTheme = styles({
-          theme: $rocketstyle as any,
+          theme: $rocketstyle as StylesTheme,
           css,
           rootSize: 16,
         })
