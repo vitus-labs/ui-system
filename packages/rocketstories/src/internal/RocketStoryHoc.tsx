@@ -15,7 +15,6 @@ import {
   makeStorybookControls,
 } from '~/utils/controls'
 import { extractDefaultBooleanProps } from '~/utils/dimensions'
-import getTheme from '~/utils/theme'
 
 export type RocketStory<P = {}> = (
   WrappedComponent: any,
@@ -23,11 +22,10 @@ export type RocketStory<P = {}> = (
 
 const rocketStory: RocketStory =
   (WrappedComponent) =>
-  ({ name, component, attrs, controls }) => {
+  ({ name, component, attrs, controls, theme = {} }) => {
     // ------------------------------------------------------
     // ROCKETSTYLE COMPONENT INFO
     // ------------------------------------------------------
-    const theme = getTheme()
     const statics = component.getStaticDimensions(theme)
     const defaultAttrs = component.getDefaultAttrs(attrs, theme, 'light')
     const { dimensions, useBooleans, multiKeys } = statics

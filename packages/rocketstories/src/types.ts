@@ -99,6 +99,16 @@ export type Configuration = {
   }>
   controls: Record<string, Control>
   decorators: Decorator[]
+  /**
+   * Theme used at story-construction time when introspecting rocketstyle
+   * components (`getStaticDimensions`, `getDefaultAttrs`). The
+   * `rocketstories` factory snapshots this from the module-level singleton
+   * (`utils/theme.ts`) so each `storyOf(component)` instance is isolated
+   * from later `setTheme` mutations or competing `init({ theme })` calls
+   * in the same process. Optional in the type to ease direct test
+   * construction; consumers via the factory always receive a value.
+   */
+  theme?: Record<string, unknown>
 }
 
 export type RocketStoryConfiguration = Omit<Configuration, 'component'> & {

@@ -466,6 +466,119 @@ describe('renderDimension', () => {
     expect(container.querySelector('[data-story="state-primary"]')).toBeNull()
   })
 
+  it('ignore list with non-existent value is a no-op', () => {
+    const story = renderDimension('state' as any, {
+      name: 'IgnoreNonexistent',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      decorators: [],
+      ignore: ['ghost-value-that-does-not-exist'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    // All real values still render — ignoring a non-existent value
+    // shouldn't filter out anything.
+    expect(container.querySelector('[data-story="state-primary"]')).toBeTruthy()
+    expect(
+      container.querySelector('[data-story="state-secondary"]'),
+    ).toBeTruthy()
+  })
+
+  it('ignore list containing all values renders no items', () => {
+    const story = renderDimension('state' as any, {
+      name: 'IgnoreAll',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      decorators: [],
+      ignore: ['primary', 'secondary'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    // Wrapper renders, but no dimension-value items inside.
+    expect(container.querySelector('[data-story]')).toBeNull()
+  })
+
+  it('ignore list with multiple values filters all of them', () => {
+    const story = renderDimension('size' as any, {
+      name: 'IgnoreMultiple',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      decorators: [],
+      ignore: ['small', 'large'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    // MockRSComponent only has small + large for size — both ignored.
+    expect(container.querySelector('[data-story="size-small"]')).toBeNull()
+    expect(container.querySelector('[data-story="size-large"]')).toBeNull()
+  })
+
+  it('ignore list works with multi-key dimension', () => {
+    const story = renderDimension('tags' as any, {
+      name: 'IgnoreMultiKey',
+      component: MockMultiKeyComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+      },
+      decorators: [],
+      ignore: ['tagA'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    expect(container.querySelector('[data-story="tags-tagA"]')).toBeNull()
+    expect(container.querySelector('[data-story="tags-tagB"]')).toBeTruthy()
+  })
+
+  it('ignore list works alongside pseudo-state mode', () => {
+    const story = renderDimension('state' as any, {
+      name: 'IgnorePseudo',
+      component: MockRSComponent as any,
+      attrs: {},
+      controls: {},
+      storyOptions: {
+        gap: 16,
+        direction: 'rows',
+        alignX: 'left',
+        alignY: 'top',
+        pseudo: true,
+      },
+      decorators: [],
+      ignore: ['primary'],
+    })
+
+    const { container } = render(createElement(story, {}))
+    // Pseudo mode renders a heading per dimension value, plus a
+    // PseudoList. The ignored value's heading must not appear.
+    expect(container.textContent).not.toContain('Primary')
+    expect(container.textContent).toContain('Secondary')
+  })
+
   it('renders story component with items', () => {
     const story = renderDimension('state' as any, {
       name: 'RenderTest',
