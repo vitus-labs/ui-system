@@ -18,10 +18,15 @@ export type RenderList<P = {}> = (
   params: RocketStoryConfiguration,
 ) => StoryComponent<P>
 
+// `<List {...list}>` spreads a dynamic ListStoryOptions; the strict public
+// overloads can't pick a branch from a fully-spread shape. Cast to a loose
+// callable for this internal HOC plumbing — runtime is correct.
+const LooseList = List as (props: Record<string, unknown>) => React.ReactNode
+
 export default (list: ListStoryOptions) =>
   RocketStoryHoc(
     (component: ComponentType) => (props: Record<string, unknown>) => (
-      <List
+      <LooseList
         rootElement={false}
         itemProps={props}
         {...list}
