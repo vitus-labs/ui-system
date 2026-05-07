@@ -61,11 +61,10 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "cover": "coveralls < .coverage/lcov.info",
-    "typecheck": "tsc --noEmit",
-    "version": "node ../../scripts/sync-peer-deps.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.1.0",
+    "@vitus-labs/core": "workspace:^",
     "react": ">= 19"
   },
   "devDependencies": {
