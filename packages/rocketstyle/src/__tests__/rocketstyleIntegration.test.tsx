@@ -198,6 +198,30 @@ describe('chaining methods', () => {
     const result = WithAttrs.getDefaultAttrs({}, {}, 'light')
     expect(result.label).toBe('default')
   })
+
+  // Regression: isDark/isLight helpers passed to .attrs() callbacks were
+  // swapped relative to `mode` for static-side calls (via getDefaultAttrs).
+  // Runtime renders were correct (via useTheme), but rocketstories' default
+  // attrs introspection received inverted helpers.
+  it('.getDefaultAttrs() passes mode helpers matching the mode', () => {
+    const ModeAware = Button.attrs(
+      (_props: any, _theme: any, helpers: any) => ({
+        mode: helpers.mode,
+        isDark: helpers.isDark,
+        isLight: helpers.isLight,
+      }),
+    )
+
+    const lightResult = ModeAware.getDefaultAttrs({}, {}, 'light')
+    expect(lightResult.mode).toBe('light')
+    expect(lightResult.isLight).toBe(true)
+    expect(lightResult.isDark).toBe(false)
+
+    const darkResult = ModeAware.getDefaultAttrs({}, {}, 'dark')
+    expect(darkResult.mode).toBe('dark')
+    expect(darkResult.isLight).toBe(false)
+    expect(darkResult.isDark).toBe(true)
+  })
 })
 
 describe('rendering', () => {
