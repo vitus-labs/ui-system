@@ -12,8 +12,12 @@ type ParseProps = <
   props: T,
 ) => Record<keyof T, unknown>
 
-const parseProps: ParseProps = (props) =>
-  Object.entries(props).reduce((acc, [key, value]) => {
+const parseProps: ParseProps = <
+  T extends Record<string, SimpleValue | SimpleValue[] | ObjValue>,
+>(
+  props: T,
+): Record<keyof T, unknown> =>
+  Object.entries(props).reduce<Record<string, unknown>>((acc, [key, value]) => {
     if (value === null) return acc
 
     const valueType = typeof value
@@ -40,7 +44,7 @@ const parseProps: ParseProps = (props) =>
     }
 
     return acc
-  }, {} as any)
+  }, {}) as Record<keyof T, unknown>
 
 // --------------------------------------------------------
 // stringifyArray

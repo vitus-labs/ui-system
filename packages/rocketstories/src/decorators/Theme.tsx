@@ -3,7 +3,7 @@
  * theme providers. Reads the theme from the global window store and applies
  * it in "light" mode so that all rocketstyle components receive proper theming.
  */
-import { Provider } from '@vitus-labs/rocketstyle'
+import { Provider, type TProvider } from '@vitus-labs/rocketstyle'
 import { Provider as provider } from '@vitus-labs/unistyle'
 import type { ComponentType, ReactElement } from 'react'
 import getTheme from '~/utils/theme'
@@ -11,7 +11,11 @@ import getTheme from '~/utils/theme'
 type ThemeDecoratorType = (Story: ComponentType) => ReactElement
 
 const ThemeDecorator: ThemeDecoratorType = (Story) => (
-  <Provider provider={provider} mode="light" theme={getTheme() as any}>
+  <Provider
+    provider={provider}
+    mode="light"
+    theme={getTheme() as NonNullable<TProvider['theme']>}
+  >
     <Story />
   </Provider>
 )

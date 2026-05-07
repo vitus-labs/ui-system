@@ -203,7 +203,7 @@ describe('createRocketStories builder', () => {
   })
 
   it('.config() returns new builder preserving existing config', () => {
-    // cloneAndEhnance uses `defaultOptions.name || options.name`
+    // cloneAndEnhance uses `defaultOptions.name || options.name`
     // existing name takes priority over config name
     const builder = rocketstories(MockComponent)
     const enhanced = builder.config({ storyOptions: { gap: 48 } })
@@ -223,6 +223,64 @@ describe('createRocketStories builder', () => {
     const builder = rocketstories(MockComponent)
     const enhanced = builder.replaceComponent(OtherComponent as any)
     expect(enhanced.CONFIG.component).toBe(OtherComponent)
+  })
+
+  it('.replaceComponent() resets attrs (component swap drops prior attrs)', () => {
+    const OtherComponent = () => null
+    OtherComponent.displayName = 'Other'
+    const builder = rocketstories(MockComponent).attrs({
+      label: 'old',
+      legacyProp: true,
+    })
+    expect(builder.CONFIG.attrs).toEqual({ label: 'old', legacyProp: true })
+    const swapped = builder.replaceComponent(OtherComponent as any)
+    expect(swapped.CONFIG.attrs).toEqual({})
+  })
+
+  it('.replaceComponent() preserves storyOptions, controls, decorators', () => {
+    const OtherComponent = () => null
+    OtherComponent.displayName = 'Other'
+    const dec = () => null
+    const builder = rocketstories(MockComponent)
+      .storyOptions({ gap: 48 })
+      .controls({ label: 'text' as any })
+      .decorators([dec] as any)
+    const swapped = builder.replaceComponent(OtherComponent as any)
+    expect(swapped.CONFIG.storyOptions.gap).toBe(48)
+    expect(swapped.CONFIG.controls.label).toBe('text')
+    expect(swapped.CONFIG.decorators).toContain(dec)
+  })
+
+  it('.replaceComponent() supports re-chaining attrs after swap', () => {
+    const OtherComponent = () => null
+    OtherComponent.displayName = 'Other'
+    const swapped = rocketstories(MockComponent)
+      .attrs({ legacyProp: true })
+      .replaceComponent(OtherComponent as any)
+      .attrs({ newProp: 1 })
+    expect(swapped.CONFIG.attrs).toEqual({ newProp: 1 })
+  })
+
+  it('.config({ component }) also resets attrs (same swap path)', () => {
+    const OtherComponent = () => null
+    OtherComponent.displayName = 'Other'
+    const builder = rocketstories(MockComponent).attrs({ label: 'old' })
+    const swapped = builder.config({ component: OtherComponent as any })
+    expect(swapped.CONFIG.component).toBe(OtherComponent)
+    expect(swapped.CONFIG.attrs).toEqual({})
+  })
+
+  it('.config() without component swap preserves attrs', () => {
+    const builder = rocketstories(MockComponent).attrs({ label: 'keep' })
+    const enhanced = builder.config({ storyOptions: { gap: 16 } })
+    expect(enhanced.CONFIG.attrs).toEqual({ label: 'keep' })
+    expect(enhanced.CONFIG.storyOptions.gap).toBe(16)
+  })
+
+  it('.replaceComponent() with the same component is a no-op for attrs', () => {
+    const builder = rocketstories(MockComponent).attrs({ label: 'keep' })
+    const same = builder.replaceComponent(MockComponent as any)
+    expect(same.CONFIG.attrs).toEqual({ label: 'keep' })
   })
 
   it('.decorators() appends decorators', () => {
@@ -249,7 +307,7 @@ describe('createRocketStories builder', () => {
     expect(enhanced.CONFIG.name).toBe('TestComp')
   })
 
-  it('cloneAndEhnance uses options.name when defaultOptions.name is empty', () => {
+  it('cloneAndEnhance uses options.name when defaultOptions.name is empty', () => {
     // When component has no displayName or name, the initial name is empty
     const AnonymousComp = () => null
     Object.defineProperty(AnonymousComp, 'displayName', {
@@ -266,7 +324,7 @@ describe('createRocketStories builder', () => {
     expect(enhanced.CONFIG.name).toContain('FallbackName')
   })
 
-  it('cloneAndEhnance falls back to component.name when displayName is missing', () => {
+  it('cloneAndEnhance falls back to component.name when displayName is missing', () => {
     function NamedFunc() {
       return null
     }

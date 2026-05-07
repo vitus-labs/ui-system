@@ -13,19 +13,38 @@ import type {
 } from '~/types'
 
 /**
- * Clones the current configuration, merges in new options,
- * and returns a fresh IRocketStories instance for immutable chaining.
+ * Clones the current configuration, merges in new options, and returns a
+ * fresh IRocketStories instance for immutable chaining.
+ *
+ * Component-swap reset: when `options.component` differs from the current
+ * `defaultOptions.component`, the prior `attrs` are dropped — they were
+ * tailored to the previous component's prop shape, and applying them to a
+ * different component silently leaks invalid props onto the rendered
+ * output. Story-level config (`storyOptions`, `controls`, `decorators`)
+ * is preserved because it's about how stories render, not about the
+ * component's prop shape. Mirrors the same fix in `@vitus-labs/rocketstyle`'s
+ * `cloneAndEnhance` (PR #200).
+ *
+ * Callers who want to preserve attrs across a component swap must
+ * re-chain explicitly:
+ *
+ *   stories.replaceComponent(NewComp).attrs(sharedAttrs)
  */
-const cloneAndEhnance = (
+const cloneAndEnhance = (
   defaultOptions: Configuration,
   options: Partial<Configuration>,
 ) => {
+  const componentChanged =
+    options.component != null && options.component !== defaultOptions.component
+
   const result = {
     ...defaultOptions,
     name: defaultOptions.name || options.name,
     prefix: options.prefix || defaultOptions.prefix,
     component: options.component || defaultOptions.component,
-    attrs: { ...defaultOptions.attrs, ...options.attrs },
+    attrs: componentChanged
+      ? { ...options.attrs }
+      : { ...defaultOptions.attrs, ...options.attrs },
     storyOptions: { ...defaultOptions.storyOptions, ...options.storyOptions },
     controls: { ...defaultOptions.controls, ...options.controls },
     decorators: [
@@ -196,11 +215,11 @@ const createRocketStories: CreateRocketStories = (options) => {
     },
 
     // chaining methods
-    storyOptions: (storyOptions) => cloneAndEhnance(options, { storyOptions }),
-    controls: (controls) => cloneAndEhnance(options, { controls }),
+    storyOptions: (storyOptions) => cloneAndEnhance(options, { storyOptions }),
+    controls: (controls) => cloneAndEnhance(options, { controls }),
 
     config: ({ component, storyOptions, prefix, name, decorators }) =>
-      cloneAndEhnance(options, {
+      cloneAndEnhance(options, {
         component,
         storyOptions,
         prefix,
@@ -208,11 +227,11 @@ const createRocketStories: CreateRocketStories = (options) => {
         decorators,
       }),
 
-    attrs: (attrs) => cloneAndEhnance(options, { attrs }),
+    attrs: (attrs) => cloneAndEnhance(options, { attrs }),
 
-    replaceComponent: (component) => cloneAndEhnance(options, { component }),
+    replaceComponent: (component) => cloneAndEnhance(options, { component }),
 
-    decorators: (decorators) => cloneAndEhnance(options, { decorators }),
+    decorators: (decorators) => cloneAndEnhance(options, { decorators }),
   }
 }
 

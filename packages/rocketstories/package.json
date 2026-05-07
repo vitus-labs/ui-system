@@ -65,7 +65,7 @@
     "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
-    "@storybook/react": "10.3.6",
+    "@storybook/react": "^10.3.6",
     "@vitus-labs/core": "2.1.0",
     "@vitus-labs/rocketstyle": "2.1.0",
     "@vitus-labs/unistyle": "2.1.0",
