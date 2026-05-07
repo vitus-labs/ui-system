@@ -1,6 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import { Fragment } from 'react'
-import Iterator from '../helpers/Iterator/component'
+import IteratorStrict from '../helpers/Iterator/component'
+
+// Loose alias for runtime-defensive edge-case tests below — the strict
+// public overloads correctly reject calls like `<Iterator />` (no data, no
+// children) or `<Iterator component data children />` (mode collision)
+// because consumers shouldn't write those. The tests still exercise the
+// implementation's defensive return-null paths via this loose handle.
+const Iterator = IteratorStrict as any
 
 const TextItem = ({ children, ...props }: any) => (
   <span data-testid="item" {...props}>

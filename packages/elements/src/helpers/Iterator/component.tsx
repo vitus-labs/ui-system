@@ -16,11 +16,14 @@ import {
 } from 'react'
 import { isFragment } from 'react-is'
 import type {
+  ChildrenProps,
   ElementType,
   ExtendedProps,
+  ObjectProps,
   ObjectValue,
   Props,
   PropsCallback,
+  SimpleProps,
   SimpleValue,
   TObj,
 } from './types'
@@ -261,7 +264,39 @@ const Component: FC<Props> = ({
   )
 }
 
-export default Object.assign(memo(Component), {
+// ---------------------------------------------------------------------------
+// Public callable type — overloads expose the generic `<T>` API at the JSX
+// boundary while the impl stays loose-typed. TS picks the matching overload
+// based on the props object passed:
+//
+//   <Iterator data={['a','b']} valueName="text" component={Item} />
+//   ^ T inferred as string → SimpleProps<string> overload selected
+//
+//   <Iterator data={users} component={UserCard} />
+//   ^ T inferred as User → ObjectProps<User> overload selected
+//
+//   <Iterator>{...}</Iterator>            → ChildrenProps overload selected
+//   <Iterator {...untypedProps} />        → LooseProps fallback overload
+// ---------------------------------------------------------------------------
+export interface IteratorComponent {
+  // T is inferred from the `data` prop at the JSX site — no explicit
+  // generic argument needed. The order matters: SimpleProps first (matches
+  // `data: SimpleValue[]`), then ObjectProps (object[]), then ChildrenProps.
+  // The narrow overloads enforce per-mode constraints (valueName required
+  // for primitive arrays, forbidden for object arrays, etc.) — there is
+  // intentionally no loose fallback overload, so calls that don't match
+  // any branch produce a real type error.
+  <T extends SimpleValue>(props: SimpleProps<T>): ReactNode
+  <T extends ObjectValue>(props: ObjectProps<T>): ReactNode
+  (props: ChildrenProps): ReactNode
+  isIterator: true
+  RESERVED_PROPS: typeof RESERVED_PROPS
+  displayName?: string
+}
+
+const Iterator = Object.assign(memo(Component), {
   isIterator: true as const,
   RESERVED_PROPS,
-})
+}) as unknown as IteratorComponent
+
+export default Iterator
