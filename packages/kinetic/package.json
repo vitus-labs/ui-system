@@ -58,7 +58,7 @@
     "node": ">= 18"
   },
   "peerDependencies": {
-    "@vitus-labs/hooks": "2.1.0",
+    "@vitus-labs/hooks": "^2.1.0",
     "react": ">= 19",
     "react-native": ">= 0.76"
   },

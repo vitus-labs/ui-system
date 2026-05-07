@@ -66,9 +66,9 @@
   },
   "peerDependencies": {
     "@storybook/react": "^10.3.6",
-    "@vitus-labs/core": "2.1.0",
-    "@vitus-labs/rocketstyle": "2.1.0",
-    "@vitus-labs/unistyle": "2.1.0",
+    "@vitus-labs/core": "^2.1.0",
+    "@vitus-labs/rocketstyle": "^2.1.0",
+    "@vitus-labs/unistyle": "^2.1.0",
     "react": ">= 19"
   },
   "dependencies": {

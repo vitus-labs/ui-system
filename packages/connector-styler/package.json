@@ -51,8 +51,8 @@
     "version": "node ../../scripts/sync-peer-deps.mjs"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.1.0",
-    "@vitus-labs/styler": "2.1.0",
+    "@vitus-labs/core": "^2.1.0",
+    "@vitus-labs/styler": "^2.1.0",
     "react": ">= 19"
   },
   "devDependencies": {

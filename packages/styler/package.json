@@ -57,7 +57,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@vitus-labs/core": "2.1.0",
+    "@vitus-labs/core": "^2.1.0",
     "react": ">= 19"
   },
   "devDependencies": {
