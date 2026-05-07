@@ -112,7 +112,24 @@ CI's `Changeset` check fails any PR that touches `packages/**` without either a 
 2. The next push to `main` triggers `release.yml` → `changesets/action` collects all unconsumed changesets and opens a `chore: version packages` PR.
 3. That PR shows: bumped versions in every `package.json`, generated `CHANGELOG.md` per package, deleted `.changeset/*.md` files.
 4. CI runs on it; once green, mark it auto-merge (or wait for a maintainer).
-5. Merging triggers another `release.yml` run that publishes to npm via OIDC trusted publishing (no secrets needed) and creates one GitHub Release per package with the changeset summaries as the body.
+5. Merging triggers another `release.yml` run that publishes to npm via OIDC trusted publishing (no secrets needed) and creates a single umbrella `vX.Y.Z` GitHub Release for the suite. Per-package detail lives in each `packages/*/CHANGELOG.md`.
+
+### Setup (optional): `RELEASE_PAT` for self-triggering Version PRs
+
+By default, GitHub Actions workflows triggered by pushes from `GITHUB_TOKEN` (which `changesets/action` uses) **do not trigger downstream workflows** — a security feature to prevent infinite-loop scenarios. Without a workaround, Version PRs land with empty CI checks and require a manual close+reopen to start them.
+
+To make Version PRs self-trigger CI, create a fine-grained Personal Access Token and store it as a `RELEASE_PAT` repository secret:
+
+1. **Create the PAT**: github.com/settings/personal-access-tokens → *Generate new token (Fine-grained)*
+   - Resource owner: `vitus-labs`
+   - Repository access: only `vitus-labs/ui-system`
+   - Permissions: Repository → Contents = read+write, Pull requests = read+write, Workflows = read+write
+   - Expiration: long-lived or rotation-based per your security policy
+2. **Add as secret**: repo → Settings → Secrets and variables → Actions → *New repository secret*
+   - Name: `RELEASE_PAT`
+   - Value: (paste the token)
+
+`release.yml` falls back to the default `GITHUB_TOKEN` when `RELEASE_PAT` is unset, so this is genuinely optional — without it, releases still work, you just close+reopen the Version PR once to kick CI.
 
 ### Prerelease channel
 
