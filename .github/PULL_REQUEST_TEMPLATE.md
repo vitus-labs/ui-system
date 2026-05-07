@@ -8,6 +8,13 @@
 
 -
 
+## Release Impact
+
+- [ ] I've added a changeset (`bun changeset`) describing the user-facing change
+- [ ] OR this PR doesn't ship to consumers (chore / CI / internal refactor) and I've added the `skip-changeset` label
+
+CI's `Changeset` check enforces this for any PR touching `packages/**`. See [CONTRIBUTING.md → Releases](../blob/main/CONTRIBUTING.md#releases--changesets).
+
 ## Testing
 
 <!-- How were the changes tested? -->
