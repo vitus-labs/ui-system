@@ -164,4 +164,8 @@ jobs:
       - name: Publish snapshot
         run: |
           bunx changeset version --snapshot alpha
+          # See scripts/rewrite-workspace-peers.mjs — npm publish doesn't
+          # rewrite `workspace:` in peerDependencies, only in dependencies.
+          # We do it ourselves so the published artifact has valid semver.
+          node scripts/rewrite-workspace-peers.mjs
           bunx changeset publish --tag next
