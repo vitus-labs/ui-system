@@ -1,5 +1,12 @@
 # @vitus-labs/rocketstories
 
+## 2.3.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @vitus-labs/elements@2.3.0
+
 ## 2.2.1
 
 ### Patch Changes
