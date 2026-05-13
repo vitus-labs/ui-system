@@ -92,19 +92,29 @@ export interface IRocketStyleComponent<
   // `OA extends infer O` distributes over OA's union branches so a wrapper
   // around an overloaded component (`ExtractProps<typeof List>` is a
   // 3-branch union after the new ExtractProps) yields a discriminated DFP
-  // union — one MergeTypes per branch.
+  // union — one branch per overload.
   //
-  // Critically: OA is intersected raw, NOT fed through MergeTypes. The
-  // wrapped component's prop type (e.g. `ObjectProps<O>`) uses `valueName?:
-  // never` as the discrimination mechanism (#199); MergeTypes' inner
-  // `ExtractNullableKeys` strips keys whose type is `never | undefined`,
-  // which would erase that discrimination and let `<StyledList
-  // data={users} valueName="x" />` compile against the object branch.
-  // Keeping OA outside MergeTypes preserves all `?: never` markers from
-  // each overload branch, so per-mode rejection fires at the JSX call
-  // site of the wrapper just like it does on the direct component.
+  // OA-overlapping EA keys (e.g. `.attrs({ tag: 'button' })` on a wrapper
+  // whose OA has `tag: HTMLTags`) are stripped from OA and re-added as
+  // `Partial<Pick<O, …>>` — taking O's WIDER type, not EA's narrow
+  // literal. The runtime default is `'button'`; the JSX call site still
+  // accepts any `HTMLTags` value (so `<Btn tag="a" />` is valid).
+  // `Partial<Omit<EA, keyof O>>` handles net-new EA-only keys (no OA
+  // conflict) and marks them optional too — every `.attrs()` value is
+  // semantically a default, never required of the consumer.
+  //
+  // OA is intersected raw, NOT fed through MergeTypes — `?: never`
+  // markers from overload branches (PR #222) must survive discrimination.
   DFP = OA extends infer O
-    ? O & MergeTypes<[EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>
+    ? Omit<O, keyof EA & keyof O> &
+        Partial<Pick<O, keyof EA & keyof O>> &
+        MergeTypes<
+          [
+            Partial<Omit<EA, keyof O>>,
+            DefaultProps,
+            ExtractDimensionProps<D, DKP, UB>,
+          ]
+        >
     : never,
 > {
   (props: DFP & { ref?: any }): ReactNode
@@ -210,10 +220,22 @@ export interface IRocketStyleComponent<
    *  }))
    *  ```
    */
-  attrs: <P extends TObj | unknown = unknown>(
-    param: P extends TObj
-      ? Partial<MergeTypes<[DFP, P]>> | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>
-      : Partial<DFP> | AttrsCb<DFP, Theme<T>>,
+  attrs: <P extends TObj = {}>(
+    // Object form: TS infers P from the param's keys. `NoInfer<DFP>`
+    // prevents DFP from contributing to P inference, so keys that exist on
+    // both P and DFP (e.g. `component` when wrapping `List`) get attributed
+    // to P — which makes them optional at the JSX call site (via DFP
+    // widening on EA keys). Extra DFP defaults that aren't in P come
+    // through the `Partial<NoInfer<DFP>>` part, preserving the existing
+    // ability to set defaults for any current prop without typing them
+    // into P explicitly.
+    //
+    // Callback form: P is inferred from the explicit type annotation only
+    // (no inference from callback return), so wrapped-component widening
+    // requires `.attrs<P>((props) => …)` for callbacks.
+    param:
+      | (P & Partial<NoInfer<DFP>>)
+      | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>,
     config?: Partial<{
       /**
        * priority props will be resolved first and overwritten by normal `attrs`
@@ -223,13 +245,9 @@ export interface IRocketStyleComponent<
       /**
        * filter props will be omitted when passing to final component
        */
-      filter: P extends TObj
-        ? Partial<keyof MergeTypes<[EA, P]>>[]
-        : Partial<keyof EA>[]
+      filter: (keyof MergeTypes<[EA, P]>)[]
     }>,
-  ) => P extends TObj
-    ? RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
-    : RocketStyleComponent<OA, EA, T, CSS, S, HOC, D, UB, DKP>
+  ) => RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
 
   // THEME chaining method
   // --------------------------------------------------------
