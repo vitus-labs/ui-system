@@ -102,8 +102,10 @@ Component.VITUS_LABS__COMPONENT = name
 type RefExtra = { ref?: Ref<any> }
 
 export interface ListComponent {
-  // T inferred from `data` — strict per-mode constraints, no loose fallback.
-  // See Iterator's IteratorComponent for the same rationale.
+  // T inferred from `data`. Order: SimpleProps, ObjectProps, ChildrenProps,
+  // then a LooseProps fallback for forwarding patterns where derived
+  // `$$types['data']` is a wide union that doesn't bind to any narrow
+  // overload. See Iterator's IteratorComponent for the same rationale.
   <T extends SimpleValue>(
     props: IteratorSimpleProps<T> & ListExtras & RefExtra,
   ): ReactNode
@@ -111,6 +113,7 @@ export interface ListComponent {
     props: IteratorObjectProps<T> & ListExtras & RefExtra,
   ): ReactNode
   (props: IteratorChildrenProps & ListExtras & RefExtra): ReactNode
+  (props: IteratorLooseProps & ListExtras & RefExtra): ReactNode
   displayName?: string
   pkgName?: string
   VITUS_LABS__COMPONENT?: string
