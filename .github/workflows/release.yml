@@ -49,6 +49,20 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # `bun install` runs the root `prepare` script which sets
+      # core.hooksPath to .githooks — that hook chains lint+typecheck
+      # before every `git push`. In CI it fires when `changesets/action`
+      # pushes the Version PR commit / publish tags, which made the
+      # action spend minutes re-running typecheck and eventually SIGTERM
+      # itself (observed on the 2.2.1 publish — npm publish succeeded but
+      # the GitHub Release step was killed before it could run).
+      #
+      # The workflow already validates lint/build/typecheck/test in
+      # explicit steps below, so suppressing the hook here removes pure
+      # redundancy — not safety.
+      - name: Disable local git hooks for the publish flow
+        run: git config core.hooksPath /dev/null
+
       - name: Lint & Format
         run: bun run lint
 
@@ -157,6 +171,12 @@ jobs:
           restore-keys: bun-${{ runner.os }}-
 
       - run: bun install --frozen-lockfile
+
+      # Same reason as the stable job — the local pre-push hook would
+      # re-run typecheck on every push by `changeset publish` and could
+      # cancel the action mid-publish.
+      - name: Disable local git hooks for the publish flow
+        run: git config core.hooksPath /dev/null
 
       - name: Build all packages
         run: bun run pkgs:build
