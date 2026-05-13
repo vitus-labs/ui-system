@@ -1,5 +1,7 @@
 # @vitus-labs/connector-native
 
+## 2.4.0
+
 ## 2.3.0
 
 ## 2.2.1
