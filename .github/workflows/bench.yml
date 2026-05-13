@@ -1,0 +1,187 @@
+name: Bench
+
+# Runs the CSS-in-JS perf bench on PRs that touch styler's hot path,
+# posts a sticky comment with the numbers, and fails the job if any
+# styler row regresses by more than 10% vs the committed baseline in
+# `packages/styler/benchmarks/results.md`.
+#
+# Why path-filtered: noise — running bench on every PR is wasteful and
+# every CI runner has different perf characteristics. Restrict to PRs
+# that could actually affect performance.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/styler/src/**'
+      - 'packages/styler/benchmarks/**'
+  workflow_dispatch: # manual trigger for ad-hoc runs
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: bench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bench:
+    name: Perf bench (styler)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      - name: Cache bun dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build styler
+        run: bun run --filter='@vitus-labs/styler' build
+
+      - name: Run bench
+        id: bench
+        working-directory: packages/styler
+        run: |
+          set -e
+          NODE_ENV=production bun run bench > bench-output.txt 2>&1
+          # Mirror output into the workflow log
+          cat bench-output.txt
+          # Stash for the next step (using GITHUB_OUTPUT for multi-line is finicky; use a file)
+          mkdir -p /tmp/bench-artifacts
+          cp bench-output.txt /tmp/bench-artifacts/
+          cp benchmarks/results.md /tmp/bench-artifacts/
+
+      - name: Compare with baseline + post comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require('fs')
+            const output = fs.readFileSync('/tmp/bench-artifacts/bench-output.txt', 'utf8')
+            const baseline = fs.readFileSync('/tmp/bench-artifacts/results.md', 'utf8')
+
+            // Parse a bench block into { scenario → { lib → ops } }
+            // Match lines of the form: `  styler   1528 ops/s   0.685 ms/op …`
+            const parse = (text) => {
+              const out = {}
+              let currentScenario = null
+              for (const rawLine of text.split('\n')) {
+                const line = rawLine.replace(/[─=]/g, ' ').trim()
+                if (!line) continue
+                // Scenario header: "── ssr-static ──" → "ssr-static"
+                const sceneMatch = line.match(/^([a-z][a-z0-9-]+)\s*$/i)
+                if (sceneMatch && !line.includes('ops/s')) {
+                  currentScenario = sceneMatch[1]
+                  if (!out[currentScenario]) out[currentScenario] = {}
+                  continue
+                }
+                // Row: "styler 1528 ops/s 0.685 ms/op …"
+                const rowMatch = rawLine.match(
+                  /^\s*([a-z][a-z0-9-]*)\s+([0-9.]+)\s*ops\/s/i,
+                )
+                if (rowMatch && currentScenario) {
+                  const [, lib, ops] = rowMatch
+                  out[currentScenario][lib] = Number(ops)
+                }
+              }
+              return out
+            }
+
+            const prData = parse(output)
+            const baseData = parse(baseline)
+
+            // Diff: focus on styler — that's the row we control.
+            const REGRESSION_THRESHOLD = -0.10 // -10% triggers failure
+            const lines = []
+            const violations = []
+            const scenarios = new Set([
+              ...Object.keys(prData),
+              ...Object.keys(baseData),
+            ])
+            for (const scene of scenarios) {
+              const pr = prData[scene]?.styler
+              const base = baseData[scene]?.styler
+              if (pr == null || base == null) continue
+              const pct = (pr - base) / base
+              const sign = pct >= 0 ? '+' : ''
+              const emoji = pct >= 0.05 ? '🚀' : pct <= REGRESSION_THRESHOLD ? '🔴' : '🟢'
+              lines.push(
+                `| ${scene} | ${base.toFixed(0)} ops/s | ${pr.toFixed(0)} ops/s | ${emoji} ${sign}${(pct * 100).toFixed(1)}% |`,
+              )
+              if (pct <= REGRESSION_THRESHOLD) {
+                violations.push(
+                  `\`${scene}\` styler regressed ${(pct * 100).toFixed(1)}% (${base.toFixed(0)} → ${pr.toFixed(0)} ops/s)`,
+                )
+              }
+            }
+
+            const verdict = violations.length === 0
+              ? '✅ No regression detected.'
+              : `❌ Regression detected on ${violations.length} scenario(s):\n\n- ${violations.join('\n- ')}\n\nIf this regression is expected, update \`packages/styler/benchmarks/results.md\` to the new baseline.`
+
+            const body = [
+              '<!-- bench-bot -->',
+              '## 🏁 Perf bench — styler',
+              '',
+              verdict,
+              '',
+              '### styler vs committed baseline',
+              '',
+              '| Scenario | Baseline | PR | Δ |',
+              '|---|---|---|---|',
+              ...lines,
+              '',
+              '<details><summary>Full bench output</summary>',
+              '',
+              '```',
+              output,
+              '```',
+              '',
+              '</details>',
+              '',
+              '_Threshold: 10% regression fails this job. Baseline lives in `packages/styler/benchmarks/results.md` — update if a regression is intentional._',
+            ].join('\n')
+
+            // Sticky-comment pattern: find existing bot comment, update or create
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const existing = comments.find((c) =>
+              c.body && c.body.includes('<!-- bench-bot -->'),
+            )
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
+
+            if (violations.length > 0) {
+              core.setFailed(
+                `Perf regression: ${violations.length} scenario(s) below -10% threshold`,
+              )
+            }
