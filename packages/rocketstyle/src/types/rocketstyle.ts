@@ -88,7 +88,24 @@ export interface IRocketStyleComponent<
   // dimension key props
   DKP extends TDKP = TDKP,
   // calculated final props
-  DFP = MergeTypes<[OA, EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>,
+  //
+  // `OA extends infer O` distributes over OA's union branches so a wrapper
+  // around an overloaded component (`ExtractProps<typeof List>` is a
+  // 3-branch union after the new ExtractProps) yields a discriminated DFP
+  // union — one MergeTypes per branch.
+  //
+  // Critically: OA is intersected raw, NOT fed through MergeTypes. The
+  // wrapped component's prop type (e.g. `ObjectProps<O>`) uses `valueName?:
+  // never` as the discrimination mechanism (#199); MergeTypes' inner
+  // `ExtractNullableKeys` strips keys whose type is `never | undefined`,
+  // which would erase that discrimination and let `<StyledList
+  // data={users} valueName="x" />` compile against the object branch.
+  // Keeping OA outside MergeTypes preserves all `?: never` markers from
+  // each overload branch, so per-mode rejection fires at the JSX call
+  // site of the wrapper just like it does on the direct component.
+  DFP = OA extends infer O
+    ? O & MergeTypes<[EA, DefaultProps, ExtractDimensionProps<D, DKP, UB>]>
+    : never,
 > {
   (props: DFP & { ref?: any }): ReactNode
   // CONFIG chaining method
