@@ -23,24 +23,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify changeset present (or bypass label)
+      - name: Verify changeset activity (added or consumed)
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
           HAS_SKIP_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'skip-changeset') }}
-          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           set -euo pipefail
-
-          # 0. Auto-bypass for the changesets/action-generated Version PR.
-          # That PR bumps every package.json (touches packages/**) but
-          # *deletes* changesets instead of adding new ones — so a literal
-          # reading of the gate fails it. The PR is signed by github-actions
-          # and titled "chore: version packages" — recognise both.
-          if [ "$PR_AUTHOR" = "github-actions[bot]" ] && [[ "$PR_TITLE" == "chore: version packages"* ]]; then
-            echo "::notice::Auto-generated Version PR — bypassing the gate."
-            exit 0
-          fi
 
           # 1. PRs that don't touch packages/ never need a changeset.
           PACKAGE_FILES=$(git diff --name-only "origin/${BASE_REF}...HEAD" -- 'packages/**' || true)
@@ -57,15 +45,21 @@ jobs:
             exit 0
           fi
 
-          # 3. Otherwise, an added .changeset/*.md file is required.
-          ADDED_CHANGESETS=$(git diff --name-only --diff-filter=A "origin/${BASE_REF}...HEAD" -- '.changeset/*.md' || true)
+          # 3. Either ADDING a changeset (regular feature/fix PR) or
+          # DELETING changesets (Version PR consuming them) satisfies the
+          # gate. The intent of the rule is "every package change has a
+          # changelog trail" — consuming a previously-added changeset
+          # honours that just as much as adding a new one. This frames
+          # the Version PR as a first-class workflow PR rather than a
+          # special case needing an author/title bypass.
+          CHANGESET_DIFF=$(git diff --name-only --diff-filter=AD "origin/${BASE_REF}...HEAD" -- '.changeset/*.md' || true)
           # Filter out README.md and config files that don't count.
-          ADDED_CHANGESETS=$(echo "$ADDED_CHANGESETS" | grep -v -E '\.changeset/(README|config)\.(md|json)$' || true)
+          CHANGESET_DIFF=$(echo "$CHANGESET_DIFF" | grep -v -E '\.changeset/(README|config)\.(md|json)$' || true)
 
-          if [ -z "$ADDED_CHANGESETS" ]; then
-            echo "::error::This PR touches packages/ but no changeset is present."
+          if [ -z "$CHANGESET_DIFF" ]; then
+            echo "::error::This PR touches packages/ but no changeset activity is present."
             echo ""
-            echo "To add one:"
+            echo "Add one with:"
             echo "  bun changeset"
             echo "  git add .changeset && git commit -m 'add changeset' && git push"
             echo ""
@@ -74,5 +68,5 @@ jobs:
             exit 1
           fi
 
-          echo "::notice::Changeset(s) found:"
-          echo "$ADDED_CHANGESETS"
+          echo "::notice::Changeset activity found:"
+          echo "$CHANGESET_DIFF"
