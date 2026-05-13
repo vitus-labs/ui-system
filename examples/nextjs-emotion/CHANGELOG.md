@@ -1,5 +1,17 @@
 # @vitus-labs/example-nextjs-emotion
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [[`29aaed2`](https://github.com/vitus-labs/ui-system/commit/29aaed20c73c6cd466e0ac2ffb1512d4c519883a)]:
+  - @vitus-labs/connector-emotion@2.2.1
+  - @vitus-labs/coolgrid@2.2.1
+  - @vitus-labs/core@2.2.1
+  - @vitus-labs/elements@2.2.1
+  - @vitus-labs/rocketstyle@2.2.1
+  - @vitus-labs/unistyle@2.2.1
+
 ## 0.0.1
 
 ### Patch Changes
