@@ -1,5 +1,17 @@
 # @vitus-labs/example-vite-emotion
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`4114383`](https://github.com/vitus-labs/ui-system/commit/4114383abde75ce242fe38e2f08a67f17e567733), [`4114383`](https://github.com/vitus-labs/ui-system/commit/4114383abde75ce242fe38e2f08a67f17e567733)]:
+  - @vitus-labs/elements@2.5.0
+  - @vitus-labs/rocketstyle@2.5.0
+  - @vitus-labs/connector-emotion@2.5.0
+  - @vitus-labs/coolgrid@2.5.0
+  - @vitus-labs/core@2.5.0
+  - @vitus-labs/unistyle@2.5.0
+
 ## 0.0.4
 
 ### Patch Changes
