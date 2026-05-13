@@ -24,6 +24,7 @@
     "test": "vitest run",
     "typecheck": "bun run --filter './packages/*' typecheck",
     "size": "size-limit",
+    "licenses": "bun scripts/check-licenses.ts",
     "format": "biome format --write .",
     "atlas": "vl_atlas"
   },
