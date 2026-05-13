@@ -1,4 +1,4 @@
-import component from './component'
+import component, { LooseIterator } from './component'
 import type {
   ChildrenProps,
   ElementType,
@@ -24,5 +24,7 @@ export type {
   SimpleProps,
   SimpleValue,
 }
+
+export { LooseIterator }
 
 export default component

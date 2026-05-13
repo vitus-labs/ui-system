@@ -9,7 +9,7 @@ import type {
   PropsCallback,
 } from '~/helpers/Iterator'
 import type { Props as ListProps } from '~/List'
-import List from '~/List'
+import List, { LooseList } from '~/List'
 import type { Props as OverlayProps, UseOverlayProps } from '~/Overlay'
 import Overlay, { OverlayProvider, useOverlay } from '~/Overlay'
 import type { Props as PortalProps } from '~/Portal'
@@ -61,6 +61,7 @@ export type {
 export {
   Element,
   List,
+  LooseList,
   Overlay,
   OverlayProvider,
   Portal,

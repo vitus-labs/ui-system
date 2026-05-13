@@ -19,6 +19,7 @@ import type {
   ChildrenProps,
   ElementType,
   ExtendedProps,
+  LooseProps,
   ObjectProps,
   ObjectValue,
   Props,
@@ -297,6 +298,35 @@ export interface IteratorComponent {
 const Iterator = Object.assign(memo(Component), {
   isIterator: true as const,
   RESERVED_PROPS,
-}) as unknown as IteratorComponent
+})
 
-export default Iterator
+export default Iterator as unknown as IteratorComponent
+
+// ---------------------------------------------------------------------------
+// Loose-typed alias for HOC composition (rocketstyle wrapping etc.)
+//
+// `IteratorComponent`'s strict overloads give direct JSX callers per-mode
+// narrowing — but `ExtractProps<typeof Iterator>` (used by rocketstyle and
+// other HOC machinery) resolves overloaded interfaces via the *last*
+// signature, which is `ChildrenProps` — much narrower than 2.1.0's loose
+// surface and requires `children`.
+//
+// A single callable can't be both strict-per-T at call sites AND loose for
+// `infer P` reflection. The dual export pattern lets direct consumers keep
+// full narrowing while HOC consumers get a wrappable surface. See
+// `LooseList` for the same pattern in the List package.
+//
+//   import Iterator from '~/helpers/Iterator'
+//   <Iterator data={users} valueName="x" />          // ❌ correctly narrowed
+//
+//   import { LooseIterator } from '~/helpers/Iterator'
+//   const Wrapped = rocketstyle()({ component: LooseIterator })
+//   <Wrapped data={users} />                         // ✅ wrappable
+//
+export const LooseIterator = Iterator as unknown as ((
+  props: LooseProps,
+) => ReactNode) & {
+  isIterator: true
+  RESERVED_PROPS: typeof RESERVED_PROPS
+  displayName?: string
+}

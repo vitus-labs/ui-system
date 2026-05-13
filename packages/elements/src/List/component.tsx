@@ -117,3 +117,37 @@ export interface ListComponent {
 }
 
 export default Component as unknown as ListComponent
+
+// ---------------------------------------------------------------------------
+// Loose-typed alias for HOC composition (rocketstyle wrapping etc.)
+//
+// `ListComponent`'s strict overloads give direct JSX callers per-mode
+// narrowing — but `ExtractProps<typeof List>` (used by rocketstyle and other
+// HOC machinery to derive the wrapper's prop surface) resolves overloaded
+// interfaces via the *last* signature, which is `IteratorChildrenProps &
+// ListExtras & RefExtra` — much narrower than 2.1.0's loose surface and
+// requires `children`.
+//
+// The fundamental TS constraint: a single callable can't be both
+// strict-per-T at call sites AND loose for `infer P` reflection. Loose
+// fallbacks at the call site (overload-last or generic-with-default) bleed
+// into call-site resolution and defeat the narrowing.
+//
+// Solution: export the same runtime under two type identities. Direct
+// consumers use the default `List` for full narrowing; HOC consumers use
+// `LooseList` for the loose, wrappable surface.
+//
+//   import List from '@vitus-labs/elements'
+//   <List data={users} valueName="x" />              // ❌ correctly narrowed
+//
+//   import { LooseList } from '@vitus-labs/elements'
+//   const Styled = rocketstyle()({ component: LooseList })
+//   <Styled data={users} />                          // ✅ wrappable
+//
+export const LooseList = Component as unknown as ((
+  props: IteratorLooseProps & ListExtras & RefExtra,
+) => ReactNode) & {
+  displayName?: string
+  pkgName?: string
+  VITUS_LABS__COMPONENT?: string
+}
