@@ -19,6 +19,7 @@ import type {
   ChildrenProps,
   ElementType,
   ExtendedProps,
+  LooseProps,
   ObjectProps,
   ObjectValue,
   Props,
@@ -280,15 +281,21 @@ const Component: FC<Props> = ({
 // ---------------------------------------------------------------------------
 export interface IteratorComponent {
   // T is inferred from the `data` prop at the JSX site — no explicit
-  // generic argument needed. The order matters: SimpleProps first (matches
-  // `data: SimpleValue[]`), then ObjectProps (object[]), then ChildrenProps.
-  // The narrow overloads enforce per-mode constraints (valueName required
-  // for primitive arrays, forbidden for object arrays, etc.) — there is
-  // intentionally no loose fallback overload, so calls that don't match
-  // any branch produce a real type error.
+  // generic argument needed. Order matters: SimpleProps first (matches
+  // `data: SimpleValue[]`), then ObjectProps (object[]), then ChildrenProps,
+  // then a LooseProps fallback.
+  //
+  // The narrow overloads (Simple/Object/Children) drive per-mode T
+  // inference and stricter compile-time errors for direct callers. The
+  // LooseProps fallback exists for forwarding patterns where
+  // `Partial<(typeof Wrapper)['$$types']>` is spread back into the JSX
+  // site — without a loose binding home, the wide union from
+  // overload-distribution (rocketstyle's ExtractProps) couldn't bind to
+  // any narrow overload.
   <T extends SimpleValue>(props: SimpleProps<T>): ReactNode
   <T extends ObjectValue>(props: ObjectProps<T>): ReactNode
   (props: ChildrenProps): ReactNode
+  (props: LooseProps): ReactNode
   isIterator: true
   RESERVED_PROPS: typeof RESERVED_PROPS
   displayName?: string

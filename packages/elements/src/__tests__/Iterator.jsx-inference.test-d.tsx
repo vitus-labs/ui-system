@@ -162,14 +162,13 @@ const SizedButton = rocketstyle({
 />
 
 // ----------------------------------------------------------------------
-// Heterogeneous arrays — mixed string|object still rejected by all
-// overloads (`T extends SimpleValue | ObjectValue` doesn't accept a
-// union of the two simultaneously).
+// Heterogeneous arrays — mixed string|object now bind to the LooseProps
+// fallback overload (was rejected by Simple/Object overloads alone). The
+// runtime handles per-item dispatch; type-side, the fallback exists so
+// derived `$$types['data']` round-trips back into JSX cleanly.
 // ----------------------------------------------------------------------
 
 const mixed: (string | User)[] = ['a', { id: 1, name: 'one' }]
-// MUST FAIL: heterogeneous array doesn't match any single branch
-// @ts-expect-error — mixed-type arrays must be normalized before iteration
 ;<Iterator data={mixed} component={Item} />
 
 // ----------------------------------------------------------------------
