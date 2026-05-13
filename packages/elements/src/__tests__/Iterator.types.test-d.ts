@@ -33,43 +33,40 @@ expectTypeOf<Props>().toEqualTypeOf<LooseProps>()
 expectTypeOf<Props<unknown>>().toEqualTypeOf<LooseProps>()
 
 // ---------------------------------------------------------------------------
-// Simple branch: valueName is OPTIONAL (defaults to 'children' at runtime)
+// Simple branch
 // ---------------------------------------------------------------------------
 
 type Simple = Props<string>
 expectTypeOf<Simple['valueName']>().toEqualTypeOf<string | undefined>()
 expectTypeOf<Simple['data']>().toEqualTypeOf<Array<string | undefined | null>>()
 
-// itemProps callback arg is { [valueName]: T }
-type SimpleItemProps = NonNullable<SimpleProps<string>['itemProps']>
-type SimpleItemPropsFn = Extract<SimpleItemProps, (...a: any[]) => any>
-expectTypeOf<Parameters<SimpleItemPropsFn>[0]>().toEqualTypeOf<{
-  [k: string]: string
-}>()
-
 // ---------------------------------------------------------------------------
-// Object branch: valueName forbidden, itemKey accepts `keyof T`
+// Object branch
+//
+// After dropping `?: never` markers for forwarding compatibility:
+//   - valueName is accepted as `string | undefined` even on object branch
+//     (was: `undefined` only). Runtime ignores it but TS no longer rejects.
+//   - itemKey still narrows to `keyof T | (item, idx) => SimpleValue` on
+//     direct callers — wrappers (via ExtractProps) substitute T with its
+//     upper bound and lose this narrowing.
 // ---------------------------------------------------------------------------
 
 type Obj = Props<User>
-expectTypeOf<Obj['valueName']>().toEqualTypeOf<undefined>()
+expectTypeOf<Obj['valueName']>().toEqualTypeOf<string | undefined>()
 
 type ObjKey = NonNullable<Obj['itemKey']>
 expectTypeOf<keyof User>().toMatchTypeOf<ObjKey>()
 
-// itemProps callback arg is the full T
-type ObjItemProps = NonNullable<ObjectProps<User>['itemProps']>
-type ObjItemPropsFn = Extract<ObjItemProps, (...a: any[]) => any>
-expectTypeOf<Parameters<ObjItemPropsFn>[0]>().toEqualTypeOf<User>()
-
 // ---------------------------------------------------------------------------
-// Children branch: data/component/valueName/itemKey are all forbidden
+// Children branch
+//
+// Only `children` is required on this branch. Other props (data,
+// component, valueName, itemKey) are optional and accepted at the type
+// level for forwarding compatibility — the runtime ignores them when
+// children is the active discriminator.
 // ---------------------------------------------------------------------------
 
-expectTypeOf<ChildrenProps['data']>().toEqualTypeOf<undefined>()
-expectTypeOf<ChildrenProps['component']>().toEqualTypeOf<undefined>()
-expectTypeOf<ChildrenProps['valueName']>().toEqualTypeOf<undefined>()
-expectTypeOf<ChildrenProps['itemKey']>().toEqualTypeOf<undefined>()
+expectTypeOf<ChildrenProps['children']>().not.toBeNever()
 
 // ---------------------------------------------------------------------------
 // List propagates T identically to Iterator + adds Element prop surface
@@ -87,20 +84,13 @@ expectTypeOf<ListSimple['direction']>().not.toBeNever()
 // List-only toggle
 expectTypeOf<ListSimple['rootElement']>().toEqualTypeOf<boolean | undefined>()
 
-// List<User> mirrors Iterator's ObjectProps — valueName forbidden, itemKey
-// accepts `keyof T`, itemProps callback receives the full T.
-// (`MergeTypes` strips never-typed keys, so we check via `keyof` rather
-// than indexed access for the forbidden case.)
+// List<User> mirrors Iterator's ObjectProps — itemKey accepts `keyof T`,
+// valueName is `string | undefined` (no longer rejected via `?: never`).
 type ListObj = ListProps<User>
-type ListObjHasValueName = 'valueName' extends keyof ListObj ? true : false
-expectTypeOf<ListObjHasValueName>().toEqualTypeOf<false>()
+expectTypeOf<ListObj['valueName']>().toEqualTypeOf<string | undefined>()
 
 type ListObjKey = NonNullable<ListObj['itemKey']>
 expectTypeOf<keyof User>().toMatchTypeOf<ListObjKey>()
-
-type ListObjItemProps = NonNullable<ListObj['itemProps']>
-type ListObjItemPropsFn = Extract<ListObjItemProps, (...a: any[]) => any>
-expectTypeOf<Parameters<ListObjItemPropsFn>[0]>().toEqualTypeOf<User>()
 
 // List with no T defaults to the loose surface (today's behavior — non-breaking).
 // tag from Element-prop surface and rootElement remain accessible.

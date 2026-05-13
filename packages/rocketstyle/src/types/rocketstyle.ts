@@ -220,34 +220,38 @@ export interface IRocketStyleComponent<
    *  }))
    *  ```
    */
-  attrs: <P extends TObj = {}>(
-    // Object form: TS infers P from the param's keys. `NoInfer<DFP>`
-    // prevents DFP from contributing to P inference, so keys that exist on
-    // both P and DFP (e.g. `component` when wrapping `List`) get attributed
-    // to P — which makes them optional at the JSX call site (via DFP
-    // widening on EA keys). Extra DFP defaults that aren't in P come
-    // through the `Partial<NoInfer<DFP>>` part, preserving the existing
-    // ability to set defaults for any current prop without typing them
-    // into P explicitly.
-    //
-    // Callback form: P is inferred from the explicit type annotation only
-    // (no inference from callback return), so wrapped-component widening
-    // requires `.attrs<P>((props) => …)` for callbacks.
-    param:
-      | (P & Partial<NoInfer<DFP>>)
-      | AttrsCb<MergeTypes<[DFP, P]>, Theme<T>>,
-    config?: Partial<{
-      /**
-       * priority props will be resolved first and overwritten by normal `attrs`
-       * callbacks and `props` afterwards
-       */
-      priority: boolean
-      /**
-       * filter props will be omitted when passing to final component
-       */
-      filter: (keyof MergeTypes<[EA, P]>)[]
-    }>,
-  ) => RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
+  // Two overloads. TS resolves in declaration order; the callback form
+  // is listed first so a function argument matches it before falling
+  // through to the object form.
+  //
+  // Both overloads use `NoInfer<DFP>` to prevent DFP from contributing
+  // to P inference. P is only inferred from explicit `<P>` annotation
+  // or from the object-form param's own keys. This keeps literals
+  // narrow under contextual typing — `tag: 'ul'` stays `'ul'` instead of
+  // widening to `string` (the cause of the pre-fix "needs `as const`"
+  // friction in callback form).
+  //
+  // Object-form note: `P & Partial<NoInfer<DFP>>` accepts both new keys
+  // (via P) and defaults for any existing DFP slot (via the partial),
+  // and OA-overlapping keys make the corresponding OA slot optional at
+  // the JSX call site via DFP widening.
+  attrs: {
+    <P extends TObj = {}>(
+      param: AttrsCb<DFP & P, Theme<T>>,
+      config?: Partial<{
+        priority: boolean
+        filter: (keyof MergeTypes<[EA, P]>)[]
+      }>,
+    ): RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
+
+    <P extends TObj = {}>(
+      param: P & Partial<NoInfer<DFP>>,
+      config?: Partial<{
+        priority: boolean
+        filter: (keyof MergeTypes<[EA, P]>)[]
+      }>,
+    ): RocketStyleComponent<OA, MergeTypes<[EA, P]>, T, CSS, S, HOC, D, UB, DKP>
+  }
 
   // THEME chaining method
   // --------------------------------------------------------

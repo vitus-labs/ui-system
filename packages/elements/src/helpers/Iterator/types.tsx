@@ -28,7 +28,23 @@ export type ExtendedProps = {
 
 // ---------------------------------------------------------------------------
 // Per-mode prop shapes — narrowed via the `T` data-element type
+//
+// Discriminated by `data`'s element type only — Simple's `T extends
+// SimpleValue` vs Object's `T extends ObjectValue`. The remaining slots
+// (valueName, itemKey, itemProps, wrapProps, children) share the SAME
+// loose signature across all three branches so the branches stay
+// structurally compatible — this matters for prop-forwarding patterns
+// like `<Wrapper {...props} data={users} />` where `props` comes from a
+// derived `Partial<$$types>`. Previously these used `?: never`
+// discriminators which broke forwarding (a union of `?: string` and `?:
+// never` merges to `string | undefined`, which doesn't fit a `?: never`
+// slot on the target branch). The runtime semantics still differ per
+// branch (valueName is meaningless on objects, children is ignored when
+// data is present), but TS no longer enforces those constraints.
 // ---------------------------------------------------------------------------
+
+/** Loose item-callback param — uniformly typed across branches. */
+type LooseItem = SimpleValue | ObjectValue | Record<string, SimpleValue>
 
 /**
  * Iterator over an array of strings/numbers. Each item is wrapped in
@@ -47,50 +63,63 @@ export type SimpleProps<T extends SimpleValue> = {
   valueName?: string
   /** Optional wrapper around each item. */
   wrapComponent?: ElementType
-  /** Stable key per item (defaults to index). */
-  itemKey?: (item: T, index: number) => SimpleValue
+  /** Stable key per item — pick a key, or compute it. */
+  itemKey?:
+    | keyof ObjectValue
+    | ((item: LooseItem, index: number) => SimpleValue)
   /** Extra props merged onto the rendered component, optionally per-item. */
-  itemProps?: TObj | ((item: { [k: string]: T }, ext: ExtendedProps) => TObj)
+  itemProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
   /** Extra props merged onto the wrapper, optionally per-item. */
-  wrapProps?: TObj | ((item: { [k: string]: T }, ext: ExtendedProps) => TObj)
-  children?: never
+  wrapProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
+  /** Children are ignored at runtime when `data` is present. */
+  children?: ReactNode
 }
 
 /**
  * Iterator over an array of objects. Each item is spread onto the rendered
  * component as props. Per-item `component` overrides also work — when an
  * item carries its own `component` field, the wrapper is bypassed.
+ *
+ * `itemKey` keeps the per-`T` narrowing (`keyof T`) so direct callers
+ * benefit from key-completion against the concrete `T`. itemProps /
+ * wrapProps share the loose signature for forwarding compatibility.
  */
 export type ObjectProps<T extends ObjectValue> = {
   data: Array<T | MaybeNull>
   /** Default React component to be rendered per item (item-level `component` overrides). */
   component: ElementType
-  /** `valueName` is meaningless when iterating objects — TS forbids it. */
-  valueName?: never
+  /** `valueName` is meaningless when iterating objects (runtime ignores it). */
+  valueName?: string
   /** Optional wrapper around each item. */
   wrapComponent?: ElementType
   /** Stable key per item — pick a key from the item, or compute it. */
-  itemKey?: keyof T | ((item: T, index: number) => SimpleValue)
+  itemKey?: keyof T | ((item: LooseItem, index: number) => SimpleValue)
   /** Extra props merged onto the rendered component, optionally per-item. */
-  itemProps?: TObj | ((item: T, ext: ExtendedProps) => TObj)
+  itemProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
   /** Extra props merged onto the wrapper, optionally per-item. */
-  wrapProps?: TObj | ((item: T, ext: ExtendedProps) => TObj)
-  children?: never
+  wrapProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
+  /** Children are ignored at runtime when `data` is present. */
+  children?: ReactNode
 }
 
 /**
- * Iterator over `children` — no `data`/`component`. Each child gets
- * positional metadata via `itemProps` and an optional `wrapComponent`.
+ * Iterator over `children` — no `data`/`component` at runtime. Each
+ * child gets positional metadata via `itemProps` and an optional
+ * `wrapComponent`. data/component/valueName/itemKey are accepted at the
+ * type level for forwarding compatibility but ignored at runtime when
+ * `children` is the active discriminator.
  */
 export type ChildrenProps = {
   children: ReactNode
-  data?: never
-  component?: never
-  valueName?: never
-  itemKey?: never
+  data?: Array<SimpleValue | ObjectValue | MaybeNull>
+  component?: ElementType
+  valueName?: string
+  itemKey?:
+    | keyof ObjectValue
+    | ((item: LooseItem, index: number) => SimpleValue)
   wrapComponent?: ElementType
-  itemProps?: TObj | ((_: Record<string, never>, ext: ExtendedProps) => TObj)
-  wrapProps?: TObj | ((_: Record<string, never>, ext: ExtendedProps) => TObj)
+  itemProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
+  wrapProps?: TObj | ((item: LooseItem, ext: ExtendedProps) => TObj)
 }
 
 // ---------------------------------------------------------------------------

@@ -1,21 +1,15 @@
 /**
- * Integration: does `rocketstyle()({ component: List })` produce a wrapper
- * whose JSX call site preserves the per-mode narrowing #199 introduced on
- * direct `<List>` usage?
+ * Integration: `rocketstyle()({ component: List })` produces a wrapper
+ * whose JSX call site can be invoked in each of List's three iterator
+ * modes (object-array, string-array, children-only).
  *
- * `bun run typecheck` fails if narrowing-through-wrap regresses:
- *   - `valueName` on object arrays — must be rejected on the wrapper.
- *   - `data` + `children` mode-mixing — must be rejected.
- *   - Object-array mode with the right shape — must compile.
- *   - String-array mode with `valueName` — must compile.
- *   - Children-only mode — must compile.
- *
- * Note on per-T narrowing inside the wrapped surface: `keyof ObjectValue`
- * widens to `string | number | symbol` (ObjectValue includes
- * `Record<string, unknown>`), so `itemKey="anything"` is accepted on the
- * wrapper — that's a documented trade-off of going through ExtractProps
- * (the wrapped T substitutes its upper bound). Direct `<List …>` calls
- * keep per-T narrowing.
+ * After the forwarding-friendliness refactor in @vitus-labs/elements,
+ * the per-mode `?: never` discrimination was dropped (it broke
+ * `<Wrapper {...props} />` patterns over derived `$$types`). What stays:
+ * each mode's required slots (data for iterators, children for the
+ * children branch) still discriminate via the data-element type at the
+ * overload level, and `bun run typecheck` fails if those compile paths
+ * regress.
  */
 import { List } from '@vitus-labs/elements'
 import rocketstyle from '~/init'
@@ -48,20 +42,4 @@ const _children = (
   </StyledList>
 )
 
-// ─── Fail: illegal calls must be rejected by the narrowing ───────────
-
-// MUST FAIL: valueName forbidden on object arrays
-const _badValueName = (
-  // @ts-expect-error — valueName forbidden on object arrays (Object branch)
-  <StyledList data={users} valueName="text" component={Card} />
-)
-
-// MUST FAIL: Children mode forbids `data`
-const _modeMix = (
-  // @ts-expect-error — children mode rejects `data`
-  <StyledList data={strings}>
-    <span>x</span>
-  </StyledList>
-)
-
-export { _badValueName, _children, _modeMix, _obj, _str }
+export { _children, _obj, _str }

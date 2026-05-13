@@ -8,6 +8,11 @@
  *     `ObjectProps['component']` is required.
  *   - keys that are new (EA-only): `.attrs<{ tone: string }>({ tone: 'a' })`
  *     makes `tone` optional at the call site.
+ *
+ * Per-mode discrimination via `?: never` markers was previously enforced
+ * here (PR #222) but is now relaxed in @vitus-labs/elements to support
+ * prop-forwarding patterns (`<Wrapper {...props} />` over derived
+ * `Partial<$$types>`). See the elements changeset for the trade-off.
  */
 import { List } from '@vitus-labs/elements'
 import rocketstyle from '~/init'
@@ -40,18 +45,4 @@ const Sized = rocketstyle()({ component: List, name: 'Sized' })
 const _toneOmitted = <Sized data={users} component={Card} itemKey="id" />
 const _toneSet = <Sized data={users} component={Card} itemKey="id" tone="b" />
 
-// ─── Per-mode discrimination from PR #222 must still fire ───────────
-const _badValueName = (
-  // @ts-expect-error — valueName forbidden on object arrays (Object branch)
-  <CardList data={users} valueName="text" />
-)
-
-declare const strings: string[]
-const _modeMix = (
-  // @ts-expect-error — children mode rejects `data`
-  <CardList data={strings}>
-    <span>x</span>
-  </CardList>
-)
-
-export { _badValueName, _modeMix, _omitted, _override, _toneOmitted, _toneSet }
+export { _omitted, _override, _toneOmitted, _toneSet }
