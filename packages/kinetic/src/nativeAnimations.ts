@@ -68,20 +68,23 @@ export const buildAnimatedStyle = (
         (toStyle.transform as string) || '',
       )
 
-      const types = new Set([
-        ...fromTransforms.map((t) => t.type),
-        ...toTransforms.map((t) => t.type),
-      ])
+      // Index by type once (O(n)) so the per-type loop below is O(1)
+      // lookups instead of O(n·m) repeated `.find()` scans. `.find()`
+      // returns the FIRST match, so we keep the first occurrence per
+      // type (skip if already set) to preserve exact prior semantics
+      // when a transform string repeats a type.
+      const fromByType = new Map<string, number>()
+      for (const t of fromTransforms)
+        if (!fromByType.has(t.type)) fromByType.set(t.type, t.value)
+      const toByType = new Map<string, number>()
+      for (const t of toTransforms)
+        if (!toByType.has(t.type)) toByType.set(t.type, t.value)
+
+      const types = new Set([...fromByType.keys(), ...toByType.keys()])
 
       for (const type of types) {
-        const fromVal =
-          fromTransforms.find((t) => t.type === type)?.value ??
-          TRANSFORM_IDENTITY[type] ??
-          0
-        const toVal =
-          toTransforms.find((t) => t.type === type)?.value ??
-          TRANSFORM_IDENTITY[type] ??
-          0
+        const fromVal = fromByType.get(type) ?? TRANSFORM_IDENTITY[type] ?? 0
+        const toVal = toByType.get(type) ?? TRANSFORM_IDENTITY[type] ?? 0
 
         if (fromVal === toVal) {
           transforms.push({ [type]: fromVal })

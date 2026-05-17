@@ -1,5 +1,16 @@
 // ─── Transition string parsing (pure, no react-native dependency) ────
 
+// Hoisted to module scope + Set for O(1) membership — avoids
+// re-allocating the array and the O(n) `.includes()` scan on every
+// parsed transition token.
+const EASING_NAMES = new Set([
+  'linear',
+  'ease',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+])
+
 export type TransitionConfig = {
   property: string
   duration: number
@@ -33,9 +44,8 @@ export const parseTransitionString = (
     }
 
     let easingName = 'ease'
-    const easingNames = ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out']
     for (const t of tokens) {
-      if (easingNames.includes(t)) {
+      if (EASING_NAMES.has(t)) {
         easingName = t
         break
       }
