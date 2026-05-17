@@ -11,7 +11,7 @@ type Props = {
   title?: string
 } & { [key: string]: any }
 
-const component: FC<Props> = ({ title, ...props }) => {
+const Item: FC<Props> = ({ title, ...props }) => {
   const { component } = useContext()
 
   return (
@@ -22,4 +22,4 @@ const component: FC<Props> = ({ title, ...props }) => {
   )
 }
 
-export default component
+export default Item

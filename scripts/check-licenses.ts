@@ -73,8 +73,10 @@ const isBlocked = (license: unknown): string | null => {
   const tokens = license
     .replace(/[()]/g, ' ')
     .split(/\s+(?:OR|AND|WITH)\s+/i)
-    .map((t) => t.trim())
-    .filter(Boolean)
+    .flatMap((t) => {
+      const trimmed = t.trim()
+      return trimmed ? [trimmed] : []
+    })
 
   // If ANY token is OR'd with a permissive license, allow.
   const hasPermissiveAlt = license

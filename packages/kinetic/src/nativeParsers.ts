@@ -1,5 +1,16 @@
 // ─── Transition string parsing (pure, no react-native dependency) ────
 
+// Hoisted to module scope + Set for O(1) membership — avoids
+// re-allocating the array and the O(n) `.includes()` scan on every
+// parsed transition token.
+const EASING_NAMES = new Set([
+  'linear',
+  'ease',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+])
+
 export type TransitionConfig = {
   property: string
   duration: number
@@ -33,9 +44,8 @@ export const parseTransitionString = (
     }
 
     let easingName = 'ease'
-    const easingNames = ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out']
     for (const t of tokens) {
-      if (easingNames.includes(t)) {
+      if (EASING_NAMES.has(t)) {
         easingName = t
         break
       }
@@ -55,6 +65,11 @@ export const getPrimaryTransitionConfig = (
   if (!transition) return { duration: 300, easingName: 'ease' }
 
   const configs = parseTransitionString(transition)
+  // Unreachable defensive guard: `parseTransitionString` does
+  // `transition.split(',').map(...)`, and `split(',')` on any non-empty
+  // string yields ≥1 element (the `!transition` early-return above
+  // covers empty/undefined). Kept for safety; not coverable.
+  /* v8 ignore next */
   if (configs.length === 0) return { duration: 300, easingName: 'ease' }
 
   // biome-ignore lint/style/noNonNullAssertion: configs.length === 0 already returned above, so configs[0] exists
@@ -83,10 +98,18 @@ export const parseTransformString = (transform: string): ParsedTransform[] => {
   let match: RegExpExecArray | null
 
   while ((match = regex.exec(transform)) !== null) {
+    // The `?? ''` fallbacks are unreachable: the regex
+    // `/(\w+)\(([^)]+)\)/` only matches when BOTH capture groups are
+    // present, so `match[1]`/`match[2]` are never undefined here. The
+    // coalesce exists solely to satisfy `noUncheckedIndexedAccess`.
+    /* v8 ignore next 2 */
     const type = match[1] ?? ''
     const raw = (match[2] ?? '').trim()
     const value = Number.parseFloat(raw)
-    if (type && !Number.isNaN(value)) {
+    // `type` is always truthy here — the regex group `(\w+)` requires
+    // ≥1 word char, so the dropped `type &&` guard was dead. Only the
+    // NaN check is a real branch (`raw` may be non-numeric).
+    if (!Number.isNaN(value)) {
       result.push({ type, value })
     }
   }
