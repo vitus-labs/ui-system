@@ -19,6 +19,12 @@ const EASING_MAP: Record<string, (t: number) => number> = {
 }
 
 const toEasing = (name: string): ((t: number) => number) =>
+  // The `?? Easing.ease` fallback is unreachable in practice: the only
+  // caller is `getPrimaryTransition`, and `getPrimaryTransitionConfig`
+  // only ever yields an `easingName` from the recognised set (or the
+  // 'ease' default) — all of which are keys of EASING_MAP. Kept as a
+  // defensive guard for direct/future callers.
+  /* v8 ignore next */
   EASING_MAP[name] ?? Easing.ease
 
 /**
