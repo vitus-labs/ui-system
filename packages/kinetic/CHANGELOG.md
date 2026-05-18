@@ -1,5 +1,16 @@
 # @vitus-labs/kinetic
 
+## 2.6.1
+
+### Patch Changes
+
+- [#239](https://github.com/vitus-labs/ui-system/pull/239) [`fafa465`](https://github.com/vitus-labs/ui-system/commit/fafa465fb6bc9dd1f511d33cab5107fc3d2577c8) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Perf + correctness micro-fixes from a `react-doctor` triage (valid findings only; tool false-positives documented, not actioned):
+
+  - `nativeParsers`: hoist `easingNames` to a module-level `Set` — was an O(n) `.includes()` re-allocating a 5-element array per parsed transition token. Dropped a provably-dead `type &&` guard (the regex group `(\w+)` guarantees a non-empty match).
+  - `nativeAnimations`: replace the O(n·m) `.find()`-in-loop with a pre-built type→value `Map`. `.find()`-first semantics are preserved exactly (the Map is built skip-if-present, so a repeated transform type keeps its FIRST value, not last).
+
+  Behaviour is unchanged. New `nativeAnimations.test.ts` (20 cases) pins the transform-merge parity, identity fallbacks, the non-transform style path, `getPrimaryTransition`, and `mergeStyles` — net coverage rises.
+
 ## 2.6.0
 
 ## 2.5.0
