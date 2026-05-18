@@ -144,9 +144,34 @@ const createStyledComponent = (
       staticClassName = sheet.insert(cssText, boost)
     }
 
+    // Tag is known at creation time — hoist the typeof check out of render.
+    const tagIsDOM = typeof tag === 'string'
+
+    // Pre-built ReactElement returned when the consumer passes no props
+    // (the most common case: `<MyStyled />`). Saves the destructure +
+    // buildProps + createElement chain per render. ReactElement values
+    // are immutable so sharing across renders is safe — React treats it
+    // as a fresh element by identity for reconciliation.
+    const baselineMainEl = createElement(tag, {
+      className: staticClassName || undefined,
+    })
+    const baselineFragmentEl = cachedStyleEl
+      ? createElement(Fragment, null, cachedStyleEl, baselineMainEl)
+      : baselineMainEl
+
     const StaticStyled = ({ ref, ...rawProps }: Record<string, any>) => {
+      // Hot path: no props beyond ref → return the pre-cached element.
+      // `for…in` over an empty object has zero iterations; the `break`
+      // ensures we exit on the first key seen.
+      let hasExtraProps = false
+      for (const _k in rawProps) {
+        hasExtraProps = true
+        break
+      }
+      if (!hasExtraProps && ref == null) return baselineFragmentEl
+
       const finalTag = rawProps.as || tag
-      const isDOM = typeof finalTag === 'string'
+      const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
       const finalProps = buildProps(
         rawProps,
         staticClassName,
