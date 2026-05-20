@@ -10,12 +10,18 @@ type RemoveUndefinedProps = <T extends Record<string, any>>(
   props: T,
 ) => { [I in keyof T as T[I] extends undefined ? never : I]: T[I] }
 
-export const removeUndefinedProps: RemoveUndefinedProps = (props) =>
-  Object.keys(props).reduce((acc, key) => {
-    const currentValue = props[key]
-    if (currentValue !== undefined) acc[key] = currentValue
-    return acc
-  }, {} as any)
+export const removeUndefinedProps: RemoveUndefinedProps = (props) => {
+  // Direct for-in loop avoids the `Object.keys` array allocation that the
+  // prior `reduce` over `Object.keys(props)` paid on every render. The hot
+  // path is `attrsHoc`'s useMemo body which fires on every content-equal
+  // re-render of any attrs-wrapped component.
+  const result = {} as any
+  for (const key in props) {
+    const value = props[key]
+    if (value !== undefined) result[key] = value
+  }
+  return result
+}
 
 /**
  * Reduces an array of option functions (from chained `.attrs()` calls)
