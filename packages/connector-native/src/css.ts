@@ -28,6 +28,23 @@ export type CSSResult = {
 const isCSSResult = (v: unknown): v is CSSResult =>
   typeof v === 'object' && v !== null && (v as any).__brand === 'vl.native.css'
 
+const styleObjectToString = (obj: Record<string, unknown>): string => {
+  // Single for-in concat avoids the `Object.entries → .map → .join`
+  // chain's three intermediate arrays (entries tuple array + transformed
+  // array + the implicit array `join` consumes).
+  let result = ''
+  let first = true
+  for (const key in obj) {
+    if (first) {
+      result = `${key}: ${obj[key]}`
+      first = false
+    } else {
+      result += `; ${key}: ${obj[key]}`
+    }
+  }
+  return result
+}
+
 const resolveInterpolation = (value: Interpolation, props: any): string => {
   if (value == null || value === false || value === true) return ''
   if (typeof value === 'function') {
@@ -36,15 +53,10 @@ const resolveInterpolation = (value: Interpolation, props: any): string => {
   }
   if (isCSSResult(value)) {
     // Nested css`` — resolve it and convert back to CSS-like string
-    const resolved = value.resolve(props)
-    return Object.entries(resolved)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join('; ')
+    return styleObjectToString(value.resolve(props))
   }
   if (typeof value === 'object') {
-    return Object.entries(value)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join('; ')
+    return styleObjectToString(value as Record<string, unknown>)
   }
   return String(value)
 }
