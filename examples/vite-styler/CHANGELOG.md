@@ -1,5 +1,18 @@
 # @vitus-labs/example-vite-styler
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`5540257`](https://github.com/vitus-labs/ui-system/commit/5540257276936fc226be8ee28859d63d0d1f5737), [`804dd0e`](https://github.com/vitus-labs/ui-system/commit/804dd0e2bd9709c61766abeb3b9f4519a0d949f1), [`00fdadc`](https://github.com/vitus-labs/ui-system/commit/00fdadc215bd2ddc67daad88e9294c496e148204), [`c483cab`](https://github.com/vitus-labs/ui-system/commit/c483cabc569b31aca111f1bbb5e59e30801bbffc)]:
+  - @vitus-labs/coolgrid@2.6.2
+  - @vitus-labs/elements@2.6.2
+  - @vitus-labs/rocketstyle@2.6.2
+  - @vitus-labs/styler@2.6.2
+  - @vitus-labs/connector-styler@2.6.2
+  - @vitus-labs/core@2.6.2
+  - @vitus-labs/unistyle@2.6.2
+
 ## 0.0.7
 
 ### Patch Changes
