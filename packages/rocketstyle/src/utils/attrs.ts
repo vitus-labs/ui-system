@@ -31,11 +31,17 @@ type PickStyledAttrs = <
   // constraint, but TS doesn't carry that invariant into the mapped type
 ) => { [I in keyof K]: T[I] }
 
-export const pickStyledAttrs: PickStyledAttrs = (props, keywords) =>
-  Object.keys(props).reduce((acc, key) => {
-    if (keywords[key] && props[key]) acc[key] = props[key]
-    return acc
-  }, {} as any)
+export const pickStyledAttrs: PickStyledAttrs = (props, keywords) => {
+  // Direct for-in avoids the `Object.keys` array allocation the prior
+  // reduce-over-keys paid on every render. The hot path is rocketstyle's
+  // EnhancedComponent body, which fires once per render of every
+  // rocketstyle-wrapped component.
+  const result = {} as any
+  for (const key in props) {
+    if (keywords[key] && props[key]) result[key] = props[key]
+  }
+  return result
+}
 
 // --------------------------------------------------------
 // combine values

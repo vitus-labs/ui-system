@@ -7,6 +7,16 @@ export const PSEUDO_KEYS = ['hover', 'active', 'focus', 'pressed'] as const
 /** Meta pseudo-state keys representing non-interactive states (disabled, readOnly). */
 export const PSEUDO_META_KEYS = ['disabled', 'readOnly'] as const
 
+/**
+ * Pre-merged interaction + meta keys. Hoisted from `rocketstyle.tsx`'s render
+ * body so the `pick(props, [...PSEUDO_KEYS, ...PSEUDO_META_KEYS])` call no
+ * longer allocates a fresh 6-element array on every render.
+ */
+export const PSEUDO_AND_META_KEYS = [
+  ...PSEUDO_KEYS,
+  ...PSEUDO_META_KEYS,
+] as const
+
 /** Supported theme mode flags. */
 export const THEME_MODES = {
   light: true,
