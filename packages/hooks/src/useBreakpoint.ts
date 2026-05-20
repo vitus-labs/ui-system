@@ -21,7 +21,16 @@ const useBreakpoint: UseBreakpoint = () => {
 
   const sorted = useMemo(() => {
     if (!breakpoints) return []
-    return Object.entries(breakpoints).sort(([, a], [, b]) => a - b)
+    // Build the [name, min] tuples directly from a for-in scan instead of
+    // `Object.entries(...).sort(...)`. Skips the intermediate entries
+    // tuple-array allocation. Cached by useMemo so this runs only when
+    // breakpoints identity changes (typically once per Provider mount).
+    const tuples: [string, number][] = []
+    for (const name in breakpoints) {
+      const value = breakpoints[name]
+      if (typeof value === 'number') tuples.push([name, value])
+    }
+    return tuples.sort(([, a], [, b]) => a - b)
   }, [breakpoints])
 
   const [current, setCurrent] = useState<string | undefined>(() => {
