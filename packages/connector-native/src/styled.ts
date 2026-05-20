@@ -36,7 +36,9 @@ const createStyledComponent = (
 
     const filter = options?.shouldForwardProp ?? shouldForwardByDefault
     const forwardedProps: Record<string, any> = {}
-    for (const key of Object.keys(props)) {
+    // for-in avoids the `Object.keys` array allocation per render. Runs on
+    // every native styled component render.
+    for (const key in props) {
       if (key === 'children' || key === 'style' || filter(key)) {
         forwardedProps[key] = props[key]
       }

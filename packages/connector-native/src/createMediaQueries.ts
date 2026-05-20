@@ -14,8 +14,12 @@ type CreateMediaQueries = <B extends Record<string, number>>(props: {
  * evaluates the current screen width against breakpoints
  * and conditionally applies styles (mobile-first).
  */
-const createMediaQueries: CreateMediaQueries = ({ breakpoints, css }) =>
-  Object.keys(breakpoints).reduce<Record<string, any>>((acc, key) => {
+const createMediaQueries: CreateMediaQueries = ({ breakpoints, css }) => {
+  // Direct for-in + mutation. The prior `Object.keys.reduce` allocated the
+  // keys array and paid reduce-callback overhead per breakpoint setup.
+  // Mirrors the same change in `@vitus-labs/unistyle`'s `createMediaQueries`.
+  const acc: Record<string, any> = {}
+  for (const key in breakpoints) {
     const breakpointValue = (breakpoints as Record<string, number>)[key]
 
     if (breakpointValue === 0) {
@@ -30,8 +34,8 @@ const createMediaQueries: CreateMediaQueries = ({ breakpoints, css }) =>
         return ''
       }
     }
-
-    return acc
-  }, {}) as any
+  }
+  return acc as any
+}
 
 export default createMediaQueries
