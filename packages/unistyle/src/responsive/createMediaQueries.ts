@@ -18,25 +18,27 @@ const createMediaQueries: CreateMediaQueries = ({
   breakpoints,
   rootSize,
   css,
-}) =>
-  Object.keys(breakpoints).reduce<Record<string, any>>((acc, key) => {
+}) => {
+  // Direct for-in + mutation. The prior `Object.keys.reduce` allocated the
+  // keys array and paid reduce-callback overhead per iteration. Hot at
+  // Provider mount and on any theme/rootSize change.
+  const acc: Record<string, any> = {}
+  for (const key in breakpoints) {
+    const breakpointValue = (breakpoints as Record<string, number>)[key]
     // use em in breakpoints to work properly cross-browser and support users
     // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
-    const breakpointValue = (breakpoints as Record<string, number>)[key]
-
     if (breakpointValue === 0) {
       acc[key] = (...args: any[]) => css(...args)
     } else if (breakpointValue != null) {
       const emSize = breakpointValue / rootSize
-
       acc[key] = (...args: any[]) => css`
           @media only screen and (min-width: ${emSize}em) {
             ${css(...args)};
           }
         `
     }
-
-    return acc
-  }, {}) as any
+  }
+  return acc as any
+}
 
 export default createMediaQueries

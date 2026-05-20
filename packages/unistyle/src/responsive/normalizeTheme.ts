@@ -51,10 +51,17 @@ const handleObjectCb =
 
 const handleValueCb = (value: unknown) => () => value
 
-const shouldNormalize = (props: Record<string, any>) =>
-  Object.values(props).some(
-    (item) => typeof item === 'object' || Array.isArray(item),
-  )
+const shouldNormalize = (props: Record<string, any>) => {
+  // for-in early-exit avoids the `Object.values(props)` array allocation
+  // that the prior `.some()` paid on every theme normalization decision.
+  // Fires once per per-breakpoint theme transform; the early `return true`
+  // is hit by any responsive token, so most calls bail out quickly.
+  for (const key in props) {
+    const item = props[key]
+    if (typeof item === 'object' || Array.isArray(item)) return true
+  }
+  return false
+}
 
 export type NormalizeTheme = ({
   theme,
@@ -76,22 +83,21 @@ const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
   const getBpValues = assignToBreakpointKey(breakpoints)
   const result: Record<string, unknown> = {}
 
-  Object.entries(theme).forEach(([key, value]) => {
-    if (value == null) return
+  // for-in instead of Object.entries.forEach — avoids the entries-tuple
+  // array allocation per theme normalization (one alloc + one inner [k,v]
+  // tuple per property dropped).
+  for (const key in theme) {
+    const value = theme[key]
+    if (value == null) continue
 
-    // if it's an array
     if (Array.isArray(value)) {
       result[key] = getBpValues(handleArrayCb(value as (string | number)[]))
-    }
-    // if it's an object
-    else if (typeof value === 'object') {
+    } else if (typeof value === 'object') {
       result[key] = getBpValues(handleObjectCb(value as Record<string, any>))
-    }
-    // if any other value
-    else {
+    } else {
       result[key] = getBpValues(handleValueCb(value))
     }
-  })
+  }
 
   return result
 }

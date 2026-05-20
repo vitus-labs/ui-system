@@ -29,6 +29,7 @@ export type TransformTheme = ({
  * Output: `{ xs: { fontSize: 12, color: 'red' }, md: { fontSize: 15 } }`
  * Supports three input shapes per property: scalar, array (positional), or object (keyed).
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: shape-dispatch transform — three branches inlined for one-pass perf
 const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
   const result = {}
 
@@ -38,20 +39,24 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
   // { fontSize: 12 }
   // { fontSize: { xs: 12, md: 15 }}
   // { fontSize: [12, 15] }
-  Object.entries(theme).forEach(([key, value]) => {
+  // for-in + nested for-in avoids the two `Object.entries(...)` array
+  // allocations (outer + inner per object value) the prior forEach paid.
+  for (const key in theme) {
+    const value = theme[key]
     // array
     if (Array.isArray(value) && value.length > 0) {
-      value.forEach((child, i) => {
+      for (let i = 0; i < value.length; i++) {
         // biome-ignore lint/style/noNonNullAssertion: caller guarantees breakpoints array spans all responsive values
         const indexBreakpoint = breakpoints[i]!
-        set(result, [indexBreakpoint, key], child)
-      })
+        set(result, [indexBreakpoint, key], value[i])
+      }
     }
     // object
     else if (typeof value === 'object' && value !== null) {
-      Object.entries(value).forEach(([childKey, childValue]) => {
-        set(result, [childKey, key], childValue)
-      })
+      const obj = value as Record<string, unknown>
+      for (const childKey in obj) {
+        set(result, [childKey, key], obj[childKey])
+      }
     }
     // normal value
     else if (value != null) {
@@ -59,7 +64,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
       const firstBreakpoint = breakpoints[0]!
       set(result, [firstBreakpoint, key], value)
     }
-  })
+  }
 
   return removeUnexpectedKeys(result, breakpoints)
 }
