@@ -247,7 +247,12 @@ export const buildProps = (
     result.className = userCls
   }
 
-  result.ref = ref
+  // Skip the `undefined` case (the common one — caller passed no `ref`,
+  // so the destructure default is `undefined`). Assigning `undefined`
+  // adds an own-property React still has to traverse during reconciliation.
+  // An explicit `ref={null}` is preserved verbatim for callers that rely
+  // on that distinction.
+  if (ref !== undefined) result.ref = ref
 
   // Component target — forward all props except as/className and $-prefixed
   if (!isDOM) {

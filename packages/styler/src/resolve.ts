@@ -32,6 +32,14 @@ export type Interpolation =
  * deferred until a styled component renders (or until explicitly resolved).
  */
 export class CSSResult {
+  /**
+   * Memoized result of `isDynamic(this)`. Populated on first access from
+   * `shared.ts#isDynamic`. CSSResult instances are typically created at
+   * module load and reused, so even one rescan saved per nested result
+   * adds up across nested composition trees.
+   */
+  _isDynamic: boolean | undefined = undefined
+
   constructor(
     readonly strings: TemplateStringsArray,
     readonly values: Interpolation[],
