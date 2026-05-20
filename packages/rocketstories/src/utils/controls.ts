@@ -13,23 +13,21 @@ import type {
 } from '~/types'
 
 /** Normalizes user-supplied control shorthand (string or object) into full ControlConfiguration objects. */
-export const createControls = (props: Record<string, any>) =>
-  Object.entries(props).reduce<Record<string, any>>((acc, [key, value]) => {
+export const createControls = (props: Record<string, any>) => {
+  // Mutate accumulator directly. The previous `Object.entries.reduce` with
+  // `return { ...acc, [key]: value }` per iteration was O(n²) — every
+  // assignment cloned the whole accumulated object. for-in + mutation is O(n).
+  const result: Record<string, any> = {}
+  for (const key in props) {
+    const value = props[key]
     if (typeof value === 'string') {
-      return {
-        ...acc,
-        [key]: {
-          type: value,
-        },
-      }
+      result[key] = { type: value }
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = value
     }
-
-    if (typeof value === 'object' && value !== null) {
-      return { ...acc, [key]: value }
-    }
-
-    return acc
-  }, {})
+  }
+  return result
+}
 
 type ConvertDimensionsToControls = ({
   dimensions,
@@ -43,19 +41,21 @@ type ConvertDimensionsToControls = ({
 export const convertDimensionsToControls: ConvertDimensionsToControls = ({
   dimensions,
   multiKeys,
-}) =>
-  Object.entries(dimensions).reduce((acc, [key, value]) => {
-    const valueKeys = Object.keys(value)
-    const isMultiKey = !!multiKeys[key]
-
-    const control = {
-      type: isMultiKey ? 'multi-select' : 'select',
-      options: valueKeys,
+}) => {
+  // O(n) via direct mutation — same reasoning as `createControls`. Saves the
+  // per-iteration `{...acc, [key]: control}` clone for components with many
+  // dimensions (typical design-system buttons run 4-8 dimensions).
+  const result: Record<string, any> = {}
+  for (const key in dimensions) {
+    const value = dimensions[key]
+    result[key] = {
+      type: multiKeys[key] ? 'multi-select' : 'select',
+      options: Object.keys(value),
       group: 'Dimensions [Rocketstyle (Vitus-Labs)]',
     }
-
-    return { ...acc, [key]: control }
-  }, {})
+  }
+  return result
+}
 
 // --------------------------------------------------------
 // values to controls
@@ -129,35 +129,27 @@ export const makeStorybookControls: MakeStorybookControls = (obj, props) =>
     {},
   )
 
-// --------------------------------------------------------
-// disableControl
-// --------------------------------------------------------
-type DisableControl = (
-  name: string,
-) => Record<string, { table: { disable: true } }>
-
-const disableControl: DisableControl = (name) => ({
-  [name]: { table: { disable: true } },
-})
-
 /** Produces argType overrides that hide individual dimension value keys from the controls panel. */
 type DisableDimensionControls = (
-  dimensions: Record<string, boolean>,
+  dimensions: Record<string, Record<string, unknown>>,
   name?: string,
-) => any
+) => Record<string, { table: { disable: true } }>
 
 export const disableDimensionControls: DisableDimensionControls = (
   dimensions,
   dimensionName,
 ) => {
-  const result = dimensionName ? disableControl(dimensionName) : {}
-  const dimensionKeys = Object.values(dimensions)
-
-  return dimensionKeys.reduce((acc, value) => {
-    Object.keys(value).forEach((item) => {
-      acc = { ...acc, ...disableControl(item) }
-    })
-
-    return acc
-  }, result)
+  // Two-level O(n) walk via mutation — replaces the nested
+  // `acc = {...acc, ...disableControl(item)}` reduce, which was O(n²) over
+  // the total number of dimension values.
+  const result: Record<string, { table: { disable: true } }> = dimensionName
+    ? { [dimensionName]: { table: { disable: true } } }
+    : {}
+  for (const key in dimensions) {
+    const value = dimensions[key]
+    for (const item in value) {
+      result[item] = { table: { disable: true } }
+    }
+  }
+  return result
 }

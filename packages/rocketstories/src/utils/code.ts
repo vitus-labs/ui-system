@@ -16,18 +16,31 @@ const parseProps: ParseProps = <
   T extends Record<string, SimpleValue | SimpleValue[] | ObjValue>,
 >(
   props: T,
-): Record<keyof T, unknown> =>
-  Object.entries(props).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    if (value === null) return acc
+): Record<keyof T, unknown> => {
+  // Direct mutation — replaces the per-iteration `{ ...acc, [key]: value }`
+  // spread that turned the prior reduce into O(n²). For prop sets with
+  // many keys (dimension stories often pass 10+ props), the O(n) variant
+  // is meaningfully faster.
+  const result: Record<string, unknown> = {}
+  for (const key in props) {
+    const value = props[key]
+    if (value === null) continue
 
     const valueType = typeof value
 
-    if (['string', 'number', 'boolean', 'bigint'].includes(valueType)) {
-      return { ...acc, [key]: value }
+    if (
+      valueType === 'string' ||
+      valueType === 'number' ||
+      valueType === 'boolean' ||
+      valueType === 'bigint'
+    ) {
+      result[key] = value
+      continue
     }
 
     if (Array.isArray(value)) {
-      return { ...acc, [key]: value }
+      result[key] = value
+      continue
     }
 
     if (valueType === 'object') {
@@ -36,15 +49,12 @@ const parseProps: ParseProps = <
       const defaultValue = get(value, 'value')
 
       // if has custom knobs configuration
-      if (type && options && defaultValue) {
-        return { ...acc, [key]: defaultValue || options }
-      }
-
-      return { ...acc, [key]: value }
+      result[key] =
+        type && options && defaultValue ? defaultValue || options : value
     }
-
-    return acc
-  }, {}) as Record<keyof T, unknown>
+  }
+  return result as Record<keyof T, unknown>
+}
 
 // --------------------------------------------------------
 // stringifyArray
