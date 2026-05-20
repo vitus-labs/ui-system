@@ -10,8 +10,8 @@ import { useMemo, useRef as useReactRef } from 'react'
 import { LocalThemeManager } from '~/cache'
 import {
   CONFIG_KEYS,
+  PSEUDO_AND_META_KEYS,
   PSEUDO_KEYS,
-  PSEUDO_META_KEYS,
   STYLING_KEYS,
 } from '~/constants'
 import createLocalProvider from '~/context/createLocalProvider'
@@ -75,16 +75,21 @@ const isShallowEqualRocketstate = (
 ): boolean => {
   if (a === b) return true
   if (!a || !b) return false
-  const aKeys = Object.keys(a)
-  if (aKeys.length !== Object.keys(b).length) return false
-  for (const k of aKeys) {
+  // Two for-in scans replace `Object.keys(a)` + `Object.keys(b)` — fires on
+  // every rocketstyle render, so dropping the two transient string arrays
+  // is meaningful even though both still walk every key.
+  let aCount = 0
+  for (const k in a) {
+    aCount++
     const av = a[k]
     const bv = b[k]
     if (av === bv) continue
     if (Array.isArray(av) && Array.isArray(bv) && arraysEqual(av, bv)) continue
     return false
   }
-  return true
+  let bCount = 0
+  for (const _ in b) bCount++
+  return aCount === bCount
 }
 
 // --------------------------------------------------------
@@ -335,7 +340,7 @@ const rocketComponent: RocketComponent = (options) => {
     // --------------------------------------------------
     const pseudoRocketstate = {
       ...pseudo,
-      ...pick(props, [...PSEUDO_KEYS, ...PSEUDO_META_KEYS]),
+      ...pick(props, PSEUDO_AND_META_KEYS as unknown as string[]),
     }
 
     // --------------------------------------------------
