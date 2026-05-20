@@ -92,6 +92,21 @@ describe('css', () => {
       expect(result.resolve({})).toEqual({ color: 'blue' })
     })
 
+    it('handles multi-key object interpolations (exercises join branch)', () => {
+      // Multi-key input forces the `result += '; ' + …` branch in
+      // `styleObjectToString` (the single-key case only hits the first
+      // assignment). Without this, the second branch stays uncovered.
+      const result = css`
+        ${{ color: 'blue', width: '10px', padding: '4px' }};
+      `
+
+      expect(result.resolve({})).toEqual({
+        color: 'blue',
+        width: 10,
+        padding: 4,
+      })
+    })
+
     it('handles true boolean interpolation', () => {
       const result = css`
         width: 100px;
