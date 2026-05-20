@@ -17,13 +17,15 @@ export const extractDefaultBooleanProps: ExtractDefaultBooleanProps = ({
 }) => {
   if (!useBooleans) return null
 
-  return Object.entries(dimensions).reduce((acc, [key, value]) => {
+  // Direct mutation — the previous `reduce` rebuilt the accumulator object
+  // every iteration (O(n²)). for-in + key assignment is O(n).
+  const result: Record<string, true> = {}
+  for (const key in dimensions) {
     if (!multiKeys[key]) {
+      const value = dimensions[key]
       const propName = Object.keys(value)[0] as string
-
-      return { ...acc, [propName]: true }
+      result[propName] = true
     }
-
-    return acc
-  }, {})
+  }
+  return result
 }
