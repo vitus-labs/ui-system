@@ -32,6 +32,15 @@ import useEscapeKey from './useEscapeKey'
 import useHoverListeners from './useHoverListeners'
 import useScrollReposition from './useScrollReposition'
 
+// Hoisted: closeOn values that count as "click-driven close". Inlined
+// previously, allocating a fresh 3-element array on each click-listener
+// useEffect re-run.
+const CLICK_CLOSE_KINDS: ReadonlySet<string> = new Set([
+  'click',
+  'clickOnTrigger',
+  'clickOutsideContent',
+])
+
 export type UseOverlayProps = Partial<{
   /**
    * Defines default state whether **Overlay** component should be active.
@@ -399,9 +408,7 @@ const useOverlay = ({
   useEffect(() => {
     if (blocked || disabled) return undefined
 
-    const enabledClick =
-      openOn === 'click' ||
-      ['click', 'clickOnTrigger', 'clickOutsideContent'].includes(closeOn)
+    const enabledClick = openOn === 'click' || CLICK_CLOSE_KINDS.has(closeOn)
 
     if (enabledClick) window.addEventListener('click', handleClick)
 

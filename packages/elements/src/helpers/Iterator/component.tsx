@@ -116,31 +116,38 @@ const flattenChildren = (children: ReactNode): ReactNode[] => {
   return [children]
 }
 
-/** Drop nullish entries and empty objects (matches legacy behavior). */
-const filterValidItems = (data: unknown[]): unknown[] =>
-  data.filter(
-    (item) =>
-      item != null &&
-      !(typeof item === 'object' && isEmpty(item as Record<string, unknown>)),
-  )
-
 type DataKind = 'simple' | 'complex' | null
 
-/** Determine if the array is uniformly simple (string/number) or complex (object). Mixed → null. */
-const detectKind = (items: unknown[]): DataKind => {
+const classifyItem = (item: unknown): DataKind => {
+  const t = typeof item
+  if (t === 'string' || t === 'number') return 'simple'
+  if (t === 'object') return 'complex'
+  return null
+}
+
+/**
+ * Single-pass: filter out nullish + empty-object entries and detect whether
+ * the surviving items form a uniformly simple (string/number) or complex
+ * (object) collection. Mixed shapes → kind `null`. Replaces the prior
+ * `filterValidItems` + `detectKind` two-pass which allocated an intermediate
+ * filtered array; this fuses both into one scan.
+ */
+const filterAndDetectKind = (
+  data: unknown[],
+): { items: unknown[]; kind: DataKind } => {
+  const items: unknown[] = []
   let kind: DataKind = null
-  for (const item of items) {
-    const t =
-      typeof item === 'string' || typeof item === 'number'
-        ? 'simple'
-        : typeof item === 'object'
-          ? 'complex'
-          : null
-    if (t === null) return null
+  for (const item of data) {
+    if (item == null) continue
+    if (typeof item === 'object' && isEmpty(item as Record<string, unknown>))
+      continue
+    items.push(item)
+    const t = classifyItem(item)
+    if (t === null) return { items, kind: null }
     if (kind === null) kind = t
-    else if (kind !== t) return null
+    else if (kind !== t) return { items, kind: null }
   }
-  return kind
+  return { items, kind }
 }
 
 const objectKey = (
@@ -206,10 +213,8 @@ const buildDataSpecs = (
   valueName: string | undefined,
   itemKey: Props['itemKey'],
 ): ItemSpec[] | null => {
-  const items = filterValidItems(data)
-  if (items.length === 0) return null
-  const kind = detectKind(items)
-  if (!kind) return null
+  const { items, kind } = filterAndDetectKind(data)
+  if (items.length === 0 || !kind) return null
   return kind === 'simple'
     ? buildSimpleSpecs(items as SimpleValue[], component, valueName, itemKey)
     : buildObjectSpecs(items as ObjectValue[], component, itemKey)

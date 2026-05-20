@@ -5,7 +5,7 @@
  * a static `isText` flag so other components can detect text children.
  */
 import type { HTMLTextTags } from '@vitus-labs/core'
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { PKG_NAME } from '~/constants'
 import type { ExtendCss, VLComponent } from '~/types'
 import Styled from './styled'
@@ -33,27 +33,18 @@ export type Props = Partial<{
   css: ExtendCss
 }>
 
-type RenderContent = (as?: any) => ReactElement | null
-
 const Component: VLComponent<Props> & {
   isText?: true
 } = ({ paragraph, label, children, tag, css, ref, ...props }: any) => {
-  const renderContent: RenderContent = (as = undefined) => (
-    <Styled ref={ref} as={as} $text={{ extraStyles: css }} {...props}>
+  // `finalTag` only diverges from `tag` on web (paragraph → `<p>`). On native
+  // the underlying Styled handles the platform default, so we pass undefined.
+  const finalTag = __WEB__ ? (paragraph ? 'p' : tag) : undefined
+
+  return (
+    <Styled ref={ref} as={finalTag} $text={{ extraStyles: css }} {...props}>
       {children ?? label}
     </Styled>
   )
-
-  let finalTag: string | undefined
-
-  if (__WEB__) {
-    if (paragraph) finalTag = 'p'
-    else {
-      finalTag = tag
-    }
-  }
-
-  return renderContent(finalTag)
 }
 
 // ----------------------------------------------
