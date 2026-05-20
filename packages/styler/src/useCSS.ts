@@ -22,18 +22,22 @@ export function useCSS(
   boost?: boolean,
 ): string {
   const theme = useTheme()
-  const allProps = theme ? { ...props, theme } : (props ?? {})
+  const allProps = props ? { ...props, theme } : { theme }
   const cssText = normalizeCSS(
     resolve(template.strings, template.values, allProps),
   )
 
   const cacheRef = useRef({ css: '', className: '' })
+  // Single emptiness check — normalizeCSS already stripped whitespace, so
+  // any non-empty cssText is meaningful. `.trim()` is O(n) and used to
+  // fire three times per render; one zero-cost length check is enough.
+  const hasContent = cssText.length > 0
   let className: string
 
   if (cssText === cacheRef.current.css) {
     className = cacheRef.current.className
   } else {
-    if (cssText.trim()) {
+    if (hasContent) {
       className = sheet.getClassName(cssText)
       if (IS_SERVER) sheet.insert(cssText, boost)
     } else {
@@ -43,7 +47,7 @@ export function useCSS(
   }
 
   useInsertionEffect(() => {
-    if (cssText.trim()) sheet.insert(cssText, boost)
+    if (cssText.length > 0) sheet.insert(cssText, boost)
   }, [cssText, boost])
 
   return className

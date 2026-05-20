@@ -208,6 +208,7 @@ const createStyledComponent = (
   // Client: useInsertionEffect injects into shared sheet (1 DOM node, scales to any size).
   // SSR: <style precedence> for FOUC-free delivery (useInsertionEffect is a no-op on server).
   // useRef cache avoids recomputing when CSS text hasn't changed between renders.
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path render — LRU-2 hit/miss + SSR vs client branches inlined for perf
   const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
     const theme = useTheme()
     // Mutate rawProps to inject theme for resolve(), restore afterwards.
@@ -220,21 +221,41 @@ const createStyledComponent = (
     if (hadTheme) rawProps.theme = prevTheme
     else delete rawProps.theme
 
-    const cacheRef = useRef<{
+    // Two-entry LRU cache. The previous single-slot ref missed every render
+    // when a prop alternates between two values (toggle/hover/animation
+    // frame, etc.), forcing repeated `getClassName` / `prepare` work even
+    // though both class names are already cached upstream. Two slots cover
+    // the alternation case without meaningfully growing per-instance state.
+    type DynEntry = {
       css: string
       className: string
       styleEl: ReturnType<typeof createElement> | null
-    }>({ css: '', className: '', styleEl: null })
+    }
+    const cacheRef = useRef<{ a: DynEntry | null; b: DynEntry | null }>({
+      a: null,
+      b: null,
+    })
+
+    const cur = cacheRef.current
+    let entry: DynEntry | null = null
+    if (cur.a && cur.a.css === cssText) {
+      entry = cur.a
+    } else if (cur.b && cur.b.css === cssText) {
+      // Promote LRU hit to head so the next alternation hits slot `a` too.
+      entry = cur.b
+      cur.b = cur.a
+      cur.a = entry
+    }
 
     let className: string
-    let styleEl: ReturnType<typeof createElement> | null = null
+    let styleEl: ReturnType<typeof createElement> | null
 
-    if (cssText === cacheRef.current.css) {
-      // Cache hit — reuse className and style element (if SSR)
-      className = cacheRef.current.className
-      styleEl = cacheRef.current.styleEl
+    if (entry) {
+      className = entry.className
+      styleEl = entry.styleEl
     } else {
       // Cache miss — recompute
+      styleEl = null
       if (cssText.length > 0) {
         if (IS_SERVER) {
           // SSR: emit a <style precedence> element only. See the matching
@@ -254,7 +275,9 @@ const createStyledComponent = (
       } else {
         className = ''
       }
-      cacheRef.current = { css: cssText, className, styleEl }
+      // Insert as new head; the prior head ages out to the tail slot.
+      cur.b = cur.a
+      cur.a = { css: cssText, className, styleEl }
     }
 
     // Client: inject CSS synchronously before paint (no-op on server)
