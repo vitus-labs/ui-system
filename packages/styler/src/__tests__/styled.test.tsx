@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { createRef, type FC, forwardRef } from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { sheet } from '../sheet'
 import { styled } from '../styled'
 import { ThemeProvider } from '../ThemeProvider'
 
@@ -400,6 +401,74 @@ describe('styled', () => {
       const { container } = render(<Comp />)
       const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
+    })
+  })
+
+  describe('DynamicStyled LRU-2 cacheRef', () => {
+    it('hits the cache on both slots when cssText alternates between two values', () => {
+      // The LRU-2 cacheRef stores the last two cssText results. With single-slot
+      // caching, alternating props would miss every other render. With LRU-2 the
+      // second-most-recent value remains hittable, so steady-state alternation
+      // stops calling sheet.getClassName.
+      const spy = vi.spyOn(sheet, 'getClassName')
+      const callsBefore = spy.mock.calls.length
+
+      const Comp = styled('div')`
+        color: ${(p: { $color: string }) => p.$color};
+      `
+
+      const { container, rerender } = render(<Comp $color="rebeccapurple" />)
+      const cls1 = (container.lastElementChild as HTMLElement).className
+
+      // Alternate eight times. Without LRU-2 each toggle is a cacheRef miss
+      // → getClassName fires every render. With LRU-2, after both slots are
+      // primed (renders 1 + 2 below) every subsequent render is a cache hit
+      // and the spy stops accumulating calls.
+      rerender(<Comp $color="seagreen" />) // primes slot b
+      const callsAfterPrime = spy.mock.calls.length
+      const cls2 = (container.lastElementChild as HTMLElement).className
+
+      for (let i = 0; i < 6; i++) {
+        rerender(<Comp $color={i % 2 === 0 ? 'rebeccapurple' : 'seagreen'} />)
+      }
+      const callsAfterAlternation = spy.mock.calls.length
+
+      // Both colours produce stable, distinct class names
+      expect(cls1).toMatch(/^vl-/)
+      expect(cls2).toMatch(/^vl-/)
+      expect(cls1).not.toBe(cls2)
+
+      // The final colour should match cls2 (seagreen on i=5 → odd)
+      const clsFinal = (container.lastElementChild as HTMLElement).className
+      expect(clsFinal).toBe(cls2)
+
+      // Spy assertion: alternation phase should NOT have invoked getClassName.
+      // (callsBefore..callsAfterPrime accounts for the two priming renders.)
+      expect(callsAfterAlternation).toBe(callsAfterPrime)
+      // And both priming renders did go through getClassName
+      expect(callsAfterPrime).toBeGreaterThan(callsBefore)
+
+      spy.mockRestore()
+    })
+
+    it('preserves correctness across many alternations (functional check)', () => {
+      const Comp = styled('div')`
+        color: ${(p: { $color: string }) => p.$color};
+      `
+      const { container, rerender } = render(<Comp $color="red" />)
+      const classes: string[] = []
+      const colours = ['red', 'blue', 'red', 'blue', 'red', 'blue']
+      for (const c of colours) {
+        rerender(<Comp $color={c} />)
+        classes.push((container.lastElementChild as HTMLElement).className)
+      }
+      // Every render with the same colour produces the same className
+      expect(classes[0]).toBe(classes[2])
+      expect(classes[0]).toBe(classes[4])
+      expect(classes[1]).toBe(classes[3])
+      expect(classes[1]).toBe(classes[5])
+      // Different colours produce different classNames
+      expect(classes[0]).not.toBe(classes[1])
     })
   })
 
