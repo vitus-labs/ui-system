@@ -1,5 +1,12 @@
 # @vitus-labs/rocketstories
 
+## 2.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`804dd0e`](https://github.com/vitus-labs/ui-system/commit/804dd0e2bd9709c61766abeb3b9f4519a0d949f1)]:
+  - @vitus-labs/elements@2.6.2
+
 ## 2.6.1
 
 ### Patch Changes
