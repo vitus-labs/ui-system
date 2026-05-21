@@ -1,5 +1,32 @@
 # @vitus-labs/rocketstories
 
+## 2.6.2
+
+### Patch Changes
+
+- [#248](https://github.com/vitus-labs/ui-system/pull/248) [`faa0e47`](https://github.com/vitus-labs/ui-system/commit/faa0e471a2b0a003046fc4ba963dc517ecf4d8fb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Five O(n²) → O(n) cleanups in the story-generation code paths. No public API or behavioural changes.
+
+  **Changes**
+
+  1. **`createControls`** (`utils/controls.ts`) — `Object.entries.reduce` with `return { ...acc, [key]: value }` per iteration was O(n²) (every assignment cloned the whole accumulator). Replaced with for-in + direct mutation.
+  2. **`convertDimensionsToControls`** (`utils/controls.ts`) — same pattern. O(n²) → O(n).
+  3. **`disableDimensionControls`** (`utils/controls.ts`) — nested `acc = { ...acc, ...disableControl(item) }` reduce was O(n²) over the _total_ number of dimension values. Replaced with two-level for-in walk. Removed the now-unused internal `disableControl` helper, and tightened the `dimensions` parameter type from `Record<string, boolean>` to `Record<string, Record<string, unknown>>` (the real runtime shape — the prior type lied about the input).
+  4. **`extractDefaultBooleanProps`** (`utils/dimensions.ts`) — same pattern. O(n²) → O(n).
+  5. **`parseProps`** (`utils/code.ts`) — same pattern, with three `return { ...acc, [key]: value }` branches consolidated into a single mutation path.
+
+  These functions all run at story-creation time (once per story load in Storybook). For dimension-heavy components — typical design-system buttons run 4-8 dimensions with 5-10 values each — the O(n²) builds add up to thousands of unnecessary object clones.
+
+  **Verification**
+
+  - 136 rocketstories tests pass (no new tests — existing suite covers all five functions: `createControls`, `convertDimensionsToControls`, `disableDimensionControls`, `extractDefaultBooleanProps`, `parseProps` via the code-generation paths)
+  - 2688 monorepo tests pass
+  - `bun run lint`, `bun run typecheck` clean
+
+  Measured deltas are reported in the PR description (added to `perf-audit-bench.tsx`).
+
+- Updated dependencies [[`804dd0e`](https://github.com/vitus-labs/ui-system/commit/804dd0e2bd9709c61766abeb3b9f4519a0d949f1)]:
+  - @vitus-labs/elements@2.6.2
+
 ## 2.6.1
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @vitus-labs/example-vite-kinetic
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`4549648`](https://github.com/vitus-labs/ui-system/commit/4549648a5c3ff4f8e8691346ee6d75142401809c)]:
+  - @vitus-labs/hooks@2.6.2
+  - @vitus-labs/kinetic@2.6.2
+  - @vitus-labs/kinetic-presets@2.6.2
+
 ## 0.0.7
 
 ### Patch Changes
