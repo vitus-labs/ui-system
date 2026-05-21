@@ -34,11 +34,21 @@ export type Interpolation =
 export class CSSResult {
   /**
    * Memoized result of `isDynamic(this)`. Populated on first access from
-   * `shared.ts#isDynamic`. CSSResult instances are typically created at
-   * module load and reused, so even one rescan saved per nested result
-   * adds up across nested composition trees.
+   * `shared.ts#isDynamic` (or from `resolveValue` below on lazy populate).
+   * CSSResult instances are typically created at module load and reused,
+   * so even one rescan saved per nested result adds up across nested
+   * composition trees.
    */
   _isDynamic: boolean | undefined = undefined
+
+  /**
+   * Memoized resolved CSS string for static CSSResults — populated by
+   * `resolveValue` the first time a known-static nested CSSResult is
+   * resolved. Safe because props don't affect the output when there are
+   * no function interpolations. Skipped for dynamic CSSResults (the
+   * resolved string depends on props each call).
+   */
+  _staticResolved: string | undefined = undefined
 
   constructor(
     readonly strings: TemplateStringsArray,
@@ -185,9 +195,20 @@ export const resolveValue = (
   if (typeof value === 'function')
     return resolveValue(value(props) as Interpolation, props)
 
-  // nested CSSResult → recursively resolve
-  if (value instanceof CSSResult)
+  // nested CSSResult → recursively resolve, with static-result memoization.
+  // When `_isDynamic === false` (populated by shared.ts#isDynamic at styled
+  // component creation time), the resolved string is independent of props
+  // and can be cached on the instance — saves re-walking strings/values for
+  // every consumer of a shared static snippet.
+  if (value instanceof CSSResult) {
+    if (value._isDynamic === false) {
+      if (value._staticResolved === undefined) {
+        value._staticResolved = resolve(value.strings, value.values, {})
+      }
+      return value._staticResolved
+    }
     return resolve(value.strings, value.values, props)
+  }
 
   // array of results (e.g. from makeItResponsive's breakpoints.map())
   // Uses loop instead of .map().join() to avoid intermediate array allocation
