@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { css } from '../css'
-import { normalizeCSS, resolve } from '../resolve'
+import { CSSResult, normalizeCSS, resolve, resolveValue } from '../resolve'
+import { isDynamic } from '../shared'
 
 // Helper to create a TemplateStringsArray
 const tsa = (strings: readonly string[]): TemplateStringsArray => {
@@ -228,5 +229,56 @@ describe('normalizeCSS', () => {
       const result = normalizeCSS('; color: red;')
       expect(result).toBe('color: red;')
     })
+  })
+})
+
+describe('CSSResult._staticResolved cache (PR #253)', () => {
+  it('populates _staticResolved on first resolveValue of a known-static CSSResult', () => {
+    const inner = css`color: red;`
+    // Pre-classify as static via isDynamic (the same call shared.ts makes
+    // at styled-component creation time).
+    isDynamic(inner)
+    expect(inner._isDynamic).toBe(false)
+    expect(inner._staticResolved).toBe(undefined)
+
+    resolveValue(inner, {})
+    expect(inner._staticResolved).toBe('color: red;')
+  })
+
+  it('returns cached _staticResolved on subsequent resolveValue calls', () => {
+    const inner = css`padding: 12px;`
+    isDynamic(inner)
+    resolveValue(inner, {})
+    expect(inner._staticResolved).toBe('padding: 12px;')
+
+    // Mutate values to a sentinel that would change the resolved output if
+    // recomputed. The cache MUST return the prior result.
+    ;(inner as unknown as { values: unknown[] }).values = ['SENTINEL']
+    expect(resolveValue(inner, {})).toBe('padding: 12px;')
+  })
+
+  it('does NOT cache dynamic CSSResults (props vary per call)', () => {
+    const dyn = css`color: ${(p: { c: string }) => p.c};`
+    isDynamic(dyn)
+    expect(dyn._isDynamic).toBe(true)
+
+    // Resolve twice with different props; cache should not be populated.
+    resolveValue(dyn, { c: 'red' })
+    expect(dyn._staticResolved).toBe(undefined)
+    resolveValue(dyn, { c: 'blue' })
+    expect(dyn._staticResolved).toBe(undefined)
+  })
+
+  it('skips cache when _isDynamic is undefined (not yet classified)', () => {
+    // Construct a CSSResult directly without going through isDynamic.
+    // resolveValue's cache check is `_isDynamic === false` (strict), so an
+    // unclassified CSSResult falls through to the regular resolve path.
+    const tpl = Object.assign(['color: ', ';'], {
+      raw: ['color: ', ';'],
+    }) as unknown as TemplateStringsArray
+    const r = new CSSResult(tpl, ['red'])
+    expect(r._isDynamic).toBe(undefined)
+    expect(resolve(r.strings, r.values, {})).toBe('color: red;')
+    expect(r._staticResolved).toBe(undefined) // cache stays unpopulated
   })
 })
