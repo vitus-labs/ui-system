@@ -4,8 +4,13 @@
  * transient (styling-only) and are always filtered out.
  */
 
-// Common HTML attributes, event handlers, and ARIA/data attributes
-const HTML_PROPS = new Set([
+// Common HTML attributes, event handlers, and ARIA/data attributes.
+//
+// Using a plain object with `key in HTML_PROPS` instead of `Set.has(key)`:
+// V8 inlines `in` checks via hidden-class lookups (the object has a fixed
+// shape at module load and never changes), which is meaningfully faster
+// than going through the Set protocol on hot prop-filter paths.
+const HTML_PROPS_LIST = [
   // Core React props
   'children',
   'className',
@@ -190,7 +195,13 @@ const HTML_PROPS = new Set([
   'value',
   'width',
   'wrap',
-])
+] as const
+
+// Build the lookup object once at module load. `null`-prototype keeps the
+// object's hidden class lean and means `in` checks don't accidentally pick
+// up `Object.prototype` keys.
+const HTML_PROPS: Record<string, true> = Object.create(null)
+for (const k of HTML_PROPS_LIST) HTML_PROPS[k] = true
 
 /**
  * Filters props for HTML elements. Keeps valid HTML attrs, data-*, aria-*.
@@ -215,7 +226,7 @@ export const filterProps = (
     }
 
     // Keep known HTML props
-    if (HTML_PROPS.has(key)) {
+    if (key in HTML_PROPS) {
       filtered[key] = props[key]
     }
   }
@@ -281,7 +292,7 @@ export const buildProps = (
       result[key] = rawProps[key]
       continue
     }
-    if (HTML_PROPS.has(key)) result[key] = rawProps[key]
+    if (key in HTML_PROPS) result[key] = rawProps[key]
   }
   return result
 }
