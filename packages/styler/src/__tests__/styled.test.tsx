@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { createRef, type FC, forwardRef } from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { sheet } from '../sheet'
 import { styled } from '../styled'
 import { ThemeProvider } from '../ThemeProvider'
 
@@ -400,6 +401,65 @@ describe('styled', () => {
       const { container } = render(<Comp />)
       const el = container.lastElementChild as HTMLElement
       expect(el.className).toMatch(/^vl-/)
+    })
+  })
+
+  describe('DynamicStyled LRU-2 cacheRef', () => {
+    it('hits the cache on both slots when cssText alternates between two values', () => {
+      // Behavioural lock-in for the LRU-2 cacheRef in DynamicStyled
+      // (shipped in PR #242). The slot cache stores the two most-recent
+      // cssText results; the spy proves `sheet.getClassName` is only called
+      // for the two priming renders and zero times across subsequent
+      // alternation renders — i.e. the alternation case hits both slots.
+      const spy = vi.spyOn(sheet, 'getClassName')
+      const callsBefore = spy.mock.calls.length
+
+      const Comp = styled('div')`
+        color: ${(p: { $color: string }) => p.$color};
+      `
+
+      const { container, rerender } = render(<Comp $color="rebeccapurple" />)
+      const cls1 = (container.lastElementChild as HTMLElement).className
+      rerender(<Comp $color="seagreen" />) // primes slot b
+      const callsAfterPrime = spy.mock.calls.length
+      const cls2 = (container.lastElementChild as HTMLElement).className
+
+      for (let i = 0; i < 6; i++) {
+        rerender(<Comp $color={i % 2 === 0 ? 'rebeccapurple' : 'seagreen'} />)
+      }
+      const callsAfterAlternation = spy.mock.calls.length
+
+      expect(cls1).toMatch(/^vl-/)
+      expect(cls2).toMatch(/^vl-/)
+      expect(cls1).not.toBe(cls2)
+
+      const clsFinal = (container.lastElementChild as HTMLElement).className
+      expect(clsFinal).toBe(cls2)
+
+      // Priming renders MUST hit getClassName; alternation renders MUST NOT.
+      expect(callsAfterPrime).toBeGreaterThan(callsBefore)
+      expect(callsAfterAlternation).toBe(callsAfterPrime)
+
+      spy.mockRestore()
+    })
+
+    it('preserves correctness across many alternations (functional check)', () => {
+      const Comp = styled('div')`
+        color: ${(p: { $color: string }) => p.$color};
+      `
+      const { container, rerender } = render(<Comp $color="red" />)
+      const classes: string[] = []
+      const colours = ['red', 'blue', 'red', 'blue', 'red', 'blue']
+      for (const c of colours) {
+        rerender(<Comp $color={c} />)
+        classes.push((container.lastElementChild as HTMLElement).className)
+      }
+      // Every render with the same colour produces the same className
+      expect(classes[0]).toBe(classes[2])
+      expect(classes[0]).toBe(classes[4])
+      expect(classes[1]).toBe(classes[3])
+      expect(classes[1]).toBe(classes[5])
+      expect(classes[0]).not.toBe(classes[1])
     })
   })
 
