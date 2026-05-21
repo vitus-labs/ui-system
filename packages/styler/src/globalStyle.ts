@@ -36,14 +36,19 @@ export const createGlobalStyle = (
   // STATIC FAST PATH: compute once at creation time
   if (!hasDynamicValues) {
     const cssText = normalizeCSS(resolve(strings, values, {}))
-    const href = cssText.trim() ? `g-${hash(cssText)}` : ''
+    // `normalizeCSS` already strips leading/trailing whitespace, so a length
+    // check is equivalent to the prior `.trim()` calls but cheaper (no
+    // O(n) whitespace scan, no string allocation). Same pattern as `useCSS`
+    // (PR #242).
+    const hasContent = cssText.length > 0
+    const href = hasContent ? `g-${hash(cssText)}` : ''
 
     // Client only: inject into shared sheet. On SSR we deliberately do NOT
     // call sheet.insertGlobal() — that would push duplicates into ssrBuffer
     // and the same rule would also re-insert via insertRule() on hydration
     // (cache miss → DOM duplication). React 19 dedupes <style precedence>
     // emissions automatically, so a single precedence tag is sufficient.
-    if (!IS_SERVER && cssText.trim()) sheet.insertGlobal(cssText)
+    if (!IS_SERVER && hasContent) sheet.insertGlobal(cssText)
 
     // SSR: pre-compute <style precedence> for FOUC-free delivery.
     const cachedStyleEl =
@@ -63,11 +68,13 @@ export const createGlobalStyle = (
     const theme = useTheme()
     const allProps = { ...props, theme }
     const cssText = normalizeCSS(resolve(strings, values, allProps))
-    const href = cssText.trim() ? `g-${hash(cssText)}` : ''
+    // Single length check — replaces three `.trim()` calls per render below.
+    const hasContent = cssText.length > 0
+    const href = hasContent ? `g-${hash(cssText)}` : ''
 
     // Client: inject via useInsertionEffect (no-op on server)
     useInsertionEffect(() => {
-      if (cssText.trim()) sheet.insertGlobal(cssText)
+      if (cssText.length > 0) sheet.insertGlobal(cssText)
     }, [cssText])
 
     if (!href) return null
