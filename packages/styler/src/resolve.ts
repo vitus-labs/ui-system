@@ -134,10 +134,13 @@ export const normalizeCSS = (css: string): string => {
 
     // /* block comment */
     if (c === 47 /* / */ && css.charCodeAt(i + 1) === 42 /* * */) {
-      // Inline flush of the regular-char run ending at i.
+      // Inline flush of the regular-char run ending at i. The pending-space
+      // check that appears in the whitespace/semicolon flush sites is
+      // omitted here: by the state machine, `space` is always false on
+      // entry to a comment (preceding whitespace would have set
+      // `runStart = i+1`, making `i > runStart` false; preceding semicolon
+      // explicitly sets `space = false`).
       if (i > runStart) {
-        if (space && last !== 0) out += ' '
-        space = false
         out += css.slice(runStart, i)
         last = css.charCodeAt(i - 1)
       }
@@ -154,9 +157,9 @@ export const normalizeCSS = (css: string): string => {
       css.charCodeAt(i + 1) === 47 /* / */ &&
       last !== 58 /* : */
     ) {
+      // Same flush shape as the block-comment branch above; same unreachable
+      // pending-space check omitted for the same reason.
       if (i > runStart) {
-        if (space && last !== 0) out += ' '
-        space = false
         out += css.slice(runStart, i)
         last = css.charCodeAt(i - 1)
       }

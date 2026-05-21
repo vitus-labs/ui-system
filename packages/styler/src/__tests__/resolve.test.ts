@@ -201,6 +201,21 @@ describe('normalizeCSS', () => {
       const result = normalizeCSS('color: red;\n// trailing comment')
       expect(result).toBe('color: red;')
     })
+
+    it('strips block comment immediately following regular chars (no separator)', () => {
+      // Exercises the inline-flush block inside the block-comment branch:
+      // when chars accumulate as a "run" and a `/*` follows without a
+      // whitespace/semicolon boundary, the flush has to emit the run before
+      // skipping the comment body.
+      const result = normalizeCSS('padding/* gap */: 8px;')
+      expect(result).toBe('padding : 8px;')
+    })
+
+    it('strips line comment immediately following regular chars (no separator)', () => {
+      // Same flush-edge for the line-comment branch.
+      const result = normalizeCSS('padding// gap\n: 8px;')
+      expect(result).toBe('padding : 8px;')
+    })
   })
 
   describe('whitespace and semicolons', () => {
