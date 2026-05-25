@@ -1,5 +1,17 @@
 # @vitus-labs/example-nextjs-styled-components
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`5540257`](https://github.com/vitus-labs/ui-system/commit/5540257276936fc226be8ee28859d63d0d1f5737), [`804dd0e`](https://github.com/vitus-labs/ui-system/commit/804dd0e2bd9709c61766abeb3b9f4519a0d949f1), [`00fdadc`](https://github.com/vitus-labs/ui-system/commit/00fdadc215bd2ddc67daad88e9294c496e148204), [`e573e6c`](https://github.com/vitus-labs/ui-system/commit/e573e6c411ae195efe17b9d0c9dda2b218165037)]:
+  - @vitus-labs/coolgrid@2.6.2
+  - @vitus-labs/elements@2.6.2
+  - @vitus-labs/rocketstyle@2.6.2
+  - @vitus-labs/unistyle@2.6.2
+  - @vitus-labs/connector-styled-components@2.6.2
+  - @vitus-labs/core@2.6.2
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,25 @@
 # @vitus-labs/attrs
 
+## 2.6.2
+
+### Patch Changes
+
+- [#246](https://github.com/vitus-labs/ui-system/pull/246) [`b003de4`](https://github.com/vitus-labs/ui-system/commit/b003de47b6648f49365f879caf544ef94b935e29) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `removeUndefinedProps`: switch from `Object.keys(props).reduce(...)` to a direct `for...in` loop.
+
+  **Why**
+
+  The function fires on every content-equal re-render via `attrsHoc`'s `useMemo` body. The prior `reduce` over `Object.keys(props)` allocated an intermediate keys array per call. The for-in loop iterates the same own enumerable keys (React props are always plain objects) without the array allocation.
+
+  **Verification**
+
+  - 83 attrs tests pass (existing suite exhaustively covers `removeUndefinedProps`: undefined-stripping, null/false/0/'' preservation, all-undefined, empty-object edge cases)
+  - 2688 monorepo tests pass
+  - `bun run lint`, `bun run typecheck` clean
+
+  **Honest framing**
+
+  Structural cleanup, **not a measurable headline perf win**. No microbench in-tree for attrs, so no claimed delta. The win is one fewer array allocation per `attrsHoc` render — it compounds across deep attrs-wrapped trees but is below single-component noise.
+
 ## 2.6.1
 
 ## 2.6.0
