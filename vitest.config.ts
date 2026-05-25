@@ -22,8 +22,8 @@ export default defineConfig({
       // numerator/denominator sees 98.48 and fails). The weekly ratchet
       // will re-raise this if coverage genuinely improves.
       thresholds: {
-        statements: 98.62,
-        branches: 94.27,
+        statements: 98.71,
+        branches: 94.46,
         functions: 98.4,
         lines: 99.32,
       },
