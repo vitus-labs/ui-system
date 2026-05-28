@@ -59,47 +59,27 @@ const RADIUS_LONGHANDS = [
 ] as const
 
 /**
- * Expand 1–4 CSS edge values into the four [top, right, bottom, left] slots,
- * following CSS shorthand rules:
- *   1 → all sides · 2 → [V, H] · 3 → [top, H, bottom] · 4 → as-is
+ * Expand 1–4 CSS shorthand values into four slots. The slot-fill pattern is
+ * identical for edges ([top, right, bottom, left]) and border-radius corners
+ * ([TL, TR, BR, BL]):
+ *   1 → all · 2 → [a, b, a, b] · 3 → [a, b, c, b] · 4 → [a, b, c, d]
  */
-const expandEdge = <T>(v: T[]): [T, T, T, T] => {
-  // biome-ignore lint/style/noNonNullAssertion: callers only pass 1–4 element arrays; index access guarded by length switch
+const expand4 = <T>(v: T[]): [T, T, T, T] => {
+  // biome-ignore lint/style/noNonNullAssertion: callers only pass 1–4 element arrays; index access guarded by the length switch
   const a = v[0]!
+  // biome-ignore lint/style/noNonNullAssertion: lengths ≥ 2 guarantee v[1]; b unused for length 1
+  const b = v[1]!
   switch (v.length) {
     case 1:
       return [a, a, a, a]
     case 2:
-      // biome-ignore lint/style/noNonNullAssertion: length === 2 guarantees v[1]
-      return [a, v[1]!, a, v[1]!]
+      return [a, b, a, b]
     case 3:
-      // biome-ignore lint/style/noNonNullAssertion: length === 3 guarantees v[1],v[2]
-      return [a, v[1]!, v[2]!, v[1]!]
+      // biome-ignore lint/style/noNonNullAssertion: length === 3 guarantees v[2]
+      return [a, b, v[2]!, b]
     default:
-      // biome-ignore lint/style/noNonNullAssertion: length >= 4
-      return [a, v[1]!, v[2]!, v[3]!]
-  }
-}
-
-/**
- * Expand 1–4 CSS corner values into [TL, TR, BR, BL] for border-radius:
- *   1 → all corners · 2 → [TL&BR, TR&BL] · 3 → [TL, TR&BL, BR] · 4 → as-is
- */
-const expandCorners = <T>(v: T[]): [T, T, T, T] => {
-  // biome-ignore lint/style/noNonNullAssertion: callers only pass 1–4 element arrays
-  const a = v[0]!
-  switch (v.length) {
-    case 1:
-      return [a, a, a, a]
-    case 2:
-      // biome-ignore lint/style/noNonNullAssertion: length === 2 guarantees v[1]
-      return [a, v[1]!, a, v[1]!]
-    case 3:
-      // biome-ignore lint/style/noNonNullAssertion: length === 3 guarantees v[1],v[2]
-      return [a, v[1]!, v[2]!, v[1]!]
-    default:
-      // biome-ignore lint/style/noNonNullAssertion: length >= 4
-      return [a, v[1]!, v[2]!, v[3]!]
+      // biome-ignore lint/style/noNonNullAssertion: length ≥ 4 guarantees v[2],v[3]
+      return [a, b, v[2]!, v[3]!]
   }
 }
 
@@ -145,7 +125,7 @@ const expandShorthand = (
 
   // biome-ignore lint/style/noNonNullAssertion: isEdge (prop in EDGE_SHORTHANDS) guaranteed here when not radius/gap
   const slots = isRadius ? RADIUS_LONGHANDS : EDGE_SHORTHANDS[prop]!
-  const expanded = isRadius ? expandCorners(values) : expandEdge(values)
+  const expanded = expand4(values)
   for (let i = 0; i < 4; i++) {
     // biome-ignore lint/style/noNonNullAssertion: slots and expanded are fixed length 4
     style[slots[i]!] = expanded[i]!

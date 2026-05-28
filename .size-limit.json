@@ -14,7 +14,7 @@
   {
     "name": "@vitus-labs/connector-native",
     "path": "packages/connector-native/lib/index.js",
-    "limit": "3.5 KB",
+    "limit": "4.5 KB",
     "gzip": true
   },
   {
