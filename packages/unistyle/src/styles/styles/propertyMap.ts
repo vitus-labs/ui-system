@@ -341,6 +341,7 @@ const propertyMap: PropertyDescriptor[] = [
   { kind: 'simple', css: 'border-image-source', key: 'borderImageSource' },
   { kind: 'simple', css: 'border-image-width', key: 'borderImageWidth' },
   { kind: 'simple', css: 'border-spacing', key: 'borderSpacing' },
+  { kind: 'simple', css: 'border-collapse', key: 'borderCollapse' },
 
   // Logical borders
   { kind: 'simple', css: 'border-inline', key: 'borderInline' },

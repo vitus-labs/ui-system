@@ -25,7 +25,7 @@ UI System is not a component library. It's a set of composable packages for buil
 | Package | Description |
 | ------- | ----------- |
 | [@vitus-labs/core](./packages/core) | Shared utilities, styling engine bridge, theme context |
-| [@vitus-labs/styler](./packages/styler) | Lightweight CSS-in-JS engine (3.81 KB gz) — drop-in styled-components replacement |
+| [@vitus-labs/styler](./packages/styler) | Lightweight CSS-in-JS engine (4.82 KB gz) — drop-in styled-components replacement |
 | [@vitus-labs/attrs](./packages/attrs) | Immutable chainable default-props factory for React components |
 | [@vitus-labs/elements](./packages/elements) | Layout primitives — Element, Text, List, Overlay, Portal |
 | [@vitus-labs/unistyle](./packages/unistyle) | Responsive CSS engine — media queries, unit conversion, style processing |
@@ -38,8 +38,8 @@ UI System is not a component library. It's a set of composable packages for buil
 
 | Package | Size (gzip) | Description |
 | ------- | ----------- | ----------- |
-| [@vitus-labs/kinetic](./packages/kinetic) | 3.2 KB | CSS-first animation — enter/exit, stagger, collapse, list reconciliation |
-| [@vitus-labs/kinetic-presets](./packages/kinetic-presets) | 2.3 KB | 122 presets, 5 factories, 5 composition utilities for kinetic |
+| [@vitus-labs/kinetic](./packages/kinetic) | 3.4 KB | CSS-first animation — enter/exit, stagger, collapse, list reconciliation |
+| [@vitus-labs/kinetic-presets](./packages/kinetic-presets) | 3.7 KB | 123 presets, 5 factories, 5 composition utilities for kinetic |
 
 ### Connectors
 

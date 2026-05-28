@@ -3,20 +3,20 @@
 CSS-first animation library for React. Enter/exit transitions, staggered animations, height collapse, and list reconciliation — all in ~3KB gzipped.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/kinetic)](https://www.npmjs.com/package/@vitus-labs/kinetic)
-[![gzip size](https://img.shields.io/badge/gzip-3.2KB-brightgreen)](https://bundlephobia.com/package/@vitus-labs/kinetic)
+[![gzip size](https://img.shields.io/badge/gzip-3.4KB-brightgreen)](https://bundlephobia.com/package/@vitus-labs/kinetic)
 [![license](https://img.shields.io/npm/l/@vitus-labs/kinetic)](./LICENSE)
 
 ## Why Kinetic?
 
 Most React animation libraries run their own JavaScript animation loop on the main thread. Kinetic takes a different approach: it delegates all interpolation to the browser's CSS transition engine (compositor thread for `transform`/`opacity`), and only handles orchestration — mount/unmount lifecycle, stagger timing, height measurement, and list diffing.
 
-The result: GPU-composited 60/120 FPS animations with a 3.2KB footprint.
+The result: GPU-composited 60/120 FPS animations with a 3.4KB footprint.
 
 ### How It Compares
 
 | Library | Gzipped | Engine | Enter/Exit | Stagger | List Recon. | Collapse | Reduced Motion |
 | ------- | ------- | ------ | ---------- | ------- | ----------- | -------- | -------------- |
-| **@vitus-labs/kinetic** | **3.2 KB** | CSS transitions | Yes | Yes | Yes | Yes | Yes |
+| **@vitus-labs/kinetic** | **3.4 KB** | CSS transitions | Yes | Yes | Yes | Yes | Yes |
 | Motion (framer-motion) | ~34 KB | JS (rAF + WAAPI) | Yes | Yes | Yes | Quirky | Yes |
 | @react-spring/web | ~16-24 KB | JS (spring physics) | Yes | Partial | Yes | Manual | Yes |
 | react-transition-group | ~5 KB | CSS classes | Yes | No | Yes | No | No |
@@ -29,7 +29,7 @@ The result: GPU-composited 60/120 FPS animations with a 3.2KB footprint.
 - **CSS-first**: `transform`/`opacity` run on GPU compositor thread, not main thread
 - **Modern replacement for react-transition-group** (dead since 2022, broken on React 19)
 - **Only library** combining CSS transitions + stagger + collapse + list reconciliation
-- **122 presets** available via `@vitus-labs/kinetic-presets`
+- **123 presets** available via `@vitus-labs/kinetic-presets`
 
 ### Performance: CSS vs JS Animation Engines
 
@@ -238,7 +238,7 @@ Six presets are included in the core package:
 import { fade, scaleIn, slideUp, slideDown, slideLeft, slideRight } from '@vitus-labs/kinetic'
 ```
 
-For 122 presets, factories, and composition utilities, install `@vitus-labs/kinetic-presets`.
+For 123 presets, factories, and composition utilities, install `@vitus-labs/kinetic-presets`.
 
 ## Hooks
 

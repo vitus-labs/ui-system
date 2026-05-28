@@ -2,7 +2,7 @@
 
 A lightweight CSS-in-JS engine for React. Drop-in replacement for `styled-components` at a fraction of the size.
 
-**3.81 KB** gzipped | **React 19+** | **SSR & static export ready** | **TypeScript strict**
+**4.82 KB** gzipped | **React 19+** | **SSR & static export ready** | **TypeScript strict**
 
 ## Installation
 
@@ -313,7 +313,7 @@ All benchmarks run via Vitest bench on the same machine. React is externalized i
 | Library | Minified | Gzipped |
 |---------|--------:|--------:|
 | goober | 2.32 KB | 1.31 KB |
-| **@vitus-labs/styler** | **10.13 KB** | **3.81 KB** |
+| **@vitus-labs/styler** | **12.21 KB** | **4.82 KB** |
 | styled-components | 44.93 KB | 17.89 KB |
 | @emotion/react + styled | 48.26 KB | 16.59 KB |
 
@@ -344,7 +344,7 @@ Key differences:
 
 | Feature | styled-components | @vitus-labs/styler |
 |---------|------------------|-------------------|
-| Bundle size | ~16 KB gz | **3.81 KB gz** |
+| Bundle size | ~16 KB gz | **4.82 KB gz** |
 | `styled.div` shorthand | Yes | Yes |
 | `as` prop | Yes | Yes |
 | Ref forwarding | Yes | Yes |
