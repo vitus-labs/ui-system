@@ -62,6 +62,13 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
   const RenderComponent = options.component
 
+  // `filterAttrs` is fixed for the component's lifetime, so build the omit-key
+  // Set once here instead of letting `omit` rebuild it on every render.
+  const hasFilterAttrs = !!options.filterAttrs && options.filterAttrs.length > 0
+  const filterAttrsSet = hasFilterAttrs
+    ? new Set<string>(options.filterAttrs)
+    : undefined
+
   // Build the HOC chain: attrsHoc is always first (resolves default props),
   // followed by user-composed HOCs in reverse order (outermost wraps first).
   const hocsFuncs = [attrsHoc(options), ...calculateHocsFuncs(options.compose)]
@@ -77,11 +84,10 @@ const attrsComponent: InitAttrsComponent = (options) => {
     // both the consumer's ref and intermediate HOC refs point to the same node.
     const internalRef = useRef({ $attrsRef, ref })
     const needsRef = ref ?? $attrsRef
-    const needsFiltering = options.filterAttrs && options.filterAttrs.length > 0
 
     const baseProps = needsRef ? { ...props, ref: internalRef } : props
-    const filteredProps = needsFiltering
-      ? omit(baseProps, options.filterAttrs)
+    const filteredProps = filterAttrsSet
+      ? omit(baseProps, filterAttrsSet)
       : baseProps
 
     const finalProps =

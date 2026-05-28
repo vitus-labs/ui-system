@@ -2,16 +2,24 @@
 // omit — create a new object without the specified keys.
 // Accepts nullable input for convenience (returns `{}`).
 // Uses a Set for O(1) key lookup.
+//
+// `keys` may be an array OR a prebuilt `ReadonlySet`. Hot callers whose key
+// list is stable across renders (e.g. a component's reserved-prop list) should
+// pass a memoized/module-scope Set so we skip rebuilding it on every call —
+// the Set construction otherwise dominates the cost when `obj` is small.
 // --------------------------------------------------------
 export const omit = <T extends Record<string, any>>(
   obj: T | null | undefined,
-  keys?: readonly (string | keyof T)[],
+  keys?: readonly (string | keyof T)[] | ReadonlySet<string | keyof T>,
 ): Partial<T> => {
   if (obj == null) return {} as Partial<T>
-  if (!keys || keys.length === 0) return { ...obj }
+  if (!keys) return { ...obj }
+
+  const keysSet: ReadonlySet<unknown> =
+    keys instanceof Set ? keys : new Set(keys as readonly unknown[])
+  if (keysSet.size === 0) return { ...obj }
 
   const result: Record<string, any> = {}
-  const keysSet = new Set(keys as readonly string[])
 
   for (const key in obj) {
     if (Object.hasOwn(obj, key) && !keysSet.has(key)) {

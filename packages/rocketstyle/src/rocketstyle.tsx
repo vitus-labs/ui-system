@@ -322,6 +322,22 @@ const rocketComponent: RocketComponent = (options) => {
       [reservedPropNames],
     )
 
+    // Prebuilt omit-key Set for the finalProps assembly below. All three
+    // sources are stable for the instance (RESERVED_STYLING_PROPS_KEYS is
+    // memoized, PSEUDO_KEYS is a module constant, options.filterAttrs is fixed
+    // at component-config time), so the Set — and the 3-way array spread that
+    // fed it — were being rebuilt every render for nothing. `omit` now consumes
+    // the Set directly, skipping its own per-call `new Set(...)`.
+    const omitKeysSet = useMemo(
+      () =>
+        new Set<string>([
+          ...RESERVED_STYLING_PROPS_KEYS,
+          ...PSEUDO_KEYS,
+          ...options.filterAttrs,
+        ]),
+      [RESERVED_STYLING_PROPS_KEYS],
+    )
+
     // --------------------------------------------------
     // get final props which are (latest has the highest priority):
     // (1) merged styling from context,
@@ -391,11 +407,7 @@ const rocketComponent: RocketComponent = (options) => {
     const finalProps: Record<string, any> = {
       // this removes styling state from props and passes its state
       // under rocketstate key only
-      ...omit(mergeProps, [
-        ...RESERVED_STYLING_PROPS_KEYS,
-        ...PSEUDO_KEYS,
-        ...options.filterAttrs,
-      ]),
+      ...omit(mergeProps, omitKeysSet),
       // if enforced to pass styling props, we pass them directly
       ...(options.passProps ? pick(mergeProps, options.passProps) : {}),
       ref: (ref ?? $rocketstyleRef) ? internalRef : undefined,

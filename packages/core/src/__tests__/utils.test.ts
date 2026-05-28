@@ -45,6 +45,26 @@ describe('omit', () => {
     obj.own = 1
     expect(omit(obj, [])).toEqual({ own: 1 })
   })
+
+  // A prebuilt Set is accepted in place of an array so hot callers can skip
+  // the per-call `new Set(...)` rebuild.
+  it('accepts a Set of keys (same result as an array)', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 }
+    expect(omit(obj, new Set(['a', 'c']))).toEqual({ b: 2, d: 4 })
+  })
+
+  it('returns a shallow copy when given an empty Set', () => {
+    const obj = { a: 1, b: 2 }
+    const result = omit(obj, new Set())
+    expect(result).toEqual({ a: 1, b: 2 })
+    expect(result).not.toBe(obj)
+  })
+
+  it('does not mutate the passed-in Set', () => {
+    const keys = new Set(['b'])
+    omit({ a: 1, b: 2 }, keys)
+    expect([...keys]).toEqual(['b'])
+  })
 })
 
 // --------------------------------------------------------
