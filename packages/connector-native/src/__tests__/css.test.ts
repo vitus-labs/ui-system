@@ -72,6 +72,31 @@ describe('css', () => {
     })
   })
 
+  // Regression: arrays of interpolations (the per-breakpoint output shape of
+  // unistyle's makeItResponsive — [CSSResult, '', CSSResult, …]) previously
+  // fell through to the object branch and stringified to "0: [object Object]".
+  describe('array interpolations (makeItResponsive output)', () => {
+    it('flattens an array of CSSResults and skips falsy entries', () => {
+      const a = css`color: red;`
+      const b = css`width: 100px;`
+      const result = css`${[a, '', b, false, null, undefined]}`
+      expect(result.resolve({})).toEqual({ color: 'red', width: 100 })
+    })
+
+    it('flattens arrays returned from a function interpolation', () => {
+      const a = css`color: blue;`
+      const result = css`${() => [a]}`
+      expect(result.resolve({})).toEqual({ color: 'blue' })
+    })
+
+    it('later array entries override earlier ones (breakpoint cascade)', () => {
+      const base = css`color: red;`
+      const override = css`color: blue;`
+      const result = css`${[base, override]}`
+      expect(result.resolve({})).toEqual({ color: 'blue' })
+    })
+  })
+
   describe('edge cases', () => {
     it('handles null/undefined/boolean interpolations', () => {
       const result = css`

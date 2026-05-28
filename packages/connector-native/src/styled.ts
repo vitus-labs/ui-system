@@ -2,6 +2,7 @@ import { type ComponentType, createElement } from 'react'
 
 import { type CSSResult, css as cssFactory } from '~/css'
 import { mergeStyles } from '~/parse'
+import { useTheme } from '~/provider'
 
 type StyledOptions = {
   shouldForwardProp?: (prop: string) => boolean
@@ -30,8 +31,16 @@ const createStyledComponent = (
   const template = cssFactory(strings, ...values)
 
   const Styled = ({ ref, ...props }: Record<string, any>) => {
+    // Inject the context theme so dynamic interpolations (`p.theme.*`) and
+    // unistyle's makeItResponsive (which reads `props.theme`) resolve on
+    // native, mirroring the web styler. Only injected into the resolve props
+    // — never forwarded to the underlying RN component (theme isn't a valid
+    // RN prop). A consumer-passed `theme` prop takes precedence and is
+    // forwarded as-is, matching the web connector.
+    const theme = useTheme()
+    const resolveProps = props.theme !== undefined ? props : { ...props, theme }
     const resolvedStyles = isCSSResult(template)
-      ? template.resolve(props)
+      ? template.resolve(resolveProps)
       : template
 
     const filter = options?.shouldForwardProp ?? shouldForwardByDefault

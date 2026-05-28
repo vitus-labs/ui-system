@@ -9,6 +9,7 @@ type Interpolation =
   | undefined
   | StyleObject
   | CSSResult
+  | Interpolation[]
   | ((props: any) => any)
 
 /**
@@ -54,6 +55,19 @@ const resolveInterpolation = (value: Interpolation, props: any): string => {
   if (isCSSResult(value)) {
     // Nested css`` — resolve it and convert back to CSS-like string
     return styleObjectToString(value.resolve(props))
+  }
+  if (Array.isArray(value)) {
+    // Array of interpolations — e.g. the per-breakpoint output of
+    // unistyle's makeItResponsive ([CSSResult, '', CSSResult, …]). Resolve
+    // each entry and join as `;`-separated declarations so the outer parse
+    // splits them correctly. Without this branch arrays fell through to the
+    // object path below and stringified to "0: [object Object]; …".
+    let out = ''
+    for (let i = 0; i < value.length; i++) {
+      const part = resolveInterpolation(value[i] as Interpolation, props)
+      if (part) out += `${part};`
+    }
+    return out
   }
   if (typeof value === 'object') {
     return styleObjectToString(value as Record<string, unknown>)
