@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { type FC, forwardRef } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import { ThemeProvider } from '~/provider'
 import { styled } from '~/styled'
 
 // Mock base component that captures style prop
@@ -65,6 +66,56 @@ describe('styled', () => {
     const style = JSON.parse(el.getAttribute('data-style')!)
 
     expect(style).toEqual({ width: 150 })
+  })
+
+  // Regression: the context theme was not injected into resolve props, so
+  // `p.theme.*` interpolations (and unistyle's makeItResponsive, which reads
+  // `props.theme`) resolved to undefined on native.
+  it('injects the context theme into dynamic interpolations', () => {
+    const StyledView = styled(MockView)`
+      color: ${(p: any) => p.theme?.brand ?? 'NONE'};
+    `
+    render(
+      <ThemeProvider theme={{ brand: 'tomato' }}>
+        <StyledView />
+      </ThemeProvider>,
+    )
+    const el = screen.getByTestId('view')
+    expect(JSON.parse(el.getAttribute('data-style')!)).toEqual({
+      color: 'tomato',
+    })
+  })
+
+  it('does not forward the injected theme to the underlying component', () => {
+    const spy = vi.fn()
+    const Spy: FC<any> = forwardRef<any, any>((props, ref) => {
+      spy(props)
+      return <div ref={ref} data-testid="spy" />
+    })
+    const StyledSpy = styled(Spy)`
+      width: 100px;
+    `
+    render(
+      <ThemeProvider theme={{ brand: 'x' }}>
+        <StyledSpy />
+      </ThemeProvider>,
+    )
+    expect(spy.mock.calls[0]?.[0]).not.toHaveProperty('theme')
+  })
+
+  it('a consumer-passed theme prop takes precedence over context', () => {
+    const StyledView = styled(MockView)`
+      color: ${(p: any) => p.theme?.brand};
+    `
+    render(
+      <ThemeProvider theme={{ brand: 'fromContext' }}>
+        <StyledView theme={{ brand: 'fromProp' }} />
+      </ThemeProvider>,
+    )
+    const el = screen.getByTestId('view')
+    expect(JSON.parse(el.getAttribute('data-style')!)).toEqual({
+      color: 'fromProp',
+    })
   })
 
   it('filters out $ prefixed props', () => {

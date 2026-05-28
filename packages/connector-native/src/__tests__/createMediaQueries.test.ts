@@ -79,4 +79,52 @@ describe('createMediaQueries', () => {
     expect(result.__brand).toBe('vl.native.css')
     expect(result.resolve({})).toEqual({ width: 400 })
   })
+
+  // End-to-end shape of the responsive pipeline: unistyle's makeItResponsive
+  // emits `[media.xs`…`, media.md`…`, …]` (CSSResult when the breakpoint
+  // applies, '' when it doesn't) and feeds that array into the engine's css
+  // as an interpolation. This exercises createMediaQueries + array-flattening
+  // + the breakpoint cascade together, the way a real responsive native
+  // component does.
+  describe('responsive pipeline (media → array → css)', () => {
+    it('applies base + matching breakpoint, later one wins', () => {
+      vi.mocked(Dimensions.get).mockReturnValue({
+        width: 768,
+        height: 1024,
+        scale: 1,
+        fontScale: 1,
+      })
+      const media = createMediaQueries({ breakpoints, rootSize: 16, css })
+
+      // mobile-first: xs (base) + md applies at width 768, lg does not
+      const responsive = [
+        media.xs`color: red; padding: 8px;`,
+        media.md`color: blue;`,
+        media.lg`color: green;`,
+      ]
+      const composed = css`${responsive}`
+
+      // md overrides xs color; lg dropped (width < 1024); padding from base kept
+      expect(composed.resolve({})).toEqual({ color: 'blue', padding: 8 })
+    })
+
+    it('keeps only the base breakpoint on a narrow screen', () => {
+      vi.mocked(Dimensions.get).mockReturnValue({
+        width: 375,
+        height: 812,
+        scale: 1,
+        fontScale: 1,
+      })
+      const media = createMediaQueries({ breakpoints, rootSize: 16, css })
+
+      const responsive = [
+        media.xs`color: red;`,
+        media.md`color: blue;`,
+        media.lg`color: green;`,
+      ]
+      const composed = css`${responsive}`
+
+      expect(composed.resolve({})).toEqual({ color: 'red' })
+    })
+  })
 })
