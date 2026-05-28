@@ -57,6 +57,10 @@ type ListExtras = ElementProps & ListOnly
  */
 export type Props<T = unknown> = MergeTypes<[IteratorProps<T>, ListExtras]>
 
+// Built once at module load — `Iterator.RESERVED_PROPS` is a static constant
+// array, so feeding `omit` a prebuilt Set skips the per-render Set rebuild.
+const RESERVED_PROPS_SET = new Set<string>(Iterator.RESERVED_PROPS)
+
 const Component: VLElement<IteratorLooseProps & ListExtras> = ({
   rootElement = false,
   ref,
@@ -77,7 +81,7 @@ const Component: VLElement<IteratorLooseProps & ListExtras> = ({
   if (!rootElement) return renderedList
 
   return (
-    <Element ref={ref} {...omit(props, Iterator.RESERVED_PROPS)}>
+    <Element ref={ref} {...omit(props, RESERVED_PROPS_SET)}>
       {renderedList}
     </Element>
   )
