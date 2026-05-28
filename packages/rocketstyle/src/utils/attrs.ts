@@ -87,17 +87,19 @@ type CalculateStylingAttrs = ({
 }) => Record<string, any>
 export const calculateStylingAttrs: CalculateStylingAttrs =
   ({ useBooleans, multiKeys }) =>
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dimension matching algo — branches by multi/single + boolean keyword detection, inlined for the per-render hot path
   ({ props, dimensions }) => {
     const result: Record<string, any> = {}
 
-    // (1) find dimension keys values & initialize
-    // object with possible options
-    Object.keys(dimensions).forEach((item) => {
+    // (1) find dimension keys values & initialize object with possible options.
+    // Direct for-in avoids the `Object.keys` array + `forEach` closure
+    // allocation this paid on every render (same pattern as `pickStyledAttrs`).
+    for (const item in dimensions) {
       const pickedProp = props[item]
       const t = typeof pickedProp
 
       // if the property is multi key, allow assign array as well
-      if (multiKeys?.[item] && Array.isArray(pickedProp)) {
+      if (multiKeys?.[item as keyof MultiKeys] && Array.isArray(pickedProp)) {
         result[item] = pickedProp
       }
       // assign when it's only a string or number otherwise it's considered
@@ -107,34 +109,35 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
       } else {
         result[item] = undefined
       }
-    })
+    }
 
     // (2) if booleans are being used let's find the rest
     if (useBooleans) {
       const propsKeys = Object.keys(props)
 
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dimension matching algo — branches by multi/single + boolean keyword detection
-      Object.entries(result).forEach(([key, value]) => {
-        // @ts-expect-error — `multiKeys` is typed `MultiKeys` (specific dimension prop names),
-        // but `key` here is `string` from `Object.entries`. They overlap by construction at the call site.
-        const isMultiKey = multiKeys[key]
-
+      // for-in over `result` (instead of `Object.entries`) drops the
+      // entries-array + closure allocation per render.
+      for (const key in result) {
         // when value in result is not assigned yet
-        if (!value) {
+        if (!result[key]) {
+          const isMultiKey = multiKeys?.[key as keyof MultiKeys]
           let newDimensionValue: string | string[] | undefined
-          const keywordSet = new Set(
-            Object.keys(dimensions[key] as Record<string, unknown>),
-          )
+          // `dimensions[key]` is a stable config object. `Object.hasOwn`
+          // membership replaces the prior `new Set(Object.keys(...))` built
+          // per dimension per render — no Set, no intermediate keys array.
+          const dimObj = dimensions[key] as Record<string, unknown>
 
           if (isMultiKey) {
-            newDimensionValue = propsKeys.filter((key) => keywordSet.has(key))
+            newDimensionValue = propsKeys.filter((k) =>
+              Object.hasOwn(dimObj, k),
+            )
           } else {
             // iterate backwards to guarantee the last one will have
             // a priority over previous ones
             for (let i = propsKeys.length - 1; i >= 0; i--) {
               // biome-ignore lint/style/noNonNullAssertion: loop bound `i >= 0 && i < propsKeys.length` guarantees propsKeys[i] exists
               const k = propsKeys[i]!
-              if (keywordSet.has(k) && props[k]) {
+              if (Object.hasOwn(dimObj, k) && props[k]) {
                 newDimensionValue = k
                 break
               }
@@ -143,7 +146,7 @@ export const calculateStylingAttrs: CalculateStylingAttrs =
 
           result[key] = newDimensionValue
         }
-      })
+      }
     }
 
     return result

@@ -191,4 +191,42 @@ describe('calculateStylingAttrs', () => {
     })
     expect(result.state).toBe('primary')
   })
+
+  // Lock-in: when several boolean keywords for a single-key dimension are all
+  // truthy, the LAST one in prop-insertion order wins (backward scan). Pins the
+  // behaviour through the for-in + Object.hasOwn rewrite.
+  it('resolves the last truthy keyword when multiple are set (single key)', () => {
+    const calc = calculateStylingAttrs({ useBooleans: true, multiKeys: {} })
+    const result = calc({
+      props: { primary: true, secondary: true },
+      dimensions: { state: { primary: true, secondary: true } },
+    })
+    expect(result.state).toBe('secondary')
+  })
+
+  // Lock-in: multi-key dimensions collect ALL matching keywords, in prop order.
+  it('collects all matching keywords for a multi-key dimension in prop order', () => {
+    const calc = calculateStylingAttrs({
+      useBooleans: true,
+      multiKeys: { features: true },
+    })
+    const result = calc({
+      props: { rounded: true, elevated: true, notAKeyword: true },
+      dimensions: {
+        features: { rounded: true, bordered: true, elevated: true },
+      },
+    })
+    expect(result.features).toEqual(['rounded', 'elevated'])
+  })
+
+  // Lock-in: a keyword present in props but with a falsy value is ignored for
+  // single-key resolution even when an earlier truthy keyword exists.
+  it('ignores falsy keyword props during single-key backward scan', () => {
+    const calc = calculateStylingAttrs({ useBooleans: true, multiKeys: {} })
+    const result = calc({
+      props: { primary: true, secondary: false },
+      dimensions: { state: { primary: true, secondary: true } },
+    })
+    expect(result.state).toBe('primary')
+  })
 })
