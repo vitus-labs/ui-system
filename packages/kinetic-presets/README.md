@@ -1,9 +1,9 @@
 # @vitus-labs/kinetic-presets
 
-122 animation presets, 5 configurable factories, and 5 composition utilities for `@vitus-labs/kinetic`.
+123 animation presets, 5 configurable factories, and 5 composition utilities for `@vitus-labs/kinetic`.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/kinetic-presets)](https://www.npmjs.com/package/@vitus-labs/kinetic-presets)
-[![gzip size](https://img.shields.io/badge/gzip-2.3KB-brightgreen)](https://bundlephobia.com/package/@vitus-labs/kinetic-presets)
+[![gzip size](https://img.shields.io/badge/gzip-3.7KB-brightgreen)](https://bundlephobia.com/package/@vitus-labs/kinetic-presets)
 [![license](https://img.shields.io/npm/l/@vitus-labs/kinetic-presets)](./LICENSE)
 
 All exports are tree-shakeable. Import only what you use.
@@ -33,7 +33,7 @@ const FadeSlide = kinetic('div').preset(compose(presets.fade, presets.slideUp))
 const QuickBounce = kinetic('div').preset(withDuration(presets.bounceIn, 200))
 ```
 
-## Presets (122 total)
+## Presets (123 total)
 
 All presets are available as named exports and via the `presets` map object.
 

@@ -16,6 +16,19 @@ describe('styles', () => {
     expect(flat).toContain('color: red')
   })
 
+  // Regression: borderCollapse was declared in ITheme but had no propertyMap
+  // descriptor, so it type-checked yet emitted nothing. Lock in that it now
+  // produces CSS.
+  it('emits border-collapse (was typed but unmapped)', () => {
+    const result = styles({
+      theme: { borderCollapse: 'collapse' } as any,
+      css,
+      rootSize: 16,
+    })
+    const flat = Array.isArray(result) ? result.flat().join('') : String(result)
+    expect(flat).toContain('border-collapse: collapse')
+  })
+
   it('converts number values to rem', () => {
     const result = styles({
       theme: { fontSize: 16 } as any,

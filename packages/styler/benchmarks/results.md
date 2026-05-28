@@ -6,11 +6,12 @@ Comparison of `@vitus-labs/styler` against `styled-components` 6 and `@emotion/s
 
 ## Setup
 
-- bun 1.3.13, react 19.2.5
-- `NODE_ENV=production`
+- bun 1.3.14, react 19.2.6
+- styler 2.6.2, styled-components 6.4.2, @emotion/styled 11.14.1 / @emotion/react 11.14.0
 - jsdom for CSR scenarios
 - tinybench: 1500 ms timed window, 300 ms warmup
 - Apple Silicon
+- Medians of 3 full passes (within-pass variance < 5%)
 
 ## Scenarios
 
@@ -25,39 +26,16 @@ Comparison of `@vitus-labs/styler` against `styled-components` 6 and `@emotion/s
 
 **Fairness note**: `styled-components` 6 does NOT use React 19's `<style precedence>` mechanism — `renderToString` only emits class names, deferring CSS serialization. The SSR sc paths wrap each render in `ServerStyleSheet.collectStyles()` + `getStyleTags()` so all three libs do equivalent work (render + serialize CSS).
 
-## Latest results
+## Results (median ops/sec, higher is better)
 
-```
-── ssr-static ──
-  styler     1528 ops/s   0.685 ms/op   1.00× ████████████████████
-  emotion    1008 ops/s   1.040 ms/op   0.66× █████████████
-  sc          259 ops/s   3.905 ms/op   0.17× ███
-
-── ssr-dynamic ──
-  styler     1174 ops/s   0.887 ms/op   1.00× ████████████████████
-  emotion     904 ops/s   1.152 ms/op   0.77× ███████████████
-  sc          242 ops/s   4.179 ms/op   0.21× ████
-
-── ssr-themed ──
-  styler     1148 ops/s   0.910 ms/op   1.00× ████████████████████
-  emotion     903 ops/s   1.148 ms/op   0.79× ████████████████
-  sc          250 ops/s   4.054 ms/op   0.22× ████
-
-── csr-mount ──
-  emotion   48630 ops/s   0.022 ms/op   1.00× ████████████████████
-  styler    46611 ops/s   0.024 ms/op   0.96× ███████████████████
-  sc        45659 ops/s   0.024 ms/op   0.94× ███████████████████
-
-── csr-update ──
-  styler    36386 ops/s   0.029 ms/op   1.00× ████████████████████
-  emotion   35896 ops/s   0.030 ms/op   0.99× ████████████████████
-  sc        35844 ops/s   0.029 ms/op   0.99× ████████████████████
-
-── csr-many ──
-  styler    42842 ops/s   0.027 ms/op   1.00× ████████████████████
-  emotion   38800 ops/s   0.027 ms/op   0.91× ██████████████████
-  sc        13936 ops/s   0.090 ms/op   0.33× ███████
-```
+| Scenario | styler | emotion | sc | styler vs emotion | styler vs sc |
+|---|---|---|---|---|---|
+| ssr-static | **674.5** | 315.6 | 196.6 | **2.14×** | **3.43×** |
+| ssr-dynamic | **400.7** | 303.0 | 188.4 | **1.32×** | **2.13×** |
+| ssr-themed | **346.1** | 251.7 | 171.0 | **1.37×** | **2.02×** |
+| csr-mount | 13715 | 13048 | 13266 | 1.05× | 1.03× |
+| csr-update | 12800 | 12664 | 12844 | 1.01× | 1.00× |
+| csr-many | **18714** | 17938 | 5463 | 1.04× | **3.43×** |
 
 ## Per-render translation
 
@@ -65,32 +43,32 @@ SSR per-render cost (each tick = 500 renders):
 
 | Scenario | styler | emotion | sc |
 |---|---|---|---|
-| ssr-static | **1.37 μs** | 2.08 μs | 7.81 μs |
-| ssr-dynamic | **1.77 μs** | 2.30 μs | 8.36 μs |
-| ssr-themed | **1.82 μs** | 2.30 μs | 8.11 μs |
+| ssr-static | **3.05 μs** | 6.44 μs | 10.26 μs |
+| ssr-dynamic | **5.06 μs** | 6.68 μs | 10.75 μs |
+| ssr-themed | **6.05 μs** | 8.15 μs | 11.82 μs |
 
-CSR per-mount cost (each tick = 100 mounts):
+CSR per-mount cost (each tick = 100 mounts; csr-many = 50 distinct components):
 
 | Scenario | styler | emotion | sc |
 |---|---|---|---|
-| csr-mount | 0.24 μs | **0.22 μs** | 0.24 μs |
-| csr-update | **0.29 μs** | 0.30 μs | 0.29 μs |
-| csr-many | **0.54 μs/tick / 50** | 0.55 μs | 1.79 μs |
+| csr-mount | **0.78 μs** | 0.84 μs | 0.82 μs |
+| csr-update | 0.84 μs | 0.85 μs | **0.82 μs** |
+| csr-many (per component) | **1.18 μs** | 1.20 μs | 4.22 μs |
 
 ## Takeaways
 
-1. **SSR**: styler leads by **1.3–1.4× vs emotion** and **4–5× vs sc**. The React 19 `<style precedence>` integration + cached static templates + lazy resolve all contribute.
-2. **CSR mount/update**: within ~5% across all three libs. React's reconciler dominates; CSS-in-JS work is in the noise.
-3. **CSR many** (distinct components per tick, cache-defeating): styler/emotion are similar (~10% gap), **sc is 3× slower**. Each new `styled.div` template carries setup cost that sc pays at create-time.
-4. **Bundle size (orthogonal)**: styler gzip ≈ 3.06 KB, emotion ≈ 7 KB, sc6 ≈ 16 KB.
+1. **SSR**: styler leads on every scenario — **2.0–3.4× vs styled-components** and **1.3–2.1× vs emotion**. The lead is largest on `ssr-static` (no function interpolations → class computed once and cached) and narrows on `ssr-dynamic`/`ssr-themed` where all three must resolve per render. The React 19 `<style precedence>` integration + cached static templates + lazy resolve all contribute.
+2. **CSR mount/update**: within ~5% across all three libs — i.e. a statistical tie. React's reconciler + jsdom DOM mutation dominate; CSS-in-JS overhead is in the noise here.
+3. **CSR many** (distinct components per tick, cache-defeating): styler ≈ emotion, both **~3.4× faster than styled-components**. Each new `styled.div` template carries per-component setup cost that sc pays heavily at create-time.
 
-## Caveats
+## Caveats (honesty)
 
-- jsdom CSR doesn't paint — real browser perf includes layout/style recalc that this bench doesn't reflect. Component count, layout complexity, and CSS rule count will shift the picture.
-- `tinybench` numbers within ~5% are noise. The dramatic SSR sc gap and `csr-many` sc gap are well outside the noise floor; the close-fought CSR mount/update results are within it.
-- `styled-components` 6 ships a streaming-SSR path (`renderToPipeableStream`) optimized for large trees — this bench measures sync `renderToString` only.
-- styler's cache benefits from the same component being rendered many times per tick. Real apps see this for the most-rendered components.
+- **jsdom CSR doesn't paint** — a real browser includes layout/style recalc this bench doesn't reflect. The CSR mount/update tie should be read as "CSS engine isn't the bottleneck there," not "all engines paint equally fast."
+- **`tinybench` numbers within ~5% are noise.** The SSR gaps and the `csr-many` sc gap are well outside the noise floor; the CSR mount/update results are within it (reported as ties).
+- **Absolute throughput is machine/thermal-dependent** — only the cross-library ratios on the *same* run are meaningful. These were measured on one machine in one sitting, 3 passes.
+- **`styled-components` 6 ships a streaming-SSR path** (`renderToPipeableStream`) optimized for large trees — this bench measures sync `renderToString` only.
+- **styler's cache benefits from the same component rendering many times per tick.** Real apps see this for their most-rendered components; cold one-off renders look more like `csr-many`.
 
 ## Regression check
 
-Future PRs that touch the styler hot path should re-run `bun run bench` and update this file. If you see a >10% regression on any styler row vs the numbers here, investigate before merging.
+Future PRs that touch the styler hot path should re-run `bun run bench` and update this file. A >10% regression on any styler row vs these numbers warrants investigation before merging. (Compare ratios, not absolute ops/s — the latter drifts with machine/runtime version.)

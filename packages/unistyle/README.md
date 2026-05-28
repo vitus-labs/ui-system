@@ -13,7 +13,7 @@ Transforms property-centric theme objects into breakpoint-centric CSS with media
 - **px-to-rem conversion** — configurable rootSize, zero-effort unit handling
 - **Breakpoint deduplication** — identical breakpoints are collapsed, no redundant CSS
 - **Three input formats** — scalar, mobile-first array, or breakpoint object per property
-- **Data-driven styles** — 100+ CSS properties processed from a theme object
+- **Data-driven styles** — 170+ CSS properties processed from a theme object
 - **Alignment helpers** — flex alignment constants for X and Y axes
 
 ## Installation

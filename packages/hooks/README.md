@@ -1,6 +1,6 @@
 # @vitus-labs/hooks
 
-28 React hooks for UI interactions, state management, DOM observation, accessibility, and theming. 2.15KB gzipped.
+28 React hooks for UI interactions, state management, DOM observation, accessibility, and theming. ~3.4 KB gzipped.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/hooks)](https://www.npmjs.com/package/@vitus-labs/hooks)
 [![license](https://img.shields.io/npm/l/@vitus-labs/hooks)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
