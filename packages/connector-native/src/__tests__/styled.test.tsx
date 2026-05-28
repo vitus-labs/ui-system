@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { type FC, forwardRef } from 'react'
+import { Dimensions } from 'react-native'
 import { describe, expect, it, vi } from 'vitest'
+import createMediaQueries from '~/createMediaQueries'
+import { css } from '~/css'
 import { ThemeProvider } from '~/provider'
 import { styled } from '~/styled'
 
@@ -212,5 +215,47 @@ describe('styled', () => {
     `
 
     expect(StyledComponent.displayName).toBe('styled(Component)')
+  })
+
+  // Rotation reactivity: a component whose styles depend on a media query
+  // re-resolves with the new width when the window dimensions change. In
+  // production `useWindowDimensions()` (called inside styled) triggers the
+  // re-render; here we simulate that re-render and assert the resolved style
+  // tracks the width.
+  it('re-resolves responsive media styles when window width changes', () => {
+    const media = createMediaQueries({
+      breakpoints: { xs: 0, md: 768 },
+      rootSize: 16,
+      css,
+    })
+    // mimic makeItResponsive's output: a prop carrying the per-breakpoint array
+    const Box = styled(MockView)`
+      ${(p: any) => p.$responsive}
+    `
+    const responsive = [media.xs`color: red;`, media.md`color: blue;`]
+
+    // start narrow → only base (xs) applies
+    vi.mocked(Dimensions.get).mockReturnValue({
+      width: 375,
+      height: 812,
+      scale: 1,
+      fontScale: 1,
+    })
+    const { rerender } = render(<Box $responsive={responsive} />)
+    expect(
+      JSON.parse(screen.getByTestId('view').getAttribute('data-style')!),
+    ).toEqual({ color: 'red' })
+
+    // rotate wider → md now applies and overrides
+    vi.mocked(Dimensions.get).mockReturnValue({
+      width: 1024,
+      height: 768,
+      scale: 1,
+      fontScale: 1,
+    })
+    rerender(<Box $responsive={responsive} />)
+    expect(
+      JSON.parse(screen.getByTestId('view').getAttribute('data-style')!),
+    ).toEqual({ color: 'blue' })
   })
 })

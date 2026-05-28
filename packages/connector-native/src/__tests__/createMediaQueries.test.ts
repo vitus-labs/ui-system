@@ -19,12 +19,15 @@ describe('createMediaQueries', () => {
     expect(result.resolve({})).toEqual({ width: 100 })
   })
 
-  it('applies styles when width >= breakpoint', () => {
-    // Default mock: width=375, so sm (576) should NOT apply
+  it('resolves to empty when width < breakpoint (lazy)', () => {
+    // Default mock: width=375, so sm (576) should NOT apply. The result is a
+    // lazy CSSResult that resolves to {} rather than the literal '' it used
+    // to return eagerly.
     const media = createMediaQueries({ breakpoints, rootSize: 16, css })
     const result = media.sm`width: 200px;`
 
-    expect(result).toBe('')
+    expect(result.__brand).toBe('vl.native.css')
+    expect(result.resolve({})).toEqual({})
   })
 
   it('applies styles when width matches breakpoint exactly', () => {
@@ -53,7 +56,33 @@ describe('createMediaQueries', () => {
     const media = createMediaQueries({ breakpoints, rootSize: 16, css })
     const result = media.md`width: 300px;`
 
-    expect(result).toBe('')
+    expect(result.resolve({})).toEqual({})
+  })
+
+  it('re-evaluates width lazily at resolve time (rotation reactivity)', () => {
+    // The width check must happen at resolve(), NOT when media.md`…` is
+    // called — otherwise a cached result would freeze the width. Build the
+    // result while narrow, then "rotate" wider and resolve again.
+    vi.mocked(Dimensions.get).mockReturnValue({
+      width: 375,
+      height: 812,
+      scale: 1,
+      fontScale: 1,
+    })
+    const media = createMediaQueries({ breakpoints, rootSize: 16, css })
+    const result = media.md`width: 300px;` // md = 768, built at width 375
+
+    // Still narrow → empty
+    expect(result.resolve({})).toEqual({})
+
+    // Rotate to a wider screen; the SAME result must now apply
+    vi.mocked(Dimensions.get).mockReturnValue({
+      width: 1024,
+      height: 768,
+      scale: 1,
+      fontScale: 1,
+    })
+    expect(result.resolve({})).toEqual({ width: 300 })
   })
 
   it('skips breakpoint with null value', () => {
@@ -81,11 +110,11 @@ describe('createMediaQueries', () => {
   })
 
   // End-to-end shape of the responsive pipeline: unistyle's makeItResponsive
-  // emits `[media.xs`…`, media.md`…`, …]` (CSSResult when the breakpoint
-  // applies, '' when it doesn't) and feeds that array into the engine's css
-  // as an interpolation. This exercises createMediaQueries + array-flattening
-  // + the breakpoint cascade together, the way a real responsive native
-  // component does.
+  // emits `[media.xs`…`, media.md`…`, …]` (each a lazy CSSResult that resolves
+  // to its styles when the breakpoint applies, or {} when it doesn't) and
+  // feeds that array into the engine's css as an interpolation. This exercises
+  // createMediaQueries + array-flattening + the breakpoint cascade together,
+  // the way a real responsive native component does.
   describe('responsive pipeline (media → array → css)', () => {
     it('applies base + matching breakpoint, later one wins', () => {
       vi.mocked(Dimensions.get).mockReturnValue({

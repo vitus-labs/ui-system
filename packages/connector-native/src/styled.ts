@@ -1,4 +1,5 @@
 import { type ComponentType, createElement } from 'react'
+import { useWindowDimensions } from 'react-native'
 
 import { type CSSResult, css as cssFactory } from '~/css'
 import { mergeStyles } from '~/parse'
@@ -31,6 +32,12 @@ const createStyledComponent = (
   const template = cssFactory(strings, ...values)
 
   const Styled = ({ ref, ...props }: Record<string, any>) => {
+    // Subscribe to window dimensions so the component re-renders on
+    // rotation / resize. The width itself is read lazily inside
+    // createMediaQueries at resolve time — this call only provides the
+    // re-render trigger, mirroring how the browser re-evaluates `@media`.
+    useWindowDimensions()
+
     // Inject the context theme so dynamic interpolations (`p.theme.*`) and
     // unistyle's makeItResponsive (which reads `props.theme`) resolve on
     // native, mirroring the web styler. Only injected into the resolve props
