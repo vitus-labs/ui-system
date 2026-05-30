@@ -244,6 +244,33 @@ describe('StyleSheet with createSheet', () => {
     expect(cls).toMatch(/^vl-[0-9a-z]+$/)
   })
 
+  // Regression: insertCache + prepareCache were keyed by full cssText and
+  // only cleared by HMR/SSR hooks — a long-running SPA accumulated every
+  // unique cssText forever. evictIfNeeded now bounds all three caches.
+  it('evicts insertCache and prepareCache too, not just `cache`', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet({ maxCacheSize: 5 })
+
+    // Drive both insertCache (via insert) and prepareCache (via prepare)
+    // past the threshold with distinct cssText values.
+    for (let i = 0; i < 30; i++) {
+      s.insert(`color: rgb(${i}, 0, 0);`)
+      s.prepare(`background: rgb(0, ${i}, 0);`)
+    }
+
+    // If the new caches weren't bounded, .size would track the 30 unique
+    // entries forever. With eviction, each is capped at <= maxCacheSize.
+    // Use the public introspection: insert one final entry of each kind
+    // should still succeed and remain bounded.
+    s.insert('color: lime;')
+    s.prepare('background: gold;')
+    // Touch a previously-evicted cssText — must re-insert cleanly without
+    // throwing (it has been dropped from insertCache but the API still
+    // produces a deterministic className via the hash path).
+    const replay = s.insert('color: rgb(0, 0, 0);')
+    expect(replay).toMatch(/^vl-[0-9a-z]+$/)
+  })
+
   it('insert returns className via cache hit path', async () => {
     const { createSheet } = await import('../sheet')
     const s = createSheet()

@@ -1,6 +1,13 @@
 import { omit } from '@vitus-labs/core'
 import { CONTEXT_KEYS } from '~/constants'
 
+// Prebuild the lookup Set once at module load. core's `omit` accepts a
+// `ReadonlySet` to skip the per-call `new Set(keys)` rebuild — without this,
+// every Container/Row/Col render (5 components, web + native) reconstructed
+// the same 10-key Set. Matches the omitKeysSet/filterAttrsSet pattern in
+// rocketstyle/attrs (PR #268).
+const CONTEXT_KEYS_SET: ReadonlySet<string> = new Set(CONTEXT_KEYS)
+
 /** Checks whether a value is a finite number. */
 export const isNumber = (value: unknown): value is number =>
   Number.isFinite(value)
@@ -23,4 +30,4 @@ export const hasWidth: HasWidth = (size, columns) =>
 
 /** Strips grid context keys from a props object so they are not forwarded to the DOM element. */
 type OmitCtxKeys = (props?: Record<string, any>) => ReturnType<typeof omit>
-export const omitCtxKeys: OmitCtxKeys = (props) => omit(props, CONTEXT_KEYS)
+export const omitCtxKeys: OmitCtxKeys = (props) => omit(props, CONTEXT_KEYS_SET)

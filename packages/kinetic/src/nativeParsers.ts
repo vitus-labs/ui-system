@@ -92,12 +92,18 @@ export type ParsedTransform = { type: string; value: number }
  * parseTransformString('translateY(16px) scale(0.95)')
  * // [{ type: 'translateY', value: 16 }, { type: 'scale', value: 0.95 }]
  */
+// Hoisted to module scope — the prior `const regex = ... /g` was reallocated
+// on every call. Mirrors the EASING_NAMES module-hoist pattern earlier in
+// this file. Stateful regex (`/g`) so `lastIndex` must be reset before each
+// use.
+const TRANSFORM_RE = /(\w+)\(([^)]+)\)/g
+
 export const parseTransformString = (transform: string): ParsedTransform[] => {
   const result: ParsedTransform[] = []
-  const regex = /(\w+)\(([^)]+)\)/g
+  TRANSFORM_RE.lastIndex = 0
   let match: RegExpExecArray | null
 
-  while ((match = regex.exec(transform)) !== null) {
+  while ((match = TRANSFORM_RE.exec(transform)) !== null) {
     // The `?? ''` fallbacks are unreachable: the regex
     // `/(\w+)\(([^)]+)\)/` only matches when BOTH capture groups are
     // present, so `match[1]`/`match[2]` are never undefined here. The

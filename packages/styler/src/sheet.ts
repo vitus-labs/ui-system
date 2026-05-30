@@ -126,10 +126,24 @@ export class StyleSheet {
     }
   }
 
-  /** Evict oldest entries when cache exceeds max size. */
+  /**
+   * Evict oldest entries from any cache that exceeds maxCacheSize.
+   * `cache` was already gated; `insertCache` and `prepareCache` are keyed by
+   * full cssText (200–5000B per entry) and were only cleared by HMR/SSR
+   * hooks before — a long-running SPA with theme switching or prop-driven
+   * CSS accumulated every unique cssText forever. Each cache is now bounded
+   * the same way (oldest ~10% evicted at the threshold).
+   */
   private evictIfNeeded() {
-    if (this.cache.size <= this.maxCacheSize) return
-    evictMapByPercent(this.cache, 0.1)
+    if (this.cache.size > this.maxCacheSize) {
+      evictMapByPercent(this.cache, 0.1)
+    }
+    if (this.insertCache.size > this.maxCacheSize) {
+      evictMapByPercent(this.insertCache, 0.1)
+    }
+    if (this.prepareCache.size > this.maxCacheSize) {
+      evictMapByPercent(this.prepareCache, 0.1)
+    }
   }
 
   /**

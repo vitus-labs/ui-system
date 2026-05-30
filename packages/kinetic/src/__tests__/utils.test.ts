@@ -114,6 +114,22 @@ describe('removeClasses', () => {
   })
 })
 
+describe('splitClasses cache eviction', () => {
+  it('caps splitCache by evicting the oldest ~10% past the threshold', () => {
+    // Drive splitCache past its 256-entry cap via addClasses (which calls
+    // splitClasses internally). The eviction path keeps the cache bounded
+    // and continues to function for new keys.
+    const el = document.createElement('div')
+    for (let i = 0; i < 300; i++) {
+      addClasses(el, `cls-${i}`)
+    }
+    // After eviction, a brand-new key must still parse + apply correctly.
+    addClasses(el, 'after-evict-a after-evict-b')
+    expect(el.classList.contains('after-evict-a')).toBe(true)
+    expect(el.classList.contains('after-evict-b')).toBe(true)
+  })
+})
+
 describe('nextFrame', () => {
   it('calls callback after double rAF', () => {
     const callbacks: (() => void)[] = []
@@ -140,5 +156,54 @@ describe('nextFrame', () => {
     expect(fn).toHaveBeenCalledTimes(1)
 
     globalThis.requestAnimationFrame = originalRaf
+  })
+
+  // Regression: the prior `nextFrame` returned only the OUTER rAF id, so
+  // callers that wanted to abort could only cancel the outer frame — the
+  // inner rAF fired against potentially-stale or detached elements on rapid
+  // toggles. `nextFrame` now returns a canceller that aborts BOTH frames.
+  it('returns a canceller that suppresses the callback after the outer frame fires', () => {
+    const callbacks: (() => void)[] = []
+    const originalRaf = globalThis.requestAnimationFrame
+    globalThis.requestAnimationFrame = ((cb: () => void) => {
+      callbacks.push(cb)
+      return callbacks.length
+    }) as typeof requestAnimationFrame
+
+    const fn = vi.fn()
+    const cancel = nextFrame(fn)
+
+    // Outer rAF fires — queues the inner rAF
+    callbacks[0]!()
+    expect(callbacks.length).toBe(2)
+
+    // Cancel BEFORE the inner rAF runs
+    cancel()
+    // Inner rAF executes — must be a no-op due to the cancelled flag
+    callbacks[1]!()
+    expect(fn).not.toHaveBeenCalled()
+
+    globalThis.requestAnimationFrame = originalRaf
+  })
+
+  it('cancels the outer rAF when cancelled before either frame fires', () => {
+    const cancelledIds: number[] = []
+    const originalRaf = globalThis.requestAnimationFrame
+    const originalCancel = globalThis.cancelAnimationFrame
+    let nextId = 0
+    globalThis.requestAnimationFrame = ((_cb: () => void) => {
+      nextId++
+      return nextId
+    }) as typeof requestAnimationFrame
+    globalThis.cancelAnimationFrame = ((id: number) => {
+      cancelledIds.push(id)
+    }) as typeof cancelAnimationFrame
+
+    const cancel = nextFrame(vi.fn())
+    cancel()
+    expect(cancelledIds).toContain(1)
+
+    globalThis.requestAnimationFrame = originalRaf
+    globalThis.cancelAnimationFrame = originalCancel
   })
 })

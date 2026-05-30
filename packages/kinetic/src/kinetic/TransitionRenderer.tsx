@@ -132,14 +132,14 @@ const TransitionRenderer = ({
 
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const frameId = applyEnter(el, config)
-      return () => cancelAnimationFrame(frameId)
+      const cancel = applyEnter(el, config)
+      return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const frameId = applyLeave(el, config)
-      return () => cancelAnimationFrame(frameId)
+      const cancel = applyLeave(el, config)
+      return cancel
     }
 
     if (stage === 'entered') {
