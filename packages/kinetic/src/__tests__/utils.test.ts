@@ -141,4 +141,53 @@ describe('nextFrame', () => {
 
     globalThis.requestAnimationFrame = originalRaf
   })
+
+  // Regression: the prior `nextFrame` returned only the OUTER rAF id, so
+  // callers that wanted to abort could only cancel the outer frame — the
+  // inner rAF fired against potentially-stale or detached elements on rapid
+  // toggles. `nextFrame` now returns a canceller that aborts BOTH frames.
+  it('returns a canceller that suppresses the callback after the outer frame fires', () => {
+    const callbacks: (() => void)[] = []
+    const originalRaf = globalThis.requestAnimationFrame
+    globalThis.requestAnimationFrame = ((cb: () => void) => {
+      callbacks.push(cb)
+      return callbacks.length
+    }) as typeof requestAnimationFrame
+
+    const fn = vi.fn()
+    const cancel = nextFrame(fn)
+
+    // Outer rAF fires — queues the inner rAF
+    callbacks[0]!()
+    expect(callbacks.length).toBe(2)
+
+    // Cancel BEFORE the inner rAF runs
+    cancel()
+    // Inner rAF executes — must be a no-op due to the cancelled flag
+    callbacks[1]!()
+    expect(fn).not.toHaveBeenCalled()
+
+    globalThis.requestAnimationFrame = originalRaf
+  })
+
+  it('cancels the outer rAF when cancelled before either frame fires', () => {
+    const cancelledIds: number[] = []
+    const originalRaf = globalThis.requestAnimationFrame
+    const originalCancel = globalThis.cancelAnimationFrame
+    let nextId = 0
+    globalThis.requestAnimationFrame = ((_cb: () => void) => {
+      nextId++
+      return nextId
+    }) as typeof requestAnimationFrame
+    globalThis.cancelAnimationFrame = ((id: number) => {
+      cancelledIds.push(id)
+    }) as typeof cancelAnimationFrame
+
+    const cancel = nextFrame(vi.fn())
+    cancel()
+    expect(cancelledIds).toContain(1)
+
+    globalThis.requestAnimationFrame = originalRaf
+    globalThis.cancelAnimationFrame = originalCancel
+  })
 })

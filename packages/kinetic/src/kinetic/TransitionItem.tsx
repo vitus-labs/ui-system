@@ -168,14 +168,14 @@ const TransitionItem = ({
 
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const frameId = applyEnter(el, transitionConfig)
-      return () => cancelAnimationFrame(frameId)
+      const cancel = applyEnter(el, transitionConfig)
+      return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const frameId = applyLeave(el, transitionConfig)
-      return () => cancelAnimationFrame(frameId)
+      const cancel = applyLeave(el, transitionConfig)
+      return cancel
     }
 
     if (stage === 'entered') {

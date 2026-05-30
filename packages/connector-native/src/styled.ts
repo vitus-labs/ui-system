@@ -30,6 +30,9 @@ const createStyledComponent = (
   values: Interpolation[],
 ) => {
   const template = cssFactory(strings, ...values)
+  // Hoist the prop-forward filter once at component-creation time so we
+  // don't re-evaluate the `??` per render.
+  const filter = options?.shouldForwardProp ?? shouldForwardByDefault
 
   const Styled = ({ ref, ...props }: Record<string, any>) => {
     // Subscribe to window dimensions so the component re-renders on
@@ -50,25 +53,24 @@ const createStyledComponent = (
       ? template.resolve(resolveProps)
       : template
 
-    const filter = options?.shouldForwardProp ?? shouldForwardByDefault
+    // Build the forwarded-props object directly via mutation. The previous
+    // `createElement(tag, { ...forwardedProps, ref, style })` re-spread a
+    // freshly-allocated object for no reason — mirrors the styler
+    // rawProps-mutation trick (no caller holds the reference yet, so the
+    // mutation is safe).
     const forwardedProps: Record<string, any> = {}
-    // for-in avoids the `Object.keys` array allocation per render. Runs on
-    // every native styled component render.
     for (const key in props) {
       if (key === 'children' || key === 'style' || filter(key)) {
         forwardedProps[key] = props[key]
       }
     }
 
-    const mergedStyle = props.style
+    forwardedProps.style = props.style
       ? mergeStyles(resolvedStyles, props.style)
       : resolvedStyles
+    if (ref !== undefined) forwardedProps.ref = ref
 
-    return createElement(tag, {
-      ...forwardedProps,
-      ref,
-      style: mergedStyle,
-    })
+    return createElement(tag, forwardedProps)
   }
 
   const name =
