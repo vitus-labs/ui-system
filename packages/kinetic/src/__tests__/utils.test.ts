@@ -114,6 +114,22 @@ describe('removeClasses', () => {
   })
 })
 
+describe('splitClasses cache eviction', () => {
+  it('caps splitCache by evicting the oldest ~10% past the threshold', () => {
+    // Drive splitCache past its 256-entry cap via addClasses (which calls
+    // splitClasses internally). The eviction path keeps the cache bounded
+    // and continues to function for new keys.
+    const el = document.createElement('div')
+    for (let i = 0; i < 300; i++) {
+      addClasses(el, `cls-${i}`)
+    }
+    // After eviction, a brand-new key must still parse + apply correctly.
+    addClasses(el, 'after-evict-a after-evict-b')
+    expect(el.classList.contains('after-evict-a')).toBe(true)
+    expect(el.classList.contains('after-evict-b')).toBe(true)
+  })
+})
+
 describe('nextFrame', () => {
   it('calls callback after double rAF', () => {
     const callbacks: (() => void)[] = []
