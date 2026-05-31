@@ -91,19 +91,55 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
  * width, padding, margin, and extra CSS. When hidden (size === 0), moves
  * the element off-screen with fixed positioning.
  */
+// `offset` is rendered as a percentage of `columns` (matching how Col
+// computes its own width), so a Col with `columns=12 offset=3` gets
+// `margin-left: 25%`. Negative offsets pull the column LEFT, which CSS
+// already supports via negative margin.
+const offsetStyles = (
+  offset: number | undefined,
+  columns: number | undefined,
+): string => {
+  if (!isNumber(offset) || offset === 0 || !isNumber(columns) || columns <= 0)
+    return ''
+  const pct = (offset / columns) * 100
+  return `margin-left: ${pct}%;`
+}
+
+const orderStyles = (order: number | undefined): string =>
+  isNumber(order) ? `order: ${order};` : ''
+
 const styles: MakeItResponsiveStyles<StyledTypes> = ({
   theme,
   css,
   rootSize,
 }) => {
-  const { size, columns, gap, padding, extraStyles, RNparentWidth } = theme
-  const renderStyles = isVisible(size)
+  const { size, columns, gap, padding, offset, order, auto, extraStyles, RNparentWidth } =
+    theme
+  const renderStyles = isVisible(size) || auto === true
 
   if (renderStyles) {
+    // `auto` overrides the explicit-width path with `flex: 1 1 0%` so the
+    // col stretches to fill remaining row space — Bootstrap's `col-*-auto`
+    // analogue. When `auto` is set, we skip the width calc but still apply
+    // padding/margin so the row's gap rhythm stays intact.
     return css`
       ${__WEB__ ? 'left: initial;' : ''}
       position: relative;
-      ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })};
+      ${
+        auto === true
+          ? __WEB__
+            ? css`
+                flex: 1 1 0%;
+                max-width: 100%;
+              `
+            : css`
+                flex: 1 1 auto;
+                flex-basis: auto;
+              `
+          : widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })
+      };
+      ${offsetStyles(offset, columns)};
+      ${orderStyles(order)};
       ${spacingStyles('padding', padding, rootSize)};
       ${spacingStyles('margin', gap, rootSize)};
       ${extendCss(extraStyles)};

@@ -34,6 +34,20 @@ export type ConfigurationProps = Partial<{
   gap: ValueType
   gutter: ValueType
   columns: ValueType
+  /**
+   * Push the column to the right by N of `columns` units (12-col default).
+   * Maps to `margin-left: (offset/columns) * 100%` on web. Responsive.
+   */
+  offset: ValueType
+  /**
+   * CSS `order` for flex re-ordering. Responsive.
+   */
+  order: ValueType
+  /**
+   * When truthy, the column stretches to fill remaining row space
+   * (`flex: 1 1 0`) regardless of `size`. Responsive boolean.
+   */
+  auto: CreateValueType<boolean>
   colCss: ExtraStyles
   rowCss: ExtraStyles
   colComponent: ComponentType
@@ -55,6 +69,9 @@ export type StyledTypes = Partial<{
   gap: number
   gutter: number
   columns: number
+  offset: number
+  order: number
+  auto: boolean
   extraStyles: Css
   RNparentWidth: any
   contentAlignX: AlignContentAlignXKeys

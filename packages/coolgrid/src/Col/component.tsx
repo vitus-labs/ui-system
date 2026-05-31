@@ -35,6 +35,15 @@ const Component: ElementType<
     ...props,
   })
 
+  // offset / order / auto are per-Col props (not inherited from RowContext).
+  // Read directly from the component's own props and pass through theme so
+  // the responsive engine resolves them per breakpoint.
+  const { offset, order, auto } = props as {
+    offset?: unknown
+    order?: unknown
+    auto?: unknown
+  }
+
   const finalProps = useMemo(
     () => ({
       $coolgrid: {
@@ -42,10 +51,13 @@ const Component: ElementType<
         gap,
         size,
         padding,
+        offset,
+        order,
+        auto,
         extraStyles: css ?? colCss,
       },
     }),
-    [columns, gap, size, padding, css, colCss],
+    [columns, gap, size, padding, offset, order, auto, css, colCss],
   )
 
   return (
