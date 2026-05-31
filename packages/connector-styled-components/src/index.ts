@@ -21,5 +21,21 @@ declare module '@vitus-labs/core' {
     extends Extract<StyledComponentsCssResult, object> {}
 }
 
+/**
+ * Hook that mirrors `@vitus-labs/styler`'s `useCSS` surface so consumer
+ * code can import `useCSS` from any connector without import errors.
+ *
+ * Honest limitation: styled-components v6 has no public API that turns a
+ * `css\`…\`` RuleSet into a standalone class name without a styled
+ * component wrapper. Calling this from a styled-components-backed app
+ * throws a clear error pointing at the supported migration path; the
+ * shim exists purely so cross-engine code compiles.
+ */
+export const useCSS = (..._args: unknown[]): string => {
+  throw new Error(
+    '[@vitus-labs/connector-styled-components] useCSS() is not supported on styled-components — wrap the styles in `styled.<tag>` (or migrate to `@vitus-labs/connector-styler`, which supports useCSS natively).',
+  )
+}
+
 export { createGlobalStyle, css, keyframes, styled, useTheme }
 export const provider = ThemeProvider

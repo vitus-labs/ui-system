@@ -128,6 +128,37 @@ export const createGlobalStyle = (
 }
 
 // ---------------------------------------------------------------------------
+// useCSS — parity with `@vitus-labs/styler`'s hook for engine-swap intent.
+// ---------------------------------------------------------------------------
+
+/**
+ * Hook that resolves a `css()` result and returns the class name attached
+ * to the corresponding Emotion `<style>` rule. Mirrors the styler `useCSS`
+ * surface so consumer code can import `useCSS` from any connector.
+ *
+ * Honest limitation: Emotion's `css` returns either a plain string
+ * (static fast path) or a `(props) => string` function (dynamic path).
+ * Both are resolved here; the resulting string is fed through Emotion's
+ * own `emotionCss\`…\`` to obtain a SerializedStyles with `.name`. For
+ * the most common usage — static templates — this is indistinguishable
+ * from styler's useCSS.
+ */
+export const useCSS = (
+  template: unknown,
+  props?: Record<string, unknown>,
+): string => {
+  const cssStr =
+    typeof template === 'function'
+      ? (template as (p: Record<string, unknown>) => string)(props ?? {})
+      : typeof template === 'string'
+        ? template
+        : String(template ?? '')
+  if (!cssStr) return ''
+  const serialized = emotionCss`${cssStr}` as unknown as { name?: string }
+  return serialized?.name ?? ''
+}
+
+// ---------------------------------------------------------------------------
 // Re-exports from Emotion
 // ---------------------------------------------------------------------------
 
