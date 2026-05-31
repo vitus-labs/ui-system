@@ -6,12 +6,16 @@ import type { UseColorScheme } from './useColorScheme'
 import useColorScheme from './useColorScheme'
 import type { UseControllableState } from './useControllableState'
 import useControllableState from './useControllableState'
+import type { UseCopyToClipboard } from './useCopyToClipboard'
+import useCopyToClipboard from './useCopyToClipboard'
 import type { UseDebouncedCallback } from './useDebouncedCallback'
 import useDebouncedCallback from './useDebouncedCallback'
 import type { UseDebouncedValue } from './useDebouncedValue'
 import useDebouncedValue from './useDebouncedValue'
 import type { UseElementSize } from './useElementSize'
 import useElementSize from './useElementSize'
+import type { UseEventListener } from './useEventListener'
+import useEventListener from './useEventListener'
 import type { UseFocus } from './useFocus'
 import useFocus from './useFocus'
 import type { UseFocusTrap } from './useFocusTrap'
@@ -28,6 +32,8 @@ import type { UseKeyboard } from './useKeyboard'
 import useKeyboard from './useKeyboard'
 import type { UseLatest } from './useLatest'
 import useLatest from './useLatest'
+import type { UseLocalStorage } from './useLocalStorage'
+import useLocalStorage from './useLocalStorage'
 import type { UseMediaQuery } from './useMediaQuery'
 import useMediaQuery from './useMediaQuery'
 import type { UseMergedRef } from './useMergedRef'
@@ -36,6 +42,8 @@ import type { UsePrevious } from './usePrevious'
 import usePrevious from './usePrevious'
 import type { UseReducedMotion } from './useReducedMotion'
 import useReducedMotion from './useReducedMotion'
+import type { UseResizeObserver } from './useResizeObserver'
+import useResizeObserver from './useResizeObserver'
 import type { UseRootSize } from './useRootSize'
 import useRootSize from './useRootSize'
 import type { UseScrollLock } from './useScrollLock'
@@ -60,9 +68,11 @@ export type {
   UseClickOutside,
   UseColorScheme,
   UseControllableState,
+  UseCopyToClipboard,
   UseDebouncedCallback,
   UseDebouncedValue,
   UseElementSize,
+  UseEventListener,
   UseFocus,
   UseFocusTrap,
   UseHover,
@@ -71,10 +81,12 @@ export type {
   UseIsomorphicLayoutEffect,
   UseKeyboard,
   UseLatest,
+  UseLocalStorage,
   UseMediaQuery,
   UseMergedRef,
   UsePrevious,
   UseReducedMotion,
+  UseResizeObserver,
   UseRootSize,
   UseScrollLock,
   UseSpacing,
@@ -91,9 +103,11 @@ export {
   useClickOutside,
   useColorScheme,
   useControllableState,
+  useCopyToClipboard,
   useDebouncedCallback,
   useDebouncedValue,
   useElementSize,
+  useEventListener,
   useFocus,
   useFocusTrap,
   useHover,
@@ -102,10 +116,12 @@ export {
   useIsomorphicLayoutEffect,
   useKeyboard,
   useLatest,
+  useLocalStorage,
   useMediaQuery,
   useMergedRef,
   usePrevious,
   useReducedMotion,
+  useResizeObserver,
   useRootSize,
   useScrollLock,
   useSpacing,
