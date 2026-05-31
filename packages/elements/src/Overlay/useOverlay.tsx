@@ -9,7 +9,6 @@
  * `./useScrollReposition`.
  */
 import { context, throttle } from '@vitus-labs/core'
-import { useFocusTrap, useScrollLock } from '@vitus-labs/hooks'
 import { value } from '@vitus-labs/unistyle'
 import {
   useCallback,
@@ -30,7 +29,9 @@ import {
   processVisibilityEvent,
 } from './positionMath'
 import useEscapeKey from './useEscapeKey'
+import useFocusTrap from './useFocusTrap'
 import useHoverListeners from './useHoverListeners'
+import useScrollLock from './useScrollLock'
 import useScrollReposition from './useScrollReposition'
 
 // Hoisted: closeOn values that count as "click-driven close". Inlined

@@ -9,6 +9,13 @@
  * existing rocketstyle engine so power users can still drop down to the
  * chain when they need theme modes, multi-dimensions, or transforms.
  *
+ * **Soft peer:** recipe imports `makeItResponsive` from
+ * `@vitus-labs/unistyle` to serialize variant themes into CSS. rocketstyle
+ * does NOT declare unistyle as a peerDependency — the import is
+ * externalized at bundle time so consumers using the chain API directly
+ * never pay the cost. Consumers using `recipe()` must install
+ * `@vitus-labs/unistyle` alongside `@vitus-labs/rocketstyle`.
+ *
  * Example:
  *   const Button = recipe({
  *     name: 'Button',
