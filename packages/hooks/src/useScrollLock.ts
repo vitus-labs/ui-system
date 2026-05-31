@@ -2,26 +2,21 @@ import { useEffect } from 'react'
 
 export type UseScrollLock = (enabled: boolean) => void
 
-// Refcount + original-overflow snapshot live on a `globalThis` symbol so
-// this hook and `@vitus-labs/elements`'s internal copy (Overlay/
-// useScrollLock.ts) cooperate on ONE shared registry. Without this,
-// pairing an Overlay modal with this hook in the same app gives each
-// package its own counter and original-overflow snapshot — the release
-// order can leave the page silently scroll-locked. The Symbol.for() key
-// matches the elements-side key exactly: a consumer using BOTH packages
-// gets one canonical state regardless of install topology.
+// Refcount + original-overflow snapshot live on `document.body.dataset`
+// (the same keys used by `@vitus-labs/elements`'s internal copy at
+// Overlay/useScrollLock.ts). The body is the actual element being
+// locked, so keeping the bookkeeping there means a consumer pairing this
+// hook with an Overlay modal cooperates on ONE shared counter — no
+// cross-package import, no globalThis, no shared module. Each
+// implementation can stay package-local; the convention is the dataset
+// key names.
 
-type Registry = { count: number; original: string | undefined }
-const REGISTRY_KEY: unique symbol = Symbol.for('@vitus-labs/scroll-lock')
-const getRegistry = (): Registry => {
-  const g = globalThis as unknown as Record<symbol, Registry>
-  if (!g[REGISTRY_KEY]) g[REGISTRY_KEY] = { count: 0, original: undefined }
-  return g[REGISTRY_KEY] as Registry
-}
+const COUNT_KEY = 'vlScrollLockCount'
+const ORIGINAL_KEY = 'vlScrollLockOriginal'
 
 /**
  * Locks page scroll by setting `overflow: hidden` on `document.body`.
- * Uses a global-symbol refcount so concurrent locks (including the
+ * Uses a body-dataset refcount so concurrent locks (including the
  * internal copy used by @vitus-labs/elements' Overlay) don't clobber
  * each other's original-overflow snapshot.
  */
@@ -29,18 +24,20 @@ const useScrollLock: UseScrollLock = (enabled) => {
   useEffect(() => {
     if (!enabled) return undefined
 
-    const reg = getRegistry()
-    if (reg.count === 0) {
-      reg.original = document.body.style.overflow
-    }
-    reg.count++
-    document.body.style.overflow = 'hidden'
+    const { body } = document
+    const count = Number(body.dataset[COUNT_KEY] ?? '0')
+    if (count === 0) body.dataset[ORIGINAL_KEY] = body.style.overflow
+    body.dataset[COUNT_KEY] = String(count + 1)
+    body.style.overflow = 'hidden'
 
     return () => {
-      reg.count--
-      if (reg.count === 0) {
-        document.body.style.overflow = reg.original ?? ''
-        reg.original = undefined
+      const next = Number(body.dataset[COUNT_KEY] ?? '0') - 1
+      if (next <= 0) {
+        body.style.overflow = body.dataset[ORIGINAL_KEY] ?? ''
+        delete body.dataset[COUNT_KEY]
+        delete body.dataset[ORIGINAL_KEY]
+      } else {
+        body.dataset[COUNT_KEY] = String(next)
       }
     }
   }, [enabled])
