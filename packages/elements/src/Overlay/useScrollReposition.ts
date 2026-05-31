@@ -15,49 +15,40 @@ type Config = {
   handleVisibility: ThrottledEvt
 }
 
-// Reference counter for nested modals sharing document.body overflow lock.
-// Only the first modal sets overflow:hidden; only the last restores it.
-let modalOverflowCount = 0
-
 /**
  * Window-level scroll/resize listeners that reposition active overlays and
- * re-evaluate close-on-scroll behavior. Also manages the body overflow lock
- * for modal overlays (refcounted across nested modals).
+ * re-evaluate close-on-scroll behavior. Body overflow lock for modal
+ * overlays is intentionally NOT managed here — that's `useScrollLock`'s
+ * job (wired into useOverlay.tsx). A prior duplicate counter here ran a
+ * separate refcount that activated synchronously (before
+ * `isContentLoaded`), letting useScrollLock capture 'hidden' as its
+ * "original" value and silently leaving the page permanently locked on
+ * async-mount modals.
  */
 const useWindowReposition = (
   active: boolean,
-  type: string,
+  _type: string,
   handleContentPosition: ThrottledNoArg,
   handleVisibility: ThrottledEvt,
 ) => {
   useEffect(() => {
     if (!active) return undefined
 
-    const shouldSetOverflow = type === 'modal'
-
     const onScroll = (e: Event) => {
       handleContentPosition()
       handleVisibility(e)
     }
 
-    if (shouldSetOverflow) {
-      modalOverflowCount++
-      if (modalOverflowCount === 1) document.body.style.overflow = 'hidden'
-    }
     window.addEventListener('resize', handleContentPosition)
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       handleContentPosition.cancel()
       handleVisibility.cancel()
-      if (shouldSetOverflow) {
-        modalOverflowCount--
-        if (modalOverflowCount === 0) document.body.style.overflow = ''
-      }
       window.removeEventListener('resize', handleContentPosition)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [active, type, handleContentPosition, handleVisibility])
+  }, [active, handleContentPosition, handleVisibility])
 }
 
 /**

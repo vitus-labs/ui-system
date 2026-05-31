@@ -9,7 +9,7 @@ export type UseTransitionState = (options: {
 
 const useTransitionState: UseTransitionState = ({ show, appear = false }) => {
   const isInitialMount = useRef(true)
-  const elementRef = useRef<HTMLElement | null>(null)
+  const elementRef = useRef<unknown>(null)
 
   const [stage, setStage] = useState<TransitionStage>(() => {
     if (show && !appear) return 'entered'

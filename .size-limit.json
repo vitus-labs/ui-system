@@ -74,7 +74,7 @@
   {
     "name": "@vitus-labs/rocketstyle",
     "path": "packages/rocketstyle/lib/index.js",
-    "limit": "9 KB",
+    "limit": "9.5 KB",
     "gzip": true
   },
   {

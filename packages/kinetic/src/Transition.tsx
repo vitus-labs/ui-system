@@ -103,6 +103,7 @@ const Transition = ({
   leaveStyle,
   leaveToStyle,
   leaveTransition,
+  delay,
   onEnter,
   onAfterEnter,
   onLeave,
@@ -171,6 +172,14 @@ const Transition = ({
       return applyReducedMotion(stage, callbacksRef.current, complete)
     }
 
+    // `delay` was declared in TransitionProps but silently ignored on web
+    // (only Transition.native honored it). Only TOUCH transitionDelay
+    // when the consumer explicitly set the prop — Stagger writes its
+    // own per-child transitionDelay onto the cloned child's style, so
+    // clobbering unconditionally would zero it out. When delay IS set
+    // here, mirror it on 'entered' cleanup too.
+    if (delay !== undefined) el.style.transitionDelay = `${delay}ms`
+
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
       const cancel = applyEnter(el, transitionConfig)
@@ -186,8 +195,9 @@ const Transition = ({
     if (stage === 'entered') {
       removeClasses(el, enter)
       el.style.transition = ''
+      if (delay !== undefined) el.style.transitionDelay = ''
     }
-  }, [stage])
+  }, [stage, delay])
 
   if (!shouldMount) {
     if (unmount) return null

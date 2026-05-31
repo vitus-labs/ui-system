@@ -2,24 +2,30 @@ import { useEffect } from 'react'
 
 export type UseScrollLock = (enabled: boolean) => void
 
-let lockCount = 0
-let originalOverflow: string | undefined
+type Registry = { count: number; original: string | undefined }
+const REGISTRY_KEY: unique symbol = Symbol.for('@vitus-labs/scroll-lock')
+const getRegistry = (): Registry => {
+  const g = globalThis as unknown as Record<symbol, Registry>
+  if (!g[REGISTRY_KEY]) g[REGISTRY_KEY] = { count: 0, original: undefined }
+  return g[REGISTRY_KEY] as Registry
+}
 
 const useScrollLock: UseScrollLock = (enabled) => {
   useEffect(() => {
     if (!enabled) return undefined
 
-    if (lockCount === 0) {
-      originalOverflow = document.body.style.overflow
+    const reg = getRegistry()
+    if (reg.count === 0) {
+      reg.original = document.body.style.overflow
     }
-    lockCount++
+    reg.count++
     document.body.style.overflow = 'hidden'
 
     return () => {
-      lockCount--
-      if (lockCount === 0) {
-        document.body.style.overflow = originalOverflow ?? ''
-        originalOverflow = undefined
+      reg.count--
+      if (reg.count === 0) {
+        document.body.style.overflow = reg.original ?? ''
+        reg.original = undefined
       }
     }
   }, [enabled])

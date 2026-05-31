@@ -112,8 +112,14 @@ export type CollapseProps = TransitionCallbacks & {
 export type TransitionStateResult = {
   /** Current lifecycle stage */
   stage: TransitionStage
-  /** Ref to attach to the transitioning element */
-  ref: RefObject<HTMLElement | null>
+  /**
+   * Ref to attach to the transitioning element. Typed as `unknown` so
+   * native consumers can attach it to an RN component (View/Pressable)
+   * without a TS error — useTransitionState is publicly re-exported from
+   * the native entry. Web callers cast at the call site:
+   *   `useRef<HTMLElement>(null)` already widens to `RefObject<unknown>`.
+   */
+  ref: RefObject<unknown>
   /** Whether the element should be rendered */
   shouldMount: boolean
   /** Call when the current animation finishes */
