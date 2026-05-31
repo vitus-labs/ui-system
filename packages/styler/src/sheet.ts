@@ -250,13 +250,35 @@ export class StyleSheet {
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
 
-    if (this.cache.has(className)) {
+    // Cache-hit on the className. We additionally verify the cssText
+    // matches what produced this className the first time — a 32-bit
+    // FNV-1a hash has ~1-in-4-billion theoretical collision odds on
+    // distinct CSS strings. Silent dedup (apply the FIRST cssText to
+    // the colliding second component) would be incorrect; this dev
+    // warning surfaces the rare case so the user can rename a token,
+    // tweak the rule, or add a structural workaround.
+    const existing = this.cache.get(className)
+    if (existing !== undefined) {
+      // `existing !== className` excludes the legacy reservation pattern
+      // used by SSR hydration / globalStyle / keyframes (those store the
+      // className itself as the value because they don't carry the
+      // original cssText through the API).
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        existing !== className &&
+        existing !== cssText
+      ) {
+        // biome-ignore lint/suspicious/noConsole: dev-only diagnostic for an undetected silent-collision class
+        console.warn(
+          `[@vitus-labs/styler] hash collision on class ${className} — different CSS strings produced the same hash. First inserted: ${existing.slice(0, 80)}… / now: ${cssText.slice(0, 80)}…`,
+        )
+      }
       this.insertCache.set(icKey, className)
       return className
     }
 
     this.evictIfNeeded()
-    this.cache.set(className, className)
+    this.cache.set(className, cssText)
 
     const selector = boost ? `.${className}.${className}` : `.${className}`
 

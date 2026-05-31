@@ -140,4 +140,39 @@ describe('styles', () => {
     const flat = Array.isArray(result) ? result.flat().join('') : String(result)
     expect(flat).toContain('custom: value')
   })
+
+  // T1.2: theme-typo detector — silent style failure was a credibility tax.
+  describe('dev-only unknown theme key warning', () => {
+    it('warns once when a theme key has no propertyMap descriptor', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      try {
+        // `paddng` is an obvious typo — used to render nothing silently.
+        // Using a fresh key string each test to avoid the once-warned cache
+        // from a prior test masking this assertion.
+        styles({ theme: { __mistypedKeyA__: 8 } as any, css, rootSize: 16 })
+        expect(warn).toHaveBeenCalledTimes(1)
+        expect(warn.mock.calls[0]?.[0]).toContain('__mistypedKeyA__')
+
+        // Second call with the same key should NOT re-warn (rate-limited).
+        styles({ theme: { __mistypedKeyA__: 8 } as any, css, rootSize: 16 })
+        expect(warn).toHaveBeenCalledTimes(1)
+      } finally {
+        warn.mockRestore()
+      }
+    })
+
+    it('does NOT warn for valid theme keys', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      try {
+        styles({
+          theme: { padding: 8, color: 'red', display: 'flex' } as any,
+          css,
+          rootSize: 16,
+        })
+        expect(warn).not.toHaveBeenCalled()
+      } finally {
+        warn.mockRestore()
+      }
+    })
+  })
 })
