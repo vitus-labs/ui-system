@@ -1,5 +1,4 @@
-import { get, pick, useStableValue } from '@vitus-labs/core'
-import { context } from '@vitus-labs/unistyle'
+import { context, get, pick, useStableValue } from '@vitus-labs/core'
 import { useContext, useMemo } from 'react'
 import { CONTEXT_KEYS } from '~/constants'
 import type { Context, Obj, ValueType } from '~/types'

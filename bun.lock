@@ -323,11 +323,9 @@
         "@vitus-labs/unistyle": "workspace:^",
         "react": ">= 19",
         "react-dom": ">= 19",
-        "react-native": ">= 0.76",
       },
       "optionalPeers": [
         "react-dom",
-        "react-native",
       ],
     },
     "packages/hooks": {
@@ -398,11 +396,9 @@
     "packages/rocketstories": {
       "name": "@vitus-labs/rocketstories",
       "version": "2.6.2",
-      "dependencies": {
-        "@vitus-labs/elements": "workspace:*",
-      },
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
+        "@vitus-labs/elements": "workspace:*",
         "@vitus-labs/rocketstyle": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
         "@vitus-labs/tools-storybook": "2.5.0",
@@ -410,8 +406,8 @@
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
-        "@storybook/react": "^10.3.6",
         "@vitus-labs/core": "workspace:^",
+        "@vitus-labs/elements": "workspace:^",
         "@vitus-labs/rocketstyle": "workspace:^",
         "@vitus-labs/unistyle": "workspace:^",
         "react": ">= 19",
@@ -430,8 +426,12 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
+        "@vitus-labs/unistyle": "workspace:^",
         "react": ">= 19",
       },
+      "optionalPeers": [
+        "@vitus-labs/unistyle",
+      ],
     },
     "packages/styler": {
       "name": "@vitus-labs/styler",
@@ -463,11 +463,7 @@
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
         "react": ">= 19",
-        "react-native": ">= 0.76",
       },
-      "optionalPeers": [
-        "react-native",
-      ],
     },
   },
   "overrides": {
