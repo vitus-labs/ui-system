@@ -6,28 +6,18 @@ type ThrottledEvt = Cancellable<(e: Event) => void>
 
 type Config = {
   active: boolean
-  type: string
   parentContainer: HTMLElement | null | undefined
   closeOn: string
-  /** Reposition is called on every scroll/resize tick. */
   handleContentPosition: ThrottledNoArg
-  /** Visibility is also re-evaluated on scroll. */
   handleVisibility: ThrottledEvt
 }
 
-/**
- * Window-level scroll/resize listeners that reposition active overlays and
- * re-evaluate close-on-scroll behavior. Body overflow lock for modal
- * overlays is intentionally NOT managed here — that's `useScrollLock`'s
- * job (wired into useOverlay.tsx). A prior duplicate counter here ran a
- * separate refcount that activated synchronously (before
- * `isContentLoaded`), letting useScrollLock capture 'hidden' as its
- * "original" value and silently leaving the page permanently locked on
- * async-mount modals.
- */
+// Body-overflow lock is owned by `useScrollLock` (wired in useOverlay).
+// Mixing it back in here previously activated synchronously and let
+// useScrollLock capture 'hidden' as its "original" value — leaving the
+// page silently scroll-locked on async-mount modals.
 const useWindowReposition = (
   active: boolean,
-  _type: string,
   handleContentPosition: ThrottledNoArg,
   handleVisibility: ThrottledEvt,
 ) => {
@@ -51,11 +41,8 @@ const useWindowReposition = (
   }, [active, handleContentPosition, handleVisibility])
 }
 
-/**
- * Same as `useWindowReposition` but for a custom scrollable ancestor.
- * Locks the parent's overflow while the overlay is active (unless hover-driven,
- * which expects the parent to keep scrolling).
- */
+// Locks the parent's overflow while the overlay is active, except when
+// hover-driven (the parent must keep scrolling so the overlay can close).
 const useParentContainerReposition = (
   active: boolean,
   parentContainer: HTMLElement | null | undefined,
@@ -90,13 +77,12 @@ const useParentContainerReposition = (
 
 const useScrollReposition = ({
   active,
-  type,
   parentContainer,
   closeOn,
   handleContentPosition,
   handleVisibility,
 }: Config) => {
-  useWindowReposition(active, type, handleContentPosition, handleVisibility)
+  useWindowReposition(active, handleContentPosition, handleVisibility)
   useParentContainerReposition(
     active,
     parentContainer,

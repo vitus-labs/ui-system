@@ -409,12 +409,8 @@
       },
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
-        "@vitus-labs/unistyle": "workspace:^",
         "react": ">= 19",
       },
-      "optionalPeers": [
-        "@vitus-labs/unistyle",
-      ],
     },
     "packages/styler": {
       "name": "@vitus-labs/styler",
