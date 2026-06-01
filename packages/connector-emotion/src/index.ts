@@ -127,36 +127,15 @@ export const createGlobalStyle = (
   return GlobalComponent
 }
 
-// ---------------------------------------------------------------------------
-// useCSS — parity with `@vitus-labs/styler`'s hook for engine-swap intent.
-// ---------------------------------------------------------------------------
-
-/**
- * Hook that resolves a `css()` result and returns the class name attached
- * to the corresponding Emotion `<style>` rule. Mirrors the styler `useCSS`
- * surface so consumer code can import `useCSS` from any connector.
- *
- * Honest limitation: Emotion's `css` returns either a plain string
- * (static fast path) or a `(props) => string` function (dynamic path).
- * Both are resolved here; the resulting string is fed through Emotion's
- * own `emotionCss\`…\`` to obtain a SerializedStyles with `.name`. For
- * the most common usage — static templates — this is indistinguishable
- * from styler's useCSS.
- */
-export const useCSS = (
-  template: unknown,
-  props?: Record<string, unknown>,
-): string => {
-  const cssStr =
-    typeof template === 'function'
-      ? (template as (p: Record<string, unknown>) => string)(props ?? {})
-      : typeof template === 'string'
-        ? template
-        : String(template ?? '')
-  if (!cssStr) return ''
-  const serialized = emotionCss`${cssStr}` as unknown as { name?: string }
-  return serialized?.name ?? ''
-}
+// NOTE: this connector does NOT export `useCSS`. An earlier shim
+// returned `emotionCss\`…\`.name` for shape-parity with styler's
+// useCSS, but Emotion never inserts the serialized rule unless it
+// passes through @emotion/styled or `<Global>` — so the className
+// resolved to a stylesheet that didn't exist, rendering UNSTYLED with
+// no warning. Emotion's idiomatic pattern is
+// `<div className={css\`…\`} />` (css returns an injection-ready
+// className synchronously). Consumers needing the useCSS hook shape
+// should use `@vitus-labs/connector-styler` directly.
 
 // ---------------------------------------------------------------------------
 // Re-exports from Emotion

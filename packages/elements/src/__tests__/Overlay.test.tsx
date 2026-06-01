@@ -368,6 +368,44 @@ describe('Overlay', () => {
       unmount()
       expect(document.body.style.overflow).toBe('')
     })
+
+    // Refcount path: when two modals are open at once, the inner one's
+    // unmount must NOT release the body-overflow lock — only the LAST
+    // unmount restores. Exercises the `lockCount > 0` branch in
+    // useScrollLock.
+    it('keeps body overflow locked while a second modal is still open', () => {
+      const { unmount: unmountFirst } = render(
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      const { unmount: unmountSecond } = render(
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      expect(document.body.style.overflow).toBe('hidden')
+
+      unmountFirst()
+      // Second modal still open → still locked.
+      expect(document.body.style.overflow).toBe('hidden')
+
+      unmountSecond()
+      // Last one out releases the lock.
+      expect(document.body.style.overflow).toBe('')
+    })
   })
 
   describe('render function pattern', () => {

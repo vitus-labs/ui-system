@@ -95,4 +95,87 @@ describe('useLocalStorage', () => {
       stub.setItem = orig
     }
   })
+
+  it('tolerates removeItem failures without throwing', () => {
+    const stub = installLocalStorageStub()
+    const orig = stub.removeItem.bind(stub)
+    stub.removeItem = () => {
+      throw new Error('cannot remove')
+    }
+    try {
+      const { result } = renderHook(() => useLocalStorage('k8', 'init'))
+      act(() => result.current[1]('changed'))
+      expect(() => act(() => result.current[2]())).not.toThrow()
+      // Even though localStorage.removeItem threw, in-memory still resets.
+      expect(result.current[0]).toBe('init')
+    } finally {
+      stub.removeItem = orig
+    }
+  })
+
+  it('mirrors a cross-tab storage event for the same key', () => {
+    const { result } = renderHook(() => useLocalStorage('k9', 'a'))
+    act(() => {
+      const evt = new Event('storage') as Event & {
+        key: string | null
+        newValue: string | null
+        storageArea: Storage | null
+      }
+      evt.key = 'k9'
+      evt.newValue = JSON.stringify('b')
+      evt.storageArea = window.localStorage
+      window.dispatchEvent(evt)
+    })
+    expect(result.current[0]).toBe('b')
+  })
+
+  it('resets to initialValue when a cross-tab storage event sets the value to null', () => {
+    const { result } = renderHook(() => useLocalStorage('k10', 'fallback'))
+    act(() => result.current[1]('changed'))
+    expect(result.current[0]).toBe('changed')
+    act(() => {
+      const evt = new Event('storage') as Event & {
+        key: string | null
+        newValue: string | null
+        storageArea: Storage | null
+      }
+      evt.key = 'k10'
+      evt.newValue = null
+      evt.storageArea = window.localStorage
+      window.dispatchEvent(evt)
+    })
+    expect(result.current[0]).toBe('fallback')
+  })
+
+  it('ignores cross-tab storage events for unrelated keys', () => {
+    const { result } = renderHook(() => useLocalStorage('k11', 'keep'))
+    act(() => {
+      const evt = new Event('storage') as Event & {
+        key: string | null
+        newValue: string | null
+        storageArea: Storage | null
+      }
+      evt.key = 'other-key'
+      evt.newValue = JSON.stringify('nope')
+      evt.storageArea = window.localStorage
+      window.dispatchEvent(evt)
+    })
+    expect(result.current[0]).toBe('keep')
+  })
+
+  it('ignores cross-tab storage events with malformed JSON', () => {
+    const { result } = renderHook(() => useLocalStorage('k12', 'safe'))
+    act(() => {
+      const evt = new Event('storage') as Event & {
+        key: string | null
+        newValue: string | null
+        storageArea: Storage | null
+      }
+      evt.key = 'k12'
+      evt.newValue = '{not valid json'
+      evt.storageArea = window.localStorage
+      window.dispatchEvent(evt)
+    })
+    expect(result.current[0]).toBe('safe')
+  })
 })

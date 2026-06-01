@@ -12,7 +12,7 @@ import { Provider as CoreProvider } from '@vitus-labs/core'
 import { Element } from '@vitus-labs/elements'
 import type { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
-import recipe from '../recipe'
+import { recipe } from '~/index'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <CoreProvider theme={{ rootSize: 16 }}>{children}</CoreProvider>

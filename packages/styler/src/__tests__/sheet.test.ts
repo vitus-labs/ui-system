@@ -277,9 +277,7 @@ describe('StyleSheet with createSheet', () => {
   it('warns in dev when two different cssText strings produce the same hash', async () => {
     const { createSheet } = await import('../sheet')
     const s = createSheet()
-    const warn = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     try {
       // Plant entry A.
       const clsA = s.insert('color: red;')
@@ -305,9 +303,7 @@ describe('StyleSheet with createSheet', () => {
   it('does NOT warn for legacy reservation entries (hydration / globalStyle)', async () => {
     const { createSheet } = await import('../sheet')
     const s = createSheet()
-    const warn = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     try {
       const clsA = s.insert('color: lime;')
       // Simulate the legacy reservation pattern used by hydration paths:

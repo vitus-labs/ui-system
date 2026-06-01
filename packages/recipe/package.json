@@ -1,0 +1,52 @@
+{
+  "name": "@vitus-labs/recipe",
+  "version": "2.6.2",
+  "description": "CVA-shaped front door for @vitus-labs/rocketstyle — variants, compoundVariants, defaultVariants",
+  "license": "MIT",
+  "author": "Vit Bokisch <vit@bokisch.cz>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitus-labs/ui-system",
+    "directory": "packages/recipe"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "source": "./src/index.ts",
+    "import": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "types": "./lib/index.d.ts",
+  "main": "./lib/index.js",
+  "files": [
+    "lib",
+    "!lib/**/*.map",
+    "!lib/analysis"
+  ],
+  "scripts": {
+    "prepublish": "bun run build",
+    "build": "bun run vl_rolldown_build",
+    "build:watch": "bun run vl_rolldown_build-watch",
+    "lint": "biome check src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@vitus-labs/rocketstyle": "workspace:^",
+    "@vitus-labs/unistyle": "workspace:^",
+    "react": ">= 19"
+  },
+  "devDependencies": {
+    "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/elements": "workspace:*",
+    "@vitus-labs/rocketstyle": "workspace:*",
+    "@vitus-labs/tools-rolldown": "2.5.0",
+    "@vitus-labs/tools-typescript": "2.5.0",
+    "@vitus-labs/unistyle": "workspace:*"
+  }
+}

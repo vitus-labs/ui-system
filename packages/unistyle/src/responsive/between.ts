@@ -1,29 +1,19 @@
-import type { Breakpoints } from './breakpoints'
-
 /**
  * Build a closed-range `@media` query string from two breakpoint values.
  *
- * The default `createMediaQueries` only emits `(min-width: N)` rules
- * (mobile-first). For the "this style applies ONLY between sm and md"
- * pattern that grid layouts and visibility utilities commonly need,
- * `between()` returns the matching query string. Use it inside a `css`
- * template literal or with the engine's `extendCss` helper.
- *
- * Compatible with both numeric breakpoints (`576` → `576px`) and string
- * (`'36em'` → as-is). The upper bound is decremented by `0.02px` so
- * adjacent ranges don't overlap on Safari's sub-pixel matching.
+ * Accepts any flat breakpoint map (`Record<string, number | string>`).
+ * Numeric values render as `${n}px`, string values pass through as-is
+ * so consumers can use rem/em units (`'36em'` → as-is). The upper
+ * bound is decremented by `0.02px` so adjacent ranges don't overlap on
+ * Safari's sub-pixel matching.
  *
  * @example
  * ```ts
- * const onlyMobile = between(breakpoints, 'xs', 'sm')
+ * const onlyMobile = between({ xs: 0, sm: 576 }, 'xs', 'sm')
  * // → '@media (min-width: 0px) and (max-width: 575.98px)'
- *
- * css`
- *   ${onlyMobile} { display: none; }
- * `
  * ```
  */
-export const between = <B extends Breakpoints>(
+export const between = <B extends Record<string, number | string>>(
   breakpoints: B,
   minKey: keyof B,
   maxKey: keyof B,

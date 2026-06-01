@@ -113,8 +113,17 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
   css,
   rootSize,
 }) => {
-  const { size, columns, gap, padding, offset, order, auto, extraStyles, RNparentWidth } =
-    theme
+  const {
+    size,
+    columns,
+    gap,
+    padding,
+    offset,
+    order,
+    auto,
+    extraStyles,
+    RNparentWidth,
+  } = theme
   const renderStyles = isVisible(size) || auto === true
 
   if (renderStyles) {

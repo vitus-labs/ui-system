@@ -61,4 +61,26 @@ describe('useEventListener', () => {
       renderHook(() => useEventListener('click', () => undefined, null)),
     ).not.toThrow()
   })
+
+  it('does nothing when the ref points at a target without addEventListener', () => {
+    const ref = { current: {} as EventTarget } // missing addEventListener
+    expect(() =>
+      renderHook(() => useEventListener('click', () => undefined, ref)),
+    ).not.toThrow()
+  })
+
+  it('passes addEventListener options through', () => {
+    const handler = vi.fn()
+    const target = document.createElement('div')
+    const ref = { current: target }
+    const addSpy = vi.spyOn(target, 'addEventListener')
+    renderHook(() =>
+      useEventListener('click', handler, ref, { capture: true, once: true }),
+    )
+    expect(addSpy).toHaveBeenCalledWith('click', expect.any(Function), {
+      capture: true,
+      once: true,
+    })
+    addSpy.mockRestore()
+  })
 })

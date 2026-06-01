@@ -10,17 +10,15 @@ import {
   keyframes,
   provider as Provider,
   styled,
-  useCSS,
   useTheme,
 } from '../index'
 
 describe('@vitus-labs/connector-styled-components', () => {
-  it('exports the full connector surface', () => {
+  it('exports the full connector surface (useCSS intentionally absent)', () => {
     expect(typeof css).toBe('function')
     expect(typeof styled).toBe('function')
     expect(typeof keyframes).toBe('function')
     expect(typeof createGlobalStyle).toBe('function')
-    expect(typeof useCSS).toBe('function')
     expect(typeof useTheme).toBe('function')
     expect(typeof Provider).toBe('function')
   })
@@ -45,18 +43,6 @@ describe('@vitus-labs/connector-styled-components', () => {
       const el = container.firstElementChild as HTMLElement
       expect(el.tagName).toBe('DIV')
       expect(el.textContent).toBe('hi')
-    })
-  })
-
-  // The shim exists so cross-engine code compiles — but styled-components
-  // has no way to materialize a className from a css`` RuleSet without
-  // wrapping. We throw a clear error rather than silently returning '',
-  // which would have looked like a successful render with no styles.
-  describe('useCSS shim', () => {
-    it('throws a clear "not supported" error with migration guidance', () => {
-      expect(() => useCSS('color: red;')).toThrow(
-        /useCSS\(\) is not supported on styled-components/,
-      )
     })
   })
 })

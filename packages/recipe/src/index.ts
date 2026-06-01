@@ -1,5 +1,5 @@
 /**
- * `recipe()` — CVA-shaped front door over rocketstyle.
+ * `recipe()` — CVA-shaped front door over @vitus-labs/rocketstyle.
  *
  * Most consumers reach for "variants + compoundVariants + defaults" first;
  * the rocketstyle chain (.theme/.styles/.attrs/.compose + per-dimension
@@ -9,14 +9,16 @@
  * existing rocketstyle engine so power users can still drop down to the
  * chain when they need theme modes, multi-dimensions, or transforms.
  *
- * **Soft peer:** recipe imports `makeItResponsive` from
- * `@vitus-labs/unistyle` to serialize variant themes into CSS. rocketstyle
- * does NOT declare unistyle as a peerDependency — the import is
- * externalized at bundle time so consumers using the chain API directly
- * never pay the cost. Consumers using `recipe()` must install
- * `@vitus-labs/unistyle` alongside `@vitus-labs/rocketstyle`.
+ * Lives in its OWN package — neither @vitus-labs/rocketstyle nor
+ * @vitus-labs/unistyle declares it; this package declares BOTH as peers.
+ * That keeps the engines architecturally independent: chain-API
+ * consumers never load unistyle's CSS-serialization path, and recipe's
+ * existence doesn't force any coupling on rocketstyle's surface.
  *
  * Example:
+ *   import { recipe } from '@vitus-labs/recipe'
+ *   import Element from '@vitus-labs/elements'
+ *
  *   const Button = recipe({
  *     name: 'Button',
  *     component: Element,
@@ -32,8 +34,8 @@
  *   })
  *   // <Button size="lg" intent="primary" />   // gets all three
  */
+import rocketstyle from '@vitus-labs/rocketstyle'
 import { makeItResponsive, styles } from '@vitus-labs/unistyle'
-import rocketstyle from '~/init'
 
 type ThemeObject = Record<string, any>
 type VariantsMap = Record<string, Record<string, ThemeObject>>
@@ -96,7 +98,9 @@ const matchCompoundStyles = <V extends VariantsMap>(
       }
     }
     if (matches) {
-      merged = merged ? { ...merged, ...cv.styles } : { ...cv.styles }
+      const s = cv.styles as Record<string, unknown>
+      const prev: Record<string, unknown> = merged ?? {}
+      merged = { ...prev, ...s }
     }
   }
   return merged
@@ -184,7 +188,11 @@ export const recipe = <V extends VariantsMap>(config: RecipeConfig<V>): any => {
         $rocketstate?: Record<string, unknown>
       }) => {
         const base = $rocketstyle
-          ? makeItResponsive({ theme: $rocketstyle, styles, css: css as any })
+          ? makeItResponsive({
+              theme: $rocketstyle as any,
+              styles,
+              css: css as any,
+            })
           : ''
         const compound =
           compoundVariants.length > 0 && $rocketstate

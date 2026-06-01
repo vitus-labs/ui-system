@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { useRef } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import useResizeObserver from '../useResizeObserver'
 
 // Capture the most-recent observer instance + callback so the test can
@@ -63,5 +63,29 @@ describe('useResizeObserver', () => {
     } finally {
       ;(globalThis as any).ResizeObserver = orig
     }
+  })
+
+  it('returns null when the ref has no current node', () => {
+    ;(globalThis as any).ResizeObserver = MockResizeObserver
+    MockResizeObserver.observed = []
+    const { result } = renderHook(() => {
+      const ref = useRef<HTMLDivElement>(null)
+      return useResizeObserver(ref)
+    })
+    expect(result.current).toBeNull()
+    expect(MockResizeObserver.observed.length).toBe(0)
+  })
+
+  it('ignores callback invocations with no entries', () => {
+    ;(globalThis as any).ResizeObserver = MockResizeObserver
+    const node = document.createElement('div')
+    const { result } = renderHook(() => {
+      const ref = useRef<HTMLDivElement>(node)
+      return useResizeObserver(ref)
+    })
+    act(() => {
+      MockResizeObserver.lastCb?.([])
+    })
+    expect(result.current).toBeNull()
   })
 })

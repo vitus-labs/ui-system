@@ -4,8 +4,6 @@ import type { Rocketstyle } from '~/init'
 import rocketstyle from '~/init'
 import type { IsRocketComponent } from '~/isRocketComponent'
 import isRocketComponent from '~/isRocketComponent'
-import type { CompoundVariant, RecipeConfig } from '~/recipe'
-import recipe from '~/recipe'
 import type { AttrsCb } from '~/types/attrs'
 import type {
   ConfigAttrs,
@@ -47,7 +45,6 @@ import type { ElementType, ExtractProps, MergeTypes, TObj } from '~/types/utils'
 export type {
   AttrsCb,
   ComposeParam,
-  CompoundVariant,
   ConfigAttrs,
   ConsumerCb,
   ConsumerCtxCBValue,
@@ -65,7 +62,6 @@ export type {
   IRocketStyleComponent,
   IsRocketComponent,
   MergeTypes,
-  RecipeConfig,
   RocketComponentType,
   RocketProviderState,
   RocketStyleComponent,
@@ -83,5 +79,5 @@ export type {
   TProvider,
 }
 
-export { context, isRocketComponent, Provider, recipe, rocketstyle }
+export { context, isRocketComponent, Provider, rocketstyle }
 export default rocketstyle

@@ -45,7 +45,9 @@ const useEventListener: UseEventListener = (
   }, [event, target, options])
 }
 
-const resolveTarget = (target: EventTargetLike | undefined): EventTarget | null => {
+const resolveTarget = (
+  target: EventTargetLike | undefined,
+): EventTarget | null => {
   if (target === undefined) return typeof window === 'undefined' ? null : window
   if (target === null) return null
   if ('current' in (target as RefObject<EventTarget>)) {

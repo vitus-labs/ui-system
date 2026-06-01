@@ -62,11 +62,7 @@ describe('Stagger.native — interval propagates to per-child delay', () => {
 
   it('uses the default interval (50ms) when not explicitly set', () => {
     transitionInvocations.length = 0
-    render(
-      <Stagger show>
-        {[child('a'), child('b')]}
-      </Stagger>,
-    )
+    render(<Stagger show>{[child('a'), child('b')]}</Stagger>)
     expect(transitionInvocations[0]?.delay).toBe(0)
     expect(transitionInvocations[1]?.delay).toBe(50)
   })

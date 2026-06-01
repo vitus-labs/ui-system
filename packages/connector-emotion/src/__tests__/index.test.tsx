@@ -12,17 +12,15 @@ import {
   keyframes,
   provider as Provider,
   styled,
-  useCSS,
   useTheme,
 } from '../index'
 
 describe('@vitus-labs/connector-emotion', () => {
-  it('exports the full connector surface', () => {
+  it('exports the full connector surface (useCSS intentionally absent)', () => {
     expect(typeof css).toBe('function')
     expect(typeof styled).toBe('function')
     expect(typeof keyframes).toBe('function')
     expect(typeof createGlobalStyle).toBe('function')
-    expect(typeof useCSS).toBe('function')
     expect(typeof useTheme).toBe('function')
     expect(typeof Provider).toBe('function')
   })
@@ -71,27 +69,6 @@ describe('@vitus-labs/connector-emotion', () => {
       const el = container.firstElementChild as HTMLElement
       expect(el.tagName).toBe('DIV')
       expect(el.textContent).toBe('hi')
-    })
-  })
-
-  describe('useCSS shim', () => {
-    it('returns the Emotion class name for a static css() result', () => {
-      const r = css`
-        color: gold;
-      `
-      // useCSS is technically a hook (no React state used), so we can
-      // call it directly here; the shim's "hook-ness" is just a naming
-      // convention to match the styler API.
-      const cls = useCSS(r as unknown)
-      expect(typeof cls).toBe('string')
-      // Emotion's SerializedStyles.name is a bare hash (length > 0)
-      expect(cls.length).toBeGreaterThan(0)
-    })
-
-    it('returns empty string for empty input', () => {
-      expect(useCSS('')).toBe('')
-      expect(useCSS(null)).toBe('')
-      expect(useCSS(undefined)).toBe('')
     })
   })
 })

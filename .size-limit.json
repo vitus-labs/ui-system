@@ -50,7 +50,7 @@
   {
     "name": "@vitus-labs/hooks",
     "path": "packages/hooks/lib/index.js",
-    "limit": "6.5 KB",
+    "limit": "8 KB",
     "gzip": true
   },
   {
@@ -63,6 +63,12 @@
     "name": "@vitus-labs/kinetic-presets",
     "path": "packages/kinetic-presets/lib/index.js",
     "limit": "8 KB",
+    "gzip": true
+  },
+  {
+    "name": "@vitus-labs/recipe",
+    "path": "packages/recipe/lib/index.js",
+    "limit": "2 KB",
     "gzip": true
   },
   {

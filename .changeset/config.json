@@ -25,6 +25,7 @@
       "@vitus-labs/hooks",
       "@vitus-labs/kinetic",
       "@vitus-labs/kinetic-presets",
+      "@vitus-labs/recipe",
       "@vitus-labs/rocketstories",
       "@vitus-labs/rocketstyle",
       "@vitus-labs/styler",

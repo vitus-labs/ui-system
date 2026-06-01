@@ -37,7 +37,10 @@ const useCopyToClipboard: UseCopyToClipboard = (resetMs = 2000) => {
     async (text: string): Promise<boolean> => {
       let ok = false
       try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        if (
+          typeof navigator !== 'undefined' &&
+          navigator.clipboard?.writeText
+        ) {
           await navigator.clipboard.writeText(text)
           ok = true
         } else if (typeof document !== 'undefined') {
@@ -49,8 +52,10 @@ const useCopyToClipboard: UseCopyToClipboard = (resetMs = 2000) => {
           ta.style.left = '-9999px'
           document.body.appendChild(ta)
           ta.select()
-          // biome-ignore lint/suspicious/noExplicitAny: deprecated API, no current types
-          ok = (document as any).execCommand('copy') === true
+          ok =
+            (
+              document as { execCommand?: (s: string) => boolean }
+            ).execCommand?.('copy') === true
           document.body.removeChild(ta)
         }
       } catch {
