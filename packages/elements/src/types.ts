@@ -5,10 +5,10 @@
  * and defining VL component signatures with static metadata.
  */
 import type { BreakpointKeys, config, render } from '@vitus-labs/core'
-import type { MakeItResponsive } from '@vitus-labs/unistyle'
+import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
 import type { ComponentType, FC, ForwardedRef, ReactElement } from 'react'
 
-export type ResponsiveStylesCallback = Parameters<MakeItResponsive>[0]['styles']
+export type ResponsiveStylesCallback = MakeItResponsiveStyles
 
 type ExtractNullableKeys<T> = {
   [P in keyof T as T[P] extends null | undefined ? never : P]: T[P]

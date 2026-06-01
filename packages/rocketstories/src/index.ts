@@ -7,8 +7,6 @@ import type {
   Controls,
   ControlTypes,
   ElementType,
-  ExtractDimensions,
-  ExtractProps,
   PartialControls,
   RocketStoryConfiguration,
   RocketType,
@@ -17,14 +15,19 @@ import type {
   StoryConfiguration,
 } from '~/types'
 
+// NOTE: `ExtractDimensions` and `ExtractProps` exist in `~/types` for
+// internal use, but are NOT re-exported here. Both names also exist in
+// `@vitus-labs/rocketstyle` with different shapes — re-exporting them
+// from rocketstories created a silent name collision in any module that
+// pulled both. Consumers needing those helpers should import them from
+// `@vitus-labs/rocketstyle` (the canonical source).
+
 export type {
   Configuration,
   Control,
   Controls,
   ControlTypes,
   ElementType,
-  ExtractDimensions,
-  ExtractProps,
   Init,
   IRocketStories,
   PartialControls,
