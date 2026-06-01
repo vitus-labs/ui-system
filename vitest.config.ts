@@ -23,7 +23,7 @@ export default defineConfig({
       // will re-raise this if coverage genuinely improves.
       thresholds: {
         statements: 98.62,
-        branches: 94.27,
+        branches: 94.45,
         functions: 98.4,
         lines: 99.32,
       },
