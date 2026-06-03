@@ -35,11 +35,11 @@ export class CSSResult {
   /**
    * Memoized result of `isDynamic(this)`. Populated on first access from
    * `shared.ts#isDynamic` (or from `resolveValue` below on lazy populate).
-   * CSSResult instances are typically created at module load and reused,
-   * so even one rescan saved per nested result adds up across nested
-   * composition trees.
+   * Declared without an initializer — V8 sees `undefined` for unassigned
+   * properties anyway, and skipping the `= undefined` write keeps the
+   * constructor's hidden-class transition shorter (one fewer store).
    */
-  _isDynamic: boolean | undefined = undefined
+  _isDynamic: boolean | undefined
 
   /**
    * Memoized resolved CSS string for static CSSResults — populated by
@@ -48,7 +48,7 @@ export class CSSResult {
    * no function interpolations. Skipped for dynamic CSSResults (the
    * resolved string depends on props each call).
    */
-  _staticResolved: string | undefined = undefined
+  _staticResolved: string | undefined
 
   constructor(
     readonly strings: TemplateStringsArray,

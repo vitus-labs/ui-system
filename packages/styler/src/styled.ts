@@ -58,10 +58,16 @@ const getDisplayName = (tag: Tag): string =>
 
 // Component cache: same template literal + tag + no options → same component.
 // WeakMap on `strings` (TemplateStringsArray is object-identity per source location).
-let staticComponentCache = new WeakMap<
-  TemplateStringsArray,
-  Map<Tag, ComponentType<any>>
->()
+//
+// Value shape is union: `[tag, component]` tuple for the single-tag case
+// (the ~95% common case — `styled.div\`...\`` is paired with exactly one tag),
+// promoted to `Map<Tag, Component>` only when a SECOND tag arrives for the
+// same strings. Skips the per-template Map allocation in csr-many-style
+// workloads that mint distinct templates per tick.
+type StaticEntry =
+  | readonly [Tag, ComponentType<any>]
+  | Map<Tag, ComponentType<any>>
+let staticComponentCache = new WeakMap<TemplateStringsArray, StaticEntry>()
 
 // Single-entry hot cache — just 3 reference comparisons, no Map/WeakMap overhead.
 // Covers the most common pattern: same styled component created repeatedly.
@@ -94,10 +100,17 @@ const createStyledComponent = (
       // biome-ignore lint/style/noNonNullAssertion: invariant — when hotCache.strings/tag match, hotCache.component was assigned in the prior call
       return hotCache.component!
 
-    // WeakMap fallback for alternating patterns
-    const tagMap = staticComponentCache.get(strings)
-    if (tagMap) {
-      const cached = tagMap.get(tag)
+    // WeakMap fallback for alternating patterns. Single-tag entries are
+    // stored as `[tag, component]` tuples (skips Map allocation); multi-tag
+    // entries are stored as Map<Tag, Component>.
+    const entry = staticComponentCache.get(strings)
+    if (entry !== undefined) {
+      let cached: ComponentType<any> | undefined
+      if (entry instanceof Map) {
+        cached = entry.get(tag)
+      } else if (entry[0] === tag) {
+        cached = entry[1]
+      }
       if (cached) {
         hotCache.strings = strings
         hotCache.tag = tag
@@ -188,14 +201,20 @@ const createStyledComponent = (
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
 
-    // Store in component cache + hot cache for future reuse
+    // Store in component cache + hot cache for future reuse. Single-tag
+    // stays as a tuple; second tag for the same strings promotes to a Map.
     if (!options && values.length === 0) {
-      let tagMap = staticComponentCache.get(strings)
-      if (!tagMap) {
-        tagMap = new Map()
-        staticComponentCache.set(strings, tagMap)
+      const existing = staticComponentCache.get(strings)
+      if (existing === undefined) {
+        staticComponentCache.set(strings, [tag, StaticStyled] as const)
+      } else if (existing instanceof Map) {
+        existing.set(tag, StaticStyled)
+      } else {
+        const map = new Map<Tag, ComponentType<any>>()
+        map.set(existing[0], existing[1])
+        map.set(tag, StaticStyled)
+        staticComponentCache.set(strings, map)
       }
-      tagMap.set(tag, StaticStyled)
       hotCache.strings = strings
       hotCache.tag = tag
       hotCache.component = StaticStyled
@@ -322,8 +341,11 @@ const styledFactory = (tag: Tag, options?: StyledOptions) => {
  * - `styled('div', { shouldForwardProp })` → with custom prop filtering
  * - `styled.div` → shorthand via Proxy (no options)
  */
-// Cache template functions per tag to avoid closure allocation on every Proxy get
-const proxyCache = new Map<string, Function>()
+// Cache template functions per tag to avoid closure allocation on every Proxy
+// get. null-proto plain object: V8 inlines `proxyCache[prop]` as monomorphic
+// dict-mode access on a known-shape object; `Map.get` goes through a polymorphic
+// IC shared with every Map in the runtime.
+const proxyCache: Record<string, Function> = Object.create(null)
 
 export const styled: typeof styledFactory &
   Record<
@@ -333,11 +355,11 @@ export const styled: typeof styledFactory &
   get(_target: unknown, prop: string) {
     if (prop === 'prototype' || prop === '$$typeof') return undefined
     // styled.div`...`, styled.span`...`, etc.
-    let fn = proxyCache.get(prop)
+    let fn = proxyCache[prop]
     if (!fn) {
       fn = (strings: TemplateStringsArray, ...values: Interpolation[]) =>
         createStyledComponent(prop, strings, values)
-      proxyCache.set(prop, fn)
+      proxyCache[prop] = fn
     }
     return fn
   },
