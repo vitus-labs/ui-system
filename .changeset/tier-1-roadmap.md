@@ -9,8 +9,11 @@
 
 Tier-1 roadmap: six shipped enhancements across the stack, all
 architected to keep packages independent and recommended-to-compose.
-(T1.3 / `recipe()` deferred to a separate PR — package-boundary
-decision still open.)
+(T1.3 / `recipe()` dropped — rocketstyle's chain API already covers
+multi-dimensional state, theme modes, composition, and per-prop attrs
+in a way that maps to this library's runtime-resolved, cross-platform
+model. A CVA-shaped sugar layer borrows another ecosystem's design
+constraints without sharing them, and the chain is the API.)
 
 **T1.1 — Overlay modal a11y (`elements`)**
 `Overlay` (when `type="modal"` and active) now wires focus-trap +
