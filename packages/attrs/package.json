@@ -50,6 +50,7 @@
     "prepublish": "bun run build",
     "build": "bun run vl_rolldown_build",
     "build:watch": "bun run vl_rolldown_build-watch",
+    "bench": "bun benchmarks/render-bench.tsx",
     "lint": "biome check src/",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -62,10 +63,14 @@
     "react": ">= 19"
   },
   "devDependencies": {
+    "@vitus-labs/connector-styler": "workspace:*",
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/elements": "workspace:*",
+    "@vitus-labs/styler": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.5.0",
     "@vitus-labs/tools-storybook": "2.5.0",
-    "@vitus-labs/tools-typescript": "2.5.0"
+    "@vitus-labs/tools-typescript": "2.5.0",
+    "jsdom": "^29.1.1",
+    "tinybench": "^6.0.1"
   }
 }
