@@ -100,25 +100,16 @@ export const resolve = (
 }
 
 /**
- * Normalize resolved CSS text for strict `insertRule` compatibility.
- *
- * Single-pass scanner that handles all cleanup in one traversal:
- * - Strips block comments and line comments (preserves :// in URLs)
- * - Collapses whitespace to single spaces
- * - Removes redundant semicolons
- * - Trims leading/trailing whitespace
+ * Normalize CSS for strict `insertRule` (single-pass: strips comments,
+ * collapses whitespace, removes redundant semicolons).
  */
 const normCache = new Map<string, string>()
-// 2-slot LRU in front of normCache — every dynamic SSR render hits
-// normalizeCSS with the same (or alternating-pair-of-2) css text.
-// Reference compare beats the Map.get hash + bucket walk on a 500-call
-// SSR loop.
+// 2-slot LRU keyed on input string (reference-compare hot path).
 let normHotKeyA: string | null = null
 let normHotValA = ''
 let normHotKeyB: string | null = null
 let normHotValB = ''
 
-/** Clear the normalizeCSS cache (called during HMR cleanup). */
 export const clearNormCache = () => {
   normCache.clear()
   normHotKeyA = null
@@ -127,15 +118,11 @@ export const clearNormCache = () => {
   normHotValB = ''
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer
 export const normalizeCSS = (css: string): string => {
-  // Hot cache: nested so the cold-start path is a single null check.
-  // The csr-many bench (50 distinct components per tick) hits cold every call;
-  // the SSR bench hits the same key 500x in a row.
   if (normHotKeyA !== null) {
     if (normHotKeyA === css) return normHotValA
     if (normHotKeyB !== null && normHotKeyB === css) {
-      // Promote B → A
       const tk = normHotKeyA
       const tv = normHotValA
       normHotKeyA = normHotKeyB

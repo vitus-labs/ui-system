@@ -25,10 +25,7 @@ import {
   useInsertionEffect,
   useRef,
 } from 'react'
-// React 19's `createElement` always copies props via for-in. `jsx`/`jsxs`
-// from the JSX runtime skip the copy when no `key` is set on config —
-// `buildProps` never writes `key`, so every styled render benefits.
-// Saves ~30-80 ns per call relative to createElement.
+// jsx/jsxs skip createElement's unconditional props copy when no `key` is set.
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { buildProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
@@ -60,30 +57,19 @@ const getDisplayName = (tag: Tag): string =>
       (tag as ComponentType).name ||
       'Component'
 
-// Component cache: same template literal + tag + no options → same component.
-// WeakMap on `strings` (TemplateStringsArray is object-identity per source location).
-//
-// Value shape is union: `[tag, component]` tuple for the single-tag case
-// (the ~95% common case — `styled.div\`...\`` is paired with exactly one tag),
-// promoted to `Map<Tag, Component>` only when a SECOND tag arrives for the
-// same strings. Skips the per-template Map allocation in csr-many-style
-// workloads that mint distinct templates per tick.
+// Component cache (single-tag entries stored as tuple, multi-tag promoted to Map).
 type StaticEntry =
   | readonly [Tag, ComponentType<any>]
   | Map<Tag, ComponentType<any>>
 let staticComponentCache = new WeakMap<TemplateStringsArray, StaticEntry>()
 
-// Single-entry hot cache — just 3 reference comparisons, no Map/WeakMap overhead.
-// Covers the most common pattern: same styled component created repeatedly.
-// Wrapped in an object so `sheet.clearAll()` can reset every field together
-// (HMR scenario: stale references to old components must be purged).
+// Single-entry hot cache in front of staticComponentCache (HMR-resettable).
 const hotCache: {
   strings: TemplateStringsArray | null
   tag: Tag | null
   component: ComponentType<any> | null
 } = { strings: null, tag: null, component: null }
 
-// Subscribe to `sheet.clearAll()` so HMR reloads don't leak stale components.
 onSheetClear(() => {
   staticComponentCache = new WeakMap()
   hotCache.strings = null
@@ -98,15 +84,11 @@ const createStyledComponent = (
   options?: StyledOptions,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path styled factory — static/dynamic split + hot cache + SSR/client branches inlined for perf
 ) => {
-  // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
     if (strings === hotCache.strings && tag === hotCache.tag)
-      // biome-ignore lint/style/noNonNullAssertion: invariant — when hotCache.strings/tag match, hotCache.component was assigned in the prior call
+      // biome-ignore lint/style/noNonNullAssertion: invariant — hotCache.component is assigned when strings/tag match
       return hotCache.component!
 
-    // WeakMap fallback for alternating patterns. Single-tag entries are
-    // stored as `[tag, component]` tuples (skips Map allocation); multi-tag
-    // entries are stored as Map<Tag, Component>.
     const entry = staticComponentCache.get(strings)
     if (entry !== undefined) {
       let cached: ComponentType<any> | undefined
@@ -124,15 +106,13 @@ const createStyledComponent = (
     }
   }
 
-  // Fast check: no values means no dynamic interpolations — avoids .some() scan
   const hasDynamicValues = values.length > 0 && values.some(isDynamic)
   const customFilter = options ? options.shouldForwardProp : undefined
   const boost = options ? (options.boost ?? false) : false
 
-  // STATIC FAST PATH: no function interpolations → compute class once at creation time
+  // STATIC PATH: no function interpolations → compute className once at module load.
   if (!hasDynamicValues) {
-    // Inline resolve for the common no-values case (avoids function call overhead)
-    // biome-ignore lint/style/noNonNullAssertion: tagged template guarantee — strings.length >= 1 (length === values.length + 1, and values.length === 0 here)
+    // biome-ignore lint/style/noNonNullAssertion: tagged template guarantee — strings.length >= 1
     const raw = values.length === 0 ? strings[0]! : resolve(strings, values, {})
     const cssText = normalizeCSS(raw)
     const hasCss = cssText.length > 0
@@ -143,12 +123,10 @@ const createStyledComponent = (
     if (!hasCss) {
       staticClassName = ''
     } else if (IS_SERVER) {
-      // SSR: emit a single <style precedence> element. We deliberately do NOT
-      // call `sheet.insert()` here — that would push duplicate rules into the
-      // ssrBuffer and, after the client hydrates from <style data-precedence>
-      // tags, the same rule would also get re-inserted via insertRule() on
-      // first render (cache miss → DOM duplication). React 19 collects and
-      // dedupes <style precedence> emissions automatically.
+      // SSR: emit <style precedence> only. Calling sheet.insert() would push to
+      // ssrBuffer AND re-insert via insertRule on first client render after
+      // hydrating from <style data-precedence> — duplicate rules. React 19
+      // dedupes precedence emissions automatically.
       const prepared = sheet.prepare(cssText, boost)
       staticClassName = prepared.className
       cachedStyleEl = jsx('style', {
@@ -161,14 +139,9 @@ const createStyledComponent = (
       staticClassName = sheet.insert(cssText, boost)
     }
 
-    // Tag is known at creation time — hoist the typeof check out of render.
     const tagIsDOM = typeof tag === 'string'
 
-    // Pre-built ReactElement returned when the consumer passes no props
-    // (the most common case: `<MyStyled />`). Saves the destructure +
-    // buildProps + createElement chain per render. ReactElement values
-    // are immutable so sharing across renders is safe — React treats it
-    // as a fresh element by identity for reconciliation.
+    // Pre-built ReactElement returned on prop-less renders (the common case).
     const baselineMainEl = jsx(tag as any, {
       className: staticClassName || undefined,
     })
@@ -177,9 +150,6 @@ const createStyledComponent = (
       : baselineMainEl
 
     const StaticStyled = ({ ref, ...rawProps }: Record<string, any>) => {
-      // Hot path: no props beyond ref → return the pre-cached element.
-      // `for…in` over an empty object has zero iterations; the `break`
-      // ensures we exit on the first key seen.
       let hasExtraProps = false
       for (const _k in rawProps) {
         hasExtraProps = true
@@ -205,8 +175,6 @@ const createStyledComponent = (
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
 
-    // Store in component cache + hot cache for future reuse. Single-tag
-    // stays as a tuple; second tag for the same strings promotes to a Map.
     if (!options && values.length === 0) {
       const existing = staticComponentCache.get(strings)
       if (existing === undefined) {
@@ -227,21 +195,10 @@ const createStyledComponent = (
     return StaticStyled
   }
 
-  // Hoist tagIsDOM out of the render — mirrors the static path. The check is
-  // stable per-component, so paying typeof per render was waste.
   const tagIsDOM = typeof tag === 'string'
 
-  // DYNAMIC PATH — two function bodies, chosen by IS_SERVER at module load.
-  // The server variant drops `useRef` LRU + `useInsertionEffect` (no DOM to
-  // inject into; React's server renderer no-ops the effect anyway), saving
-  // ~120-200 ns per render on closure + deps-array + ref allocation.
-  // The client variant keeps the LRU cache for alternating-prop renders
-  // (toggle/hover/animation) and `useInsertionEffect` for synchronous CSS
-  // injection before paint.
-  //
-  // React hooks rules are per-function-body: both variants call their hooks
-  // unconditionally; the choice between bodies happens at module load.
-
+  // DYNAMIC PATH — two variants chosen by IS_SERVER at module load. The server
+  // variant drops useRef LRU + useInsertionEffect (dead weight on SSR).
   const DynamicStyled: ComponentType<any> = IS_SERVER
     ? ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
@@ -252,11 +209,7 @@ const createStyledComponent = (
         let className = ''
         let styleEl: ReactElement | null = null
         if (cssText.length > 0) {
-          // SSR: emit a <style precedence> element. We deliberately do NOT
-          // call sheet.insert() — that would push to ssrBuffer and, after
-          // hydration, the same rule would re-insert via insertRule on
-          // first client render (duplication). React 19 collects and
-          // dedupes <style precedence> emissions automatically.
+          // SSR: emit <style precedence> only; sheet.insert() would dupe on hydration.
           const prepared = sheet.prepare(cssText, boost)
           className = prepared.className
           styleEl = jsx('style', {
@@ -288,16 +241,8 @@ const createStyledComponent = (
           rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
-        // Two-entry LRU cache. The previous single-slot ref missed every
-        // render when a prop alternates between two values (toggle/hover/
-        // animation frame, etc.), forcing repeated getClassName work even
-        // though both class names are already cached upstream.
-        type DynEntry = {
-          css: string
-          className: string
-        }
-        // Lazy init — useRef(initialValue) evaluates initialValue every
-        // render even though React only uses it on first mount.
+        // 2-slot LRU keyed on cssText — alternating prop values (toggle/hover) hit.
+        type DynEntry = { css: string; className: string }
         const cacheRef = useRef<{
           a: DynEntry | null
           b: DynEntry | null
@@ -308,7 +253,6 @@ const createStyledComponent = (
         if (cur.a && cur.a.css === cssText) {
           entry = cur.a
         } else if (cur.b && cur.b.css === cssText) {
-          // Promote LRU hit to head so the next alternation hits slot `a` too.
           entry = cur.b
           cur.b = cur.a
           cur.a = entry
@@ -324,7 +268,6 @@ const createStyledComponent = (
           cur.a = { css: cssText, className }
         }
 
-        // Inject CSS synchronously before paint.
         useInsertionEffect(() => {
           if (cssText.length > 0) sheet.insert(cssText, boost)
         }, [cssText])
@@ -362,10 +305,7 @@ const styledFactory = (tag: Tag, options?: StyledOptions) => {
  * - `styled('div', { shouldForwardProp })` → with custom prop filtering
  * - `styled.div` → shorthand via Proxy (no options)
  */
-// Cache template functions per tag to avoid closure allocation on every Proxy
-// get. null-proto plain object: V8 inlines `proxyCache[prop]` as monomorphic
-// dict-mode access on a known-shape object; `Map.get` goes through a polymorphic
-// IC shared with every Map in the runtime.
+// null-proto: V8 inlines `proxyCache[prop]` faster than Map.get's polymorphic IC.
 const proxyCache: Record<string, Function> = Object.create(null)
 
 export const styled: typeof styledFactory &
