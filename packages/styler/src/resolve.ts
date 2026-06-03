@@ -109,13 +109,45 @@ export const resolve = (
  * - Trims leading/trailing whitespace
  */
 const normCache = new Map<string, string>()
+// 2-slot LRU in front of normCache — every dynamic SSR render hits
+// normalizeCSS with the same (or alternating-pair-of-2) css text.
+// Reference compare beats the Map.get hash + bucket walk on a 500-call
+// SSR loop.
+let normHotKeyA: string | null = null
+let normHotValA = ''
+let normHotKeyB: string | null = null
+let normHotValB = ''
+
 /** Clear the normalizeCSS cache (called during HMR cleanup). */
-export const clearNormCache = () => normCache.clear()
+export const clearNormCache = () => {
+  normCache.clear()
+  normHotKeyA = null
+  normHotValA = ''
+  normHotKeyB = null
+  normHotValB = ''
+}
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
 export const normalizeCSS = (css: string): string => {
+  if (normHotKeyA !== null && normHotKeyA === css) return normHotValA
+  if (normHotKeyB !== null && normHotKeyB === css) {
+    // Promote B → A
+    const tk = normHotKeyA
+    const tv = normHotValA
+    normHotKeyA = normHotKeyB
+    normHotValA = normHotValB
+    normHotKeyB = tk
+    normHotValB = tv
+    return normHotValA
+  }
   const cached = normCache.get(css)
-  if (cached !== undefined) return cached
+  if (cached !== undefined) {
+    normHotKeyB = normHotKeyA
+    normHotValB = normHotValA
+    normHotKeyA = css
+    normHotValA = cached
+    return cached
+  }
 
   const len = css.length
   let out = ''
@@ -180,6 +212,10 @@ export const normalizeCSS = (css: string): string => {
     evictMapByPercent(normCache, 0.1)
   }
   normCache.set(css, out)
+  normHotKeyB = normHotKeyA
+  normHotValB = normHotValA
+  normHotKeyA = css
+  normHotValA = out
 
   return out
 }

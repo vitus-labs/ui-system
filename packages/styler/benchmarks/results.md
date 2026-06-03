@@ -72,3 +72,31 @@ CSR per-mount cost (each tick = 100 mounts; csr-many = 50 distinct components):
 ## Regression check
 
 Future PRs that touch the styler hot path should re-run `bun run bench` and update this file. A >10% regression on any styler row vs these numbers warrants investigation before merging. (Compare ratios, not absolute ops/s — the latter drifts with machine/runtime version.)
+
+## Post-audit results (`perf/styler-audit`)
+
+Same setup, single pass after the styler perf pass landed on this branch:
+
+| Scenario | Pre (ops/s) | Post (ops/s) | Δ |
+|---|---|---|---|
+| ssr-static | 674.5 | **730.4** | +8.3% |
+| ssr-dynamic | 400.7 | **429.5** | +7.2% |
+| ssr-themed | 346.1 | **371.2** | +7.3% |
+| csr-mount | 13715 | 14164 | +3.3% (within noise) |
+| csr-update | 12800 | 12995 | +1.5% (within noise) |
+| csr-many | 18714 | 19276 | +3.0% (within noise) |
+
+SSR scenarios are the load-bearing wins (~7-8% across all three). CSR rows are within the noise floor as expected — they were already cache-hit dominated by the per-tick repeated renders.
+
+### Where the SSR gains came from (audit-pass changes)
+
+| Change | Hot-path effect |
+|---|---|
+| `styled.ts`: drop `delete rawProps.theme` in favor of `Object.assign({theme}, rawProps)` | Avoids V8 hidden-class deopt on every dynamic render |
+| `sheet.ts`: 2-slot LRU in front of `prepareCache` + `insertCache` | Reference compare hits before `Map.get` hash + bucket walk |
+| `sheet.ts`: no-`@` fast path in `prepare()` and `insert()` | Skips `splitAtRules` + two intermediate arrays + map/spread on ~95% of CSS |
+| `sheet.ts`: inline `@`-prefix dispatch in `splitAtRules` (`startsWith` + 1-char gate) | Removes the per-`@` `.slice(i, i+20)` + regex compile |
+| `resolve.ts`: 2-slot LRU in front of `normCache` | Same reference-compare win on `normalizeCSS` |
+| `styled.ts`: lazy `useRef` init for dynamic LRU | One less literal allocation per render |
+
+None of these change behavior — every existing test (406 in styler, 2776 across the monorepo) still passes. Bundle size grew ~600 B gzipped (11.4 → 12.0 KB).

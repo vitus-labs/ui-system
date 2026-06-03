@@ -211,15 +211,17 @@ const createStyledComponent = (
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path render — LRU-2 hit/miss + SSR vs client branches inlined for perf
   const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
     const theme = useTheme()
-    // Mutate rawProps to inject theme for resolve(), restore afterwards.
-    // rawProps is freshly created by the destructure spread above — no caller
-    // holds its reference yet, so mutation is safe. Avoids a second n-key spread.
-    const hadTheme = 'theme' in rawProps
-    const prevTheme = rawProps.theme
-    rawProps.theme = theme
-    const cssText = normalizeCSS(resolve(strings, values, rawProps))
-    if (hadTheme) rawProps.theme = prevTheme
-    else delete rawProps.theme
+    // Build a thin merged view for resolve() instead of mutate+restore.
+    // The prior `delete rawProps.theme` forced V8 to abandon `rawProps`'s
+    // hidden class, slowing every subsequent property read in `buildProps`'s
+    // `for…in`. `Object.assign` keeps both objects on their hidden classes.
+    // When the caller explicitly passed `theme`, their value wins (the
+    // resolve view receives it via the rawProps spread below).
+    const resolveProps =
+      rawProps.theme === undefined
+        ? Object.assign({ theme }, rawProps)
+        : rawProps
+    const cssText = normalizeCSS(resolve(strings, values, resolveProps))
 
     // Two-entry LRU cache. The previous single-slot ref missed every render
     // when a prop alternates between two values (toggle/hover/animation
@@ -231,11 +233,13 @@ const createStyledComponent = (
       className: string
       styleEl: ReturnType<typeof createElement> | null
     }
-    const cacheRef = useRef<{ a: DynEntry | null; b: DynEntry | null }>({
-      a: null,
-      b: null,
-    })
-
+    // Lazy init — `useRef(initialValue)` evaluates `initialValue` every render
+    // even though React only uses it on first mount. Skip the per-render
+    // literal allocation.
+    const cacheRef = useRef<{ a: DynEntry | null; b: DynEntry | null } | null>(
+      null,
+    )
+    if (cacheRef.current === null) cacheRef.current = { a: null, b: null }
     const cur = cacheRef.current
     let entry: DynEntry | null = null
     if (cur.a && cur.a.css === cssText) {

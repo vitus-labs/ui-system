@@ -289,6 +289,10 @@ describe('StyleSheet with createSheet', () => {
       const insertCacheField = (s as any).insertCache as Map<string, string>
       cacheField.set(clsA, 'color: blue;')
       insertCacheField.clear()
+      // Also clear the 2-slot LRU hot cache the test isn't aware of —
+      // bypassing the public clearCache() leaves it stale otherwise.
+      ;(s as any).insertHotA = null
+      ;(s as any).insertHotB = null
       // Now re-insert "color: red;" → hashes to clsA, cache has the wrong
       // cssText → collision detected → warn.
       s.insert('color: red;')
