@@ -6,7 +6,7 @@
  */
 import type { BreakpointKeys, config, render } from '@vitus-labs/core'
 import type { MakeItResponsiveStyles } from '@vitus-labs/unistyle'
-import type { ComponentType, FC, ForwardedRef, ReactElement } from 'react'
+import type { ForwardedRef, ReactElement } from 'react'
 
 export type ResponsiveStylesCallback = MakeItResponsiveStyles
 
@@ -27,17 +27,12 @@ export type MergeTypes<A extends readonly [...any]> = ExtractNullableKeys<
   Spread<A>
 >
 
-export type SimpleHoc<P extends Record<string, unknown> = {}> = (
-  WrappedComponent: ComponentType<P>,
-) => ComponentType<P>
-
 export type InnerRef = ForwardedRef<any>
 
-export type CssCallback = (css: typeof config.css) => ReturnType<typeof css>
-
-export type Css = CssCallback | ReturnType<typeof config.css> | string
-
-export type isEmpty = null | undefined
+export type Css =
+  | ((css: typeof config.css) => ReturnType<typeof css>)
+  | ReturnType<typeof config.css>
+  | string
 
 export type Content = Parameters<typeof render>['0']
 
@@ -66,8 +61,6 @@ export type ContentDirection =
 export type ContentBoolean = boolean
 export type ContentSimpleValue = string | number
 
-export type Ref = HTMLElement
-
 export type AlignY =
   | ContentAlignY
   | ContentAlignY[]
@@ -94,17 +87,6 @@ export type Responsive =
   | Partial<Record<BreakpointKeys, number | string>>
 
 export type ExtendCss = Css | Css[] | Partial<Record<BreakpointKeys, Css>>
-
-export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends ComponentType<infer TProps>
-    ? TProps
-    : TComponentOrTProps
-
-// export type HTMLTagProps<T extends HTMLTags> = JSX.IntrinsicElements[T];
-
-/** @deprecated Use VLComponent instead — forwardRef is no longer needed with React 19 */
-export type VLForwardedComponent<P extends Record<string, unknown> = {}> =
-  FC<P> & VLStatic
 
 export type VLComponent<P extends Record<string, any> = {}> = ((
   props: P & { ref?: any },

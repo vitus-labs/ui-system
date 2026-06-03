@@ -38,7 +38,11 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
     const refresh = () => {
       const all = container.querySelectorAll<HTMLElement>(FOCUSABLE)
       const result: HTMLElement[] = []
-      for (const el of all) if (isTabbable(el)) result.push(el)
+      // Index loop — `NodeList` iterator allocates; index access doesn't.
+      for (let i = 0; i < all.length; i++) {
+        const el = all[i]
+        if (el && isTabbable(el)) result.push(el)
+      }
       focusable = result
     }
     refresh()

@@ -1,37 +1,3 @@
-/** Props consumed by Element that should not be forwarded to the underlying DOM node. */
-export const RESERVED_PROPS = [
-  'innerRef',
-  'tag',
-  'block',
-  'label',
-  'children',
-  'beforeContent',
-  'afterContent',
-
-  'equalCols',
-  'vertical',
-  'direction',
-  'alignX',
-  'alignY',
-
-  'css',
-  'contentCss',
-  'beforeContentCss',
-  'afterContentCss',
-
-  'contentDirection',
-  'contentAlignX',
-  'contentAlignY',
-
-  'beforeContentDirection',
-  'beforeContentAlignX',
-  'beforeContentAlignY',
-
-  'afterContentDirection',
-  'afterContentAlignX',
-  'afterContentAlignY',
-] as const
-
 /**
  * HTML tags that are inline-level by default. When Element renders one of
  * these tags, child Content wrappers use `span` instead of `div` to
@@ -85,7 +51,6 @@ export const EMPTY_ELEMENTS = {
   hr: true,
   img: true,
   input: true,
-  keygen: true,
   link: true,
   textarea: true,
   // 'meta': true,

@@ -43,6 +43,11 @@ const CLICK_CLOSE_KINDS: ReadonlySet<string> = new Set([
   'clickOutsideContent',
 ])
 
+const isNodeOrChildOf = (
+  node: HTMLElement | null,
+  target: Element | null,
+): boolean => !!(node && target && (node.contains(target) || target === node))
+
 export type UseOverlayProps = Partial<{
   /**
    * Defines default state whether **Overlay** component should be active.
@@ -259,15 +264,15 @@ const useOverlay = ({
     assignContentPosition(calculateContentPosition())
   }, [assignContentPosition, calculateContentPosition])
 
-  const isNodeOrChild = useCallback(
-    (ref: { current: HTMLElement | null }) => (e: Event) => {
-      if (e?.target && ref.current) {
-        return (
-          ref.current.contains(e.target as Element) || e.target === ref.current
-        )
-      }
-      return false
-    },
+  // Stable per-ref predicates — created once, reused across every event.
+  const isTriggerOrChild = useCallback(
+    (e: Event) =>
+      isNodeOrChildOf(triggerRef.current, e?.target as Element | null),
+    [],
+  )
+  const isContentOrChild = useCallback(
+    (e: Event) =>
+      isNodeOrChildOf(contentRef.current, e?.target as Element | null),
     [],
   )
 
@@ -279,8 +284,8 @@ const useOverlay = ({
         active,
         openOn,
         closeOn,
-        isNodeOrChild(triggerRef),
-        isNodeOrChild(contentRef),
+        isTriggerOrChild,
+        isContentOrChild,
         showContent,
         hideContent,
       )
@@ -293,7 +298,8 @@ const useOverlay = ({
       closeOn,
       hideContent,
       showContent,
-      isNodeOrChild,
+      isTriggerOrChild,
+      isContentOrChild,
     ],
   )
 
@@ -344,19 +350,27 @@ const useOverlay = ({
     return () => cancelAnimationFrame(rafId)
   }, [active, isContentLoaded, setContentPosition])
 
-  // Track previous active state so callbacks only fire on actual transitions,
-  // not on every dependency change or unmount-while-closed.
+  // Ref-capture lifecycle callbacks — consumers typically pass inline arrows,
+  // so including them in the dep array re-runs the effect every parent render
+  // and fires spurious `onClose`/`setUnblocked` cleanup while the overlay
+  // is still open.
+  const latestOnOpen = useRef(onOpen)
+  latestOnOpen.current = onOpen
+  const latestOnClose = useRef(onClose)
+  latestOnClose.current = onClose
+
+  // Track previous active state so callbacks only fire on actual transitions.
   const prevActiveRef = useRef(false)
   useEffect(() => {
     const wasActive = prevActiveRef.current
     prevActiveRef.current = active
 
     if (active && !wasActive) {
-      onOpen?.()
+      latestOnOpen.current?.()
       ctx.setBlocked?.()
     } else if (!active && wasActive) {
       setContentLoaded(false)
-      onClose?.()
+      latestOnClose.current?.()
       ctx.setUnblocked?.()
     } else if (!active) {
       setContentLoaded(false)
@@ -365,11 +379,11 @@ const useOverlay = ({
     return () => {
       // On unmount, only clean up if currently active
       if (active) {
-        onClose?.()
+        latestOnClose.current?.()
         ctx.setUnblocked?.()
       }
     }
-  }, [active, ctx, onClose, onOpen])
+  }, [active, ctx])
 
   // Modal a11y — trap Tab + lock page scroll while open. Both hooks
   // no-op when `enabled` is false, so non-modal overlays pay nothing.
@@ -387,15 +401,16 @@ const useOverlay = ({
     handleVisibility,
   })
 
-  // Click-based open/close: attach to window
+  // Click-based open/close — listen on `document` (matches useEscapeKey +
+  // useFocusTrap; one fewer propagation hop than `window`).
   useEffect(() => {
     if (blocked || disabled) return undefined
 
     const enabledClick = openOn === 'click' || CLICK_CLOSE_KINDS.has(closeOn)
 
-    if (enabledClick) window.addEventListener('click', handleClick)
+    if (enabledClick) document.addEventListener('click', handleClick)
 
-    return () => window.removeEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
   }, [openOn, closeOn, blocked, disabled, handleClick])
 
   useHoverListeners({

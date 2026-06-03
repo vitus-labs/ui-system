@@ -6,7 +6,7 @@
  * a dropdown inside another dropdown) via blocked-state propagation.
  */
 import { render } from '@vitus-labs/core'
-import { type ReactNode, useId, useMemo } from 'react'
+import { type ReactNode, useId } from 'react'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { Content, VLComponent } from '~/types'
@@ -92,53 +92,58 @@ const Component: VLComponent<Props> = ({
   const { openOn, closeOn, type } = props
   const contentId = useId()
 
-  const passHandlers = useMemo(
-    () =>
-      openOn === 'manual' ||
-      closeOn === 'manual' ||
-      closeOn === 'clickOutsideContent',
-    [openOn, closeOn],
-  )
+  // Primitives — useMemo overhead exceeds recomputation cost.
+  const passHandlers =
+    openOn === 'manual' ||
+    closeOn === 'manual' ||
+    closeOn === 'clickOutsideContent'
 
-  const ariaHasPopup = useMemo(() => {
-    switch (type) {
-      case 'modal':
-        return 'dialog' as const
-      case 'tooltip':
-        return 'true' as const
-      default:
-        return 'menu' as const
-    }
-  }, [type])
+  const ariaHasPopup =
+    type === 'modal'
+      ? ('dialog' as const)
+      : type === 'tooltip'
+        ? ('true' as const)
+        : ('menu' as const)
+
+  const triggerProps: Record<string, unknown> = {
+    [triggerRefName]: triggerRef,
+    active,
+    'aria-expanded': active,
+    'aria-haspopup': ariaHasPopup,
+    'aria-controls': active ? contentId : undefined,
+  }
+  if (passHandlers) {
+    triggerProps.showContent = showContent
+    triggerProps.hideContent = hideContent
+  }
 
   return (
     <>
-      {render(trigger, {
-        [triggerRefName]: triggerRef,
-        active,
-        'aria-expanded': active,
-        'aria-haspopup': ariaHasPopup,
-        'aria-controls': active ? contentId : undefined,
-        ...(passHandlers ? { showContent, hideContent } : {}),
-      })}
+      {render(trigger, triggerProps)}
 
-      {IS_BROWSER && active && (
-        <Portal DOMLocation={DOMLocation}>
-          <Provider {...ctx}>
-            {render(children, {
-              [contentRefName]: contentRef,
-              id: contentId,
-              role: type === 'modal' ? 'dialog' : undefined,
-              'aria-modal': type === 'modal' ? true : undefined,
-              active,
-              align,
-              alignX,
-              alignY,
-              ...(passHandlers ? { showContent, hideContent } : {}),
-            })}
-          </Provider>
-        </Portal>
-      )}
+      {IS_BROWSER &&
+        active &&
+        (() => {
+          const contentProps: Record<string, unknown> = {
+            [contentRefName]: contentRef,
+            id: contentId,
+            role: type === 'modal' ? 'dialog' : undefined,
+            'aria-modal': type === 'modal' ? true : undefined,
+            active,
+            align,
+            alignX,
+            alignY,
+          }
+          if (passHandlers) {
+            contentProps.showContent = showContent
+            contentProps.hideContent = hideContent
+          }
+          return (
+            <Portal DOMLocation={DOMLocation}>
+              <Provider {...ctx}>{render(children, contentProps)}</Provider>
+            </Portal>
+          )
+        })()}
     </>
   )
 }

@@ -7,7 +7,7 @@
  * skipping children or switching sub-tags accordingly.
  */
 import { render } from '@vitus-labs/core'
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
+import { memo, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { PKG_NAME } from '~/constants'
 import { Content, Wrapper } from '~/helpers'
 import type { VLElement } from './types'
@@ -16,25 +16,31 @@ import { getShouldBeEmpty, isInlineElement } from './utils'
 const equalize = (el: HTMLElement, direction: unknown) => {
   const beforeEl = el.firstElementChild as HTMLElement | null
   const afterEl = el.lastElementChild as HTMLElement | null
+  if (!beforeEl || !afterEl || beforeEl === afterEl) return
 
-  if (beforeEl && afterEl && beforeEl !== afterEl) {
-    const type: 'height' | 'width' = direction === 'rows' ? 'height' : 'width'
-    const prop = type === 'height' ? 'offsetHeight' : 'offsetWidth'
-    const beforeSize = beforeEl[prop]
-    const afterSize = afterEl[prop]
+  const type: 'height' | 'width' = direction === 'rows' ? 'height' : 'width'
+  const prop = type === 'height' ? 'offsetHeight' : 'offsetWidth'
+  const beforeSize = beforeEl[prop]
+  const afterSize = afterEl[prop]
+  if (!Number.isInteger(beforeSize) || !Number.isInteger(afterSize)) return
+  // Already balanced (and not the initial 0/0 case) — skip the write to
+  // break the ResizeObserver loop. The `> 0` guard lets jsdom (no layout
+  // engine, all sizes return 0) still exercise the write path.
+  if (beforeSize === afterSize && beforeSize > 0) return
 
-    if (Number.isInteger(beforeSize) && Number.isInteger(afterSize)) {
-      const maxSize = `${Math.max(beforeSize, afterSize)}px`
-      beforeEl.style[type] = maxSize
-      afterEl.style[type] = maxSize
-    }
-  }
+  const maxSize = `${Math.max(beforeSize, afterSize)}px`
+  beforeEl.style[type] = maxSize
+  afterEl.style[type] = maxSize
 }
 
 const defaultDirection = 'inline'
 const defaultContentDirection = 'rows'
 const defaultAlignX = 'left'
 const defaultAlignY = 'center'
+
+// Hoisted — passed via spread so TS doesn't reject `as` on Wrapper's Props
+// (Wrapper forwards it to Styled). Resets styled-components' `as` prop.
+const AS_RESET = { as: undefined } as const
 
 const Component: VLElement = ({
   innerRef,
@@ -125,16 +131,20 @@ const Component: VLElement = ({
   const equalizeRef = useRef<HTMLElement | null>(null)
   const externalRef = ref ?? innerRef
 
-  const mergedRef = useCallback(
-    (node: HTMLElement | null) => {
-      equalizeRef.current = node
-      if (typeof externalRef === 'function') externalRef(node)
-      else if (externalRef != null) {
-        ;(externalRef as { current: HTMLElement | null }).current = node
-      }
-    },
-    [externalRef],
-  )
+  // Ref-capture the external ref so `mergedRef` stays stable. Without
+  // this, inline ref-callbacks from parents would change identity every
+  // render, forcing React to detach/attach the DOM ref each cycle.
+  const latestExternalRef = useRef(externalRef)
+  latestExternalRef.current = externalRef
+
+  const mergedRef = useCallback((node: HTMLElement | null) => {
+    equalizeRef.current = node
+    const r = latestExternalRef.current
+    if (typeof r === 'function') r(node)
+    else if (r != null) {
+      ;(r as { current: HTMLElement | null }).current = node
+    }
+  }, [])
 
   useLayoutEffect(() => {
     if (!__WEB__) return
@@ -152,29 +162,36 @@ const Component: VLElement = ({
     return () => observer.disconnect()
   }, [equalBeforeAfter, beforeContent, afterContent, direction])
 
-  // --------------------------------------------------------
-  // common wrapper props
-  // --------------------------------------------------------
-  const WRAPPER_PROPS = {
-    ref: mergedRef,
-    extendCss: css,
-    tag,
-    block,
-    direction: wrapperDirection,
-    alignX: wrapperAlignX,
-    alignY: wrapperAlignY,
-    as: undefined, // reset styled-components `as` prop
-  }
-
-  // --------------------------------------------------------
-  // return simple/empty element like input or image etc.
-  // --------------------------------------------------------
+  // Empty self-closing elements (input, img, …) render Wrapper alone.
   if (shouldBeEmpty) {
-    return <Wrapper {...props} {...WRAPPER_PROPS} />
+    return (
+      <Wrapper
+        {...props}
+        ref={mergedRef}
+        extendCss={css}
+        tag={tag}
+        block={block}
+        direction={wrapperDirection}
+        alignX={wrapperAlignX}
+        alignY={wrapperAlignY}
+        {...AS_RESET}
+      />
+    )
   }
 
   return (
-    <Wrapper {...props} {...WRAPPER_PROPS} isInline={isInline}>
+    <Wrapper
+      {...props}
+      ref={mergedRef}
+      extendCss={css}
+      tag={tag}
+      block={block}
+      direction={wrapperDirection}
+      alignX={wrapperAlignX}
+      alignY={wrapperAlignY}
+      isInline={isInline}
+      {...AS_RESET}
+    >
       {beforeContent && (
         <Content
           tag={SUB_TAG}
@@ -229,8 +246,12 @@ const Component: VLElement = ({
 
 const name = `${PKG_NAME}/Element` as const
 
-Component.displayName = name
-Component.pkgName = PKG_NAME
-Component.VITUS_LABS__COMPONENT = name
+// Memoize so parent re-renders don't re-run the body when Element's props
+// are referentially stable. The VL statics are attached to the memoized
+// wrapper so rocketstyle/attrs detection still works.
+const MemoComponent = memo(Component) as unknown as VLElement
+MemoComponent.displayName = name
+MemoComponent.pkgName = PKG_NAME
+MemoComponent.VITUS_LABS__COMPONENT = name
 
-export default Component
+export default MemoComponent
