@@ -60,14 +60,10 @@
     "@vitus-labs/core": "workspace:^",
     "@vitus-labs/unistyle": "workspace:^",
     "react": ">= 19",
-    "react-dom": ">= 19",
-    "react-native": ">= 0.76"
+    "react-dom": ">= 19"
   },
   "peerDependenciesMeta": {
     "react-dom": {
-      "optional": true
-    },
-    "react-native": {
       "optional": true
     }
   },

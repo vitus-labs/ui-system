@@ -368,6 +368,44 @@ describe('Overlay', () => {
       unmount()
       expect(document.body.style.overflow).toBe('')
     })
+
+    // Refcount path: when two modals are open at once, the inner one's
+    // unmount must NOT release the body-overflow lock — only the LAST
+    // unmount restores. Exercises the `lockCount > 0` branch in
+    // useScrollLock.
+    it('keeps body overflow locked while a second modal is still open', () => {
+      const { unmount: unmountFirst } = render(
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      const { unmount: unmountSecond } = render(
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          type="modal"
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      expect(document.body.style.overflow).toBe('hidden')
+
+      unmountFirst()
+      // Second modal still open → still locked.
+      expect(document.body.style.overflow).toBe('hidden')
+
+      unmountSecond()
+      // Last one out releases the lock.
+      expect(document.body.style.overflow).toBe('')
+    })
   })
 
   describe('render function pattern', () => {
@@ -1938,6 +1976,86 @@ describe('Overlay', () => {
       )
       expect(screen.getByTestId('trigger')).toBeInTheDocument()
       expect(screen.getByTestId('content')).toBeInTheDocument()
+    })
+
+    // ──────────────────────────────────────────────────────────────────
+    // Modal a11y: focus trap + scroll lock wired through useFocusTrap +
+    // useScrollLock. Locks in the T1.1 fix — these used to silently leak
+    // Tab out of the modal and let the page scroll behind it.
+    // ──────────────────────────────────────────────────────────────────
+    it('locks body scroll while a modal Overlay is open and unlocks on unmount', () => {
+      // `useScrollLock` uses a module-global ref counter, so we exercise the
+      // mount→unmount cycle (not toggle isOpen) for a hermetic assertion.
+      document.body.style.overflow = ''
+      const { unmount } = render(
+        <OverlayComponent
+          trigger={Trigger}
+          type="modal"
+          isOpen
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      expect(document.body.style.overflow).toBe('hidden')
+      unmount()
+      expect(document.body.style.overflow).not.toBe('hidden')
+    })
+
+    it('does NOT lock body scroll for non-modal Overlay types', () => {
+      render(
+        <OverlayComponent
+          trigger={Trigger}
+          type="dropdown"
+          isOpen
+          closeOn="manual"
+        >
+          {Content}
+        </OverlayComponent>,
+        { wrapper },
+      )
+      expect(document.body.style.overflow).not.toBe('hidden')
+    })
+
+    it('traps Tab inside a modal Overlay (focus moves into content, cycles)', () => {
+      // Two focusable buttons in the content to verify trap-cycle on Tab.
+      const ModalContent = forwardRef<HTMLDivElement, any>((props, ref) => (
+        <div ref={ref} data-testid="modal-content" {...props}>
+          <button type="button" data-testid="modal-btn-1">
+            First
+          </button>
+          <button type="button" data-testid="modal-btn-2">
+            Last
+          </button>
+        </div>
+      ))
+      ModalContent.displayName = 'ModalContent'
+
+      render(
+        <OverlayComponent
+          trigger={Trigger}
+          type="modal"
+          isOpen
+          closeOn="manual"
+        >
+          {ModalContent}
+        </OverlayComponent>,
+        { wrapper },
+      )
+
+      // useFocusTrap autoFocus moved focus to the first focusable button.
+      const first = screen.getByTestId('modal-btn-1')
+      const last = screen.getByTestId('modal-btn-2')
+      expect(document.activeElement).toBe(first)
+
+      // Simulate Tab from the last element → wraps to first.
+      last.focus()
+      const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })
+      act(() => {
+        document.dispatchEvent(tab)
+      })
+      expect(document.activeElement).toBe(first)
     })
 
     it('passes ref via custom contentRefName', () => {

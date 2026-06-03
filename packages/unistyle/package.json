@@ -51,13 +51,7 @@
   },
   "peerDependencies": {
     "@vitus-labs/core": "workspace:^",
-    "react": ">= 19",
-    "react-native": ">= 0.76"
-  },
-  "peerDependenciesMeta": {
-    "react-native": {
-      "optional": true
-    }
+    "react": ">= 19"
   },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",

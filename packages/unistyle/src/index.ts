@@ -14,6 +14,7 @@ import type {
 // RESPONSIVE UTILITIES
 // --------------------------------------------------------
 import {
+  between,
   breakpoints,
   createMediaQueries,
   makeItResponsive,
@@ -86,6 +87,7 @@ export {
   ALIGN_CONTENT_MAP_X,
   ALIGN_CONTENT_MAP_Y,
   alignContent,
+  between,
   breakpoints,
   context,
   createMediaQueries,

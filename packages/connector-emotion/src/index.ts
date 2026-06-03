@@ -127,6 +127,16 @@ export const createGlobalStyle = (
   return GlobalComponent
 }
 
+// NOTE: this connector does NOT export `useCSS`. An earlier shim
+// returned `emotionCss\`…\`.name` for shape-parity with styler's
+// useCSS, but Emotion never inserts the serialized rule unless it
+// passes through @emotion/styled or `<Global>` — so the className
+// resolved to a stylesheet that didn't exist, rendering UNSTYLED with
+// no warning. Emotion's idiomatic pattern is
+// `<div className={css\`…\`} />` (css returns an injection-ready
+// className synchronously). Consumers needing the useCSS hook shape
+// should use `@vitus-labs/connector-styler` directly.
+
 // ---------------------------------------------------------------------------
 // Re-exports from Emotion
 // ---------------------------------------------------------------------------

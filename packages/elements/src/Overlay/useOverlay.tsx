@@ -29,7 +29,9 @@ import {
   processVisibilityEvent,
 } from './positionMath'
 import useEscapeKey from './useEscapeKey'
+import useFocusTrap from './useFocusTrap'
 import useHoverListeners from './useHoverListeners'
+import useScrollLock from './useScrollLock'
 import useScrollReposition from './useScrollReposition'
 
 // Hoisted: closeOn values that count as "click-driven close". Inlined
@@ -372,22 +374,26 @@ const useOverlay = ({
 
   // Focus management for modals: save active element on open, restore on close.
   useEffect(() => {
+    // `useFocusTrap` (below) owns focus management for modals — autoFocus
+    // moves focus into the dialog on enable and restores it on disable. The
+    // prior manual save/restore block here duplicated (and slightly
+    // contradicted) that, so it's removed. Non-modal types intentionally
+    // don't trap focus.
     if (type !== 'modal') return
-
-    if (active && isContentLoaded && contentRef.current) {
-      prevFocusRef.current = document.activeElement as HTMLElement | null
-      // Make content focusable if it isn't already, then focus it.
-      if (contentRef.current.tabIndex < 0) {
-        contentRef.current.tabIndex = -1
-      }
-      contentRef.current.focus()
-    }
-
     if (!active && prevFocusRef.current) {
-      prevFocusRef.current.focus()
+      // Legacy field kept for back-compat with anything reading prevFocusRef.
       prevFocusRef.current = null
     }
-  }, [active, isContentLoaded, type])
+  }, [active, type])
+
+  // ----------------------------------------------------------------------
+  // Modal a11y — trap Tab inside the content + lock page scroll while open.
+  // Both hooks no-op when their `enabled` flag is false, so the effect cost
+  // for non-modal overlays is zero.
+  // ----------------------------------------------------------------------
+  const modalActive = type === 'modal' && active && isContentLoaded
+  useFocusTrap(contentRef, modalActive)
+  useScrollLock(modalActive)
 
   // ----------------------------------------------------------------------
   // Composed listener hooks

@@ -18,7 +18,7 @@ import type { T_CONTROL_TYPES } from '~/constants/controls'
 
 export type TObj = Record<string, unknown>
 
-export type ExtractProps<TComponentOrTProps> =
+export type StoryExtractProps<TComponentOrTProps> =
   TComponentOrTProps extends ComponentType<infer TProps>
     ? TProps
     : TComponentOrTProps
@@ -79,7 +79,7 @@ export type StorybookControl = {
   }
 }
 
-export type ExtractDimensions<C extends RocketType> = keyof C['$$rocketstyle']
+export type StoryDimensions<C extends RocketType> = keyof C['$$rocketstyle']
 
 export type RocketDimensions = keyof RocketType['$$rocketstyle']
 

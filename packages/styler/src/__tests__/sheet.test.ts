@@ -271,6 +271,52 @@ describe('StyleSheet with createSheet', () => {
     expect(replay).toMatch(/^vl-[0-9a-z]+$/)
   })
 
+  // T1.2: silent hash-collision was a "type allowed it, runtime did nothing
+  // visible" credibility tax. Now we warn in dev when two distinct cssText
+  // strings hash to the same className (silently apply the FIRST's rule).
+  it('warns in dev when two different cssText strings produce the same hash', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    try {
+      // Plant entry A.
+      const clsA = s.insert('color: red;')
+      // Force a fake collision: copy the className → a DIFFERENT cssText
+      // through the internal cache. Also clear insertCache so the next
+      // insert() doesn't short-circuit before the collision-detection
+      // branch (insertCache is the fast cssText→className lookup).
+      const cacheField = (s as any).cache as Map<string, string>
+      const insertCacheField = (s as any).insertCache as Map<string, string>
+      cacheField.set(clsA, 'color: blue;')
+      insertCacheField.clear()
+      // Now re-insert "color: red;" → hashes to clsA, cache has the wrong
+      // cssText → collision detected → warn.
+      s.insert('color: red;')
+      expect(warn).toHaveBeenCalled()
+      const msg = String(warn.mock.calls[0]?.[0] ?? '')
+      expect(msg).toMatch(/hash collision/i)
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
+  it('does NOT warn for legacy reservation entries (hydration / globalStyle)', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    try {
+      const clsA = s.insert('color: lime;')
+      // Simulate the legacy reservation pattern used by hydration paths:
+      // the cache value is the className itself (not real cssText).
+      const cacheField = (s as any).cache as Map<string, string>
+      cacheField.set(clsA, clsA)
+      s.insert('color: lime;') // hits cache; cached === className → no warn
+      expect(warn).not.toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
   it('insert returns className via cache hit path', async () => {
     const { createSheet } = await import('../sheet')
     const s = createSheet()

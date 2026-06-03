@@ -86,11 +86,6 @@ const spacingStyles: SpacingStyles = (type, param, rootSize) => {
   `
 }
 
-/**
- * Main responsive style block for Col. When the column is visible, applies
- * width, padding, margin, and extra CSS. When hidden (size === 0), moves
- * the element off-screen with fixed positioning.
- */
 const styles: MakeItResponsiveStyles<StyledTypes> = ({
   theme,
   css,

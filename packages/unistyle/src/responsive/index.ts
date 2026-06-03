@@ -1,3 +1,4 @@
+import between from './between'
 import type { Breakpoints } from './breakpoints'
 import breakpoints from './breakpoints'
 import type { CreateMediaQueries } from './createMediaQueries'
@@ -25,6 +26,7 @@ export type {
 }
 
 export {
+  between,
   breakpoints,
   createMediaQueries,
   makeItResponsive,

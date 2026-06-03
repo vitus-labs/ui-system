@@ -58,6 +58,12 @@ export type TransitionProps = ClassTransitionProps &
     unmount?: boolean
     /** Safety timeout in ms. Default: 5000. */
     timeout?: number
+    /**
+     * Per-instance start delay in ms. Stagger uses this internally to
+     * cascade child animations; consumers can also set it for one-off
+     * delayed enters. Default: 0.
+     */
+    delay?: number
     /** Single child element. Must accept className, style, and ref. */
     children: ReactElement<any>
   }

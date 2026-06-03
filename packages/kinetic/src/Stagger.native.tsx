@@ -21,7 +21,7 @@ const Stagger = ({
     <>
       {childArray.map((child, index) => {
         const staggerIndex = !show && reverseLeave ? count - 1 - index : index
-        const _delay = staggerIndex * interval
+        const delay = staggerIndex * interval
 
         return (
           <Transition
@@ -29,6 +29,7 @@ const Stagger = ({
             show={show}
             appear={appear}
             timeout={timeout}
+            delay={delay}
             {...transitionProps}
             onAfterLeave={
               index === (reverseLeave ? 0 : count - 1)

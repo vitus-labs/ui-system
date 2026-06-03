@@ -64,17 +64,15 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@storybook/react": "^10.3.6",
     "@vitus-labs/core": "workspace:^",
+    "@vitus-labs/elements": "workspace:^",
     "@vitus-labs/rocketstyle": "workspace:^",
     "@vitus-labs/unistyle": "workspace:^",
     "react": ">= 19"
   },
-  "dependencies": {
-    "@vitus-labs/elements": "workspace:*"
-  },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",
+    "@vitus-labs/elements": "workspace:*",
     "@vitus-labs/rocketstyle": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.5.0",
     "@vitus-labs/tools-storybook": "2.5.0",

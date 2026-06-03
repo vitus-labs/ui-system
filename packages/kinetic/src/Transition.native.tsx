@@ -1,4 +1,8 @@
-import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
+import {
+  useIsomorphicLayoutEffect,
+  useLatest,
+  useReducedMotion,
+} from '@vitus-labs/hooks'
 import { cloneElement, useMemo, useRef } from 'react'
 import { Animated } from 'react-native'
 import { buildAnimatedStyle, getPrimaryTransition } from './nativeAnimations'
@@ -10,6 +14,7 @@ const Transition = ({
   appear = false,
   unmount = true,
   timeout: _timeout,
+  delay = 0,
   enterStyle,
   enterToStyle,
   enterTransition,
@@ -27,6 +32,14 @@ const Transition = ({
     appear,
   })
 
+  // Honor the OS-level Reduce Motion preference: when on, skip the
+  // animation and snap to the final state — synchronously firing
+  // onEnter+onAfterEnter / onLeave+onAfterLeave so consumer state machines
+  // still progress. Web Transition relies on CSS `prefers-reduced-motion`;
+  // native needs an explicit check since RN style animations don't honor
+  // the OS setting automatically.
+  const reduced = useReducedMotion()
+
   const callbacksRef = useLatest({
     onEnter,
     onAfterEnter,
@@ -43,6 +56,12 @@ const Transition = ({
   useIsomorphicLayoutEffect(() => {
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
+      if (reduced) {
+        progress.setValue(1)
+        callbacksRef.current.onAfterEnter?.()
+        complete()
+        return undefined
+      }
       progress.setValue(0)
       animatingRef.current = true
 
@@ -50,6 +69,7 @@ const Transition = ({
         toValue: 1,
         duration: enterConfig.duration,
         easing: enterConfig.easing,
+        delay,
         useNativeDriver: true,
       }).start(({ finished }) => {
         animatingRef.current = false
@@ -62,6 +82,12 @@ const Transition = ({
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
+      if (reduced) {
+        progress.setValue(1)
+        callbacksRef.current.onAfterLeave?.()
+        complete()
+        return undefined
+      }
       progress.setValue(0)
       animatingRef.current = true
 
@@ -69,6 +95,7 @@ const Transition = ({
         toValue: 1,
         duration: leaveConfig.duration,
         easing: leaveConfig.easing,
+        delay,
         useNativeDriver: true,
       }).start(({ finished }) => {
         animatingRef.current = false
@@ -85,7 +112,7 @@ const Transition = ({
         animatingRef.current = false
       }
     }
-  }, [stage])
+  }, [stage, reduced, delay])
 
   const animatedStyle = useMemo(() => {
     if (stage === 'entering') {

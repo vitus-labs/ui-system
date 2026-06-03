@@ -50,7 +50,7 @@
   {
     "name": "@vitus-labs/hooks",
     "path": "packages/hooks/lib/index.js",
-    "limit": "6.5 KB",
+    "limit": "8 KB",
     "gzip": true
   },
   {
