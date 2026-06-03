@@ -30,7 +30,7 @@ import { buildProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
 import { onSheetClear, sheet } from './sheet'
-import { useTheme } from './ThemeProvider'
+import { EMPTY_THEME, useTheme } from './ThemeProvider'
 
 // SSR vs client detection — computed once at module load time.
 // In Node.js (SSR): true. In browser/jsdom: false.
@@ -204,6 +204,10 @@ const createStyledComponent = (
     return StaticStyled
   }
 
+  // Hoist tagIsDOM out of the render — mirrors the static path. The check is
+  // stable per-component, so paying typeof per render was waste.
+  const tagIsDOM = typeof tag === 'string'
+
   // DYNAMIC PATH: resolve CSS on every render with theme/props.
   // Client: useInsertionEffect injects into shared sheet (1 DOM node, scales to any size).
   // SSR: <style precedence> for FOUC-free delivery (useInsertionEffect is a no-op on server).
@@ -213,13 +217,12 @@ const createStyledComponent = (
     const theme = useTheme()
     // Inject theme by mutating rawProps (which is freshly destructured by
     // this function and discarded after; no caller can observe the mutation).
-    // The earlier `Object.assign({theme}, rawProps)` allocated a new object
-    // every render — measurable as a 6-10% regression on CSR per-tick at
-    // 100 mounts. If the caller passed an explicit `theme` prop, leave it
-    // alone — their value wins on both `resolve()` and `buildProps`.
-    // Skip the write entirely when there's no provider AND no caller theme;
-    // saves a property assignment + a key in `buildProps`'s for-in.
-    if (theme !== undefined && rawProps.theme === undefined)
+    // EMPTY_THEME is the referentially-stable sentinel returned by useTheme
+    // when no <ThemeProvider> is mounted — skip the write entirely in that
+    // case (bench's csr-mount / csr-many / no-theme SSR scenarios).
+    // If the caller passed an explicit `theme` prop, leave it alone — their
+    // value wins on both `resolve()` and `buildProps`.
+    if (theme !== EMPTY_THEME && rawProps.theme === undefined)
       rawProps.theme = theme
     const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
@@ -290,7 +293,7 @@ const createStyledComponent = (
     }, [cssText])
 
     const finalTag = rawProps.as || tag
-    const isDOM = typeof finalTag === 'string'
+    const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
     const finalProps = buildProps(rawProps, className, ref, isDOM, customFilter)
 
     const mainEl = createElement(finalTag, finalProps)

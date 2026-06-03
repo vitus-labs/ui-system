@@ -18,7 +18,13 @@ export interface DefaultTheme {}
 
 type Theme = DefaultTheme & Record<string, unknown>
 
-const ThemeContext = createContext<Theme>({})
+// Empty-theme sentinel — referentially stable, so `DynamicStyled` can skip
+// the rawProps.theme write when no provider is mounted. Without this, every
+// no-provider dynamic render writes `theme = {}` for nothing (the bench's
+// csr-mount / csr-update / csr-many scenarios are all no-provider).
+export const EMPTY_THEME: Theme = {}
+
+const ThemeContext = createContext<Theme>(EMPTY_THEME)
 
 /** Hook to read the current theme from the nearest ThemeProvider. */
 export const useTheme = <T extends Theme = Theme>(): T =>

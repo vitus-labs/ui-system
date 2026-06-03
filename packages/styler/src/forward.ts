@@ -287,6 +287,10 @@ export const buildProps = (
   // DOM element with default filtering
   for (const key in rawProps) {
     if (key === 'as' || key === 'className') continue
+    // `theme` is mutated onto rawProps by DynamicStyled for resolve() — it's
+    // never a valid HTML attr, and skipping it here avoids 3 string checks
+    // + an `in` lookup on the dominant rawProps.theme path.
+    if (key === 'theme') continue
     if (key.charCodeAt(0) === 36) continue // $-prefixed transient
     if (key.startsWith('data-') || key.startsWith('aria-')) {
       result[key] = rawProps[key]

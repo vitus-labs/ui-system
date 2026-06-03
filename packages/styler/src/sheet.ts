@@ -52,6 +52,9 @@ export class StyleSheet {
   constructor(options: StyleSheetOptions = {}) {
     this.maxCacheSize = options.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE
     this.layer = options.layer
+    // Per-instance SSR check — tests toggle `globalThis.document` between
+    // createSheet() calls to simulate SSR/client transitions, so we can't
+    // freeze this at module load.
     this.isSSR = typeof document === 'undefined'
     if (!this.isSSR) this.mount()
   }
@@ -242,9 +245,27 @@ export class StyleSheet {
    * Used with useInsertionEffect pattern: compute class during render, inject in effect.
    */
   getClassName(cssText: string): string {
-    // Check insertCache (populated by insert()) to avoid hashing
+    // Hot cache: the same cssText that `useInsertionEffect`'s `insert()`
+    // populated 1 µs ago is asked for here on the next render. Reference
+    // compare beats Map.get's hash + bucket walk on every dynamic client
+    // render in steady state. Same 2-slot LRU as `insert()`, keyed on
+    // unboosted cssText (getClassName has no boost arg).
+    const hotA = this.insertHotA
+    if (hotA !== null) {
+      if (hotA.key === cssText) return hotA.value
+      const hotB = this.insertHotB
+      if (hotB !== null && hotB.key === cssText) {
+        this.insertHotB = hotA
+        this.insertHotA = hotB
+        return hotB.value
+      }
+    }
     const cached = this.insertCache.get(cssText)
-    if (cached) return cached
+    if (cached) {
+      this.insertHotB = hotA
+      this.insertHotA = { key: cssText, value: cached }
+      return cached
+    }
     const h = hash(cssText)
     return `${PREFIX}-${h}`
   }
