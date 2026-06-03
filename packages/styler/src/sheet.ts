@@ -28,10 +28,7 @@ export class StyleSheet {
   private insertCache = new Map<string, string>()
   private prepareCache = new Map<string, { className: string; rules: string }>()
 
-  // Two-slot LRU in front of `prepareCache` — every dynamic SSR render hits
-  // `prepare()` with the SAME (or alternating-pair-of-2) cssText. A reference
-  // compare hits before the Map.get's hash. Same pattern as DynamicStyled's
-  // useRef LRU-2, but engine-wide.
+  // 2-slot LRU in front of prepareCache / insertCache (reference-compare hot path).
   private prepareHotA: {
     key: string
     value: { className: string; rules: string }
@@ -145,14 +142,7 @@ export class StyleSheet {
     }
   }
 
-  /**
-   * Evict oldest entries from any cache that exceeds maxCacheSize.
-   * `cache` was already gated; `insertCache` and `prepareCache` are keyed by
-   * full cssText (200–5000B per entry) and were only cleared by HMR/SSR
-   * hooks before — a long-running SPA with theme switching or prop-driven
-   * CSS accumulated every unique cssText forever. Each cache is now bounded
-   * the same way (oldest ~10% evicted at the threshold).
-   */
+  /** Evict oldest ~10% from any cache over maxCacheSize. */
   private evictIfNeeded() {
     if (this.cache.size > this.maxCacheSize) {
       evictMapByPercent(this.cache, 0.1)
@@ -240,16 +230,9 @@ export class StyleSheet {
     return { base: baseParts.join(' '), atRules }
   }
 
-  /**
-   * Compute a className from CSS text without injecting (pure function for render phase).
-   * Used with useInsertionEffect pattern: compute class during render, inject in effect.
-   */
+  /** Compute className without injecting (paired with useInsertionEffect). */
   getClassName(cssText: string): string {
-    // Hot cache: the same cssText that `useInsertionEffect`'s `insert()`
-    // populated 1 µs ago is asked for here on the next render. Reference
-    // compare beats Map.get's hash + bucket walk on every dynamic client
-    // render in steady state. Same 2-slot LRU as `insert()`, keyed on
-    // unboosted cssText (getClassName has no boost arg).
+    // Same 2-slot LRU as insert(), keyed on unboosted cssText.
     const hotA = this.insertHotA
     if (hotA !== null) {
       if (hotA.key === cssText) return hotA.value
@@ -271,26 +254,13 @@ export class StyleSheet {
   }
 
   /**
-   * Insert CSS rules for a component. Returns the class name (deterministic, hash-based).
-   * Deduplicates: same CSS text always produces the same class name and
-   * the rules are only injected once.
-   *
-   * Nested @media/@supports/@container blocks are automatically extracted
-   * into separate top-level rules (matching styled-components/Emotion behavior).
-   *
-   * When `boost` is true, the selector is doubled (`.vl-abc.vl-abc`)
-   * to raise specificity from (0,1,0) to (0,2,0). This ensures the
-   * rule wins over single-class selectors regardless of source order.
+   * Insert CSS rules. Returns deterministic class name. Dedupes by cssText.
+   * Nested @media/@supports/@container are extracted into top-level rules.
+   * `boost` doubles the selector (`.vl-abc.vl-abc`) for higher specificity.
    */
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path CSS rule insertion — cache check + hash + split + SSR vs client + @layer wrapping inlined for perf
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path
   insert(cssText: string, boost = false): string {
-    // Fast path: skip hash computation on repeated insertions of same CSS text
     const icKey = boost ? `${cssText}\0` : cssText
-
-    // Hot cache: reference compare before Map.get's hash. Common pattern is
-    // every render hitting the same cssText (or 2 alternating values).
-    // Nested so the cold-start path (no entries populated yet) is a single
-    // null check, not 4 — the bench's csr-many scenario hits cold every call.
     const hotA = this.insertHotA
     if (hotA !== null) {
       if (hotA.key === icKey) return hotA.value
@@ -312,25 +282,17 @@ export class StyleSheet {
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
 
-    // Cache-hit on the className. We additionally verify the cssText
-    // matches what produced this className the first time — a 32-bit
-    // FNV-1a hash has ~1-in-4-billion theoretical collision odds on
-    // distinct CSS strings. Silent dedup (apply the FIRST cssText to
-    // the colliding second component) would be incorrect; this dev
-    // warning surfaces the rare case so the user can rename a token,
-    // tweak the rule, or add a structural workaround.
+    // Verify the cached cssText matches — FNV-1a collision (1-in-4B) detected here.
+    // `existing === className` is the legacy reservation pattern (SSR hydration,
+    // globalStyle, keyframes — those don't carry original cssText).
     const existing = this.cache.get(className)
     if (existing !== undefined) {
-      // `existing !== className` excludes the legacy reservation pattern
-      // used by SSR hydration / globalStyle / keyframes (those store the
-      // className itself as the value because they don't carry the
-      // original cssText through the API).
       if (
         process.env.NODE_ENV !== 'production' &&
         existing !== className &&
         existing !== cssText
       ) {
-        // biome-ignore lint/suspicious/noConsole: dev-only diagnostic for an undetected silent-collision class
+        // biome-ignore lint/suspicious/noConsole: dev-only hash-collision diagnostic
         console.warn(
           `[@vitus-labs/styler] hash collision on class ${className} — different CSS strings produced the same hash. First inserted: ${existing.slice(0, 80)}… / now: ${cssText.slice(0, 80)}…`,
         )
@@ -583,29 +545,18 @@ export class StyleSheet {
     for (const cb of clearCallbacks) cb()
   }
 
-  /**
-   * Compute className and full CSS rule text without injecting.
-   * Used with React 19's `<style precedence>` for component-level injection.
-   * Result is cached so repeated calls (per render until cssText changes) skip
-   * the hash + splitAtRules + join work.
-   */
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path — 2-slot LRU + no-@ fast path + @layer wrapping inlined for SSR perf
+  /** Compute className + rule text without injecting (for React 19 <style precedence>). */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path
   prepare(
     cssText: string,
     boost = false,
   ): { className: string; rules: string } {
     const prepKey = boost ? `${cssText}\0` : cssText
-
-    // Hot cache: reference compare before Map.get's hash + bucket walk.
-    // SSR commonly renders the same component (same cssText) 100s of times
-    // per request; client renders frequently alternate between 2 values.
-    // Nested so the cold-start path is a single null check.
     const hotA = this.prepareHotA
     if (hotA !== null) {
       if (hotA.key === prepKey) return hotA.value
       const hotB = this.prepareHotB
       if (hotB !== null && hotB.key === prepKey) {
-        // Promote B → A so the next call hits the first slot.
         this.prepareHotB = hotA
         this.prepareHotA = hotB
         return hotB.value
@@ -623,9 +574,7 @@ export class StyleSheet {
     const className = `${PREFIX}-${h}`
     const selector = boost ? `.${className}.${className}` : `.${className}`
 
-    // Fast path: no @-rules to split + no @layer wrapping → build directly.
-    // 95% of styled CSS hits this. Skips splitAtRules (regex + scan +
-    // two intermediate arrays + .join).
+    // Fast path: no @-rules + no @layer → skip splitAtRules (hits ~95% of CSS).
     let rules: string
     if (cssText.indexOf('@') === -1 && !this.layer) {
       rules = cssText.length > 0 ? `${selector}{${cssText}}` : ''
