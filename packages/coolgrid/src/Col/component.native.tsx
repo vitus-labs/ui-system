@@ -25,7 +25,7 @@ const Component: ElementType<
     'gutter',
     'contentAlignX',
   ]
-> = ({ children, component, css, offset, order, auto, ...props }) => {
+> = ({ children, component, css, ...props }) => {
   const parentCtx = useContext(RowContext)
   const { colCss, colComponent, columns, gap, size, padding } = useGridContext({
     ...parentCtx,
@@ -34,9 +34,6 @@ const Component: ElementType<
 
   const RNparentWidth = parentCtx.RNparentWidth ?? 0
 
-  // offset/order/auto were silently dropped here — styled.ts has native
-  // code paths for all three (offset% margins, flex order, flex: 1 1 auto)
-  // but the props never reached it. Mirrors component.tsx on web.
   const finalProps = useMemo(
     () => ({
       $coolgrid: {
@@ -44,25 +41,11 @@ const Component: ElementType<
         gap,
         size,
         padding,
-        offset,
-        order,
-        auto,
         RNparentWidth,
         extraStyles: css ?? colCss,
       },
     }),
-    [
-      columns,
-      gap,
-      size,
-      padding,
-      offset,
-      order,
-      auto,
-      RNparentWidth,
-      css,
-      colCss,
-    ],
+    [columns, gap, size, padding, RNparentWidth, css, colCss],
   )
 
   return (
