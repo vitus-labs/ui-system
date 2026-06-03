@@ -211,17 +211,17 @@ const createStyledComponent = (
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path render — LRU-2 hit/miss + SSR vs client branches inlined for perf
   const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
     const theme = useTheme()
-    // Build a thin merged view for resolve() instead of mutate+restore.
-    // The prior `delete rawProps.theme` forced V8 to abandon `rawProps`'s
-    // hidden class, slowing every subsequent property read in `buildProps`'s
-    // `for…in`. `Object.assign` keeps both objects on their hidden classes.
-    // When the caller explicitly passed `theme`, their value wins (the
-    // resolve view receives it via the rawProps spread below).
-    const resolveProps =
-      rawProps.theme === undefined
-        ? Object.assign({ theme }, rawProps)
-        : rawProps
-    const cssText = normalizeCSS(resolve(strings, values, resolveProps))
+    // Inject theme by mutating rawProps (which is freshly destructured by
+    // this function and discarded after; no caller can observe the mutation).
+    // The earlier `Object.assign({theme}, rawProps)` allocated a new object
+    // every render — measurable as a 6-10% regression on CSR per-tick at
+    // 100 mounts. If the caller passed an explicit `theme` prop, leave it
+    // alone — their value wins on both `resolve()` and `buildProps`.
+    // Skip the write entirely when there's no provider AND no caller theme;
+    // saves a property assignment + a key in `buildProps`'s for-in.
+    if (theme !== undefined && rawProps.theme === undefined)
+      rawProps.theme = theme
+    const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
     // Two-entry LRU cache. The previous single-slot ref missed every render
     // when a prop alternates between two values (toggle/hover/animation

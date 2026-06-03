@@ -129,16 +129,21 @@ export const clearNormCache = () => {
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
 export const normalizeCSS = (css: string): string => {
-  if (normHotKeyA !== null && normHotKeyA === css) return normHotValA
-  if (normHotKeyB !== null && normHotKeyB === css) {
-    // Promote B → A
-    const tk = normHotKeyA
-    const tv = normHotValA
-    normHotKeyA = normHotKeyB
-    normHotValA = normHotValB
-    normHotKeyB = tk
-    normHotValB = tv
-    return normHotValA
+  // Hot cache: nested so the cold-start path is a single null check.
+  // The csr-many bench (50 distinct components per tick) hits cold every call;
+  // the SSR bench hits the same key 500x in a row.
+  if (normHotKeyA !== null) {
+    if (normHotKeyA === css) return normHotValA
+    if (normHotKeyB !== null && normHotKeyB === css) {
+      // Promote B → A
+      const tk = normHotKeyA
+      const tv = normHotValA
+      normHotKeyA = normHotKeyB
+      normHotValA = normHotValB
+      normHotKeyB = tk
+      normHotValB = tv
+      return normHotValA
+    }
   }
   const cached = normCache.get(css)
   if (cached !== undefined) {

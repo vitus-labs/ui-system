@@ -268,13 +268,17 @@ export class StyleSheet {
 
     // Hot cache: reference compare before Map.get's hash. Common pattern is
     // every render hitting the same cssText (or 2 alternating values).
+    // Nested so the cold-start path (no entries populated yet) is a single
+    // null check, not 4 — the bench's csr-many scenario hits cold every call.
     const hotA = this.insertHotA
-    if (hotA !== null && hotA.key === icKey) return hotA.value
-    const hotB = this.insertHotB
-    if (hotB !== null && hotB.key === icKey) {
-      this.insertHotB = hotA
-      this.insertHotA = hotB
-      return hotB.value
+    if (hotA !== null) {
+      if (hotA.key === icKey) return hotA.value
+      const hotB = this.insertHotB
+      if (hotB !== null && hotB.key === icKey) {
+        this.insertHotB = hotA
+        this.insertHotA = hotB
+        return hotB.value
+      }
     }
 
     const icHit = this.insertCache.get(icKey)
@@ -574,14 +578,17 @@ export class StyleSheet {
     // Hot cache: reference compare before Map.get's hash + bucket walk.
     // SSR commonly renders the same component (same cssText) 100s of times
     // per request; client renders frequently alternate between 2 values.
+    // Nested so the cold-start path is a single null check.
     const hotA = this.prepareHotA
-    if (hotA !== null && hotA.key === prepKey) return hotA.value
-    const hotB = this.prepareHotB
-    if (hotB !== null && hotB.key === prepKey) {
-      // Promote B → A so the next call hits the first slot.
-      this.prepareHotB = hotA
-      this.prepareHotA = hotB
-      return hotB.value
+    if (hotA !== null) {
+      if (hotA.key === prepKey) return hotA.value
+      const hotB = this.prepareHotB
+      if (hotB !== null && hotB.key === prepKey) {
+        // Promote B → A so the next call hits the first slot.
+        this.prepareHotB = hotA
+        this.prepareHotA = hotB
+        return hotB.value
+      }
     }
 
     const cached = this.prepareCache.get(prepKey)
