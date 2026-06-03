@@ -52,6 +52,9 @@ export class StyleSheet {
   constructor(options: StyleSheetOptions = {}) {
     this.maxCacheSize = options.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE
     this.layer = options.layer
+    // Per-instance SSR check — tests toggle `globalThis.document` between
+    // createSheet() calls to simulate SSR/client transitions, so we can't
+    // freeze this at module load.
     this.isSSR = typeof document === 'undefined'
     if (!this.isSSR) this.mount()
   }
@@ -242,9 +245,27 @@ export class StyleSheet {
    * Used with useInsertionEffect pattern: compute class during render, inject in effect.
    */
   getClassName(cssText: string): string {
-    // Check insertCache (populated by insert()) to avoid hashing
+    // Hot cache: the same cssText that `useInsertionEffect`'s `insert()`
+    // populated 1 µs ago is asked for here on the next render. Reference
+    // compare beats Map.get's hash + bucket walk on every dynamic client
+    // render in steady state. Same 2-slot LRU as `insert()`, keyed on
+    // unboosted cssText (getClassName has no boost arg).
+    const hotA = this.insertHotA
+    if (hotA !== null) {
+      if (hotA.key === cssText) return hotA.value
+      const hotB = this.insertHotB
+      if (hotB !== null && hotB.key === cssText) {
+        this.insertHotB = hotA
+        this.insertHotA = hotB
+        return hotB.value
+      }
+    }
     const cached = this.insertCache.get(cssText)
-    if (cached) return cached
+    if (cached) {
+      this.insertHotB = hotA
+      this.insertHotA = { key: cssText, value: cached }
+      return cached
+    }
     const h = hash(cssText)
     return `${PREFIX}-${h}`
   }
@@ -268,13 +289,17 @@ export class StyleSheet {
 
     // Hot cache: reference compare before Map.get's hash. Common pattern is
     // every render hitting the same cssText (or 2 alternating values).
+    // Nested so the cold-start path (no entries populated yet) is a single
+    // null check, not 4 — the bench's csr-many scenario hits cold every call.
     const hotA = this.insertHotA
-    if (hotA !== null && hotA.key === icKey) return hotA.value
-    const hotB = this.insertHotB
-    if (hotB !== null && hotB.key === icKey) {
-      this.insertHotB = hotA
-      this.insertHotA = hotB
-      return hotB.value
+    if (hotA !== null) {
+      if (hotA.key === icKey) return hotA.value
+      const hotB = this.insertHotB
+      if (hotB !== null && hotB.key === icKey) {
+        this.insertHotB = hotA
+        this.insertHotA = hotB
+        return hotB.value
+      }
     }
 
     const icHit = this.insertCache.get(icKey)
@@ -574,14 +599,17 @@ export class StyleSheet {
     // Hot cache: reference compare before Map.get's hash + bucket walk.
     // SSR commonly renders the same component (same cssText) 100s of times
     // per request; client renders frequently alternate between 2 values.
+    // Nested so the cold-start path is a single null check.
     const hotA = this.prepareHotA
-    if (hotA !== null && hotA.key === prepKey) return hotA.value
-    const hotB = this.prepareHotB
-    if (hotB !== null && hotB.key === prepKey) {
-      // Promote B → A so the next call hits the first slot.
-      this.prepareHotB = hotA
-      this.prepareHotA = hotB
-      return hotB.value
+    if (hotA !== null) {
+      if (hotA.key === prepKey) return hotA.value
+      const hotB = this.prepareHotB
+      if (hotB !== null && hotB.key === prepKey) {
+        // Promote B → A so the next call hits the first slot.
+        this.prepareHotB = hotA
+        this.prepareHotA = hotB
+        return hotB.value
+      }
     }
 
     const cached = this.prepareCache.get(prepKey)
