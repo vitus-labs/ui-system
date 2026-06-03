@@ -1,15 +1,16 @@
 ---
 '@vitus-labs/elements': minor
 '@vitus-labs/hooks': minor
-'@vitus-labs/recipe': minor
 '@vitus-labs/unistyle': minor
 '@vitus-labs/coolgrid': minor
 '@vitus-labs/styler': patch
 '@vitus-labs/kinetic': patch
 ---
 
-Tier-1 roadmap: seven shipped enhancements across the stack, all
+Tier-1 roadmap: six shipped enhancements across the stack, all
 architected to keep packages independent and recommended-to-compose.
+(T1.3 / `recipe()` deferred to a separate PR — package-boundary
+decision still open.)
 
 **T1.1 — Overlay modal a11y (`elements`)**
 `Overlay` (when `type="modal"` and active) now wires focus-trap +
@@ -24,14 +25,6 @@ focus on unmount. The hooks are inlined directly into elements/Overlay
 detected and logged in dev. `unistyle` ships a CI-enforced parity test
 between `ITheme` and the runtime `propertyMap`, plus a dev-only warning
 when an unknown theme key reaches the styles transformer.
-
-**T1.3 — New package `@vitus-labs/recipe`**
-CVA-shaped front door for rocketstyle: `recipe({ base, variants,
-compoundVariants, defaultVariants })`. Lives in its OWN package —
-@vitus-labs/rocketstyle stays unistyle-independent; recipe declares
-both rocketstyle and unistyle as peers because it needs both to
-serialize variant themes to CSS. Chain-API consumers of rocketstyle
-never load unistyle through this path.
 
 **T1.4 — Per-connector smoke tests (`connector-emotion`,
 `connector-styled-components`)**

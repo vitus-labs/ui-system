@@ -66,12 +66,6 @@
     "gzip": true
   },
   {
-    "name": "@vitus-labs/recipe",
-    "path": "packages/recipe/lib/index.js",
-    "limit": "2 KB",
-    "gzip": true
-  },
-  {
     "name": "@vitus-labs/rocketstories",
     "path": "packages/rocketstories/lib/index.js",
     "limit": "10 KB",
