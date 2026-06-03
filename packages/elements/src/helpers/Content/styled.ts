@@ -17,11 +17,7 @@ import type { StyledProps, ThemeProps } from './types'
 
 const { styled, css, component } = config
 
-const equalColsCSS = `
-  flex: 1;
-`
-
-const typeContentCSS = `
+const FLEX_1 = `
   flex: 1;
 `
 
@@ -73,7 +69,7 @@ const styles: ResponsiveStylesCallback = ({ css, theme: t, rootSize }) => css`
     alignY: t.alignY,
   })};
 
-  ${t.equalCols && equalColsCSS};
+  ${t.equalCols && FLEX_1};
 
   ${
     t.gap &&
@@ -97,8 +93,7 @@ const StyledComponent = styled(component)`
   align-self: stretch;
   flex-wrap: wrap;
 
-  ${({ $contentType }: StyledProps) =>
-    $contentType === 'content' && typeContentCSS};
+  ${({ $contentType }: StyledProps) => $contentType === 'content' && FLEX_1};
 
   ${makeItResponsive({
     key: '$element',

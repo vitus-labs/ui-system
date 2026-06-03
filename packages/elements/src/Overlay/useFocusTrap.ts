@@ -38,12 +38,27 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
     const refresh = () => {
       const all = container.querySelectorAll<HTMLElement>(FOCUSABLE)
       const result: HTMLElement[] = []
-      for (const el of all) if (isTabbable(el)) result.push(el)
+      // Index loop — `NodeList` iterator allocates; index access doesn't.
+      for (let i = 0; i < all.length; i++) {
+        const el = all[i]
+        if (el && isTabbable(el)) result.push(el)
+      }
       focusable = result
     }
     refresh()
 
-    const observer = new MutationObserver(refresh)
+    // Debounce mutation refreshes — children mount in bursts inside modals
+    // (forms, lists). Coalescing into rAF avoids re-running `querySelectorAll`
+    // dozens of times in a single tick.
+    let refreshRafId: number | null = null
+    const scheduleRefresh = () => {
+      if (refreshRafId != null) return
+      refreshRafId = requestAnimationFrame(() => {
+        refreshRafId = null
+        refresh()
+      })
+    }
+    const observer = new MutationObserver(scheduleRefresh)
     observer.observe(container, { childList: true, subtree: true })
 
     const prevFocus = document.activeElement as HTMLElement | null
@@ -83,6 +98,7 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
 
     document.addEventListener('keydown', handler)
     return () => {
+      if (refreshRafId != null) cancelAnimationFrame(refreshRafId)
       observer.disconnect()
       document.removeEventListener('keydown', handler)
       if (autoFocus && prevFocus && typeof prevFocus.focus === 'function') {

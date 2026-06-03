@@ -13,8 +13,6 @@ import type {
   ResponsiveBoolType,
 } from '~/types'
 
-export type Reference = unknown
-
 export interface Props {
   children: ReactNode
   tag: HTMLTags

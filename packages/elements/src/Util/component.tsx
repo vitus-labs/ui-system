@@ -4,7 +4,7 @@
  * helper to clone children with the merged props.
  */
 import { render } from '@vitus-labs/core'
-import { type ReactNode, useMemo } from 'react'
+import type { ReactNode } from 'react'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
 
@@ -24,10 +24,9 @@ export interface Props {
 }
 
 const Component: VLComponent<Props> = ({ children, className, style }) => {
-  const mergedClasses = useMemo(
-    () => (Array.isArray(className) ? className.join(' ') : className),
-    [className],
-  )
+  const mergedClasses = Array.isArray(className)
+    ? className.join(' ')
+    : className
 
   const finalProps: Record<string, any> = {}
   if (style) finalProps.style = style

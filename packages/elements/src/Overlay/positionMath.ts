@@ -24,6 +24,12 @@ export type OverlayType =
   | 'modal'
   | 'custom'
 
+const DROPDOWN_TYPES: ReadonlySet<OverlayType> = new Set([
+  'dropdown',
+  'tooltip',
+  'popover',
+])
+
 export type PositionResult = {
   pos: OverlayPosition
   resolvedAlignX: AlignX
@@ -212,7 +218,7 @@ export const computePosition = (
   contentEl: HTMLElement | null,
   ancestorOffset: { top: number; left: number },
 ): ComputeResult => {
-  const isDropdown = ['dropdown', 'tooltip', 'popover'].includes(type)
+  const isDropdown = DROPDOWN_TYPES.has(type)
 
   if (isDropdown && (!triggerEl || !contentEl)) {
     devWarn(
