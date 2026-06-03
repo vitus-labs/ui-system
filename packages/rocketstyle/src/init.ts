@@ -2,6 +2,10 @@ import { isEmpty } from '@vitus-labs/core'
 import { ALL_RESERVED_KEYS } from '~/constants'
 import defaultDimensions from '~/constants/defaultDimensions'
 import rocketComponent from '~/rocketstyle'
+
+// Hoisted Set so validateInit's reserved-key lookup is O(1) per key.
+const RESERVED_KEYS_SET: ReadonlySet<string> = new Set(ALL_RESERVED_KEYS)
+
 import type { DefaultDimensions, Dimensions } from '~/types/dimensions'
 import type { RocketComponent } from '~/types/rocketComponent'
 import type { ElementType } from '~/types/utils'
@@ -59,9 +63,10 @@ const validateInit = (
   if (isEmpty(dimensions)) {
     errors.dimensions = 'Parameter `dimensions` is missing in params!'
   } else {
+    // Set lookup → O(R + D) instead of nested .some() O(R × D).
     const definedDimensions = getKeys(dimensions)
-    const invalidDimension = ALL_RESERVED_KEYS.some((item) =>
-      definedDimensions.some((d) => d === item),
+    const invalidDimension = definedDimensions.some((d) =>
+      RESERVED_KEYS_SET.has(d),
     )
 
     if (invalidDimension) {

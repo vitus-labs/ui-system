@@ -40,8 +40,6 @@ type CalculateChainOptions = <A>(
 
 export const calculateChainOptions: CalculateChainOptions =
   (options) => (args) => {
-    const result = {}
-    if (!options || isEmpty(options)) return result
-
+    if (!options || isEmpty(options)) return {}
     return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }

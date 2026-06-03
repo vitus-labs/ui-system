@@ -35,11 +35,15 @@ type ChainOrOptions = (
   defaultOpts: Obj,
 ) => Record<string, unknown>
 
-export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) =>
-  keys.reduce(
-    (acc, item) => ({ ...acc, [item]: opts[item] || defaultOpts[item] }),
-    {},
-  )
+export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) => {
+  // Single-pass mutation; the prior reduce-with-spread was O(K²).
+  const result: Record<string, unknown> = {}
+  for (let i = 0; i < keys.length; i++) {
+    const item = keys[i] as string
+    result[item] = opts[item] || defaultOpts[item]
+  }
+  return result
+}
 
 // --------------------------------------------------------
 // Chain Reserved Options
@@ -58,12 +62,13 @@ export const chainReservedKeyOptions: ChainReservedKeyOptions = (
   keys,
   opts,
   defaultOpts,
-) =>
-  keys.reduce(
-    (acc, item) => ({
-      ...acc,
-      // biome-ignore lint/style/noNonNullAssertion: defaultOpts is initialized with empty arrays for all reserved keys at factory time, so defaultOpts[item] is always defined here
-      [item]: chainOptions(opts[item], defaultOpts[item]!),
-    }),
-    {},
-  )
+) => {
+  // Single-pass; the prior reduce-with-spread was O(K²).
+  const result: Record<string, ReturnType<typeof chainOptions>> = {}
+  for (let i = 0; i < keys.length; i++) {
+    const item = keys[i] as string
+    // biome-ignore lint/style/noNonNullAssertion: defaultOpts is initialized with empty arrays for all reserved keys at factory time, so defaultOpts[item] is always defined here
+    result[item] = chainOptions(opts[item], defaultOpts[item]!)
+  }
+  return result
+}

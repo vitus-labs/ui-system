@@ -18,8 +18,9 @@ type UseAttrsRef = (props: {
 const useAttrsStyleRef: UseAttrsRef = ({ $attrsRef, ref }) => {
   const internalRef = useRef(null)
 
-  useImperativeHandle($attrsRef, () => internalRef.current)
-  useImperativeHandle(ref, () => internalRef.current)
+  // Empty deps — internalRef is stable; the getter only reads `.current`.
+  useImperativeHandle($attrsRef, () => internalRef.current, [])
+  useImperativeHandle(ref, () => internalRef.current, [])
 
   return internalRef
 }

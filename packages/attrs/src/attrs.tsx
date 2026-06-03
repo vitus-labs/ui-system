@@ -1,4 +1,5 @@
 import { compose, hoistNonReactStatics, omit, pick } from '@vitus-labs/core'
+import { memo } from 'react'
 import { attrsHoc } from '~/hoc'
 import { useRef } from '~/hooks'
 import type {
@@ -98,9 +99,11 @@ const attrsComponent: InitAttrsComponent = (options) => {
     return <RenderComponent {...finalProps} />
   }
 
-  // Apply the full HOC chain: compose(attrsHoc, ...userHocs)(EnhancedComponent)
+  // Memoize the innermost component so content-equal re-renders short-circuit
+  // before walking the HOC stack. attrsHoc already stabilizes its output via
+  // useStableValue + useMemo, so a stable-prop parent render bails here.
   const AttrsComponent: AttrsComponentType = compose(...hocsFuncs)(
-    EnhancedComponent,
+    memo(EnhancedComponent) as unknown as typeof EnhancedComponent,
   )
 
   AttrsComponent.IS_ATTRS = true

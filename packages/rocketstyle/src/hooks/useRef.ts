@@ -13,8 +13,9 @@ type UseRocketstyleRef = (props: {
 const useRocketstyleRef: UseRocketstyleRef = ({ $rocketstyleRef, ref }) => {
   const internalRef = useRef(null)
 
-  useImperativeHandle($rocketstyleRef, () => internalRef.current)
-  useImperativeHandle(ref, () => internalRef.current)
+  // Empty deps — internalRef is stable; the getter only reads `.current`.
+  useImperativeHandle($rocketstyleRef, () => internalRef.current, [])
+  useImperativeHandle(ref, () => internalRef.current, [])
 
   return internalRef
 }

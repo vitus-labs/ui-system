@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { THEME_MODES_INVERSED } from '~/constants'
 import { context } from '~/context/context'
 import type { ThemeModeKeys } from '~/types/theme'
@@ -28,10 +28,9 @@ const useThemeAttrs: UseThemeAttrs = ({ inversed }) => {
   const isDark = inversed ? !ctxDark : ctxDark
   const isLight = !isDark
 
-  return useMemo(
-    () => ({ theme, mode, isDark, isLight }),
-    [theme, mode, isDark, isLight],
-  )
+  // Callers destructure the primitives; the 4-key useMemo + dep compare cost
+  // more than re-allocating this small object per render.
+  return { theme, mode, isDark, isLight }
 }
 
 export default useThemeAttrs
