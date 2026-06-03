@@ -27,6 +27,22 @@ export class StyleSheet {
   private cache = new Map<string, string>()
   private insertCache = new Map<string, string>()
   private prepareCache = new Map<string, { className: string; rules: string }>()
+
+  // Two-slot LRU in front of `prepareCache` — every dynamic SSR render hits
+  // `prepare()` with the SAME (or alternating-pair-of-2) cssText. A reference
+  // compare hits before the Map.get's hash. Same pattern as DynamicStyled's
+  // useRef LRU-2, but engine-wide.
+  private prepareHotA: {
+    key: string
+    value: { className: string; rules: string }
+  } | null = null
+  private prepareHotB: {
+    key: string
+    value: { className: string; rules: string }
+  } | null = null
+
+  private insertHotA: { key: string; value: string } | null = null
+  private insertHotB: { key: string; value: string } | null = null
   private sheet: CSSStyleSheet | null = null
   private ssrBuffer: string[] = []
   private isSSR: boolean
@@ -193,10 +209,15 @@ export class StyleSheet {
           lastBase = i + 1
         }
       } else if (depth === 0 && ch === 64 /* @ */ && atStart < 0) {
-        // Check if this starts a splittable at-rule (not @keyframes, @font-face, etc.)
-        const remaining = cssText.slice(i, i + 20)
-        if (/^@(?:media|supports|container)\b/.test(remaining)) {
-          // Save any base CSS that precedes this at-rule
+        // Dispatch on 2nd char to avoid slicing a fresh 20-char string per
+        // '@' just to regex-match it. startsWith is a V8 intrinsic — no
+        // allocation, no regex compile.
+        const c1 = cssText.charCodeAt(i + 1)
+        if (
+          (c1 === 109 /* m */ && cssText.startsWith('@media', i)) ||
+          (c1 === 115 /* s */ && cssText.startsWith('@supports', i)) ||
+          (c1 === 99 /* c */ && cssText.startsWith('@container', i))
+        ) {
           const baseBefore = cssText.slice(lastBase, i).trim()
           if (baseBefore) baseParts.push(baseBefore)
           atStart = i
@@ -244,8 +265,24 @@ export class StyleSheet {
   insert(cssText: string, boost = false): string {
     // Fast path: skip hash computation on repeated insertions of same CSS text
     const icKey = boost ? `${cssText}\0` : cssText
+
+    // Hot cache: reference compare before Map.get's hash. Common pattern is
+    // every render hitting the same cssText (or 2 alternating values).
+    const hotA = this.insertHotA
+    if (hotA !== null && hotA.key === icKey) return hotA.value
+    const hotB = this.insertHotB
+    if (hotB !== null && hotB.key === icKey) {
+      this.insertHotB = hotA
+      this.insertHotA = hotB
+      return hotB.value
+    }
+
     const icHit = this.insertCache.get(icKey)
-    if (icHit) return icHit
+    if (icHit) {
+      this.insertHotB = hotA
+      this.insertHotA = { key: icKey, value: icHit }
+      return icHit
+    }
 
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
@@ -274,6 +311,8 @@ export class StyleSheet {
         )
       }
       this.insertCache.set(icKey, className)
+      this.insertHotB = this.insertHotA
+      this.insertHotA = { key: icKey, value: className }
       return className
     }
 
@@ -281,26 +320,45 @@ export class StyleSheet {
     this.cache.set(className, cssText)
 
     const selector = boost ? `.${className}.${className}` : `.${className}`
+    const layer = this.layer
 
-    // Split nested at-rules (@media, @supports, @container) into separate
-    // top-level rules. Base declarations stay in the main selector rule.
+    // Fast path: no @-rules + no @layer wrap → emit a single rule, skip
+    // splitAtRules (regex + linear scan + two intermediate arrays + map +
+    // spread). Hits on ~95% of styled CSS.
+    if (cssText.indexOf('@') === -1 && !layer) {
+      if (cssText.length > 0) {
+        const rule = `${selector}{${cssText}}`
+        if (this.isSSR) {
+          this.ssrBuffer.push(rule)
+        } else if (this.sheet) {
+          try {
+            this.sheet.insertRule(rule, this.sheet.cssRules.length)
+          } catch (e) {
+            if (process.env.NODE_ENV !== 'production') {
+              // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
+              console.warn(
+                `[styler] Failed to insert CSS rule for .${className}:`,
+                (e as Error).message,
+                '\nCSS:',
+                rule.slice(0, 200),
+              )
+            }
+          }
+        }
+      }
+      this.insertCache.set(icKey, className)
+      this.insertHotB = this.insertHotA
+      this.insertHotA = { key: icKey, value: className }
+      return className
+    }
+
+    // Slow path: split nested at-rules + wrap with @layer if configured.
     const { base, atRules } = this.splitAtRules(cssText, selector)
 
-    const rules: string[] = []
-    if (base) rules.push(`${selector}{${base}}`)
-    rules.push(...atRules)
-
-    // Apply @layer wrapping if configured
-    const finalRules = this.layer
-      ? rules.map((r) => `@layer ${this.layer}{${r}}`)
-      : rules
-
-    if (this.isSSR) {
-      for (const rule of finalRules) {
+    const emit = (rule: string) => {
+      if (this.isSSR) {
         this.ssrBuffer.push(rule)
-      }
-    } else if (this.sheet) {
-      for (const rule of finalRules) {
+      } else if (this.sheet) {
         try {
           this.sheet.insertRule(rule, this.sheet.cssRules.length)
         } catch (e) {
@@ -317,7 +375,21 @@ export class StyleSheet {
       }
     }
 
+    if (base) {
+      emit(
+        layer
+          ? `@layer ${layer}{${selector}{${base}}}`
+          : `${selector}{${base}}`,
+      )
+    }
+    for (let i = 0; i < atRules.length; i++) {
+      const r = atRules[i] as string
+      emit(layer ? `@layer ${layer}{${r}}` : r)
+    }
+
     this.insertCache.set(icKey, className)
+    this.insertHotB = this.insertHotA
+    this.insertHotA = { key: icKey, value: className }
     return className
   }
 
@@ -435,12 +507,21 @@ export class StyleSheet {
     return this.ssrBuffer.join('')
   }
 
+  /** Invalidate the 2-slot LRU hot caches in front of insert/prepare. */
+  private clearHotSlots(): void {
+    this.insertHotA = null
+    this.insertHotB = null
+    this.prepareHotA = null
+    this.prepareHotB = null
+  }
+
   /** Reset SSR buffer and cache (call between server requests). */
   reset(): void {
     this.ssrBuffer = []
     this.cache.clear()
     this.insertCache.clear()
     this.prepareCache.clear()
+    this.clearHotSlots()
   }
 
   /** Clear the dedup cache. Useful for HMR / dev-time reloads. */
@@ -448,6 +529,7 @@ export class StyleSheet {
     this.cache.clear()
     this.insertCache.clear()
     this.prepareCache.clear()
+    this.clearHotSlots()
     clearNormCache()
   }
 
@@ -465,6 +547,7 @@ export class StyleSheet {
     this.cache.clear()
     this.insertCache.clear()
     this.prepareCache.clear()
+    this.clearHotSlots()
     clearNormCache()
     this.ssrBuffer = []
     if (this.sheet) {
@@ -481,29 +564,63 @@ export class StyleSheet {
    * Result is cached so repeated calls (per render until cssText changes) skip
    * the hash + splitAtRules + join work.
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path — 2-slot LRU + no-@ fast path + @layer wrapping inlined for SSR perf
   prepare(
     cssText: string,
     boost = false,
   ): { className: string; rules: string } {
     const prepKey = boost ? `${cssText}\0` : cssText
+
+    // Hot cache: reference compare before Map.get's hash + bucket walk.
+    // SSR commonly renders the same component (same cssText) 100s of times
+    // per request; client renders frequently alternate between 2 values.
+    const hotA = this.prepareHotA
+    if (hotA !== null && hotA.key === prepKey) return hotA.value
+    const hotB = this.prepareHotB
+    if (hotB !== null && hotB.key === prepKey) {
+      // Promote B → A so the next call hits the first slot.
+      this.prepareHotB = hotA
+      this.prepareHotA = hotB
+      return hotB.value
+    }
+
     const cached = this.prepareCache.get(prepKey)
-    if (cached) return cached
+    if (cached) {
+      this.prepareHotB = hotA
+      this.prepareHotA = { key: prepKey, value: cached }
+      return cached
+    }
 
     const h = hash(cssText)
     const className = `${PREFIX}-${h}`
     const selector = boost ? `.${className}.${className}` : `.${className}`
-    const { base, atRules } = this.splitAtRules(cssText, selector)
 
-    const allRules: string[] = []
-    if (base) allRules.push(`${selector}{${base}}`)
-    allRules.push(...atRules)
+    // Fast path: no @-rules to split + no @layer wrapping → build directly.
+    // 95% of styled CSS hits this. Skips splitAtRules (regex + scan +
+    // two intermediate arrays + .join).
+    let rules: string
+    if (cssText.indexOf('@') === -1 && !this.layer) {
+      rules = cssText.length > 0 ? `${selector}{${cssText}}` : ''
+    } else {
+      const { base, atRules } = this.splitAtRules(cssText, selector)
+      const layer = this.layer
+      if (base) {
+        rules = layer
+          ? `@layer ${layer}{${selector}{${base}}}`
+          : `${selector}{${base}}`
+      } else {
+        rules = ''
+      }
+      for (let i = 0; i < atRules.length; i++) {
+        const r = atRules[i] as string
+        rules += layer ? `@layer ${layer}{${r}}` : r
+      }
+    }
 
-    const finalRules = this.layer
-      ? allRules.map((r) => `@layer ${this.layer}{${r}}`)
-      : allRules
-
-    const result = { className, rules: finalRules.join('') }
+    const result = { className, rules }
     this.prepareCache.set(prepKey, result)
+    this.prepareHotB = hotA
+    this.prepareHotA = { key: prepKey, value: result }
     return result
   }
 

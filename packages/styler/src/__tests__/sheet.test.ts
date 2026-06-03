@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { hash } from '../hash'
 
 // We test the StyleSheet class behavior by importing the sheet singleton.
@@ -198,6 +198,86 @@ describe('StyleSheet', () => {
   })
 })
 
+// Hot-cache coverage — repeated calls exercise the 2-slot LRU paths
+// (hotA hit, hotB hit + promote, prepareCache hit) added in the styler
+// perf audit. Without these tests, the new branches are uncovered.
+describe('StyleSheet — 2-slot LRU hot caches', () => {
+  const cleanupStyleTags = () => {
+    // createSheet() appends a <style data-vl> per call when no existing tag
+    // is present; without cleanup, subsequent tests in this file (e.g. the
+    // SSR-hydration test) get the wrong sheet via querySelector('first-match').
+    for (const el of Array.from(document.querySelectorAll('style[data-vl]')))
+      el.remove()
+  }
+  beforeEach(cleanupStyleTags)
+  afterEach(cleanupStyleTags)
+
+  it('prepare() returns identical result on repeated same-key call (hotA hit)', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const a = s.prepare('color: hotpink;')
+    const b = s.prepare('color: hotpink;')
+    expect(b).toBe(a) // same reference — hot slot returned cached value
+  })
+
+  it('prepare() promotes hotB → hotA on alternating-key access', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const a1 = s.prepare('color: red;')
+    const b1 = s.prepare('color: blue;') // displaces red → hotB
+    const a2 = s.prepare('color: red;') // hits hotB → promote
+    const b2 = s.prepare('color: blue;') // hits hotB → promote
+    expect(a2).toBe(a1)
+    expect(b2).toBe(b1)
+  })
+
+  it('prepare() repopulates hot slots from Map on cold-hot displacement', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    // Fill prepareCache with 3 entries — last 2 occupy the hot slots.
+    s.prepare('color: red;')
+    s.prepare('color: green;')
+    s.prepare('color: blue;')
+    // 'color: red;' is now in prepareCache but not in either hot slot.
+    // This call must miss both hot slots, hit the Map, and repopulate.
+    const a = s.prepare('color: red;')
+    expect(a.className).toMatch(/^vl-/)
+    // Subsequent call should hit hotA (was just populated)
+    const a2 = s.prepare('color: red;')
+    expect(a2).toBe(a)
+  })
+
+  it('insert() returns identical className on repeated same-key call (hotA hit)', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const a = s.insert('background: lime;')
+    const b = s.insert('background: lime;')
+    expect(b).toBe(a)
+  })
+
+  it('insert() promotes hotB → hotA on alternating-key access', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const a1 = s.insert('background: red;')
+    const b1 = s.insert('background: blue;')
+    const a2 = s.insert('background: red;') // hits hotB → promote
+    const b2 = s.insert('background: blue;') // hits hotB → promote
+    expect(a2).toBe(a1)
+    expect(b2).toBe(b1)
+  })
+
+  it('insert() repopulates hot slots from insertCache on cold-hot displacement', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    s.insert('background: red;')
+    s.insert('background: green;')
+    s.insert('background: blue;')
+    // 'background: red;' lives in insertCache but neither hot slot now.
+    const a = s.insert('background: red;')
+    expect(a).toMatch(/^vl-/)
+  })
+})
+
 describe('StyleSheet — hydration from SSR tag', () => {
   it('hydrates cache from existing SSR-rendered style tag', async () => {
     // Create a pre-existing SSR-rendered <style data-vl> tag
@@ -289,6 +369,10 @@ describe('StyleSheet with createSheet', () => {
       const insertCacheField = (s as any).insertCache as Map<string, string>
       cacheField.set(clsA, 'color: blue;')
       insertCacheField.clear()
+      // Also clear the 2-slot LRU hot cache the test isn't aware of —
+      // bypassing the public clearCache() leaves it stale otherwise.
+      ;(s as any).insertHotA = null
+      ;(s as any).insertHotB = null
       // Now re-insert "color: red;" → hashes to clsA, cache has the wrong
       // cssText → collision detected → warn.
       s.insert('color: red;')
