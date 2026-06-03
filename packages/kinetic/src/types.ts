@@ -109,17 +109,16 @@ export type CollapseProps = TransitionCallbacks & {
   children: ReactElement<any>
 }
 
-export type TransitionStateResult = {
+export type TransitionStateResult<T = HTMLElement> = {
   /** Current lifecycle stage */
   stage: TransitionStage
   /**
-   * Ref to attach to the transitioning element. Typed as `unknown` so
-   * native consumers can attach it to an RN component (View/Pressable)
-   * without a TS error — useTransitionState is publicly re-exported from
-   * the native entry. Web callers cast at the call site:
-   *   `useRef<HTMLElement>(null)` already widens to `RefObject<unknown>`.
+   * Ref to attach to the transitioning element. Generic so web callers
+   * keep `HTMLElement` methods (`.focus()`, `.classList`, etc.) by
+   * default while native consumers can parameterize with a View ref
+   * type if needed.
    */
-  ref: RefObject<unknown>
+  ref: RefObject<T | null>
   /** Whether the element should be rendered */
   shouldMount: boolean
   /** Call when the current animation finishes */

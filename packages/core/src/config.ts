@@ -56,19 +56,6 @@ export interface CSSEngineConnector {
   createGlobalStyle?: (strings: TemplateStringsArray, ...values: any[]) => any
   /** Hook to read the current theme from the engine's context. */
   useTheme?: () => any
-  /**
-   * Optional hook that resolves a `css()` result to an injected class
-   * name. Not all engines can implement this (e.g. styled-components
-   * generates class names through `styled()` only). Connectors that
-   * can't support it should throw a clear error from this hook rather
-   * than ship a no-op stub — silent unstyled renders are worse than
-   * a loud failure.
-   */
-  useCSS?: (
-    template: any,
-    props?: Record<string, any>,
-    boost?: boolean,
-  ) => string
 }
 
 interface PlatformConfig {
@@ -180,7 +167,6 @@ class Configuration {
   _keyframes: CSSEngineConnector['keyframes'] | null = null
   _createGlobalStyle: CSSEngineConnector['createGlobalStyle'] | null = null
   _useTheme: CSSEngineConnector['useTheme'] | null = null
-  _useCSS: CSSEngineConnector['useCSS'] | null = null
 
   // Platform defaults
   component: ComponentType | HTMLTags = 'div'
@@ -231,11 +217,6 @@ class Configuration {
     return this._useTheme ?? null
   }
 
-  /** useCSS hook from the configured engine, or null. */
-  get useCSS(): CSSEngineConnector['useCSS'] | null {
-    return this._useCSS ?? null
-  }
-
   constructor() {
     this.styled = createStyledDelegate(this)
   }
@@ -259,7 +240,6 @@ class Configuration {
     if (props.createGlobalStyle)
       this._createGlobalStyle = props.createGlobalStyle
     if (props.useTheme) this._useTheme = props.useTheme
-    if (props.useCSS) this._useCSS = props.useCSS
     if (props.component) this.component = props.component
     if (props.textComponent) this.textComponent = props.textComponent
     if (props.createMediaQueries)
