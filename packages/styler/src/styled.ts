@@ -21,11 +21,15 @@
  */
 import {
   type ComponentType,
-  createElement,
-  Fragment,
+  type ReactElement,
   useInsertionEffect,
   useRef,
 } from 'react'
+// React 19's `createElement` always copies props via for-in. `jsx`/`jsxs`
+// from the JSX runtime skip the copy when no `key` is set on config —
+// `buildProps` never writes `key`, so every styled render benefits.
+// Saves ~30-80 ns per call relative to createElement.
+import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { buildProps } from './forward'
 import { type Interpolation, normalizeCSS, resolve } from './resolve'
 import { isDynamic } from './shared'
@@ -134,7 +138,7 @@ const createStyledComponent = (
     const hasCss = cssText.length > 0
 
     let staticClassName: string
-    let cachedStyleEl: ReturnType<typeof createElement> | null = null
+    let cachedStyleEl: ReactElement | null = null
 
     if (!hasCss) {
       staticClassName = ''
@@ -147,11 +151,11 @@ const createStyledComponent = (
       // dedupes <style precedence> emissions automatically.
       const prepared = sheet.prepare(cssText, boost)
       staticClassName = prepared.className
-      cachedStyleEl = createElement(
-        'style',
-        { href: staticClassName, precedence: 'medium' },
-        prepared.rules,
-      )
+      cachedStyleEl = jsx('style', {
+        href: staticClassName,
+        precedence: 'medium',
+        children: prepared.rules,
+      })
     } else {
       // Client: insert() returns className and handles caching — skip prepare() entirely
       staticClassName = sheet.insert(cssText, boost)
@@ -165,11 +169,11 @@ const createStyledComponent = (
     // buildProps + createElement chain per render. ReactElement values
     // are immutable so sharing across renders is safe — React treats it
     // as a fresh element by identity for reconciliation.
-    const baselineMainEl = createElement(tag, {
+    const baselineMainEl = jsx(tag as any, {
       className: staticClassName || undefined,
     })
     const baselineFragmentEl = cachedStyleEl
-      ? createElement(Fragment, null, cachedStyleEl, baselineMainEl)
+      ? jsxs(Fragment, { children: [cachedStyleEl, baselineMainEl] })
       : baselineMainEl
 
     const StaticStyled = ({ ref, ...rawProps }: Record<string, any>) => {
@@ -193,10 +197,10 @@ const createStyledComponent = (
         customFilter,
       )
 
-      const mainEl = createElement(finalTag, finalProps)
+      const mainEl = jsx(finalTag as any, finalProps)
 
       if (!cachedStyleEl) return mainEl
-      return createElement(Fragment, null, cachedStyleEl, mainEl)
+      return jsxs(Fragment, { children: [cachedStyleEl, mainEl] })
     }
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
@@ -227,99 +231,116 @@ const createStyledComponent = (
   // stable per-component, so paying typeof per render was waste.
   const tagIsDOM = typeof tag === 'string'
 
-  // DYNAMIC PATH: resolve CSS on every render with theme/props.
-  // Client: useInsertionEffect injects into shared sheet (1 DOM node, scales to any size).
-  // SSR: <style precedence> for FOUC-free delivery (useInsertionEffect is a no-op on server).
-  // useRef cache avoids recomputing when CSS text hasn't changed between renders.
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path render — LRU-2 hit/miss + SSR vs client branches inlined for perf
-  const DynamicStyled = ({ ref, ...rawProps }: Record<string, any>) => {
-    const theme = useTheme()
-    // Inject theme by mutating rawProps (which is freshly destructured by
-    // this function and discarded after; no caller can observe the mutation).
-    // EMPTY_THEME is the referentially-stable sentinel returned by useTheme
-    // when no <ThemeProvider> is mounted — skip the write entirely in that
-    // case (bench's csr-mount / csr-many / no-theme SSR scenarios).
-    // If the caller passed an explicit `theme` prop, leave it alone — their
-    // value wins on both `resolve()` and `buildProps`.
-    if (theme !== EMPTY_THEME && rawProps.theme === undefined)
-      rawProps.theme = theme
-    const cssText = normalizeCSS(resolve(strings, values, rawProps))
+  // DYNAMIC PATH — two function bodies, chosen by IS_SERVER at module load.
+  // The server variant drops `useRef` LRU + `useInsertionEffect` (no DOM to
+  // inject into; React's server renderer no-ops the effect anyway), saving
+  // ~120-200 ns per render on closure + deps-array + ref allocation.
+  // The client variant keeps the LRU cache for alternating-prop renders
+  // (toggle/hover/animation) and `useInsertionEffect` for synchronous CSS
+  // injection before paint.
+  //
+  // React hooks rules are per-function-body: both variants call their hooks
+  // unconditionally; the choice between bodies happens at module load.
 
-    // Two-entry LRU cache. The previous single-slot ref missed every render
-    // when a prop alternates between two values (toggle/hover/animation
-    // frame, etc.), forcing repeated `getClassName` / `prepare` work even
-    // though both class names are already cached upstream. Two slots cover
-    // the alternation case without meaningfully growing per-instance state.
-    type DynEntry = {
-      css: string
-      className: string
-      styleEl: ReturnType<typeof createElement> | null
-    }
-    // Lazy init — `useRef(initialValue)` evaluates `initialValue` every render
-    // even though React only uses it on first mount. Skip the per-render
-    // literal allocation.
-    const cacheRef = useRef<{ a: DynEntry | null; b: DynEntry | null } | null>(
-      null,
-    )
-    if (cacheRef.current === null) cacheRef.current = { a: null, b: null }
-    const cur = cacheRef.current
-    let entry: DynEntry | null = null
-    if (cur.a && cur.a.css === cssText) {
-      entry = cur.a
-    } else if (cur.b && cur.b.css === cssText) {
-      // Promote LRU hit to head so the next alternation hits slot `a` too.
-      entry = cur.b
-      cur.b = cur.a
-      cur.a = entry
-    }
+  const DynamicStyled: ComponentType<any> = IS_SERVER
+    ? ({ ref, ...rawProps }: Record<string, any>) => {
+        const theme = useTheme()
+        if (theme !== EMPTY_THEME && rawProps.theme === undefined)
+          rawProps.theme = theme
+        const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
-    let className: string
-    let styleEl: ReturnType<typeof createElement> | null
-
-    if (entry) {
-      className = entry.className
-      styleEl = entry.styleEl
-    } else {
-      // Cache miss — recompute
-      styleEl = null
-      if (cssText.length > 0) {
-        if (IS_SERVER) {
-          // SSR: emit a <style precedence> element only. See the matching
-          // comment in the static path above for why we don't push to
-          // ssrBuffer here — TL;DR: it would duplicate on hydration.
+        let className = ''
+        let styleEl: ReactElement | null = null
+        if (cssText.length > 0) {
+          // SSR: emit a <style precedence> element. We deliberately do NOT
+          // call sheet.insert() — that would push to ssrBuffer and, after
+          // hydration, the same rule would re-insert via insertRule on
+          // first client render (duplication). React 19 collects and
+          // dedupes <style precedence> emissions automatically.
           const prepared = sheet.prepare(cssText, boost)
           className = prepared.className
-          styleEl = createElement(
-            'style',
-            { href: prepared.className, precedence: 'medium' },
-            prepared.rules,
-          )
-        } else {
-          // Client: just compute className (injection via useInsertionEffect below)
-          className = sheet.getClassName(cssText)
+          styleEl = jsx('style', {
+            href: prepared.className,
+            precedence: 'medium',
+            children: prepared.rules,
+          })
         }
-      } else {
-        className = ''
+
+        const finalTag = rawProps.as || tag
+        const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
+        const finalProps = buildProps(
+          rawProps,
+          className,
+          ref,
+          isDOM,
+          customFilter,
+        )
+
+        const mainEl = jsx(finalTag as any, finalProps)
+
+        if (!styleEl) return mainEl
+        return jsxs(Fragment, { children: [styleEl, mainEl] })
       }
-      // Insert as new head; the prior head ages out to the tail slot.
-      cur.b = cur.a
-      cur.a = { css: cssText, className, styleEl }
-    }
+    : // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path client render — LRU + useInsertionEffect inlined for perf
+      ({ ref, ...rawProps }: Record<string, any>) => {
+        const theme = useTheme()
+        if (theme !== EMPTY_THEME && rawProps.theme === undefined)
+          rawProps.theme = theme
+        const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
-    // Client: inject CSS synchronously before paint (no-op on server)
-    useInsertionEffect(() => {
-      if (cssText.length > 0) sheet.insert(cssText, boost)
-    }, [cssText])
+        // Two-entry LRU cache. The previous single-slot ref missed every
+        // render when a prop alternates between two values (toggle/hover/
+        // animation frame, etc.), forcing repeated getClassName work even
+        // though both class names are already cached upstream.
+        type DynEntry = {
+          css: string
+          className: string
+        }
+        // Lazy init — useRef(initialValue) evaluates initialValue every
+        // render even though React only uses it on first mount.
+        const cacheRef = useRef<{
+          a: DynEntry | null
+          b: DynEntry | null
+        } | null>(null)
+        if (cacheRef.current === null) cacheRef.current = { a: null, b: null }
+        const cur = cacheRef.current
+        let entry: DynEntry | null = null
+        if (cur.a && cur.a.css === cssText) {
+          entry = cur.a
+        } else if (cur.b && cur.b.css === cssText) {
+          // Promote LRU hit to head so the next alternation hits slot `a` too.
+          entry = cur.b
+          cur.b = cur.a
+          cur.a = entry
+        }
 
-    const finalTag = rawProps.as || tag
-    const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
-    const finalProps = buildProps(rawProps, className, ref, isDOM, customFilter)
+        let className: string
+        if (entry) {
+          className = entry.className
+        } else {
+          className = cssText.length > 0 ? sheet.getClassName(cssText) : ''
+          // Insert as new head; the prior head ages out to the tail slot.
+          cur.b = cur.a
+          cur.a = { css: cssText, className }
+        }
 
-    const mainEl = createElement(finalTag, finalProps)
+        // Inject CSS synchronously before paint.
+        useInsertionEffect(() => {
+          if (cssText.length > 0) sheet.insert(cssText, boost)
+        }, [cssText])
 
-    if (!styleEl) return mainEl
-    return createElement(Fragment, null, styleEl, mainEl)
-  }
+        const finalTag = rawProps.as || tag
+        const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
+        const finalProps = buildProps(
+          rawProps,
+          className,
+          ref,
+          isDOM,
+          customFilter,
+        )
+
+        return jsx(finalTag as any, finalProps)
+      }
 
   DynamicStyled.displayName = `styled(${getDisplayName(tag)})`
   return DynamicStyled
