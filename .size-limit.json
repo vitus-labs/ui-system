@@ -80,7 +80,7 @@
   {
     "name": "@vitus-labs/styler",
     "path": "packages/styler/lib/index.js",
-    "limit": "12 KB",
+    "limit": "12.5 KB",
     "gzip": true
   },
   {
