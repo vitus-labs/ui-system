@@ -6,65 +6,43 @@ type ThrottledEvt = Cancellable<(e: Event) => void>
 
 type Config = {
   active: boolean
-  type: string
   parentContainer: HTMLElement | null | undefined
   closeOn: string
-  /** Reposition is called on every scroll/resize tick. */
   handleContentPosition: ThrottledNoArg
-  /** Visibility is also re-evaluated on scroll. */
   handleVisibility: ThrottledEvt
 }
 
-// Reference counter for nested modals sharing document.body overflow lock.
-// Only the first modal sets overflow:hidden; only the last restores it.
-let modalOverflowCount = 0
-
-/**
- * Window-level scroll/resize listeners that reposition active overlays and
- * re-evaluate close-on-scroll behavior. Also manages the body overflow lock
- * for modal overlays (refcounted across nested modals).
- */
+// Body-overflow lock is owned by `useScrollLock` (wired in useOverlay).
+// Mixing it back in here previously activated synchronously and let
+// useScrollLock capture 'hidden' as its "original" value — leaving the
+// page silently scroll-locked on async-mount modals.
 const useWindowReposition = (
   active: boolean,
-  type: string,
   handleContentPosition: ThrottledNoArg,
   handleVisibility: ThrottledEvt,
 ) => {
   useEffect(() => {
     if (!active) return undefined
 
-    const shouldSetOverflow = type === 'modal'
-
     const onScroll = (e: Event) => {
       handleContentPosition()
       handleVisibility(e)
     }
 
-    if (shouldSetOverflow) {
-      modalOverflowCount++
-      if (modalOverflowCount === 1) document.body.style.overflow = 'hidden'
-    }
     window.addEventListener('resize', handleContentPosition)
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       handleContentPosition.cancel()
       handleVisibility.cancel()
-      if (shouldSetOverflow) {
-        modalOverflowCount--
-        if (modalOverflowCount === 0) document.body.style.overflow = ''
-      }
       window.removeEventListener('resize', handleContentPosition)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [active, type, handleContentPosition, handleVisibility])
+  }, [active, handleContentPosition, handleVisibility])
 }
 
-/**
- * Same as `useWindowReposition` but for a custom scrollable ancestor.
- * Locks the parent's overflow while the overlay is active (unless hover-driven,
- * which expects the parent to keep scrolling).
- */
+// Locks the parent's overflow while the overlay is active, except when
+// hover-driven (the parent must keep scrolling so the overlay can close).
 const useParentContainerReposition = (
   active: boolean,
   parentContainer: HTMLElement | null | undefined,
@@ -99,13 +77,12 @@ const useParentContainerReposition = (
 
 const useScrollReposition = ({
   active,
-  type,
   parentContainer,
   closeOn,
   handleContentPosition,
   handleVisibility,
 }: Config) => {
-  useWindowReposition(active, type, handleContentPosition, handleVisibility)
+  useWindowReposition(active, handleContentPosition, handleVisibility)
   useParentContainerReposition(
     active,
     parentContainer,

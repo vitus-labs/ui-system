@@ -8,10 +8,13 @@ import type { UseDebouncedCallback } from './useDebouncedCallback'
 import useDebouncedCallback from './useDebouncedCallback'
 import type { UseDebouncedValue } from './useDebouncedValue'
 import useDebouncedValue from './useDebouncedValue'
-import type { UseFocus } from './useFocus'
-import useFocus from './useFocus'
-import type { UseHover } from './useHover'
-import useHover from './useHover'
+// useFocus + useHover are intentionally NOT re-exported on native — they
+// return onMouseEnter/onMouseLeave/onFocus/onBlur handler names that no
+// React Native component fires. Exporting them would have consumers wire
+// `<Pressable {...useHover()} />` and silently get a permanently-false
+// `hover` state with no warning. If you need hover/focus on RN, use
+// Pressable's `onHoverIn`/`onHoverOut` / TextInput's `onFocus`/`onBlur`
+// directly — they're per-component, not generalizable to a single hook.
 import type { UseInterval } from './useInterval'
 import useInterval from './useInterval'
 import type { UseIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
@@ -49,8 +52,6 @@ export type {
   UseControllableState,
   UseDebouncedCallback,
   UseDebouncedValue,
-  UseFocus,
-  UseHover,
   UseInterval,
   UseIsomorphicLayoutEffect,
   UseKeyboard,
@@ -74,8 +75,6 @@ export {
   useControllableState,
   useDebouncedCallback,
   useDebouncedValue,
-  useFocus,
-  useHover,
   useInterval,
   useIsomorphicLayoutEffect,
   useKeyboard,

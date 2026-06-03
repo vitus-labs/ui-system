@@ -176,7 +176,6 @@ const useOverlay = ({
 
   const triggerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLElement>(null)
-  const prevFocusRef = useRef<HTMLElement | null>(null)
 
   const setBlocked = useCallback(() => setBlockedCount((c) => c + 1), [])
   const setUnblocked = useCallback(
@@ -372,38 +371,16 @@ const useOverlay = ({
     }
   }, [active, ctx, onClose, onOpen])
 
-  // Focus management for modals: save active element on open, restore on close.
-  useEffect(() => {
-    // `useFocusTrap` (below) owns focus management for modals — autoFocus
-    // moves focus into the dialog on enable and restores it on disable. The
-    // prior manual save/restore block here duplicated (and slightly
-    // contradicted) that, so it's removed. Non-modal types intentionally
-    // don't trap focus.
-    if (type !== 'modal') return
-    if (!active && prevFocusRef.current) {
-      // Legacy field kept for back-compat with anything reading prevFocusRef.
-      prevFocusRef.current = null
-    }
-  }, [active, type])
-
-  // ----------------------------------------------------------------------
-  // Modal a11y — trap Tab inside the content + lock page scroll while open.
-  // Both hooks no-op when their `enabled` flag is false, so the effect cost
-  // for non-modal overlays is zero.
-  // ----------------------------------------------------------------------
+  // Modal a11y — trap Tab + lock page scroll while open. Both hooks
+  // no-op when `enabled` is false, so non-modal overlays pay nothing.
   const modalActive = type === 'modal' && active && isContentLoaded
   useFocusTrap(contentRef, modalActive)
   useScrollLock(modalActive)
-
-  // ----------------------------------------------------------------------
-  // Composed listener hooks
-  // ----------------------------------------------------------------------
 
   useEscapeKey(closeOnEsc, active, blocked, hideContent)
 
   useScrollReposition({
     active,
-    type,
     parentContainer,
     closeOn,
     handleContentPosition,

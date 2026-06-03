@@ -406,6 +406,36 @@ describe('Overlay', () => {
       // Last one out releases the lock.
       expect(document.body.style.overflow).toBe('')
     })
+
+    // Regression test for a latent silent-failure: useScrollReposition used
+    // to set body.overflow='hidden' on activation (before isContentLoaded),
+    // and THEN useScrollLock captured that 'hidden' as its "original"
+    // value. On close the original was restored — but the original was
+    // the dirty 'hidden', not the consumer's pre-modal value. Result:
+    // page silently locked forever. The fix removed body.overflow
+    // management from useScrollReposition entirely; only useScrollLock
+    // (gated on isContentLoaded) touches it now.
+    it('restores body overflow to the consumer-set value, not the empty string', () => {
+      document.body.style.overflow = 'auto'
+      try {
+        const { unmount } = render(
+          <OverlayComponent
+            trigger={Trigger}
+            isOpen
+            type="modal"
+            closeOn="manual"
+          >
+            {Content}
+          </OverlayComponent>,
+          { wrapper },
+        )
+        expect(document.body.style.overflow).toBe('hidden')
+        unmount()
+        expect(document.body.style.overflow).toBe('auto')
+      } finally {
+        document.body.style.overflow = ''
+      }
+    })
   })
 
   describe('render function pattern', () => {
