@@ -1,9 +1,5 @@
 import { useEffect } from 'react'
 
-// Local copy: kept inside elements so the package stays independent of
-// @vitus-labs/hooks. The public version lives there for general use; this
-// one is the minimum Overlay needs and stays in sync by intent, not by
-// import. If you fix a bug in one, fix it in the other.
 export type UseFocusTrapOptions = {
   autoFocus?: boolean
 }

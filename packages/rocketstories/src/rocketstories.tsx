@@ -5,10 +5,10 @@ import * as rocketstory from '~/stories/rocketstories'
 import type {
   Configuration,
   Control,
-  ExtractProps,
   ListStoryOptions,
   RenderStoryOptions,
   RocketType,
+  StoryExtractProps,
   TObj,
 } from '~/types'
 
@@ -144,8 +144,8 @@ export interface IRocketStories<
   replaceComponent: <P extends Configuration['component']>(
     param: P,
   ) => P extends RocketType
-    ? IRocketStories<ExtractProps<P>, P['$$rocketstyle'], true>
-    : IRocketStories<ExtractProps<P>, unknown, false>
+    ? IRocketStories<StoryExtractProps<P>, P['$$rocketstyle'], true>
+    : IRocketStories<StoryExtractProps<P>, unknown, false>
 
   // COMPONENT chaining method
   // --------------------------------------------------------

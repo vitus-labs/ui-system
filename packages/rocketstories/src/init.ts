@@ -1,6 +1,6 @@
 import type { IRocketStories } from '~/rocketstories'
 import createRocketStories from '~/rocketstories'
-import type { Configuration, ExtractProps, RocketType } from '~/types'
+import type { Configuration, RocketType, StoryExtractProps } from '~/types'
 import getTheme, { setTheme } from '~/utils/theme'
 
 type InitParams = Partial<
@@ -22,8 +22,8 @@ export type Init = <P extends InitParams>(
 ) => <T extends Configuration['component']>(
   component: T,
 ) => T extends RocketType
-  ? IRocketStories<ExtractProps<T>, T['$$rocketstyle'], true>
-  : IRocketStories<ExtractProps<T>, unknown, false>
+  ? IRocketStories<StoryExtractProps<T>, T['$$rocketstyle'], true>
+  : IRocketStories<StoryExtractProps<T>, unknown, false>
 
 /** @see {@link Init} */
 const init: Init = ({ decorators = [], storyOptions = {}, theme, ...rest }) => {
@@ -44,8 +44,8 @@ export type Rocketstories = <C extends Configuration['component']>(
     theme?: Record<string, unknown>
   },
 ) => C extends RocketType
-  ? IRocketStories<ExtractProps<C>, C['$$rocketstyle'], true>
-  : IRocketStories<ExtractProps<C>, unknown, false>
+  ? IRocketStories<StoryExtractProps<C>, C['$$rocketstyle'], true>
+  : IRocketStories<StoryExtractProps<C>, unknown, false>
 
 /** @see {@link Rocketstories} */
 // @ts-expect-error — `Rocketstories` is a conditional generic over `C extends RocketType`;
