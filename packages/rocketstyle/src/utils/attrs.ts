@@ -57,9 +57,7 @@ type CalculateChainOptions = <A>(
 
 export const calculateChainOptions: CalculateChainOptions =
   (options) => (args) => {
-    const result = {}
-    if (isEmpty(options)) return result
-
+    if (isEmpty(options)) return {}
     // @ts-expect-error — isEmpty narrows runtime but doesn't narrow `options` to non-undefined here
     return options.reduce((acc, item) => Object.assign(acc, item(...args)), {})
   }

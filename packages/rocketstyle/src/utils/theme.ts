@@ -82,22 +82,6 @@ export const getDimensionThemes: GetDimensionThemes = (theme, options) => {
 }
 
 // --------------------------------------------------------
-// combine values
-// --------------------------------------------------------
-/** Reduces an array of option callbacks by calling each with the given args and deep-merging results. */
-type CalculateChainOptions = (
-  options: OptionFunc[] | undefined | null,
-  args: any[],
-) => Record<string, any>
-
-export const calculateChainOptions: CalculateChainOptions = (options, args) => {
-  const result = {}
-  if (!options || isEmpty(options)) return result
-
-  return options.reduce((acc, item) => merge(acc, item(...args)), result)
-}
-
-// --------------------------------------------------------
 // generate theme
 // --------------------------------------------------------
 /**

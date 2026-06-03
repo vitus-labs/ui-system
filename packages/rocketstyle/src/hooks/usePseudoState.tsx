@@ -1,10 +1,4 @@
-import {
-  type FocusEventHandler,
-  type MouseEventHandler,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { PseudoActions, PseudoState } from '~/types/pseudo'
 
 type UsePseudoState = ({
@@ -23,6 +17,11 @@ type UsePseudoState = ({
  * Tracks hover, focus, and pressed pseudo-states via mouse and focus
  * event handlers. Returns the current state flags and wrapped event
  * callbacks that preserve any user-provided handlers.
+ *
+ * Consumer handlers are captured in a ref so the wrapped event callbacks
+ * keep stable identity across re-renders — otherwise inline arrow
+ * handlers (`onClick={() => …}`) would re-create the wrappers every
+ * render and defeat downstream memoization.
  */
 const usePseudoState: UsePseudoState = ({
   onBlur,
@@ -36,77 +35,58 @@ const usePseudoState: UsePseudoState = ({
   const [focus, setFocus] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  const handleOnMouseEnter: MouseEventHandler = useCallback(
-    (e) => {
-      setHover(true)
-      if (onMouseEnter) onMouseEnter(e)
-    },
-    [onMouseEnter],
-  )
+  // Ref-capture the latest consumer handlers — wrappers below stay stable.
+  const latest = useRef({
+    onBlur,
+    onFocus,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseUp,
+  })
+  latest.current = {
+    onBlur,
+    onFocus,
+    onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseUp,
+  }
 
-  const handleOnMouseLeave: MouseEventHandler = useCallback(
-    (e) => {
-      setHover(false)
-      setPressed(false)
-      if (onMouseLeave) onMouseLeave(e)
-    },
-    [onMouseLeave],
-  )
-
-  const handleOnMouseDown: MouseEventHandler = useCallback(
-    (e) => {
-      setPressed(true)
-      if (onMouseDown) onMouseDown(e)
-    },
-    [onMouseDown],
-  )
-
-  const handleOnMouseUp: MouseEventHandler = useCallback(
-    (e) => {
-      setPressed(false)
-      if (onMouseUp) onMouseUp(e)
-    },
-    [onMouseUp],
-  )
-
-  const handleOnFocus: FocusEventHandler = useCallback(
-    (e) => {
-      setFocus(true)
-      if (onFocus) onFocus(e)
-    },
-    [onFocus],
-  )
-
-  const handleOnBlur: FocusEventHandler = useCallback(
-    (e) => {
-      setFocus(false)
-      if (onBlur) onBlur(e)
-    },
-    [onBlur],
+  const events = useMemo<PseudoActions>(
+    () => ({
+      onMouseEnter: (e: any) => {
+        setHover(true)
+        latest.current.onMouseEnter?.(e)
+      },
+      onMouseLeave: (e: any) => {
+        setHover(false)
+        setPressed(false)
+        latest.current.onMouseLeave?.(e)
+      },
+      onMouseDown: (e: any) => {
+        setPressed(true)
+        latest.current.onMouseDown?.(e)
+      },
+      onMouseUp: (e: any) => {
+        setPressed(false)
+        latest.current.onMouseUp?.(e)
+      },
+      onFocus: (e: any) => {
+        setFocus(true)
+        latest.current.onFocus?.(e)
+      },
+      onBlur: (e: any) => {
+        setFocus(false)
+        latest.current.onBlur?.(e)
+      },
+    }),
+    [],
   )
 
   const state = useMemo(
     () => ({ hover, focus, pressed }),
     [hover, focus, pressed],
-  )
-
-  const events = useMemo(
-    () => ({
-      onMouseEnter: handleOnMouseEnter,
-      onMouseLeave: handleOnMouseLeave,
-      onMouseDown: handleOnMouseDown,
-      onMouseUp: handleOnMouseUp,
-      onFocus: handleOnFocus,
-      onBlur: handleOnBlur,
-    }),
-    [
-      handleOnMouseEnter,
-      handleOnMouseLeave,
-      handleOnMouseDown,
-      handleOnMouseUp,
-      handleOnFocus,
-      handleOnBlur,
-    ],
   )
 
   return { state, events }

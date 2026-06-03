@@ -1,5 +1,4 @@
 import {
-  calculateChainOptions,
   getDimensionThemes,
   getTheme,
   getThemeByMode,
@@ -126,33 +125,6 @@ describe('getDimensionThemes', () => {
     }
     const result = getDimensionThemes({}, options)
     expect(result.state).toBeUndefined()
-  })
-})
-
-describe('calculateChainOptions (theme)', () => {
-  it('returns empty for null', () => {
-    expect(calculateChainOptions(null, [])).toEqual({})
-  })
-
-  it('returns empty for undefined', () => {
-    expect(calculateChainOptions(undefined, [])).toEqual({})
-  })
-
-  it('returns empty for empty array', () => {
-    expect(calculateChainOptions([], [])).toEqual({})
-  })
-
-  it('evaluates chain and deep-merges results', () => {
-    const fn1 = () => ({ nested: { a: 1 } })
-    const fn2 = () => ({ nested: { b: 2 } })
-    const result = calculateChainOptions([fn1, fn2], [])
-    expect(result).toEqual({ nested: { a: 1, b: 2 } })
-  })
-
-  it('passes args to each function', () => {
-    const fn = vi.fn(() => ({}))
-    calculateChainOptions([fn], ['arg1', 'arg2'])
-    expect(fn).toHaveBeenCalledWith('arg1', 'arg2')
   })
 })
 

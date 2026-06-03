@@ -10,7 +10,6 @@ import {
   THEME_MODES,
   THEME_MODES_INVERSED,
 } from '../constants'
-import BOOLEAN_TAGS from '../constants/booleanTags'
 import DEFAULT_DIMENSIONS from '../constants/defaultDimensions'
 import {
   createStaticsChainingEnhancers,
@@ -187,21 +186,5 @@ describe('DEFAULT_DIMENSIONS', () => {
       propName: 'multiple',
       multi: true,
     })
-  })
-})
-
-describe('BOOLEAN_TAGS', () => {
-  it('is an array of HTML boolean attributes', () => {
-    expect(Array.isArray(BOOLEAN_TAGS)).toBe(true)
-    expect(BOOLEAN_TAGS).toContain('disabled')
-    expect(BOOLEAN_TAGS).toContain('checked')
-    expect(BOOLEAN_TAGS).toContain('readOnly')
-    expect(BOOLEAN_TAGS).toContain('required')
-    expect(BOOLEAN_TAGS).toContain('hidden')
-    expect(BOOLEAN_TAGS).toContain('autoFocus')
-  })
-
-  it('has more than 20 entries', () => {
-    expect(BOOLEAN_TAGS.length).toBeGreaterThan(20)
   })
 })

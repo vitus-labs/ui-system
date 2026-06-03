@@ -6,7 +6,7 @@ import {
   pick,
   render,
 } from '@vitus-labs/core'
-import { useMemo, useRef as useReactRef } from 'react'
+import { memo, useMemo, useRef as useReactRef } from 'react'
 import { LocalThemeManager } from '~/cache'
 import {
   CONFIG_KEYS,
@@ -443,8 +443,12 @@ const rocketComponent: RocketComponent = (options) => {
   // This will hoist and generate dynamically next static methods
   // for all dimensions available in configuration
   // ------------------------------------------------------
+  // Memoize the innermost component so content-equal re-renders short-circuit
+  // before walking the HOC stack. The outer chain (rocketstyleAttrsHoc +
+  // compose) already stabilizes its output via useStableValue + useMemo,
+  // so a stable-prop parent render bails at the memo boundary.
   const RocketComponent: RocketStyleComponent = compose(...hocsFuncs)(
-    EnhancedComponent,
+    memo(EnhancedComponent) as unknown as typeof EnhancedComponent,
   )
   RocketComponent.IS_ROCKETSTYLE = true
   RocketComponent.displayName = componentName
@@ -461,11 +465,7 @@ const rocketComponent: RocketComponent = (options) => {
     options,
   })
 
-  // ------------------------------------------------------
-  RocketComponent.IS_ROCKETSTYLE = true
-  RocketComponent.displayName = componentName
   RocketComponent.meta = {}
-  // ------------------------------------------------------
 
   // ------------------------------------------------------
   // enhance for statics
