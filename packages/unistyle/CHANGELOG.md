@@ -1,5 +1,20 @@
 # @vitus-labs/unistyle
 
+## 2.7.0
+
+### Minor Changes
+
+- [#274](https://github.com/vitus-labs/ui-system/pull/274) [`b4bba44`](https://github.com/vitus-labs/ui-system/commit/b4bba443b1cfb24dc350f99bba4fd2b2ca1818cd) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - `elements`: `Overlay` (modal) auto-traps focus and locks page scroll while open. Focus selector widened to include `contenteditable`, `video[controls]`, `audio[controls]`, `summary`. Hooks inlined — no `@vitus-labs/hooks` peer.
+  - `hooks`: add `useLocalStorage`, `useEventListener`, `useCopyToClipboard`, `useResizeObserver`.
+  - `unistyle`: add `between(breakpoints, minKey, maxKey)` for closed-range media queries; dev warning for unknown theme keys; CI-enforced `ITheme` ↔ `propertyMap` parity test.
+  - `styler`: hash-collision dev warning in `sheet`.
+  - `kinetic`: fix `Stagger.native` dropping per-child `delay`; `Transition.native` honors `useReducedMotion`.
+  - `connector-emotion` + `connector-styled-components`: per-connector smoke tests; broken `useCSS` shims removed (now styler-only).
+
+### Patch Changes
+
+- [#270](https://github.com/vitus-labs/ui-system/pull/270) [`41772d9`](https://github.com/vitus-labs/ui-system/commit/41772d95bf281cb00b61ec34d813def70a6ce1dc) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix `borderCollapse`: it was declared in the `ITheme` prop type but had no `propertyMap` descriptor, so passing it type-checked yet emitted no CSS. Added the missing `simple` descriptor so `borderCollapse: 'collapse' | 'separate'` now produces `border-collapse: …`. Verified by diffing all 305 typed `ITheme` keys against the property map — this was the only typed-but-unmapped key (the other, `keyframe`, is intentionally consumed by the `animation` special handler).
+
 ## 2.6.2
 
 ### Patch Changes

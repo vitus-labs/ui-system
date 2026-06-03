@@ -1,5 +1,109 @@
 # @vitus-labs/styler
 
+## 2.7.0
+
+### Patch Changes
+
+- [#273](https://github.com/vitus-labs/ui-system/pull/273) [`1ff9db0`](https://github.com/vitus-labs/ui-system/commit/1ff9db072b4e7c47dde960aefde7d3991944e834) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Perf + correctness audit, round 3 — seven fixes across five packages, identified by a multi-modal codebase audit with 3-judge adversarial verification per finding.
+
+  **Correctness fix (kinetic)** — `nextFrame` now returns a canceller that aborts both rAFs. The prior implementation returned only the OUTER rAF id, so cleanup left the inner rAF live and the transition callback fired against potentially-stale or detached elements on fast toggles (open-while-closing, StrictMode double-invoke). All 6 call sites in `Transition` / `TransitionItem` / `TransitionRenderer` updated in lockstep.
+
+  **Memory hygiene**
+
+  - `styler`: `sheet.insertCache` and `sheet.prepareCache` were keyed by full cssText (200–5000 B per entry) and only cleared by HMR/SSR hooks — long-running SPAs accumulated every unique cssText forever. `evictIfNeeded()` now bounds all three caches via the existing `evictMapByPercent`.
+  - `kinetic`: `splitCache` (className → string[] memoization) was unbounded module-level Map; now capped at 256 entries with the same oldest-10%-evict pattern.
+
+  **Per-render allocations**
+
+  - `coolgrid`: `omitCtxKeys` rebuilt a 10-key Set on every Container/Row/Col render (5 components, web + native). Now uses a module-scope `CONTEXT_KEYS_SET`, matching the `omitKeysSet`/`filterAttrsSet` pattern from PR [#268](https://github.com/vitus-labs/ui-system/issues/268).
+  - `connector-native`: `styled` re-spread `forwardedProps` into `createElement` despite the object being freshly allocated one line earlier and held by no caller. Now mutates directly (mirrors the styler rawProps-mutation trick); also hoists the `shouldForwardProp` resolution to component-creation time.
+
+  **Algorithmic / consistency**
+
+  - `rocketstyle`: `removeNullableValues` was O(n²) (`.filter().reduce(spread)` allocates a fresh accumulator per step). Now O(n) single-pass, matching the sibling implementation in `@vitus-labs/attrs`.
+  - `kinetic`: `parseTransformString` allocated a fresh stateful `RegExp` on every call. `TRANSFORM_RE` now hoisted to module scope (mirrors the existing `EASING_NAMES` pattern in the same file); `lastIndex` reset per use.
+
+  Verified by 2-of-3 adversarial judges (correctness / perf / safety lenses) per finding, with 9 separate candidates refuted and excluded. Full suite 2730+ pass; 5 new lock-in tests covering the nextFrame canceller and the multi-cache eviction.
+
+- [#281](https://github.com/vitus-labs/ui-system/pull/281) [`4d301dd`](https://github.com/vitus-labs/ui-system/commit/4d301dd85507a1d7018d00eeb4ecc7e4cf0bafad) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Perf pass on the styler hot path — six micro-wins compounding to ~7-8% on SSR scenarios. Same engine, same output; no API or behavior changes.
+
+  **`styled.ts` — dynamic render**
+
+  - Drop `delete rawProps.theme` and replace with `Object.assign({ theme }, rawProps)` when `theme` isn't already provided. The `delete` was poisoning V8's hidden-class shape for every dynamic render's props object; the spread keeps the shape stable.
+  - Lazy `useRef` init for the 2-slot LRU cache — one less object literal allocated per render before the first cache hit.
+
+  **`sheet.ts` — `prepare()` / `insert()`**
+
+  - 2-slot LRU in front of `prepareCache` and `insertCache`. Reference compare hits before `Map.get`'s hash + bucket walk, which matters on the typical SSR loop where the same component re-renders 500x with identical cssText.
+  - No-`@` fast path: when cssText contains no `@`-rules and no `@layer` is configured (~95% of styled CSS), `prepare()` / `insert()` build the rule string directly and skip `splitAtRules` entirely (regex, linear scan, two intermediate arrays, map, spread — all gone).
+  - `splitAtRules` inline `@`-prefix dispatch: replaced the `cssText.slice(i, i + 20)` + regex pattern with a 1-char `charCodeAt` gate that calls `startsWith` only on a match. No per-`@` allocation; `startsWith` is a V8 intrinsic.
+
+  **`resolve.ts` — `normalizeCSS`**
+
+  - 2-slot LRU in front of `normCache`. Same shape and rationale as the sheet caches — SSR loops alternate between very few cssText values.
+
+  **Bench numbers** (median, single pass on the same machine; full table in `packages/styler/benchmarks/results.md`):
+
+  | Scenario    | Pre   | Post  | Δ     |
+  | ----------- | ----- | ----- | ----- |
+  | ssr-static  | 674.5 | 730.4 | +8.3% |
+  | ssr-dynamic | 400.7 | 429.5 | +7.2% |
+  | ssr-themed  | 346.1 | 371.2 | +7.3% |
+
+  CSR scenarios are within the noise floor (already cache-hit dominated by the per-tick repeated renders).
+
+  All 406 styler tests and 2776 monorepo tests pass. One test (`warns in dev when two different cssText strings produce the same hash`) was updated to clear the new hot slots when bypassing the public `clearCache()` to plant its synthetic collision.
+
+- [#282](https://github.com/vitus-labs/ui-system/pull/282) [`a5d7f8b`](https://github.com/vitus-labs/ui-system/commit/a5d7f8ba326f1208335305dd2ea076bca8b57274) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix CSR regression introduced by PR [#281](https://github.com/vitus-labs/ui-system/issues/281) + further perf cleanup on hot caches.
+
+  PR [#281](https://github.com/vitus-labs/ui-system/issues/281)'s CI bench job showed **csr-many −10.0%**, csr-mount −6.2%, csr-update −6.6% vs main. The wins on SSR were real but came with these CSR regressions, which the PR shipped anyway because local bench variance hid them.
+
+  **Root cause: `Object.assign({theme}, rawProps)` in `DynamicStyled`.** PR [#281](https://github.com/vitus-labs/ui-system/issues/281) replaced the `delete rawProps.theme` pattern with `Object.assign` to dodge a hypothesized V8 hidden-class deopt. But the deopt concern was misplaced — `rawProps` is freshly destructured per render and discarded; nothing reads it after the function returns. The `Object.assign` allocated a new object on every dynamic render, costing more than the deopt it was trying to avoid.
+
+  **Fix.** Mutate `rawProps` directly. Skip the write entirely when there's no provider (csr-mount / csr-many runs without `ThemeProvider`) AND the caller didn't pass an explicit `theme` prop. This also saves `buildProps`'s for-in iteration one extra key.
+
+  ```ts
+  // Before (PR [#281](https://github.com/vitus-labs/ui-system/issues/281)):
+  const resolveProps =
+    rawProps.theme === undefined
+      ? Object.assign({ theme }, rawProps)
+      : rawProps;
+
+  // After:
+  if (theme !== undefined && rawProps.theme === undefined)
+    rawProps.theme = theme;
+  ```
+
+  **Hot-cache cold-miss cleanup.** The 2-slot LRU hot caches in `sheet.insert()`, `sheet.prepare()`, and `normalizeCSS()` ran 4 reads + 4 compares before falling through to `Map.get` on cold-miss — paid by every csr-many call (50 distinct cssText per tick → 100% miss rate). Nested so the cold-start path is a single `null` check:
+
+  ```ts
+  // Before:
+  if (hotA !== null && hotA.key === key) return hotA.value;
+  if (hotB !== null && hotB.key === key) {
+    /* promote */
+  }
+  // → 4 ops on cold start
+
+  // After:
+  if (hotA !== null) {
+    if (hotA.key === key) return hotA.value;
+    const hotB = this.hotB;
+    if (hotB !== null && hotB.key === key) {
+      /* promote */
+    }
+  }
+  // → 1 op on cold start (hotA === null), same cost as before on hit
+  ```
+
+  All 412 styler tests + 2782 monorepo tests pass; lint and typecheck clean.
+
+- [#274](https://github.com/vitus-labs/ui-system/pull/274) [`b4bba44`](https://github.com/vitus-labs/ui-system/commit/b4bba443b1cfb24dc350f99bba4fd2b2ca1818cd) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - `elements`: `Overlay` (modal) auto-traps focus and locks page scroll while open. Focus selector widened to include `contenteditable`, `video[controls]`, `audio[controls]`, `summary`. Hooks inlined — no `@vitus-labs/hooks` peer.
+  - `hooks`: add `useLocalStorage`, `useEventListener`, `useCopyToClipboard`, `useResizeObserver`.
+  - `unistyle`: add `between(breakpoints, minKey, maxKey)` for closed-range media queries; dev warning for unknown theme keys; CI-enforced `ITheme` ↔ `propertyMap` parity test.
+  - `styler`: hash-collision dev warning in `sheet`.
+  - `kinetic`: fix `Stagger.native` dropping per-child `delay`; `Transition.native` honors `useReducedMotion`.
+  - `connector-emotion` + `connector-styled-components`: per-connector smoke tests; broken `useCSS` shims removed (now styler-only).
+
 ## 2.6.2
 
 ### Patch Changes
