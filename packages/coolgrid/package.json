@@ -23,16 +23,15 @@
     "!lib/analysis"
   ],
   "homepage": "https://github.com/vitus-labs/ui-system/tree/master/packages/coolgrid",
-  "description": "Responsive 12-column grid (Container/Row/Col) with the SAME JSX on web and React Native — theme-driven runtime breakpoints, no build-time compilation, single layout API across platforms.",
+  "description": "Ultra flexible and extensible grid system inspired by Bootstrap grid, based on styled-components",
   "keywords": [
     "vitus-labs",
     "grid",
     "react",
-    "react-native",
-    "responsive",
-    "layout",
-    "breakpoints",
-    "cross-platform",
+    "styled-components",
+    "bootstrap",
+    "flexible",
+    "extensible",
     "coolgrid"
   ],
   "publishConfig": {

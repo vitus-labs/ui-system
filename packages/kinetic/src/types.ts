@@ -109,16 +109,11 @@ export type CollapseProps = TransitionCallbacks & {
   children: ReactElement<any>
 }
 
-export type TransitionStateResult<T = HTMLElement> = {
+export type TransitionStateResult = {
   /** Current lifecycle stage */
   stage: TransitionStage
-  /**
-   * Ref to attach to the transitioning element. Generic so web callers
-   * keep `HTMLElement` methods (`.focus()`, `.classList`, etc.) by
-   * default while native consumers can parameterize with a View ref
-   * type if needed.
-   */
-  ref: RefObject<T | null>
+  /** Ref to attach to the transitioning element */
+  ref: RefObject<HTMLElement | null>
   /** Whether the element should be rendered */
   shouldMount: boolean
   /** Call when the current animation finishes */

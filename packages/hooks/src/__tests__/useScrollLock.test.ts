@@ -68,40 +68,6 @@ describe('useScrollLock', () => {
     expect(document.body.style.overflow).toBe('scroll')
   })
 
-  // Cross-package contract test: the dataset coordination only works if
-  // BOTH implementations (this hook + the inline copy in
-  // @vitus-labs/elements/Overlay/useScrollLock) read and write the SAME
-  // dataset keys. Simulate a sibling consumer that already locked scroll
-  // (via direct dataset writes — what the elements copy emits) and
-  // verify this hook honors the existing refcount instead of clobbering
-  // the original-overflow snapshot.
-  it('cooperates with a sibling consumer via the body.dataset contract', () => {
-    // Sibling has already locked scroll: count=1, original='scroll'.
-    document.body.style.overflow = 'scroll'
-    document.body.dataset.vlScrollLockCount = '1'
-    document.body.dataset.vlScrollLockOriginal = 'scroll'
-    document.body.style.overflow = 'hidden'
-
-    const { unmount } = renderHook(() => useScrollLock(true))
-    // Count increments to 2; original stays 'scroll' (not re-captured as 'hidden').
-    expect(document.body.dataset.vlScrollLockCount).toBe('2')
-    expect(document.body.dataset.vlScrollLockOriginal).toBe('scroll')
-    expect(document.body.style.overflow).toBe('hidden')
-
-    unmount()
-    // Count decrements to 1; sibling still holds the lock — must stay hidden.
-    expect(document.body.dataset.vlScrollLockCount).toBe('1')
-    expect(document.body.style.overflow).toBe('hidden')
-
-    // Sibling cleans up — final release restores the captured original.
-    delete document.body.dataset.vlScrollLockCount
-    document.body.style.overflow =
-      document.body.dataset.vlScrollLockOriginal ?? ''
-    delete document.body.dataset.vlScrollLockOriginal
-    expect(document.body.style.overflow).toBe('scroll')
-    document.body.style.overflow = ''
-  })
-
   it('restores empty string when originalOverflow is undefined', () => {
     // When body has no explicit overflow set
     document.body.style.overflow = ''

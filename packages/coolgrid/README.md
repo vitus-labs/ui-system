@@ -1,24 +1,21 @@
 # @vitus-labs/coolgrid
 
-Responsive 12-column grid — same JSX on web and React Native.
+Responsive grid system for React.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/coolgrid)](https://www.npmjs.com/package/@vitus-labs/coolgrid)
 [![license](https://img.shields.io/npm/l/@vitus-labs/coolgrid)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
 
-Container / Row / Col with context-cascading configuration. Define breakpoints, column count, gaps, and gutters at any level — children inherit automatically. Every value is responsive. The exact same `<Container><Row><Col size={{xs: 12, md: 6}} /></Row></Container>` JSX renders identically on web (CSS Grid + media queries) and React Native (Yoga + onLayout-measured widths) — no build-time compilation, no separate platform component.
-
-## Why
-
-CSS Grid + container queries cover responsive layout on web at zero JS cost. Tailwind / panda / vanilla-extract atomic CSS does it even smaller. **Coolgrid's unique value is one specific scenario: you want the same Container/Row/Col API to work identically on web AND React Native, with theme-driven breakpoints you can swap at runtime.** Yoga doesn't implement CSS Grid, and `@media` doesn't exist on RN — so a cross-platform grid has to be JS-resolved. That's what this package is. Bundle cost is ~3.6 KB gzip + ~2-3 KB of `@vitus-labs/unistyle`'s responsive engine; if you're web-only, CSS Grid + atomic CSS is smaller. If you need 1:1 web/RN parity, you pay the bytes.
+Bootstrap-inspired Container / Row / Col grid with context-cascading configuration. Define breakpoints, column count, gaps, and gutters at any level — children inherit automatically. Every value is responsive.
 
 ## Features
 
-- **One JSX on web and RN** — the same `<Container><Row><Col size={...} /></Row></Container>` works on both; no `Platform.OS` branching needed
+- **Familiar mental model** — Container, Row, Col just like Bootstrap
 - **Context cascading** — set columns, gaps, and gutters at Container level, inherited by all Rows and Cols
-- **Responsive values** — single value, mobile-first array, or breakpoint object on every prop (including on React Native, via window-width measurement)
-- **Runtime-swappable breakpoints** — name and size them however you want; change them at runtime via `@vitus-labs/unistyle`'s Provider
+- **Responsive values** — single value, mobile-first array, or breakpoint object on every prop
+- **Custom breakpoints** — name and size them however you want
 - **Custom column counts** — 12, 24, 5 — any number
-- **Custom components** — swap Container, Row, or Col underlying elements (web `div`/RN `View`, or any custom)
+- **Custom components** — swap Container, Row, or Col underlying elements
+- **Default Bootstrap theme** — included and ready to use
 
 ## Installation
 
