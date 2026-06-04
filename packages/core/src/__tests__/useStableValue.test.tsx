@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import { type ReactNode, useState } from 'react'
 import useStableValue from '~/useStableValue'
 
@@ -105,5 +105,49 @@ describe('useStableValue — React integration with cyclic data', () => {
     expect(() =>
       render(<Probe value={parent} onStable={() => undefined} />),
     ).not.toThrow()
+  })
+
+  // Exact-symptom regression: "page loads fine, crashes on state change".
+  // First render: ref.current === value (Object.is short-circuits → no
+  // isEqual descent). State change → second render with a referentially-
+  // fresh cyclic prop → ref.current !== value → isEqual descends → without
+  // cycle detection, infinite recursion → stack overflow.
+  // Pre-fix: this test crashed. Post-fix: passes.
+  it('survives a state-change re-render with cyclic props (the reported failure)', () => {
+    const makeCyclic = (): Record<string, unknown> => {
+      // Mimics a real $rocketstyle/$rocketstate-shaped prop: nested
+      // object with a back-reference somewhere in the graph.
+      const $rocketstate: Record<string, unknown> = { mode: 'default' }
+      const props: Record<string, unknown> = {
+        title: 'Header',
+        $rocketstate,
+      }
+      // The actual cycle: rocketstyle/attrs sometimes ends up with props
+      // that reference back to their own state container.
+      $rocketstate.owner = props
+      return props
+    }
+
+    let trigger: (() => void) | undefined
+    let renderCount = 0
+
+    const Header = () => {
+      const [showMore, setShowMore] = useState(false)
+      renderCount++
+      const props = makeCyclic()
+      // The actual broken path: hoc wraps props in useStableValue every render.
+      useStableValue({ ...props, showMore })
+      if (!trigger) trigger = () => setShowMore(true)
+      return null
+    }
+
+    expect(() => render(<Header />)).not.toThrow()
+    expect(renderCount).toBe(1)
+
+    // Trigger the state change that historically crashed. Wrap in act() so
+    // React flushes the update synchronously and our renderCount assertion
+    // sees the post-update value.
+    expect(() => act(() => trigger?.())).not.toThrow()
+    expect(renderCount).toBeGreaterThan(1)
   })
 })
