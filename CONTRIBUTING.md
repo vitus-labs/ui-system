@@ -114,11 +114,37 @@ CI's `Changeset` check fails any PR that touches `packages/**` without either a 
 4. CI runs on it; once green, mark it auto-merge (or wait for a maintainer).
 5. Merging triggers another `release.yml` run that publishes to npm via OIDC trusted publishing (no secrets needed) and creates a single umbrella `vX.Y.Z` GitHub Release for the suite. Per-package detail lives in each `packages/*/CHANGELOG.md`.
 
-### Setup (optional): `RELEASE_PAT` for self-triggering Version PRs
+### Setup: make Version PRs self-trigger CI
 
-By default, GitHub Actions workflows triggered by pushes from `GITHUB_TOKEN` (which `changesets/action` uses) **do not trigger downstream workflows** — a security feature to prevent infinite-loop scenarios. Without a workaround, Version PRs land with empty CI checks and require a manual close+reopen to start them.
+**Why this matters.** `changesets/action` pushes the Version PR commit using `GITHUB_TOKEN`. GitHub silently suppresses workflow runs for events triggered by `GITHUB_TOKEN` (recursion-prevention), so the Version PR lands with **empty CI checks**. Without a non-`GITHUB_TOKEN` identity, every release requires a manual close+reopen on the Version PR to fire CI.
 
-To make Version PRs self-trigger CI, create a fine-grained Personal Access Token and store it as a `RELEASE_PAT` repository secret:
+`release.yml` resolves auth in priority order: **GitHub App → `RELEASE_PAT` → `GITHUB_TOKEN`**. Configure one of the first two — the App is recommended for long-lived setups, the PAT is faster to set up.
+
+#### Option A — GitHub App (recommended)
+
+Best for: long-lived setups, no token expiration drama, machine identity in audit logs.
+
+1. **Create a GitHub App** under your account or org: github.com/settings/apps → *New GitHub App*
+   - Name: e.g. `vitus-labs-release-bot`
+   - Homepage URL: anything (required field — repo URL works)
+   - Webhooks: uncheck *Active*
+   - Repository permissions: Contents = read+write, Pull requests = read+write, Workflows = read+write
+   - Where can this be installed: *Only on this account*
+2. **Generate a private key**: scroll down on the App settings page → *Generate a private key*. Saves a `.pem` file.
+3. **Install the App on this repo**: from the App settings → *Install App* → select `vitus-labs/ui-system` (or your fork).
+4. **Add credentials to the repo**:
+   - Settings → Secrets and variables → Actions → **Variables** tab → *New repository variable*
+     - Name: `RELEASE_APP_ID`
+     - Value: the App's numeric ID (top of App settings page)
+   - Settings → Secrets and variables → Actions → **Secrets** tab → *New repository secret*
+     - Name: `RELEASE_APP_PRIVATE_KEY`
+     - Value: the entire contents of the `.pem` file (including the `-----BEGIN…END-----` lines)
+
+`release.yml`'s `Mint GitHub App token` step will detect `RELEASE_APP_ID` and use the App from then on. Pushes from the App's token DO trigger downstream workflows.
+
+#### Option B — Fine-grained PAT (faster but expires)
+
+Best for: getting unblocked in 2 minutes; accept rotating the token every 90 days.
 
 1. **Create the PAT**: github.com/settings/personal-access-tokens → *Generate new token (Fine-grained)*
    - Resource owner: `vitus-labs`
@@ -129,7 +155,7 @@ To make Version PRs self-trigger CI, create a fine-grained Personal Access Token
    - Name: `RELEASE_PAT`
    - Value: (paste the token)
 
-`release.yml` falls back to the default `GITHUB_TOKEN` when `RELEASE_PAT` is unset, so this is genuinely optional — without it, releases still work, you just close+reopen the Version PR once to kick CI.
+If neither is configured, `release.yml` falls back to `GITHUB_TOKEN` and logs a loud warning. Releases still work, you just close+reopen the Version PR once to kick CI — exactly what the App / PAT exist to avoid.
 
 ### Prerelease channel
 
