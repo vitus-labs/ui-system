@@ -112,4 +112,79 @@ describe('isEqual', () => {
     expect(isEqual([], {})).toBe(false)
     expect(isEqual(0, false)).toBe(false)
   })
+
+  // Cycle detection — regression for "Maximum call stack size exceeded"
+  // observed when consumer apps pass props with self/mutual references
+  // (e.g. React internals: fiber owners, refs back to elements) through
+  // `useStableValue`.
+  it('handles self-referential objects without stack overflow', () => {
+    const a: Record<string, unknown> = { x: 1 }
+    a.self = a
+    const b: Record<string, unknown> = { x: 1 }
+    b.self = b
+    expect(isEqual(a, b)).toBe(true)
+  })
+
+  it('handles mutually-referential object pairs', () => {
+    const a1: Record<string, unknown> = {}
+    const b1: Record<string, unknown> = {}
+    a1.other = b1
+    b1.other = a1
+    const a2: Record<string, unknown> = {}
+    const b2: Record<string, unknown> = {}
+    a2.other = b2
+    b2.other = a2
+    expect(isEqual(a1, a2)).toBe(true)
+  })
+
+  it('still detects differences inside cyclic structures', () => {
+    const a: Record<string, unknown> = { x: 1 }
+    a.self = a
+    const b: Record<string, unknown> = { x: 2 }
+    b.self = b
+    expect(isEqual(a, b)).toBe(false)
+  })
+
+  it('handles self-referential arrays', () => {
+    const a: unknown[] = [1, 2]
+    a.push(a)
+    const b: unknown[] = [1, 2]
+    b.push(b)
+    expect(isEqual(a, b)).toBe(true)
+  })
+
+  // Asymmetric cycle — `a` cycles to itself; `b1` and `b2` cycle to each
+  // other. Naive seen-by-`a`-only tracking overwrites between
+  // `(a, b1)` and `(a, b2)` and infinite-recurses. Real consumer-side
+  // graphs hit this (React internals back-refs, mutually-referential
+  // contexts). We accept treating these as "equal" — structural
+  // inequality in cyclic graphs is graph isomorphism (NP-hard); the
+  // contract is "do not crash".
+  it('handles asymmetric cycles without stack overflow', () => {
+    const a: Record<string, unknown> = {}
+    a.next = a
+    const b1: Record<string, unknown> = {}
+    const b2: Record<string, unknown> = {}
+    b1.next = b2
+    b2.next = b1
+    expect(() => isEqual(a, b1)).not.toThrow()
+  })
+
+  it('handles long cyclic chains', () => {
+    const head1: Record<string, unknown> = {}
+    let cur1 = head1
+    const head2: Record<string, unknown> = {}
+    let cur2 = head2
+    for (let i = 0; i < 50; i++) {
+      const next1: Record<string, unknown> = { i }
+      cur1.next = next1
+      cur1 = next1
+      const next2: Record<string, unknown> = { i }
+      cur2.next = next2
+      cur2 = next2
+    }
+    cur1.next = head1
+    cur2.next = head2
+    expect(isEqual(head1, head2)).toBe(true)
+  })
 })
