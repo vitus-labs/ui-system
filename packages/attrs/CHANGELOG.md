@@ -1,5 +1,7 @@
 # @vitus-labs/attrs
 
+## 2.7.1
+
 ## 2.7.0
 
 ### Patch Changes

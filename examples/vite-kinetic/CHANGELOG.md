@@ -1,5 +1,14 @@
 # @vitus-labs/example-vite-kinetic
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @vitus-labs/hooks@2.7.1
+  - @vitus-labs/kinetic@2.7.1
+  - @vitus-labs/kinetic-presets@2.7.1
+
 ## 0.0.9
 
 ### Patch Changes
