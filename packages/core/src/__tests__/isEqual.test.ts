@@ -112,4 +112,44 @@ describe('isEqual', () => {
     expect(isEqual([], {})).toBe(false)
     expect(isEqual(0, false)).toBe(false)
   })
+
+  // Cycle detection — regression for "Maximum call stack size exceeded"
+  // observed when consumer apps pass props with self/mutual references
+  // (e.g. React internals: fiber owners, refs back to elements) through
+  // `useStableValue`.
+  it('handles self-referential objects without stack overflow', () => {
+    const a: Record<string, unknown> = { x: 1 }
+    a.self = a
+    const b: Record<string, unknown> = { x: 1 }
+    b.self = b
+    expect(isEqual(a, b)).toBe(true)
+  })
+
+  it('handles mutually-referential object pairs', () => {
+    const a1: Record<string, unknown> = {}
+    const b1: Record<string, unknown> = {}
+    a1.other = b1
+    b1.other = a1
+    const a2: Record<string, unknown> = {}
+    const b2: Record<string, unknown> = {}
+    a2.other = b2
+    b2.other = a2
+    expect(isEqual(a1, a2)).toBe(true)
+  })
+
+  it('still detects differences inside cyclic structures', () => {
+    const a: Record<string, unknown> = { x: 1 }
+    a.self = a
+    const b: Record<string, unknown> = { x: 2 }
+    b.self = b
+    expect(isEqual(a, b)).toBe(false)
+  })
+
+  it('handles self-referential arrays', () => {
+    const a: unknown[] = [1, 2]
+    a.push(a)
+    const b: unknown[] = [1, 2]
+    b.push(b)
+    expect(isEqual(a, b)).toBe(true)
+  })
 })
