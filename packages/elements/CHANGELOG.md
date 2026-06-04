@@ -1,5 +1,73 @@
 # @vitus-labs/elements
 
+## 2.7.0
+
+### Minor Changes
+
+- [#274](https://github.com/vitus-labs/ui-system/pull/274) [`b4bba44`](https://github.com/vitus-labs/ui-system/commit/b4bba443b1cfb24dc350f99bba4fd2b2ca1818cd) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - `elements`: `Overlay` (modal) auto-traps focus and locks page scroll while open. Focus selector widened to include `contenteditable`, `video[controls]`, `audio[controls]`, `summary`. Hooks inlined — no `@vitus-labs/hooks` peer.
+  - `hooks`: add `useLocalStorage`, `useEventListener`, `useCopyToClipboard`, `useResizeObserver`.
+  - `unistyle`: add `between(breakpoints, minKey, maxKey)` for closed-range media queries; dev warning for unknown theme keys; CI-enforced `ITheme` ↔ `propertyMap` parity test.
+  - `styler`: hash-collision dev warning in `sheet`.
+  - `kinetic`: fix `Stagger.native` dropping per-child `delay`; `Transition.native` honors `useReducedMotion`.
+  - `connector-emotion` + `connector-styled-components`: per-connector smoke tests; broken `useCSS` shims removed (now styler-only).
+
+### Patch Changes
+
+- [#278](https://github.com/vitus-labs/ui-system/pull/278) [`34e4994`](https://github.com/vitus-labs/ui-system/commit/34e499472d94c9b081be5af54a496d200b1fc6e4) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Performance and correctness pass on `@vitus-labs/elements`:
+
+  - `Element` and `Wrapper` are now wrapped in `memo()` — parent re-renders no longer re-execute the full body when props are referentially stable. VL statics (`displayName`/`pkgName`/`VITUS_LABS__COMPONENT`) attach to the memoized wrapper so rocketstyle/attrs detection still works.
+  - `Element` `WRAPPER_PROPS` literal removed — keys inlined into the JSX so the build-then-spread copy pass disappears. `Wrapper` `COMMON_PROPS` literal removed the same way.
+  - `Wrapper`'s three separate `useMemo` calls (`normalElement`/`parentFixElement`/`childFixElement`) collapsed into one — each render previously paid the dep-array compare cost for all three even though only one shape is used.
+  - `Element` `mergedRef` is now ref-stable. The previous `useCallback` listed `externalRef` in its deps, so an inline parent ref-callback caused React to detach/attach the DOM ref every render.
+  - `useOverlay`: `onOpen`/`onClose` ref-captured. The previous dep array re-ran the lifecycle effect on every parent render and fired spurious `onClose`/`setUnblocked` cleanup callbacks while the overlay was still open.
+  - `useOverlay`: `isNodeOrChild` curry replaced with two stable predicates allocated once. The old shape allocated two fresh closures per click event.
+  - `useOverlay`: click listener uses `document` instead of `window` (one fewer propagation hop, matches `useFocusTrap`'s convention).
+  - `useFocusTrap`: `for…of` over `NodeList` swapped for an index loop (no iterator-protocol allocation). MutationObserver refreshes coalesced via `requestAnimationFrame` so a burst of child mounts doesn't re-run `querySelectorAll` per mutation.
+  - `Element/equalize`: skip the style write when both sides are already equal AND non-zero. Breaks a potential `ResizeObserver` loop in real browsers without affecting jsdom (where sizes always read 0).
+  - `Overlay/component`: dropped two `useMemo` calls over primitive results (`passHandlers`, `ariaHasPopup`) where memo bookkeeping exceeded the recomputation cost. Replaced `...(cond ? { … } : {})` ternaries with conditional property assignment — no per-render `{}` allocation.
+  - `Util/component`: dropped `useMemo` over a one-shot string `join(' ')`.
+  - `positionMath`: hoisted `['dropdown', 'tooltip', 'popover'].includes(type)` into a module-level `Set` lookup. The array literal allocated per `computePosition` call (throttled scroll/resize hot path).
+  - `Content/styled`: deduped identical `equalColsCSS` and `typeContentCSS` literals into one `FLEX_1` constant.
+
+  Dead code removed:
+
+  - `types.ts`: drop `SimpleHoc`, `CssCallback`, `isEmpty`, `Ref`, `ExtractProps`, `VLForwardedComponent` — zero monorepo consumers; `SimpleHoc`/`ExtractProps` were also drift hazards (different shapes in attrs/rocketstyle).
+  - `Element/constants.ts`: drop `RESERVED_PROPS` (unused; `Iterator` has its own); drop `keygen` from `EMPTY_ELEMENTS` (removed from HTML5 spec in 2017).
+  - `helpers/Wrapper/types.ts`: drop `Reference = unknown` (unused).
+
+- [#276](https://github.com/vitus-labs/ui-system/pull/276) [`d25e339`](https://github.com/vitus-labs/ui-system/commit/d25e3393a7af48c2367986a6e77f70b2812235c0) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - `elements/Overlay`: strip `body.overflow` management from `useScrollReposition`. `useScrollLock` is now the sole owner, gated on `isContentLoaded`. Fixes a silent permanent scroll-lock on async-mount modals.
+
+  - `elements/Overlay/useOverlay`: remove `prevFocusRef` (set, never read) and its dead effect.
+  - `kinetic`: `Transition.tsx` honors the `delay` prop (was advertised, ignored on web).
+  - `hooks`: drop `useFocus` and `useHover` from the native re-exports — they return DOM-only handler names that no RN component fires.
+  - `coolgrid`: delete `Container/utils.ts:getContainerWidth` — exported but only consumed by its own tests.
+
+- [#268](https://github.com/vitus-labs/ui-system/pull/268) [`a99742a`](https://github.com/vitus-labs/ui-system/commit/a99742a27279399f4533fb7f620ca036c7075c6f) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `omit()` now accepts a prebuilt `ReadonlySet` of keys in addition to an array, and the three per-render callers feed it a stable Set so the lookup Set is no longer rebuilt on every render.
+
+  **Why**
+
+  `omit` builds `new Set(keys)` internally for O(1) lookups. When the key list is stable for a component's lifetime — which it is at every render-path caller — that Set was being reconstructed every render for nothing. The Set construction dominates the call cost when the source object is small (the usual case for props).
+
+  Three hot callers, all previously passing a stable key array and paying the rebuild:
+
+  - **rocketstyle** (`rocketstyle.tsx`, `finalProps` assembly) — additionally rebuilt a 3-way `[...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS, ...options.filterAttrs]` array each render. Now memoized into a single `Set` via `useMemo` (all three sources are stable for the instance).
+  - **elements/List** — built a module-scope `Set` from the constant `Iterator.RESERVED_PROPS`.
+  - **attrs** — built the `Set` once in the factory closure from `options.filterAttrs` (fixed at component-config time).
+
+  `omit` stays fully backward compatible: array callers hit the same `new Set(keys)` path as before; only the internal length check moved from `keys.length` to `keysSet.size`.
+
+  **Measured delta**
+
+  Head-to-head microbench (median of 5 passes), realistic `finalProps` call: ~18-key mergeProps (dimension keywords + DOM/component props), 18 stable omit keys. Outputs byte-identical across all three strategies.
+
+  | Strategy                                 | V8 (Node)             | JSC (Bun)             |
+  | ---------------------------------------- | --------------------- | --------------------- |
+  | current (concat + `new Set` each render) | 1.6M ops/s            | 1.5M ops/s            |
+  | memoized array (Set still rebuilt)       | 1.7M ops/s (+5%)      | 1.5M ops/s (+2%)      |
+  | **prebuilt Set (this change)**           | **3.0M ops/s (+47%)** | **6.5M ops/s (+77%)** |
+
+  Memoizing the array alone barely moves the needle — the per-render `new Set` rebuild is the real cost, and passing a prebuilt Set removes it entirely.
+
 ## 2.6.2
 
 ### Patch Changes

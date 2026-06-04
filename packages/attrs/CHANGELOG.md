@@ -1,5 +1,52 @@
 # @vitus-labs/attrs
 
+## 2.7.0
+
+### Patch Changes
+
+- [#268](https://github.com/vitus-labs/ui-system/pull/268) [`a99742a`](https://github.com/vitus-labs/ui-system/commit/a99742a27279399f4533fb7f620ca036c7075c6f) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `omit()` now accepts a prebuilt `ReadonlySet` of keys in addition to an array, and the three per-render callers feed it a stable Set so the lookup Set is no longer rebuilt on every render.
+
+  **Why**
+
+  `omit` builds `new Set(keys)` internally for O(1) lookups. When the key list is stable for a component's lifetime — which it is at every render-path caller — that Set was being reconstructed every render for nothing. The Set construction dominates the call cost when the source object is small (the usual case for props).
+
+  Three hot callers, all previously passing a stable key array and paying the rebuild:
+
+  - **rocketstyle** (`rocketstyle.tsx`, `finalProps` assembly) — additionally rebuilt a 3-way `[...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS, ...options.filterAttrs]` array each render. Now memoized into a single `Set` via `useMemo` (all three sources are stable for the instance).
+  - **elements/List** — built a module-scope `Set` from the constant `Iterator.RESERVED_PROPS`.
+  - **attrs** — built the `Set` once in the factory closure from `options.filterAttrs` (fixed at component-config time).
+
+  `omit` stays fully backward compatible: array callers hit the same `new Set(keys)` path as before; only the internal length check moved from `keys.length` to `keysSet.size`.
+
+  **Measured delta**
+
+  Head-to-head microbench (median of 5 passes), realistic `finalProps` call: ~18-key mergeProps (dimension keywords + DOM/component props), 18 stable omit keys. Outputs byte-identical across all three strategies.
+
+  | Strategy                                 | V8 (Node)             | JSC (Bun)             |
+  | ---------------------------------------- | --------------------- | --------------------- |
+  | current (concat + `new Set` each render) | 1.6M ops/s            | 1.5M ops/s            |
+  | memoized array (Set still rebuilt)       | 1.7M ops/s (+5%)      | 1.5M ops/s (+2%)      |
+  | **prebuilt Set (this change)**           | **3.0M ops/s (+47%)** | **6.5M ops/s (+77%)** |
+
+  Memoizing the array alone barely moves the needle — the per-render `new Set` rebuild is the real cost, and passing a prebuilt Set removes it entirely.
+
+- [#279](https://github.com/vitus-labs/ui-system/pull/279) [`fd0a6ac`](https://github.com/vitus-labs/ui-system/commit/fd0a6ac19c8171db5d407cb29d337fccfda5649d) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Performance pass on `@vitus-labs/rocketstyle` and `@vitus-labs/attrs`:
+
+  - `attrs` and `rocketstyle`: wrap the innermost `EnhancedComponent` in `memo()`. attrs' `attrsHoc` already stabilizes its output via `useStableValue` + `useMemo`; rocketstyle's `rocketstyleAttrsHoc` now follows the same pattern. With both, a content-equal parent re-render bails at the memo boundary instead of walking the HOC stack.
+  - `rocketstyleAttrsHoc`: brought to parity with `attrsHoc` (PR [#170](https://github.com/vitus-labs/ui-system/issues/170) pattern). Adds `useStableValue` + `useMemo` + a fast path for "no `.attrs()` configured" — the common case for rocketstyle components built with `.theme()`/dimensions only, which previously rebuilt every prop merge on every render.
+  - `usePseudoState`: handlers ref-captured. Consumers passing inline `onMouseEnter`/`onMouseLeave`/etc (the common React idiom) no longer churn the wrapped handler identities every render, so downstream memoization actually takes effect on interactive components.
+  - `useTheme`: drop the pointless `useMemo` wrapping `{ theme, mode, isDark, isLight }`. All call sites destructure the primitives; the memo bookkeeping cost more than the recomputation.
+  - `useRef` hooks (both packages): add empty `[]` deps to `useImperativeHandle` so the getter isn't re-registered every render.
+  - `chainOrOptions` + `chainReservedKeyOptions` (rocketstyle): replace `reduce-with-spread-accumulator` (O(K²)) with single-pass mutation (O(K)).
+  - `validateInit` (rocketstyle): replace nested `.some()` with module-level `Set` lookup (O(R + D) instead of O(R × D)).
+  - `calculateChainOptions` (both): drop the dead `const result = {}` allocation in the early-return path.
+
+  Dead code removed:
+
+  - `rocketstyle/constants/booleanTags.ts`: 33-line constant array imported by nothing in production. Only its own test referenced it.
+  - `rocketstyle/utils/theme.ts`: orphan `calculateChainOptions` (a 2-arg variant unused outside its own test; the live impl lives in `utils/attrs.ts`).
+  - `rocketstyle.tsx`: duplicate `IS_ROCKETSTYLE` + `displayName` assignment block.
+
 ## 2.6.2
 
 ### Patch Changes

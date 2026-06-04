@@ -1,5 +1,92 @@
 # @vitus-labs/rocketstyle
 
+## 2.7.0
+
+### Patch Changes
+
+- [#273](https://github.com/vitus-labs/ui-system/pull/273) [`1ff9db0`](https://github.com/vitus-labs/ui-system/commit/1ff9db072b4e7c47dde960aefde7d3991944e834) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Perf + correctness audit, round 3 — seven fixes across five packages, identified by a multi-modal codebase audit with 3-judge adversarial verification per finding.
+
+  **Correctness fix (kinetic)** — `nextFrame` now returns a canceller that aborts both rAFs. The prior implementation returned only the OUTER rAF id, so cleanup left the inner rAF live and the transition callback fired against potentially-stale or detached elements on fast toggles (open-while-closing, StrictMode double-invoke). All 6 call sites in `Transition` / `TransitionItem` / `TransitionRenderer` updated in lockstep.
+
+  **Memory hygiene**
+
+  - `styler`: `sheet.insertCache` and `sheet.prepareCache` were keyed by full cssText (200–5000 B per entry) and only cleared by HMR/SSR hooks — long-running SPAs accumulated every unique cssText forever. `evictIfNeeded()` now bounds all three caches via the existing `evictMapByPercent`.
+  - `kinetic`: `splitCache` (className → string[] memoization) was unbounded module-level Map; now capped at 256 entries with the same oldest-10%-evict pattern.
+
+  **Per-render allocations**
+
+  - `coolgrid`: `omitCtxKeys` rebuilt a 10-key Set on every Container/Row/Col render (5 components, web + native). Now uses a module-scope `CONTEXT_KEYS_SET`, matching the `omitKeysSet`/`filterAttrsSet` pattern from PR [#268](https://github.com/vitus-labs/ui-system/issues/268).
+  - `connector-native`: `styled` re-spread `forwardedProps` into `createElement` despite the object being freshly allocated one line earlier and held by no caller. Now mutates directly (mirrors the styler rawProps-mutation trick); also hoists the `shouldForwardProp` resolution to component-creation time.
+
+  **Algorithmic / consistency**
+
+  - `rocketstyle`: `removeNullableValues` was O(n²) (`.filter().reduce(spread)` allocates a fresh accumulator per step). Now O(n) single-pass, matching the sibling implementation in `@vitus-labs/attrs`.
+  - `kinetic`: `parseTransformString` allocated a fresh stateful `RegExp` on every call. `TRANSFORM_RE` now hoisted to module scope (mirrors the existing `EASING_NAMES` pattern in the same file); `lastIndex` reset per use.
+
+  Verified by 2-of-3 adversarial judges (correctness / perf / safety lenses) per finding, with 9 separate candidates refuted and excluded. Full suite 2730+ pass; 5 new lock-in tests covering the nextFrame canceller and the multi-cache eviction.
+
+- [#268](https://github.com/vitus-labs/ui-system/pull/268) [`a99742a`](https://github.com/vitus-labs/ui-system/commit/a99742a27279399f4533fb7f620ca036c7075c6f) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `omit()` now accepts a prebuilt `ReadonlySet` of keys in addition to an array, and the three per-render callers feed it a stable Set so the lookup Set is no longer rebuilt on every render.
+
+  **Why**
+
+  `omit` builds `new Set(keys)` internally for O(1) lookups. When the key list is stable for a component's lifetime — which it is at every render-path caller — that Set was being reconstructed every render for nothing. The Set construction dominates the call cost when the source object is small (the usual case for props).
+
+  Three hot callers, all previously passing a stable key array and paying the rebuild:
+
+  - **rocketstyle** (`rocketstyle.tsx`, `finalProps` assembly) — additionally rebuilt a 3-way `[...RESERVED_STYLING_PROPS_KEYS, ...PSEUDO_KEYS, ...options.filterAttrs]` array each render. Now memoized into a single `Set` via `useMemo` (all three sources are stable for the instance).
+  - **elements/List** — built a module-scope `Set` from the constant `Iterator.RESERVED_PROPS`.
+  - **attrs** — built the `Set` once in the factory closure from `options.filterAttrs` (fixed at component-config time).
+
+  `omit` stays fully backward compatible: array callers hit the same `new Set(keys)` path as before; only the internal length check moved from `keys.length` to `keysSet.size`.
+
+  **Measured delta**
+
+  Head-to-head microbench (median of 5 passes), realistic `finalProps` call: ~18-key mergeProps (dimension keywords + DOM/component props), 18 stable omit keys. Outputs byte-identical across all three strategies.
+
+  | Strategy                                 | V8 (Node)             | JSC (Bun)             |
+  | ---------------------------------------- | --------------------- | --------------------- |
+  | current (concat + `new Set` each render) | 1.6M ops/s            | 1.5M ops/s            |
+  | memoized array (Set still rebuilt)       | 1.7M ops/s (+5%)      | 1.5M ops/s (+2%)      |
+  | **prebuilt Set (this change)**           | **3.0M ops/s (+47%)** | **6.5M ops/s (+77%)** |
+
+  Memoizing the array alone barely moves the needle — the per-render `new Set` rebuild is the real cost, and passing a prebuilt Set removes it entirely.
+
+- [#266](https://github.com/vitus-labs/ui-system/pull/266) [`d61892e`](https://github.com/vitus-labs/ui-system/commit/d61892ea0010d91eba81dd6a214dcb9f91554641) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `calculateStylingAttrs`: drop per-render allocations on the dimension-resolution hot path. Replace `Object.keys(dimensions).forEach` and `Object.entries(result).forEach` with `for…in` loops, and replace the per-dimension `new Set(Object.keys(dimensions[key]))` keyword lookup with direct `Object.hasOwn` membership.
+
+  **Why**
+
+  `calculateStylingAttrs` runs in the `EnhancedComponent` render body (rocketstyle.tsx:351) — once per render of every rocketstyle-wrapped component, not memoized. The old implementation allocated, per render: a keys array + closure for `Object.keys(dimensions).forEach`, an entries array + closure for `Object.entries(result).forEach`, and — for each unresolved boolean dimension — a fresh `Set` plus its backing `Object.keys` array. The `Set` is rebuilt every render even though `dimensions[key]` is a stable config object, so the keyword membership was recomputed from scratch each time.
+
+  `Object.hasOwn(dimensions[key], k)` is the exact equivalent of the prior `keywordSet.has(k)` (own enumerable keys of a plain config object) with zero allocation, and matches the `for…in` precedent already established by `pickStyledAttrs` directly above.
+
+  **Measured delta**
+
+  Head-to-head microbench (median of 5 passes, interleaved to neutralize drift), realistic fixture: 3 dimensions (~4–5 keywords each), `useBooleans` on, props = mix of dimension keywords + typical non-dimension props (`className`, `onClick`, `children`, `data-*`, `aria-*`, `style`, …). Outputs byte-identical between old and new.
+
+  | Engine    | Old        | New        | Δ        |
+  | --------- | ---------- | ---------- | -------- |
+  | V8 (Node) | 2.0M ops/s | 2.3M ops/s | **+13%** |
+  | JSC (Bun) | 1.7M ops/s | 8.6M ops/s | **+79%** |
+
+  JavaScriptCore optimizes the `for…in` + `Object.hasOwn` form far better than `Object.keys`/`forEach`/`Set`; V8 gains are smaller but consistent. The rewrite is simpler code and faster on both engines.
+
+- [#279](https://github.com/vitus-labs/ui-system/pull/279) [`fd0a6ac`](https://github.com/vitus-labs/ui-system/commit/fd0a6ac19c8171db5d407cb29d337fccfda5649d) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Performance pass on `@vitus-labs/rocketstyle` and `@vitus-labs/attrs`:
+
+  - `attrs` and `rocketstyle`: wrap the innermost `EnhancedComponent` in `memo()`. attrs' `attrsHoc` already stabilizes its output via `useStableValue` + `useMemo`; rocketstyle's `rocketstyleAttrsHoc` now follows the same pattern. With both, a content-equal parent re-render bails at the memo boundary instead of walking the HOC stack.
+  - `rocketstyleAttrsHoc`: brought to parity with `attrsHoc` (PR [#170](https://github.com/vitus-labs/ui-system/issues/170) pattern). Adds `useStableValue` + `useMemo` + a fast path for "no `.attrs()` configured" — the common case for rocketstyle components built with `.theme()`/dimensions only, which previously rebuilt every prop merge on every render.
+  - `usePseudoState`: handlers ref-captured. Consumers passing inline `onMouseEnter`/`onMouseLeave`/etc (the common React idiom) no longer churn the wrapped handler identities every render, so downstream memoization actually takes effect on interactive components.
+  - `useTheme`: drop the pointless `useMemo` wrapping `{ theme, mode, isDark, isLight }`. All call sites destructure the primitives; the memo bookkeeping cost more than the recomputation.
+  - `useRef` hooks (both packages): add empty `[]` deps to `useImperativeHandle` so the getter isn't re-registered every render.
+  - `chainOrOptions` + `chainReservedKeyOptions` (rocketstyle): replace `reduce-with-spread-accumulator` (O(K²)) with single-pass mutation (O(K)).
+  - `validateInit` (rocketstyle): replace nested `.some()` with module-level `Set` lookup (O(R + D) instead of O(R × D)).
+  - `calculateChainOptions` (both): drop the dead `const result = {}` allocation in the early-return path.
+
+  Dead code removed:
+
+  - `rocketstyle/constants/booleanTags.ts`: 33-line constant array imported by nothing in production. Only its own test referenced it.
+  - `rocketstyle/utils/theme.ts`: orphan `calculateChainOptions` (a 2-arg variant unused outside its own test; the live impl lives in `utils/attrs.ts`).
+  - `rocketstyle.tsx`: duplicate `IS_ROCKETSTYLE` + `displayName` assignment block.
+
 ## 2.6.2
 
 ### Patch Changes

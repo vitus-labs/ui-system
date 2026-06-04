@@ -1,5 +1,18 @@
 # @vitus-labs/example-nextjs-styler
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`34e4994`](https://github.com/vitus-labs/ui-system/commit/34e499472d94c9b081be5af54a496d200b1fc6e4), [`41772d9`](https://github.com/vitus-labs/ui-system/commit/41772d95bf281cb00b61ec34d813def70a6ce1dc), [`d25e339`](https://github.com/vitus-labs/ui-system/commit/d25e3393a7af48c2367986a6e77f70b2812235c0), [`1ff9db0`](https://github.com/vitus-labs/ui-system/commit/1ff9db072b4e7c47dde960aefde7d3991944e834), [`a99742a`](https://github.com/vitus-labs/ui-system/commit/a99742a27279399f4533fb7f620ca036c7075c6f), [`d61892e`](https://github.com/vitus-labs/ui-system/commit/d61892ea0010d91eba81dd6a214dcb9f91554641), [`4d301dd`](https://github.com/vitus-labs/ui-system/commit/4d301dd85507a1d7018d00eeb4ecc7e4cf0bafad), [`a5d7f8b`](https://github.com/vitus-labs/ui-system/commit/a5d7f8ba326f1208335305dd2ea076bca8b57274), [`fd0a6ac`](https://github.com/vitus-labs/ui-system/commit/fd0a6ac19c8171db5d407cb29d337fccfda5649d), [`b4bba44`](https://github.com/vitus-labs/ui-system/commit/b4bba443b1cfb24dc350f99bba4fd2b2ca1818cd)]:
+  - @vitus-labs/elements@2.7.0
+  - @vitus-labs/unistyle@2.7.0
+  - @vitus-labs/coolgrid@2.7.0
+  - @vitus-labs/styler@2.7.0
+  - @vitus-labs/rocketstyle@2.7.0
+  - @vitus-labs/core@2.7.0
+  - @vitus-labs/connector-styler@2.7.0
+
 ## 0.0.8
 
 ### Patch Changes
