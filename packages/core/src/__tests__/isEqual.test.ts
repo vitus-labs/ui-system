@@ -152,4 +152,39 @@ describe('isEqual', () => {
     b.push(b)
     expect(isEqual(a, b)).toBe(true)
   })
+
+  // Asymmetric cycle — `a` cycles to itself; `b1` and `b2` cycle to each
+  // other. Naive seen-by-`a`-only tracking overwrites between
+  // `(a, b1)` and `(a, b2)` and infinite-recurses. Real consumer-side
+  // graphs hit this (React internals back-refs, mutually-referential
+  // contexts). We accept treating these as "equal" — structural
+  // inequality in cyclic graphs is graph isomorphism (NP-hard); the
+  // contract is "do not crash".
+  it('handles asymmetric cycles without stack overflow', () => {
+    const a: Record<string, unknown> = {}
+    a.next = a
+    const b1: Record<string, unknown> = {}
+    const b2: Record<string, unknown> = {}
+    b1.next = b2
+    b2.next = b1
+    expect(() => isEqual(a, b1)).not.toThrow()
+  })
+
+  it('handles long cyclic chains', () => {
+    const head1: Record<string, unknown> = {}
+    let cur1 = head1
+    const head2: Record<string, unknown> = {}
+    let cur2 = head2
+    for (let i = 0; i < 50; i++) {
+      const next1: Record<string, unknown> = { i }
+      cur1.next = next1
+      cur1 = next1
+      const next2: Record<string, unknown> = { i }
+      cur2.next = next2
+      cur2 = next2
+    }
+    cur1.next = head1
+    cur2.next = head2
+    expect(isEqual(head1, head2)).toBe(true)
+  })
 })
