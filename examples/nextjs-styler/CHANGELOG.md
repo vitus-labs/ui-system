@@ -1,5 +1,18 @@
 # @vitus-labs/example-nextjs-styler
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies [[`b9ae0ab`](https://github.com/vitus-labs/ui-system/commit/b9ae0abf8236cde48e8a4a6873e2353fa5c3d605)]:
+  - @vitus-labs/core@2.7.1
+  - @vitus-labs/connector-styler@2.7.1
+  - @vitus-labs/coolgrid@2.7.1
+  - @vitus-labs/elements@2.7.1
+  - @vitus-labs/rocketstyle@2.7.1
+  - @vitus-labs/styler@2.7.1
+  - @vitus-labs/unistyle@2.7.1
+
 ## 0.0.9
 
 ### Patch Changes
