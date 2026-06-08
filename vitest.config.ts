@@ -24,10 +24,10 @@ export default defineConfig({
       // Storage-typed storageArea). Re-ratchet whenever genuine
       // coverage improves on real paths.
       thresholds: {
-        statements: 98.0,
-        branches: 93.0,
-        functions: 98.2,
-        lines: 98.8,
+        statements: 98.08,
+        branches: 93.14,
+        functions: 98.28,
+        lines: 98.88,
       },
     },
   },
