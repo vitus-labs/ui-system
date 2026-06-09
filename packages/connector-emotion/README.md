@@ -1,17 +1,23 @@
 <!-- LOGO:BEGIN -->
-<p align="left">
+<div align="center">
+<table align="center" border="0" cellpadding="0" cellspacing="0"><tr>
+<td valign="middle">
   <a href="https://github.com/vitus-labs/ui-system">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-dark.svg">
-      <img alt="vitus·labs" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-light.svg" width="48" height="48">
+      <img alt="vitus·labs" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-light.svg" width="56" height="56">
     </picture>
   </a>
-  &nbsp;&nbsp;&nbsp;
+</td>
+<td width="20">&nbsp;</td>
+<td valign="middle">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/connector-emotion/assets/logo-dark.svg">
-    <img alt="@vitus-labs/connector-emotion" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/connector-emotion/assets/logo-light.svg" width="96" height="96">
+    <img alt="@vitus-labs/connector-emotion" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/connector-emotion/assets/logo-light.svg" width="72" height="72">
   </picture>
-</p>
+</td>
+</tr></table>
+</div>
 <!-- LOGO:END -->
 
 # @vitus-labs/connector-emotion
