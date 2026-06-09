@@ -1,10 +1,10 @@
 <!-- LOGO:BEGIN -->
-<p align="left">
+<div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/vitus-labs-lockup-dark.svg">
     <img alt="vitus·labs" src="./.github/assets/vitus-labs-lockup-light.svg" height="80">
   </picture>
-</p>
+</div>
 <!-- LOGO:END -->
 
 # UI System

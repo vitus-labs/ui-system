@@ -141,7 +141,8 @@ const buildMark = (name, mode) => {
   const fg = fgFor(mode)
   const ac = accentFor(META[name].accent, mode)
   const body = glyphs[name](fg, ac)
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" role="img" aria-label="${name === 'ui-system' ? 'vitus·labs' : '@vitus-labs/' + name}">${body}</svg>\n`
+  const label = name === 'ui-system' ? 'vitus·labs' : `@vitus-labs/${name}`
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" role="img" aria-label="${label}">${body}</svg>\n`
 }
 
 // Lockup: umbrella mark + "vitus·labs" wordmark (Geist Mono).
@@ -165,30 +166,41 @@ const HEADER_END = '<!-- LOGO:END -->'
 // README always points at the latest committed art.
 const RAW = 'https://raw.githubusercontent.com/vitus-labs/ui-system/main'
 
+// `<div align="center">` + `<table align="center">` gives reliable
+// horizontal centering on both github.com and npmjs.com renderers.
+// `valign="middle"` on the cells guarantees vertical centering across the
+// two different-sized marks. `<picture>` + `prefers-color-scheme` swaps
+// the SVG variant based on the viewer's theme — readable in both modes.
 const pkgHeader = (pkg) => `${HEADER_BEGIN}
-<p align="left">
+<div align="center">
+<table align="center" border="0" cellpadding="0" cellspacing="0"><tr>
+<td valign="middle">
   <a href="https://github.com/vitus-labs/ui-system">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="${RAW}/.github/assets/vitus-labs-mark-dark.svg">
-      <img alt="vitus·labs" src="${RAW}/.github/assets/vitus-labs-mark-light.svg" width="48" height="48">
+      <img alt="vitus·labs" src="${RAW}/.github/assets/vitus-labs-mark-light.svg" width="56" height="56">
     </picture>
   </a>
-  &nbsp;&nbsp;&nbsp;
+</td>
+<td width="20">&nbsp;</td>
+<td valign="middle">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="${RAW}/packages/${pkg}/assets/logo-dark.svg">
-    <img alt="@vitus-labs/${pkg}" src="${RAW}/packages/${pkg}/assets/logo-light.svg" width="96" height="96">
+    <img alt="@vitus-labs/${pkg}" src="${RAW}/packages/${pkg}/assets/logo-light.svg" width="72" height="72">
   </picture>
-</p>
+</td>
+</tr></table>
+</div>
 ${HEADER_END}
 `
 
 const rootHeader = () => `${HEADER_BEGIN}
-<p align="left">
+<div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/vitus-labs-lockup-dark.svg">
     <img alt="vitus·labs" src="./.github/assets/vitus-labs-lockup-light.svg" height="80">
   </picture>
-</p>
+</div>
 ${HEADER_END}
 `
 
