@@ -1,22 +1,16 @@
 <!-- LOGO:BEGIN -->
 <div align="center">
-<table align="center" border="0" cellpadding="0" cellspacing="0"><tr>
-<td valign="middle">
   <a href="https://github.com/vitus-labs/ui-system">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-dark.svg">
-      <img alt="vitus·labs" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-light.svg" width="56" height="56">
+      <img alt="vitus·labs" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-light.svg" height="64">
     </picture>
   </a>
-</td>
-<td width="20">&nbsp;</td>
-<td valign="middle">
+  &nbsp;&nbsp;&nbsp;&nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/coolgrid/assets/logo-dark.svg">
-    <img alt="@vitus-labs/coolgrid" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/coolgrid/assets/logo-light.svg" width="72" height="72">
+    <img alt="@vitus-labs/coolgrid" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/coolgrid/assets/logo-light.svg" height="64">
   </picture>
-</td>
-</tr></table>
 </div>
 <!-- LOGO:END -->
 
