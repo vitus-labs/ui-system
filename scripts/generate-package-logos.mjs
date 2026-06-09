@@ -166,30 +166,24 @@ const HEADER_END = '<!-- LOGO:END -->'
 // README always points at the latest committed art.
 const RAW = 'https://raw.githubusercontent.com/vitus-labs/ui-system/main'
 
-// `<div align="center">` + `<table align="center">` gives reliable
-// horizontal centering on both github.com and npmjs.com renderers.
-// `valign="middle"` on the cells guarantees vertical centering across the
-// two different-sized marks. `<picture>` + `prefers-color-scheme` swaps
-// the SVG variant based on the viewer's theme — readable in both modes.
+// Two `<picture>` elements at the SAME height baseline-align naturally —
+// no table wrapper, so GitHub's default `<td>` border CSS can't kick in.
+// `<div align="center">` centers horizontally on both github.com and
+// npmjs.com. `<picture>` + `prefers-color-scheme` swaps the SVG variant
+// based on the viewer's theme — readable in both modes.
 const pkgHeader = (pkg) => `${HEADER_BEGIN}
 <div align="center">
-<table align="center" border="0" cellpadding="0" cellspacing="0"><tr>
-<td valign="middle">
   <a href="https://github.com/vitus-labs/ui-system">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="${RAW}/.github/assets/vitus-labs-mark-dark.svg">
-      <img alt="vitus·labs" src="${RAW}/.github/assets/vitus-labs-mark-light.svg" width="56" height="56">
+      <img alt="vitus·labs" src="${RAW}/.github/assets/vitus-labs-mark-light.svg" height="64">
     </picture>
   </a>
-</td>
-<td width="20">&nbsp;</td>
-<td valign="middle">
+  &nbsp;&nbsp;&nbsp;&nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="${RAW}/packages/${pkg}/assets/logo-dark.svg">
-    <img alt="@vitus-labs/${pkg}" src="${RAW}/packages/${pkg}/assets/logo-light.svg" width="72" height="72">
+    <img alt="@vitus-labs/${pkg}" src="${RAW}/packages/${pkg}/assets/logo-light.svg" height="64">
   </picture>
-</td>
-</tr></table>
 </div>
 ${HEADER_END}
 `
