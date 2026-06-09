@@ -1,3 +1,12 @@
+<!-- LOGO:BEGIN -->
+<p align="left">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/vitus-labs-lockup-dark.svg">
+    <img alt="vitus·labs" src="./.github/assets/vitus-labs-lockup-light.svg" height="80">
+  </picture>
+</p>
+<!-- LOGO:END -->
+
 # UI System
 
 A composable toolkit for building React UI systems.
