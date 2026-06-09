@@ -17,6 +17,7 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "rewrite-workspace-peers": "node scripts/rewrite-workspace-peers.mjs",
+    "logos": "bun scripts/generate-package-logos.mjs",
     "release": "bun run rewrite-workspace-peers && changeset publish",
     "lint": "biome check packages/*/src/",
     "pkgs:clean": "rm -rf node_modules/ bun.lock && bun install",

@@ -1,3 +1,19 @@
+<!-- LOGO:BEGIN -->
+<p align="left">
+  <a href="https://github.com/vitus-labs/ui-system">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-dark.svg">
+      <img alt="vitus·labs" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/.github/assets/vitus-labs-mark-light.svg" width="48" height="48">
+    </picture>
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/rocketstories/assets/logo-dark.svg">
+    <img alt="@vitus-labs/rocketstories" src="https://raw.githubusercontent.com/vitus-labs/ui-system/main/packages/rocketstories/assets/logo-light.svg" width="96" height="96">
+  </picture>
+</p>
+<!-- LOGO:END -->
+
 # @vitus-labs/rocketstories
 
 Auto-generated Storybook stories from rocketstyle components.
