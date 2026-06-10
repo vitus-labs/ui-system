@@ -78,6 +78,6 @@
     "@vitus-labs/tools-typescript": "2.5.0",
     "@vitus-labs/unistyle": "workspace:*",
     "jsdom": "^29.1.1",
-    "tinybench": "^6.0.1"
+    "tinybench": "^6.0.2"
   }
 }
