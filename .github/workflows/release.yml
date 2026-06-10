@@ -28,10 +28,43 @@ jobs:
         with:
           egress-policy: audit
 
+      # Resolve the token used to push the Version PR commit / publish tags.
+      # Order: GitHub App (preferred — no expiration, machine identity) →
+      # `RELEASE_PAT` (PAT fallback, expires) → `GITHUB_TOKEN` (last resort —
+      # WILL leave the Version PR with empty CI checks because GitHub
+      # suppresses workflows triggered by GITHUB_TOKEN events).
+      - name: Mint GitHub App token
+        id: app_token
+        if: ${{ vars.RELEASE_APP_ID != '' }}
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Resolve release token
+        id: token
+        env:
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
+          PAT_TOKEN: ${{ secrets.RELEASE_PAT }}
+        run: |
+          if [ -n "$APP_TOKEN" ]; then
+            echo "source=github-app" >> "$GITHUB_OUTPUT"
+            echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
+            echo "::notice::Release auth: GitHub App (preferred — checks will fire on the Version PR)."
+          elif [ -n "$PAT_TOKEN" ]; then
+            echo "source=pat" >> "$GITHUB_OUTPUT"
+            echo "token=$PAT_TOKEN" >> "$GITHUB_OUTPUT"
+            echo "::notice::Release auth: RELEASE_PAT — checks will fire on the Version PR."
+          else
+            echo "source=github-token" >> "$GITHUB_OUTPUT"
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Version PR will have empty checks::No RELEASE_APP_ID/RELEASE_PAT configured — falling back to GITHUB_TOKEN. The Version PR will land with no CI runs and require a manual close+reopen to trigger them. See CONTRIBUTING.md → Releases → Setup."
+          fi
+
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.token.outputs.token }}
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -84,12 +117,11 @@ jobs:
           title: 'chore: version packages'
           commit: 'chore: version packages'
         env:
-          # Prefer a fine-grained PAT (`RELEASE_PAT`) when present so
-          # commits the action pushes to the Version PR's branch trigger
-          # downstream workflows (CI on the Version PR). Falls back to
-          # the default token, which works for everything except trigger
-          # propagation. See CONTRIBUTING.md → Releases → Setup.
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          # Token resolved in the `Resolve release token` step above.
+          # App / PAT pushes trigger downstream CI on the Version PR;
+          # bare GITHUB_TOKEN does not — that's the empty-checks footgun
+          # that historically required close+reopen on every release.
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
           # Emit npm provenance attestations — the job already grants
           # `id-token: write` for OIDC trusted publishing; this makes npm
           # actually attach the attestation to every published package.
