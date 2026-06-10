@@ -116,6 +116,14 @@ jobs:
           publish: bun run release
           title: 'chore: version packages'
           commit: 'chore: version packages'
+          # Disable the built-in per-package GitHub Releases — the
+          # "Create umbrella GitHub Release" step below ships a single
+          # `vX.Y.Z` release for the fixed-group suite instead. Without
+          # this, the action ALSO creates 15 per-package releases (it
+          # defaults to true when `publish` is set), cluttering the
+          # releases page and re-triggering the per-package iteration that
+          # was observed hanging mid-run on the 2.2.0 release.
+          createGithubReleases: false
         env:
           # Token resolved in the `Resolve release token` step above.
           # App / PAT pushes trigger downstream CI on the Version PR;
