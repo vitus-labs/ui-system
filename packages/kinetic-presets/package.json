@@ -1,6 +1,6 @@
 {
   "name": "@vitus-labs/kinetic-presets",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "65+ animation presets, factories, and composition utilities for @vitus-labs/kinetic",
   "license": "MIT",
   "author": "Vit Bokisch <vit@bokisch.cz>",
