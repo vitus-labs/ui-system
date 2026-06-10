@@ -54,4 +54,33 @@ describe('useControllableState', () => {
     act(() => result.current[1]((prev: number) => prev + 1))
     expect(result.current[0]).toBe(2)
   })
+
+  it('applies consecutive functional updates within one event handler', () => {
+    const onChange = vi.fn()
+    const { result } = renderHook(() =>
+      useControllableState({ defaultValue: 0, onChange }),
+    )
+    act(() => {
+      result.current[1]((prev: number) => prev + 1)
+      result.current[1]((prev: number) => prev + 1)
+    })
+    expect(result.current[0]).toBe(2)
+    expect(onChange).toHaveBeenNthCalledWith(1, 1)
+    expect(onChange).toHaveBeenNthCalledWith(2, 2)
+  })
+
+  it('computes functional updates from the latest value in stale closures', () => {
+    const { result } = renderHook(() =>
+      useControllableState({ defaultValue: 0 }),
+    )
+    // capture setValue from the initial render
+    const staleSetValue = result.current[1]
+
+    act(() => result.current[1](10))
+    expect(result.current[0]).toBe(10)
+
+    // the stale reference must still compute from the latest value
+    act(() => staleSetValue((prev: number) => prev + 1))
+    expect(result.current[0]).toBe(11)
+  })
 })

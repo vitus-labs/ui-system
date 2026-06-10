@@ -53,13 +53,16 @@ const Provider: FC<TProvider> = ({ theme, children, ...props }) => {
     return undefined
   }, [breakpoints, rootSize])
 
-  const result = {
-    ...theme,
-    __VITUS_LABS__: {
-      sortedBreakpoints,
-      media,
-    },
-  }
+  const result = useMemo(
+    () => ({
+      ...theme,
+      __VITUS_LABS__: {
+        sortedBreakpoints,
+        media,
+      },
+    }),
+    [theme, sortedBreakpoints, media],
+  )
 
   return (
     <CoreProvider theme={result} {...props}>

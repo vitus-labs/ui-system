@@ -25,6 +25,7 @@ const useWindowResize: UseWindowResize = (
   { width = 0, height = 0 } = {},
 ) => {
   const [windowSize, setWindowSize] = useState({ width, height })
+  const lastSizesRef = useRef({ width, height })
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
@@ -34,8 +35,17 @@ const useWindowResize: UseWindowResize = (
       height: window.innerHeight,
     }
 
-    setWindowSize(sizes)
-    if (onChangeRef.current) onChangeRef.current(sizes)
+    // Bail out of re-rendering when dimensions are unchanged
+    // (e.g. a throttle trailing call after the size settled)
+    setWindowSize((prev) =>
+      prev.width === sizes.width && prev.height === sizes.height ? prev : sizes,
+    )
+
+    const last = lastSizesRef.current
+    if (last.width !== sizes.width || last.height !== sizes.height) {
+      lastSizesRef.current = sizes
+      if (onChangeRef.current) onChangeRef.current(sizes)
+    }
   }, [])
 
   useEffect(() => {

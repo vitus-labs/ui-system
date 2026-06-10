@@ -40,7 +40,13 @@ const Provider: FC<ProviderType> = ({ theme, children, ...props }) => {
   if (ExternalProvider) {
     return (
       <VitusLabsProvider value={context}>
-        <ExternalProvider theme={theme}>{children}</ExternalProvider>
+        {/* Pass the STABILIZED theme (context.theme), not the raw prop —
+            consumers often pass inline theme literals, and the external
+            engine's ThemeProvider (styler/emotion/sc) puts this object
+            straight into its context. A fresh identity per render would
+            re-render every themed component app-wide. useStableValue
+            guarantees context.theme is deep-equal to the prop. */}
+        <ExternalProvider theme={context.theme}>{children}</ExternalProvider>
       </VitusLabsProvider>
     )
   }

@@ -135,21 +135,6 @@ const Transition = ({
     onAfterLeave,
   })
 
-  const transitionConfig = {
-    enter,
-    enterFrom,
-    enterTo,
-    leave,
-    leaveFrom,
-    leaveTo,
-    enterStyle,
-    enterToStyle,
-    enterTransition,
-    leaveStyle,
-    leaveToStyle,
-    leaveTransition,
-  }
-
   useAnimationEnd({
     ref: elementRef,
     active: (stage === 'entering' || stage === 'leaving') && !reducedMotion,
@@ -170,6 +155,24 @@ const Transition = ({
 
     if (reducedMotion) {
       return applyReducedMotion(stage, callbacksRef.current, complete)
+    }
+
+    // Built inside the effect (which fires on [stage, delay] changes and
+    // closes over fresh props) so parent re-renders don't allocate a fresh
+    // ~12-key object per render — Stagger renders n of these per update.
+    const transitionConfig = {
+      enter,
+      enterFrom,
+      enterTo,
+      leave,
+      leaveFrom,
+      leaveTo,
+      enterStyle,
+      enterToStyle,
+      enterTransition,
+      leaveStyle,
+      leaveToStyle,
+      leaveTransition,
     }
 
     // `delay` was declared in TransitionProps but silently ignored on web

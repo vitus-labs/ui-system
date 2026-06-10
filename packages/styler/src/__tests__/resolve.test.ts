@@ -204,6 +204,69 @@ describe('normalizeCSS', () => {
     })
   })
 
+  // Regression: the line-comment guard previously only protected `//`
+  // immediately after `:`, so protocol-relative URLs, path double-slashes,
+  // and string contents were destroyed.
+  describe('string and url() awareness', () => {
+    it('preserves protocol-relative URLs (url(//cdn...))', () => {
+      const result = normalizeCSS('background: url(//cdn.example.com/x.png);')
+      expect(result).toBe('background: url(//cdn.example.com/x.png);')
+    })
+
+    it('preserves double slashes inside URL paths', () => {
+      const result = normalizeCSS('background: url(https://a.com/a//b.png);')
+      expect(result).toContain('https://a.com/a//b.png')
+    })
+
+    it('preserves // inside quoted strings (content: "//")', () => {
+      const result = normalizeCSS('&::before { content: "//"; }')
+      expect(result).toContain('content: "//"')
+    })
+
+    it('preserves whitespace inside quoted strings', () => {
+      const result = normalizeCSS('content: "a  b";')
+      expect(result).toBe('content: "a  b";')
+    })
+
+    it('preserves semicolons and braces inside quoted strings', () => {
+      const result = normalizeCSS('content: ";{}";color: red;')
+      expect(result).toBe('content: ";{}";color: red;')
+    })
+
+    it('handles escaped quotes inside strings', () => {
+      const result = normalizeCSS('content: "a\\"b  c";')
+      expect(result).toBe('content: "a\\"b  c";')
+    })
+
+    it('still strips comments after a url() ends', () => {
+      const result = normalizeCSS(
+        'background: url(//cdn.com/x.png); /* note */ color: red;',
+      )
+      expect(result).toBe('background: url(//cdn.com/x.png); color: red;')
+    })
+
+    it('does not treat curl( as url(', () => {
+      // ident ending in "url" must not trigger verbatim mode — the comment
+      // after it must still strip
+      const result = normalizeCSS('width: curl(1); /* x */ color: red;')
+      expect(result).toBe('width: curl(1); color: red;')
+    })
+
+    it('preserves quoted URLs inside url("...") verbatim', () => {
+      // hits the quote-opening branch INSIDE url( — double slashes and
+      // spaces in the quoted string must survive
+      const result = normalizeCSS(
+        'background: url("https://a.com/a//b c.png");',
+      )
+      expect(result).toBe('background: url("https://a.com/a//b c.png");')
+    })
+
+    it('preserves single-quoted URLs inside url(...)', () => {
+      const result = normalizeCSS("background: url('//cdn.com/x.png');")
+      expect(result).toBe("background: url('//cdn.com/x.png');")
+    })
+  })
+
   describe('whitespace and semicolons', () => {
     it('collapses whitespace', () => {
       const result = normalizeCSS('  color:  red;   font-size:  1rem;  ')

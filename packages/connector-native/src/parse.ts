@@ -2,6 +2,13 @@ type StyleObject = Record<string, string | number>
 
 const CAMEL_RE = /-([a-z])/g
 const NUMERIC_RE = /^-?\d+(\.\d+)?$/
+// `!important` has no meaning in RN style objects — strip it before any
+// dispatch/shorthand expansion. Without this, `margin: 10px !important`
+// tokenized as two values and expanded to `{ marginRight: '!important' }`.
+// Anchored on the literal `!` (no leading \s*) so the regex can't backtrack
+// polynomially on long whitespace runs (CodeQL js/polynomial-redos); the
+// whitespace before `!` is left for the call site's trim handling.
+const IMPORTANT_RE = /!\s*important\s*$/i
 
 /**
  * Converts a kebab-case CSS property to camelCase for React Native.
@@ -153,7 +160,7 @@ export const parseCSS = (cssText: string): StyleObject => {
     if (colonIdx === -1) continue
 
     const rawProp = decl.slice(0, colonIdx)
-    const rawValue = decl.slice(colonIdx + 1)
+    const rawValue = decl.slice(colonIdx + 1).replace(IMPORTANT_RE, '')
 
     if (!rawProp.trim() || !rawValue.trim()) continue
 

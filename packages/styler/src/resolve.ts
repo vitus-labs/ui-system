@@ -127,40 +127,54 @@ export const clearNormCache = () => {
   normHotValB = ''
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
-export const normalizeCSS = (css: string): string => {
-  // Hot cache: nested so the cold-start path is a single null check.
-  // The csr-many bench (50 distinct components per tick) hits cold every call;
-  // the SSR bench hits the same key 500x in a row.
-  if (normHotKeyA !== null) {
-    if (normHotKeyA === css) return normHotValA
-    if (normHotKeyB !== null && normHotKeyB === css) {
-      // Promote B → A
-      const tk = normHotKeyA
-      const tv = normHotValA
-      normHotKeyA = normHotKeyB
-      normHotValA = normHotValB
-      normHotKeyB = tk
-      normHotValB = tv
-      return normHotValA
-    }
-  }
-  const cached = normCache.get(css)
-  if (cached !== undefined) {
-    normHotKeyB = normHotKeyA
-    normHotValB = normHotValA
-    normHotKeyA = css
-    normHotValA = cached
-    return cached
-  }
-
+// The scanner lives in its own function so `normalizeCSS` itself stays
+// SMALL: V8 only inlines callees under a bytecode-size budget, and the
+// per-render call sites (DynamicStyled) hit the hot-cache path at the top —
+// keeping that path inlineable is worth far more than saving one call on
+// the cold (cache-miss) path. Growing the scanner inside normalizeCSS
+// measurably regressed CSR throughput by breaking that inlining.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon/string/url handling inlined for perf
+const scanNormalize = (css: string): string => {
   const len = css.length
   let out = ''
   let space = false // pending space to emit before next non-whitespace char
   let last = 0 // charCode of last char written to output (0 = nothing yet)
+  let quote = 0 // 0 = not in string; else the opening quote's charCode
+  let inUrl = false // inside an unquoted url(...) — preserve verbatim
 
   for (let i = 0; i < len; i++) {
     const c = css.charCodeAt(i)
+
+    // Inside a quoted string — preserve verbatim (whitespace, //, ;, all of
+    // it). `content: "//"` and `content: "a  b"` must survive untouched.
+    if (quote !== 0) {
+      out += css[i]
+      if (c === 92 /* \ */ && i + 1 < len) {
+        // escape — emit the next char unconditionally
+        i++
+        out += css[i]
+        last = css.charCodeAt(i)
+        continue
+      }
+      if (c === quote) quote = 0
+      last = c
+      continue
+    }
+
+    // Inside unquoted url(...) — preserve verbatim so protocol-relative
+    // and path double-slashes (`url(//cdn...)`, `/a//b.png`) survive.
+    if (inUrl) {
+      if (c === 34 /* " */ || c === 39 /* ' */) {
+        quote = c
+        out += css[i]
+        last = c
+        continue
+      }
+      out += css[i]
+      if (c === 41 /* ) */) inUrl = false
+      last = c
+      continue
+    }
 
     // /* block comment */
     if (c === 47 /* / */ && css.charCodeAt(i + 1) === 42 /* * */) {
@@ -210,7 +224,61 @@ export const normalizeCSS = (css: string): string => {
 
     out += css[i]
     last = c
+
+    if (c === 34 /* " */ || c === 39 /* ' */) {
+      quote = c
+    } else if (c === 40 /* ( */) {
+      // Entering url( ? — check the 3 chars before '(' case-insensitively,
+      // and require a non-ident char (or start) before them so `curl(`
+      // doesn't match.
+      const e = out.length - 1
+      if (
+        e >= 3 &&
+        (out.charCodeAt(e - 3) | 32) === 117 /* u */ &&
+        (out.charCodeAt(e - 2) | 32) === 114 /* r */ &&
+        (out.charCodeAt(e - 1) | 32) === 108 /* l */
+      ) {
+        const before = e >= 4 ? out.charCodeAt(e - 4) | 32 : 0
+        const isIdent =
+          (before >= 97 && before <= 122) ||
+          (before >= 48 && before <= 57) ||
+          before === 45 /* - */ ||
+          before === 95 /* _ */
+        if (!isIdent) inUrl = true
+      }
+    }
   }
+
+  return out
+}
+
+export const normalizeCSS = (css: string): string => {
+  // Hot cache: nested so the cold-start path is a single null check.
+  // The csr-many bench (50 distinct components per tick) hits cold every
+  // call; the SSR bench hits the same key 500x in a row.
+  if (normHotKeyA !== null) {
+    if (normHotKeyA === css) return normHotValA
+    if (normHotKeyB !== null && normHotKeyB === css) {
+      // Promote B → A
+      const tk = normHotKeyA
+      const tv = normHotValA
+      normHotKeyA = normHotKeyB
+      normHotValA = normHotValB
+      normHotKeyB = tk
+      normHotValB = tv
+      return normHotValA
+    }
+  }
+  const cached = normCache.get(css)
+  if (cached !== undefined) {
+    normHotKeyB = normHotKeyA
+    normHotValB = normHotValA
+    normHotKeyA = css
+    normHotValA = cached
+    return cached
+  }
+
+  const out = scanNormalize(css)
 
   // Evict oldest ~10% to prevent memory leaks without cliff-edge drop
   if (normCache.size > 2000) {

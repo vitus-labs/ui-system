@@ -165,6 +165,38 @@ describe('parseCSS', () => {
       })
     })
   })
+
+  // Regression: `!important` was not stripped, so `margin: 10px !important`
+  // tokenized as two values and expanded to invalid RN styles like
+  // `{ marginRight: '!important' }`.
+  describe('!important stripping', () => {
+    it('strips !important so margin resolves to numeric 10 on all sides', () => {
+      // Single value → RN shorthand prop (applies to all four sides)
+      expect(parseCSS('margin: 10px !important')).toEqual({ margin: 10 })
+      // Multi-value → expanded longhands, all four numeric 10
+      expect(parseCSS('margin: 10px 10px !important')).toEqual({
+        marginTop: 10,
+        marginRight: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+      })
+    })
+
+    it('strips !important from single-value declarations', () => {
+      expect(parseCSS('width: 100px !important')).toEqual({ width: 100 })
+    })
+
+    it('is case-insensitive and tolerates extra whitespace', () => {
+      expect(parseCSS('width: 100px  !IMPORTANT  ')).toEqual({ width: 100 })
+      expect(parseCSS('width: 100px ! important')).toEqual({ width: 100 })
+    })
+
+    it('skips declarations whose value is only !important', () => {
+      expect(parseCSS('width: !important; height: 50px')).toEqual({
+        height: 50,
+      })
+    })
+  })
 })
 
 describe('mergeStyles', () => {

@@ -47,7 +47,7 @@
     },
     "examples/nextjs-emotion": {
       "name": "@vitus-labs/example-nextjs-emotion",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -69,7 +69,7 @@
     },
     "examples/nextjs-styled-components": {
       "name": "@vitus-labs/example-nextjs-styled-components",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@vitus-labs/connector-styled-components": "workspace:*",
         "@vitus-labs/coolgrid": "workspace:*",
@@ -90,7 +90,7 @@
     },
     "examples/nextjs-styler": {
       "name": "@vitus-labs/example-nextjs-styler",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@vitus-labs/connector-styler": "workspace:*",
         "@vitus-labs/coolgrid": "workspace:*",
@@ -111,7 +111,7 @@
     },
     "examples/vite-emotion": {
       "name": "@vitus-labs/example-vite-emotion",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -134,7 +134,7 @@
     },
     "examples/vite-kinetic": {
       "name": "@vitus-labs/example-vite-kinetic",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@vitus-labs/hooks": "workspace:*",
         "@vitus-labs/kinetic": "workspace:*",
@@ -153,7 +153,7 @@
     },
     "examples/vite-styled-components": {
       "name": "@vitus-labs/example-vite-styled-components",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@vitus-labs/connector-styled-components": "workspace:*",
         "@vitus-labs/coolgrid": "workspace:*",
@@ -175,7 +175,7 @@
     },
     "examples/vite-styler": {
       "name": "@vitus-labs/example-vite-styler",
-      "version": "0.0.8",
+      "version": "0.0.10",
       "dependencies": {
         "@vitus-labs/connector-styler": "workspace:*",
         "@vitus-labs/coolgrid": "workspace:*",
@@ -197,7 +197,7 @@
     },
     "packages/attrs": {
       "name": "@vitus-labs/attrs",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/connector-styler": "workspace:*",
         "@vitus-labs/core": "workspace:*",
@@ -216,7 +216,7 @@
     },
     "packages/connector-emotion": {
       "name": "@vitus-labs/connector-emotion",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -231,7 +231,7 @@
     },
     "packages/connector-native": {
       "name": "@vitus-labs/connector-native",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -245,7 +245,7 @@
     },
     "packages/connector-styled-components": {
       "name": "@vitus-labs/connector-styled-components",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -260,7 +260,7 @@
     },
     "packages/connector-styler": {
       "name": "@vitus-labs/connector-styler",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
@@ -275,7 +275,7 @@
     },
     "packages/coolgrid": {
       "name": "@vitus-labs/coolgrid",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -296,7 +296,7 @@
     },
     "packages/core": {
       "name": "@vitus-labs/core",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -310,7 +310,7 @@
     },
     "packages/elements": {
       "name": "@vitus-labs/elements",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "dependencies": {
         "react-is": "^19.2.4",
       },
@@ -338,7 +338,7 @@
     },
     "packages/hooks": {
       "name": "@vitus-labs/hooks",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -357,7 +357,7 @@
     },
     "packages/kinetic": {
       "name": "@vitus-labs/kinetic",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/hooks": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -375,7 +375,7 @@
     },
     "packages/kinetic-presets": {
       "name": "@vitus-labs/kinetic-presets",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/tools-rolldown": "2.5.0",
         "@vitus-labs/tools-typescript": "2.5.0",
@@ -386,7 +386,7 @@
     },
     "packages/rocketstories": {
       "name": "@vitus-labs/rocketstories",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
@@ -406,7 +406,7 @@
     },
     "packages/rocketstyle": {
       "name": "@vitus-labs/rocketstyle",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/connector-styler": "workspace:*",
         "@vitus-labs/core": "workspace:*",
@@ -426,7 +426,7 @@
     },
     "packages/styler": {
       "name": "@vitus-labs/styler",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -445,7 +445,7 @@
     },
     "packages/unistyle": {
       "name": "@vitus-labs/unistyle",
-      "version": "2.6.2",
+      "version": "2.7.1",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/tools-rolldown": "2.5.0",
@@ -460,6 +460,7 @@
   "overrides": {
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "shell-quote": "^1.8.4",
   },
   "packages": {
     "@adobe/css-tools": ["@adobe/css-tools@4.4.4", "", {}, "sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg=="],
@@ -2098,7 +2099,7 @@
 
     "shebang-regex": ["shebang-regex@3.0.0", "", {}, "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A=="],
 
-    "shell-quote": ["shell-quote@1.8.3", "", {}, "sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw=="],
+    "shell-quote": ["shell-quote@1.8.4", "", {}, "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ=="],
 
     "siginfo": ["siginfo@2.0.0", "", {}, "sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g=="],
 

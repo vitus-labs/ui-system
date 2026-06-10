@@ -371,6 +371,23 @@ Key differences:
 | CSS nesting | Preprocessed | Native (no transform) |
 | `attrs()` | Yes | Use `@vitus-labs/attrs` |
 
+## Security
+
+Interpolated values are **trusted by contract** — the same model as styled-components and Emotion. Values are stringified and concatenated into CSS without sanitization, so interpolating untrusted third-party data (user input, URL params, API responses) can inject arbitrary CSS rules:
+
+```tsx
+// ❌ DON'T — untrusted input can break out of the declaration
+const Avatar = styled.div`background-image: url(${userProvidedUrl});`
+
+// ✅ DO — validate/allowlist untrusted values before interpolating
+const safe = ALLOWED_COLORS.has(input) ? input : 'inherit'
+const Tag = styled.span`color: ${safe};`
+```
+
+CSS injection can't execute script, but it can exfiltrate data (attribute selectors + `background-image: url(...)` beacons) and deface the page. Treat template interpolations like you'd treat `dangerouslySetInnerHTML`: developer-controlled values only.
+
+SSR output is safe against `</style>` breakout — React 19 escapes style-element children, and the manual `getStyleTag()` path neutralizes the sequence as well.
+
 ## License
 
 MIT
