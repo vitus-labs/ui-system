@@ -251,6 +251,20 @@ describe('normalizeCSS', () => {
       const result = normalizeCSS('width: curl(1); /* x */ color: red;')
       expect(result).toBe('width: curl(1); color: red;')
     })
+
+    it('preserves quoted URLs inside url("...") verbatim', () => {
+      // hits the quote-opening branch INSIDE url( — double slashes and
+      // spaces in the quoted string must survive
+      const result = normalizeCSS(
+        'background: url("https://a.com/a//b c.png");',
+      )
+      expect(result).toBe('background: url("https://a.com/a//b c.png");')
+    })
+
+    it('preserves single-quoted URLs inside url(...)', () => {
+      const result = normalizeCSS("background: url('//cdn.com/x.png');")
+      expect(result).toBe("background: url('//cdn.com/x.png');")
+    })
   })
 
   describe('whitespace and semicolons', () => {

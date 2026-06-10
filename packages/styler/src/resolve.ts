@@ -127,33 +127,14 @@ export const clearNormCache = () => {
   normHotValB = ''
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon handling inlined for perf
-export const normalizeCSS = (css: string): string => {
-  // Hot cache: nested so the cold-start path is a single null check.
-  // The csr-many bench (50 distinct components per tick) hits cold every call;
-  // the SSR bench hits the same key 500x in a row.
-  if (normHotKeyA !== null) {
-    if (normHotKeyA === css) return normHotValA
-    if (normHotKeyB !== null && normHotKeyB === css) {
-      // Promote B → A
-      const tk = normHotKeyA
-      const tv = normHotValA
-      normHotKeyA = normHotKeyB
-      normHotValA = normHotValB
-      normHotKeyB = tk
-      normHotValB = tv
-      return normHotValA
-    }
-  }
-  const cached = normCache.get(css)
-  if (cached !== undefined) {
-    normHotKeyB = normHotKeyA
-    normHotValB = normHotValA
-    normHotKeyA = css
-    normHotValA = cached
-    return cached
-  }
-
+// The scanner lives in its own function so `normalizeCSS` itself stays
+// SMALL: V8 only inlines callees under a bytecode-size budget, and the
+// per-render call sites (DynamicStyled) hit the hot-cache path at the top —
+// keeping that path inlineable is worth far more than saving one call on
+// the cold (cache-miss) path. Growing the scanner inside normalizeCSS
+// measurably regressed CSR throughput by breaking that inlining.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass CSS normalizer — comment/whitespace/semicolon/string/url handling inlined for perf
+const scanNormalize = (css: string): string => {
   const len = css.length
   let out = ''
   let space = false // pending space to emit before next non-whitespace char
@@ -267,6 +248,37 @@ export const normalizeCSS = (css: string): string => {
       }
     }
   }
+
+  return out
+}
+
+export const normalizeCSS = (css: string): string => {
+  // Hot cache: nested so the cold-start path is a single null check.
+  // The csr-many bench (50 distinct components per tick) hits cold every
+  // call; the SSR bench hits the same key 500x in a row.
+  if (normHotKeyA !== null) {
+    if (normHotKeyA === css) return normHotValA
+    if (normHotKeyB !== null && normHotKeyB === css) {
+      // Promote B → A
+      const tk = normHotKeyA
+      const tv = normHotValA
+      normHotKeyA = normHotKeyB
+      normHotValA = normHotValB
+      normHotKeyB = tk
+      normHotValB = tv
+      return normHotValA
+    }
+  }
+  const cached = normCache.get(css)
+  if (cached !== undefined) {
+    normHotKeyB = normHotKeyA
+    normHotValB = normHotValA
+    normHotKeyA = css
+    normHotValA = cached
+    return cached
+  }
+
+  const out = scanNormalize(css)
 
   // Evict oldest ~10% to prevent memory leaks without cliff-edge drop
   if (normCache.size > 2000) {

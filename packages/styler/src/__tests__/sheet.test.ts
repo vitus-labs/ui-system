@@ -78,6 +78,35 @@ describe('StyleSheet', () => {
     warnSpy.mockRestore()
   })
 
+  // Regression: splitRules' brace counting previously ignored quotes — a
+  // `{` or `}` inside a string corrupted rule boundaries, so the second
+  // rule never reached insertRule. Uses a fresh sheet because this
+  // describe's beforeEach detaches the singleton's style tag.
+  it('insertGlobal splits rules correctly when a string contains braces', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const tags = document.querySelectorAll<HTMLStyleElement>('style[data-vl]')
+    const el = tags[tags.length - 1] as HTMLStyleElement
+    const before = el.sheet?.cssRules.length ?? 0
+    s.insertGlobal('.q-a::before{content:"}{";}\n.q-b{color:red;}')
+    const rules = el.sheet?.cssRules ?? ({ length: 0 } as CSSRuleList)
+    expect(rules.length).toBe(before + 2)
+    const texts = Array.from(rules).map((r) => r.cssText)
+    expect(texts.some((t) => t.includes('.q-b'))).toBe(true)
+    el.remove()
+  })
+
+  it('insertGlobal handles escaped quotes when splitting rules', async () => {
+    const { createSheet } = await import('../sheet')
+    const s = createSheet()
+    const tags = document.querySelectorAll<HTMLStyleElement>('style[data-vl]')
+    const el = tags[tags.length - 1] as HTMLStyleElement
+    const before = el.sheet?.cssRules.length ?? 0
+    s.insertGlobal('.e-a::after{content:"a\\"}b";}\n.e-b{margin:0;}')
+    expect(el.sheet?.cssRules.length).toBe(before + 2)
+    el.remove()
+  })
+
   it('insert with boost does not throw', () => {
     const className = sheet.insert('font-size: 14px;', true)
     expect(className).toMatch(/^vl-[0-9a-z]+$/)

@@ -196,6 +196,37 @@ describe('styled', () => {
     expect(StyledComponent.displayName).toBe('styled(MyComponent)')
   })
 
+  it('forwards ref to the underlying component', () => {
+    const StyledView = styled(MockView)`
+      width: 100px;
+    `
+    let node: unknown = null
+    render(
+      <StyledView
+        ref={(n: unknown) => {
+          node = n
+        }}
+      />,
+    )
+    expect(node).toBe(screen.getByTestId('view'))
+  })
+
+  it('forwards ref on dynamic templates too', () => {
+    const StyledView = styled(MockView)`
+      width: ${(p: any) => p.w || '50px'};
+    `
+    let node: unknown = null
+    render(
+      <StyledView
+        w="80px"
+        ref={(n: unknown) => {
+          node = n
+        }}
+      />,
+    )
+    expect(node).toBe(screen.getByTestId('view'))
+  })
+
   it('uses function name when displayName is missing', () => {
     function NamedComponent(props: any) {
       return <div {...props} />
