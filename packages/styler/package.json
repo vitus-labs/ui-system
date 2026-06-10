@@ -67,9 +67,9 @@
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/tools-rolldown": "2.5.0",
     "@vitus-labs/tools-typescript": "2.5.0",
-    "goober": "^2.1.18",
+    "goober": "^2.1.19",
     "jsdom": "^29.1.1",
-    "styled-components": "^6.3.11",
-    "tinybench": "^6.0.1"
+    "styled-components": "^6.4.2",
+    "tinybench": "^6.0.2"
   }
 }
