@@ -163,7 +163,7 @@ describe('css', () => {
   })
 
   describe('dynamic cache eviction', () => {
-    it('clears resolveCache when it exceeds 100 entries', () => {
+    it('keeps resolving correctly when the cache exceeds 100 entries', () => {
       const result = css`
         width: ${(props: any) => props.w}px;
       `
@@ -173,10 +173,36 @@ describe('css', () => {
         result.resolve({ w: i })
       }
 
-      // After exceeding 100, the cache was cleared and new entries added
-      // Verify it still works correctly
+      // After exceeding 100, the oldest ~10% were evicted and new entries
+      // added — verify it still works correctly
       const output = result.resolve({ w: 999 })
       expect(output).toEqual({ width: 999 })
+    })
+
+    // Regression: eviction used to `clear()` the WHOLE cache, throwing away
+    // hot recent entries. Now only the oldest ~10% are dropped. The internal
+    // Map isn't exported, so cache hits are observed via object identity of
+    // resolve() output (same approach as the 'dynamic cache hit' test).
+    it('retains recent entries after eviction (only oldest ~10% dropped)', () => {
+      const result = css`
+        width: ${(props: any) => props.w}px;
+      `
+
+      // Fill to 101 entries (w: 0..100) — eviction triggers on the NEXT miss
+      const oldest = result.resolve({ w: 0 })
+      for (let i = 1; i <= 100; i++) {
+        result.resolve({ w: i })
+      }
+      const recent = result.resolve({ w: 100 }) // cache hit during fill
+
+      // 102nd distinct entry → size 101 > 100 → evicts the oldest ~10%
+      result.resolve({ w: 101 })
+
+      // A recent entry survived eviction → same object reference (cache hit)
+      expect(result.resolve({ w: 100 })).toBe(recent)
+      // The oldest entry was evicted → re-parsed into a fresh object
+      expect(result.resolve({ w: 0 })).not.toBe(oldest)
+      expect(result.resolve({ w: 0 })).toEqual({ width: 0 })
     })
   })
 })

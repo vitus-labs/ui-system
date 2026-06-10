@@ -12,6 +12,12 @@ type Context = {
 
 type UseThemeAttrs = ({ inversed }: { inversed?: boolean }) => Context
 
+// Referentially-stable fallback — a fresh `{}` destructure default would be
+// a NEW object every render in no-Provider apps, missing the WeakMap theme
+// caches (ThemeManager) and invalidating downstream useMemo deps on every
+// render of every rocketstyle component.
+const EMPTY_THEME: Record<string, unknown> = {}
+
 /**
  * Retrieves the current theme object and resolved mode from context.
  * Supports mode inversion so nested components can flip between
@@ -19,7 +25,7 @@ type UseThemeAttrs = ({ inversed }: { inversed?: boolean }) => Context
  */
 const useThemeAttrs: UseThemeAttrs = ({ inversed }) => {
   const {
-    theme = {},
+    theme = EMPTY_THEME,
     mode: ctxMode = 'light',
     isDark: ctxDark,
   } = useContext<Context>(context) || {}

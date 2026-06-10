@@ -411,6 +411,46 @@ describe('ref forwarding', () => {
     render(<Component ref={ref} />)
     expect(ref.current).toBe(screen.getByTestId('ref-target'))
   })
+
+  // Regression: the previous useImperativeHandle(..., []) implementation
+  // snapshotted internalRef.current once at mount — after a host remount
+  // (e.g. tag change div → button) the consumer ref kept the detached
+  // old node.
+  it('keeps the consumer ref live across host remounts (tag change)', () => {
+    const TagComponent = React.forwardRef<HTMLElement, any>(
+      ({ tag: Tag = 'div', ...props }, ref) => (
+        <Tag ref={ref} data-testid="remount-target" {...props} />
+      ),
+    )
+
+    const Component = attrs({ name: 'Test', component: TagComponent })
+    const ref = createRef<HTMLElement>()
+
+    const { rerender } = render(<Component ref={ref} tag="div" />)
+    expect(ref.current?.tagName).toBe('DIV')
+
+    rerender(<Component ref={ref} tag="button" />)
+    expect(ref.current?.tagName).toBe('BUTTON')
+    expect(ref.current).toBe(screen.getByTestId('remount-target'))
+  })
+
+  it('supports callback refs', () => {
+    const RefComponent = React.forwardRef<HTMLDivElement, any>((props, ref) => (
+      <div ref={ref} data-testid="cb-ref-target" {...props} />
+    ))
+
+    const Component = attrs({ name: 'Test', component: RefComponent })
+    let node: HTMLDivElement | null = null
+
+    render(
+      <Component
+        ref={(n: HTMLDivElement | null) => {
+          node = n
+        }}
+      />,
+    )
+    expect(node).toBe(screen.getByTestId('cb-ref-target'))
+  })
 })
 
 // --------------------------------------------------------

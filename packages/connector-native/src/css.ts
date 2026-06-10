@@ -46,6 +46,21 @@ const styleObjectToString = (obj: Record<string, unknown>): string => {
   return result
 }
 
+/**
+ * Evicts the oldest ~10% of cache entries (Map iteration order = insertion
+ * order) — bounds memory without wiping recent hot entries the way a full
+ * `clear()` did. Local implementation to keep this package dependency-free
+ * (mirrors styler's `evictMapByPercent`).
+ */
+const evictOldest = (cache: Map<string, StyleObject>): void => {
+  let toEvict = Math.ceil(cache.size * 0.1)
+  for (const key of cache.keys()) {
+    cache.delete(key)
+    toEvict -= 1
+    if (toEvict === 0) break
+  }
+}
+
 const resolveInterpolation = (value: Interpolation, props: any): string => {
   if (value == null || value === false || value === true) return ''
   if (typeof value === 'function') {
@@ -124,7 +139,7 @@ export const css = (
     }
     let cached = resolveCache.get(cssText)
     if (!cached) {
-      if (resolveCache.size > 100) resolveCache.clear()
+      if (resolveCache.size > 100) evictOldest(resolveCache)
       cached = parseCSS(cssText)
       resolveCache.set(cssText, cached)
     }

@@ -64,6 +64,40 @@ describe('useWindowResize', () => {
     vi.useRealTimers()
   })
 
+  it('does not re-render when resize resolves to identical dimensions', () => {
+    vi.useFakeTimers()
+    const onChange = vi.fn()
+
+    let renderCount = 0
+    const { result } = renderHook(() => {
+      renderCount += 1
+      return useWindowResize({ throttleDelay: 100, onChange })
+    })
+
+    // mount effect already read 1024x768 and re-rendered
+    expect(onChange).toHaveBeenCalledTimes(1)
+
+    // warm-up: React may render once more to confirm the bail-out
+    // before eager dispatch comparisons kick in
+    act(() => {
+      window.dispatchEvent(new Event('resize'))
+      vi.advanceTimersByTime(200)
+    })
+    const rendersAfterSettle = renderCount
+
+    act(() => {
+      // dimensions unchanged — leading + trailing throttle calls
+      window.dispatchEvent(new Event('resize'))
+      vi.advanceTimersByTime(200)
+    })
+
+    expect(result.current).toEqual({ width: 1024, height: 768 })
+    expect(renderCount).toBe(rendersAfterSettle)
+    expect(onChange).toHaveBeenCalledTimes(1)
+
+    vi.useRealTimers()
+  })
+
   it('calls onChange callback', () => {
     vi.useFakeTimers()
     const onChange = vi.fn()

@@ -403,6 +403,41 @@ describe('StyleSheet — at-rule splitting', () => {
       )
     })
 
+    // Regression: brace counting previously ignored quotes, so a `{` or `}`
+    // inside a string corrupted depth tracking — @media after content:"{"
+    // never got extracted (insertRule then rejects the nested form and the
+    // media styles silently drop in prod).
+    it('extracts @media correctly when a string contains a brace', () => {
+      const s = createSheet()
+      s.insert('&::before{content:"{";} @media (min-width: 600px){color: red;}')
+      const styles = s.getStyles()
+      expect(styles).toMatch(
+        /@media \(min-width: 600px\)\{\.vl-[0-9a-z]+\{color: red;\}\}/,
+      )
+      expect(styles).toContain('content:"{"')
+    })
+
+    it('extracts @media correctly when a string contains @media', () => {
+      const s = createSheet()
+      s.insert('content:"@media"; @media (min-width: 600px){color: red;}')
+      const styles = s.getStyles()
+      expect(styles).toContain('content:"@media";')
+      expect(styles).toMatch(
+        /@media \(min-width: 600px\)\{\.vl-[0-9a-z]+\{color: red;\}\}/,
+      )
+      // the literal string must not leak into the extracted at-rule
+      expect(styles).not.toContain('"}@media')
+    })
+
+    it('handles escaped quotes inside strings during splitting', () => {
+      const s = createSheet()
+      s.insert('content:"a\\"{b"; @media (min-width: 600px){color: red;}')
+      const styles = s.getStyles()
+      expect(styles).toMatch(
+        /@media \(min-width: 600px\)\{\.vl-[0-9a-z]+\{color: red;\}\}/,
+      )
+    })
+
     it('handles consecutive @media blocks with no base CSS between them', () => {
       const s = createSheet()
       s.insert(

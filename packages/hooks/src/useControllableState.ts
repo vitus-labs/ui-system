@@ -28,13 +28,22 @@ const useControllableState: UseControllableState = ({
   const isControlled = value !== undefined
   const current = isControlled ? value : internal
 
+  // Tracks the freshest value so consecutive or stale-closure functional
+  // updates compute from the latest value, not the render-captured one
+  const currentRef = useRef(current)
+  currentRef.current = current
+
   const setValue = useCallback(
     (next: any) => {
-      const nextValue = typeof next === 'function' ? next(current) : next
-      if (!isControlled) setInternal(nextValue)
+      const nextValue =
+        typeof next === 'function' ? next(currentRef.current) : next
+      currentRef.current = nextValue
+      // Route updates through React untouched so functional updates
+      // receive the latest state even when batched
+      if (!isControlled) setInternal(next)
       onChangeRef.current?.(nextValue)
     },
-    [current, isControlled],
+    [isControlled],
   )
 
   return [current, setValue]

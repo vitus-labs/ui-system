@@ -1,7 +1,13 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { type FC, forwardRef } from 'react'
 import { Dimensions } from 'react-native'
 import { describe, expect, it, vi } from 'vitest'
+// Test-only mock internals ('react-native' is aliased to this module in
+// vitest.config, so these are the same instances styled.ts sees).
+import {
+  __setWindowDimensions,
+  useWindowDimensions,
+} from '~/__mocks__/react-native'
 import createMediaQueries from '~/createMediaQueries'
 import { css } from '~/css'
 import { ThemeProvider } from '~/provider'
@@ -257,5 +263,86 @@ describe('styled', () => {
     expect(
       JSON.parse(screen.getByTestId('view').getAttribute('data-style')!),
     ).toEqual({ color: 'blue' })
+  })
+
+  // Static templates (no function interpolations) must not subscribe to
+  // window dimensions — their styles can't depend on the width by
+  // construction, so re-rendering them on every rotation/resize only
+  // produced identical output. The static/dynamic branch happens at
+  // component-creation time.
+  describe('window dimensions subscription', () => {
+    it('static templates do not call useWindowDimensions', () => {
+      useWindowDimensions.mockClear()
+      const Static = styled(MockView)`
+        width: 100px;
+      `
+
+      render(<Static />)
+
+      expect(
+        JSON.parse(screen.getByTestId('view').getAttribute('data-style')!),
+      ).toEqual({ width: 100 })
+      expect(useWindowDimensions).not.toHaveBeenCalled()
+    })
+
+    it('static templates do not re-render on a dimensions change', () => {
+      const renderSpy = vi.fn()
+      const Probe: FC<any> = forwardRef<any, any>(({ style }, ref) => {
+        renderSpy()
+        return (
+          <div
+            ref={ref}
+            data-testid="probe"
+            data-style={JSON.stringify(style)}
+          />
+        )
+      })
+      const Static = styled(Probe)`
+        width: 100px;
+      `
+
+      render(<Static />)
+      const rendersBefore = renderSpy.mock.calls.length
+
+      act(() => {
+        __setWindowDimensions({
+          width: 1024,
+          height: 768,
+          scale: 1,
+          fontScale: 1,
+        })
+      })
+
+      // No re-render — and the output is still correct
+      expect(renderSpy.mock.calls.length).toBe(rendersBefore)
+      expect(
+        JSON.parse(screen.getByTestId('probe').getAttribute('data-style')!),
+      ).toEqual({ width: 100 })
+    })
+
+    it('dynamic templates re-render on a dimensions change', () => {
+      const renderSpy = vi.fn()
+      const Probe: FC<any> = forwardRef<any, any>((_props, ref) => {
+        renderSpy()
+        return <div ref={ref} data-testid="probe" />
+      })
+      const Dynamic = styled(Probe)`
+        width: ${(p: any) => p.$w}px;
+      `
+
+      render(<Dynamic $w={10} />)
+      const rendersBefore = renderSpy.mock.calls.length
+
+      act(() => {
+        __setWindowDimensions({
+          width: 800,
+          height: 600,
+          scale: 1,
+          fontScale: 1,
+        })
+      })
+
+      expect(renderSpy.mock.calls.length).toBeGreaterThan(rendersBefore)
+    })
   })
 })

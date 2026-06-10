@@ -90,6 +90,10 @@ jobs:
           # the default token, which works for everything except trigger
           # propagation. See CONTRIBUTING.md → Releases → Setup.
           GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          # Emit npm provenance attestations — the job already grants
+          # `id-token: write` for OIDC trusted publishing; this makes npm
+          # actually attach the attestation to every published package.
+          NPM_CONFIG_PROVENANCE: 'true'
 
       # The changesets/action's built-in `createGithubReleases: true`
       # iterates per-package and was observed hanging mid-run on the 2.2.0
@@ -100,6 +104,11 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Injection-safe convention: pass step output through env rather
+          # than interpolating `${{ }}` directly into the script body. The
+          # content is repo-derived (package names/versions), but env vars
+          # can't break shell quoting the way inline interpolation can.
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
         run: |
           set -euo pipefail
           VERSION=$(node -p "require('./packages/core/package.json').version")
@@ -115,7 +124,7 @@ jobs:
 
           # Build a markdown list of every published package@version from
           # the action's structured output.
-          PACKAGES=$(echo '${{ steps.changesets.outputs.publishedPackages }}' \
+          PACKAGES=$(printf '%s' "$PUBLISHED_PACKAGES" \
             | jq -r '[.[] | "- `\(.name)@\(.version)`"] | join("\n")')
 
           BODY=$(cat <<EOF
@@ -182,6 +191,10 @@ jobs:
         run: bun run pkgs:build
 
       - name: Publish snapshot
+        env:
+          # Same provenance attestation as the stable job — id-token: write
+          # is granted workflow-wide.
+          NPM_CONFIG_PROVENANCE: 'true'
         run: |
           bunx changeset version --snapshot alpha
           # See scripts/rewrite-workspace-peers.mjs — npm publish doesn't

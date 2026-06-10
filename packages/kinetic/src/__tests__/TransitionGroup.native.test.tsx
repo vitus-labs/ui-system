@@ -71,6 +71,37 @@ describe('TransitionGroup.native — onAfterLeave callback identity stability', 
     }
   })
 
+  it('rebuilds the onAfterLeave callback when a leaving key reappears', () => {
+    transitionInvocations.length = 0
+
+    const { rerender } = render(
+      <TransitionGroup>{[child('a'), child('b')]}</TransitionGroup>,
+    )
+
+    // Remove "b" — it starts leaving and caches its per-key callback.
+    rerender(<TransitionGroup>{[child('a')]}</TransitionGroup>)
+    const leavingB = transitionInvocations.slice(2).find((i) => i.key === 'b')
+    expect(typeof leavingB?.onAfterLeave).toBe('function')
+
+    // Re-add "b" — the reappear loop must drop the stale cached callback
+    // so the key gets a freshly built one.
+    rerender(<TransitionGroup>{[child('a'), child('b')]}</TransitionGroup>)
+    const reappearedB = transitionInvocations
+      .slice(-2)
+      .find((i) => i.key === 'b')
+    expect(typeof reappearedB?.onAfterLeave).toBe('function')
+    expect(reappearedB?.onAfterLeave).not.toBe(leavingB?.onAfterLeave)
+
+    // The untouched sibling must keep its stable reference throughout —
+    // only keys that were actually leaving may be invalidated.
+    const aRefs = new Set(
+      transitionInvocations
+        .filter((i) => i.key === 'a')
+        .map((i) => i.onAfterLeave),
+    )
+    expect(aRefs.size).toBe(1)
+  })
+
   it('keeps a removed child rendered until its onAfterLeave fires', () => {
     transitionInvocations.length = 0
     const onAfterLeave = vi.fn()

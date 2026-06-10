@@ -332,6 +332,55 @@ describe('TransitionGroup', () => {
     expect(screen.getByTestId('b')).toBeInTheDocument()
   })
 
+  it('fires onAfterLeave for a key that leaves again after reappearing', () => {
+    const onAfterLeave = vi.fn()
+    const items = (keys: string[]) =>
+      keys.map((k) => (
+        <div key={k} data-testid={k}>
+          {k}
+        </div>
+      ))
+
+    const { rerender } = render(
+      <TransitionGroup leave="t-leave" onAfterLeave={onAfterLeave}>
+        {items(['a', 'b'])}
+      </TransitionGroup>,
+    )
+
+    // Remove "b" — starts leave
+    rerender(
+      <TransitionGroup leave="t-leave" onAfterLeave={onAfterLeave}>
+        {items(['a'])}
+      </TransitionGroup>,
+    )
+
+    // Re-add "b" before leave completes — cancels leave and drops the
+    // cached per-key callback
+    rerender(
+      <TransitionGroup leave="t-leave" onAfterLeave={onAfterLeave}>
+        {items(['a', 'b'])}
+      </TransitionGroup>,
+    )
+
+    // Remove "b" again — the second leave runs with a freshly built callback
+    rerender(
+      <TransitionGroup leave="t-leave" onAfterLeave={onAfterLeave}>
+        {items(['a'])}
+      </TransitionGroup>,
+    )
+
+    const bEl = screen.getByTestId('b')
+    expect(bEl).toBeInTheDocument()
+
+    act(() => flushRaf())
+    act(() => flushRaf())
+    act(() => fireTransitionEnd(bEl))
+
+    expect(onAfterLeave).toHaveBeenCalledTimes(1)
+    expect(screen.queryByTestId('b')).not.toBeInTheDocument()
+    expect(screen.getByTestId('a')).toBeInTheDocument()
+  })
+
   it('new children added after initial render use appear=true', () => {
     const { rerender } = render(
       <TransitionGroup enter="t-enter" enterFrom="t-from">

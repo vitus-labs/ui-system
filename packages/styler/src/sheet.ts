@@ -196,6 +196,22 @@ export class StyleSheet {
     for (let i = 0; i < len; i++) {
       const ch = cssText.charCodeAt(i)
 
+      // Skip quoted spans — braces and '@' inside strings (content: "{",
+      // content: "@media") must not affect depth tracking or extraction.
+      if (ch === 34 /* " */ || ch === 39 /* ' */) {
+        i++
+        while (i < len) {
+          const q = cssText.charCodeAt(i)
+          if (q === 92 /* \ */) {
+            i += 2
+            continue
+          }
+          if (q === ch) break
+          i++
+        }
+        continue
+      }
+
       if (ch === 123 /* { */) {
         depth++
       } else if (ch === 125 /* } */) {
@@ -449,6 +465,7 @@ export class StyleSheet {
    * CSSStyleSheet.insertRule() only accepts one rule at a time,
    * so multi-rule CSS must be split before injection.
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass rule splitter — quote-skipping + depth tracking inlined
   private splitRules(cssText: string): string[] {
     const rules: string[] = []
     const len = cssText.length
@@ -457,6 +474,20 @@ export class StyleSheet {
 
     for (let i = 0; i < len; i++) {
       const ch = cssText.charCodeAt(i)
+      // Skip quoted spans — braces inside strings must not affect depth.
+      if (ch === 34 /* " */ || ch === 39 /* ' */) {
+        i++
+        while (i < len) {
+          const q = cssText.charCodeAt(i)
+          if (q === 92 /* \ */) {
+            i += 2
+            continue
+          }
+          if (q === ch) break
+          i++
+        }
+        continue
+      }
       if (ch === 123 /* { */) depth++
       else if (ch === 125 /* } */) {
         depth--

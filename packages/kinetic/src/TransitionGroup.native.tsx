@@ -58,8 +58,14 @@ const TransitionGroup = ({
     }
   }
 
+  // If a leaving child reappears, stop leaving and drop its cached
+  // callback so a future leave rebuilds it fresh. Only touch keys that
+  // were actually leaving — clearing the cache for every current key
+  // would churn callback identities on every render.
   for (const key of currentMap.keys()) {
-    leavingRef.current.delete(key)
+    if (leavingRef.current.delete(key)) {
+      callbackCache.current.delete(key)
+    }
   }
 
   prevRef.current = currentMap

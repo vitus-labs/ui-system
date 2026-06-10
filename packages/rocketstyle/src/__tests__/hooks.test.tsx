@@ -112,33 +112,60 @@ describe('usePseudoState', () => {
 })
 
 describe('useRocketstyleRef', () => {
-  it('returns a ref object', () => {
+  it('returns a callback ref usable as a ref prop', () => {
     const { result } = renderHook(() =>
       useRocketstyleRef({ $rocketstyleRef: undefined, ref: undefined }),
     )
-    expect(result.current).toHaveProperty('current')
+    expect(typeof result.current).toBe('function')
   })
 
-  it('exposes internal ref to $rocketstyleRef', () => {
-    let capturedRef: any = null
-    const rocketstyleRef = (val: any) => {
-      capturedRef = val
-    }
-    renderHook(() =>
-      useRocketstyleRef({ $rocketstyleRef: rocketstyleRef, ref: undefined }),
+  it('delivers the attached node to both forwarded refs', () => {
+    let viaRocketstyle: unknown = 'unset'
+    let viaOuter: unknown = 'unset'
+    const { result } = renderHook(() =>
+      useRocketstyleRef({
+        $rocketstyleRef: (val: unknown) => {
+          viaRocketstyle = val
+        },
+        ref: (val: unknown) => {
+          viaOuter = val
+        },
+      }),
     )
-    expect(capturedRef).toBeNull() // initial value is null
+    const node = { tagName: 'DIV' }
+    ;(result.current as (n: unknown) => void)(node)
+    expect(viaRocketstyle).toBe(node)
+    expect(viaOuter).toBe(node)
   })
 
-  it('exposes internal ref to outer ref', () => {
-    let capturedRef: any = null
-    const outerRef = (val: any) => {
-      capturedRef = val
-    }
-    renderHook(() =>
-      useRocketstyleRef({ $rocketstyleRef: undefined, ref: outerRef }),
+  it('writes to object refs as well', () => {
+    const objectRef = { current: null as unknown }
+    const { result } = renderHook(() =>
+      useRocketstyleRef({ $rocketstyleRef: objectRef, ref: undefined }),
     )
-    expect(capturedRef).toBeNull()
+    const node = { tagName: 'BUTTON' }
+    ;(result.current as (n: unknown) => void)(node)
+    expect(objectRef.current).toBe(node)
+  })
+
+  // Regression: the previous useImperativeHandle(..., []) implementation
+  // snapshotted the node once at mount — a host remount left consumer refs
+  // pointing at the detached old node. The callback ref re-fires per
+  // attach/detach, so each new node propagates.
+  it('keeps forwarded refs live across re-attachment (remount)', () => {
+    const objectRef = { current: null as unknown }
+    const { result } = renderHook(() =>
+      useRocketstyleRef({ $rocketstyleRef: objectRef, ref: undefined }),
+    )
+    const cb = result.current as (n: unknown) => void
+    const first = { tagName: 'DIV' }
+    const second = { tagName: 'BUTTON' }
+    cb(first)
+    expect(objectRef.current).toBe(first)
+    cb(null) // detach (React does this on unmount of the old host)
+    expect(objectRef.current).toBeNull()
+    cb(second) // attach new host
+    expect(objectRef.current).toBe(second)
   })
 })
 
