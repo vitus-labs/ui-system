@@ -333,19 +333,36 @@ All benchmarks run via Vitest bench on the same machine. React is externalized i
 | styled-components | 44.93 KB | 17.89 KB |
 | @emotion/react + styled | 48.26 KB | 16.59 KB |
 
-### Performance (ops/sec, higher is better)
+### Render throughput (what actually matters)
 
-| Benchmark | styler | styled-components | @emotion | goober |
-|-----------|-------:|-------------------:|---------:|-------:|
-| css() creation | **25.2M** | 9.0M | 2.2M | 26K |
-| css() with interpolations | **24.9M** | 5.6M | 2.3M | 28K |
-| Template resolution | **21.4M** | 3.9M | — | — |
+Same machine, React 19.2.6, Bun 1.3.14, jsdom, all libraries on latest stable. Each scenario runs 500 SSR renders / 100 CSR mounts per tick via [tinybench](https://github.com/tinylibs/tinybench). Reproducible — `bun run bench` from this package.
+
+| Scenario | styler | styled-components | emotion |
+|----------|-------:|------------------:|--------:|
+| SSR static (`renderToString`) | **687.9** | 203.0 (0.30×) | 323.2 (0.47×) |
+| SSR dynamic (fn interpolation) | **426.2** | 198.2 (0.47×) | 306.9 (0.72×) |
+| SSR themed (via Provider) | **348.9** | 161.7 (0.46×) | 247.2 (0.71×) |
+| CSR mount (×100) | 14,336 | 14,281 | 14,069 |
+| CSR update (×100) | 13,547 | 13,403 | 13,388 |
+| CSR mount ×50 distinct | **19,611** | 5,788 (0.30×) | 18,338 (0.94×) |
+
+styler leads SSR by **2.0–3.4× over styled-components** and **1.3–2.1× over Emotion** — the lead comes from React 19 `<style precedence>` + the static-template cache. On client mount/update it's a **statistical tie** with both: React's reconciler dominates there and CSS-in-JS overhead is in the noise. The one client standout is mounting many *distinct* styled components per tick, where styled-components' per-template setup cost shows (3.4×).
+
+<details>
+<summary>Microbenchmarks (isolated factory/creation calls — not render performance)</summary>
+
+These measure individual operations in isolation. They're useful for catching regressions, but **don't read real-world speedups into them** — nobody's render path is bottlenecked on calling `css()` or `styled()`.
+
+| Microbench | styler | styled-components | @emotion | goober |
+|------------|-------:|------------------:|---------:|-------:|
+| css() creation | 25.2M | 9.0M | 2.2M | 26K |
+| css() with interpolations | 24.9M | 5.6M | 2.3M | 28K |
+| Template resolution | 21.4M | 3.9M | — | — |
 | Dynamic interpolation | 12.4M | **13.4M** | — | — |
-| Nested composition | **8.3M** | 2.2M | 1.4M | 8K |
-| SSR renderToString | **307K** | 69K | 192K | 18K |
-| styled() factory | **17.3M** | 109K | 933K | 18.2M |
+| Nested composition | 8.3M | 2.2M | 1.4M | 8K |
+| styled() factory | 17.3M | 109K | 933K | 18.2M |
 
-Styler is **2.8–1034x faster** than alternatives across css creation, composition, and SSR. The `styled()` factory is now essentially tied with goober (17.3M vs 18.2M ops/s) while being 158x faster than styled-components and 18x faster than Emotion. The only benchmark where styler doesn't lead is dynamic function interpolation, where styled-components' manual flatten is ~8% faster.
+</details>
 
 ## Migrating from styled-components
 
