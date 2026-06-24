@@ -231,6 +231,19 @@ const createStyledComponent = (
   // stable per-component, so paying typeof per render was waste.
   const tagIsDOM = typeof tag === 'string'
 
+  // SSR: cache the `<style precedence>` ReactElement keyed by the object
+  // `sheet.prepare()` returns. prepare() returns the SAME `{className, rules}`
+  // reference for a repeated cssText (its own cache), so the WeakMap hits
+  // whenever the resolved CSS repeats — every render in `ssr-themed` (constant
+  // theme → one cssText), all-but-2 in `ssr-dynamic`. React elements are
+  // immutable and `<style precedence>` dedupes by href, so sharing the
+  // reference across renders is safe — same trick as the static path's
+  // `cachedStyleEl`. Saves one jsx('style') + its props-object allocation
+  // per render on hit.
+  const ssrStyleElCache: WeakMap<object, ReactElement> | null = IS_SERVER
+    ? new WeakMap()
+    : null
+
   // DYNAMIC PATH — two function bodies, chosen by IS_SERVER at module load.
   // The server variant drops `useRef` LRU + `useInsertionEffect` (no DOM to
   // inject into; React's server renderer no-ops the effect anyway), saving
@@ -243,7 +256,8 @@ const createStyledComponent = (
   // unconditionally; the choice between bodies happens at module load.
 
   const DynamicStyled: ComponentType<any> = IS_SERVER
-    ? ({ ref, ...rawProps }: Record<string, any>) => {
+    ? // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path SSR render — styleEl cache + prepare + buildProps inlined for perf
+      ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
         if (theme !== EMPTY_THEME && rawProps.theme === undefined)
           rawProps.theme = theme
@@ -259,11 +273,19 @@ const createStyledComponent = (
           // dedupes <style precedence> emissions automatically.
           const prepared = sheet.prepare(cssText, boost)
           className = prepared.className
-          styleEl = jsx('style', {
-            href: prepared.className,
-            precedence: 'medium',
-            children: prepared.rules,
-          })
+          // biome-ignore lint/style/noNonNullAssertion: ssrStyleElCache is non-null whenever this SSR body runs (IS_SERVER)
+          const cache = ssrStyleElCache!
+          const cachedEl = cache.get(prepared)
+          if (cachedEl !== undefined) {
+            styleEl = cachedEl
+          } else {
+            styleEl = jsx('style', {
+              href: prepared.className,
+              precedence: 'medium',
+              children: prepared.rules,
+            })
+            cache.set(prepared, styleEl)
+          }
         }
 
         const finalTag = rawProps.as || tag
