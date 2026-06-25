@@ -7,8 +7,8 @@
       "dependencies": {
         "@storybook/react": "^10.4.6",
         "@vitejs/plugin-react": "^6.0.3",
-        "@vitus-labs/tools-rolldown": "^2.6.0",
-        "@vitus-labs/tools-storybook": "^2.6.0",
+        "@vitus-labs/tools-rolldown": "^2.6.1",
+        "@vitus-labs/tools-storybook": "^2.6.1",
         "goober": "^2.1.19",
         "next": "^16.2.9",
         "react-is": "^19.2.7",
@@ -30,10 +30,10 @@
         "@types/react-dom": "^19.2.3",
         "@types/react-is": "^19.2.0",
         "@vitest/coverage-v8": "^4.1.9",
-        "@vitus-labs/tools-atlas": "2.6.0",
-        "@vitus-labs/tools-lint": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
-        "@vitus-labs/tools-vitest": "2.6.0",
+        "@vitus-labs/tools-atlas": "2.6.1",
+        "@vitus-labs/tools-lint": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
+        "@vitus-labs/tools-vitest": "2.6.1",
         "csstype": "^3.2.3",
         "jsdom": "^29.1.1",
         "react": "^19.2.7",
@@ -203,9 +203,9 @@
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "jsdom": "^29.1.1",
         "tinybench": "^6.0.2",
       },
@@ -220,8 +220,8 @@
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "@emotion/react": ">= 11",
@@ -234,8 +234,8 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
@@ -248,8 +248,8 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "styled-components": "^6.4.3",
       },
       "peerDependencies": {
@@ -264,8 +264,8 @@
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
@@ -278,9 +278,9 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "@vitus-labs/unistyle": "workspace:*",
         "react-native": ">=0.84.1",
       },
@@ -301,8 +301,8 @@
         "react-is": "^19.2.4",
       },
       "devDependencies": {
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "react": ">= 19",
@@ -319,9 +319,9 @@
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/rocketstyle": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "@vitus-labs/unistyle": "workspace:*",
         "jsdom": "^29.1.1",
         "tinybench": "^6.0.2",
@@ -341,9 +341,9 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "react-native": ">=0.84.1",
       },
       "peerDependencies": {
@@ -360,8 +360,8 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/hooks": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "react-native": ">=0.84.1",
       },
       "peerDependencies": {
@@ -377,8 +377,8 @@
       "name": "@vitus-labs/kinetic-presets",
       "version": "2.7.2",
       "devDependencies": {
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "react": ">= 19",
@@ -391,9 +391,9 @@
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
         "@vitus-labs/rocketstyle": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "@vitus-labs/unistyle": "workspace:*",
       },
       "peerDependencies": {
@@ -412,9 +412,9 @@
         "@vitus-labs/core": "workspace:*",
         "@vitus-labs/elements": "workspace:*",
         "@vitus-labs/styler": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-storybook": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-storybook": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "@vitus-labs/unistyle": "workspace:*",
         "jsdom": "^29.1.1",
         "tinybench": "^6.0.2",
@@ -431,8 +431,8 @@
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
         "goober": "^2.1.19",
         "jsdom": "^29.1.1",
         "styled-components": "^6.4.3",
@@ -448,8 +448,8 @@
       "version": "2.7.2",
       "devDependencies": {
         "@vitus-labs/core": "workspace:*",
-        "@vitus-labs/tools-rolldown": "2.6.0",
-        "@vitus-labs/tools-typescript": "2.6.0",
+        "@vitus-labs/tools-rolldown": "2.6.1",
+        "@vitus-labs/tools-typescript": "2.6.1",
       },
       "peerDependencies": {
         "@vitus-labs/core": "workspace:^",
@@ -1231,19 +1231,19 @@
 
     "@vitus-labs/styler": ["@vitus-labs/styler@workspace:packages/styler"],
 
-    "@vitus-labs/tools-atlas": ["@vitus-labs/tools-atlas@2.6.0", "", { "dependencies": { "@vitus-labs/tools-core": "^2.5.0", "commander": "^15.0.0", "tinyglobby": "^0.2.17" }, "bin": { "vl_atlas": "lib/bin/run-atlas.js" } }, "sha512-CJTsKeninW7SL5oUUqw0ItQaI1gmNaG+TkfySh1ZQGgiRvYT3mYdHZhWt8ehj1gzhLnJNEKQa4TZDClVlq6bdg=="],
+    "@vitus-labs/tools-atlas": ["@vitus-labs/tools-atlas@2.6.1", "", { "dependencies": { "@vitus-labs/tools-core": "^2.5.0", "commander": "^15.0.0", "tinyglobby": "^0.2.17" }, "bin": { "vl_atlas": "lib/bin/run-atlas.js" } }, "sha512-Z1hljdT/rrX3ER0jhaxno2VsxEtx4xGa6iVTiGNI216CdpD8x4o0uuhCGKTG6xVNBzh2HiT5OdWJea1IfwpELA=="],
 
     "@vitus-labs/tools-core": ["@vitus-labs/tools-core@2.6.0", "", {}, "sha512-FDjT4goIs6WeUs/r46cr3RObvyhO/JOUMmpEAcDDOZGmcW7UbruwTQ/VdEDL5tQLxsRAZRRAr0LewTBDASv1lw=="],
 
-    "@vitus-labs/tools-lint": ["@vitus-labs/tools-lint@2.6.0", "", { "dependencies": { "@biomejs/biome": "^2.5.1" } }, "sha512-BvISlL7SV8W+zZhWkSkDG+lyZbjX8tomAz1BeyBSBmeA0K6dhdnKctbEelhGSmTPqWL/EZM/vGxIgx2E8kPuPA=="],
+    "@vitus-labs/tools-lint": ["@vitus-labs/tools-lint@2.6.1", "", { "dependencies": { "@biomejs/biome": "^2.5.1" } }, "sha512-s2xGHakuaKLQnGc4pAWavld1SXZk9imt2hNUjf2xD1hQEE/TSdT0RFMvjsTjBhqgYwutK2B4VBepCrIHxdVtvQ=="],
 
-    "@vitus-labs/tools-rolldown": ["@vitus-labs/tools-rolldown@2.6.0", "", { "dependencies": { "@vitus-labs/tools-core": "^2.5.0", "chalk": "^5.6.2", "rolldown": "^1.1.3", "rolldown-plugin-dts": "^0.26.0", "rollup-plugin-filesize": "^10.0.0", "rollup-plugin-visualizer": "^7.0.1" }, "bin": { "vl_rolldown_build": "lib/bin/run-build.js", "vl_rolldown_build-watch": "lib/bin/run-watch.js" } }, "sha512-msVf+DqAFR2KvaufN1ubUnlUeC70/wIzUvxGxm2dHaBHPzzh5wttLaoM/MbhBFLj6txRTWGsM6iY+YwlpnfHEg=="],
+    "@vitus-labs/tools-rolldown": ["@vitus-labs/tools-rolldown@2.6.1", "", { "dependencies": { "@vitus-labs/tools-core": "^2.5.0", "chalk": "^5.6.2", "rolldown": "^1.1.3", "rolldown-plugin-dts": "^0.26.0", "rollup-plugin-filesize": "^10.0.0", "rollup-plugin-visualizer": "^7.0.1" }, "bin": { "vl_rolldown_build": "lib/bin/run-build.js", "vl_rolldown_build-watch": "lib/bin/run-watch.js" } }, "sha512-1o+43RzFVrR7OQJBh/OZzyJsdsrJEDDcMDK74eM/kenDx0piO1u5jvTXotNTJDhye706yUb9QgbLyUpdNEjMig=="],
 
-    "@vitus-labs/tools-storybook": ["@vitus-labs/tools-storybook@2.6.0", "", { "dependencies": { "@chromatic-com/storybook": "^5.2.1", "@storybook/addon-a11y": "^10.4.6", "@storybook/addon-designs": "^11.1.3", "@storybook/addon-docs": "^10.4.6", "@storybook/addon-themes": "^10.4.6", "@storybook/addon-vitest": "^10.4.6", "@storybook/nextjs-vite": "^10.4.6", "@storybook/react": "^10.4.6", "@storybook/react-native": "^10.4.7", "@storybook/react-vite": "^10.4.6", "@vitus-labs/tools-core": "^2.5.0", "@vueless/storybook-dark-mode": "^10.0.8", "storybook": "^10.4.6", "storybook-addon-pseudo-states": "^10.4.6", "tinyglobby": "^0.2.17", "vite": "^8.1.0", "vite-tsconfig-paths": "^6.1.1" }, "peerDependencies": { "react": ">=19", "react-dom": ">=19", "react-native": ">=0.74", "react-native-web": ">=0.19" }, "optionalPeers": ["react-native", "react-native-web"], "bin": { "vl_stories": "lib/bin/run-stories.js", "vl_stories-build": "lib/bin/run-stories-build.js", "vl_stories-monorepo": "lib/bin/run-stories-monorepo.js", "vl_stories-monorepo-build": "lib/bin/run-stories-monorepo-build.js" } }, "sha512-LCNjKlmt1MIHCkLw7heajRpVsInNeOcpvIEdONtUJtM0tK/Az9zZHhlLQKxpOVroAWO10xnJBzzqvj/IUdpKsw=="],
+    "@vitus-labs/tools-storybook": ["@vitus-labs/tools-storybook@2.6.1", "", { "dependencies": { "@chromatic-com/storybook": "^5.2.1", "@storybook/addon-a11y": "^10.4.6", "@storybook/addon-designs": "^11.1.3", "@storybook/addon-docs": "^10.4.6", "@storybook/addon-themes": "^10.4.6", "@storybook/addon-vitest": "^10.4.6", "@storybook/nextjs-vite": "^10.4.6", "@storybook/react": "^10.4.6", "@storybook/react-native": "^10.4.7", "@storybook/react-vite": "^10.4.6", "@vitus-labs/tools-core": "^2.5.0", "@vueless/storybook-dark-mode": "^10.0.8", "storybook": "^10.4.6", "storybook-addon-pseudo-states": "^10.4.6", "tinyglobby": "^0.2.17", "vite": "^8.1.0", "vite-tsconfig-paths": "^6.1.1" }, "peerDependencies": { "react": ">=19", "react-dom": ">=19", "react-native": ">=0.74", "react-native-web": ">=0.19" }, "optionalPeers": ["react-native", "react-native-web"], "bin": { "vl_stories": "lib/bin/run-stories.js", "vl_stories-build": "lib/bin/run-stories-build.js", "vl_stories-monorepo": "lib/bin/run-stories-monorepo.js", "vl_stories-monorepo-build": "lib/bin/run-stories-monorepo-build.js" } }, "sha512-MY+2N3VPqrON7YHDYU30pUBZhHJQXRzQClLlWI9NlLV0HF3P4xAuCpYMy4y+IluNT7JyJLJjkkLF5ZxWiIMokA=="],
 
-    "@vitus-labs/tools-typescript": ["@vitus-labs/tools-typescript@2.6.0", "", { "peerDependencies": { "typescript": "^6.0.3" } }, "sha512-c1LmcEiEdUzhpKDCW79Yk3nosgbr51o72Ndz4Hb3jCpFxckY+wzQ4q+Jlrj5h4LbLMMEHH0ZUd8dh6+N1F19MA=="],
+    "@vitus-labs/tools-typescript": ["@vitus-labs/tools-typescript@2.6.1", "", { "peerDependencies": { "typescript": "^6.0.3" } }, "sha512-p+68fqnp3i/oPYZLxgUk30KpsHjfufZSvK8euXkJj6en/yeYuQui3ArXjV6De4XsM4VE8nsW43EtCF0eKB2r+w=="],
 
-    "@vitus-labs/tools-vitest": ["@vitus-labs/tools-vitest@2.6.0", "", { "peerDependencies": { "vite": "^8.1.0", "vitest": ">=4" } }, "sha512-5VWDV79Qr8b5el2gQRwpOE7LJ988qsaI2jHaWrKufeEyqXmOFfe1BPWrHPYCmd0w4yg3H+GZKUfY5AU4McrGJQ=="],
+    "@vitus-labs/tools-vitest": ["@vitus-labs/tools-vitest@2.6.1", "", { "peerDependencies": { "vite": "^8.1.0", "vitest": ">=4" } }, "sha512-dhtzEKchYL76offMQckuOHGmDl5KR0t4kFz6d07MfQICUX2UNtXGhO/WSdarJwxaNss88k6Yv9NfTWxLxb2xOQ=="],
 
     "@vitus-labs/unistyle": ["@vitus-labs/unistyle@workspace:packages/unistyle"],
 
