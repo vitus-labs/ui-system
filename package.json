@@ -76,7 +76,7 @@
     "goober": "^2.1.19",
     "next": "^16.2.9",
     "react-is": "^19.2.7",
-    "react-native": "^0.85.3",
+    "react-native": "^0.86.0",
     "styled-components": "^6.4.3",
     "sugar-high": "^1.2.1",
     "tinybench": "^6.0.2",
