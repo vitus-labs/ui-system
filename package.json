@@ -51,7 +51,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "@vitus-labs/tools-atlas": "2.6.1",
     "@vitus-labs/tools-lint": "2.6.1",
-    "@vitus-labs/tools-typescript": "2.6.1",
+    "@vitus-labs/tools-typescript": "2.6.3",
     "@vitus-labs/tools-vitest": "2.6.1",
     "csstype": "^3.2.3",
     "jsdom": "^29.1.1",
