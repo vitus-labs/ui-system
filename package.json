@@ -73,7 +73,7 @@
   "dependencies": {
     "@storybook/react": "^10.4.6",
     "@vitejs/plugin-react": "^6.0.3",
-    "@vitus-labs/tools-rolldown": "^2.6.1",
+    "@vitus-labs/tools-rolldown": "^2.6.3",
     "@vitus-labs/tools-storybook": "^2.6.1",
     "goober": "^2.1.19",
     "next": "^16.2.9",
