@@ -19,7 +19,7 @@
     "@vitus-labs/kinetic-presets": "file:../../packages/kinetic-presets",
     "@vitus-labs/rocketstyle": "file:../../packages/rocketstyle",
     "@vitus-labs/unistyle": "file:../../packages/unistyle",
-    "expo": "^55.0.17",
+    "expo": "^57.0.7",
     "expo-linking": "^55.0.14",
     "expo-router": "~55.0.13",
     "expo-status-bar": "~55.0.5",
