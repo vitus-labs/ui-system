@@ -1,5 +1,21 @@
 # @vitus-labs/kinetic
 
+## 2.7.3
+
+### Patch Changes
+
+- [#344](https://github.com/vitus-labs/ui-system/pull/344) [`aec560c`](https://github.com/vitus-labs/ui-system/commit/aec560c16df5ff118a6b05f1d20a4d1da06e4141) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Adapt to React Native 0.87 types and refresh the toolchain.
+  
+  `react-native@0.87` regressed `Dimensions.addEventListener`'s generated
+  types to a bare `Function`, so `useBreakpoint` / `useWindowResize` (native)
+  now annotate the handler with `DimensionsPayload` and guard the optional
+  `window` field. `kinetic`'s native `CollapseRenderer` gained an explicit
+  `ReactElement` return type so its declaration no longer has to name RN's
+  internal `ReactNativeElement`.
+  
+  No public API changes — dev/build tooling (`@vitus-labs/tools-*` 2.6.3,
+  vitest 4.1.11, jsdom 30, biome 2.5.10, vite 8.2.2) moved to latest.
+
 ## 2.7.2
 
 ### Patch Changes
