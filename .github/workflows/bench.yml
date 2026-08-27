@@ -1,7 +1,20 @@
 name: Bench
 
-# Runs the CSS-in-JS perf bench on PRs that touch styler's hot path,
+# Runs the perf benches on PRs that touch a benchmarked package's hot path,
 # comparing PR-branch numbers to main-branch numbers ON THE SAME RUNNER.
+#
+# Two jobs:
+#   * `bench`        — styler's CSS-in-JS bench (ops/sec vs emotion + sc).
+#   * `bench-render` — the React render benches for attrs / elements /
+#     rocketstyle. These previously had NO CI coverage at all: a regression
+#     in any of them was invisible, and an improvement could not be
+#     arbitrated. Each package only runs when its own files change.
+#
+# `bench-render` compares MIN ms per scenario, not avg. Measured on these
+# benches, avg swings 5-17x run-to-run on an otherwise idle machine (GC and
+# scheduler outliers drag it; p99 reaches 128ms against a 1.5ms min) while
+# min stays stable to within a few percent. Min is the closest thing to
+# "the work the code actually does" that this harness exposes.
 # Posts a sticky comment with per-scenario diffs and fails the job if any
 # styler row regresses by more than 10%.
 #
@@ -18,6 +31,12 @@ on:
     paths:
       - 'packages/styler/src/**'
       - 'packages/styler/benchmarks/**'
+      - 'packages/attrs/src/**'
+      - 'packages/attrs/benchmarks/**'
+      - 'packages/elements/src/**'
+      - 'packages/elements/benchmarks/**'
+      - 'packages/rocketstyle/src/**'
+      - 'packages/rocketstyle/benchmarks/**'
   workflow_dispatch:
 
 permissions:
@@ -29,8 +48,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Which benchmarked areas did this PR actually touch? The workflow-level
+  # path filter is the union of all of them, so each job re-checks its own
+  # slice — otherwise an elements-only PR would pay for the styler bench.
+  changes:
+    name: Detect changed packages
+    runs-on: ubuntu-latest
+    outputs:
+      styler: ${{ steps.filter.outputs.styler }}
+      render: ${{ steps.filter.outputs.render }}
+      render_pkgs: ${{ steps.filter.outputs.render_pkgs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Filter
+        id: filter
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref || 'main' }}
+        run: |
+          set -euo pipefail
+          DIFF=$(git diff --name-only "origin/${BASE_REF}...HEAD" || true)
+          echo "changed files:"; echo "$DIFF"
+
+          if grep -qE '^packages/styler/(src|benchmarks)/' <<<"$DIFF"; then
+            echo "styler=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "styler=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          PKGS=()
+          for p in attrs elements rocketstyle; do
+            if grep -qE "^packages/${p}/(src|benchmarks)/" <<<"$DIFF"; then
+              PKGS+=("$p")
+            fi
+          done
+
+          if [ ${#PKGS[@]} -eq 0 ]; then
+            echo "render=false" >> "$GITHUB_OUTPUT"
+            echo 'render_pkgs=[]' >> "$GITHUB_OUTPUT"
+          else
+            echo "render=true" >> "$GITHUB_OUTPUT"
+            printf 'render_pkgs=[' >> "$GITHUB_OUTPUT"
+            printf '"%s",' "${PKGS[@]}" | sed 's/,$//' >> "$GITHUB_OUTPUT"
+            printf ']\n' >> "$GITHUB_OUTPUT"
+          fi
+
   bench:
     name: Perf bench (styler)
+    needs: changes
+    if: needs.changes.outputs.styler == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -61,7 +129,11 @@ jobs:
         working-directory: packages/styler
         run: |
           set -e
-          NODE_ENV=production bun run bench > /tmp/pr-bench.txt 2>&1
+          if ! NODE_ENV=production bun run bench > /tmp/pr-bench.txt 2>&1; then
+            echo "=== PR BENCH FAILED ==="
+            cat /tmp/pr-bench.txt
+            exit 1
+          fi
           echo "=== PR BENCH OUTPUT ==="
           cat /tmp/pr-bench.txt
 
@@ -253,5 +325,197 @@ jobs:
             if (violations.length > 0) {
               core.setFailed(
                 `Perf regression: ${violations.length} scenario(s) below -10% threshold`,
+              )
+            }
+
+  # ── Render benches: attrs / elements / rocketstyle ────────────────
+  # Same same-runner methodology as the styler job above: run the bench on
+  # the PR commit, then on main, on the SAME machine back-to-back, so the
+  # comparison is free of cross-runner hardware variance.
+  bench-render:
+    name: Perf bench (${{ matrix.pkg }})
+    needs: changes
+    if: needs.changes.outputs.render == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg: ${{ fromJSON(needs.changes.outputs.render_pkgs) }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      - name: Cache bun dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      # The render benches import the BUILT package (`../lib/index.js`) and
+      # its built workspace deps (core / unistyle / connector-styler), so
+      # every package has to be built first — a fresh checkout has no lib/.
+      - name: Build packages (PR)
+        run: bun run pkgs:build
+
+      - name: Run bench (PR)
+        working-directory: packages/${{ matrix.pkg }}
+        run: |
+          set -e
+          # `cat` on failure too: with a bare redirect under `set -e` a
+          # failing bench exits before the cat and the error is invisible.
+          if ! NODE_ENV=production bun run bench > /tmp/pr-render.txt 2>&1; then
+            echo "=== PR BENCH FAILED ==="
+            cat /tmp/pr-render.txt
+            exit 1
+          fi
+          echo "=== PR BENCH OUTPUT ==="
+          cat /tmp/pr-render.txt
+
+      - name: Checkout main into __main__/
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: __main__
+
+      - name: Check whether main has this bench
+        id: main_has_bench
+        run: |
+          if [ -f "__main__/packages/${{ matrix.pkg }}/benchmarks/render-bench.tsx" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "note=main has no bench for ${{ matrix.pkg }} — skipping comparison" >&2
+          fi
+
+      - name: Bench on main
+        if: steps.main_has_bench.outputs.present == 'true'
+        run: |
+          set -e
+          cd __main__
+          bun install --frozen-lockfile
+          bun run pkgs:build
+          cd packages/${{ matrix.pkg }}
+          if ! NODE_ENV=production bun run bench > /tmp/main-render.txt 2>&1; then
+            echo "=== MAIN BENCH FAILED ==="
+            cat /tmp/main-render.txt
+            exit 1
+          fi
+          echo "=== MAIN BENCH OUTPUT ==="
+          cat /tmp/main-render.txt
+
+      - name: Compare + post comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          PKG: ${{ matrix.pkg }}
+          MAIN_HAS_BENCH: ${{ steps.main_has_bench.outputs.present }}
+        with:
+          script: |
+            const fs = require('fs')
+            const pkg = process.env.PKG
+            const prText = fs.readFileSync('/tmp/pr-render.txt', 'utf8')
+            const mainText = process.env.MAIN_HAS_BENCH === 'true'
+              ? fs.readFileSync('/tmp/main-render.txt', 'utf8')
+              : ''
+
+            // Rows look like:
+            // │ 0 │ mount-element ×100 │ 1.833 │ 1.512 │ 4.315 │ 569 │ 546 │
+            // Columns: idx, scenario, avg, min, p99, ops/sec, samples.
+            // We key on MIN (col 4) — see the header comment for why avg is
+            // not usable as a signal on these benches.
+            const parse = (text) => {
+              const out = {}
+              for (const line of text.split('\n')) {
+                if (!line.includes('│')) continue
+                const cells = line.split('│').map((c) => c.trim()).filter(Boolean)
+                if (cells.length < 7) continue
+                const [, scenario, , min] = cells
+                const v = Number.parseFloat(min)
+                if (!Number.isFinite(v)) continue
+                out[scenario] = v
+              }
+              return out
+            }
+
+            const pr = parse(prText)
+            const main = parse(mainText)
+            const scenarios = Object.keys(pr)
+
+            // Regression gate at 15%. Looser than the styler job's 10%
+            // because these benches drive React render trees rather than a
+            // tight loop, so even min carries a few percent of jitter.
+            const THRESHOLD = 15
+            const rows = []
+            let worst = 0
+
+            for (const s of scenarios) {
+              const p = pr[s]
+              const m = main[s]
+              if (m == null) {
+                rows.push(`| ${s} | ${p.toFixed(3)} ms | — | — |`)
+                continue
+              }
+              const delta = ((p - m) / m) * 100
+              if (delta > worst) worst = delta
+              const sign = delta > 0 ? '+' : ''
+              const flag = delta > THRESHOLD ? ' 🔴' : delta < -5 ? ' 🟢' : ''
+              rows.push(
+                `| ${s} | ${p.toFixed(3)} ms | ${m.toFixed(3)} ms | ${sign}${delta.toFixed(1)}%${flag} |`,
+              )
+            }
+
+            const body = [
+              `<!-- bench-render-bot-${pkg} -->`,
+              `## 🏁 Perf bench — ${pkg}`,
+              '',
+              main && Object.keys(main).length
+                ? `PR vs \`main\`, same runner, back-to-back. **Min ms per scenario** (lower is better).`
+                : `_No \`main\` baseline available — PR numbers only._`,
+              '',
+              '| scenario | PR (min) | main (min) | delta |',
+              '|---|---|---|---|',
+              ...rows,
+              '',
+              `Regression gate: **>${THRESHOLD}%** on any scenario fails this job.`,
+              '',
+              `<sub>Min, not avg: avg on these benches swings 5–17× run-to-run from GC/scheduler outliers, while min is stable to a few percent.</sub>`,
+            ].join('\n')
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const existing = comments.find((c) =>
+              c.body.includes(`<!-- bench-render-bot-${pkg} -->`),
+            )
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
+
+            if (worst > THRESHOLD) {
+              core.setFailed(
+                `${pkg}: worst-case regression ${worst.toFixed(1)}% exceeds ${THRESHOLD}%`,
               )
             }
