@@ -36,6 +36,8 @@
     "postcss": "^8.5.10",
     "uuid": "^14.0.0",
     "js-yaml": "^4.2.0",
-    "@babel/core": "^7.29.6"
+    "@babel/core": "^7.29.6",
+    "react-dom": "19.2.3",
+    "shell-quote": "^1.10.0"
   }
 }
