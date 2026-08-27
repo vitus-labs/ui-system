@@ -69,7 +69,12 @@
     "shell-quote": "^1.10.0",
     "js-yaml": "^4.2.0",
     "@babel/core": "^7.29.6",
-    "tar": "^7.5.22"
+    "tar": "^7.5.22",
+    "nanoid": "^3.3.18",
+    "valibot": "^1.4.2",
+    "ip-address": "^10.5.0",
+    "ws": "^8.21.3",
+    "react-devtools-core/ws": "^7.5.11"
   },
   "dependencies": {
     "@storybook/react": "^10.5.10",
