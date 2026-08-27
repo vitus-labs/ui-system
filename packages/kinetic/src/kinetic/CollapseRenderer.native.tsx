@@ -2,6 +2,7 @@ import { useIsomorphicLayoutEffect, useLatest } from '@vitus-labs/hooks'
 import {
   createElement,
   type ForwardedRef,
+  type ReactElement,
   type ReactNode,
   useCallback,
   useRef,
@@ -42,7 +43,7 @@ const CollapseRenderer = ({
   callbacks,
   children,
   forwardedRef,
-}: CollapseRendererProps) => {
+}: CollapseRendererProps): ReactElement => {
   const effectiveAppear = appear ?? config.appear ?? false
   const effectiveTransition =
     transition ?? config.transition ?? 'height 300ms ease'

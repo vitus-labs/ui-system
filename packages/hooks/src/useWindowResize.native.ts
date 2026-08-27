@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, type DimensionsPayload } from 'react-native'
 
 type Sizes = {
   width: number
@@ -36,11 +36,17 @@ const useWindowResize: UseWindowResize = (
   onChangeRef.current = onChange
 
   useEffect(() => {
-    const sub = Dimensions.addEventListener('change', ({ window }) => {
-      const sizes = { width: window.width, height: window.height }
-      setWindowSize(sizes)
-      onChangeRef.current?.(sizes)
-    })
+    // RN 0.87 types `addEventListener`'s handler as bare `Function`, so the
+    // payload has to be annotated here — and `window` is optional on it.
+    const sub = Dimensions.addEventListener(
+      'change',
+      ({ window }: DimensionsPayload) => {
+        if (!window) return
+        const sizes = { width: window.width, height: window.height }
+        setWindowSize(sizes)
+        onChangeRef.current?.(sizes)
+      },
+    )
 
     return () => sub.remove()
   }, [])

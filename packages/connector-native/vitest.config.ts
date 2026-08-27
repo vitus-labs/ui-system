@@ -1,5 +1,5 @@
 import path from 'node:path'
-import createConfig from '../../vitest.shared'
+import createConfig from '../../vitest.shared.ts'
 
 const base = createConfig({ name: 'connector-native' })
 
@@ -10,7 +10,7 @@ export default {
     alias: {
       ...(base.resolve as any)?.alias,
       'react-native': path.resolve(
-        __dirname,
+        import.meta.dirname,
         'src/__mocks__/react-native.ts'
       ),
     },
