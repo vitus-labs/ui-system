@@ -68,7 +68,8 @@
     "react-dom": "^19.2.8",
     "shell-quote": "^1.10.0",
     "js-yaml": "^4.2.0",
-    "@babel/core": "^7.29.6"
+    "@babel/core": "^7.29.6",
+    "tar": "^7.5.22"
   },
   "dependencies": {
     "@storybook/react": "^10.5.10",
