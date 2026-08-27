@@ -7,11 +7,11 @@
  * skipping children or switching sub-tags accordingly.
  */
 import { render } from '@vitus-labs/core'
-import { memo, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
+import { memo, useCallback, useLayoutEffect, useRef } from 'react'
 import { PKG_NAME } from '~/constants'
 import { Content, Wrapper } from '~/helpers'
 import type { VLElement } from './types'
-import { getShouldBeEmpty, isInlineElement } from './utils'
+import { getShouldBeEmpty, isInlineElement, resolveWrapperAxes } from './utils'
 
 const equalize = (el: HTMLElement, direction: unknown) => {
   const beforeEl = el.firstElementChild as HTMLElement | null
@@ -99,31 +99,15 @@ const Component: VLElement = ({
   // --------------------------------------------------------
   // direction & alignX & alignY calculations
   // --------------------------------------------------------
-  const { wrapperDirection, wrapperAlignX, wrapperAlignY } = useMemo(() => {
-    let wrapperDirection: typeof direction = direction
-    let wrapperAlignX: typeof alignX = alignX
-    let wrapperAlignY: typeof alignY = alignY
-
-    if (isSimpleElement) {
-      if (contentDirection) wrapperDirection = contentDirection
-      if (contentAlignX) wrapperAlignX = contentAlignX
-      if (contentAlignY) wrapperAlignY = contentAlignY
-    } else if (direction) {
-      wrapperDirection = direction
-    } else {
-      wrapperDirection = defaultDirection
-    }
-
-    return { wrapperDirection, wrapperAlignX, wrapperAlignY }
-  }, [
+  const { wrapperDirection, wrapperAlignX, wrapperAlignY } = resolveWrapperAxes(
     isSimpleElement,
+    direction,
+    alignX,
+    alignY,
     contentDirection,
     contentAlignX,
     contentAlignY,
-    alignX,
-    alignY,
-    direction,
-  ])
+  )
 
   // --------------------------------------------------------
   // equalBeforeAfter: measure & equalize slot dimensions
