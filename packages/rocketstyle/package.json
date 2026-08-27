@@ -73,9 +73,9 @@
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/elements": "workspace:*",
     "@vitus-labs/styler": "workspace:*",
-    "@vitus-labs/tools-rolldown": "2.7.0",
-    "@vitus-labs/tools-storybook": "2.7.0",
-    "@vitus-labs/tools-typescript": "2.7.0",
+    "@vitus-labs/tools-rolldown": "2.7.1",
+    "@vitus-labs/tools-storybook": "2.7.1",
+    "@vitus-labs/tools-typescript": "2.7.1",
     "@vitus-labs/unistyle": "workspace:*",
     "jsdom": "^30.0.1",
     "tinybench": "^6.1.3"
