@@ -1,3 +1,3 @@
-import createConfig from '../../vitest.shared'
+import createConfig from '../../vitest.shared.ts'
 
 export default createConfig({ name: 'kinetic-presets' })

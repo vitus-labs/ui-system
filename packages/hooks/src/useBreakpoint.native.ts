@@ -1,6 +1,6 @@
 import { context } from '@vitus-labs/core'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, type DimensionsPayload } from 'react-native'
 
 export type UseBreakpoint = () => string | undefined
 
@@ -48,9 +48,15 @@ const useBreakpoint: UseBreakpoint = () => {
   useEffect(() => {
     if (sorted.length === 0) return undefined
 
-    const sub = Dimensions.addEventListener('change', ({ window }) => {
-      setCurrent(getMatch(window.width))
-    })
+    // RN 0.87 types `addEventListener`'s handler as bare `Function`, so the
+    // payload has to be annotated here — and `window` is optional on it.
+    const sub = Dimensions.addEventListener(
+      'change',
+      ({ window }: DimensionsPayload) => {
+        if (!window) return
+        setCurrent(getMatch(window.width))
+      },
+    )
 
     return () => sub.remove()
   }, [sorted, getMatch])

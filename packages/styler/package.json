@@ -65,11 +65,11 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/tools-rolldown": "2.6.1",
-    "@vitus-labs/tools-typescript": "2.6.1",
+    "@vitus-labs/tools-rolldown": "2.6.3",
+    "@vitus-labs/tools-typescript": "2.6.3",
     "goober": "^2.1.19",
-    "jsdom": "^29.1.1",
-    "styled-components": "^6.4.3",
-    "tinybench": "^6.0.2"
+    "jsdom": "^30.0.1",
+    "styled-components": "^6.5.3",
+    "tinybench": "^6.1.3"
   }
 }

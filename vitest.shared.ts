@@ -1,5 +1,5 @@
 import { createVitestConfig } from '@vitus-labs/tools-vitest'
-import tildeResolve from './vitest.tilde-plugin'
+import tildeResolve from './vitest.tilde-plugin.ts'
 
 type Options = {
   name: string

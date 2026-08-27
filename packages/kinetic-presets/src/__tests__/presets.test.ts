@@ -151,11 +151,12 @@ describe('presets — count', () => {
 describe('presets — shape', () => {
   const allPresets = Object.entries(presets)
 
-  it.each(
-    allPresets,
-  )('%s has required style+transition fields', (_, preset) => {
-    assertPresetShape(preset)
-  })
+  it.each(allPresets)(
+    '%s has required style+transition fields',
+    (_, preset) => {
+      assertPresetShape(preset)
+    },
+  )
 
   it.each(allPresets)('%s is symmetric (leave reverses enter)', (_, preset) => {
     assertSymmetric(preset)

@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
 
@@ -36,7 +36,7 @@ jobs:
       - name: Mint GitHub App token
         id: app_token
         if: ${{ vars.RELEASE_APP_ID != '' }}
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
@@ -61,12 +61,12 @@ jobs:
             echo "::warning title=Version PR will have empty checks::No RELEASE_APP_ID/RELEASE_PAT configured — falling back to GITHUB_TOKEN. The Version PR will land with no CI runs and require a manual close+reopen to trigger them. See CONTRIBUTING.md → Releases → Setup."
           fi
 
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ steps.token.outputs.token }}
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
@@ -74,7 +74,7 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Cache bun dependencies
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -110,32 +110,40 @@ jobs:
 
       - name: Create Release PR or Publish
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          version: bun run version-packages
-          publish: bun run release
-          title: 'chore: version packages'
-          commit: 'chore: version packages'
+          # v2 no longer reads the `GITHUB_TOKEN` env var or the
+          # credentials `actions/checkout` configured — the token must be
+          # passed explicitly through this input. Token resolved in the
+          # `Resolve release token` step above. App / PAT pushes trigger
+          # downstream CI on the Version PR; bare GITHUB_TOKEN does not —
+          # that's the empty-checks footgun that historically required
+          # close+reopen on every release.
+          github-token: ${{ steps.token.outputs.token }}
+          version-script: bun run version-packages
+          publish-script: bun run release
+          pr-title: 'chore: version packages'
+          commit-message: 'chore: version packages'
           # Disable the built-in per-package GitHub Releases — the
           # "Create umbrella GitHub Release" step below ships a single
           # `vX.Y.Z` release for the fixed-group suite instead. Without
           # this, the action ALSO creates 15 per-package releases (it
-          # defaults to true when `publish` is set), cluttering the
+          # defaults to true when `publish-script` is set), cluttering the
           # releases page and re-triggering the per-package iteration that
           # was observed hanging mid-run on the 2.2.0 release.
-          createGithubReleases: false
+          create-github-releases: false
+          # v2 split git tags out of `create-github-releases`: turning the
+          # releases off no longer suppresses the 15 per-package git tags,
+          # they now default to on. Keep them off — the umbrella step below
+          # pushes the single `vX.Y.Z` tag this repo actually releases from.
+          push-git-tags: false
         env:
-          # Token resolved in the `Resolve release token` step above.
-          # App / PAT pushes trigger downstream CI on the Version PR;
-          # bare GITHUB_TOKEN does not — that's the empty-checks footgun
-          # that historically required close+reopen on every release.
-          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
           # Emit npm provenance attestations — the job already grants
           # `id-token: write` for OIDC trusted publishing; this makes npm
           # actually attach the attestation to every published package.
           NPM_CONFIG_PROVENANCE: 'true'
 
-      # The changesets/action's built-in `createGithubReleases: true`
+      # The changesets/action's built-in `create-github-releases: true`
       # iterates per-package and was observed hanging mid-run on the 2.2.0
       # release after npm publish had already succeeded. Replaced with a
       # single umbrella Release for the suite — matches how other fixed-
@@ -148,7 +156,7 @@ jobs:
           # than interpolating `${{ }}` directly into the script body. The
           # content is repo-derived (package names/versions), but env vars
           # can't break shell quoting the way inline interpolation can.
-          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.published-packages }}
         run: |
           set -euo pipefail
           VERSION=$(node -p "require('./packages/core/package.json').version")
@@ -197,15 +205,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
@@ -213,7 +221,7 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Cache bun dependencies
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}

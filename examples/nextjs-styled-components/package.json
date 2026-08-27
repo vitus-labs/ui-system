@@ -8,10 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "next": "^16.1.6",
-    "styled-components": "^6.3.11",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "next": "^16.3.3",
+    "styled-components": "^6.5.3",
     "@vitus-labs/core": "workspace:*",
     "@vitus-labs/connector-styled-components": "workspace:*",
     "@vitus-labs/elements": "workspace:*",
@@ -20,8 +20,8 @@
     "@vitus-labs/rocketstyle": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "typescript": "~6.0.3"
   }
 }

@@ -56,8 +56,8 @@
   },
   "devDependencies": {
     "@vitus-labs/core": "workspace:*",
-    "@vitus-labs/tools-rolldown": "2.6.1",
-    "@vitus-labs/tools-typescript": "2.6.1",
-    "styled-components": "^6.4.3"
+    "@vitus-labs/tools-rolldown": "2.6.3",
+    "@vitus-labs/tools-typescript": "2.6.3",
+    "styled-components": "^6.5.3"
   }
 }

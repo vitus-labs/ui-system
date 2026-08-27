@@ -124,12 +124,12 @@ describe('TransitionGroup.native — onAfterLeave callback identity stability', 
     // Find b's onAfterLeave from the most recent batch and invoke it.
     const last = transitionInvocations.slice(-2)
     const bEntry = last.find((i) => i.key === 'b')
-    expect(bEntry).toBeDefined()
-    expect(typeof bEntry?.onAfterLeave).toBe('function')
+    if (!bEntry) throw new Error('expected a leaving entry for key "b"')
+    expect(typeof bEntry.onAfterLeave).toBe('function')
 
     // Invoke it — exercises leavingRef.delete + callbackCache.delete +
     // onAfterLeave forwarding + forceUpdate paths.
-    ;(bEntry?.onAfterLeave as () => void)()
+    ;(bEntry.onAfterLeave as () => void)()
     expect(onAfterLeave).toHaveBeenCalledTimes(1)
   })
 })
