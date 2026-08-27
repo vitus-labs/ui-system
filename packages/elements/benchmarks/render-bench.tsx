@@ -129,6 +129,63 @@ const makeThreeSlotChildren = (count: number): React.ReactElement[] => {
   return kids
 }
 
+/**
+ * Zero-elements floor: plain nested divs matching the DOM shape Element
+ * emits, with no elements / styler / unistyle in the path.
+ *
+ * Every row below is only meaningful as a MULTIPLE of its floor. Measured
+ * 2026-08-27 (min ms, the stable statistic — see the note on avg below):
+ *
+ *   FLOOR-mount    0.569   1.0x     FLOOR-reupdate   9.880   1.0x
+ *   mount-element  1.583   2.8x     reupdate-stable 59.418   6.0x
+ *   mount-3-slot   5.290   9.3x     reupdate-churn 106.602  10.8x
+ *
+ * That is genuine headroom: the work is real and it is ours. Contrast the
+ * styler CSR bench, where the equivalent floor comes out FASTER than every
+ * library because those rows are dominated by React itself — there, a delta
+ * is noise; here, it is not.
+ *
+ * The floor also doubles as a drift control in CI: it contains no code of
+ * ours, so if the floor row moves between PR and main, the runner moved and
+ * the other deltas in that run should be read with suspicion.
+ *
+ * Read `min`, not `avg`. On this bench avg swings 5-17x run to run from GC
+ * and scheduler outliers (p99 has been seen at 128ms against a 1.5ms min)
+ * while min holds to a few percent.
+ */
+const makeFloorChildren = (count: number): React.ReactElement[] => {
+  const kids: React.ReactElement[] = []
+  for (let i = 0; i < count; i++) {
+    kids.push(
+      React.createElement(
+        'div',
+        { key: i, className: 'vl-floor' },
+        React.createElement(CountingChild, { tick: 0 }),
+      ),
+    )
+  }
+  return kids
+}
+
+const mountFloor = () => {
+  setupRoot()
+  flushSync(() => {
+    currentRoot!.render(wrap(makeFloorChildren(MOUNT_N)))
+  })
+}
+
+const reupdateFloor = () => {
+  setupRoot()
+  flushSync(() => {
+    currentRoot!.render(wrap(makeFloorChildren(MOUNT_N)))
+  })
+  for (let i = 1; i <= UPDATE_N; i++) {
+    flushSync(() => {
+      currentRoot!.render(wrap(makeFloorChildren(MOUNT_N)))
+    })
+  }
+}
+
 // ─── Scenarios ───────────────────────────────────────────────────────
 const mountElement = () => {
   setupRoot()
@@ -223,6 +280,8 @@ const bench = new Bench({ time: 1000 })
 
 bench
   .add(`mount-element ×${MOUNT_N}`, mountElement)
+  .add(`floor-mount ×${MOUNT_N}`, mountFloor)
+  .add(`floor-reupdate ×${UPDATE_N}`, reupdateFloor)
   .add(`reupdate-stable ×${UPDATE_N}`, reupdateStable)
   .add(`reupdate-churn ×${UPDATE_N}`, reupdateChurn)
   .add(`mount-three-slot ×${MOUNT_N}`, mountThreeSlot)
