@@ -1,5 +1,7 @@
 # @vitus-labs/rocketstories
 
+## 2.7.3
+
 ## 2.7.2
 
 ## 2.7.1
