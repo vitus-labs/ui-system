@@ -129,7 +129,11 @@ jobs:
         working-directory: packages/styler
         run: |
           set -e
-          NODE_ENV=production bun run bench > /tmp/pr-bench.txt 2>&1
+          if ! NODE_ENV=production bun run bench > /tmp/pr-bench.txt 2>&1; then
+            echo "=== PR BENCH FAILED ==="
+            cat /tmp/pr-bench.txt
+            exit 1
+          fi
           echo "=== PR BENCH OUTPUT ==="
           cat /tmp/pr-bench.txt
 
@@ -333,7 +337,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.render == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -357,11 +361,23 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # The render benches import the BUILT package (`../lib/index.js`) and
+      # its built workspace deps (core / unistyle / connector-styler), so
+      # every package has to be built first — a fresh checkout has no lib/.
+      - name: Build packages (PR)
+        run: bun run pkgs:build
+
       - name: Run bench (PR)
         working-directory: packages/${{ matrix.pkg }}
         run: |
           set -e
-          NODE_ENV=production bun run bench > /tmp/pr-render.txt 2>&1
+          # `cat` on failure too: with a bare redirect under `set -e` a
+          # failing bench exits before the cat and the error is invisible.
+          if ! NODE_ENV=production bun run bench > /tmp/pr-render.txt 2>&1; then
+            echo "=== PR BENCH FAILED ==="
+            cat /tmp/pr-render.txt
+            exit 1
+          fi
           echo "=== PR BENCH OUTPUT ==="
           cat /tmp/pr-render.txt
 
@@ -387,8 +403,13 @@ jobs:
           set -e
           cd __main__
           bun install --frozen-lockfile
+          bun run pkgs:build
           cd packages/${{ matrix.pkg }}
-          NODE_ENV=production bun run bench > /tmp/main-render.txt 2>&1
+          if ! NODE_ENV=production bun run bench > /tmp/main-render.txt 2>&1; then
+            echo "=== MAIN BENCH FAILED ==="
+            cat /tmp/main-render.txt
+            exit 1
+          fi
           echo "=== MAIN BENCH OUTPUT ==="
           cat /tmp/main-render.txt
 
