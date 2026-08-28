@@ -25,6 +25,20 @@ const METRICS: readonly Metric[] = ['lines', 'statements', 'functions', 'branche
 // when the gain is at least this many points above the current floor.
 const MARGIN = 0.05
 
+// Headroom left BELOW current coverage when raising a floor.
+//
+// Without this the new threshold was set to exactly the measured value, so
+// every ratchet PR pinned the floor at current coverage and any later change
+// that dropped a single covered branch failed CI immediately. Nine such PRs
+// accumulated between 2026-06-29 and 2026-08-24, all proposing thresholds
+// with 0.00 headroom on branches and functions — unmergeable in practice and
+// failing this job's own review checklist, which asks whether the numbers
+// have room against the actuals.
+//
+// 0.5 points absorbs an ordinary refactor that removes a covered line while
+// still locking in the bulk of any real gain.
+const HEADROOM = 0.5
+
 const summaryPath = 'coverage/coverage-summary.json'
 const configPath = 'vitest.config.ts'
 
@@ -55,9 +69,13 @@ for (const metric of METRICS) {
     process.exit(1)
   }
   const old = Number(match[2])
-  const next = truncate2(current)
+  // Trigger on the raw measurement, but write a floor that sits HEADROOM
+  // below it. Guard `next > old` so a floor is never LOWERED — that would
+  // turn the ratchet into a downgrade whenever coverage dipped slightly.
+  const measured = truncate2(current)
+  const next = truncate2(current - HEADROOM)
 
-  if (next > old + MARGIN) {
+  if (measured > old + MARGIN && next > old) {
     config = config.replace(pattern, `$1${next}`)
     updates.push({ metric, from: old, to: next })
   }
