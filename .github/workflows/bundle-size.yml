@@ -21,11 +21,22 @@ jobs:
     name: Bundle size diff
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Checkout PR head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          # Blobless clone. `fetch-depth: 0` needs full ref history, but this
+          # repo carries ~907 MB of `.yarn/cache/*.zip` in history from the
+          # pre-Bun era — 3443 files that no longer exist in the tree and
+          # never will again. Without the filter every such job downloads
+          # them: measured 861 MB and 15+ minutes, versus 5 seconds and
+          # 2.7 MB with it. Blobs are fetched on demand, so `git diff
+          # --name-only` and changesets still work (verified on a real
+          # blobless clone of this repo).
+          filter: blob:none
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
@@ -156,11 +167,22 @@ jobs:
     name: Changeset preview
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Checkout PR head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          # Blobless clone. `fetch-depth: 0` needs full ref history, but this
+          # repo carries ~907 MB of `.yarn/cache/*.zip` in history from the
+          # pre-Bun era — 3443 files that no longer exist in the tree and
+          # never will again. Without the filter every such job downloads
+          # them: measured 861 MB and 15+ minutes, versus 5 seconds and
+          # 2.7 MB with it. Blobs are fetched on demand, so `git diff
+          # --name-only` and changesets still work (verified on a real
+          # blobless clone of this repo).
+          filter: blob:none
 
       - name: Detect changesets in this PR
         id: detect
