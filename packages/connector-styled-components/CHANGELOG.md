@@ -1,5 +1,26 @@
 # @vitus-labs/connector-styled-components
 
+## 2.7.4
+
+### Patch Changes
+
+- [#348](https://github.com/vitus-labs/ui-system/pull/348) [`5129bb8`](https://github.com/vitus-labs/ui-system/commit/5129bb8d88d7404b52d1b55c9cee7e492aa10649) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.7.1.
+  
+  Patch bump of the build toolchain — rolldown and rolldown-plugin-dts are
+  unchanged from 2.7.0, so the emitted bundles are equivalent and every
+  size budget still passes. No source or public API changes.
+
+- [#348](https://github.com/vitus-labs/ui-system/pull/348) [`5129bb8`](https://github.com/vitus-labs/ui-system/commit/5129bb8d88d7404b52d1b55c9cee7e492aa10649) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.7.0.
+  
+  The build toolchain moves to rolldown 1.2.6 and rolldown-plugin-dts
+  0.28.2, so the published bundles are regenerated. No source or public
+  API changes — bundle sizes shift by tens of bytes and all size budgets
+  still pass.
+  
+  2.7.0 also drops `rollup-plugin-filesize` from `tools-rolldown`, which
+  removes the `pacote` -> `cacache`/`sigstore`/`node-gyp` subtree from the
+  install graph: 157 fewer packages and 5 fewer security advisories.
+
 ## 2.7.3
 
 ## 2.7.2

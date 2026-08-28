@@ -1,5 +1,38 @@
 # @vitus-labs/elements
 
+## 2.7.4
+
+### Patch Changes
+
+- [#348](https://github.com/vitus-labs/ui-system/pull/348) [`5129bb8`](https://github.com/vitus-labs/ui-system/commit/5129bb8d88d7404b52d1b55c9cee7e492aa10649) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.7.1.
+  
+  Patch bump of the build toolchain — rolldown and rolldown-plugin-dts are
+  unchanged from 2.7.0, so the emitted bundles are equivalent and every
+  size budget still passes. No source or public API changes.
+
+- [#350](https://github.com/vitus-labs/ui-system/pull/350) [`c0d9ddf`](https://github.com/vitus-labs/ui-system/commit/c0d9ddfb7b7125241176bbd7bd235feefa2f1d58) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Drop a redundant `useMemo` in Element's axis resolution.
+  
+  The memo returned `{ wrapperDirection, wrapperAlignX, wrapperAlignY }`, which
+  is destructured immediately into three primitives passed straight to Wrapper —
+  nothing downstream depends on the object's identity. Memoizing therefore cost a
+  7-element dependency array plus 7 comparisons per render to avoid three
+  branches. The logic moves to a pure `resolveWrapperAxes()` in `utils.ts`.
+  
+  Behaviour is identical (`if (x) v = x` is `x || v` for these inputs). This is a
+  simplification, not a measured speed-up: see the PR for why the local harness
+  cannot resolve a change this size.
+
+- [#348](https://github.com/vitus-labs/ui-system/pull/348) [`5129bb8`](https://github.com/vitus-labs/ui-system/commit/5129bb8d88d7404b52d1b55c9cee7e492aa10649) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.7.0.
+  
+  The build toolchain moves to rolldown 1.2.6 and rolldown-plugin-dts
+  0.28.2, so the published bundles are regenerated. No source or public
+  API changes — bundle sizes shift by tens of bytes and all size budgets
+  still pass.
+  
+  2.7.0 also drops `rollup-plugin-filesize` from `tools-rolldown`, which
+  removes the `pacote` -> `cacache`/`sigstore`/`node-gyp` subtree from the
+  install graph: 157 fewer packages and 5 fewer security advisories.
+
 ## 2.7.3
 
 ## 2.7.2
