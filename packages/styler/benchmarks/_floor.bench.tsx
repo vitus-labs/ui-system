@@ -72,26 +72,9 @@ const stylerStatic = stylerStyled.div`color: red; padding: 8px;`
 const scStatic = scStyled.div`color: red; padding: 8px;`
 const emStatic = emStyled.div`color: red; padding: 8px;`
 
-/**
- * Zero-CSS-in-JS floor: a plain div carrying a static className — the same
- * DOM shape a styled component emits, with no styling library in the path.
- *
- * Present because the CSR rows below are NOT measuring CSS-in-JS. Measured
- * 2026-08-27, this floor comes out ~7% SLOWER than styler and emotion on
- * both csr-mount and csr-update. A component doing no styling work cannot
- * genuinely be slower than one doing real work, so that gap is React's
- * createRoot/render/unmount machinery plus harness noise — which is what
- * the CSR numbers are dominated by. Read every CSR row against this floor:
- * if a library is within a few percent of it, the scenario has no headroom
- * to win and any "improvement" there is noise.
- *
- * The SSR rows are the opposite: ~0.5-0.6 ms/op against ~0.02 ms/op for
- * CSR, so roughly 30x more actual CSS work per op. That is where styler's
- * lead (1.5-1.6x emotion, ~6x styled-components) is real and where any
- * genuine optimisation has room to show up.
- */
-const floorComponent = ({ children }: any) =>
-  React.createElement('div', { className: 'vl-floor' }, children)
+// PROBE: zero-CSS-in-JS floor. Same tree shape, no styling layer at all.
+const vanillaDynamic = ({ color, children }: any) =>
+  React.createElement('div', { style: { color } }, children)
 
 const stylerDynamic = stylerStyled.div<{ color: string }>`
   color: ${(p) => p.color};
@@ -267,11 +250,11 @@ bench
   .add('sc      · ssr-themed  · 500x', () => ssrScThemed(scThemed))
   .add('emotion · ssr-themed  · 500x', () => ssrThemed(emThemed, EmProvider))
   // CSR
-  .add('floor   · csr-mount   · 100x', () => csrMount(floorComponent))
+  .add('VANILLA · csr-mount   · 100x', () => csrMount(vanillaDynamic))
+  .add('VANILLA · csr-update  · 100x', () => csrUpdate(vanillaDynamic))
   .add('styler  · csr-mount   · 100x', () => csrMount(stylerDynamic))
   .add('sc      · csr-mount   · 100x', () => csrMount(scDynamic))
   .add('emotion · csr-mount   · 100x', () => csrMount(emDynamic))
-  .add('floor   · csr-update  · 100x', () => csrUpdate(floorComponent))
   .add('styler  · csr-update  · 100x', () => csrUpdate(stylerDynamic))
   .add('sc      · csr-update  · 100x', () => csrUpdate(scDynamic))
   .add('emotion · csr-update  · 100x', () => csrUpdate(emDynamic))

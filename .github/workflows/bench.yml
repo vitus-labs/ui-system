@@ -186,7 +186,14 @@ jobs:
               for (const rawLine of text.split('\n')) {
                 const line = rawLine.replace(/[─=]/g, ' ').trim()
                 if (!line) continue
-                const sceneMatch = line.match(/^([a-z][a-z0-9-]+)\s*$/i)
+                // The bench prints scenario headers as `── csr-mount ──`,
+                // so the box-drawing rule characters have to be allowed for.
+                // Without this the match never fires, `currentScenario` stays
+                // null, `prData` comes out `{}` — an empty table and a
+                // regression gate that iterates nothing.
+                const sceneMatch = line.match(
+                  /^[\s\u2500-\u257f-]*([a-z][a-z0-9-]+)[\s\u2500-\u257f-]*$/i,
+                )
                 if (sceneMatch && !line.includes('ops/s')) {
                   currentScenario = sceneMatch[1]
                   if (!out[currentScenario]) out[currentScenario] = {}
@@ -203,6 +210,11 @@ jobs:
               return out
             }
 
+            // `floor` is a plain div + static className with no CSS-in-JS at
+            // all. It exists to keep the CSR rows honest — see below.
+            const FLOOR_NOTE =
+              '<sub><b>floor</b> = plain div + static className, no CSS-in-JS in the path. The CSR rows are dominated by React\'s createRoot/render/unmount, not by the styling library: the floor lands within a few percent of — and often below — every library, so CSR deltas there are noise, not headroom. The SSR rows do ~30x more CSS work per op and are the meaningful comparison.</sub>'
+
             const prData = parse(prText)
             const mainData = mainText ? parse(mainText) : null
 
@@ -214,7 +226,7 @@ jobs:
               const sceneRows = Object.entries(prData)
                 .map(
                   ([s, libs]) =>
-                    `| ${s} | ${(libs.styler ?? 0).toFixed(0)} ops/s | ${(libs.emotion ?? 0).toFixed(0)} ops/s | ${(libs.sc ?? 0).toFixed(0)} ops/s |`,
+                    `| ${s} | ${(libs.styler ?? 0).toFixed(0)} ops/s | ${(libs.emotion ?? 0).toFixed(0)} ops/s | ${(libs.sc ?? 0).toFixed(0)} ops/s | ${libs.floor != null ? `${libs.floor.toFixed(0)} ops/s` : '—'} |`,
                 )
                 .join('\n')
               body = [
@@ -223,9 +235,11 @@ jobs:
                 '',
                 'ℹ️ `main` does not yet contain the bench script — no comparison possible. PR numbers below for review:',
                 '',
-                '| Scenario | styler | emotion | sc |',
-                '|---|---|---|---|',
+                '| Scenario | styler | emotion | sc | floor |',
+                '|---|---|---|---|---|',
                 sceneRows,
+                '',
+                FLOOR_NOTE,
                 '',
                 '<details><summary>Full bench output (PR)</summary>',
                 '',
@@ -279,6 +293,8 @@ jobs:
                 '| Scenario | main | PR | Δ |',
                 '|---|---|---|---|',
                 ...lines,
+                '',
+                FLOOR_NOTE,
                 '',
                 '<details><summary>Full bench output</summary>',
                 '',
