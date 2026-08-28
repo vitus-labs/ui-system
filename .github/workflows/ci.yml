@@ -18,6 +18,8 @@ jobs:
   ci:
     name: Lint → Build → Typecheck → Test
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -62,6 +64,8 @@ jobs:
   audit:
     name: Security Audit
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -87,6 +91,8 @@ jobs:
   licenses:
     name: License Check
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0

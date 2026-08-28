@@ -12,6 +12,8 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     permissions:
       actions: read
       contents: read

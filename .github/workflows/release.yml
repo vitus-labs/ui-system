@@ -22,6 +22,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     name: Release
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     env:
       # Prefer a maintainer-owned token, matching vitus-labs/tools. The
       # Version PR that changesets opens is authored by whoever owns this
@@ -44,6 +46,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          # Blobless clone. `fetch-depth: 0` needs full ref history, but this
+          # repo carries ~907 MB of `.yarn/cache/*.zip` in history from the
+          # pre-Bun era — 3443 files that no longer exist in the tree and
+          # never will again. Without the filter every such job downloads
+          # them: measured 861 MB and 15+ minutes, versus 5 seconds and
+          # 2.7 MB with it. Blobs are fetched on demand, so `git diff
+          # --name-only` and changesets still work (verified on a real
+          # blobless clone of this repo).
+          filter: blob:none
           token: ${{ env.RELEASE_TOKEN }}
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -182,6 +193,8 @@ jobs:
     if: github.ref != 'refs/heads/main'
     name: Publish Prerelease
     runs-on: ubuntu-latest
+    # A hung job otherwise runs to GitHub's 6-hour default.
+    timeout-minutes: 20
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -191,6 +204,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          # Blobless clone. `fetch-depth: 0` needs full ref history, but this
+          # repo carries ~907 MB of `.yarn/cache/*.zip` in history from the
+          # pre-Bun era — 3443 files that no longer exist in the tree and
+          # never will again. Without the filter every such job downloads
+          # them: measured 861 MB and 15+ minutes, versus 5 seconds and
+          # 2.7 MB with it. Blobs are fetched on demand, so `git diff
+          # --name-only` and changesets still work (verified on a real
+          # blobless clone of this repo).
+          filter: blob:none
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
