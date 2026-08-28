@@ -118,33 +118,9 @@ CI's `Changeset` check fails any PR that touches `packages/**` without either a 
 
 **Why this matters.** `changesets/action` pushes the Version PR commit using `GITHUB_TOKEN`. GitHub silently suppresses workflow runs for events triggered by `GITHUB_TOKEN` (recursion-prevention), so the Version PR lands with **empty CI checks**. Without a non-`GITHUB_TOKEN` identity, every release requires a manual close+reopen on the Version PR to fire CI.
 
-`release.yml` resolves auth in priority order: **GitHub App → `RELEASE_PAT` → `GITHUB_TOKEN`**. Configure one of the first two — the App is recommended for long-lived setups, the PAT is faster to set up.
+`release.yml` and `ratchet.yml` both use a single secret, **`RELEASE_TOKEN`**, falling back to `GITHUB_TOKEN` when it is unset. This matches how `vitus-labs/tools` is configured.
 
-#### Option A — GitHub App (recommended)
-
-Best for: long-lived setups, no token expiration drama, machine identity in audit logs.
-
-1. **Create a GitHub App** under your account or org: github.com/settings/apps → *New GitHub App*
-   - Name: e.g. `vitus-labs-release-bot`
-   - Homepage URL: anything (required field — repo URL works)
-   - Webhooks: uncheck *Active*
-   - Repository permissions: Contents = read+write, Pull requests = read+write, Workflows = read+write
-   - Where can this be installed: *Only on this account*
-2. **Generate a private key**: scroll down on the App settings page → *Generate a private key*. Saves a `.pem` file.
-3. **Install the App on this repo**: from the App settings → *Install App* → select `vitus-labs/ui-system` (or your fork).
-4. **Add credentials to the repo**:
-   - Settings → Secrets and variables → Actions → **Variables** tab → *New repository variable*
-     - Name: `RELEASE_APP_ID`
-     - Value: the App's numeric ID (top of App settings page)
-   - Settings → Secrets and variables → Actions → **Secrets** tab → *New repository secret*
-     - Name: `RELEASE_APP_PRIVATE_KEY`
-     - Value: the entire contents of the `.pem` file (including the `-----BEGIN…END-----` lines)
-
-`release.yml`'s `Mint GitHub App token` step will detect `RELEASE_APP_ID` and use the App from then on. Pushes from the App's token DO trigger downstream workflows.
-
-#### Option B — Fine-grained PAT (faster but expires)
-
-Best for: getting unblocked in 2 minutes; accept rotating the token every 90 days.
+#### Setup — fine-grained PAT
 
 1. **Create the PAT**: github.com/settings/personal-access-tokens → *Generate new token (Fine-grained)*
    - Resource owner: `vitus-labs`
@@ -152,10 +128,14 @@ Best for: getting unblocked in 2 minutes; accept rotating the token every 90 day
    - Permissions: Repository → Contents = read+write, Pull requests = read+write, Workflows = read+write
    - Expiration: long-lived or rotation-based per your security policy
 2. **Add as secret**: repo → Settings → Secrets and variables → Actions → *New repository secret*
-   - Name: `RELEASE_PAT`
+   - Name: `RELEASE_TOKEN`
    - Value: (paste the token)
 
-If neither is configured, `release.yml` falls back to `GITHUB_TOKEN` and logs a loud warning. Releases still work, you just close+reopen the Version PR once to kick CI — exactly what the App / PAT exist to avoid.
+If it is unset, both workflows fall back to `GITHUB_TOKEN`. Releases still work — you just close+reopen the Version PR once to kick CI, which is exactly what `RELEASE_TOKEN` exists to avoid.
+
+#### Why `ratchet.yml` needs it too
+
+The same suppression applies to the weekly coverage-ratchet job. A branch it pushes with `GITHUB_TOKEN` gets **no status checks at all**, and branch protection then blocks the PR permanently. Nine identical ratchet PRs accumulated between 2026-06-29 and 2026-08-24 for exactly this reason before it was fixed — none of them could ever go green.
 
 ### Prerelease channel
 
