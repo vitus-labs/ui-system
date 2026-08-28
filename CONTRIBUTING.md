@@ -10,10 +10,25 @@ Thank you for your interest in contributing. This guide covers the development s
 ## Setup
 
 ```bash
-git clone https://github.com/vitus-labs/ui-system.git
+git clone --filter=blob:none https://github.com/vitus-labs/ui-system.git
 cd ui-system
 bun install
 ```
+
+> **Why `--filter=blob:none`.** This repo's history carries ~907 MB of
+> `.yarn/cache/*.zip` from before the move to Bun — 3443 archives that no
+> longer exist in the tree. Nothing yarn-related remains in the working tree,
+> but deleting files does not shrink history, and the commit SHAs are load
+> bearing, so the history is deliberately left as-is.
+>
+> A blobless clone fetches the full commit and ref history and pulls file
+> contents only as needed. Measured against this repo: **2.7 MB in ~5 seconds**
+> versus **861 MB and 15+ minutes** for a plain clone. Everything works
+> normally afterwards — `git log`, `git diff`, `git blame`, checkouts — git
+> just fetches blobs on demand the first time you touch an old revision.
+>
+> A plain `git clone` still works; it is only slower. CI uses the same filter
+> on every full-history checkout.
 
 ## Development
 
