@@ -22,49 +22,29 @@ jobs:
     if: github.ref == 'refs/heads/main'
     name: Release
     runs-on: ubuntu-latest
+    env:
+      # Prefer a maintainer-owned token, matching vitus-labs/tools. The
+      # Version PR that changesets opens is authored by whoever owns this
+      # token; with the bare GITHUB_TOKEN that is github-actions[bot], and
+      # GitHub suppresses workflow events raised by that token — so the
+      # Version PR lands with no CI runs and needs a manual close+reopen.
+      #
+      # RELEASE_TOKEN should be a fine-grained PAT with Contents:
+      # read+write and Pull requests: read+write on this repo.
+      #
+      # Falling back to GITHUB_TOKEN keeps the release working without the
+      # secret; it just reintroduces the empty-checks behaviour.
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
 
-      # Resolve the token used to push the Version PR commit / publish tags.
-      # Order: GitHub App (preferred — no expiration, machine identity) →
-      # `RELEASE_PAT` (PAT fallback, expires) → `GITHUB_TOKEN` (last resort —
-      # WILL leave the Version PR with empty CI checks because GitHub
-      # suppresses workflows triggered by GITHUB_TOKEN events).
-      - name: Mint GitHub App token
-        id: app_token
-        if: ${{ vars.RELEASE_APP_ID != '' }}
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
-      - name: Resolve release token
-        id: token
-        env:
-          APP_TOKEN: ${{ steps.app_token.outputs.token }}
-          PAT_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          if [ -n "$APP_TOKEN" ]; then
-            echo "source=github-app" >> "$GITHUB_OUTPUT"
-            echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
-            echo "::notice::Release auth: GitHub App (preferred — checks will fire on the Version PR)."
-          elif [ -n "$PAT_TOKEN" ]; then
-            echo "source=pat" >> "$GITHUB_OUTPUT"
-            echo "token=$PAT_TOKEN" >> "$GITHUB_OUTPUT"
-            echo "::notice::Release auth: RELEASE_PAT — checks will fire on the Version PR."
-          else
-            echo "source=github-token" >> "$GITHUB_OUTPUT"
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
-            echo "::warning title=Version PR will have empty checks::No RELEASE_APP_ID/RELEASE_PAT configured — falling back to GITHUB_TOKEN. The Version PR will land with no CI runs and require a manual close+reopen to trigger them. See CONTRIBUTING.md → Releases → Setup."
-          fi
-
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-          token: ${{ steps.token.outputs.token }}
+          token: ${{ env.RELEASE_TOKEN }}
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -114,12 +94,8 @@ jobs:
         with:
           # v2 no longer reads the `GITHUB_TOKEN` env var or the
           # credentials `actions/checkout` configured — the token must be
-          # passed explicitly through this input. Token resolved in the
-          # `Resolve release token` step above. App / PAT pushes trigger
-          # downstream CI on the Version PR; bare GITHUB_TOKEN does not —
-          # that's the empty-checks footgun that historically required
-          # close+reopen on every release.
-          github-token: ${{ steps.token.outputs.token }}
+          # passed explicitly through this input.
+          github-token: ${{ env.RELEASE_TOKEN }}
           version-script: bun run version-packages
           publish-script: bun run release
           pr-title: 'chore: version packages'
@@ -151,7 +127,10 @@ jobs:
       - name: Create umbrella GitHub Release
         if: steps.changesets.outputs.published == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Same identity as the push above, so the tag and the Release are
+          # attributed consistently and a tag-triggered workflow (none today,
+          # but the footgun is the same) would actually fire.
+          GH_TOKEN: ${{ env.RELEASE_TOKEN }}
           # Injection-safe convention: pass step output through env rather
           # than interpolating `${{ }}` directly into the script body. The
           # content is repo-derived (package names/versions), but env vars

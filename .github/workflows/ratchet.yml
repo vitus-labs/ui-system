@@ -32,53 +32,26 @@ jobs:
     name: Ratchet coverage thresholds
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Same token as release.yml, for the same reason and it is
+      # load-bearing here too: a branch pushed with the bare GITHUB_TOKEN
+      # raises no workflow events (GitHub's recursion guard), so the
+      # ratchet PR lands with NO status checks and branch protection blocks
+      # it permanently. That is not theoretical — nine identical ratchet
+      # PRs accumulated between 2026-06-29 and 2026-08-24, every one
+      # unmergeable, because none could ever go green. A maintainer-owned
+      # token pushes as a real identity, so CI runs normally.
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
 
-      # Same token ladder as release.yml. This is load-bearing, not
-      # cosmetic: a branch pushed with the bare GITHUB_TOKEN does not
-      # trigger workflows (GitHub suppresses events raised by that token to
-      # prevent recursion), so the ratchet PR lands with NO status checks
-      # and branch protection blocks it forever. That is exactly what
-      # happened — nine identical ratchet PRs accumulated between
-      # 2026-06-29 and 2026-08-24, every one unmergeable, because none of
-      # them could ever get a green check. An App or PAT token is owned by
-      # a real identity, so its pushes raise events normally and CI runs.
-      - name: Mint GitHub App token
-        id: app_token
-        if: ${{ vars.RELEASE_APP_ID != '' }}
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
-      - name: Resolve token
-        id: token
-        env:
-          APP_TOKEN: ${{ steps.app_token.outputs.token }}
-          PAT_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          if [ -n "$APP_TOKEN" ]; then
-            echo "source=github-app" >> "$GITHUB_OUTPUT"
-            echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
-            echo "::notice::Ratchet auth: GitHub App — checks will fire on the ratchet PR."
-          elif [ -n "$PAT_TOKEN" ]; then
-            echo "source=pat" >> "$GITHUB_OUTPUT"
-            echo "token=$PAT_TOKEN" >> "$GITHUB_OUTPUT"
-            echo "::notice::Ratchet auth: RELEASE_PAT — checks will fire on the ratchet PR."
-          else
-            echo "source=github-token" >> "$GITHUB_OUTPUT"
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
-            echo "::warning title=Ratchet PR will have empty checks::No RELEASE_APP_ID/RELEASE_PAT configured — falling back to GITHUB_TOKEN. The ratchet PR will land with no CI runs and branch protection will block it. See CONTRIBUTING.md → Releases → Setup."
-          fi
-
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # We need a full ref so we can push a new branch.
-          token: ${{ steps.token.outputs.token }}
+          token: ${{ env.RELEASE_TOKEN }}
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
@@ -114,7 +87,7 @@ jobs:
       - name: Open PR if thresholds were raised
         if: steps.ratchet.outputs.updated == 'true'
         env:
-          GH_TOKEN: ${{ steps.token.outputs.token }}
+          GH_TOKEN: ${{ env.RELEASE_TOKEN }}
           COMMIT_MSG: |
             chore: ratchet coverage thresholds
 
