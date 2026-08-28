@@ -118,7 +118,11 @@ CI's `Changeset` check fails any PR that touches `packages/**` without either a 
 
 **Why this matters.** `changesets/action` pushes the Version PR commit using `GITHUB_TOKEN`. GitHub silently suppresses workflow runs for events triggered by `GITHUB_TOKEN` (recursion-prevention), so the Version PR lands with **empty CI checks**. Without a non-`GITHUB_TOKEN` identity, every release requires a manual close+reopen on the Version PR to fire CI.
 
-`release.yml` and `ratchet.yml` both use a single secret, **`RELEASE_TOKEN`**, falling back to `GITHUB_TOKEN` when it is unset. This matches how `vitus-labs/tools` is configured.
+Both workflows are built around a single secret, **`RELEASE_TOKEN`**, matching how `vitus-labs/tools` is configured.
+
+> **Current state (2026-08-28):** `ratchet.yml` uses `RELEASE_TOKEN`. `release.yml` is **temporarily pinned to `GITHUB_TOKEN`** because the `RELEASE_TOKEN` secret cannot push yet — a dispatched ratchet run failed with `Permission to vitus-labs/ui-system.git denied to vitbokisch ... 403`. The identity in that error is the token owner rather than `github-actions[bot]`, so the secret is set and being read; it just lacks **Contents: write**. `vitus-labs` is an Organization, so a fine-grained PAT additionally needs approval under *Org Settings → Personal access tokens*.
+>
+> Releasing on an under-scoped token would be worse than not using it: `changeset publish` reaches npm over OIDC and would succeed, then the tag push and GitHub Release would 403 — packages published with no tag and no Release. Grant the permissions, approve the token, verify with `gh workflow run ratchet.yml --ref main` (same push path, no npm involved), then restore the one-line `env:` in `release.yml`. Instructions are in the file.
 
 #### Setup — fine-grained PAT
 
