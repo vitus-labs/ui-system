@@ -48,7 +48,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@types/react-is": "^19.2.0",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.0",
     "@vitus-labs/tools-atlas": "2.7.1",
     "@vitus-labs/tools-lint": "2.7.1",
     "@vitus-labs/tools-typescript": "2.7.1",
@@ -61,7 +61,7 @@
     "ts-patch": "^4.0.1",
     "typescript": "6.0.3",
     "typescript-transform-paths": "^4.0.0",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   },
   "resolutions": {
     "react": "^19.2.8",
