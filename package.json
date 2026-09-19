@@ -57,7 +57,7 @@
     "jsdom": "^30.0.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "size-limit": "^13.0.3",
+    "size-limit": "^14.0.0",
     "ts-patch": "^4.0.1",
     "typescript": "6.0.3",
     "typescript-transform-paths": "^4.0.0",
