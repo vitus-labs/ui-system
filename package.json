@@ -41,7 +41,7 @@
     "@biomejs/biome": "^2.5.10",
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",
-    "@size-limit/file": "^13.0.3",
+    "@size-limit/file": "^14.0.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "26.4.0",
