@@ -10,6 +10,7 @@ import { isEmpty, render } from '@vitus-labs/core'
 import {
   Children,
   type FC,
+  isValidElement,
   memo,
   type ReactElement,
   type ReactNode,
@@ -111,7 +112,10 @@ const renderSpec = (
 const flattenChildren = (children: ReactNode): ReactNode[] => {
   if (Array.isArray(children)) return children
   if (isFragment(children)) {
-    return (children as ReactElement<{ children: ReactNode[] }>).props.children
+    // `Children.toArray` handles single-child fragments (non-array children).
+    return Children.toArray(
+      (children as ReactElement<{ children: ReactNode }>).props.children,
+    )
   }
   return [children]
 }
@@ -164,7 +168,8 @@ const objectKey = (
 
 const buildChildrenSpecs = (children: ReactNode): ItemSpec[] =>
   flattenChildren(children).map<ItemSpec>((node, i) => ({
-    key: i,
+    // Preserve the user's own key so item state follows identity, not position.
+    key: isValidElement(node) && node.key != null ? node.key : i,
     target: node,
     source: {},
     base: {},
