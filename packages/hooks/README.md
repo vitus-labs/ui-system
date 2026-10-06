@@ -16,7 +16,7 @@
 
 # @vitus-labs/hooks
 
-28 React hooks for UI interactions, state management, DOM observation, accessibility, and theming. ~3.4 KB gzipped.
+36 React hooks for UI interactions, state management, DOM observation, accessibility, and theming. ~3.4 KB gzipped.
 
 [![npm](https://img.shields.io/npm/v/@vitus-labs/hooks)](https://www.npmjs.com/package/@vitus-labs/hooks)
 [![license](https://img.shields.io/npm/l/@vitus-labs/hooks)](https://github.com/vitus-labs/ui-system/blob/main/LICENSE)
@@ -310,6 +310,38 @@ Tracks viewport dimensions with throttled updates.
 
 ```ts
 const { width, height } = useWindowResize({ throttleDelay: 300 })
+```
+
+#### useWindowScroll
+
+Tracks window scroll position `{ x, y }`, rAF-throttled with a passive listener.
+
+```ts
+const { x, y } = useWindowScroll()
+```
+
+#### usePageVisibility
+
+`true` while the tab is visible, `false` when hidden (`visibilitychange`).
+
+```ts
+const visible = usePageVisibility()
+```
+
+#### useOnlineStatus
+
+Tracks `navigator.onLine` via `online` / `offline` events (assumes online on the server).
+
+```ts
+const online = useOnlineStatus()
+```
+
+#### useIsClient
+
+`false` on the server and the first client render, `true` after mount. Hydration-safe.
+
+```ts
+const isClient = useIsClient()
 ```
 
 ## Peer Dependencies

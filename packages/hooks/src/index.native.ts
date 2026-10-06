@@ -17,6 +17,8 @@ import useDebouncedValue from './useDebouncedValue'
 // directly — they're per-component, not generalizable to a single hook.
 import type { UseInterval } from './useInterval'
 import useInterval from './useInterval'
+import type { UseIsClient } from './useIsClient'
+import useIsClient from './useIsClient'
 import type { UseIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 import useIsomorphicLayoutEffect from './useIsomorphicLayoutEffect'
 import type { UseKeyboard } from './useKeyboard'
@@ -53,6 +55,7 @@ export type {
   UseDebouncedCallback,
   UseDebouncedValue,
   UseInterval,
+  UseIsClient,
   UseIsomorphicLayoutEffect,
   UseKeyboard,
   UseLatest,
@@ -76,6 +79,7 @@ export {
   useDebouncedCallback,
   useDebouncedValue,
   useInterval,
+  useIsClient,
   useIsomorphicLayoutEffect,
   useKeyboard,
   useLatest,
