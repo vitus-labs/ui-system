@@ -1,5 +1,25 @@
 # @vitus-labs/core
 
+## 2.8.0
+
+### Patch Changes
+
+- [#370](https://github.com/vitus-labs/ui-system/pull/370) [`08fa162`](https://github.com/vitus-labs/ui-system/commit/08fa162ff3f5abd303c14729b5c333ec56ab7f75) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Bump the `react-is` runtime dependency to `^19.3.0` to track React 19.3.
+
+- [#372](https://github.com/vitus-labs/ui-system/pull/372) [`9606862`](https://github.com/vitus-labs/ui-system/commit/960686214dd5e5353dea900814e3af9c9505c4f6) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Correctness fixes: `isEqual` compares non-plain objects (Date/Map/Set/class instances) by reference instead of reporting distinct instances equal; rocketstyle `.theme()` keeps arrays and non-plain values intact and `.config({ inversed: false })` can now override `true`; rocketstories no longer re-prepends the prefix when chaining and `.config({ name })` takes effect.
+
+- [#383](https://github.com/vitus-labs/ui-system/pull/383) [`85989d4`](https://github.com/vitus-labs/ui-system/commit/85989d425dc2904cee491306acbfc2aea1b125f2) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - styler: without a `ThemeProvider`, interpolations still receive an empty `theme`, but `theme={}` is no longer forwarded to wrapped components.
+  - styler: `on*` props are forwarded to DOM elements only when they are functions.
+  - styler: a stray top-level `;` in global CSS is no longer inserted as a (throwing) rule.
+  - core: `init()` only resets optional engine members (`keyframes`, `createGlobalStyle`, `useTheme`) when a full engine (`css` + `styled`) is supplied, so partial `init()` calls keep them.
+
+- [#376](https://github.com/vitus-labs/ui-system/pull/376) [`1036122`](https://github.com/vitus-labs/ui-system/commit/1036122c6a0fd7c2574e9a59aa693ca456f27570) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `render(0)` now renders `0` instead of nothing, and `init()` clears optional engine members (`keyframes`, `createGlobalStyle`, `useTheme`) that a newly supplied engine does not provide.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @vitus-labs/hooks
 
+## 2.8.0
+
+### Minor Changes
+
+- [#374](https://github.com/vitus-labs/ui-system/pull/374) [`91ab32e`](https://github.com/vitus-labs/ui-system/commit/91ab32ebecbadcb2a46c415cea7280f871e050b2) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Add `useIsClient`, `useWindowScroll`, `usePageVisibility` and `useOnlineStatus` hooks.
+
+### Patch Changes
+
+- [#374](https://github.com/vitus-labs/ui-system/pull/374) [`91ab32e`](https://github.com/vitus-labs/ui-system/commit/91ab32ebecbadcb2a46c415cea7280f871e050b2) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix hook correctness issues: `useIntersection` no longer loops with inline threshold arrays (and uses the last batched entry); `useFocusTrap` tracks focusability attribute changes; `useResizeObserver`, `useEventListener` and `useFocusTrap` handle refs whose element mounts later; `useMergedRef` honours React 19 ref cleanups; `useCopyToClipboard` falls back to `execCommand` when `writeText` rejects; `useClickOutside` fires once per tap (pointerdown + composedPath); `useBreakpoint` re-syncs after subscribing; `useLocalStorage` keeps stable callbacks and re-reads on key change; `useElementSize` uses the border box consistently; `useMediaQuery` guards a missing `matchMedia`.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

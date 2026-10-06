@@ -1,5 +1,32 @@
 # @vitus-labs/kinetic
 
+## 2.8.0
+
+### Patch Changes
+
+- [#384](https://github.com/vitus-labs/ui-system/pull/384) [`d78cef3`](https://github.com/vitus-labs/ui-system/commit/d78cef3f6a9068eea213b88cef234832b05a9a1a) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - kinetic: removing a `Stagger` sibling no longer restarts the remaining items' in-flight enter/leave (the recomputed delay is read via a ref and applied only when a phase starts).
+  - kinetic-presets: README documents the corrected `reverse()` semantics (visible end state preserved; motion direction reversed).
+  - elements: a hover overlay no longer closes when its trigger blurs while the pointer is still over it.
+  - elements: `Iterator` fallback keys for unkeyed children are `.${index}`, so they can't collide with a user key like `"1"`.
+
+- [#377](https://github.com/vitus-labs/ui-system/pull/377) [`fafb301`](https://github.com/vitus-labs/ui-system/commit/fafb30129bfda5bbd3fd07e902b436e2772dcf7b) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix several kinetic transition correctness bugs.
+  
+  kinetic:
+  - `Stagger` and the `delay` prop are no longer defeated by the `transition` shorthand; the delay is re-applied and cleared once entered.
+  - `TransitionGroup` / `kinetic().group()`: a leaving item keeps its position instead of jumping to the end (which cancelled its exit), and a re-added key that was in the initial render now animates in. Children without a `key` warn in development.
+  - `kinetic().stagger()` / `.group()` forward `onEnter`, `onAfterEnter` (stagger: last child) and `onLeave`.
+  - Interrupted enter/leave transitions no longer leave stale classes behind.
+  - Animation end detection: completes via the fallback timeout when the child does not attach the ref (with a dev warning), restarts the timer when switching entering to leaving, waits for the longest running transition, and completes on the next frames when durations are explicitly zero.
+  
+  kinetic-presets:
+  - `reverse()` keeps the visible end state (the element is no longer hidden after entering).
+  - `withDuration()` / `withDelay()` handle comma-separated transitions, `cubic-bezier(...)` and decimal times like `.3s`, and replace an existing delay instead of adding a third time value.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

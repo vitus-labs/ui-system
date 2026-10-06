@@ -1,5 +1,25 @@
 # @vitus-labs/elements
 
+## 2.8.0
+
+### Patch Changes
+
+- [#370](https://github.com/vitus-labs/ui-system/pull/370) [`08fa162`](https://github.com/vitus-labs/ui-system/commit/08fa162ff3f5abd303c14729b5c333ec56ab7f75) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Bump the `react-is` runtime dependency to `^19.3.0` to track React 19.3.
+
+- [#384](https://github.com/vitus-labs/ui-system/pull/384) [`d78cef3`](https://github.com/vitus-labs/ui-system/commit/d78cef3f6a9068eea213b88cef234832b05a9a1a) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - kinetic: removing a `Stagger` sibling no longer restarts the remaining items' in-flight enter/leave (the recomputed delay is read via a ref and applied only when a phase starts).
+  - kinetic-presets: README documents the corrected `reverse()` semantics (visible end state preserved; motion direction reversed).
+  - elements: a hover overlay no longer closes when its trigger blurs while the pointer is still over it.
+  - elements: `Iterator` fallback keys for unkeyed children are `.${index}`, so they can't collide with a user key like `"1"`.
+
+- [#385](https://github.com/vitus-labs/ui-system/pull/385) [`4ac9254`](https://github.com/vitus-labs/ui-system/commit/4ac9254ded0f5b48fecccbda228d5a5d6b1071d7) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Overlay: a dropdown/popover dismissed by clicking outside no longer moves focus back to its trigger. Previously this happened in Safari (which doesn't focus clicked buttons), e.g. when opening a different overlay.
+
+- [#375](https://github.com/vitus-labs/ui-system/pull/375) [`1c6919f`](https://github.com/vitus-labs/ui-system/commit/1c6919f7685245f8646c5b5866d7f3f9168e825a) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Overlay/Iterator/Element correctness fixes: `onClose` fires once per close and nested overlays no longer close their parents; only the topmost overlay closes on Escape; focus returns to the trigger for dropdowns/popovers; hover overlays react to focus/blur; tooltip/popover ARIA roles; modal focus trap keeps Tab inside when nothing is focusable; parent container overflow is restored; Portal cleanup is safe and mounts before paint; Iterator preserves user keys and supports single-child fragments; `equalBeforeAfter` can shrink; Element re-attaches swapped refs; Overlay no longer injects component props into DOM element children; Text memoizes its `$text` prop.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

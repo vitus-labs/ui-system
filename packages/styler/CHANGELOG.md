@@ -1,5 +1,27 @@
 # @vitus-labs/styler
 
+## 2.8.0
+
+### Minor Changes
+
+- [#376](https://github.com/vitus-labs/ui-system/pull/376) [`1036122`](https://github.com/vitus-labs/ui-system/commit/1036122c6a0fd7c2574e9a59aa693ca456f27570) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Add component selectors for static styled components (`${Button} { ... }` resolves to its class; dynamic components throw a clear error) and function themes: `<ThemeProvider theme={outer => ({ ...outer, x })}>`.
+
+### Patch Changes
+
+- [#376](https://github.com/vitus-labs/ui-system/pull/376) [`1036122`](https://github.com/vitus-labs/ui-system/commit/1036122c6a0fd7c2574e9a59aa693ca456f27570) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix stylesheet insertion: global CSS is split at top-level `;` so `@import`/`@charset` no longer break `insertRule` (and are inserted first), and boosted vs. unboosted identical CSS now get distinct class names so the boosted rule is actually inserted. Dynamic styled components without a `ThemeProvider` now receive an empty `theme` object instead of `undefined`.
+
+- [#376](https://github.com/vitus-labs/ui-system/pull/376) [`1036122`](https://github.com/vitus-labs/ui-system/commit/1036122c6a0fd7c2574e9a59aa693ca456f27570) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix prop forwarding: `styled.svg` now keeps SVG attributes (`viewBox`, `xmlns`, `d`, `fill`, `stroke*`, ...), every `on[A-Z]*` event handler is forwarded (capture, media, toggle, pointer, ...), `inert`/`popover*`/`suppressHydrationWarning` are allowed, and a custom `shouldForwardProp` is now honoured for component targets.
+
+- [#383](https://github.com/vitus-labs/ui-system/pull/383) [`85989d4`](https://github.com/vitus-labs/ui-system/commit/85989d425dc2904cee491306acbfc2aea1b125f2) Thanks [@vitbokisch](https://github.com/vitbokisch)! - - styler: without a `ThemeProvider`, interpolations still receive an empty `theme`, but `theme={}` is no longer forwarded to wrapped components.
+  - styler: `on*` props are forwarded to DOM elements only when they are functions.
+  - styler: a stray top-level `;` in global CSS is no longer inserted as a (throwing) rule.
+  - core: `init()` only resets optional engine members (`keyframes`, `createGlobalStyle`, `useTheme`) when a full engine (`css` + `styled`) is supplied, so partial `init()` calls keep them.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes
