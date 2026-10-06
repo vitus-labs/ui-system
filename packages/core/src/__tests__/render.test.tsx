@@ -6,6 +6,10 @@ const TestComponent = (props: { label?: string }) => (
 )
 
 describe('render', () => {
+  it('renders numeric zero', () => {
+    expect(renderFn(0 as any)).toBe(0)
+  })
+
   it('should return null for falsy content', () => {
     expect(renderFn(null)).toBeNull()
     expect(renderFn(undefined)).toBeNull()
