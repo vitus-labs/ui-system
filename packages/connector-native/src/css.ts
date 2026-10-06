@@ -29,6 +29,18 @@ export type CSSResult = {
 const isCSSResult = (v: unknown): v is CSSResult =>
   typeof v === 'object' && v !== null && (v as any).__brand === 'vl.native.css'
 
+/**
+ * A value needs per-render resolution when it is a function, a nested
+ * CSSResult that itself has dynamics, or an array containing either.
+ * (A nested dynamic CSSResult treated as static would be resolved once with
+ * empty props, baking in `undefined`.)
+ */
+const isDynamicValue = (v: unknown): boolean => {
+  if (typeof v === 'function') return true
+  if (Array.isArray(v)) return v.some(isDynamicValue)
+  return isCSSResult(v) && v.dynamics.length > 0
+}
+
 const styleObjectToString = (obj: Record<string, unknown>): string => {
   // Single for-in concat avoids the `Object.entries → .map → .join`
   // chain's three intermediate arrays (entries tuple array + transformed
@@ -69,7 +81,10 @@ const resolveInterpolation = (value: Interpolation, props: any): string => {
   }
   if (isCSSResult(value)) {
     // Nested css`` — resolve it and convert back to CSS-like string
-    return styleObjectToString(value.resolve(props))
+    // Trailing `;` so text following the interpolation starts a new
+    // declaration instead of being glued onto the last value.
+    const nested = styleObjectToString(value.resolve(props))
+    return nested ? `${nested};` : ''
   }
   if (Array.isArray(value)) {
     // Array of interpolations — e.g. the per-breakpoint output of
@@ -112,7 +127,7 @@ export const css = (
   strings: TemplateStringsArray,
   ...values: Interpolation[]
 ): CSSResult => {
-  const hasDynamics = values.some((v) => typeof v === 'function')
+  const hasDynamics = values.some(isDynamicValue)
 
   // Static fast path: no functions, parse once
   if (!hasDynamics) {
@@ -149,7 +164,7 @@ export const css = (
   return {
     __brand: 'vl.native.css',
     statics: {},
-    dynamics: values.filter((v) => typeof v === 'function') as Array<
+    dynamics: values.filter(isDynamicValue) as unknown as Array<
       (props: any) => any
     >,
     resolve,

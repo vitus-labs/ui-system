@@ -23,7 +23,9 @@ const EMPTY_STYLE = {} as const
 const lazyBreakpoint = (inner: CSSResult, minWidth: number): CSSResult => ({
   __brand: 'vl.native.css',
   statics: {},
-  dynamics: [],
+  // Reads the window width at resolve time, so it must register as dynamic
+  // (otherwise a css`` embedding it would be resolved once and cached).
+  dynamics: [(props: any) => props],
   resolve: (props: any) =>
     Dimensions.get('window').width >= minWidth
       ? inner.resolve(props)

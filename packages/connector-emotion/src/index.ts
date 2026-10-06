@@ -37,15 +37,57 @@ import { createElement, type FC } from 'react'
 // resolveValue — recursively resolve css interpolation values to strings
 // ---------------------------------------------------------------------------
 
-const resolveValue = (value: any, props: Record<string, any>): string => {
-  if (value == null || value === false || value === true) return ''
-  if (typeof value === 'function') return resolveValue(value(props), props)
+// Objects (e.g. Emotion `keyframes` / serialized styles) must NOT be
+// stringified: String(keyframes`...`) yields `_EMO_name_@keyframes..._EMO_`,
+// which Emotion only understands when it sees the object itself. So they are
+// kept as-is in a parts array (strings + objects) that Emotion serializes.
+const isStyleObject = (v: unknown): boolean =>
+  typeof v === 'object' && v !== null && !Array.isArray(v)
+
+const pushParts = (value: any, props: Record<string, any>, out: any[]) => {
+  if (value == null || value === false || value === true) return
+  if (typeof value === 'function') return pushParts(value(props), props, out)
   if (Array.isArray(value)) {
-    let result = ''
-    for (const item of value) result += resolveValue(item, props)
-    return result
+    for (const item of value) pushParts(item, props, out)
+    return
   }
-  return String(value)
+  out.push(isStyleObject(value) ? value : String(value))
+}
+
+// Collapses parts into a plain string when only strings are present, else
+// into an Emotion SerializedStyles (via Emotion's own `css`) so the style
+// objects (keyframes) are serialized natively. A raw array would not work:
+// Emotion appends `;` after every string element of an interpolated array.
+const finalize = (parts: any[]): any => {
+  if (!parts.some(isStyleObject)) return parts.join('')
+  const literals: string[] = []
+  const objs: any[] = []
+  let text = ''
+  for (const part of parts) {
+    if (isStyleObject(part)) {
+      literals.push(text)
+      objs.push(part)
+      text = ''
+    } else text += part
+  }
+  literals.push(text)
+  return emotionCss(
+    Object.assign([...literals], { raw: literals }) as any,
+    ...objs,
+  )
+}
+
+const buildParts = (
+  strings: TemplateStringsArray,
+  values: any[],
+  props: Record<string, any>,
+): any[] => {
+  const out: any[] = [strings[0] ?? '']
+  for (let i = 0; i < values.length; i++) {
+    pushParts(values[i], props, out)
+    out.push(strings[i + 1] ?? '')
+  }
+  return out
 }
 
 // ---------------------------------------------------------------------------
@@ -70,6 +112,10 @@ export const css = (strings: TemplateStringsArray, ...values: any[]): any => {
   )
 
   if (!hasDynamic) {
+    // Style objects (keyframes etc.) keep their identity → parts array
+    if (values.some(isStyleObject))
+      return finalize(buildParts(strings, values, {}))
+
     let result = strings[0] ?? ''
     for (let i = 0; i < values.length; i++) {
       const v = values[i]
@@ -82,11 +128,7 @@ export const css = (strings: TemplateStringsArray, ...values: any[]): any => {
 
   // Dynamic path: return a function that resolves with props at render time
   return (props: Record<string, any>) => {
-    let result = strings[0] ?? ''
-    for (let i = 0; i < values.length; i++) {
-      result += resolveValue(values[i], props) + (strings[i + 1] ?? '')
-    }
-    return result
+    return finalize(buildParts(strings, values, props))
   }
 }
 
@@ -115,12 +157,14 @@ export const createGlobalStyle = (
   ...values: any[]
 ) => {
   const GlobalComponent: FC<Record<string, any>> = (props) => {
-    // Resolve all interpolations (including our css functions) to strings
-    let cssStr = strings[0] ?? ''
-    for (let i = 0; i < values.length; i++) {
-      cssStr += resolveValue(values[i], props) + (strings[i + 1] ?? '')
-    }
-    return createElement(Global, { styles: emotionCss`${cssStr}` })
+    // Inject the context theme (like styled does) so `({ theme }) => ...`
+    // interpolations resolve; an explicit `theme` prop wins.
+    const theme = useTheme()
+    const resolveProps = props.theme !== undefined ? props : { ...props, theme }
+    // Resolve all interpolations (including our css functions)
+    return createElement(Global, {
+      styles: finalize(buildParts(strings, values, resolveProps)),
+    })
   }
 
   GlobalComponent.displayName = 'GlobalStyle'
