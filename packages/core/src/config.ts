@@ -233,9 +233,10 @@ class Configuration {
    * ```
    */
   init = (props: InitConfig) => {
-    // Swapping engines: drop optional members the new connector doesn't
-    // provide so stale ones from the previous connector don't linger.
-    if (props.css || props.styled || props.provider) {
+    // Swapping engines (a full connector: css + styled): drop optional
+    // members the new connector doesn't provide so stale ones from the
+    // previous connector don't linger. Partial init() calls keep them.
+    if (props.css && props.styled) {
       this._keyframes = null
       this._createGlobalStyle = null
       this._useTheme = null

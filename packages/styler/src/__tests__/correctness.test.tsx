@@ -8,6 +8,11 @@ import { styled } from '../styled'
 import { ThemeProvider, useTheme } from '../ThemeProvider'
 
 describe('prop forwarding', () => {
+  it('forwards on* props only when they are functions', () => {
+    const fn = () => {}
+    expect(filterProps({ onFoo: fn, onBar: 'x' })).toEqual({ onFoo: fn })
+  })
+
   it('forwards SVG attributes', () => {
     const r = filterProps({
       viewBox: '0 0 1 1',
@@ -81,6 +86,17 @@ describe('sheet', () => {
     ])
   })
 
+  it('does not emit a lone `;` as a rule', () => {
+    const s = createSheet()
+    const inserted: string[] = []
+    ;(s as any).sheet = {
+      cssRules: { length: 0 },
+      insertRule: (r: string) => inserted.push(r),
+    }
+    s.insertGlobal('body{margin:0}; html{color:red}')
+    expect(inserted).toEqual(['body{margin:0}', 'html{color:red}'])
+  })
+
   it('boosted and unboosted identical CSS get distinct classes', () => {
     const s = createSheet()
     expect(s.insert('color:red;', true)).not.toBe(s.insert('color:red;', false))
@@ -91,6 +107,17 @@ describe('sheet', () => {
 })
 
 describe('theme', () => {
+  it('does not forward an empty theme to component targets', () => {
+    let received: unknown = 'unset'
+    const Inner = (p: any) => {
+      received = p.theme
+      return null
+    }
+    const C = styled(Inner)`color: ${(p: any) => p.theme.x ?? 'blue'};`
+    render(<C />)
+    expect(received).toBeUndefined()
+  })
+
   it('dynamic styled without ThemeProvider gets an empty theme', () => {
     const C = styled.div!`color: ${(p: any) => p.theme.x ?? 'blue'};`
     expect(() => render(<C />)).not.toThrow()

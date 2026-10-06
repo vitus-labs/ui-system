@@ -208,10 +208,12 @@ for (const k of 'viewBox xmlns xmlnsXlink d fill fillRule fillOpacity clipRule c
 ))
   HTML_PROPS[k] = true
 
-// Any React event handler (`onXxx`, incl. `*Capture`, media, toggle, pointer…).
+// Any React event handler (`onXxx`, incl. `*Capture`, media, toggle, pointer…)
+// — functions only, so non-handler `onX` data props don't hit the DOM.
 // Only checked after the whitelist misses, so the common path is unaffected.
 const HANDLER_RE = /^on[A-Z]/
-const isHandler = (key: string): boolean => HANDLER_RE.test(key)
+const isHandler = (key: string, value: unknown): boolean =>
+  typeof value === 'function' && HANDLER_RE.test(key)
 
 /**
  * Filters props for HTML elements. Keeps valid HTML attrs, data-*, aria-*.
@@ -236,7 +238,7 @@ export const filterProps = (
     }
 
     // Keep known HTML props
-    if (key in HTML_PROPS || isHandler(key)) {
+    if (key in HTML_PROPS || isHandler(key, props[key])) {
       filtered[key] = props[key]
     }
   }
@@ -307,7 +309,8 @@ export const buildProps = (
       result[key] = rawProps[key]
       continue
     }
-    if (key in HTML_PROPS || isHandler(key)) result[key] = rawProps[key]
+    if (key in HTML_PROPS || isHandler(key, rawProps[key]))
+      result[key] = rawProps[key]
   }
   return result
 }

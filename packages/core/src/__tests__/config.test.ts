@@ -41,6 +41,13 @@ describe('Configuration', () => {
       expect(config.useTheme).toBeNull()
     })
 
+    it('keeps optional members on a partial init() call', () => {
+      const f = () => vi.fn() as any
+      init({ css: f(), styled: f(), provider: f(), keyframes: f() })
+      init({ provider: f() })
+      expect(config.keyframes).toBeTruthy()
+    })
+
     const originalCss = config._css
     const originalStyled = config._styled
     const originalProvider = config._provider

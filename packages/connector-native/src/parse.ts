@@ -151,6 +151,7 @@ const expandShorthand = (
  * stripping block comments and `//` line comments. A `//` comment is only
  * recognised at the start of a declaration, so `url(http://x)` is untouched.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass char scanner (quotes, parens, comments) — splitting it would add per-char call overhead
 const splitDeclarations = (text: string): string[] => {
   const out: string[] = []
   let cur = ''
