@@ -104,6 +104,7 @@ const Collapse = ({
     ref: wrapperRef,
     active: (stage === 'entering' || stage === 'leaving') && !reducedMotion,
     timeout,
+    phase: stage,
     onEnd: () => {
       const wrapper = wrapperRef.current
       if (stage === 'entering') {

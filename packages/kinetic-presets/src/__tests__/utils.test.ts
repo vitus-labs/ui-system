@@ -282,12 +282,30 @@ describe('withEasing — replaceEasing edge cases', () => {
 })
 
 describe('reverse', () => {
-  it('swaps enter and leave styles', () => {
-    const reversed = reverse(fadeUp)
-    expect(reversed.enterStyle).toEqual(fadeUp.leaveStyle)
-    expect(reversed.enterToStyle).toEqual(fadeUp.leaveToStyle)
-    expect(reversed.leaveStyle).toEqual(fadeUp.enterStyle)
-    expect(reversed.leaveToStyle).toEqual(fadeUp.enterToStyle)
+  const asym: Preset = {
+    enterStyle: { transform: 'translateY(16px)' },
+    enterToStyle: { transform: 'none' },
+    leaveStyle: { transform: 'none' },
+    leaveToStyle: { transform: 'translateY(-16px)' },
+  }
+
+  it('swaps the motion direction and keeps the visible end state', () => {
+    const reversed = reverse(asym)
+    expect(reversed.enterStyle).toEqual(asym.leaveToStyle)
+    expect(reversed.leaveToStyle).toEqual(asym.enterStyle)
+    // visible states are unchanged
+    expect(reversed.enterToStyle).toEqual(asym.enterToStyle)
+    expect(reversed.leaveStyle).toEqual(asym.leaveStyle)
+  })
+
+  it('never ends the enter in the hidden state', () => {
+    for (const p of [fade, fadeUp, asym]) {
+      expect(reverse(p).enterToStyle).toEqual(p.enterToStyle)
+    }
+    expect(reverse(fadeUp).enterToStyle).toEqual({
+      opacity: 1,
+      transform: 'translateY(0)',
+    })
   })
 
   it('swaps enter and leave transitions', () => {
@@ -307,11 +325,11 @@ describe('reverse', () => {
     }
     const reversed = reverse(preset)
     expect(reversed.enter).toBe('leave-class')
-    expect(reversed.enterFrom).toBe('leave-from')
-    expect(reversed.enterTo).toBe('leave-to')
+    expect(reversed.enterFrom).toBe('leave-to')
+    expect(reversed.enterTo).toBe('enter-to')
     expect(reversed.leave).toBe('enter-class')
-    expect(reversed.leaveFrom).toBe('enter-from')
-    expect(reversed.leaveTo).toBe('enter-to')
+    expect(reversed.leaveFrom).toBe('leave-from')
+    expect(reversed.leaveTo).toBe('enter-from')
   })
 
   it('double reverse returns original', () => {
@@ -326,10 +344,9 @@ describe('reverse', () => {
   it('handles preset with undefined fields', () => {
     const sparse: Preset = { enterStyle: { opacity: 0 } }
     const reversed = reverse(sparse)
-    expect(reversed.leaveStyle).toEqual({ opacity: 0 })
+    expect(reversed.leaveToStyle).toEqual({ opacity: 0 })
     expect(reversed.enterStyle).toBeUndefined()
     expect(reversed.enterToStyle).toBeUndefined()
-    expect(reversed.leaveToStyle).toBeUndefined()
     expect(reversed.enterTransition).toBeUndefined()
     expect(reversed.leaveTransition).toBeUndefined()
     expect(reversed.enter).toBeUndefined()
@@ -382,5 +399,53 @@ describe('compose — mergeStyles transitions', () => {
     const b: Preset = { enterTo: 'et-b' }
     const result = compose(a, b)
     expect(result.enterTo).toBe('et-a et-b')
+  })
+})
+
+describe('withDuration / withDelay — multi-segment and decimals', () => {
+  const multi: Preset = {
+    enterTransition:
+      'opacity .3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease-out',
+    leaveTransition: 'opacity 200ms ease',
+  }
+
+  it('replaces the duration in every comma-separated segment', () => {
+    expect(withDuration(multi, 100).enterTransition).toBe(
+      'opacity 100ms cubic-bezier(0.4, 0, 0.2, 1), transform 100ms ease-out',
+    )
+  })
+
+  it('does not split on commas inside cubic-bezier()', () => {
+    const preset: Preset = {
+      enterTransition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+    }
+    expect(withDuration(preset, 500).enterTransition).toBe(
+      'all 500ms cubic-bezier(0.4, 0, 0.2, 1)',
+    )
+  })
+
+  it('handles decimal durations like .3s', () => {
+    const preset: Preset = { enterTransition: 'opacity .3s ease' }
+    expect(withDuration(preset, 500).enterTransition).toBe('opacity 500ms ease')
+    expect(withDelay(preset, 100).enterTransition).toBe(
+      'opacity .3s 100ms ease',
+    )
+  })
+
+  it('adds the delay to every segment', () => {
+    expect(withDelay(multi, 100).enterTransition).toBe(
+      'opacity .3s 100ms cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s 100ms ease-out',
+    )
+  })
+
+  it('replaces an existing delay instead of adding a third time', () => {
+    const preset: Preset = { enterTransition: 'all 300ms ease 50ms' }
+    expect(withDelay(preset, 100).enterTransition).toBe('all 300ms ease 100ms')
+    const inline: Preset = { enterTransition: 'all 300ms 50ms ease' }
+    expect(withDelay(inline, 100).enterTransition).toBe('all 300ms 100ms ease')
+    // repeated application is stable
+    expect(withDelay(withDelay(inline, 100), 100).enterTransition).toBe(
+      'all 300ms 100ms ease',
+    )
   })
 })

@@ -62,6 +62,7 @@ const StaggerRenderer = ({
         show={show}
         appear={effectiveAppear}
         timeout={effectiveTimeout + delay}
+        delay={delay}
         enterStyle={config.enterStyle}
         enterToStyle={config.enterToStyle}
         enterTransition={config.enterTransition}
@@ -74,6 +75,9 @@ const StaggerRenderer = ({
         leave={config.leave}
         leaveFrom={config.leaveFrom}
         leaveTo={config.leaveTo}
+        onEnter={callbacks.onEnter}
+        onAfterEnter={index === count - 1 ? callbacks.onAfterEnter : undefined}
+        onLeave={callbacks.onLeave}
         onAfterLeave={
           index === (effectiveReverseLeave ? 0 : count - 1)
             ? callbacks.onAfterLeave

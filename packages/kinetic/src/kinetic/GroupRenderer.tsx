@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react'
 import type { TransitionCallbacks } from '../types'
+import { mergeLeaving, warnMissingKey } from '../utils'
 import TransitionItem from './TransitionItem'
 import type { KineticConfig } from './types'
 
@@ -25,8 +26,9 @@ type KeyedChild = { key: string | number; element: ReactElement<any> }
 const getKeyedChildren = (children: ReactElement<any>[]): KeyedChild[] => {
   const result: KeyedChild[] = []
   Children.forEach(children, (child) => {
-    if (isValidElement(child) && child.key != null) {
-      result.push({ key: child.key, element: child })
+    if (isValidElement(child)) {
+      if (child.key != null) result.push({ key: child.key, element: child })
+      else warnMissingKey()
     }
   })
   return result
@@ -53,6 +55,7 @@ const GroupRenderer = ({
   const prevRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const leavingRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const initialKeysRef = useRef<Set<string | number> | null>(null)
+  const orderRef = useRef<(string | number)[]>([])
   const [, forceUpdate] = useState(0)
 
   const currentKeyed = getKeyedChildren(children)
@@ -69,6 +72,8 @@ const GroupRenderer = ({
   for (const [key, child] of prevRef.current) {
     if (!currentMap.has(key)) {
       leavingRef.current.set(key, child)
+      // Once removed, a later re-add is a brand-new mount and must animate
+      initialKeysRef.current.delete(key)
     }
   }
 
@@ -85,11 +90,13 @@ const GroupRenderer = ({
     forceUpdate((c) => c + 1)
   }
 
-  // Merge current + leaving
-  const allEntries: KeyedChild[] = [...currentKeyed]
-  for (const [key, element] of leavingRef.current) {
-    allEntries.push({ key, element })
-  }
+  // Merge current + leaving; leaving entries keep their previous position
+  const allEntries = mergeLeaving(
+    currentKeyed,
+    leavingRef.current,
+    orderRef.current,
+  )
+  orderRef.current = allEntries.map((e) => e.key)
 
   const groupedChildren = allEntries.map(({ key, element }) => {
     const isInitial = initialKeysRef.current?.has(key) ?? false
@@ -112,6 +119,9 @@ const GroupRenderer = ({
         leave={config.leave}
         leaveFrom={config.leaveFrom}
         leaveTo={config.leaveTo}
+        onEnter={callbacks.onEnter}
+        onAfterEnter={callbacks.onAfterEnter}
+        onLeave={callbacks.onLeave}
         onAfterLeave={() => handleAfterLeave(key)}
       >
         {element}

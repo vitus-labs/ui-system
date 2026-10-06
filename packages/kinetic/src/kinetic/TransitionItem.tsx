@@ -13,7 +13,7 @@ import type {
 } from '../types'
 import useAnimationEnd from '../useAnimationEnd'
 import useTransitionState from '../useTransitionState'
-import { addClasses, mergeStyles, nextFrame, removeClasses } from '../utils'
+import { applyEnter, applyLeave, applySettled, mergeStyles } from '../utils'
 
 type TransitionItemProps = ClassTransitionProps &
   StyleTransitionProps &
@@ -25,41 +25,6 @@ type TransitionItemProps = ClassTransitionProps &
     delay?: number
     children: ReactElement<any>
   }
-
-const applyEnter = (
-  el: HTMLElement,
-  config: ClassTransitionProps & StyleTransitionProps,
-) => {
-  addClasses(el, config.enter)
-  addClasses(el, config.enterFrom)
-  if (config.enterStyle) Object.assign(el.style, config.enterStyle)
-  if (config.enterTransition) el.style.transition = config.enterTransition
-
-  return nextFrame(() => {
-    removeClasses(el, config.enterFrom)
-    addClasses(el, config.enterTo)
-    if (config.enterToStyle) Object.assign(el.style, config.enterToStyle)
-  })
-}
-
-const applyLeave = (
-  el: HTMLElement,
-  config: ClassTransitionProps & StyleTransitionProps,
-) => {
-  removeClasses(el, config.enter)
-  removeClasses(el, config.enterTo)
-
-  addClasses(el, config.leave)
-  addClasses(el, config.leaveFrom)
-  if (config.leaveStyle) Object.assign(el.style, config.leaveStyle)
-  if (config.leaveTransition) el.style.transition = config.leaveTransition
-
-  return nextFrame(() => {
-    removeClasses(el, config.leaveFrom)
-    addClasses(el, config.leaveTo)
-    if (config.leaveToStyle) Object.assign(el.style, config.leaveToStyle)
-  })
-}
 
 const applyReducedMotion = (
   stage: string,
@@ -100,6 +65,7 @@ const TransitionItem = ({
   leaveStyle,
   leaveToStyle,
   leaveTransition,
+  delay,
   onEnter,
   onAfterEnter,
   onLeave,
@@ -147,6 +113,7 @@ const TransitionItem = ({
     ref: elementRef,
     active: (stage === 'entering' || stage === 'leaving') && !reducedMotion,
     timeout,
+    phase: stage,
     onEnd: () => {
       if (stage === 'entering') {
         callbacksRef.current.onAfterEnter?.()
@@ -168,21 +135,18 @@ const TransitionItem = ({
 
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, transitionConfig)
+      const cancel = applyEnter(el, transitionConfig, delay)
       return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, transitionConfig)
+      const cancel = applyLeave(el, transitionConfig, delay)
       return cancel
     }
 
-    if (stage === 'entered') {
-      removeClasses(el, enter)
-      el.style.transition = ''
-    }
-  }, [stage])
+    applySettled(el, transitionConfig, stage, delay)
+  }, [stage, delay])
 
   if (!shouldMount) {
     if (unmount) return null

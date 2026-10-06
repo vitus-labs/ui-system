@@ -5,65 +5,10 @@ import {
   useReducedMotion,
 } from '@vitus-labs/hooks'
 import { type CSSProperties, cloneElement, type Ref, useRef } from 'react'
-import type {
-  ClassTransitionProps,
-  StyleTransitionProps,
-  TransitionProps,
-} from './types'
+import type { TransitionProps } from './types'
 import useAnimationEnd from './useAnimationEnd'
 import useTransitionState from './useTransitionState'
-import { addClasses, mergeStyles, nextFrame, removeClasses } from './utils'
-
-const applyEnter = (
-  el: HTMLElement,
-  {
-    enter,
-    enterFrom,
-    enterTo,
-    enterStyle,
-    enterToStyle,
-    enterTransition,
-  }: ClassTransitionProps & StyleTransitionProps,
-) => {
-  addClasses(el, enter)
-  addClasses(el, enterFrom)
-  if (enterStyle) Object.assign(el.style, enterStyle)
-  if (enterTransition) el.style.transition = enterTransition
-
-  return nextFrame(() => {
-    removeClasses(el, enterFrom)
-    addClasses(el, enterTo)
-    if (enterToStyle) Object.assign(el.style, enterToStyle)
-  })
-}
-
-const applyLeave = (
-  el: HTMLElement,
-  {
-    enter,
-    enterTo,
-    leave,
-    leaveFrom,
-    leaveTo,
-    leaveStyle,
-    leaveToStyle,
-    leaveTransition,
-  }: ClassTransitionProps & StyleTransitionProps,
-) => {
-  removeClasses(el, enter)
-  removeClasses(el, enterTo)
-
-  addClasses(el, leave)
-  addClasses(el, leaveFrom)
-  if (leaveStyle) Object.assign(el.style, leaveStyle)
-  if (leaveTransition) el.style.transition = leaveTransition
-
-  return nextFrame(() => {
-    removeClasses(el, leaveFrom)
-    addClasses(el, leaveTo)
-    if (leaveToStyle) Object.assign(el.style, leaveToStyle)
-  })
-}
+import { applyEnter, applyLeave, applySettled, mergeStyles } from './utils'
 
 const applyReducedMotion = (
   stage: string,
@@ -139,6 +84,7 @@ const Transition = ({
     ref: elementRef,
     active: (stage === 'entering' || stage === 'leaving') && !reducedMotion,
     timeout,
+    phase: stage,
     onEnd: () => {
       if (stage === 'entering') {
         callbacksRef.current.onAfterEnter?.()
@@ -175,31 +121,22 @@ const Transition = ({
       leaveTransition,
     }
 
-    // `delay` was declared in TransitionProps but silently ignored on web
-    // (only Transition.native honored it). Only TOUCH transitionDelay
-    // when the consumer explicitly set the prop — Stagger writes its
-    // own per-child transitionDelay onto the cloned child's style, so
-    // clobbering unconditionally would zero it out. When delay IS set
-    // here, mirror it on 'entered' cleanup too.
-    if (delay !== undefined) el.style.transitionDelay = `${delay}ms`
-
+    // `delay` is re-applied inside applyEnter/applyLeave AFTER the
+    // `transition` shorthand (which would otherwise reset it to 0), and
+    // cleared on 'entered' so later transitions (e.g. hover) aren't delayed.
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, transitionConfig)
+      const cancel = applyEnter(el, transitionConfig, delay)
       return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, transitionConfig)
+      const cancel = applyLeave(el, transitionConfig, delay)
       return cancel
     }
 
-    if (stage === 'entered') {
-      removeClasses(el, enter)
-      el.style.transition = ''
-      if (delay !== undefined) el.style.transitionDelay = ''
-    }
+    applySettled(el, transitionConfig, stage, delay)
   }, [stage, delay])
 
   if (!shouldMount) {

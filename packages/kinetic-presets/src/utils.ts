@@ -131,36 +131,95 @@ export const withDelay = (
 // ─── reverse ────────────────────────────────────────────────────────
 
 /**
- * Swap enter ↔ leave of a preset.
- * The enter animation becomes the leave animation and vice versa.
+ * Swap the motion direction of a preset while keeping its visible end state.
+ *
+ * The element now enters from the side the original leaves to, and leaves
+ * towards the side the original enters from. `enterToStyle` / `leaveStyle`
+ * (the visible state) are unchanged, so the element is always fully shown
+ * after entering. Transitions and the enter/leave classes are swapped.
+ *
+ * Note: the built-in presets are symmetric (they leave back to the state they
+ * enter from), so for them only transitions/classes swap. The direction swap
+ * matters for asymmetric presets, e.g. one that enters from below and leaves
+ * upward:
  *
  * @example
- * const slideDownOnLeave = reverse(slideUp)
- * // Enter: slides down, Leave: slides up
+ * const up = { enterStyle: { transform: 'translateY(16px)' }, enterToStyle: { transform: 'none' },
+ *              leaveStyle: { transform: 'none' }, leaveToStyle: { transform: 'translateY(-16px)' } }
+ * reverse(up)
+ * // enters from above (-16px), leaves downward (+16px), visible state unchanged
  */
 export const reverse = (preset: Preset): Preset => ({
-  enterStyle: preset.leaveStyle,
-  enterToStyle: preset.leaveToStyle,
+  enterStyle: preset.leaveToStyle,
+  enterToStyle: preset.enterToStyle,
   enterTransition: preset.leaveTransition,
-  leaveStyle: preset.enterStyle,
-  leaveToStyle: preset.enterToStyle,
+  leaveStyle: preset.leaveStyle,
+  leaveToStyle: preset.enterStyle,
   leaveTransition: preset.enterTransition,
   enter: preset.leave,
-  enterFrom: preset.leaveFrom,
-  enterTo: preset.leaveTo,
+  enterFrom: preset.leaveTo,
+  enterTo: preset.enterTo,
   leave: preset.enter,
-  leaveFrom: preset.enterFrom,
-  leaveTo: preset.enterTo,
+  leaveFrom: preset.leaveFrom,
+  leaveTo: preset.enterFrom,
 })
 
 // ─── Internal helpers ───────────────────────────────────────────────
 
+/** Splits a CSS list on top-level commas (ignores commas inside parentheses). */
+const splitTopLevel = (value: string): string[] => {
+  const parts: string[] = []
+  let depth = 0
+  let start = 0
+  for (let i = 0; i < value.length; i++) {
+    const c = value[i]
+    if (c === '(') depth++
+    else if (c === ')') depth--
+    else if (c === ',' && depth === 0) {
+      parts.push(value.slice(start, i))
+      start = i + 1
+    }
+  }
+  parts.push(value.slice(start))
+  return parts
+}
+
+// A CSS <time> token: supports decimals (".3s", "0.3s") and avoids matching
+// inside identifiers such as "translate3d" or "h2s". The boundary is a
+// captured prefix group rather than a lookbehind, which throws a SyntaxError
+// at module load on Safari < 16.4.
+const TIME = /(^|[^\w.-])((?:\d+\.?\d*|\.\d+)(?:ms|s))(?![\w-])/g
+
 /**
- * Replace the duration in a CSS transition string.
+ * Rewrites every comma-separated transition in `transition`. `fn` receives
+ * the segment and its <time> tokens (1st = duration, 2nd = delay).
+ */
+const mapSegments = (
+  transition: string,
+  fn: (segment: string, times: RegExpMatchArray[]) => string,
+): string =>
+  splitTopLevel(transition)
+    .map((seg) => fn(seg, [...seg.matchAll(TIME)]))
+    .join(',')
+
+const spliceMatch = (
+  seg: string,
+  m: RegExpMatchArray,
+  text: string,
+): string => {
+  const start = (m.index ?? 0) + (m[1] ?? '').length
+  return seg.slice(0, start) + text + seg.slice(start + (m[2] ?? '').length)
+}
+
+/**
+ * Replace the duration of every transition in a CSS transition string.
  * Handles: "all 300ms ease-out" → "all 500ms ease-out"
+ * and lists: "opacity .3s, transform 0.5s" → both durations replaced.
  */
 const replaceDuration = (transition: string, newDuration: string): string =>
-  transition.replace(/\d{1,10}(?:ms|s)/, newDuration)
+  mapSegments(transition, (seg, [duration]) =>
+    duration ? spliceMatch(seg, duration, newDuration) : seg,
+  )
 
 /**
  * Replace the easing in a CSS transition string.
@@ -174,8 +233,14 @@ const replaceEasing = (transition: string, newEasing: string): string =>
   )
 
 /**
- * Add a delay to a CSS transition string.
+ * Set the delay of every transition in a CSS transition string. An existing
+ * delay (the second time value) is replaced rather than stacked.
  * "all 300ms ease-out" → "all 300ms 100ms ease-out"
+ * "all 300ms 50ms ease-out" → "all 300ms 100ms ease-out"
  */
 const addDelay = (transition: string, delay: string): string =>
-  transition.replace(/(\d{1,10}(?:ms|s))(\s)/, `$1 ${delay}$2`)
+  mapSegments(transition, (seg, [duration, existing]) => {
+    if (existing) return spliceMatch(seg, existing, delay)
+    if (duration) return spliceMatch(seg, duration, `${duration[2]} ${delay}`)
+    return seg
+  })

@@ -6,6 +6,7 @@ import type {
   StyleTransitionProps,
   TransitionCallbacks,
 } from './types'
+import { mergeLeaving, warnMissingKey } from './utils'
 
 export type TransitionGroupProps = ClassTransitionProps &
   StyleTransitionProps &
@@ -20,8 +21,9 @@ type KeyedChild = { key: string | number; element: ReactElement<any> }
 const getKeyedChildren = (children: ReactElement<any>[]): KeyedChild[] => {
   const result: KeyedChild[] = []
   Children.forEach(children, (child) => {
-    if (isValidElement(child) && child.key != null) {
-      result.push({ key: child.key, element: child })
+    if (isValidElement(child)) {
+      if (child.key != null) result.push({ key: child.key, element: child })
+      else warnMissingKey()
     }
   })
   return result
@@ -37,6 +39,7 @@ const TransitionGroup = ({
   const prevRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const leavingRef = useRef<Map<string | number, ReactElement<any>>>(new Map())
   const initialKeysRef = useRef<Set<string | number> | null>(null)
+  const orderRef = useRef<(string | number)[]>([])
   const callbackCache = useRef<Map<string | number, () => void>>(new Map())
   // Capture latest user-provided onAfterLeave so cached per-key callbacks
   // can call the freshest version without being recreated.
@@ -60,6 +63,8 @@ const TransitionGroup = ({
   for (const [key, child] of prevRef.current) {
     if (!currentMap.has(key)) {
       leavingRef.current.set(key, child)
+      // Once removed, a later re-add is a brand-new mount and must animate
+      initialKeysRef.current.delete(key)
     }
   }
 
@@ -92,12 +97,13 @@ const TransitionGroup = ({
     return cb
   }
 
-  // Merge current + leaving, preserving insertion order
-  const allEntries: KeyedChild[] = [...currentKeyed]
-
-  for (const [key, element] of leavingRef.current) {
-    allEntries.push({ key, element })
-  }
+  // Merge current + leaving; leaving entries keep their previous position
+  const allEntries = mergeLeaving(
+    currentKeyed,
+    leavingRef.current,
+    orderRef.current,
+  )
+  orderRef.current = allEntries.map((e) => e.key)
 
   return (
     <>
