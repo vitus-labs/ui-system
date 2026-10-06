@@ -31,7 +31,12 @@ import {
 // Saves ~30-80 ns per call relative to createElement.
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { buildProps } from './forward'
-import { type Interpolation, normalizeCSS, resolve } from './resolve'
+import {
+  type Interpolation,
+  normalizeCSS,
+  resolve,
+  withSelectors,
+} from './resolve'
 import { isDynamic } from './shared'
 import { onSheetClear, sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
@@ -98,6 +103,8 @@ const createStyledComponent = (
   options?: StyledOptions,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path styled factory — static/dynamic split + hot cache + SSR/client branches inlined for perf
 ) => {
+  // `${Component}` selectors → class strings (must precede isDynamic checks)
+  if (values.length > 0) withSelectors(values)
   // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
     if (strings === hotCache.strings && tag === hotCache.tag)

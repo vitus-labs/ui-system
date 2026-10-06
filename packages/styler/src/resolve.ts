@@ -61,17 +61,24 @@ export class CSSResult {
   }
 }
 
-// Cold path: a styled component interpolated as a selector. Static components
-// expose their stable class via `_sel`; dynamic ones have none (empty string).
-const componentSelector = (c: {
-  _sel: string
-  displayName?: string
-}): string => {
-  if (!c._sel)
-    throw new Error(
-      `[styler] ${c.displayName} cannot be a selector (needs a static template)`,
-    )
-  return c._sel
+// Cold path, run once per template at creation: replaces styled components
+// interpolated as selectors (`${Button}:hover &`) with their class selector,
+// so `resolve` (per-render, V8-inlined) never has to check for them. Static
+// components expose their stable class via `_sel`; dynamic ones have none.
+export const withSelectors = (values: Interpolation[]): Interpolation[] => {
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i] as unknown as ((p: unknown) => unknown) & {
+      _sel?: string
+      displayName?: string
+    }
+    if (typeof v !== 'function' || v._sel === undefined) continue
+    if (!v._sel)
+      throw new Error(
+        `[styler] ${v.displayName} cannot be a selector (needs a static template)`,
+      )
+    values[i] = v._sel
+  }
+  return values
 }
 
 /** Resolve a tagged template's strings + values into a final CSS string. */
@@ -92,18 +99,13 @@ export const resolve = (
     // Inline the most common value types to avoid function call overhead.
     // Using if/else (no continue) for better V8 JIT optimization.
     if (typeof v === 'function') {
-      // Styled component used as a selector (`${Button} { ... }`).
-      if ((v as any)._sel !== undefined) {
-        result += componentSelector(v as any) + s
-      } else {
-        const r = v(props)
-        result +=
-          (typeof r === 'string'
-            ? r
-            : r == null || r === false || r === true
-              ? ''
-              : resolveValue(r as Interpolation, props)) + s
-      }
+      const r = v(props)
+      result +=
+        (typeof r === 'string'
+          ? r
+          : r == null || r === false || r === true
+            ? ''
+            : resolveValue(r as Interpolation, props)) + s
     } else if (v == null || v === false || v === true) {
       result += s
     } else if (typeof v === 'string') {

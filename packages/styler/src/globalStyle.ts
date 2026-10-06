@@ -19,7 +19,12 @@
 import { createElement, useInsertionEffect } from 'react'
 
 import { hash } from './hash'
-import { type Interpolation, normalizeCSS, resolve } from './resolve'
+import {
+  type Interpolation,
+  normalizeCSS,
+  resolve,
+  withSelectors,
+} from './resolve'
 import { isDynamic } from './shared'
 import { sheet } from './sheet'
 import { useTheme } from './ThemeProvider'
@@ -31,6 +36,7 @@ export const createGlobalStyle = (
   strings: TemplateStringsArray,
   ...values: Interpolation[]
 ) => {
+  withSelectors(values)
   const hasDynamicValues = values.some(isDynamic)
 
   // STATIC FAST PATH: compute once at creation time

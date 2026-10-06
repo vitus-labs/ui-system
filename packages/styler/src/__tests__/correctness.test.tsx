@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { css } from '../css'
 import { buildProps, filterProps } from '../forward'
 import { createSheet } from '../sheet'
@@ -124,11 +124,10 @@ describe('component selectors', () => {
     )
   })
 
-  it('dynamic component as selector throws a clear dev error', () => {
+  it('dynamic component as selector throws a clear error at definition', () => {
     const Dyn = styled.span!`color: ${(p: any) => p.c};`
-    const Outer = styled.div!`${Dyn as any} { margin: 0; }`
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() => render(<Outer />)).toThrow(/cannot be a selector/)
-    spy.mockRestore()
+    expect(() => styled.div!`${Dyn as any} { margin: 0; }`).toThrow(
+      /cannot be a selector/,
+    )
   })
 })
