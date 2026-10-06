@@ -18,6 +18,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import useIsomorphicLayoutEffect from '~/useIsomorphicLayoutEffect'
 import Provider, { useOverlayContext } from './context'
 import {
   type Align,
@@ -339,7 +340,9 @@ const useOverlay = ({
     if (disabled) hideContent()
   }, [disabled, alignX, alignY, hideContent])
 
-  useEffect(() => {
+  // Layout effect: position before paint so content never flashes at its
+  // default (unpositioned) location.
+  useIsomorphicLayoutEffect(() => {
     if (!active || !isContentLoaded) return undefined
 
     // First call positions immediately; the rAF callback re-measures after
@@ -359,31 +362,66 @@ const useOverlay = ({
   const latestOnClose = useRef(onClose)
   latestOnClose.current = onClose
 
+  // Context is read through a ref so a parent's context identity change
+  // (e.g. `blocked` flipping) never re-runs the transition effect.
+  const ctxRef = useRef(ctx)
+  ctxRef.current = ctx
+  const typeRef = useRef(type)
+  typeRef.current = type
+  const hoverRef = useRef(openOn === 'hover' || closeOn === 'hover')
+  hoverRef.current = openOn === 'hover' || closeOn === 'hover'
+
+  // Modals restore focus via `useFocusTrap`. For dropdowns/popovers, hand
+  // focus back to the trigger — but only when focus was lost with the content
+  // (inside it, or reset to body). If the user clicked another focusable
+  // element to dismiss, leave their focus alone.
+  const restoreFocusToTrigger = () => {
+    if (typeRef.current === 'modal' || typeRef.current === 'tooltip') return
+    if (hoverRef.current) return
+    const trigger = triggerRef.current
+    if (!trigger || typeof trigger.focus !== 'function') return
+    const current = document.activeElement
+    const content = contentRef.current
+    if (
+      !current ||
+      current === document.body ||
+      (content?.contains(current) ?? false)
+    ) {
+      trigger.focus()
+    }
+  }
+
   // Track previous active state so callbacks only fire on actual transitions.
   const prevActiveRef = useRef(false)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ctx/handlers are read via refs on purpose; effect must run on `active` transitions only
   useEffect(() => {
     const wasActive = prevActiveRef.current
     prevActiveRef.current = active
 
     if (active && !wasActive) {
       latestOnOpen.current?.()
-      ctx.setBlocked?.()
+      ctxRef.current.setBlocked?.()
     } else if (!active && wasActive) {
       setContentLoaded(false)
       latestOnClose.current?.()
-      ctx.setUnblocked?.()
+      ctxRef.current.setUnblocked?.()
+      restoreFocusToTrigger()
     } else if (!active) {
       setContentLoaded(false)
     }
+  }, [active])
 
-    return () => {
-      // On unmount, only clean up if currently active
-      if (active) {
+  // Unmount-only: if still active when unmounted, notify once.
+  useEffect(
+    () => () => {
+      if (prevActiveRef.current) {
+        prevActiveRef.current = false
         latestOnClose.current?.()
-        ctx.setUnblocked?.()
+        ctxRef.current.setUnblocked?.()
       }
-    }
-  }, [active, ctx])
+    },
+    [],
+  )
 
   // Modal a11y — trap Tab + lock page scroll while open. Both hooks
   // no-op when `enabled` is false, so non-modal overlays pay nothing.
