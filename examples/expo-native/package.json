@@ -19,6 +19,7 @@
     "@vitus-labs/kinetic-presets": "file:../../packages/kinetic-presets",
     "@vitus-labs/rocketstyle": "file:../../packages/rocketstyle",
     "@vitus-labs/unistyle": "file:../../packages/unistyle",
+    "decode-uri-component": "file:./vendor/decode-uri-component",
     "expo": "~57.0.26",
     "expo-linking": "~57.0.11",
     "expo-router": "~57.0.24",
@@ -38,6 +39,7 @@
     "js-yaml": "^4.2.0",
     "@babel/core": "^7.29.6",
     "react-dom": "19.2.3",
-    "shell-quote": "^1.10.0"
+    "shell-quote": "^1.10.0",
+    "decode-uri-component": "$decode-uri-component"
   }
 }
