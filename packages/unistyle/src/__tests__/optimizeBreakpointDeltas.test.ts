@@ -208,4 +208,61 @@ describe('optimizeBreakpointDeltas', () => {
       expect(norm(outXl!)).toBe('left: 55%; right: initial;')
     })
   })
+
+  describe('cascade state (regressions)', () => {
+    it('re-emits a nested block when an intermediate breakpoint changed it', () => {
+      const out = optimizeBreakpointDeltas([
+        '&:hover { color: red; }',
+        '&:hover { color: blue; }',
+        '&:hover { color: red; }',
+      ])
+      expect(out.map(norm)).toEqual([
+        '&:hover { color: red; }',
+        '&:hover { color: blue; }',
+        '&:hover { color: red; }',
+      ])
+    })
+
+    it('still skips an unchanged nested block', () => {
+      const out = optimizeBreakpointDeltas([
+        '&:hover { color: red; }',
+        '&:hover { color: red; }',
+      ])
+      expect(out.map(norm)).toEqual(['&:hover { color: red; }', ''])
+    })
+
+    it('re-emits shorthand after an intermediate longhand override', () => {
+      const out = optimizeBreakpointDeltas([
+        'padding: 1rem;',
+        'padding-top: 0;',
+        'padding: 1rem;',
+      ])
+      expect(out.map(norm)).toEqual([
+        'padding: 1rem;',
+        'padding-top: 0;',
+        'padding: 1rem;',
+      ])
+    })
+
+    it('re-emits longhand after a shorthand reset', () => {
+      const out = optimizeBreakpointDeltas([
+        'padding-top: 0;',
+        'padding: 1rem;',
+        'padding-top: 0;',
+      ])
+      expect(out.map(norm)).toEqual([
+        'padding-top: 0;',
+        'padding: 1rem;',
+        'padding-top: 0;',
+      ])
+    })
+
+    it('does not touch unrelated props', () => {
+      const out = optimizeBreakpointDeltas([
+        'padding: 1rem; color: red;',
+        'padding: 1rem; color: red;',
+      ])
+      expect(out.map(norm)).toEqual(['padding: 1rem; color: red;', ''])
+    })
+  })
 })

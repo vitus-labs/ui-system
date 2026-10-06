@@ -39,11 +39,12 @@ const widthStyles: WidthStyles = (
   // calculate % of width
   const width = __WEB__ ? (s / c) * 100 : (RNparentWidth / c) * s
 
-  const hasGap = hasValue(gap)
+  // gap of 0 collapses to the plain percentage: `calc(50% - 0)` is invalid CSS
+  const hasGap = hasValue(gap) && (!__WEB__ || g !== 0)
 
   const val = __WEB__
     ? hasGap
-      ? `calc(${width}% - ${g}px)`
+      ? `calc(${width}% - ${value(g, rootSize)})`
       : `${width}%`
     : hasGap
       ? Math.max(0, width - g)
@@ -96,7 +97,7 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
 
   if (renderStyles) {
     return css`
-      ${__WEB__ ? 'left: initial;' : ''}
+      display: flex;
       position: relative;
       ${widthStyles({ size, columns, gap, RNparentWidth }, { rootSize })};
       ${spacingStyles('padding', padding, rootSize)};
@@ -106,10 +107,7 @@ const styles: MakeItResponsiveStyles<StyledTypes> = ({
   }
 
   return css`
-    left: -9999px;
-    position: ${__WEB__ ? 'fixed' : 'absolute'};
-    margin: 0;
-    padding: 0;
+    display: none;
   `
 }
 
