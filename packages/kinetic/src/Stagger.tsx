@@ -35,6 +35,7 @@ const Stagger = ({
             show={show}
             appear={appear}
             timeout={timeout + delay}
+            delay={delay}
             {...transitionProps}
             onAfterLeave={
               index === (reverseLeave ? 0 : count - 1)

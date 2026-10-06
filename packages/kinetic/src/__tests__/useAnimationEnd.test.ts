@@ -194,8 +194,9 @@ describe('useAnimationEnd', () => {
     expect(value).toBe(2)
   })
 
-  it('does not fire when active=true but ref.current is null', () => {
+  it('falls back to the timeout (and warns) when ref.current is null', () => {
     const onEnd = vi.fn()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const ref = { current: null }
 
     renderHook(() =>
@@ -207,12 +208,121 @@ describe('useAnimationEnd', () => {
       }),
     )
 
-    // No timer should be set when ref is null
     act(() => {
-      vi.advanceTimersByTime(200)
+      vi.advanceTimersByTime(99)
+    })
+    expect(onEnd).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(2)
+    })
+    expect(onEnd).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
+  it('restarts the fallback timer when the phase changes while active', () => {
+    const onEnd = vi.fn()
+    const ref = createMockRef()
+
+    const { rerender } = renderHook(
+      ({ phase }) =>
+        useAnimationEnd({ ref, onEnd, active: true, timeout: 100, phase }),
+      { initialProps: { phase: 'entering' } },
+    )
+
+    act(() => {
+      vi.advanceTimersByTime(60)
+    })
+    rerender({ phase: 'leaving' })
+    act(() => {
+      vi.advanceTimersByTime(60)
+    })
+    // 120ms since mount, but only 60ms since the phase change
+    expect(onEnd).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(50)
+    })
+    expect(onEnd).toHaveBeenCalledTimes(1)
+  })
+
+  describe('computed styles', () => {
+    const mockStyle = (el: HTMLElement, values: Record<string, string>) => {
+      vi.spyOn(window, 'getComputedStyle').mockImplementation(
+        (target) =>
+          (target === el ? values : {}) as unknown as CSSStyleDeclaration,
+      )
+    }
+    afterEach(() => vi.restoreAllMocks())
+
+    const fire = (el: HTMLElement, propertyName: string) => {
+      const event = new Event('transitionend', { bubbles: true })
+      Object.defineProperty(event, 'target', { value: el })
+      Object.defineProperty(event, 'propertyName', { value: propertyName })
+      el.dispatchEvent(event)
+    }
+
+    it('waits while another transition is still running', () => {
+      const onEnd = vi.fn()
+      const ref = createMockRef()
+      let running = [{ transitionProperty: 'transform' }]
+      ;(ref.current as { getAnimations?: unknown }).getAnimations = () =>
+        running
+
+      renderHook(() => useAnimationEnd({ ref, onEnd, active: true }))
+
+      act(() => fire(ref.current, 'opacity'))
+      expect(onEnd).not.toHaveBeenCalled()
+
+      running = []
+      act(() => fire(ref.current, 'transform'))
+      expect(onEnd).toHaveBeenCalledTimes(1)
     })
 
-    expect(onEnd).not.toHaveBeenCalled()
+    it('completes on a following frame when durations are explicitly 0s', () => {
+      const onEnd = vi.fn()
+      const ref = createMockRef()
+      mockStyle(ref.current, {
+        transitionProperty: 'all',
+        transitionDuration: '0s',
+        transitionDelay: '0s',
+        animationDuration: '0s',
+        animationDelay: '0s',
+      })
+      const rafs: FrameRequestCallback[] = []
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafs.push(cb)
+        return rafs.length
+      })
+
+      renderHook(() => useAnimationEnd({ ref, onEnd, active: true }))
+
+      for (let i = 0; i < 3; i++) act(() => rafs.shift()?.(0))
+      expect(onEnd).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not complete early when a transition has a non-zero duration', () => {
+      const onEnd = vi.fn()
+      const ref = createMockRef()
+      mockStyle(ref.current, {
+        transitionProperty: 'all',
+        transitionDuration: '0.3s',
+        transitionDelay: '0s',
+        animationDuration: '0s',
+        animationDelay: '0s',
+      })
+      const rafs: FrameRequestCallback[] = []
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafs.push(cb)
+        return rafs.length
+      })
+
+      renderHook(() => useAnimationEnd({ ref, onEnd, active: true }))
+
+      for (let i = 0; i < 3; i++) act(() => rafs.shift()?.(0))
+      expect(onEnd).not.toHaveBeenCalled()
+    })
   })
 
   it('does not call onEnd twice when transitionend fires and then timeout fires', () => {

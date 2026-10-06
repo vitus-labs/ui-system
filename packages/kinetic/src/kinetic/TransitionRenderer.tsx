@@ -14,7 +14,7 @@ import {
 import type { TransitionCallbacks } from '../types'
 import useAnimationEnd from '../useAnimationEnd'
 import useTransitionState from '../useTransitionState'
-import { addClasses, nextFrame, removeClasses } from '../utils'
+import { applyEnter, applyLeave, applySettled } from '../utils'
 import type { KineticConfig } from './types'
 
 type TransitionRendererProps = {
@@ -27,35 +27,6 @@ type TransitionRendererProps = {
   callbacks: Partial<TransitionCallbacks>
   children: ReactNode
   forwardedRef: ForwardedRef<unknown>
-}
-
-const applyEnter = (el: HTMLElement, config: KineticConfig) => {
-  addClasses(el, config.enter)
-  addClasses(el, config.enterFrom)
-  if (config.enterStyle) Object.assign(el.style, config.enterStyle)
-  if (config.enterTransition) el.style.transition = config.enterTransition
-
-  return nextFrame(() => {
-    removeClasses(el, config.enterFrom)
-    addClasses(el, config.enterTo)
-    if (config.enterToStyle) Object.assign(el.style, config.enterToStyle)
-  })
-}
-
-const applyLeave = (el: HTMLElement, config: KineticConfig) => {
-  removeClasses(el, config.enter)
-  removeClasses(el, config.enterTo)
-
-  addClasses(el, config.leave)
-  addClasses(el, config.leaveFrom)
-  if (config.leaveStyle) Object.assign(el.style, config.leaveStyle)
-  if (config.leaveTransition) el.style.transition = config.leaveTransition
-
-  return nextFrame(() => {
-    removeClasses(el, config.leaveFrom)
-    addClasses(el, config.leaveTo)
-    if (config.leaveToStyle) Object.assign(el.style, config.leaveToStyle)
-  })
 }
 
 const applyReducedMotion = (
@@ -112,6 +83,7 @@ const TransitionRenderer = ({
     ref: elementRef,
     active: (stage === 'entering' || stage === 'leaving') && !reducedMotion,
     timeout: effectiveTimeout,
+    phase: stage,
     onEnd: () => {
       if (stage === 'entering') {
         callbacksRef.current.onAfterEnter?.()
@@ -142,10 +114,7 @@ const TransitionRenderer = ({
       return cancel
     }
 
-    if (stage === 'entered') {
-      removeClasses(el, config.enter)
-      el.style.transition = ''
-    }
+    applySettled(el, config, stage)
   }, [stage])
 
   if (!shouldMount) {
