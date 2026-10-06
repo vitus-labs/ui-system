@@ -51,6 +51,7 @@
     "build": "bun run vl_rolldown_build",
     "build:watch": "bun run vl_rolldown_build-watch",
     "bench": "bun benchmarks/css-perf.bench.tsx",
+    "bench:micro": "bun benchmarks/micro.bench.tsx",
     "lint": "biome check src/",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -68,8 +69,8 @@
     "@vitus-labs/tools-rolldown": "2.7.1",
     "@vitus-labs/tools-typescript": "2.7.1",
     "goober": "^2.1.19",
-    "jsdom": "^30.0.1",
+    "jsdom": "^30.1.2",
     "styled-components": "^6.5.3",
-    "tinybench": "^6.1.3"
+    "tinybench": "^6.2.0"
   }
 }

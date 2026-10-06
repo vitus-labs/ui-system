@@ -1,7 +1,7 @@
 /**
  * Benchmark: @vitus-labs/styler vs styled-components vs Emotion vs Goober
  *
- * Run: bun vitest bench
+ * Run from the styler package: `bun run bench:micro`.
  *
  * Compares core CSS-in-JS operations:
  * 1. css() tagged template creation
@@ -23,12 +23,25 @@ import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
 // --- styled-components ---
 import scStyled, { ServerStyleSheet, css as scCss } from 'styled-components'
-import { bench, describe } from 'vitest'
+import { Bench } from 'tinybench'
 // --- @vitus-labs/styler ---
-import { css as stylerCss } from '../css'
-import { hash as stylerHash } from '../hash'
-import { normalizeCSS, resolve as stylerResolve } from '../resolve'
-import { styled as stylerStyled } from '../styled'
+import { css as stylerCss } from '../src/css'
+import { hash as stylerHash } from '../src/hash'
+import { normalizeCSS, resolve as stylerResolve } from '../src/resolve'
+import { styled as stylerStyled } from '../src/styled'
+
+// Minimal describe/bench shim over tinybench — the suite was written against
+// vitest's legacy `bench` API, which vitest 5 replaced with a test-context API.
+const groups: Bench[] = []
+let current: Bench | undefined
+const describe = (name: string, fn: () => void) => {
+  current = new Bench({ name, time: 500, warmupTime: 100 })
+  groups.push(current)
+  fn()
+}
+const bench = (name: string, fn: () => void) => {
+  current?.add(name, fn)
+}
 
 // Setup goober to use React.createElement
 setup(createElement)
@@ -366,3 +379,9 @@ describe('normalizeCSS', () => {
     normalizeCSS(withSemicolonJunk)
   })
 })
+
+for (const group of groups) {
+  await group.run()
+  console.log(`\n${group.name}`)
+  console.table(group.table())
+}
