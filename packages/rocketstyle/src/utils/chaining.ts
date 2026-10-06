@@ -26,7 +26,7 @@ export const chainOptions: ChainOptions = (opts, defaultOpts = []) => {
 // Chain Or Options
 // --------------------------------------------------------
 /**
- * For each key, picks the new value if truthy, otherwise falls back
+ * For each key, picks the new value if defined (so `false` can override `true`), otherwise falls back
  * to the default. Used for config keys that replace rather than merge.
  */
 type ChainOrOptions = (
@@ -40,7 +40,8 @@ export const chainOrOptions: ChainOrOptions = (keys, opts, defaultOpts) => {
   const result: Record<string, unknown> = {}
   for (let i = 0; i < keys.length; i++) {
     const item = keys[i] as string
-    result[item] = opts[item] || defaultOpts[item]
+    const value = opts[item]
+    result[item] = value !== undefined ? value : defaultOpts[item]
   }
   return result
 }

@@ -50,12 +50,22 @@ describe('chainOrOptions', () => {
     expect(result).toEqual({ a: 'new', b: 'default', c: 'also' })
   })
 
-  it('uses default when opt is falsy', () => {
+  it('uses default when opt is undefined', () => {
     const keys = ['a'] as const
-    const opts = { a: '' }
+    const opts = { a: undefined }
     const defaults = { a: 'default' }
     const result = chainOrOptions(keys, opts, defaults)
-    expect(result).toEqual({ a: 'default' }) // || operator, empty string is falsy
+    expect(result).toEqual({ a: 'default' })
+  })
+
+  it('lets explicit false override a true default', () => {
+    const keys = ['inversed', 'DEBUG'] as const
+    const result = chainOrOptions(
+      keys,
+      { inversed: false, DEBUG: false },
+      { inversed: true, DEBUG: true },
+    )
+    expect(result).toEqual({ inversed: false, DEBUG: false })
   })
 
   it('handles missing keys in both', () => {
