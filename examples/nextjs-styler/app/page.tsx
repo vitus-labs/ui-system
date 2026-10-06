@@ -100,25 +100,25 @@ const RsButton = rocketstyle()({
 })
   .attrs({ tag: 'button' })
   .theme({
-    bgColor: '#0070f3',
+    backgroundColor: '#0070f3',
     color: '#fff',
-    hover: { bgColor: '#0060df' },
+    hover: { backgroundColor: '#0060df' },
   })
   .states({
     primary: {
-      bgColor: '#0070f3',
+      backgroundColor: '#0070f3',
       color: '#fff',
-      hover: { bgColor: '#0060df' },
+      hover: { backgroundColor: '#0060df' },
     },
     secondary: {
-      bgColor: '#6c757d',
+      backgroundColor: '#6c757d',
       color: '#fff',
-      hover: { bgColor: '#5c636a' },
+      hover: { backgroundColor: '#5c636a' },
     },
     outline: {
-      bgColor: 'transparent',
+      backgroundColor: 'transparent',
       color: '#0070f3',
-      hover: { bgColor: '#e8f4fd' },
+      hover: { backgroundColor: '#e8f4fd' },
     },
   })
   .styles(
@@ -133,10 +133,10 @@ const RsButton = rocketstyle()({
 
       ${({ $rocketstyle: t }) => css`
         color: ${t.color};
-        background-color: ${t.bgColor};
+        background-color: ${t.backgroundColor};
 
         &:hover {
-          background-color: ${t.hover?.bgColor ?? ''};
+          background-color: ${t.hover?.backgroundColor ?? ''};
         }
       `};
     `,
