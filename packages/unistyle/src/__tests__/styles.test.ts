@@ -175,4 +175,53 @@ describe('styles', () => {
       }
     })
   })
+
+  const flatten = (theme: Record<string, unknown>) => {
+    const result = styles({ theme: theme as any, css, rootSize: 16 })
+    return Array.isArray(result) ? result.flat().join('') : String(result)
+  }
+
+  it('keeps unitless properties unconverted', () => {
+    const flat = flatten({
+      gridColumnStart: 2,
+      gridColumnEnd: 3,
+      order: 2,
+      zIndex: 10,
+      flexGrow: 1,
+      lineHeight: 1.5,
+    })
+    expect(flat).toContain('grid-column-start: 2;')
+    expect(flat).toContain('grid-column-end: 3;')
+    expect(flat).toContain('order: 2;')
+    expect(flat).toContain('z-index: 10;')
+    expect(flat).toContain('flex-grow: 1;')
+    expect(flat).toContain('line-height: 1.5;')
+  })
+
+  it('converts numeric length properties to rem', () => {
+    const flat = flatten({
+      flexBasis: 160,
+      letterSpacing: 16,
+      wordSpacing: 8,
+      textIndent: 32,
+      outlineOffset: 16,
+      outlineWidth: 16,
+      columnWidth: 160,
+      perspective: 160,
+    })
+    expect(flat).toContain('flex-basis: 10rem;')
+    expect(flat).toContain('letter-spacing: 1rem;')
+    expect(flat).toContain('word-spacing: 0.5rem;')
+    expect(flat).toContain('text-indent: 2rem;')
+    expect(flat).toContain('outline-offset: 1rem;')
+    expect(flat).toContain('outline-width: 1rem;')
+    expect(flat).toContain('column-width: 10rem;')
+    expect(flat).toContain('perspective: 10rem;')
+  })
+
+  it('passes keyword and percentage length values through unchanged', () => {
+    const flat = flatten({ flexBasis: 'auto', textIndent: '50%' })
+    expect(flat).toContain('flex-basis: auto;')
+    expect(flat).toContain('text-indent: 50%;')
+  })
 })

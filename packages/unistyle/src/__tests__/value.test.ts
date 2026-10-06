@@ -42,6 +42,15 @@ describe('value', () => {
     expect(value(16, 16, 'px')).toBe('16px')
   })
 
+  it('honours em output unit with root-size conversion', () => {
+    expect(value(32, 16, 'em')).toBe('2em')
+  })
+
+  it('appends non-relative output units without conversion', () => {
+    expect(value(50, 16, '%')).toBe('50%')
+    expect(value(10, 16, 'vw')).toBe('10vw')
+  })
+
   it('returns "0" string for string "0"', () => {
     expect(value('0')).toBe('0')
   })

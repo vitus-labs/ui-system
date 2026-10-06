@@ -17,15 +17,14 @@
  * exact text. Anything inside parens or quoted strings is skipped over so
  * `linear-gradient(red 0%, blue 100%)` and `content: ";"` parse correctly.
  *
- * Limitations:
- *  - shorthand/longhand interaction is not modeled. If breakpoint A sets
- *    `padding: 1rem` and breakpoint B sets `padding-top: 0`, both are kept
- *    (they have different `prop` keys). If A sets `padding-top: 1rem` and B
- *    sets `padding: 1rem`, B's `padding` is emitted because the cascade map
- *    has no entry for `padding`. This is correct: B's shorthand RESETS sides
- *    A didn't touch, so dropping it would change behaviour.
- *  - Nested blocks are deduped only by exact textual match. Two equivalent
- *    blocks with different whitespace would both be emitted.
+ * Shorthand/longhand interaction: emitting `padding` invalidates the cascade
+ * entries of `padding-*`, and emitting `padding-top` invalidates `padding`,
+ * so `padding:1rem` -> `padding-top:0` -> `padding:1rem` re-emits the third.
+ *
+ * Nested blocks are tracked per selector by the last emitted text, so
+ * A -> B -> A on the same selector re-emits A at the third breakpoint.
+ * Blocks are compared by exact textual match (whitespace-different
+ * equivalents are both emitted).
  */
 
 interface DeclEntry {
@@ -148,17 +147,40 @@ const parse = (css: string): Entry[] => {
   return entries
 }
 
+/** Selector / at-rule prelude of a block ("&:hover", "@supports (…)"). */
+const blockKey = (raw: string): string => {
+  const i = raw.indexOf('{')
+  return i === -1 ? raw : raw.slice(0, i).trim()
+}
+
+/**
+ * Called when `prop` is emitted: drop cascade entries whose effective value
+ * is no longer known. A shorthand (`padding`) resets its longhands
+ * (`padding-top`), and a longhand (`padding-top`) makes the shorthand's
+ * recorded value stale. Over-invalidating is safe (it only re-emits).
+ */
+const invalidateRelated = (cascade: Map<string, string>, prop: string) => {
+  if (prop.charCodeAt(0) === 45 && prop.charCodeAt(1) === 45) return // --custom
+  const prefix = `${prop}-`
+  for (const key of cascade.keys()) {
+    if (key.startsWith(prefix)) cascade.delete(key)
+  }
+  for (let i = prop.indexOf('-', 1); i !== -1; i = prop.indexOf('-', i + 1)) {
+    cascade.delete(prop.slice(0, i))
+  }
+}
+
 /**
  * Apply the mobile-first cascade diff. The first entry passes through
  * unchanged; subsequent entries are pruned to the delta vs. the running
- * cascade (declarations by prop, blocks by exact text match).
+ * cascade (declarations by prop, blocks by selector + last emitted text).
  */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path cascade walker — declaration/block branches + cascade map updates inlined for perf
 export const optimizeBreakpointDeltas = (cssStrings: string[]): string[] => {
   if (cssStrings.length <= 1) return cssStrings
 
   const cascadeDecl = new Map<string, string>()
-  const cascadeBlocks = new Set<string>()
+  const cascadeBlocks = new Map<string, string>()
   const out: string[] = new Array(cssStrings.length)
 
   for (let i = 0; i < cssStrings.length; i++) {
@@ -176,11 +198,15 @@ export const optimizeBreakpointDeltas = (cssStrings: string[]): string[] => {
       if (e.kind === 'decl') {
         if (cascadeDecl.get(e.prop) !== e.value) {
           kept.push(e.raw)
+          invalidateRelated(cascadeDecl, e.prop)
           cascadeDecl.set(e.prop, e.value)
         }
-      } else if (!cascadeBlocks.has(e.raw)) {
-        kept.push(e.raw)
-        cascadeBlocks.add(e.raw)
+      } else {
+        const key = blockKey(e.raw)
+        if (cascadeBlocks.get(key) !== e.raw) {
+          kept.push(e.raw)
+          cascadeBlocks.set(key, e.raw)
+        }
       }
     }
 

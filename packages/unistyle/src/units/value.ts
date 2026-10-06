@@ -28,7 +28,8 @@ export type Value = (
 
 /**
  * Converts a raw numeric value to a CSS string with appropriate units.
- * - Numbers without a unit are divided by `rootSize` and output as rem (web) or px (native).
+ * - Numbers without a unit are divided by `rootSize` and output as rem/em (web default rem, native px).
+ *   Other output units (px, %, vw, …) append the unit without conversion.
  * - Values that already carry a unit are returned as-is, unless converting px→rem.
  * - Zero is always returned unitless.
  */
@@ -44,10 +45,10 @@ const value: Value = (
   if (val === 0 || typeof val === 'string') return param // zero should be unitless
 
   const canConvert = rootSize && !Number.isNaN(val)
-  if (canConvert && !unit && outputUnit === 'px') return `${val}${outputUnit}`
-  if (canConvert && !unit) return `${val / rootSize}rem`
-  if (canConvert && unit === 'px' && outputUnit === 'rem')
-    return `${val / rootSize}rem`
+  // rem/em are root-relative: px-based numbers are divided by rootSize
+  const relative = outputUnit === 'rem' || outputUnit === 'em'
+  if (canConvert && relative && (!unit || unit === 'px'))
+    return `${val / rootSize}${outputUnit}`
   if (unit) return param
 
   return `${val}${outputUnit}`
