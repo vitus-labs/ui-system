@@ -32,7 +32,7 @@
   {
     "name": "@vitus-labs/coolgrid",
     "path": "packages/coolgrid/lib/index.js",
-    "limit": "5.3 KB",
+    "limit": "4.5 KB",
     "gzip": true
   },
   {

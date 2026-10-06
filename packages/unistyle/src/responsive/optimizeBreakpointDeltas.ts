@@ -153,20 +153,52 @@ const blockKey = (raw: string): string => {
   return i === -1 ? raw : raw.slice(0, i).trim()
 }
 
+// Shorthands whose longhands are NOT `${shorthand}-*` (the prefix case —
+// `padding` ↔ `padding-top`, `border` ↔ `border-top-width` — is handled by
+// `isRelated` directly). Sibling longhands (`top` vs `bottom`) stay
+// independent so the delta output doesn't grow.
+const LONGHANDS: Record<string, RegExp> = {
+  'border-radius': /^border-.+-radius$/,
+  'border-width': /^border-.+-width$/,
+  'border-color': /^border-.+-color$/,
+  'border-style': /^border-.+-style$/,
+  'border-block': /^border-(top|bottom)(-|$)/,
+  'border-inline': /^border-(left|right)(-|$)/,
+  inset: /^(top|right|bottom|left)$/,
+  'inset-block': /^(top|bottom)$/,
+  'inset-inline': /^(left|right)$/,
+  'margin-block': /^margin-(top|bottom)$/,
+  'margin-inline': /^margin-(left|right)$/,
+  'padding-block': /^padding-(top|bottom)$/,
+  'padding-inline': /^padding-(left|right)$/,
+  'place-items': /^(align|justify)-items$/,
+  'place-content': /^(align|justify)-content$/,
+  'place-self': /^(align|justify)-self$/,
+  gap: /^(grid-)?(row|column)-gap$/,
+  'grid-gap': /^(grid-)?(row|column)-gap$/,
+  'grid-area': /^grid-(row|column)-(start|end)$/,
+  font: /^line-height$/,
+  columns: /^column-(count|width)$/,
+  'flex-flow': /^flex-(direction|wrap)$/,
+}
+
+const isRelated = (a: string, b: string): boolean =>
+  b.startsWith(`${a}-`) ||
+  a.startsWith(`${b}-`) ||
+  (LONGHANDS[a]?.test(b) ?? false) ||
+  (LONGHANDS[b]?.test(a) ?? false)
+
 /**
  * Called when `prop` is emitted: drop cascade entries whose effective value
- * is no longer known. A shorthand (`padding`) resets its longhands
- * (`padding-top`), and a longhand (`padding-top`) makes the shorthand's
- * recorded value stale. Over-invalidating is safe (it only re-emits).
+ * is no longer known. A shorthand (`padding`, `inset`) resets its longhands
+ * (`padding-top`, `top`), and a longhand makes the shorthand's recorded value
+ * stale. Over-invalidating is safe (it only re-emits); under-invalidating
+ * drops declarations that are still needed.
  */
 const invalidateRelated = (cascade: Map<string, string>, prop: string) => {
   if (prop.charCodeAt(0) === 45 && prop.charCodeAt(1) === 45) return // --custom
-  const prefix = `${prop}-`
   for (const key of cascade.keys()) {
-    if (key.startsWith(prefix)) cascade.delete(key)
-  }
-  for (let i = prop.indexOf('-', 1); i !== -1; i = prop.indexOf('-', i + 1)) {
-    cascade.delete(prop.slice(0, i))
+    if (key !== prop && isRelated(prop, key)) cascade.delete(key)
   }
 }
 
