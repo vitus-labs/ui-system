@@ -34,6 +34,10 @@ const useHoverListeners = ({
   hideContent,
 }: HoverConfig) => {
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Pointer / focus presence over trigger and content. A ref, not effect
+  // locals: the effect re-runs when `active` flips while the pointer is still
+  // there. Content flags reset when content unmounts (no mouseleave fires).
+  const presenceRef = useRef({ trigger: 0, content: 0 })
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: isContentLoaded signals contentRef.current is available so the effect re-runs to attach listeners
   useEffect(() => {
@@ -42,6 +46,8 @@ const useHoverListeners = ({
 
     const trigger = triggerRef.current
     const content = contentRef.current
+    const presence = presenceRef.current
+    if (!content) presence.content = 0
 
     const clearHoverTimeout = () => {
       if (hoverTimeoutRef.current != null) {
@@ -55,51 +61,69 @@ const useHoverListeners = ({
       hoverTimeoutRef.current = setTimeout(hideContent, hoverDelay)
     }
 
-    const onTriggerEnter = () => {
-      clearHoverTimeout()
+    // Bit flags per element: 1 = pointer over it, 2 = focus inside it.
+    // Pointer-leave hides once no pointer is over trigger/content (unchanged
+    // mouse behaviour); focus-out hides only when nothing is hovered or
+    // focused, so blurring the trigger while still hovering it keeps it open.
+    const set = (el: 'trigger' | 'content', bit: number, on: boolean) => {
+      presence[el] = on ? presence[el] | bit : presence[el] & ~bit
+      if (on) {
+        clearHoverTimeout()
+        return
+      }
+      const mask = bit === 1 ? 1 : 3
+      if (
+        closeOn === 'hover' &&
+        active &&
+        (presence.trigger & mask) === 0 &&
+        (presence.content & mask) === 0
+      )
+        scheduleHide()
+    }
+
+    const onMouseEnterTrigger = () => {
+      set('trigger', 1, true)
       if (openOn === 'hover' && !active) showContent()
     }
-
-    const onTriggerLeave = () => {
-      if (closeOn === 'hover' && active) scheduleHide()
+    const onFocusInTrigger = () => {
+      set('trigger', 2, true)
+      if (openOn === 'hover' && !active) showContent()
     }
-
-    const onContentEnter = () => {
-      clearHoverTimeout()
-    }
-
-    const onContentLeave = () => {
-      if (closeOn === 'hover' && active) scheduleHide()
-    }
+    const onMouseLeaveTrigger = () => set('trigger', 1, false)
+    const onFocusOutTrigger = () => set('trigger', 2, false)
+    const onMouseEnterContent = () => set('content', 1, true)
+    const onFocusInContent = () => set('content', 2, true)
+    const onMouseLeaveContent = () => set('content', 1, false)
+    const onFocusOutContent = () => set('content', 2, false)
 
     if (trigger) {
-      trigger.addEventListener('mouseenter', onTriggerEnter)
-      trigger.addEventListener('mouseleave', onTriggerLeave)
+      trigger.addEventListener('mouseenter', onMouseEnterTrigger)
+      trigger.addEventListener('mouseleave', onMouseLeaveTrigger)
       // Keyboard parity: focus mirrors hover open/close.
-      trigger.addEventListener('focusin', onTriggerEnter)
-      trigger.addEventListener('focusout', onTriggerLeave)
+      trigger.addEventListener('focusin', onFocusInTrigger)
+      trigger.addEventListener('focusout', onFocusOutTrigger)
     }
 
     if (content) {
-      content.addEventListener('mouseenter', onContentEnter)
-      content.addEventListener('mouseleave', onContentLeave)
-      content.addEventListener('focusin', onContentEnter)
-      content.addEventListener('focusout', onContentLeave)
+      content.addEventListener('mouseenter', onMouseEnterContent)
+      content.addEventListener('mouseleave', onMouseLeaveContent)
+      content.addEventListener('focusin', onFocusInContent)
+      content.addEventListener('focusout', onFocusOutContent)
     }
 
     return () => {
       clearHoverTimeout()
       if (trigger) {
-        trigger.removeEventListener('mouseenter', onTriggerEnter)
-        trigger.removeEventListener('mouseleave', onTriggerLeave)
-        trigger.removeEventListener('focusin', onTriggerEnter)
-        trigger.removeEventListener('focusout', onTriggerLeave)
+        trigger.removeEventListener('mouseenter', onMouseEnterTrigger)
+        trigger.removeEventListener('mouseleave', onMouseLeaveTrigger)
+        trigger.removeEventListener('focusin', onFocusInTrigger)
+        trigger.removeEventListener('focusout', onFocusOutTrigger)
       }
       if (content) {
-        content.removeEventListener('mouseenter', onContentEnter)
-        content.removeEventListener('mouseleave', onContentLeave)
-        content.removeEventListener('focusin', onContentEnter)
-        content.removeEventListener('focusout', onContentLeave)
+        content.removeEventListener('mouseenter', onMouseEnterContent)
+        content.removeEventListener('mouseleave', onMouseLeaveContent)
+        content.removeEventListener('focusin', onFocusInContent)
+        content.removeEventListener('focusout', onFocusOutContent)
       }
     }
   }, [

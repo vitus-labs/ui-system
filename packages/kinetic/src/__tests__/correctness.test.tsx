@@ -89,6 +89,27 @@ describe('transition delay survives the transition shorthand', () => {
     expect(screen.getByTestId('b').style.transitionDelay).toBe('')
   })
 
+  it('a sibling removal does not restart an in-flight Stagger item', () => {
+    const props = {
+      show: true,
+      appear: true,
+      interval: 100,
+      enterTransition: 'opacity 300ms ease',
+      enterStyle: { opacity: 0 },
+      enterToStyle: { opacity: 1 },
+    }
+    const { rerender } = render(
+      <Stagger {...props}>{items(['a', 'b'])}</Stagger>,
+    )
+    flushFrames()
+    expect(screen.getByTestId('b').style.transitionDelay).toBe('100ms')
+    expect(screen.getByTestId('b').style.opacity).toBe('1')
+    // b's cascade delay becomes 0 — its running enter must not be
+    // re-applied, which would snap it back to the start state (opacity 0).
+    rerender(<Stagger {...props}>{items(['b'])}</Stagger>)
+    expect(screen.getByTestId('b').style.opacity).toBe('1')
+  })
+
   it('kinetic().stagger() keeps the cascade delay while entering', () => {
     const List = kinetic('ul')
       .preset(fade)

@@ -169,7 +169,9 @@ const objectKey = (
 const buildChildrenSpecs = (children: ReactNode): ItemSpec[] =>
   flattenChildren(children).map<ItemSpec>((node, i) => ({
     // Preserve the user's own key so item state follows identity, not position.
-    key: isValidElement(node) && node.key != null ? node.key : i,
+    // Unkeyed children fall back to `.${i}` (React's own implicit-key shape) so
+    // the fallback can't collide with a user key like "1".
+    key: isValidElement(node) && node.key != null ? node.key : `.${i}`,
     target: node,
     source: {},
     base: {},

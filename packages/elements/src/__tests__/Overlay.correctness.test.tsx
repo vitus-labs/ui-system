@@ -209,6 +209,34 @@ describe('Overlay a11y', () => {
     vi.useRealTimers()
   })
 
+  it('stays open when the trigger blurs while still hovered', async () => {
+    vi.useFakeTimers()
+    render(
+      <OverlayComponent trigger={Trigger} openOn="hover" closeOn="hover">
+        {Content}
+      </OverlayComponent>,
+      { wrapper },
+    )
+    const trigger = screen.getByTestId('trigger')
+    await act(async () => {
+      fireEvent.mouseEnter(trigger)
+      fireEvent.focusIn(trigger)
+    })
+    expect(screen.getByTestId('content')).toBeInTheDocument()
+    await act(async () => {
+      fireEvent.focusOut(trigger)
+      vi.advanceTimersByTime(500)
+    })
+    expect(screen.getByTestId('content')).toBeInTheDocument()
+    // pointer leaving still closes it, even with focus elsewhere
+    await act(async () => {
+      fireEvent.mouseLeave(trigger)
+      vi.advanceTimersByTime(500)
+    })
+    expect(screen.queryByTestId('content')).not.toBeInTheDocument()
+    vi.useRealTimers()
+  })
+
   it('uses aria-haspopup=dialog for popover and menu for dropdown', async () => {
     const { rerender } = render(
       <OverlayComponent trigger={Trigger} type="popover">
