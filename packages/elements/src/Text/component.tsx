@@ -5,7 +5,7 @@
  * a static `isText` flag so other components can detect text children.
  */
 import type { HTMLTextTags } from '@vitus-labs/core'
-import type { ReactNode } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { PKG_NAME } from '~/constants'
 import type { ExtendCss, VLComponent } from '~/types'
 import Styled from './styled'
@@ -38,10 +38,13 @@ const Component: VLComponent<Props> & {
 } = ({ paragraph, label, children, tag, css, ref, ...props }: any) => {
   // `finalTag` only diverges from `tag` on web (paragraph → `<p>`). On native
   // the underlying Styled handles the platform default, so we pass undefined.
+  // Stable object identity so the styled/responsive cache isn't defeated.
+  const $text = useMemo(() => ({ extraStyles: css }), [css])
+
   const finalTag = __WEB__ ? (paragraph ? 'p' : tag) : undefined
 
   return (
-    <Styled ref={ref} as={finalTag} $text={{ extraStyles: css }} {...props}>
+    <Styled ref={ref} as={finalTag} $text={$text} {...props}>
       {children ?? label}
     </Styled>
   )
