@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { breakpoints, Provider } from '@vitus-labs/unistyle'
-import { forwardRef } from 'react'
+import { forwardRef, StrictMode } from 'react'
 import OverlayComponent from '../Overlay/component'
 
 const Trigger = forwardRef<HTMLButtonElement, any>(
@@ -68,6 +68,56 @@ describe('Overlay lifecycle', () => {
     )
     unmount()
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('StrictMode: no spurious onClose/onOpen pair when initially open', async () => {
+    const onClose = vi.fn()
+    const onOpen = vi.fn()
+    render(
+      <StrictMode>
+        <OverlayComponent
+          trigger={Trigger}
+          isOpen
+          onOpen={onOpen}
+          onClose={onClose}
+        >
+          {Content}
+        </OverlayComponent>
+      </StrictMode>,
+      { wrapper },
+    )
+    await act(async () => {
+      await Promise.resolve()
+    })
+    expect(onClose).not.toHaveBeenCalled()
+    expect(onOpen).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not move focus back to the trigger after a click outside', async () => {
+    render(
+      <>
+        <OverlayComponent trigger={Trigger} type="dropdown">
+          {Content}
+        </OverlayComponent>
+        <button type="button" data-testid="elsewhere">
+          elsewhere
+        </button>
+      </>,
+      { wrapper },
+    )
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('trigger'))
+    })
+    expect(screen.getByTestId('content')).toBeInTheDocument()
+    // Safari: clicking a button doesn't focus it, so activeElement stays body.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+    const elsewhere = screen.getByTestId('elsewhere')
+    await act(async () => {
+      fireEvent.pointerDown(elsewhere)
+      fireEvent.click(elsewhere)
+    })
+    expect(screen.queryByTestId('content')).not.toBeInTheDocument()
+    expect(document.activeElement).not.toBe(screen.getByTestId('trigger'))
   })
 
   it('nested: opening the child does not close it or the parent, and clicking inside child keeps parent open', async () => {
