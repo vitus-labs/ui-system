@@ -34,7 +34,7 @@ UI System is not a component library. It's a set of composable packages for buil
 | Package | Description |
 | ------- | ----------- |
 | [@vitus-labs/core](./packages/core) | Shared utilities, styling engine bridge, theme context |
-| [@vitus-labs/styler](./packages/styler) | Lightweight CSS-in-JS engine (4.82 KB gz) — drop-in styled-components replacement |
+| [@vitus-labs/styler](./packages/styler) | Lightweight CSS-in-JS engine (~6.2 KB gz) — drop-in styled-components replacement |
 | [@vitus-labs/attrs](./packages/attrs) | Immutable chainable default-props factory for React components |
 | [@vitus-labs/elements](./packages/elements) | Layout primitives — Element, Text, List, Overlay, Portal |
 | [@vitus-labs/unistyle](./packages/unistyle) | Responsive CSS engine — media queries, unit conversion, style processing |
