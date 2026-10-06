@@ -75,11 +75,16 @@ const useHoverListeners = ({
     if (trigger) {
       trigger.addEventListener('mouseenter', onTriggerEnter)
       trigger.addEventListener('mouseleave', onTriggerLeave)
+      // Keyboard parity: focus mirrors hover open/close.
+      trigger.addEventListener('focusin', onTriggerEnter)
+      trigger.addEventListener('focusout', onTriggerLeave)
     }
 
     if (content) {
       content.addEventListener('mouseenter', onContentEnter)
       content.addEventListener('mouseleave', onContentLeave)
+      content.addEventListener('focusin', onContentEnter)
+      content.addEventListener('focusout', onContentLeave)
     }
 
     return () => {
@@ -87,10 +92,14 @@ const useHoverListeners = ({
       if (trigger) {
         trigger.removeEventListener('mouseenter', onTriggerEnter)
         trigger.removeEventListener('mouseleave', onTriggerLeave)
+        trigger.removeEventListener('focusin', onTriggerEnter)
+        trigger.removeEventListener('focusout', onTriggerLeave)
       }
       if (content) {
         content.removeEventListener('mouseenter', onContentEnter)
         content.removeEventListener('mouseleave', onContentLeave)
+        content.removeEventListener('focusin', onContentEnter)
+        content.removeEventListener('focusout', onContentLeave)
       }
     }
   }, [
