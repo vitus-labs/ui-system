@@ -5,10 +5,11 @@
  * on unmount. Accepts a custom DOMLocation for rendering into specific
  * containers (e.g., a modal root).
  */
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { PKG_NAME } from '~/constants'
 import type { VLComponent } from '~/types'
+import useIsomorphicLayoutEffect from '~/useIsomorphicLayoutEffect'
 
 export interface Props {
   /**
@@ -33,7 +34,7 @@ const Component: VLComponent<Props> = ({
 }: Props) => {
   const [element, setElement] = useState<HTMLElement>()
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!tag) return undefined
 
     const position = DOMLocation ?? document.body
@@ -43,7 +44,7 @@ const Component: VLComponent<Props> = ({
     position.appendChild(element)
 
     return () => {
-      position.removeChild(element)
+      element.remove()
     }
   }, [tag, DOMLocation])
 

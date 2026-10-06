@@ -20,12 +20,20 @@ const equalize = (el: HTMLElement, direction: unknown) => {
 
   const type: 'height' | 'width' = direction === 'rows' ? 'height' : 'width'
   const prop = type === 'height' ? 'offsetHeight' : 'offsetWidth'
+
+  // Clear previously applied sizes first so the natural sizes are measured —
+  // otherwise equalization only ever grows and never shrinks.
+  const hadBefore = beforeEl.style[type] !== ''
+  const hadAfter = afterEl.style[type] !== ''
+  if (hadBefore) beforeEl.style[type] = ''
+  if (hadAfter) afterEl.style[type] = ''
+
   const beforeSize = beforeEl[prop]
   const afterSize = afterEl[prop]
   if (!Number.isInteger(beforeSize) || !Number.isInteger(afterSize)) return
-  // Already balanced (and not the initial 0/0 case) — skip the write to
-  // break the ResizeObserver loop. The `> 0` guard lets jsdom (no layout
-  // engine, all sizes return 0) still exercise the write path.
+  // Already balanced (and not the initial 0/0 case) — nothing to write. The
+  // `> 0` guard lets jsdom (no layout engine, all sizes return 0) still
+  // exercise the write path.
   if (beforeSize === afterSize && beforeSize > 0) return
 
   const maxSize = `${Math.max(beforeSize, afterSize)}px`
@@ -115,20 +123,21 @@ const Component: VLElement = ({
   const equalizeRef = useRef<HTMLElement | null>(null)
   const externalRef = ref ?? innerRef
 
-  // Ref-capture the external ref so `mergedRef` stays stable. Without
-  // this, inline ref-callbacks from parents would change identity every
-  // render, forcing React to detach/attach the DOM ref each cycle.
-  const latestExternalRef = useRef(externalRef)
-  latestExternalRef.current = externalRef
-
-  const mergedRef = useCallback((node: HTMLElement | null) => {
-    equalizeRef.current = node
-    const r = latestExternalRef.current
-    if (typeof r === 'function') r(node)
-    else if (r != null) {
-      ;(r as { current: HTMLElement | null }).current = node
-    }
-  }, [])
+  // Keyed on the external ref's identity: when a consumer swaps ref={a} to
+  // ref={b}, React detaches the old callback (null) and attaches the new one,
+  // so `b` receives the node. Inline callback refs re-attach each render,
+  // which matches React's own behavior for plain DOM refs.
+  const mergedRef = useCallback(
+    (node: HTMLElement | null) => {
+      equalizeRef.current = node
+      const r = externalRef
+      if (typeof r === 'function') r(node)
+      else if (r != null) {
+        ;(r as { current: HTMLElement | null }).current = node
+      }
+    },
+    [externalRef],
+  )
 
   useLayoutEffect(() => {
     if (!__WEB__) return

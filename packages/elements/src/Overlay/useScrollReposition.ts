@@ -53,7 +53,9 @@ const useParentContainerReposition = (
   useEffect(() => {
     if (!active || !parentContainer) return undefined
 
-    if (closeOn !== 'hover') parentContainer.style.overflow = 'hidden'
+    const previousOverflow = parentContainer.style.overflow
+    const locked = closeOn !== 'hover'
+    if (locked) parentContainer.style.overflow = 'hidden'
 
     const onScroll = (e: Event) => {
       handleContentPosition()
@@ -63,7 +65,7 @@ const useParentContainerReposition = (
     parentContainer.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
-      parentContainer.style.overflow = ''
+      if (locked) parentContainer.style.overflow = previousOverflow
       parentContainer.removeEventListener('scroll', onScroll)
     }
   }, [

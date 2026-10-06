@@ -62,7 +62,14 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
     }
 
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || focusable.length === 0) return
+      if (e.key !== 'Tab') return
+
+      // Nothing tabbable inside — keep focus on the container instead of
+      // letting Tab escape the modal.
+      if (focusable.length === 0) {
+        e.preventDefault()
+        return
+      }
 
       // biome-ignore lint/style/noNonNullAssertion: length > 0 guarantees first/last
       const first = focusable[0]!

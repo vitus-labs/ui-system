@@ -6,7 +6,7 @@
  * a dropdown inside another dropdown) via blocked-state propagation.
  */
 import { render } from '@vitus-labs/core'
-import { type ReactNode, useId } from 'react'
+import { isValidElement, type ReactNode, useId } from 'react'
 import { PKG_NAME } from '~/constants'
 import Portal from '~/Portal'
 import type { Content, VLComponent } from '~/types'
@@ -98,23 +98,38 @@ const Component: VLComponent<Props> = ({
     closeOn === 'manual' ||
     closeOn === 'clickOutsideContent'
 
+  const isTooltip = type === 'tooltip'
+
+  // dialog for modal/popover, menu for dropdowns, generic popup otherwise.
   const ariaHasPopup =
-    type === 'modal'
+    type === 'modal' || type === 'popover'
       ? ('dialog' as const)
-      : type === 'tooltip'
-        ? ('true' as const)
-        : ('menu' as const)
+      : type === 'dropdown'
+        ? ('menu' as const)
+        : ('true' as const)
+
+  // DOM element children (`<div />`) must not receive component-level props
+  // (active/align/alignX/...) — React warns about unknown DOM props and the
+  // user's own alignX would be overridden.
+  const isDomNode = (node: unknown): boolean =>
+    isValidElement(node) && typeof node.type === 'string'
 
   const triggerProps: Record<string, unknown> = {
     [triggerRefName]: triggerRef,
-    active,
-    'aria-expanded': active,
-    'aria-haspopup': ariaHasPopup,
-    'aria-controls': active ? contentId : undefined,
   }
-  if (passHandlers) {
-    triggerProps.showContent = showContent
-    triggerProps.hideContent = hideContent
+  if (isTooltip) {
+    triggerProps['aria-describedby'] = active ? contentId : undefined
+  } else {
+    triggerProps['aria-expanded'] = active
+    triggerProps['aria-haspopup'] = ariaHasPopup
+    triggerProps['aria-controls'] = active ? contentId : undefined
+  }
+  if (!isDomNode(trigger)) {
+    triggerProps.active = active
+    if (passHandlers) {
+      triggerProps.showContent = showContent
+      triggerProps.hideContent = hideContent
+    }
   }
 
   return (
@@ -127,16 +142,19 @@ const Component: VLComponent<Props> = ({
           const contentProps: Record<string, unknown> = {
             [contentRefName]: contentRef,
             id: contentId,
-            role: type === 'modal' ? 'dialog' : undefined,
+            role:
+              type === 'modal' ? 'dialog' : isTooltip ? 'tooltip' : undefined,
             'aria-modal': type === 'modal' ? true : undefined,
-            active,
-            align,
-            alignX,
-            alignY,
           }
-          if (passHandlers) {
-            contentProps.showContent = showContent
-            contentProps.hideContent = hideContent
+          if (!isDomNode(children)) {
+            contentProps.active = active
+            contentProps.align = align
+            contentProps.alignX = alignX
+            contentProps.alignY = alignY
+            if (passHandlers) {
+              contentProps.showContent = showContent
+              contentProps.hideContent = hideContent
+            }
           }
           return (
             <Portal DOMLocation={DOMLocation}>
