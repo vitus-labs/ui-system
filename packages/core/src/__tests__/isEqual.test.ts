@@ -198,7 +198,11 @@ describe('isEqual', () => {
   })
 
   it('still compares React-element-like plain objects deeply', () => {
-    const el = (t: string) => ({ $$typeof: Symbol.for('react.element'), type: t, props: { a: 1 } })
+    const el = (t: string) => ({
+      $$typeof: Symbol.for('react.element'),
+      type: t,
+      props: { a: 1 },
+    })
     expect(isEqual(el('div'), el('div'))).toBe(true)
     expect(isEqual(el('div'), el('span'))).toBe(false)
   })

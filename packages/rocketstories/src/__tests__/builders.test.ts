@@ -146,9 +146,7 @@ describe('init and rocketstories factories', () => {
   it('config({ name }) overrides the name and keeps the prefix', () => {
     const C = (_props: any) => null
     C.displayName = 'Button'
-    const b = rocketstories(C)
-      .config({ prefix: 'UI', name: 'Other' })
-      .attrs({})
+    const b = rocketstories(C).config({ prefix: 'UI', name: 'Other' }).attrs({})
     expect(b.CONFIG.name).toBe('UI/Other')
     const c = rocketstories(C).config({ name: 'Renamed' })
     expect(c.CONFIG.name).toBe('Renamed')
