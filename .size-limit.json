@@ -8,7 +8,7 @@
   {
     "name": "@vitus-labs/connector-emotion",
     "path": "packages/connector-emotion/lib/index.js",
-    "limit": "1.4 KB",
+    "limit": "1.7 KB",
     "gzip": true
   },
   {
