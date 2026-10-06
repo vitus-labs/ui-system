@@ -18,8 +18,13 @@ const IMPORTANT_RE = /!\s*important\s*$/i
 const toCamelCase = (prop: string): string =>
   prop.trim().replace(CAMEL_RE, (_, c: string) => c.toUpperCase())
 
-const parseValue = (_prop: string, raw: string): string | number => {
+// RN requires these to be strings even when numeric (`fontWeight: '700'`).
+const STRING_ONLY_PROPS = new Set(['fontWeight'])
+
+const parseValue = (prop: string, raw: string): string | number => {
   const trimmed = raw.trim()
+
+  if (STRING_ONLY_PROPS.has(prop)) return trimmed
 
   // px values → numeric
   if (trimmed.endsWith('px')) {
@@ -141,8 +146,57 @@ const expandShorthand = (
 }
 
 /**
+ * Splits CSS text into declarations on `;` that are outside parentheses and
+ * quotes (so `url(data:image/png;base64,...)` and `content: ";"` survive),
+ * stripping block comments and `//` line comments. A `//` comment is only
+ * recognised at the start of a declaration, so `url(http://x)` is untouched.
+ */
+const splitDeclarations = (text: string): string[] => {
+  const out: string[] = []
+  let cur = ''
+  let depth = 0
+  let quote = ''
+  const len = text.length
+  for (let i = 0; i < len; i++) {
+    const ch = text[i] as string
+    if (quote) {
+      cur += ch
+      if (ch === '\\' && i + 1 < len) cur += text[++i]
+      else if (ch === quote) quote = ''
+      continue
+    }
+    if (ch === '/' && text[i + 1] === '*') {
+      const end = text.indexOf('*/', i + 2)
+      i = end === -1 ? len : end + 1
+      continue
+    }
+    if (ch === '/' && text[i + 1] === '/' && depth === 0 && !cur.trim()) {
+      const end = text.indexOf('\n', i)
+      i = end === -1 ? len : end
+      continue
+    }
+    if (ch === '"' || ch === "'") quote = ch
+    else if (ch === '(') depth++
+    else if (ch === ')') {
+      if (depth > 0) depth--
+    } else if (ch === ';' && depth === 0) {
+      out.push(cur)
+      cur = ''
+      continue
+    }
+    cur += ch
+  }
+  out.push(cur)
+  return out
+}
+
+/**
  * Parses a CSS declaration string into a React Native style object.
  * Converts kebab-case properties to camelCase and numeric/px values to numbers.
+ *
+ * Notes: `rem`/`em` values are not converted (RN has no root size here) and
+ * stay strings; unitless `line-height` stays as written (RN's `lineHeight` is
+ * absolute, not a multiplier) — use px values for both.
  *
  * @param cssText - Semicolon-separated CSS declarations (e.g. `"width: 100px; color: red"`)
  * @returns A flat style object suitable for React Native's `style` prop
@@ -153,7 +207,7 @@ const expandShorthand = (
  */
 export const parseCSS = (cssText: string): StyleObject => {
   const style: StyleObject = {}
-  const declarations = cssText.split(';')
+  const declarations = splitDeclarations(cssText)
 
   for (const decl of declarations) {
     const colonIdx = decl.indexOf(':')

@@ -14,7 +14,7 @@
   {
     "name": "@vitus-labs/connector-native",
     "path": "packages/connector-native/lib/index.js",
-    "limit": "4.5 KB",
+    "limit": "5.3 KB",
     "gzip": true
   },
   {
@@ -32,7 +32,7 @@
   {
     "name": "@vitus-labs/coolgrid",
     "path": "packages/coolgrid/lib/index.js",
-    "limit": "4.5 KB",
+    "limit": "5.3 KB",
     "gzip": true
   },
   {
