@@ -59,7 +59,7 @@
     "react-is": "^19.3.0"
   },
   "devDependencies": {
-    "@vitus-labs/tools-rolldown": "2.7.1",
-    "@vitus-labs/tools-typescript": "2.7.1"
+    "@vitus-labs/tools-rolldown": "2.8.0",
+    "@vitus-labs/tools-typescript": "2.8.0"
   }
 }
