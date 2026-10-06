@@ -257,6 +257,35 @@ describe('optimizeBreakpointDeltas', () => {
       ])
     })
 
+    it.each([
+      ['border-top-left-radius', '8px', 'border-radius', '4px'],
+      ['top', '1px', 'inset', '0'],
+      ['margin-left', '1rem', 'margin-inline', '0'],
+      ['align-items', 'start', 'place-items', 'center'],
+      ['row-gap', '1rem', 'grid-gap', '0'],
+      ['row-gap', '1rem', 'gap', '0'],
+      ['line-height', '2', 'font', '16px sans-serif'],
+      ['grid-row-start', '2', 'grid-area', 'auto'],
+      ['border-top-width', '2px', 'border-width', '1px'],
+    ])(
+      're-emits %s after %s is reset by its shorthand',
+      (long, lv, short, sv) => {
+        const out = optimizeBreakpointDeltas([
+          `${long}: ${lv};`,
+          `${short}: ${sv};`,
+          `${long}: ${lv};`,
+        ])
+        expect(out.map(norm)[2]).toBe(`${long}: ${lv};`)
+
+        const reverse = optimizeBreakpointDeltas([
+          `${short}: ${sv};`,
+          `${long}: ${lv};`,
+          `${short}: ${sv};`,
+        ])
+        expect(reverse.map(norm)[2]).toBe(`${short}: ${sv};`)
+      },
+    )
+
     it('does not touch unrelated props', () => {
       const out = optimizeBreakpointDeltas([
         'padding: 1rem; color: red;',
