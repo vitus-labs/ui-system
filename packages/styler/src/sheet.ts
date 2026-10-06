@@ -496,7 +496,9 @@ export class StyleSheet {
       else if (ch === 41 /* ) */) parens--
       else if (ch === 59 /* ; */ && depth === 0 && parens <= 0) {
         // Top-level statement at-rule (@import / @charset / @namespace).
-        rules.push(cssText.slice(start, i + 1).trim())
+        // A lone `;` (e.g. after `}`) is not a rule — insertRule would throw.
+        const rule = cssText.slice(start, i + 1).trim()
+        if (rule !== ';') rules.push(rule)
         start = i + 1
       } else if (ch === 123 /* { */) depth++
       else if (ch === 125 /* } */) {

@@ -37,6 +37,7 @@ describe('Iterator keys', () => {
     const I = Iterator as any
     render(
       <I itemProps={{ 'data-x': '1' }}>
+        {/* biome-ignore lint/complexity/noUselessFragments: the single-child fragment IS the case under test */}
         <Fragment>
           <span data-testid="only">only</span>
         </Fragment>

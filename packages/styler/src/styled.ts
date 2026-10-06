@@ -39,7 +39,7 @@ import {
 } from './resolve'
 import { isDynamic } from './shared'
 import { onSheetClear, sheet } from './sheet'
-import { useTheme } from './ThemeProvider'
+import { EMPTY_THEME, useTheme } from './ThemeProvider'
 
 // SSR vs client detection — computed once at module load time.
 // In Node.js (SSR): true. In browser/jsdom: false.
@@ -252,10 +252,14 @@ const createStyledComponent = (
   // unconditionally; the choice between bodies happens at module load.
 
   const DynamicStyled: ComponentType<any> = IS_SERVER
-    ? ({ ref, ...rawProps }: Record<string, any>) => {
+    ? // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path SSR render — theme injection + <style precedence> emission inlined for perf
+      ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
         if (rawProps.theme === undefined) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
+        // Interpolations always see a theme, but don't forward `theme={}`
+        // to the target when there is no provider.
+        if (rawProps.theme === EMPTY_THEME) rawProps.theme = undefined
 
         let className = ''
         let styleEl: ReactElement | null = null
@@ -294,6 +298,9 @@ const createStyledComponent = (
         const theme = useTheme()
         if (rawProps.theme === undefined) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
+        // Interpolations always see a theme, but don't forward `theme={}`
+        // to the target when there is no provider.
+        if (rawProps.theme === EMPTY_THEME) rawProps.theme = undefined
 
         // Two-entry LRU cache. The previous single-slot ref missed every
         // render when a prop alternates between two values (toggle/hover/
