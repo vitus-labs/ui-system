@@ -39,7 +39,8 @@ const cloneAndEnhance = (
 
   const result = {
     ...defaultOptions,
-    name: defaultOptions.name || options.name,
+    // new name wins; fall back to the un-prefixed base so prefix isn't re-applied
+    name: options.name || defaultOptions.baseName || defaultOptions.name,
     prefix: options.prefix || defaultOptions.prefix,
     component: options.component || defaultOptions.component,
     attrs: componentChanged
@@ -61,7 +62,11 @@ const cloneAndEnhance = (
     ? `${result.prefix}/${finalName}`
     : finalName
 
-  return createRocketStories({ ...result, name: finalStoryName })
+  return createRocketStories({
+    ...result,
+    baseName: finalName,
+    name: finalStoryName,
+  })
 }
 
 /**

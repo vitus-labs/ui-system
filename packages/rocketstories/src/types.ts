@@ -89,7 +89,13 @@ export type Configuration = {
   component: RocketType | ElementType
   attrs: Record<string, any>
   prefix?: string
+  /** Story title (`prefix/base` once computed). */
   name: string
+  /**
+   * Base name without the prefix. Tracked separately by the chain so that
+   * re-chaining never re-prepends the prefix. Internal.
+   */
+  baseName?: string
   storyOptions: Partial<{
     direction: 'inline' | 'rows'
     alignX: 'left' | 'center' | 'right' | 'spaceBetween'

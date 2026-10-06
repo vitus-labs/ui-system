@@ -135,6 +135,25 @@ describe('init and rocketstories factories', () => {
     expect(builder.CONFIG.decorators).toContain(decorator)
   })
 
+  it('does not re-prepend prefix on chained calls', () => {
+    const C = (_props: any) => null
+    C.displayName = 'Button'
+    const b = rocketstories(C).config({ prefix: 'UI' }).attrs({}).controls({})
+    expect(b.CONFIG.name).toBe('UI/Button')
+    expect(b.init.title).toBe('UI/Button')
+  })
+
+  it('config({ name }) overrides the name and keeps the prefix', () => {
+    const C = (_props: any) => null
+    C.displayName = 'Button'
+    const b = rocketstories(C)
+      .config({ prefix: 'UI', name: 'Other' })
+      .attrs({})
+    expect(b.CONFIG.name).toBe('UI/Other')
+    const c = rocketstories(C).config({ name: 'Renamed' })
+    expect(c.CONFIG.name).toBe('Renamed')
+  })
+
   it('uses component.name when displayName is missing', () => {
     const Unnamed = function MyComp() {
       return null
@@ -369,8 +388,7 @@ describe('createRocketStories builder', () => {
   it('.config() with name overrides component name', () => {
     const builder = rocketstories(MockComponent)
     const enhanced = builder.config({ name: 'CustomName' })
-    // defaultOptions.name is truthy so it takes priority over options.name
-    expect(enhanced.CONFIG.name).toBe('TestComp')
+    expect(enhanced.CONFIG.name).toBe('CustomName')
   })
 
   it('cloneAndEnhance uses options.name when defaultOptions.name is empty', () => {
