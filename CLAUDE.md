@@ -9,7 +9,7 @@ Monorepo with 15 packages under `packages/`, managed with Bun workspaces. Publis
 ```
 packages/
 ├── core/                  # CSS engine connector, init(), utilities (get, set, merge, compose, pick, omit)
-├── styler/                # CSS-in-JS engine (~7.5KB gzip): css, styled, keyframes, ThemeProvider
+├── styler/                # CSS-in-JS engine (~6.2KB min+gz): css, styled, keyframes, ThemeProvider
 ├── connector-styler/      # Connects styler to core's engine interface
 ├── connector-emotion/     # Connects Emotion to core's engine interface
 ├── connector-styled-components/  # Connects styled-components to core's engine interface
