@@ -95,6 +95,10 @@ const Transition = ({
     },
   })
 
+  // Ref: a delay change (Stagger sibling removed) must not restart a phase
+  const delayRef = useRef(delay)
+  delayRef.current = delay
+
   useIsomorphicLayoutEffect(() => {
     const el = elementRef.current
     if (!el) return
@@ -103,7 +107,7 @@ const Transition = ({
       return applyReducedMotion(stage, callbacksRef.current, complete)
     }
 
-    // Built inside the effect (which fires on [stage, delay] changes and
+    // Built inside the effect (which fires on [stage] changes and
     // closes over fresh props) so parent re-renders don't allocate a fresh
     // ~12-key object per render — Stagger renders n of these per update.
     const transitionConfig = {
@@ -126,18 +130,18 @@ const Transition = ({
     // cleared on 'entered' so later transitions (e.g. hover) aren't delayed.
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, transitionConfig, delay)
+      const cancel = applyEnter(el, transitionConfig, delayRef.current)
       return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, transitionConfig, delay)
+      const cancel = applyLeave(el, transitionConfig, delayRef.current)
       return cancel
     }
 
-    applySettled(el, transitionConfig, stage, delay)
-  }, [stage, delay])
+    applySettled(el, transitionConfig, stage, delayRef.current)
+  }, [stage])
 
   if (!shouldMount) {
     if (unmount) return null

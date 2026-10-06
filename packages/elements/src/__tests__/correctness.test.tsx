@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { Fragment, useState } from 'react'
+import { createElement, Fragment, useState } from 'react'
 import Element from '../Element'
 import Iterator from '../helpers/Iterator/component'
 import Portal from '../Portal/component'
@@ -31,6 +31,21 @@ describe('Iterator keys', () => {
     expect(screen.getAllByTestId('stateful').map((n) => n.textContent)).toEqual(
       ['z', 'a', 'b'],
     )
+  })
+
+  it('fallback index keys do not collide with user keys', () => {
+    const I = Iterator as any
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {})
+    // unkeyed siblings next to a user key "1" are the case under test
+    const unkeyed = [
+      createElement('span', null, 'b'),
+      createElement('span', null, 'c'),
+    ]
+    render(<I>{[<span key="1">a</span>, ...unkeyed]}</I>)
+    expect(err.mock.calls.some((c) => String(c[0]).includes('same key'))).toBe(
+      false,
+    )
+    err.mockRestore()
   })
 
   it('renders a fragment with a single child', () => {

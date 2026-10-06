@@ -249,12 +249,22 @@ const delayed = withDelay(presets.fadeUp, 200, 0)
 
 ### reverse(preset)
 
-Swap enter and leave animations.
+Reverse the motion direction while keeping the visible end state: the element enters from where the original leaves to, and leaves towards where the original enters from. Transitions and enter/leave classes are swapped.
 
 ```tsx
-const slideDownOnEnter = reverse(presets.slideUp)
-// Enter: slides down (was leave). Leave: slides up (was enter).
+const enterUpLeaveDown = {
+  enterStyle: { transform: 'translateY(16px)' },
+  enterToStyle: { transform: 'none' },
+  leaveStyle: { transform: 'none' },
+  leaveToStyle: { transform: 'translateY(-16px)' },
+}
+reverse(enterUpLeaveDown)
+// Enters from above (-16px), leaves downward (+16px).
 ```
+
+The built-in presets are symmetric (they leave back to the state they entered from), so for them `reverse()` only swaps the enter/leave transitions and classes.
+
+> Changed in 2.8: `reverse()` used to swap the enter and leave style objects wholesale, which left the element in its hidden state after entering.
 
 ## Custom Presets
 

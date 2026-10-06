@@ -124,6 +124,10 @@ const TransitionItem = ({
     },
   })
 
+  // Ref: a delay change (Stagger sibling removed) must not restart a phase
+  const delayRef = useRef(delay)
+  delayRef.current = delay
+
   useIsomorphicLayoutEffect(() => {
     const el = elementRef.current
     if (!el) return
@@ -135,18 +139,18 @@ const TransitionItem = ({
 
     if (stage === 'entering') {
       callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, transitionConfig, delay)
+      const cancel = applyEnter(el, transitionConfig, delayRef.current)
       return cancel
     }
 
     if (stage === 'leaving') {
       callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, transitionConfig, delay)
+      const cancel = applyLeave(el, transitionConfig, delayRef.current)
       return cancel
     }
 
-    applySettled(el, transitionConfig, stage, delay)
-  }, [stage, delay])
+    applySettled(el, transitionConfig, stage, delayRef.current)
+  }, [stage])
 
   if (!shouldMount) {
     if (unmount) return null
