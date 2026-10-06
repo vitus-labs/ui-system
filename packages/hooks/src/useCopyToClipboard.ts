@@ -8,6 +8,29 @@ export type UseCopyToClipboardReturn = readonly [
 
 export type UseCopyToClipboard = (resetMs?: number) => UseCopyToClipboardReturn
 
+const legacyCopy = (text: string): boolean => {
+  if (typeof document === 'undefined') return false
+  let ta: HTMLTextAreaElement | null = null
+  try {
+    ta = document.createElement('textarea')
+    ta.value = text
+    ta.setAttribute('readonly', '')
+    ta.style.position = 'absolute'
+    ta.style.left = '-9999px'
+    document.body.appendChild(ta)
+    ta.select()
+    return (
+      (document as { execCommand?: (s: string) => boolean }).execCommand?.(
+        'copy',
+      ) === true
+    )
+  } catch {
+    return false
+  } finally {
+    ta?.parentNode?.removeChild(ta)
+  }
+}
+
 /**
  * Copy text to the clipboard with a transient "copied" flag (auto-resets
  * after `resetMs`, default 2000). Falls back to the legacy
@@ -33,36 +56,24 @@ const useCopyToClipboard: UseCopyToClipboard = (resetMs = 2000) => {
     setCopied(false)
   }, [])
 
+  const mountedRef = useRef(true)
+
   const copy = useCallback(
     async (text: string): Promise<boolean> => {
       let ok = false
-      try {
-        if (
-          typeof navigator !== 'undefined' &&
-          navigator.clipboard?.writeText
-        ) {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        try {
           await navigator.clipboard.writeText(text)
           ok = true
-        } else if (typeof document !== 'undefined') {
-          // Legacy fallback for non-secure contexts / older browsers.
-          const ta = document.createElement('textarea')
-          ta.value = text
-          ta.setAttribute('readonly', '')
-          ta.style.position = 'absolute'
-          ta.style.left = '-9999px'
-          document.body.appendChild(ta)
-          ta.select()
-          ok =
-            (
-              document as { execCommand?: (s: string) => boolean }
-            ).execCommand?.('copy') === true
-          document.body.removeChild(ta)
+        } catch {
+          // Rejected (permissions, insecure origin, no gesture) — try legacy.
+          ok = legacyCopy(text)
         }
-      } catch {
-        ok = false
+      } else {
+        ok = legacyCopy(text)
       }
 
-      if (ok) {
+      if (ok && mountedRef.current) {
         setCopied(true)
         if (timerRef.current !== null) clearTimeout(timerRef.current)
         if (resetMs > 0) {
@@ -78,12 +89,13 @@ const useCopyToClipboard: UseCopyToClipboard = (resetMs = 2000) => {
   )
 
   // Clean up the reset timer on unmount.
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
       if (timerRef.current !== null) clearTimeout(timerRef.current)
-    },
-    [],
-  )
+    }
+  }, [])
 
   return [copied, copy, reset] as const
 }

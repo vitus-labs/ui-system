@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useRef } from 'react'
+import useRefElement from './useRefElement'
 
 type EventTargetLike = EventTarget | { current: EventTarget | null } | null
 
@@ -33,16 +34,24 @@ const useEventListener: UseEventListener = (
   const handlerRef = useRef(handler)
   handlerRef.current = handler
 
+  // Ref targets are tracked as state so late-mounting elements get a listener.
+  const isRef =
+    target !== undefined && target !== null && 'current' in (target as object)
+  const refNode = useRefElement(
+    isRef ? (target as { current: EventTarget | null }) : null,
+  )
+  const resolved = isRef ? refNode : target
+
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
-    const node = resolveTarget(target)
+    const node = resolveTarget(resolved as EventTargetLike)
     if (!node || typeof node.addEventListener !== 'function') return undefined
 
     const listener: EventListener = (e) =>
       (handlerRef.current as (ev: Event) => void)(e)
     node.addEventListener(event as string, listener, options)
     return () => node.removeEventListener(event as string, listener, options)
-  }, [event, target, options])
+  }, [event, resolved, options])
 }
 
 const resolveTarget = (

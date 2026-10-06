@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import useRefElement from './useRefElement'
 
 export type UseFocusTrapOptions = {
   /**
@@ -32,6 +33,15 @@ const FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',')
 
+const FOCUSABLE_ATTRS = [
+  'disabled',
+  'tabindex',
+  'aria-disabled',
+  'contenteditable',
+  'href',
+  'hidden',
+]
+
 // Only filter `aria-disabled="true"` here — a CSS attribute selector
 // can't reliably exclude that. Visibility (display:none / hidden parents)
 // is left to the consumer because reading `offsetParent` is a layout
@@ -54,10 +64,11 @@ const isTabbable = (el: HTMLElement): boolean =>
  */
 const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
   const autoFocus = options?.autoFocus !== false
+  // Tracked as state so a container that mounts after the hook is trapped.
+  const container = useRefElement(ref)
 
   useEffect(() => {
     if (!enabled) return undefined
-    const container = ref.current
     if (!container) return undefined
 
     let focusable: HTMLElement[] = []
@@ -72,7 +83,14 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
     // Re-query only when the container's DOM tree changes (rare),
     // not on every Tab keypress.
     const observer = new MutationObserver(refresh)
-    observer.observe(container, { childList: true, subtree: true })
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      // Elements toggling disabled/hidden/etc. change focusability without
+      // any child being added or removed.
+      attributes: true,
+      attributeFilter: FOCUSABLE_ATTRS,
+    })
 
     // Save current focus and move it into the container.
     const prevFocus = document.activeElement as HTMLElement | null
@@ -122,7 +140,7 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
         prevFocus.focus()
       }
     }
-  }, [ref, enabled, autoFocus])
+  }, [container, enabled, autoFocus])
 }
 
 export default useFocusTrap

@@ -26,6 +26,8 @@ import type { UseIntersection } from './useIntersection'
 import useIntersection from './useIntersection'
 import type { UseInterval } from './useInterval'
 import useInterval from './useInterval'
+import type { UseIsClient } from './useIsClient'
+import useIsClient from './useIsClient'
 import type { UseIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 import useIsomorphicLayoutEffect from './useIsomorphicLayoutEffect'
 import type { UseKeyboard } from './useKeyboard'
@@ -38,6 +40,10 @@ import type { UseMediaQuery } from './useMediaQuery'
 import useMediaQuery from './useMediaQuery'
 import type { UseMergedRef } from './useMergedRef'
 import useMergedRef from './useMergedRef'
+import type { UseOnlineStatus } from './useOnlineStatus'
+import useOnlineStatus from './useOnlineStatus'
+import type { UsePageVisibility } from './usePageVisibility'
+import usePageVisibility from './usePageVisibility'
 import type { UsePrevious } from './usePrevious'
 import usePrevious from './usePrevious'
 import type { UseReducedMotion } from './useReducedMotion'
@@ -62,6 +68,8 @@ import type { UseUpdateEffect } from './useUpdateEffect'
 import useUpdateEffect from './useUpdateEffect'
 import type { UseWindowResize } from './useWindowResize'
 import useWindowResize from './useWindowResize'
+import type { UseWindowScroll } from './useWindowScroll'
+import useWindowScroll from './useWindowScroll'
 
 export type {
   UseBreakpoint,
@@ -78,12 +86,15 @@ export type {
   UseHover,
   UseIntersection,
   UseInterval,
+  UseIsClient,
   UseIsomorphicLayoutEffect,
   UseKeyboard,
   UseLatest,
   UseLocalStorage,
   UseMediaQuery,
   UseMergedRef,
+  UseOnlineStatus,
+  UsePageVisibility,
   UsePrevious,
   UseReducedMotion,
   UseResizeObserver,
@@ -96,6 +107,7 @@ export type {
   UseToggle,
   UseUpdateEffect,
   UseWindowResize,
+  UseWindowScroll,
 }
 
 export {
@@ -113,12 +125,15 @@ export {
   useHover,
   useIntersection,
   useInterval,
+  useIsClient,
   useIsomorphicLayoutEffect,
   useKeyboard,
   useLatest,
   useLocalStorage,
   useMediaQuery,
   useMergedRef,
+  useOnlineStatus,
+  usePageVisibility,
   usePrevious,
   useReducedMotion,
   useResizeObserver,
@@ -131,4 +146,5 @@ export {
   useToggle,
   useUpdateEffect,
   useWindowResize,
+  useWindowScroll,
 }

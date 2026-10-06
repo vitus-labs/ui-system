@@ -39,7 +39,7 @@ UI System is not a component library. It's a set of composable packages for buil
 | [@vitus-labs/elements](./packages/elements) | Layout primitives — Element, Text, List, Overlay, Portal |
 | [@vitus-labs/unistyle](./packages/unistyle) | Responsive CSS engine — media queries, unit conversion, style processing |
 | [@vitus-labs/coolgrid](./packages/coolgrid) | Bootstrap-inspired responsive grid with context-cascading config |
-| [@vitus-labs/hooks](./packages/hooks) | 28 React hooks — useHover, useBreakpoint, useFocusTrap, and more |
+| [@vitus-labs/hooks](./packages/hooks) | 36 React hooks — useHover, useBreakpoint, useFocusTrap, and more |
 | [@vitus-labs/rocketstyle](./packages/rocketstyle) | Multi-dimensional styling system with type-safe chains |
 | [@vitus-labs/rocketstories](./packages/rocketstories) | Auto-generated Storybook stories from rocketstyle components |
 

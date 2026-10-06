@@ -67,6 +67,9 @@ const useBreakpoint: UseBreakpoint = () => {
     }
 
     window.addEventListener('resize', onResize, { passive: true })
+    // Re-sync once after subscribing: `sorted` may have changed, or the
+    // viewport may have resized between render and effect.
+    update()
     return () => {
       if (raf !== 0) cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)

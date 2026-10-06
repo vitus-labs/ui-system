@@ -16,9 +16,17 @@ export type UseIntersection = (
  */
 const useIntersection: UseIntersection = (options = {}) => {
   const { threshold = 0, rootMargin = '0px', root = null } = options
+  // Serialize array thresholds so an inline `[0, .5, 1]` literal doesn't
+  // change the callback-ref identity on every render.
+  const thresholdKey = Array.isArray(threshold)
+    ? threshold.join(',')
+    : threshold
+  const thresholdRef = useRef(threshold)
+  thresholdRef.current = threshold
   const [entry, setEntry] = useState<IntersectionObserverEntry | null>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: thresholdKey is the stable serialization of threshold
   const ref = useCallback(
     (node: Element | null) => {
       if (observerRef.current) {
@@ -30,15 +38,15 @@ const useIntersection: UseIntersection = (options = {}) => {
 
       const observer = new IntersectionObserver(
         (entries) => {
-          setEntry(entries[0] ?? null)
+          setEntry(entries[entries.length - 1] ?? null)
         },
-        { threshold, rootMargin, root },
+        { threshold: thresholdRef.current, rootMargin, root },
       )
 
       observer.observe(node)
       observerRef.current = observer
     },
-    [threshold, rootMargin, root],
+    [thresholdKey, rootMargin, root],
   )
 
   return [ref, entry]
