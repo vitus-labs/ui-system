@@ -210,7 +210,8 @@ for (const k of 'viewBox xmlns xmlnsXlink d fill fillRule fillOpacity clipRule c
 
 // Any React event handler (`onXxx`, incl. `*Capture`, media, toggle, pointer…).
 // Only checked after the whitelist misses, so the common path is unaffected.
-const isHandler = (key: string): boolean => /^on[A-Z]/.test(key)
+const HANDLER_RE = /^on[A-Z]/
+const isHandler = (key: string): boolean => HANDLER_RE.test(key)
 
 /**
  * Filters props for HTML elements. Keeps valid HTML attrs, data-*, aria-*.
