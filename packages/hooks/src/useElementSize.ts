@@ -23,7 +23,10 @@ const useElementSize: UseElementSize = () => {
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
       if (!entry) return
-      const { width, height } = entry.contentRect
+      // Border box, to match getBoundingClientRect used for the initial read.
+      const box = entry.borderBoxSize?.[0]
+      const width = box ? box.inlineSize : entry.contentRect.width
+      const height = box ? box.blockSize : entry.contentRect.height
       setSize((prev) =>
         prev.width === width && prev.height === height
           ? prev

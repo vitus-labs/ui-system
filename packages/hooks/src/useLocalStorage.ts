@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const IS_SERVER = typeof window === 'undefined'
 
@@ -21,15 +21,31 @@ export type UseLocalStorage = <T>(
  * ```
  */
 const useLocalStorage: UseLocalStorage = <T>(key: string, initialValue: T) => {
-  const [value, setValue] = useState<T>(() => {
-    if (IS_SERVER) return initialValue
+  // Held in a ref so an inline-object initialValue doesn't change callback
+  // identities or re-subscribe the storage listener every render.
+  const initialRef = useRef(initialValue)
+  initialRef.current = initialValue
+
+  const read = (): T => {
+    if (IS_SERVER) return initialRef.current
     try {
       const raw = window.localStorage.getItem(key)
-      return raw === null ? initialValue : (JSON.parse(raw) as T)
+      return raw === null ? initialRef.current : (JSON.parse(raw) as T)
     } catch {
-      return initialValue
+      return initialRef.current
     }
-  })
+  }
+
+  const [value, setValue] = useState<T>(read)
+
+  // Re-read when `key` changes (skip the initial mount, already read above).
+  const keyRef = useRef(key)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: read is a closure over key and a ref
+  useEffect(() => {
+    if (keyRef.current === key) return
+    keyRef.current = key
+    setValue(read())
+  }, [key])
 
   const update = useCallback(
     (next: T | ((prev: T) => T)) => {
@@ -57,8 +73,8 @@ const useLocalStorage: UseLocalStorage = <T>(key: string, initialValue: T) => {
         // ignore
       }
     }
-    setValue(initialValue)
-  }, [initialValue, key])
+    setValue(initialRef.current)
+  }, [key])
 
   // Cross-tab sync: when another document updates the same key, mirror it.
   useEffect(() => {
@@ -66,7 +82,7 @@ const useLocalStorage: UseLocalStorage = <T>(key: string, initialValue: T) => {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== key || e.storageArea !== window.localStorage) return
       if (e.newValue === null) {
-        setValue(initialValue)
+        setValue(initialRef.current)
         return
       }
       try {
@@ -77,7 +93,7 @@ const useLocalStorage: UseLocalStorage = <T>(key: string, initialValue: T) => {
     }
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
-  }, [key, initialValue])
+  }, [key])
 
   return [value, update, remove]
 }

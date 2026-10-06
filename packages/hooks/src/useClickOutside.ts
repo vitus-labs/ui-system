@@ -6,7 +6,7 @@ export type UseClickOutside = (
 ) => void
 
 /**
- * Calls `handler` when a click (mousedown or touchstart) occurs
+ * Calls `handler` when a click (pointerdown, falling back to mousedown/touchstart) occurs
  * outside the element referenced by `ref`.
  */
 const useClickOutside: UseClickOutside = (ref, handler) => {
@@ -17,16 +17,25 @@ const useClickOutside: UseClickOutside = (ref, handler) => {
     const listener = (event: Event) => {
       const el = ref.current
       const target = event.target as Node | null
-      if (!el || !target || el.contains(target)) return
+      if (!el || !target) return
+      // composedPath also handles targets removed from the DOM during the
+      // event and shadow-DOM retargeting.
+      const path =
+        typeof event.composedPath === 'function' ? event.composedPath() : []
+      if (path.length > 0 ? path.includes(el) : el.contains(target)) return
       handlerRef.current(event)
     }
 
-    document.addEventListener('mousedown', listener)
-    document.addEventListener('touchstart', listener)
+    // pointerdown covers mouse, touch and pen with a single event, so the
+    // handler fires once per tap (mousedown + touchstart fired twice).
+    const events =
+      typeof window !== 'undefined' && 'onpointerdown' in window
+        ? ['pointerdown']
+        : ['mousedown', 'touchstart']
+    for (const name of events) document.addEventListener(name, listener)
 
     return () => {
-      document.removeEventListener('mousedown', listener)
-      document.removeEventListener('touchstart', listener)
+      for (const name of events) document.removeEventListener(name, listener)
     }
   }, [ref])
 }

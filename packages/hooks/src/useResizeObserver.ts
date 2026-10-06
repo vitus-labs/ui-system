@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useState } from 'react'
+import useRefElement from './useRefElement'
 
 export type UseResizeObserver = (
   ref: RefObject<HTMLElement | null>,
@@ -23,10 +24,11 @@ export type UseResizeObserver = (
  */
 const useResizeObserver: UseResizeObserver = (ref) => {
   const [rect, setRect] = useState<DOMRectReadOnly | null>(null)
+  // Tracked as state so late-mounting elements get observed.
+  const node = useRefElement(ref)
 
   useEffect(() => {
     if (typeof ResizeObserver === 'undefined') return undefined
-    const node = ref.current
     if (!node) return undefined
 
     const observer = new ResizeObserver((entries) => {
@@ -35,7 +37,7 @@ const useResizeObserver: UseResizeObserver = (ref) => {
     })
     observer.observe(node)
     return () => observer.disconnect()
-  }, [ref])
+  }, [node])
 
   return rect
 }

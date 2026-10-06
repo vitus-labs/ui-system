@@ -9,13 +9,16 @@ export type UseMediaQuery = (query: string) => boolean
 const useMediaQuery: UseMediaQuery = (query) => {
   const getMatch = useCallback(
     () =>
-      typeof window !== 'undefined' ? window.matchMedia(query).matches : false,
+      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        ? window.matchMedia(query).matches
+        : false,
     [query],
   )
 
   const [matches, setMatches] = useState(getMatch)
 
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined
     const mql = window.matchMedia(query)
     setMatches(mql.matches)
 

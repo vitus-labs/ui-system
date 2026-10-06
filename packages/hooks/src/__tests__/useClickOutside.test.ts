@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import useClickOutside from '../useClickOutside'
 
 describe('useClickOutside', () => {
-  it('calls handler on mousedown outside the ref element', () => {
+  it('calls handler on pointerdown outside the ref element', () => {
     const handler = vi.fn()
     const el = document.createElement('div')
     document.body.appendChild(el)
@@ -11,13 +11,13 @@ describe('useClickOutside', () => {
     renderHook(() => useClickOutside(ref, handler))
 
     // Click outside
-    document.dispatchEvent(new Event('mousedown'))
+    document.dispatchEvent(new Event('pointerdown'))
     expect(handler).toHaveBeenCalledTimes(1)
 
     document.body.removeChild(el)
   })
 
-  it('does not call handler on mousedown inside the ref element', () => {
+  it('does not call handler on pointerdown inside the ref element', () => {
     const handler = vi.fn()
     const el = document.createElement('div')
     document.body.appendChild(el)
@@ -26,7 +26,7 @@ describe('useClickOutside', () => {
     renderHook(() => useClickOutside(ref, handler))
 
     // Click inside
-    el.dispatchEvent(new Event('mousedown', { bubbles: true }))
+    el.dispatchEvent(new Event('pointerdown', { bubbles: true }))
     expect(handler).not.toHaveBeenCalled()
 
     document.body.removeChild(el)
@@ -38,7 +38,7 @@ describe('useClickOutside', () => {
 
     renderHook(() => useClickOutside(ref, handler))
 
-    document.dispatchEvent(new Event('mousedown'))
+    document.dispatchEvent(new Event('pointerdown'))
     expect(handler).not.toHaveBeenCalled()
   })
 
@@ -61,7 +61,7 @@ describe('useClickOutside', () => {
         value = 2
       },
     })
-    document.dispatchEvent(new Event('mousedown'))
+    document.dispatchEvent(new Event('pointerdown'))
     expect(value).toBe(2)
 
     document.body.removeChild(el)
