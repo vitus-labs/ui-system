@@ -71,12 +71,19 @@ const Component: ElementType<
     [rowAlignX, contentAlignX, columns, gap, gutter, css, rowCss],
   )
 
-  const onLayout = useCallback((e: LayoutChangeEvent) => {
-    const newWidth = e?.nativeEvent?.layout?.width
-    if (newWidth != null) {
-      setParentWidth((prev) => (prev === newWidth ? prev : newWidth))
-    }
-  }, [])
+  const userOnLayout = (props as { onLayout?: (e: LayoutChangeEvent) => void })
+    .onLayout
+
+  const onLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      const newWidth = e?.nativeEvent?.layout?.width
+      if (newWidth != null) {
+        setParentWidth((prev) => (prev === newWidth ? prev : newWidth))
+      }
+      userOnLayout?.(e)
+    },
+    [userOnLayout],
+  )
 
   return (
     <Styled
