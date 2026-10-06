@@ -1,4 +1,4 @@
-import { CSSResult, type Interpolation } from './resolve'
+import { CSSResult, type Interpolation, withSelectors } from './resolve'
 
 /**
  * Tagged template function for CSS. Captures the template strings and
@@ -12,4 +12,4 @@ import { CSSResult, type Interpolation } from './resolve'
 export const css = (
   strings: TemplateStringsArray,
   ...values: Interpolation[]
-): CSSResult => new CSSResult(strings, values)
+): CSSResult => new CSSResult(strings, withSelectors(values))

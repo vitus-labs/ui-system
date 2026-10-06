@@ -38,7 +38,7 @@ export function useCSS(
     className = cacheRef.current.className
   } else {
     if (hasContent) {
-      className = sheet.getClassName(cssText)
+      className = sheet.getClassName(cssText, boost)
       if (IS_SERVER) sheet.insert(cssText, boost)
     } else {
       className = ''

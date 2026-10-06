@@ -310,8 +310,8 @@ describe('StyleSheet — advanced features', () => {
       const s = createSheet()
       const cls1 = s.insert('color: green;', false)
       const cls2 = s.insert('color: green;', true)
-      // Same className (same hash) but both should work without error
-      expect(cls1).toBe(cls2)
+      // Boost is part of the hash input so both rules get inserted
+      expect(cls1).not.toBe(cls2)
     })
   })
 

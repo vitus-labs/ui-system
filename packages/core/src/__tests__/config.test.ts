@@ -26,6 +26,21 @@ describe('Configuration', () => {
   })
 
   describe('init', () => {
+    it('clears optional members when a new engine omits them', () => {
+      const f = () => vi.fn() as any
+      init({
+        css: f(),
+        styled: f(),
+        provider: f(),
+        keyframes: f(),
+        useTheme: f(),
+      })
+      expect(config.keyframes).toBeTruthy()
+      init({ css: f(), styled: f(), provider: f() })
+      expect(config.keyframes).toBeNull()
+      expect(config.useTheme).toBeNull()
+    })
+
     const originalCss = config._css
     const originalStyled = config._styled
     const originalProvider = config._provider

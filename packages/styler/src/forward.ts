@@ -202,6 +202,16 @@ const HTML_PROPS_LIST = [
 // up `Object.prototype` keys.
 const HTML_PROPS: Record<string, true> = Object.create(null)
 for (const k of HTML_PROPS_LIST) HTML_PROPS[k] = true
+// SVG attributes + newer React/DOM props, as one compact string (bundle size).
+for (const k of 'viewBox xmlns xmlnsXlink d fill fillRule fillOpacity clipRule clipPath stroke strokeWidth strokeLinecap strokeLinejoin strokeDasharray strokeDashoffset strokeOpacity strokeMiterlimit cx cy r rx ry x y x1 x2 y1 y2 points transform preserveAspectRatio opacity offset stopColor stopOpacity gradientUnits gradientTransform markerEnd markerStart mask filter pathLength textAnchor dominantBaseline vectorEffect href xlinkHref fx fy dx dy suppressHydrationWarning inert popover popoverTarget popoverTargetAction'.split(
+  ' ',
+))
+  HTML_PROPS[k] = true
+
+// Any React event handler (`onXxx`, incl. `*Capture`, media, toggle, pointer…).
+// Only checked after the whitelist misses, so the common path is unaffected.
+const HANDLER_RE = /^on[A-Z]/
+const isHandler = (key: string): boolean => HANDLER_RE.test(key)
 
 /**
  * Filters props for HTML elements. Keeps valid HTML attrs, data-*, aria-*.
@@ -226,7 +236,7 @@ export const filterProps = (
     }
 
     // Keep known HTML props
-    if (key in HTML_PROPS) {
+    if (key in HTML_PROPS || isHandler(key)) {
       filtered[key] = props[key]
     }
   }
@@ -270,6 +280,7 @@ export const buildProps = (
     for (const key in rawProps) {
       if (key === 'as' || key === 'className') continue
       if (key.charCodeAt(0) === 36) continue // $-prefixed transient
+      if (customFilter && !customFilter(key)) continue
       result[key] = rawProps[key]
     }
     return result
@@ -296,7 +307,7 @@ export const buildProps = (
       result[key] = rawProps[key]
       continue
     }
-    if (key in HTML_PROPS) result[key] = rawProps[key]
+    if (key in HTML_PROPS || isHandler(key)) result[key] = rawProps[key]
   }
   return result
 }

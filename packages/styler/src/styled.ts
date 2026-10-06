@@ -31,10 +31,15 @@ import {
 // Saves ~30-80 ns per call relative to createElement.
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { buildProps } from './forward'
-import { type Interpolation, normalizeCSS, resolve } from './resolve'
+import {
+  type Interpolation,
+  normalizeCSS,
+  resolve,
+  withSelectors,
+} from './resolve'
 import { isDynamic } from './shared'
 import { onSheetClear, sheet } from './sheet'
-import { EMPTY_THEME, useTheme } from './ThemeProvider'
+import { useTheme } from './ThemeProvider'
 
 // SSR vs client detection — computed once at module load time.
 // In Node.js (SSR): true. In browser/jsdom: false.
@@ -98,6 +103,8 @@ const createStyledComponent = (
   options?: StyledOptions,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path styled factory — static/dynamic split + hot cache + SSR/client branches inlined for perf
 ) => {
+  // `${Component}` selectors → class strings (must precede isDynamic checks)
+  if (values.length > 0) withSelectors(values)
   // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
     if (strings === hotCache.strings && tag === hotCache.tag)
@@ -204,6 +211,8 @@ const createStyledComponent = (
     }
 
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
+    // Component-selector support: `${StaticStyled}` → `.vl-xxxx`.
+    ;(StaticStyled as any)._sel = staticClassName ? `.${staticClassName}` : ''
 
     // Store in component cache + hot cache for future reuse. Single-tag
     // stays as a tuple; second tag for the same strings promotes to a Map.
@@ -245,8 +254,7 @@ const createStyledComponent = (
   const DynamicStyled: ComponentType<any> = IS_SERVER
     ? ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
-        if (theme !== EMPTY_THEME && rawProps.theme === undefined)
-          rawProps.theme = theme
+        if (rawProps.theme === undefined) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
         let className = ''
@@ -284,8 +292,7 @@ const createStyledComponent = (
     : // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path client render — LRU + useInsertionEffect inlined for perf
       ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
-        if (theme !== EMPTY_THEME && rawProps.theme === undefined)
-          rawProps.theme = theme
+        if (rawProps.theme === undefined) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
 
         // Two-entry LRU cache. The previous single-slot ref missed every
@@ -318,7 +325,8 @@ const createStyledComponent = (
         if (entry) {
           className = entry.className
         } else {
-          className = cssText.length > 0 ? sheet.getClassName(cssText) : ''
+          className =
+            cssText.length > 0 ? sheet.getClassName(cssText, boost) : ''
           // Insert as new head; the prior head ages out to the tail slot.
           cur.b = cur.a
           cur.a = { css: cssText, className }
@@ -343,6 +351,8 @@ const createStyledComponent = (
       }
 
   DynamicStyled.displayName = `styled(${getDisplayName(tag)})`
+  // Empty `_sel` = no stable class (resolve throws if used as a selector).
+  ;(DynamicStyled as any)._sel = ''
   return DynamicStyled
 }
 

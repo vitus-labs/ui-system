@@ -260,29 +260,30 @@ export class StyleSheet {
    * Compute a className from CSS text without injecting (pure function for render phase).
    * Used with useInsertionEffect pattern: compute class during render, inject in effect.
    */
-  getClassName(cssText: string): string {
+  getClassName(cssText: string, boost = false): string {
+    const key = boost ? `${cssText}\0` : cssText
     // Hot cache: the same cssText that `useInsertionEffect`'s `insert()`
     // populated 1 µs ago is asked for here on the next render. Reference
     // compare beats Map.get's hash + bucket walk on every dynamic client
     // render in steady state. Same 2-slot LRU as `insert()`, keyed on
-    // unboosted cssText (getClassName has no boost arg).
+    // the same key `insert()` uses (boosted keys carry a `\0` marker).
     const hotA = this.insertHotA
     if (hotA !== null) {
-      if (hotA.key === cssText) return hotA.value
+      if (hotA.key === key) return hotA.value
       const hotB = this.insertHotB
-      if (hotB !== null && hotB.key === cssText) {
+      if (hotB !== null && hotB.key === key) {
         this.insertHotB = hotA
         this.insertHotA = hotB
         return hotB.value
       }
     }
-    const cached = this.insertCache.get(cssText)
+    const cached = this.insertCache.get(key)
     if (cached) {
       this.insertHotB = hotA
-      this.insertHotA = { key: cssText, value: cached }
+      this.insertHotA = { key, value: cached }
       return cached
     }
-    const h = hash(cssText)
+    const h = hash(key)
     return `${PREFIX}-${h}`
   }
 
@@ -325,7 +326,9 @@ export class StyleSheet {
       return icHit
     }
 
-    const h = hash(cssText)
+    // Boost is part of the hash input so boosted/unboosted identical CSS get
+    // distinct classes.
+    const h = hash(boost ? `${cssText}\0` : cssText)
     const className = `${PREFIX}-${h}`
 
     // Cache-hit on the className. We additionally verify the cssText
@@ -470,6 +473,7 @@ export class StyleSheet {
     const rules: string[] = []
     const len = cssText.length
     let depth = 0
+    let parens = 0
     let start = 0
 
     for (let i = 0; i < len; i++) {
@@ -488,7 +492,13 @@ export class StyleSheet {
         }
         continue
       }
-      if (ch === 123 /* { */) depth++
+      if (ch === 40 /* ( */) parens++
+      else if (ch === 41 /* ) */) parens--
+      else if (ch === 59 /* ; */ && depth === 0 && parens <= 0) {
+        // Top-level statement at-rule (@import / @charset / @namespace).
+        rules.push(cssText.slice(start, i + 1).trim())
+        start = i + 1
+      } else if (ch === 123 /* { */) depth++
       else if (ch === 125 /* } */) {
         depth--
         if (depth === 0) {
@@ -500,6 +510,27 @@ export class StyleSheet {
     }
 
     return rules
+  }
+
+  /** Insert pre-split global rules, keeping @import/@charset ahead of everything else. */
+  private insertGlobalRules(sheet: CSSStyleSheet, rules: string[]): void {
+    let imports = 0
+    for (const rule of rules) {
+      try {
+        const head = /^@(import|charset)\b/i.test(rule)
+        sheet.insertRule(rule, head ? imports++ : sheet.cssRules.length)
+      } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
+          console.warn(
+            '[styler] Failed to insert global CSS rule:',
+            (e as Error).message,
+            '\nCSS:',
+            rule.slice(0, 200),
+          )
+        }
+      }
+    }
   }
 
   /** Insert global CSS rules (no wrapper selector). Deduplicates by hash. */
@@ -521,22 +552,7 @@ export class StyleSheet {
       // Global CSS often contains multiple top-level rules.
       // CSSStyleSheet.insertRule() only accepts one rule at a time,
       // so we split and insert each rule individually.
-      const rules = this.splitRules(cssText)
-      for (const rule of rules) {
-        try {
-          this.sheet.insertRule(rule, this.sheet.cssRules.length)
-        } catch (e) {
-          if (process.env.NODE_ENV !== 'production') {
-            // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
-            console.warn(
-              '[styler] Failed to insert global CSS rule:',
-              (e as Error).message,
-              '\nCSS:',
-              rule.slice(0, 200),
-            )
-          }
-        }
-      }
+      this.insertGlobalRules(this.sheet, this.splitRules(cssText))
     }
   }
 
@@ -650,7 +666,9 @@ export class StyleSheet {
       return cached
     }
 
-    const h = hash(cssText)
+    // Boost is part of the hash input so boosted/unboosted identical CSS get
+    // distinct classes.
+    const h = hash(boost ? `${cssText}\0` : cssText)
     const className = `${PREFIX}-${h}`
     const selector = boost ? `.${className}.${className}` : `.${className}`
 

@@ -1,6 +1,12 @@
 'use client'
 
-import { createContext, type FC, type ReactNode, useContext } from 'react'
+import {
+  createContext,
+  type FC,
+  type ReactNode,
+  useContext,
+  useMemo,
+} from 'react'
 
 /**
  * Extensible theme interface. Consumers can augment this via module
@@ -32,8 +38,14 @@ export const useTheme = <T extends Theme = Theme>(): T =>
 
 /** Provides a theme object to all nested styled components via React context. */
 export const ThemeProvider: FC<{
-  theme: Theme
+  /** A theme object, or a function receiving the outer theme and returning the new one. */
+  theme: Theme | ((outer: Theme) => Theme)
   children: ReactNode
-}> = ({ theme, children }) => (
-  <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
-)
+}> = ({ theme, children }) => {
+  const outer = useContext(ThemeContext)
+  const value = useMemo(
+    () => (typeof theme === 'function' ? theme(outer) : theme),
+    [theme, outer],
+  )
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+}

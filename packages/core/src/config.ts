@@ -233,6 +233,13 @@ class Configuration {
    * ```
    */
   init = (props: InitConfig) => {
+    // Swapping engines: drop optional members the new connector doesn't
+    // provide so stale ones from the previous connector don't linger.
+    if (props.css || props.styled || props.provider) {
+      this._keyframes = null
+      this._createGlobalStyle = null
+      this._useTheme = null
+    }
     if (props.css) this._css = props.css
     if (props.styled) this._styled = props.styled
     if (props.provider) this._provider = props.provider

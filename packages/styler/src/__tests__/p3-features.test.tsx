@@ -45,7 +45,7 @@ describe('P3 features', () => {
       expect(el.getAttribute('custom')).toBeNull()
     })
 
-    it('does not affect component wrapping (components receive all props)', () => {
+    it('applies to component targets too', () => {
       const Inner = ({
         className,
         myProp,
@@ -53,15 +53,14 @@ describe('P3 features', () => {
         className?: string
         myProp?: string
       }) => <div className={className} data-my={myProp} />
-      // shouldForwardProp is only for HTML elements
       const Comp = styled(Inner, {
         shouldForwardProp: () => false,
       })`color: red;`
 
       const { container } = render(<Comp myProp="hello" />)
       const el = container.lastElementChild as HTMLElement
-      // Components always receive all props (no filtering)
-      expect(el.getAttribute('data-my')).toBe('hello')
+      // shouldForwardProp is honoured for component targets too
+      expect(el.getAttribute('data-my')).toBeNull()
     })
   })
 

@@ -23,7 +23,7 @@ export type Render = <T extends Record<string, any> | undefined>(
 ) => ReturnType<typeof createElement> | ReturnType<typeof cloneElement> | null
 
 const render: Render = (content, attachProps) => {
-  if (!content) return null as any
+  if (content == null || content === false || content === '') return null as any
 
   const render = (child: Parameters<typeof createElement>[0]) =>
     attachProps ? createElement(child, attachProps) : createElement(child)

@@ -61,6 +61,26 @@ export class CSSResult {
   }
 }
 
+// Cold path, run once per template at creation: replaces styled components
+// interpolated as selectors (`${Button}:hover &`) with their class selector,
+// so `resolve` (per-render, V8-inlined) never has to check for them. Static
+// components expose their stable class via `_sel`; dynamic ones have none.
+export const withSelectors = (values: Interpolation[]): Interpolation[] => {
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i] as unknown as ((p: unknown) => unknown) & {
+      _sel?: string
+      displayName?: string
+    }
+    if (typeof v !== 'function' || v._sel === undefined) continue
+    if (!v._sel)
+      throw new Error(
+        `[styler] ${v.displayName} cannot be a selector (needs a static template)`,
+      )
+    values[i] = v._sel
+  }
+  return values
+}
+
 /** Resolve a tagged template's strings + values into a final CSS string. */
 export const resolve = (
   strings: TemplateStringsArray,
