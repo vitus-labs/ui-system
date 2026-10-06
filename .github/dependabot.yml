@@ -33,3 +33,20 @@ updates:
     directory: /
     schedule:
       interval: weekly
+
+  # The Expo example follows the Expo SDK (`npx expo install --fix`), not npm
+  # latest. Version updates are off (limit 0); the ignore rule also applies to
+  # security updates, so dependabot can't jump expo-router a SDK major ahead of
+  # `expo` again (#378 moved it to SDK 58 on SDK 57 and broke `npm ci`).
+  - package-ecosystem: npm
+    directory: /examples/expo-native
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "expo"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "expo-*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@expo/*"
+        update-types: ["version-update:semver-major"]
