@@ -187,4 +187,19 @@ describe('isEqual', () => {
     cur2.next = head2
     expect(isEqual(head1, head2)).toBe(true)
   })
+
+  it('compares non-plain objects by reference', () => {
+    expect(isEqual(new Date(2000), new Date(1000))).toBe(false)
+    expect(isEqual(new Map([[1, 2]]), new Map())).toBe(false)
+    expect(isEqual(new Set([1]), new Set([2]))).toBe(false)
+    const d = new Date(1000)
+    expect(isEqual({ d }, { d })).toBe(true)
+    expect(isEqual({ d: new Date(1) }, { d: new Date(2) })).toBe(false)
+  })
+
+  it('still compares React-element-like plain objects deeply', () => {
+    const el = (t: string) => ({ $$typeof: Symbol.for('react.element'), type: t, props: { a: 1 } })
+    expect(isEqual(el('div'), el('div'))).toBe(true)
+    expect(isEqual(el('div'), el('span'))).toBe(false)
+  })
 })
