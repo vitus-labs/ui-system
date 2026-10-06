@@ -61,6 +61,19 @@ export class CSSResult {
   }
 }
 
+// Cold path: a styled component interpolated as a selector. Static components
+// expose their stable class via `_sel`; dynamic ones have none (empty string).
+const componentSelector = (c: {
+  _sel: string
+  displayName?: string
+}): string => {
+  if (!c._sel)
+    throw new Error(
+      `[styler] ${c.displayName} cannot be a selector (needs a static template)`,
+    )
+  return c._sel
+}
+
 /** Resolve a tagged template's strings + values into a final CSS string. */
 export const resolve = (
   strings: TemplateStringsArray,
@@ -79,13 +92,18 @@ export const resolve = (
     // Inline the most common value types to avoid function call overhead.
     // Using if/else (no continue) for better V8 JIT optimization.
     if (typeof v === 'function') {
-      const r = v(props)
-      result +=
-        (typeof r === 'string'
-          ? r
-          : r == null || r === false || r === true
-            ? ''
-            : resolveValue(r as Interpolation, props)) + s
+      // Styled component used as a selector (`${Button} { ... }`).
+      if ((v as any)._sel !== undefined) {
+        result += componentSelector(v as any) + s
+      } else {
+        const r = v(props)
+        result +=
+          (typeof r === 'string'
+            ? r
+            : r == null || r === false || r === true
+              ? ''
+              : resolveValue(r as Interpolation, props)) + s
+      }
     } else if (v == null || v === false || v === true) {
       result += s
     } else if (typeof v === 'string') {
