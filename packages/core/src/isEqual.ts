@@ -1,8 +1,8 @@
 /**
  * Order-independent deep equality for plain objects, arrays, and primitives.
  * Handles null, undefined, nested structures, and circular references via
- * cycle detection. Does not handle Date, RegExp, Map, Set — not needed for
- * theme/props comparison.
+ * cycle detection. Non-plain objects (Date, RegExp, Map, Set, class instances) are
+ * compared by reference.
  */
 
 type Seen = WeakMap<object, WeakSet<object>>
@@ -68,6 +68,18 @@ const isEqualInner = (a: unknown, b: unknown, seen: Seen): boolean => {
   }
 
   if (Array.isArray(b)) return false
+
+  // Non-plain objects (Date, Map, Set, RegExp, class instances) have no
+  // comparable own keys — fall back to reference equality (already failed
+  // `Object.is` above) rather than reporting distinct instances as equal.
+  const aProto = Object.getPrototypeOf(aObj)
+  const bProto = Object.getPrototypeOf(bObj)
+  if (
+    (aProto !== Object.prototype && aProto !== null) ||
+    (bProto !== Object.prototype && bProto !== null)
+  ) {
+    return false
+  }
 
   return isObjectEqual(
     a as Record<string, unknown>,

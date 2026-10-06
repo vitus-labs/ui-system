@@ -405,6 +405,25 @@ describe('getTheme with transform dimensions', () => {
 })
 
 describe('getThemeByMode', () => {
+  it('preserves arrays and resolves mode callbacks inside them', () => {
+    const cb = themeModeCallback('l', 'd')
+    const result: any = getThemeByMode({ padding: [8, 16], list: [cb] }, 'dark')
+    expect(Array.isArray(result.padding)).toBe(true)
+    expect(result.padding).toEqual([8, 16])
+    expect(result.list).toEqual(['d'])
+  })
+
+  it('passes non-plain objects through untouched', () => {
+    const date = new Date(1000)
+    class Foo {
+      a = 1
+    }
+    const foo = new Foo()
+    const result: any = getThemeByMode({ date, foo }, 'light')
+    expect(result.date).toBe(date)
+    expect(result.foo).toBe(foo)
+  })
+
   it('returns scalar values as-is', () => {
     const result = getThemeByMode({ color: 'red', size: 16 }, 'light')
     expect(result).toEqual({ color: 'red', size: 16 })

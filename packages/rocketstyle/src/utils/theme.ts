@@ -173,6 +173,31 @@ export type GetThemeByMode = (
   themes: Record<string, unknown>
 }>
 
+const isPlainObject = (value: object): boolean => {
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
+}
+
+const resolveThemeValue = (value: unknown, mode: 'light' | 'dark'): unknown => {
+  if (typeof value === 'object' && value !== null) {
+    // Arrays keep their shape; mode callbacks inside still resolve.
+    if (Array.isArray(value)) {
+      const out = new Array(value.length)
+      for (let i = 0; i < value.length; i++) {
+        out[i] = resolveThemeValue(value[i], mode)
+      }
+      return out
+    }
+    // Only plain objects are walked; Date / class instances pass through.
+    if (isPlainObject(value)) {
+      return getThemeByMode(value as Record<string, any>, mode)
+    }
+    return value
+  }
+  if (isModeCallback(value)) return (value as any)(mode)
+  return value
+}
+
 export const getThemeByMode: GetThemeByMode = (object, mode) => {
   // Recursive theme walker — for-in avoids the per-node `Object.keys` array
   // allocation that the prior reduce paid. Called from inside cached useMemos
@@ -180,14 +205,7 @@ export const getThemeByMode: GetThemeByMode = (object, mode) => {
   // helpers but the pattern is consistent across the package.
   const acc: Record<string, any> = {}
   for (const key in object) {
-    const value = object[key]
-    if (typeof value === 'object' && value !== null) {
-      acc[key] = getThemeByMode(value, mode)
-    } else if (isModeCallback(value)) {
-      acc[key] = value(mode)
-    } else {
-      acc[key] = value
-    }
+    acc[key] = resolveThemeValue(object[key], mode)
   }
   return acc
 }
