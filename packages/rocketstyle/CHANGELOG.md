@@ -1,5 +1,16 @@
 # @vitus-labs/rocketstyle
 
+## 2.8.0
+
+### Patch Changes
+
+- [#372](https://github.com/vitus-labs/ui-system/pull/372) [`9606862`](https://github.com/vitus-labs/ui-system/commit/960686214dd5e5353dea900814e3af9c9505c4f6) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Correctness fixes: `isEqual` compares non-plain objects (Date/Map/Set/class instances) by reference instead of reporting distinct instances equal; rocketstyle `.theme()` keeps arrays and non-plain values intact and `.config({ inversed: false })` can now override `true`; rocketstories no longer re-prepends the prefix when chaining and `.config({ name })` takes effect.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

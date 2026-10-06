@@ -1,5 +1,16 @@
 # @vitus-labs/coolgrid
 
+## 2.8.0
+
+### Patch Changes
+
+- [#373](https://github.com/vitus-labs/ui-system/pull/373) [`919c556`](https://github.com/vitus-labs/ui-system/commit/919c55608b85fb99b1cf9704e1054df9a18bd220) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Col: use the same relative unit for gap in width calc and margin, hide size-0 columns with `display: none` (no longer focusable off-screen), and native Row now calls a user-supplied `onLayout`.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

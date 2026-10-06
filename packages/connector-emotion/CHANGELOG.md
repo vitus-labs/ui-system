@@ -1,5 +1,19 @@
 # @vitus-labs/connector-emotion
 
+## 2.8.0
+
+### Patch Changes
+
+- [#371](https://github.com/vitus-labs/ui-system/pull/371) [`522f968`](https://github.com/vitus-labs/ui-system/commit/522f9685a639f9f2a8de0c8e57bd2a3c6c68c17b) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix Emotion `keyframes` interpolation and `createGlobalStyle` theme access.
+  
+  - `css` stringified Emotion `keyframes` objects (`_EMO_name_@keyframes…_EMO_`), producing broken CSS for `animation: ${kf} 1s`. Style objects are now preserved and serialized through Emotion's own `css`.
+  - `createGlobalStyle` did not receive the context theme, so `({ theme }) => …` interpolations threw under `ThemeProvider`. It now injects `useTheme()` (an explicit `theme` prop still wins).
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes

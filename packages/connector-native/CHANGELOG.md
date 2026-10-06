@@ -1,5 +1,21 @@
 # @vitus-labs/connector-native
 
+## 2.8.0
+
+### Patch Changes
+
+- [#371](https://github.com/vitus-labs/ui-system/pull/371) [`522f968`](https://github.com/vitus-labs/ui-system/commit/522f9685a639f9f2a8de0c8e57bd2a3c6c68c17b) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix several `css` / `parseCSS` correctness bugs in the native connector.
+  
+  - A nested `css` result with its own dynamic interpolations is now treated as dynamic (previously resolved once with empty props, yielding e.g. `{ width: "px color:red" }`). Breakpoint results from `createMediaQueries` also register as dynamic.
+  - `parseCSS` strips `/* */` comments and `//` line comments (at declaration start), and splits declarations on `;` only outside parentheses and quotes (`url(data:…;base64,…)`, `content: ";"`).
+  - `font-weight` stays a string (`'700'`), as React Native requires.
+  - `rem`/`em` values and unitless `line-height` are intentionally not converted (documented); use `px`.
+
+- [#386](https://github.com/vitus-labs/ui-system/pull/386) [`ddcbc69`](https://github.com/vitus-labs/ui-system/commit/ddcbc69f9c73cbbefb50e7f4b574312cd170a8eb) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Rebuild on `@vitus-labs/tools-*` 2.8.0.
+  
+  Build toolchain update only — the emitted JS and `.d.ts` are byte-identical
+  to the 2.7.1 build for all 15 packages. No source or public API changes.
+
 ## 2.7.4
 
 ### Patch Changes
