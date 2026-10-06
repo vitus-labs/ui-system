@@ -185,8 +185,10 @@ const splitTopLevel = (value: string): string[] => {
 }
 
 // A CSS <time> token: supports decimals (".3s", "0.3s") and avoids matching
-// inside identifiers such as "translate3d" or "h2s".
-const TIME = /(?<![\w.-])(?:\d+\.?\d*|\.\d+)(?:ms|s)(?![\w-])/g
+// inside identifiers such as "translate3d" or "h2s". The boundary is a
+// captured prefix group rather than a lookbehind, which throws a SyntaxError
+// at module load on Safari < 16.4.
+const TIME = /(^|[^\w.-])((?:\d+\.?\d*|\.\d+)(?:ms|s))(?![\w-])/g
 
 /**
  * Rewrites every comma-separated transition in `transition`. `fn` receives
@@ -200,8 +202,14 @@ const mapSegments = (
     .map((seg) => fn(seg, [...seg.matchAll(TIME)]))
     .join(',')
 
-const spliceMatch = (seg: string, m: RegExpMatchArray, text: string): string =>
-  seg.slice(0, m.index) + text + seg.slice((m.index ?? 0) + m[0].length)
+const spliceMatch = (
+  seg: string,
+  m: RegExpMatchArray,
+  text: string,
+): string => {
+  const start = (m.index ?? 0) + (m[1] ?? '').length
+  return seg.slice(0, start) + text + seg.slice(start + (m[2] ?? '').length)
+}
 
 /**
  * Replace the duration of every transition in a CSS transition string.
@@ -233,6 +241,6 @@ const replaceEasing = (transition: string, newEasing: string): string =>
 const addDelay = (transition: string, delay: string): string =>
   mapSegments(transition, (seg, [duration, existing]) => {
     if (existing) return spliceMatch(seg, existing, delay)
-    if (duration) return spliceMatch(seg, duration, `${duration[0]} ${delay}`)
+    if (duration) return spliceMatch(seg, duration, `${duration[2]} ${delay}`)
     return seg
   })
