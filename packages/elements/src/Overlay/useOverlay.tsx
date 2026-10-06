@@ -371,13 +371,35 @@ const useOverlay = ({
   const hoverRef = useRef(openOn === 'hover' || closeOn === 'hover')
   hoverRef.current = openOn === 'hover' || closeOn === 'hover'
 
+  // Whether the last pointerdown while open landed outside trigger + content
+  // (i.e. the user dismissed by clicking elsewhere). Tracked explicitly
+  // because Safari doesn't focus clicked buttons, so `activeElement` alone
+  // can't tell "clicked another control" from "focus was lost".
+  const pointerOutsideRef = useRef(false)
+  useEffect(() => {
+    if (!active) return undefined
+    pointerOutsideRef.current = false
+    const onPointerDown = (e: Event) => {
+      pointerOutsideRef.current = !isTriggerOrChild(e) && !isContentOrChild(e)
+    }
+    const onKeyDown = () => {
+      pointerOutsideRef.current = false
+    }
+    document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('keydown', onKeyDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('keydown', onKeyDown, true)
+    }
+  }, [active, isTriggerOrChild, isContentOrChild])
+
   // Modals restore focus via `useFocusTrap`. For dropdowns/popovers, hand
   // focus back to the trigger — but only when focus was lost with the content
-  // (inside it, or reset to body). If the user clicked another focusable
-  // element to dismiss, leave their focus alone.
+  // (inside it, or reset to body), and never when the user dismissed by
+  // clicking outside: their focus (or lack of it) is left alone.
   const restoreFocusToTrigger = () => {
     if (typeRef.current === 'modal' || typeRef.current === 'tooltip') return
-    if (hoverRef.current) return
+    if (hoverRef.current || pointerOutsideRef.current) return
     const trigger = triggerRef.current
     if (!trigger || typeof trigger.focus !== 'function') return
     const current = document.activeElement
