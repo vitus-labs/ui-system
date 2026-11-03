@@ -227,4 +227,37 @@ describe('useBreakpoint', () => {
     const { result } = renderHook(() => useBreakpoint(), { wrapper })
     expect(result.current).toBeUndefined()
   })
+
+  it('shares ONE resize listener across many hook instances', () => {
+    setWindowWidth(800)
+    const wrapper = createWrapper({ breakpoints })
+    const a = renderHook(() => useBreakpoint(), { wrapper })
+    const b = renderHook(() => useBreakpoint(), { wrapper })
+    const c = renderHook(() => useBreakpoint(), { wrapper })
+    expect(resizeHandlers.size).toBe(1)
+
+    setWindowWidth(1300)
+    act(fireResize)
+    expect(a.result.current).toBe('xl')
+    expect(b.result.current).toBe('xl')
+    expect(c.result.current).toBe('xl')
+
+    a.unmount()
+    b.unmount()
+    expect(resizeHandlers.size).toBe(1)
+    c.unmount()
+    expect(resizeHandlers.size).toBe(0)
+  })
+
+  it('re-syncs when the breakpoints change', () => {
+    setWindowWidth(800)
+    let theme: Record<string, unknown> = { breakpoints: { xs: 0, md: 768 } }
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(Provider, { theme }, children)
+    const { result, rerender } = renderHook(() => useBreakpoint(), { wrapper })
+    expect(result.current).toBe('md')
+    theme = { breakpoints: { xs: 0, md: 900 } }
+    rerender()
+    expect(result.current).toBe('xs')
+  })
 })

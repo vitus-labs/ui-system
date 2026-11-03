@@ -116,6 +116,9 @@ describe('useLocalStorage', () => {
   it('mirrors a cross-tab storage event for the same key', () => {
     const { result } = renderHook(() => useLocalStorage('k9', 'a'))
     act(() => {
+      // Browsers update the shared storage area before firing `storage`
+      // in other documents; the hook reads storage as the source of truth.
+      localStorage.setItem('k9', JSON.stringify('b'))
       const evt = new Event('storage') as Event & {
         key: string | null
         newValue: string | null
@@ -134,6 +137,9 @@ describe('useLocalStorage', () => {
     act(() => result.current[1]('changed'))
     expect(result.current[0]).toBe('changed')
     act(() => {
+      // Browsers update the shared storage area before firing `storage`
+      // in other documents; the hook reads storage as the source of truth.
+      localStorage.removeItem('k10')
       const evt = new Event('storage') as Event & {
         key: string | null
         newValue: string | null
@@ -166,6 +172,9 @@ describe('useLocalStorage', () => {
   it('ignores cross-tab storage events with malformed JSON', () => {
     const { result } = renderHook(() => useLocalStorage('k12', 'safe'))
     act(() => {
+      // Browsers update the shared storage area before firing `storage`
+      // in other documents; the hook reads storage as the source of truth.
+      localStorage.setItem('k12', '{not valid json')
       const evt = new Event('storage') as Event & {
         key: string | null
         newValue: string | null
@@ -177,5 +186,50 @@ describe('useLocalStorage', () => {
       window.dispatchEvent(evt)
     })
     expect(result.current[0]).toBe('safe')
+  })
+
+  it('keeps multiple same-key instances in sync within the tab', () => {
+    const a = renderHook(() => useLocalStorage('k13', 'one'))
+    const b = renderHook(() => useLocalStorage('k13', 'one'))
+    act(() => a.result.current[1]('two'))
+    expect(a.result.current[0]).toBe('two')
+    expect(b.result.current[0]).toBe('two')
+    act(() => b.result.current[2]())
+    expect(a.result.current[0]).toBe('one')
+  })
+
+  it('shares an unpersistable (quota) value between same-key instances', () => {
+    const stub = installLocalStorageStub()
+    stub.setItem = () => {
+      throw new Error('QuotaExceededError')
+    }
+    const a = renderHook(() => useLocalStorage('k14', 0))
+    const b = renderHook(() => useLocalStorage('k14', 0))
+    act(() => a.result.current[1]((p) => p + 1))
+    act(() => a.result.current[1]((p) => p + 1))
+    expect(a.result.current[0]).toBe(2)
+    expect(b.result.current[0]).toBe(2)
+  })
+
+  it('returns a referentially stable parsed object between renders', () => {
+    localStorage.setItem('k15', JSON.stringify({ a: 1 }))
+    const { result, rerender } = renderHook(() =>
+      useLocalStorage('k15', { a: 0 }),
+    )
+    const first = result.current[0]
+    rerender()
+    expect(result.current[0]).toBe(first)
+  })
+
+  it('re-reads storage when the key changes', () => {
+    localStorage.setItem('k16a', JSON.stringify('A'))
+    localStorage.setItem('k16b', JSON.stringify('B'))
+    const { result, rerender } = renderHook(
+      ({ k }) => useLocalStorage(k, 'none'),
+      { initialProps: { k: 'k16a' } },
+    )
+    expect(result.current[0]).toBe('A')
+    rerender({ k: 'k16b' })
+    expect(result.current[0]).toBe('B')
   })
 })

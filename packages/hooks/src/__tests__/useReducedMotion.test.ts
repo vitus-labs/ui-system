@@ -10,7 +10,7 @@ beforeAll(() => {
     value: vi.fn((query: string) => {
       const set = new Set<(e: any) => void>()
       listeners.set(query, set)
-      return {
+      const mql = {
         matches: false,
         media: query,
         addEventListener: (_: string, handler: (e: any) => void) =>
@@ -22,11 +22,20 @@ beforeAll(() => {
         removeListener: vi.fn(),
         dispatchEvent: vi.fn(),
       }
+      mqls.set(query, mql)
+      return mql
     }),
   })
 })
 
-afterEach(() => listeners.clear())
+// MediaQueryList.matches is live in browsers: it already reflects the new
+// state when `change` fires, and the hook reads it via useSyncExternalStore.
+const mqls = new Map<string, { matches: boolean }>()
+
+afterEach(() => {
+  listeners.clear()
+  mqls.clear()
+})
 
 describe('useReducedMotion', () => {
   it('returns false by default', () => {
@@ -39,6 +48,7 @@ describe('useReducedMotion', () => {
 
     const set = listeners.get('(prefers-reduced-motion: reduce)')
     act(() => {
+      mqls.get('(prefers-reduced-motion: reduce)')!.matches = true
       for (const handler of set ?? []) {
         handler({ matches: true })
       }
