@@ -540,17 +540,32 @@ const rocketComponent: RocketComponent = (options) => {
       }
     },
 
-    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) =>
-      calculateChainOptions(options.attrs)([
+    // Mirrors the HOC merge order: priorityAttrs < attrs (attrs callbacks see
+    // the priority attrs merged under the passed props).
+    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => {
+      const themeBag = {
+        render,
+        mode,
+        isDark: mode === 'dark',
+        isLight: mode === 'light',
+      }
+      if (!options.priorityAttrs?.length) {
+        return calculateChainOptions(options.attrs)([props, theme, themeBag])
+      }
+      const prioritized = calculateChainOptions(options.priorityAttrs)([
         props,
         theme,
-        {
-          render,
-          mode,
-          isDark: mode === 'dark',
-          isLight: mode === 'light',
-        },
-      ]),
+        themeBag,
+      ])
+      return {
+        ...prioritized,
+        ...calculateChainOptions(options.attrs)([
+          { ...prioritized, ...props },
+          theme,
+          themeBag,
+        ]),
+      }
+    },
   })
 
   return RocketComponent

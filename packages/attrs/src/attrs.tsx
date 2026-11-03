@@ -160,8 +160,18 @@ const attrsComponent: InitAttrsComponent = (options) => {
 
     statics: (opts: TObj) => cloneAndEnhance(options, { statics: opts }),
 
-    getDefaultAttrs: (props: TObj) =>
-      calculateChainOptions(options.attrs)([props]),
+    // Mirrors the HOC merge order: priorityAttrs < attrs (attrs callbacks see
+    // the priority attrs merged under the passed props).
+    getDefaultAttrs: (props: TObj) => {
+      if (!options.priorityAttrs?.length) {
+        return calculateChainOptions(options.attrs)([props])
+      }
+      const prioritized = calculateChainOptions(options.priorityAttrs)([props])
+      return {
+        ...prioritized,
+        ...calculateChainOptions(options.attrs)([{ ...prioritized, ...props }]),
+      }
+    },
   })
 
   return AttrsComponent
