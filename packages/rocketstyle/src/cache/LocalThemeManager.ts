@@ -11,4 +11,19 @@ export default class ThemeManager {
   modeBaseTheme = { light: new WeakMap(), dark: new WeakMap() }
 
   modeDimensionTheme = { light: new WeakMap(), dark: new WeakMap() }
+
+  /**
+   * Per-`themes` derived dimension metadata (keysMap, keywords, reserved keys,
+   * omit Set). Depends only on the dimension themes object plus component-level
+   * options fixed at factory time, so it's shared across all instances.
+   */
+  dimensionsMap = new WeakMap<
+    object,
+    {
+      keysMap: Record<string, any>
+      keywords: Record<string, any>
+      reservedKeys: string[]
+      omitKeysSet: Set<string>
+    }
+  >()
 }
