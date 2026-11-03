@@ -148,10 +148,12 @@ const fold = (
 ) => {
   const m = base._styler
   const bs = m.strings
-  // `;` separates a base that ends without one (normalizeCSS drops extras).
+  // `\n;` separates a base that ends without `;` (normalizeCSS drops a
+  // redundant one) — after the newline, so a trailing `// comment` can't
+  // swallow it.
   const joined = bs
     .slice(0, -1)
-    .concat(`${bs[bs.length - 1]};${strings[0]}`, strings.slice(1))
+    .concat(`${bs[bs.length - 1]}\n;${strings[0]}`, strings.slice(1))
   const C = createStyledComponent(
     m.tag,
     joined as unknown as TemplateStringsArray,

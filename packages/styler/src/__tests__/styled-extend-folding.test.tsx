@@ -125,6 +125,15 @@ describe('styled(StyledComp) folds into a single component', () => {
     expect(getComputedStyle(el).color).toBe('rgb(0, 0, 255)')
   })
 
+  it('joins templates safely (no trailing `;`, trailing line comment)', () => {
+    const Base = styled('div')`width: 5px // trailing comment`
+    const Ext = styled(Base)`height: 6px`
+    const { container } = render(<Ext id="j" />)
+    const cs = getComputedStyle(container.querySelector('#j')!)
+    expect(cs.width).toBe('5px')
+    expect(cs.height).toBe('6px')
+  })
+
   it('leaves styled(NonStyledComponent) as a wrapper', () => {
     const Inner = (p: any) => <span {...p} data-inner="1" />
     const S = styled(Inner)`color: red;`
