@@ -83,4 +83,55 @@ describe('useEventListener', () => {
     })
     addSpy.mockRestore()
   })
+
+  it('does not re-subscribe on re-render when options is an inline object', () => {
+    const target = document.createElement('div')
+    const addSpy = vi.spyOn(target, 'addEventListener')
+    const removeSpy = vi.spyOn(target, 'removeEventListener')
+    const { rerender } = renderHook(() =>
+      useEventListener(
+        'scroll',
+        () => undefined,
+        { current: target },
+        {
+          passive: true,
+        },
+      ),
+    )
+    for (let i = 0; i < 5; i++) rerender()
+    expect(addSpy).toHaveBeenCalledTimes(1)
+    expect(removeSpy).not.toHaveBeenCalled()
+  })
+
+  it('re-subscribes when an option value actually changes', () => {
+    const target = document.createElement('div')
+    const addSpy = vi.spyOn(target, 'addEventListener')
+    const { rerender } = renderHook(
+      ({ capture }) =>
+        useEventListener(
+          'click',
+          () => undefined,
+          { current: target },
+          {
+            capture,
+          },
+        ),
+      { initialProps: { capture: false } },
+    )
+    rerender({ capture: false })
+    expect(addSpy).toHaveBeenCalledTimes(1)
+    rerender({ capture: true })
+    expect(addSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('treats a boolean options argument as capture without re-subscribing', () => {
+    const target = document.createElement('div')
+    const addSpy = vi.spyOn(target, 'addEventListener')
+    const { rerender } = renderHook(() =>
+      useEventListener('click', () => undefined, { current: target }, true),
+    )
+    rerender()
+    expect(addSpy).toHaveBeenCalledTimes(1)
+    expect(addSpy.mock.calls[0]?.[2]).toMatchObject({ capture: true })
+  })
 })
