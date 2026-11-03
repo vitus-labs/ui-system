@@ -222,14 +222,16 @@ const replaceDuration = (transition: string, newDuration: string): string =>
   )
 
 /**
- * Replace the easing in a CSS transition string.
+ * Replace the easing of every transition in a CSS transition string.
  * Handles: "all 300ms ease-out" → "all 300ms cubic-bezier(...)"
  * Also handles cubic-bezier(...) in the original.
  */
 const replaceEasing = (transition: string, newEasing: string): string =>
-  transition.replace(
-    /(?:ease-in-out|ease-in|ease-out|ease|linear|cubic-bezier\([^)]{1,100}\))\s*$/,
-    newEasing,
+  mapSegments(transition, (seg) =>
+    seg.replace(
+      /(?:ease-in-out|ease-in|ease-out|ease|linear|cubic-bezier\([^)]{1,100}\))\s*$/,
+      newEasing,
+    ),
   )
 
 /**
