@@ -8,6 +8,7 @@ import { createElement as h } from 'react'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { css } from '../css'
+import { createGlobalStyle } from '../globalStyle'
 import { keyframes } from '../keyframes'
 import { sheet } from '../sheet'
 import { styled } from '../styled'
@@ -28,6 +29,8 @@ describe('SSR: keyframes ship with the component that uses them', () => {
     const spin = keyframes`from{transform:rotate(0)}to{transform:rotate(1turn)}`
     const B = styled('div')`animation: ${spin} ${(p: any) => p.d}s;`
     expect(doc(h(B, { d: 2 }))).toContain(`@keyframes ${spin}`)
+    const G = createGlobalStyle`body { animation: ${spin} 1s; }`
+    expect(doc(h(G))).toContain(`@keyframes ${spin}`)
   })
 
   it('survives sheet.reset() between requests', () => {

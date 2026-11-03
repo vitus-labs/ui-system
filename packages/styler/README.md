@@ -201,6 +201,8 @@ const GlobalStyle = createGlobalStyle`
 <GlobalStyle />
 ```
 
+The rules are removed again when the last mounted instance unmounts, and a dynamic global that changes value (e.g. a light/dark toggle) replaces its previous rules instead of accumulating them.
+
 ### `ThemeProvider` & `useTheme`
 
 Provides a theme object to all nested styled components via React context:

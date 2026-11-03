@@ -61,6 +61,9 @@ export class StyleSheet {
     // freeze this at module load.
     this.isSSR = typeof document === 'undefined'
     if (!this.isSSR) this.mount()
+  // Client: ref-counted global rule groups (key `g-<hash>`) owned by mounted
+  // createGlobalStyle instances, with the CSSRule objects they inserted.
+  private globals = new Map<string, { n: number; rules: CSSRule[] }>()
   }
 
   private mount() {
@@ -524,12 +527,20 @@ export class StyleSheet {
   }
 
   /** Insert pre-split global rules, keeping @import/@charset ahead of everything else. */
-  private insertGlobalRules(sheet: CSSStyleSheet, rules: string[]): void {
+  private insertGlobalRules(
+    sheet: CSSStyleSheet,
+    rules: string[],
+    out?: CSSRule[],
+  ): void {
     let imports = 0
     for (const rule of rules) {
       try {
         const head = /^@(import|charset)\b/i.test(rule)
-        sheet.insertRule(rule, head ? imports++ : sheet.cssRules.length)
+        const i = sheet.insertRule(
+          rule,
+          head ? imports++ : sheet.cssRules.length,
+        )
+        if (out) out.push(sheet.cssRules[i] as CSSRule)
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
@@ -598,6 +609,45 @@ export class StyleSheet {
   }
 
   /**
+  /**
+   * Mount-scoped global CSS (used by createGlobalStyle on the client).
+   * Ref-counted per cssText: the first acquire inserts the rules, the last
+   * `releaseGlobal` removes them again — so unmounting a global style, or a
+   * dynamic one changing value (A → B → A), never leaves stale rules in
+   * effect. Rules already present from SSR hydration are left alone.
+   * Returns the key to pass to `releaseGlobal`.
+   */
+  acquireGlobal(cssText: string, key = `g-${hash(cssText)}`): string {
+    const g = this.globals.get(key)
+    if (g) {
+      g.n++
+      return key
+    }
+    const rules: CSSRule[] = []
+    this.globals.set(key, { n: 1, rules })
+    if (!this.cache.has(key)) {
+      this.cache.set(key, key)
+      if (this.sheet)
+        this.insertGlobalRules(this.sheet, this.splitRules(cssText), rules)
+    }
+    return key
+  }
+
+  /** Release a global acquired via `acquireGlobal`; removes its rules at zero. */
+  releaseGlobal(key: string): void {
+    const g = this.globals.get(key)
+    if (!g || --g.n > 0) return
+    this.globals.delete(key)
+    // Nothing tracked → hydrated from SSR (or no sheet): keep the cache
+    // entry so a remount doesn't duplicate the server-rendered rules.
+    if (g.rules.length === 0 || !this.sheet) return
+    this.cache.delete(key)
+    for (const rule of g.rules) {
+      const i = Array.prototype.indexOf.call(this.sheet.cssRules, rule)
+      if (i !== -1) this.sheet.deleteRule(i)
+    }
+  }
+
    * Returns collected CSS rules as a raw string (useful for streaming SSR).
    * See `getStyleTag` for caveats — empty unless rules were pushed manually.
    */
@@ -664,6 +714,7 @@ export class StyleSheet {
    */
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path — 2-slot LRU + no-@ fast path + @layer wrapping inlined for SSR perf
   prepare(
+    this.globals.clear()
     cssText: string,
     boost = false,
   ): { className: string; rules: string } {

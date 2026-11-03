@@ -13,10 +13,11 @@
  *   `
  *   // <GlobalStyle /> — renders nothing, injects global CSS
  *
- * Hybrid injection: useInsertionEffect on client (1 shared sheet),
+ * Hybrid injection: useInsertionEffect on client (1 shared sheet; rules are
+ * removed again when the last instance unmounts or the CSS changes),
  * React 19 `<style precedence>` on SSR (FOUC-free, zero config).
  */
-import { createElement, useInsertionEffect } from 'react'
+import { createElement, type FC, useInsertionEffect } from 'react'
 
 import { hash } from './hash'
 import {
@@ -43,56 +44,60 @@ export const createGlobalStyle = (
   if (!hasDynamicValues) {
     const cssText = normalizeCSS(resolve(strings, values, {}))
     // `normalizeCSS` already strips leading/trailing whitespace, so a length
-    // check is equivalent to the prior `.trim()` calls but cheaper (no
-    // O(n) whitespace scan, no string allocation). Same pattern as `useCSS`
-    // (PR #242).
-    const hasContent = cssText.length > 0
-    const href = hasContent ? `g-${hash(cssText)}` : ''
+    // check is equivalent to a `.trim()` but cheaper.
+    const href = cssText.length > 0 ? `g-${hash(cssText)}` : ''
 
-    // Client only: inject into shared sheet. On SSR we deliberately do NOT
-    // call sheet.insertGlobal() — that would push duplicates into ssrBuffer
-    // and the same rule would also re-insert via insertRule() on hydration
-    // (cache miss → DOM duplication). React 19 dedupes <style precedence>
-    // emissions automatically, so a single precedence tag is sufficient.
-    if (!IS_SERVER && hasContent) sheet.insertGlobal(cssText)
-
-    // SSR: pre-compute <style precedence> for FOUC-free delivery.
+    // SSR: pre-compute <style precedence> for FOUC-free delivery (React 19
+    // dedupes by href). Referenced @keyframes ride along.
     const cachedStyleEl =
       IS_SERVER && href
-        ? createElement('style', { href, precedence: 'low' }, cssText)
+        ? createElement(
+            'style',
+            { href, precedence: 'low' },
+            sheet.keyframesFor(cssText) + cssText,
+          )
         : null
 
-    const StaticGlobal = () => cachedStyleEl
+    // Client: rules live while at least one instance is mounted
+    // (ref-counted in the sheet), like styled-components. Server: no hooks,
+    // just the pre-built element.
+    const StaticGlobal: FC = IS_SERVER
+      ? () => cachedStyleEl
+      : () => {
+          useInsertionEffect(() => {
+            if (!href) return
+            sheet.acquireGlobal(cssText, href)
+            return () => sheet.releaseGlobal(href)
+          }, [])
+          return null
+        }
     StaticGlobal.displayName = 'GlobalStyle'
     return StaticGlobal
   }
 
   // DYNAMIC PATH: resolve on every render.
-  // Client: useInsertionEffect injects into shared sheet.
+  // Client: useInsertionEffect acquires the current CSS and releases the
+  // previous value / on unmount, so A → B → A never leaves B in effect.
   // SSR: <style precedence> for FOUC-free delivery.
   const DynamicGlobal = (props: Record<string, any>) => {
     const theme = useTheme()
     const allProps = { ...props, theme }
     const cssText = normalizeCSS(resolve(strings, values, allProps))
-    // Single length check — replaces three `.trim()` calls per render below.
-    const hasContent = cssText.length > 0
-    const href = hasContent ? `g-${hash(cssText)}` : ''
 
-    // Client: inject via useInsertionEffect (no-op on server)
     useInsertionEffect(() => {
-      if (cssText.length > 0) sheet.insertGlobal(cssText)
+      if (cssText.length === 0) return
+      const key = sheet.acquireGlobal(cssText)
+      return () => sheet.releaseGlobal(key)
     }, [cssText])
 
-    if (!href) return null
-
-    // SSR: render <style precedence> for FOUC-free delivery. We deliberately
-    // do NOT push to ssrBuffer here — see static-path comment above.
-    if (IS_SERVER) {
-      return createElement('style', { href, precedence: 'low' }, cssText)
-    }
-
-    // Client: CSS injected via useInsertionEffect, render nothing
-    return null
+    // Server only: the href hash is not needed on the client (the sheet
+    // hashes once per distinct cssText in `acquireGlobal`).
+    if (!IS_SERVER || cssText.length === 0) return null
+    return createElement(
+      'style',
+      { href: `g-${hash(cssText)}`, precedence: 'low' },
+      sheet.keyframesFor(cssText) + cssText,
+    )
   }
 
   DynamicGlobal.displayName = 'GlobalStyle'
