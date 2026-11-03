@@ -46,7 +46,15 @@ const useBreakpoint: UseBreakpoint = () => {
   })
 
   useEffect(() => {
-    if (sorted.length === 0) return undefined
+    if (sorted.length === 0) {
+      setCurrent(undefined)
+      return undefined
+    }
+
+    // Re-sync on every (re)subscribe: `sorted` may have changed (new
+    // breakpoints from the theme) or the window may have changed between
+    // render and effect — the useState initializer only ran on mount.
+    setCurrent(getMatch(Dimensions.get('window').width))
 
     // RN 0.87 types `addEventListener`'s handler as bare `Function`, so the
     // payload has to be annotated here — and `window` is optional on it.
