@@ -215,6 +215,27 @@ describe('parseCSS', () => {
   })
 })
 
+describe('parseCSS numeric parsing (ReDoS guard)', () => {
+  it('parses signed and leading-dot numbers', () => {
+    expect(
+      parseCSS('opacity: .5; flex: -.5; z-index: +1; flex-grow: 1.'),
+    ).toEqual({
+      opacity: 0.5,
+      flex: -0.5,
+      zIndex: 1,
+      flexGrow: 1,
+    })
+  })
+
+  it('rejects a long non-numeric digit run in linear time', () => {
+    // A quadratic-backtracking regex took seconds on this input.
+    const value = `${'9'.repeat(50_000)}x`
+    const start = performance.now()
+    expect(parseCSS(`width: ${value}`)).toEqual({ width: value })
+    expect(performance.now() - start).toBeLessThan(250)
+  })
+})
+
 describe('mergeStyles', () => {
   it('merges multiple style objects', () => {
     expect(mergeStyles({ width: 10 }, { height: 20 })).toEqual({

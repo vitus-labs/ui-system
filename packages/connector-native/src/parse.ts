@@ -2,7 +2,10 @@ type StyleObject = Record<string, string | number>
 
 const CAMEL_RE = /-([a-z])/g
 // Also accepts a leading `+` and leading-dot decimals (`.5` → 0.5).
-const NUMERIC_RE = /^[-+]?(\d+\.?\d*|\.\d+)$/
+// Fraction digits only after a literal `.` — `\d+\.?\d*` would let a digit
+// run split between both quantifiers and backtrack quadratically
+// (CodeQL js/polynomial-redos).
+const NUMERIC_RE = /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/
 // `!important` has no meaning in RN style objects — strip it before any
 // dispatch/shorthand expansion. Without this, `margin: 10px !important`
 // tokenized as two values and expanded to `{ marginRight: '!important' }`.
