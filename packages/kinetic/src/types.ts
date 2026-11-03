@@ -116,6 +116,11 @@ export type TransitionStateResult = {
   ref: RefObject<HTMLElement | null>
   /** Whether the element should be rendered */
   shouldMount: boolean
+  /**
+   * First render of `show && appear` (incl. SSR): render the enter start
+   * state so the markup exists and hydration matches.
+   */
+  appearing: boolean
   /** Call when the current animation finishes */
   complete: () => void
 }
