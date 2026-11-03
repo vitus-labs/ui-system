@@ -29,8 +29,9 @@ const widthStyles: WidthStyles = (
     return ''
   }
 
-  const s = size as number
   const c = columns as number
+  // a size larger than the column count would overflow the row (>100%)
+  const s = Math.min(size as number, c)
   const g = gap as number
 
   // On native, skip width calculation until onLayout provides RNparentWidth
