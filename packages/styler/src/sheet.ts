@@ -54,6 +54,10 @@ export class StyleSheet {
     this.layer = options.layer
     // Per-instance SSR check — tests toggle `globalThis.document` between
     // createSheet() calls to simulate SSR/client transitions, so we can't
+  // Server only: keyframes name → `@keyframes` rule. Keyframes are created
+  // once at module load, so this survives `reset()` and lets `prepare()`
+  // ship referenced keyframes inside the component's <style precedence>.
+  private kf = new Map<string, string>()
     // freeze this at module load.
     this.isSSR = typeof document === 'undefined'
     if (!this.isSSR) this.mount()
@@ -103,10 +107,14 @@ export class StyleSheet {
       'style[data-precedence][data-href]',
     )
     tags.forEach((el) => {
-      const href = el.getAttribute('data-href')
-      if (!href) return
-      if (href.startsWith(`${PREFIX}-`) || href.startsWith('g-')) {
-        this.cache.set(href, href)
+      // React merges same-precedence <style> tags into one element whose
+      // `data-href` is the space-separated list of every merged href
+      // (`"vl-a vl-b g-c"`), so each token is its own cache key.
+      const hrefs = (el.getAttribute('data-href') || '').split(' ')
+      for (const href of hrefs) {
+        if (href.startsWith(`${PREFIX}-`) || href.startsWith('g-')) {
+          this.cache.set(href, href)
+        }
       }
     })
   }
@@ -466,6 +474,7 @@ export class StyleSheet {
   /**
    * Split CSS text into individual top-level rules.
    * CSSStyleSheet.insertRule() only accepts one rule at a time,
+      this.kf.set(name, rule)
    * so multi-rule CSS must be split before injection.
    */
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single-pass rule splitter — quote-skipping + depth tracking inlined
@@ -533,6 +542,21 @@ export class StyleSheet {
         }
       }
     }
+  /**
+   * Server: the `@keyframes` rules referenced by `cssText` (empty when none).
+   * Keyframes are registered at module load, outside any render, so without
+   * this they never reach the SSR HTML.
+   */
+  keyframesFor(cssText: string): string {
+    let out = ''
+    if (this.kf.size > 0 && cssText.indexOf('vl-kf-') !== -1) {
+      for (const [name, rule] of this.kf) {
+        if (cssText.indexOf(name) !== -1) out += rule
+      }
+    }
+    return out
+  }
+
   }
 
   /** Insert global CSS rules (no wrapper selector). Deduplicates by hash. */
@@ -740,3 +764,8 @@ export const sheet = new StyleSheet()
  */
 export const createSheet = (options?: StyleSheetOptions): StyleSheet =>
   new StyleSheet(options)
+    // Server: ship referenced @keyframes with the component's rules (React
+    // dedupes the <style precedence> by href; duplicates across components
+    // are harmless — same name, same body).
+    if (this.kf.size > 0) rules = this.keyframesFor(cssText) + rules
+

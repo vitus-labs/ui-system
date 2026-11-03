@@ -276,7 +276,9 @@ if (import.meta.hot) {
 
 ### FOUC-free SSR & Static Export
 
-Styler uses React 19's `<style precedence>` resource system. Each styled component renders an inline `<style href="..." precedence="medium">` element alongside its markup. React automatically hoists these to `<head>`, deduplicates by `href`, and preserves them during hydration. This eliminates Flash of Unstyled Content (FOUC) for both SSR streaming and static export (e.g. `next export`) with zero configuration.
+Styler uses React 19's `<style precedence>` resource system. Each styled component renders an inline `<style href="..." precedence="medium">` element alongside its markup. React automatically hoists these to `<head>`, deduplicates by `href`, and preserves them during hydration. This eliminates Flash of Unstyled Content (FOUC) for both SSR streaming and static export (e.g. `next export`) with zero configuration. `@keyframes` referenced by a component or global style are shipped inside its `<style>` element.
+
+`useCSS` is the exception: it returns only a class name, so there is no element to carry a `<style precedence>`. On the server it returns the (deterministic) class name but emits no CSS — the rules are injected when the client hydrates. Use `styled()` for markup that must be styled in the server HTML.
 
 ### Static path (zero runtime cost)
 
