@@ -1,6 +1,7 @@
 import { isEmpty, set } from '@vitus-labs/core'
+import isBreakpointMap from './isBreakpointMap'
 
-/** Filter out breakpoint keys that don't exist in the sorted breakpoints list. */
+// Filter out breakpoint keys that don't exist in the sorted breakpoints list.
 const removeUnexpectedKeys = (obj: Record<string, unknown>, keys: string[]) => {
   const result: Record<string, unknown> = {}
 
@@ -52,7 +53,7 @@ const transformTheme: TransformTheme = ({ theme, breakpoints }) => {
       }
     }
     // object
-    else if (typeof value === 'object' && value !== null) {
+    else if (isBreakpointMap(value)) {
       const obj = value as Record<string, unknown>
       for (const childKey in obj) {
         set(result, [childKey, key], obj[childKey])

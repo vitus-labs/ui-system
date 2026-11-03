@@ -4,7 +4,7 @@ export type CreateMediaQueries = <
   C extends (...args: any) => any,
 >(props: {
   breakpoints: B
-  rootSize: R
+  rootSize?: R
   css: C
 }) => Record<keyof B, ReturnType<C>>
 
@@ -30,7 +30,7 @@ const createMediaQueries: CreateMediaQueries = ({
     if (breakpointValue === 0) {
       acc[key] = (...args: any[]) => css(...args)
     } else if (breakpointValue != null) {
-      const emSize = breakpointValue / rootSize
+      const emSize = breakpointValue / (rootSize ?? 16)
       acc[key] = (...args: any[]) => css`
           @media only screen and (min-width: ${emSize}em) {
             ${css(...args)};

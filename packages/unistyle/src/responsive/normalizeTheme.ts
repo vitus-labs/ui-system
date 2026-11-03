@@ -1,3 +1,5 @@
+import isBreakpointMap from './isBreakpointMap'
+
 type AssignToBreakpointKey = (
   breakpoints: string[],
 ) => (
@@ -9,7 +11,7 @@ type AssignToBreakpointKey = (
   ) => void,
 ) => Record<string, unknown>
 
-/** Iterates breakpoints and populates a result object using a callback per breakpoint. */
+// Iterates breakpoints and populates a result object using a callback per breakpoint.
 const assignToBreakpointKey: AssignToBreakpointKey =
   (breakpoints) => (value) => {
     const result: Record<string, unknown> = {}
@@ -21,12 +23,13 @@ const assignToBreakpointKey: AssignToBreakpointKey =
     return result
   }
 
-const handleArrayCb = (arr: (string | number)[]) => (_: unknown, i: number) => {
-  const currentValue = arr[i]
-  const lastValue = arr[arr.length - 1]
-
-  return currentValue ?? lastValue
-}
+// Arrays map to breakpoints by position. A missing entry — a `null` /
+// `undefined` hole (`[12, null, 15]`) or a position past the array's end —
+// inherits the previous breakpoint's value, same as the object form.
+const handleArrayCb =
+  (arr: unknown[]) =>
+  (_: string, i: number, bps: string[], res: Record<string, unknown>) =>
+    arr[i] ?? (i > 0 ? res[bps[i - 1] as string] : undefined)
 
 // type HandleObjectCb = (
 //   obj: Record<string, unknown>
@@ -73,7 +76,8 @@ export type NormalizeTheme = ({
 
 /**
  * Expands each theme property into a full breakpoint map so every
- * breakpoint has a value. Arrays fill by index (last value carries forward),
+ * breakpoint has a value. Arrays fill by index (holes and positions past
+ * the end inherit the previous breakpoint),
  * objects inherit from the previous breakpoint, scalars repeat for all.
  * Skipped entirely when no property is array/object (fast path).
  */
@@ -91,8 +95,8 @@ const normalizeTheme: NormalizeTheme = ({ theme, breakpoints }) => {
     if (value == null) continue
 
     if (Array.isArray(value)) {
-      result[key] = getBpValues(handleArrayCb(value as (string | number)[]))
-    } else if (typeof value === 'object') {
+      result[key] = getBpValues(handleArrayCb(value))
+    } else if (isBreakpointMap(value)) {
       result[key] = getBpValues(handleObjectCb(value as Record<string, any>))
     } else {
       result[key] = getBpValues(handleValueCb(value))

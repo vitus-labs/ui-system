@@ -7,29 +7,58 @@ import optimizeTheme from './optimizeTheme'
 import type sortBreakpoints from './sortBreakpoints'
 import transformTheme from './transformTheme'
 
-/**
- * Coerce a styles-callback result to a CSS string for delta optimization.
- * Returns null when the engine's result type can't be stringified cleanly
- * (e.g. Emotion / styled-components objects whose default toString() yields
- * "[object Object]") — caller falls back to the unoptimized path.
- *
- * Styler's CSSResult provides toString() that resolves with empty props,
- * so any function interpolation that needs render-time props must come from
- * the styles-callback closure (theme is destructured at call time, not
- * resolved later). Verified across the project's styles callbacks.
- */
-const stringifyResult = (result: unknown): string | null => {
-  if (result == null) return ''
+// NOTE: internal helpers use `//` comments on purpose — the build keeps
+// JSDoc blocks in the shipped bundle, which counts against the size budget.
+
+// Template result shape (styler `CSSResult`): `strings` + `values`.
+const isTemplateResult = (v: object): v is { values: unknown[] } =>
+  'strings' in v && Array.isArray((v as { values?: unknown }).values)
+
+// Per nested template result: "contains a function interpolation?". Shared
+// snippets (module-level `css\`…\``) are walked once.
+const fnCache = new WeakMap<object, boolean>()
+
+// True when resolving `value` could depend on render-time props: a function
+// anywhere in the tree (template values, nested results, arrays). Other
+// nested objects (keyframes, …) are resolved by the engine via `String()`,
+// which is props-independent. Over-deep (possibly cyclic) → dynamic.
+const hasFunctions = (value: unknown, depth: number): boolean => {
+  if (typeof value === 'function') return true
+  if (value === null || typeof value !== 'object') return false
+  if (depth > 32) return true
+  const isArr = Array.isArray(value)
+  if (!isArr && !isTemplateResult(value)) return false
+  // the top-level result is fresh per call — only memoize nested ones
+  const memo = !isArr && depth > 0
+  let found = memo ? fnCache.get(value) : undefined
+  if (found !== undefined) return found
+  found = (isArr ? value : (value as { values: unknown[] }).values).some(
+    (v: unknown) => hasFunctions(v, depth + 1),
+  )
+  if (memo) fnCache.set(value, found)
+  return found
+}
+
+// Coerce a styles-callback result to a CSS string for delta optimization,
+// or null when it can't be stringified faithfully — the caller then falls
+// back to the unoptimized path, where the engine resolves the raw results
+// with real render-time props.
+//
+// Template results (styler) stringify only when no function interpolation
+// exists anywhere inside: their `toString()` resolves with EMPTY props, so
+// `${p => p.theme…}` from `extendCss` / `colCss` / Element `css` callbacks
+// would silently resolve wrong. Functions (Emotion dynamic `css`), arrays
+// (styled-components RuleSet — `String()` inserts commas) and any other
+// object shape (SerializedStyles, connector-native results) → null.
+export const stringifyResult = (result: unknown): string | null => {
+  if (result == null || result === false || result === true) return ''
   if (typeof result === 'string') return result
-  // CSSResult duck-type fast path: has `strings` (TemplateStringsArray) and
-  // `values`. We know its toString() resolves to clean CSS, so we can skip
-  // the "[object Foo]" validation for the common path.
-  if (typeof result === 'object' && 'strings' in result && 'values' in result) {
-    return String(result)
-  }
-  // Foreign engine result — coerce and validate. Default
-  // Object.prototype.toString → "[object Foo]" → bail out so caller can fall
-  // back to the unoptimized path.
+  if (
+    typeof result !== 'object' ||
+    !isTemplateResult(result) ||
+    hasFunctions(result, 0)
+  )
+    return null
   const text = String(result)
   return text.includes('[object ') ? null : text
 }
@@ -76,6 +105,29 @@ export type MakeItResponsive = ({
   normalize?: boolean
 }) => (props: { theme?: Theme; [key: string]: any }) => any
 
+interface ThemeCacheEntry {
+  breakpoints: unknown
+  optimized: Record<string, Record<string, unknown>>
+  // Final output keyed by the outer `theme` reference — hit when the same
+  // internal AND outer theme render again (stable ThemeProvider value).
+  rendered?: WeakMap<object, unknown[]>
+}
+
+// One bucket per (styles, normalize): the output depends on both, so
+// instances that merely share an internal theme object must not share it.
+interface CacheBucket {
+  // internal theme object → optimized theme + rendered output
+  themes: WeakMap<object, ThemeCacheEntry>
+}
+
+const buckets = new WeakMap<object, Record<string, CacheBucket>>()
+
+const getBucket = (styles: object, normalize: boolean): CacheBucket => {
+  let byFlag = buckets.get(styles)
+  if (!byFlag) buckets.set(styles, (byFlag = {}))
+  return (byFlag[`${normalize}`] ??= { themes: new WeakMap() })
+}
+
 /**
  * Core responsive engine used by every styled component in the system.
  *
@@ -86,25 +138,20 @@ export type MakeItResponsive = ({
  *    breakpoint-per-property), optimizes (deduplicates identical breakpoints),
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
-interface ThemeCacheEntry {
-  breakpoints: unknown
-  optimized: Record<string, Record<string, unknown>>
-  /**
-   * Memoized final responsive output (array of media-wrapped CSSResults),
-   * keyed by the outer `theme` reference. Hit when the same internal theme
-   * AND the same outer theme render again — which is the common case when
-   * the ThemeProvider value is stable. Avoids re-running renderStyles +
-   * optimizeBreakpointDeltas on every parent re-render.
-   */
-  rendered?: WeakMap<object, unknown[]>
-}
+// Output is cached per (styles, normalize) by internal + outer theme
+// identity.
+const makeItResponsive: MakeItResponsive = ({
+  theme: customTheme,
+  key = '',
+  css,
+  styles,
+  normalize = true,
+}) => {
+  const bucket = getBucket(styles, normalize)
+  const themeCache = bucket.themes
 
-const themeCache = new WeakMap<object, ThemeCacheEntry>()
-
-const makeItResponsive: MakeItResponsive =
-  ({ theme: customTheme, key = '', css, styles, normalize = true }) =>
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path responsive engine — theme cache + render cache + breakpoint pipeline + optimizer dispatch all inlined per render
-  ({ theme = {}, ...props }) => {
+  return ({ theme = {}, ...props }) => {
     const internalTheme = customTheme || props[key]
 
     // if no theme is defined, return empty object
@@ -129,12 +176,12 @@ const makeItResponsive: MakeItResponsive =
     const { media, sortedBreakpoints } = __VITUS_LABS__!
 
     let optimizedTheme: Record<string, Record<string, unknown>>
-    const entry = themeCache.get(internalTheme)
+    let entry = themeCache.get(internalTheme)
     const breakpointsMatch = entry?.breakpoints === sortedBreakpoints
 
     // Full-render cache: same internal theme + same outer theme → return
-    // the previous render's output verbatim. CSSResult instances are immutable
-    // so reusing them is safe.
+    // the previous render's output verbatim. CSS results are immutable so
+    // reusing them is safe.
     if (entry && breakpointsMatch && entry.rendered) {
       const memoized = entry.rendered.get(theme as object)
       if (memoized) return memoized
@@ -162,60 +209,60 @@ const makeItResponsive: MakeItResponsive =
         breakpoints: sortedBreakpoints,
       })
 
-      themeCache.set(internalTheme, {
+      entry = {
         breakpoints: sortedBreakpoints,
         optimized: optimizedTheme,
         // Preserve any pre-existing rendered cache when re-entering with a
-        // changed sortedBreakpoints reference — usually this is unreachable
-        // because breakpoints come from a stable Provider value, but the
-        // explicit handling avoids a memory cliff in tests / HMR.
+        // changed sortedBreakpoints reference — usually unreachable because
+        // breakpoints come from a stable Provider value, but the explicit
+        // handling avoids a memory cliff in tests / HMR.
         rendered: entry?.rendered,
-      })
+      }
+      themeCache.set(internalTheme, entry)
     }
 
-    // Resolve each per-breakpoint render to a string so the delta optimizer
-    // can diff at the property level. If any breakpoint's result can't be
-    // cleanly stringified (foreign engine result), fall back to the original
-    // unoptimized path that lets the engine resolve interpolations itself.
-    const renderedTexts: (string | null)[] = sortedBreakpoints.map(
-      (item: string) => {
-        const breakpointTheme = optimizedTheme[item]
-        if (!breakpointTheme || !media) return ''
-        return stringifyResult(renderStyles(breakpointTheme))
-      },
-    )
+    // Render each breakpoint once, then try to resolve the results to
+    // strings so the delta optimizer can diff at the property level. If any
+    // result can't be stringified faithfully (function interpolations,
+    // foreign engine result), fall back to the unoptimized path that lets
+    // the engine resolve the raw results with real render-time props.
+    const rendered: unknown[] = sortedBreakpoints.map((item: string) => {
+      const breakpointTheme = optimizedTheme[item]
+      if (!breakpointTheme || !media) return null
+      return renderStyles(breakpointTheme)
+    })
 
-    const canOptimize = renderedTexts.every((t) => t !== null)
+    const renderedTexts: string[] = []
+    for (const r of rendered) {
+      const text = stringifyResult(r)
+      if (text === null) break
+      renderedTexts.push(text)
+    }
+
     let result: unknown[]
-    if (canOptimize) {
-      const deltas = optimizeBreakpointDeltas(renderedTexts as string[])
+    if (renderedTexts.length === rendered.length) {
+      const deltas = optimizeBreakpointDeltas(renderedTexts)
       result = sortedBreakpoints.map((item: string, i: number) => {
         const css = deltas[i]
         if (!css || !media) return ''
         return (media as Record<string, any>)[item]`${css}`
       })
     } else {
-      result = sortedBreakpoints.map((item: string) => {
-        const breakpointTheme = optimizedTheme[item]
-        if (!breakpointTheme || !media) return ''
-        const r = renderStyles(breakpointTheme)
+      result = sortedBreakpoints.map((item: string, i: number) => {
+        if (!optimizedTheme[item] || !media) return ''
         return (media as Record<string, any>)[item]`
-          ${r};
+          ${rendered[i]};
         `
       })
     }
 
     // Memoize the final rendered output by outer theme reference. Stable
     // theme + stable internal theme => future renders return immediately.
-    // Invariant: by this point themeCache always has an entry for
-    // internalTheme — earlier paths either hit the rendered-cache and
-    // returned, or wrote one via themeCache.set above.
-    // biome-ignore lint/style/noNonNullAssertion: invariant — see comment above
-    const cacheEntry = themeCache.get(internalTheme)!
-    if (!cacheEntry.rendered) cacheEntry.rendered = new WeakMap()
-    cacheEntry.rendered.set(theme as object, result)
+    if (!entry.rendered) entry.rendered = new WeakMap()
+    entry.rendered.set(theme as object, result)
 
     return result
   }
+}
 
 export default makeItResponsive
