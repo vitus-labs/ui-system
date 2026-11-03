@@ -30,7 +30,7 @@ import {
 // `buildProps` never writes `key`, so every styled render benefits.
 // Saves ~30-80 ns per call relative to createElement.
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
-import { buildProps } from './forward'
+import { buildProps, isDomProp } from './forward'
 import {
   type Interpolation,
   normalizeCSS,
@@ -39,7 +39,7 @@ import {
 } from './resolve'
 import { isDynamic } from './shared'
 import { onSheetClear, sheet } from './sheet'
-import { EMPTY_THEME, useTheme } from './ThemeProvider'
+import { useTheme } from './ThemeProvider'
 
 // SSR vs client detection — computed once at module load time.
 // In Node.js (SSR): true. In browser/jsdom: false.
@@ -96,15 +96,93 @@ onSheetClear(() => {
   hotCache.component = null
 })
 
+/**
+ * Creation metadata on every styled component (`_styler`), used to fold
+ * `styled(StyledComp)` into a single component (styled-components v6
+ * semantics): `cls` = static classes elements must carry so `${Base}`
+ * selectors match extensions, `el` = server <style> element(s) for them.
+ */
+interface StylerMeta {
+  // Owner. Wrappers that hoist statics (attrs, rocketstyle) copy `_styler`
+  // too; `C !== wrapper` keeps `styled(Wrapper)` a wrapper.
+  C: ComponentType<any>
+  tag: Tag
+  strings: TemplateStringsArray
+  values: Interpolation[]
+  options: StyledOptions | undefined
+  cls: string
+  el: ReactElement | null
+}
+
+// Compose options of a folded `styled(Base, b)` over Base's `a`. Nested
+// semantics: b's filter decides what reaches Base, then Base's filter (or,
+// for a DOM tag, the default HTML filter) decides what reaches the target.
+const mergeOptions = (
+  tag: Tag,
+  a: StyledOptions | undefined,
+  b: StyledOptions | undefined,
+): StyledOptions | undefined => {
+  if (!a && !b) return undefined
+  const fa = a?.shouldForwardProp
+  const fb = b?.shouldForwardProp
+  return {
+    boost: !!(a?.boost || b?.boost),
+    shouldForwardProp:
+      fa && fb
+        ? (p) => fb(p) && fa(p)
+        : fb && typeof tag === 'string'
+          ? (p) => fb(p) && isDomProp(p)
+          : fa || fb,
+  }
+}
+
+// Cold path (creation time): `styled(StyledComp)` builds ONE component from
+// the base's tag with the base's template followed by the extension's, so
+// the extension's declarations deterministically win (same rule, later
+// source position) and $-props reach the base's interpolations.
+const fold = (
+  base: ComponentType<any> & { _styler: StylerMeta },
+  strings: TemplateStringsArray,
+  values: Interpolation[],
+  options?: StyledOptions,
+) => {
+  const m = base._styler
+  const bs = m.strings
+  // `;` separates a base that ends without one (normalizeCSS drops extras).
+  const joined = bs
+    .slice(0, -1)
+    .concat(`${bs[bs.length - 1]};${strings[0]}`, strings.slice(1))
+  const C = createStyledComponent(
+    m.tag,
+    joined as unknown as TemplateStringsArray,
+    m.values.concat(values),
+    mergeOptions(m.tag, m.options, options),
+    m,
+  )
+  C.displayName = `styled(${getDisplayName(base)})`
+  return C
+}
+
 const createStyledComponent = (
   tag: Tag,
   strings: TemplateStringsArray,
   values: Interpolation[],
   options?: StyledOptions,
+  inherit?: StylerMeta,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path styled factory — static/dynamic split + hot cache + SSR/client branches inlined for perf
-) => {
+): ComponentType<any> => {
+  if (typeof tag !== 'string') {
+    // Transparent wrappers (core's pre-init lazy component) expose the
+    // real component; extend that directly.
+    tag = (tag as any)._real || tag
+    if ((tag as any)._styler?.C === tag)
+      return fold(tag as any, strings, values, options)
+  }
   // `${Component}` selectors → class strings (must precede isDynamic checks)
   if (values.length > 0) withSelectors(values)
+  // Static classes / server <style> elements inherited from a folded base.
+  const xs = inherit ? inherit.cls : ''
+  const xel = inherit ? inherit.el : null
   // Ultra-fast hot cache: 3 reference comparisons → return immediately
   if (values.length === 0 && !options) {
     if (strings === hotCache.strings && tag === hotCache.tag)
@@ -145,7 +223,7 @@ const createStyledComponent = (
     const hasCss = cssText.length > 0
 
     let staticClassName: string
-    let cachedStyleEl: ReactElement | null = null
+    let cachedStyleEl: ReactElement | null = xel
 
     if (!hasCss) {
       staticClassName = ''
@@ -158,15 +236,24 @@ const createStyledComponent = (
       // dedupes <style precedence> emissions automatically.
       const prepared = sheet.prepare(cssText, boost)
       staticClassName = prepared.className
-      cachedStyleEl = jsx('style', {
+      const own = jsx('style', {
         href: staticClassName,
         precedence: 'medium',
         children: prepared.rules,
       })
+      // Folded: the base's <style> first, so it never lands after ours.
+      cachedStyleEl = xel ? jsxs(Fragment, { children: [xel, own] }) : own
     } else {
       // Client: insert() returns className and handles caching — skip prepare() entirely
       staticClassName = sheet.insert(cssText, boost)
     }
+
+    // Own class + classes inherited from a folded base.
+    const cls = xs
+      ? staticClassName
+        ? `${staticClassName} ${xs}`
+        : xs
+      : staticClassName
 
     // Tag is known at creation time — hoist the typeof check out of render.
     const tagIsDOM = typeof tag === 'string'
@@ -177,7 +264,7 @@ const createStyledComponent = (
     // are immutable so sharing across renders is safe — React treats it
     // as a fresh element by identity for reconciliation.
     const baselineMainEl = jsx(tag as any, {
-      className: staticClassName || undefined,
+      className: cls || undefined,
     })
     const baselineFragmentEl = cachedStyleEl
       ? jsxs(Fragment, { children: [cachedStyleEl, baselineMainEl] })
@@ -196,13 +283,7 @@ const createStyledComponent = (
 
       const finalTag = rawProps.as || tag
       const isDOM = finalTag === tag ? tagIsDOM : typeof finalTag === 'string'
-      const finalProps = buildProps(
-        rawProps,
-        staticClassName,
-        ref,
-        isDOM,
-        customFilter,
-      )
+      const finalProps = buildProps(rawProps, cls, ref, isDOM, customFilter)
 
       const mainEl = jsx(finalTag as any, finalProps)
 
@@ -213,6 +294,15 @@ const createStyledComponent = (
     StaticStyled.displayName = `styled(${getDisplayName(tag)})`
     // Component-selector support: `${StaticStyled}` → `.vl-xxxx`.
     ;(StaticStyled as any)._sel = staticClassName ? `.${staticClassName}` : ''
+    ;(StaticStyled as any)._styler = {
+      C: StaticStyled,
+      tag,
+      strings,
+      values,
+      options,
+      cls,
+      el: cachedStyleEl,
+    } satisfies StylerMeta
 
     // Store in component cache + hot cache for future reuse. Single-tag
     // stays as a tuple; second tag for the same strings promotes to a Map.
@@ -239,6 +329,8 @@ const createStyledComponent = (
   // Hoist tagIsDOM out of the render — mirrors the static path. The check is
   // stable per-component, so paying typeof per render was waste.
   const tagIsDOM = typeof tag === 'string'
+  // Inherited static classes, appended on className computation (miss path).
+  const xsp = xs ? ` ${xs}` : ''
 
   // DYNAMIC PATH — two function bodies, chosen by IS_SERVER at module load.
   // The server variant drops `useRef` LRU + `useInsertionEffect` (no DOM to
@@ -255,13 +347,13 @@ const createStyledComponent = (
     ? // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path SSR render — theme injection + <style precedence> emission inlined for perf
       ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
-        if (rawProps.theme === undefined) rawProps.theme = theme
+        // Interpolations always see a theme; the injected context theme is
+        // not forwarded to the target (matches the static path).
+        const injected = rawProps.theme === undefined
+        if (injected) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
-        // Interpolations always see a theme, but don't forward `theme={}`
-        // to the target when there is no provider.
-        if (rawProps.theme === EMPTY_THEME) rawProps.theme = undefined
 
-        let className = ''
+        let className = xs
         let styleEl: ReactElement | null = null
         if (cssText.length > 0) {
           // SSR: emit a <style precedence> element. We deliberately do NOT
@@ -270,7 +362,7 @@ const createStyledComponent = (
           // first client render (duplication). React 19 collects and
           // dedupes <style precedence> emissions automatically.
           const prepared = sheet.prepare(cssText, boost)
-          className = prepared.className
+          className = prepared.className + xsp
           styleEl = jsx('style', {
             href: prepared.className,
             precedence: 'medium',
@@ -287,20 +379,25 @@ const createStyledComponent = (
           isDOM,
           customFilter,
         )
+        // The injected context theme is the last key added (after the rest
+        // spread), so this delete is V8's cheap map-transition rollback.
+        if (injected && !isDOM) delete finalProps.theme
 
         const mainEl = jsx(finalTag as any, finalProps)
 
-        if (!styleEl) return mainEl
-        return jsxs(Fragment, { children: [styleEl, mainEl] })
+        if (!styleEl && !xel) return mainEl
+        return jsxs(Fragment, {
+          children: xel ? [xel, styleEl, mainEl] : [styleEl, mainEl],
+        })
       }
     : // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: hot-path client render — LRU + useInsertionEffect inlined for perf
       ({ ref, ...rawProps }: Record<string, any>) => {
         const theme = useTheme()
-        if (rawProps.theme === undefined) rawProps.theme = theme
+        // Interpolations always see a theme; the injected context theme is
+        // not forwarded to the target (matches the static path).
+        const injected = rawProps.theme === undefined
+        if (injected) rawProps.theme = theme
         const cssText = normalizeCSS(resolve(strings, values, rawProps))
-        // Interpolations always see a theme, but don't forward `theme={}`
-        // to the target when there is no provider.
-        if (rawProps.theme === EMPTY_THEME) rawProps.theme = undefined
 
         // Two-entry LRU cache. The previous single-slot ref missed every
         // render when a prop alternates between two values (toggle/hover/
@@ -333,7 +430,7 @@ const createStyledComponent = (
           className = entry.className
         } else {
           className =
-            cssText.length > 0 ? sheet.getClassName(cssText, boost) : ''
+            cssText.length > 0 ? sheet.getClassName(cssText, boost) + xsp : xs
           // Insert as new head; the prior head ages out to the tail slot.
           cur.b = cur.a
           cur.a = { css: cssText, className }
@@ -353,6 +450,9 @@ const createStyledComponent = (
           isDOM,
           customFilter,
         )
+        // The injected context theme is the last key added (after the rest
+        // spread), so this delete is V8's cheap map-transition rollback.
+        if (injected && !isDOM) delete finalProps.theme
 
         return jsx(finalTag as any, finalProps)
       }
@@ -360,6 +460,15 @@ const createStyledComponent = (
   DynamicStyled.displayName = `styled(${getDisplayName(tag)})`
   // Empty `_sel` = no stable class (resolve throws if used as a selector).
   ;(DynamicStyled as any)._sel = ''
+  ;(DynamicStyled as any)._styler = {
+    C: DynamicStyled,
+    tag,
+    strings,
+    values,
+    options,
+    cls: xs,
+    el: xel,
+  } satisfies StylerMeta
   return DynamicStyled
 }
 
