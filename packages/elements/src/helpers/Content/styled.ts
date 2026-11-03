@@ -29,17 +29,20 @@ const gapDimensions = {
     before: 'margin-right',
     after: 'margin-left',
   },
+  // row-reverse: `before` renders at the right edge, so the gap between it
+  // and `content` is on its left (and mirrored for `after`).
   reverseInline: {
-    before: 'margin-right',
-    after: 'margin-left',
+    before: 'margin-left',
+    after: 'margin-right',
   },
   rows: {
     before: 'margin-bottom',
     after: 'margin-top',
   },
+  // column-reverse: `before` renders at the bottom — mirror as above.
   reverseRows: {
-    before: 'margin-bottom',
-    after: 'margin-top',
+    before: 'margin-top',
+    after: 'margin-bottom',
   },
 } as const
 
