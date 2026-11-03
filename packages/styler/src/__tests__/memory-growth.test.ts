@@ -3,15 +3,23 @@ import { createSheet } from '../sheet'
 
 describe('memory growth', () => {
   describe('bounded cache prevents unbounded growth (DOM mode)', () => {
-    it('cache stays bounded with maxCacheSize', () => {
+    // `cache` mirrors the rules present in the DOM sheet and is never
+    // evicted (evicting it re-inserted live rules — duplicates + cascade
+    // reorder). Only the cssText-keyed lookup caches are bounded; each
+    // distinct rule is still inserted exactly once.
+    it('DOM-inserted set is not evicted: each rule inserted once', () => {
       const maxSize = 50
       const s = createSheet({ maxCacheSize: maxSize })
+      const before = s.cacheSize
 
       for (let i = 0; i < maxSize * 3; i++) {
         s.insert(`property-${i}: value-${i};`)
       }
+      for (let i = 0; i < maxSize * 3; i++) {
+        s.insert(`property-${i}: value-${i};`)
+      }
 
-      expect(s.cacheSize).toBeLessThanOrEqual(maxSize * 1.5)
+      expect(s.cacheSize - before).toBe(maxSize * 3)
     })
 
     it('cache eviction preserves recent entries', () => {
@@ -36,13 +44,15 @@ describe('memory growth', () => {
     it('handles rapid insertions without memory issues', () => {
       const s = createSheet({ maxCacheSize: 100 })
       const iterations = 1000
+      // createSheet() hydrates from the shared <style data-vl> left by
+      // earlier tests, so measure the delta.
+      const before = s.cacheSize
 
       for (let i = 0; i < iterations; i++) {
         s.insert(`rapid-${i}: value;`)
       }
 
-      expect(s.cacheSize).toBeLessThan(iterations)
-      expect(s.cacheSize).toBeGreaterThan(0)
+      expect(s.cacheSize - before).toBe(iterations)
     })
   })
 
