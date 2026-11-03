@@ -1,4 +1,4 @@
-import { createElement } from 'react'
+import { createElement, forwardRef, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import config, { init } from '../config'
 
@@ -238,6 +238,26 @@ describe('Configuration', () => {
       expect(result).toBe('resolved-css')
     })
 
+    it('thunk memoizes the engine result and exposes it via _lazy', () => {
+      config._css = null
+      const strings = Object.assign(['color: red'] as any, {
+        raw: ['color: red'],
+      })
+      const thunk = config.css(strings) as any
+      expect(thunk._lazy).toBeUndefined()
+      const mockCss = vi.fn(() => ({ result: 1 }))
+      config._css = mockCss as any
+      const first = thunk()
+      expect(thunk()).toBe(first)
+      expect(thunk._lazy).toBe(first)
+      expect(mockCss).toHaveBeenCalledTimes(1)
+      // Swapping engines re-resolves once against the new engine.
+      const other = vi.fn(() => ({ result: 2 }))
+      config._css = other as any
+      expect(thunk()).toEqual({ result: 2 })
+      expect(other).toHaveBeenCalledTimes(1)
+    })
+
     it('thunk throws when engine is still not configured', () => {
       config._css = null
       const strings = Object.assign(['color: red'] as any, {
@@ -350,6 +370,64 @@ describe('Configuration', () => {
       renderToStaticMarkup(createElement(LazyComponent, null))
       renderToStaticMarkup(createElement(LazyComponent, null))
       // Engine factory called only once due to caching
+      expect(mockStyled).toHaveBeenCalledTimes(1)
+    })
+
+    it('renders a function Real directly (hooks + ref prop pass through)', () => {
+      config._styled = null
+      const strings = Object.assign([''] as any, { raw: [''] })
+      const LazyComponent = config.styled('div')(strings)
+      let seen: any
+      const RealComponent = (props: any) => {
+        const [n] = useState(1)
+        seen = props
+        return createElement('div', { 'data-n': n })
+      }
+      config._styled = (() => () => RealComponent) as any
+      const ref = { current: null }
+      const html = renderToStaticMarkup(
+        createElement(LazyComponent, { ref, id: 'x' }),
+      )
+      expect(html).toBe('<div data-n="1"></div>')
+      expect(seen.ref).toBe(ref)
+      expect(seen.id).toBe('x')
+    })
+
+    it('renders an exotic Real (forwardRef object) via createElement', () => {
+      config._styled = null
+      const strings = Object.assign([''] as any, { raw: [''] })
+      const LazyComponent = config.styled('div')(strings)
+      const RealComponent = forwardRef((props: any, _ref) =>
+        createElement('p', props),
+      )
+      config._styled = (() => () => RealComponent) as any
+      expect(renderToStaticMarkup(createElement(LazyComponent, null))).toBe(
+        '<p></p>',
+      )
+    })
+
+    it('exposes _sel and the real component (_real) once configured', () => {
+      config._styled = null
+      const strings = Object.assign([''] as any, { raw: [''] })
+      const LazyComponent = config.styled('div')(strings) as any
+      expect(LazyComponent._sel).toBeUndefined()
+      expect(LazyComponent._real).toBeUndefined()
+      const RealComponent = Object.assign(() => null, {
+        _sel: '.vl-abc',
+        _styler: { tag: 'div' },
+      })
+      const mockStyled = vi.fn(() => () => RealComponent)
+      config._styled = mockStyled as any
+      expect(LazyComponent._sel).toBe('.vl-abc')
+      expect(LazyComponent._real).toBe(RealComponent)
+      // Hoisted onto a wrapper (attrs/rocketstyle), `_real` stays silent.
+      const Wrapper = () => null
+      Object.defineProperty(
+        Wrapper,
+        '_real',
+        Object.getOwnPropertyDescriptor(LazyComponent, '_real')!,
+      )
+      expect((Wrapper as any)._real).toBeUndefined()
       expect(mockStyled).toHaveBeenCalledTimes(1)
     })
 

@@ -66,12 +66,21 @@ export class CSSResult {
 // so `resolve` (per-render, V8-inlined) never has to check for them. Static
 // components expose their stable class via `_sel`; dynamic ones have none.
 export const withSelectors = (values: Interpolation[]): Interpolation[] => {
+// Also unwraps `@vitus-labs/core`'s pre-init `css` thunks (`_lazy` getter →
+// the real CSSResult once the engine is configured) so a template built
+// before `init()` stays static instead of becoming a per-render function.
   for (let i = 0; i < values.length; i++) {
     const v = values[i] as unknown as ((p: unknown) => unknown) & {
       _sel?: string
       displayName?: string
+      _lazy?: Interpolation
     }
-    if (typeof v !== 'function' || v._sel === undefined) continue
+    if (typeof v !== 'function') continue
+    if (v._lazy !== undefined) {
+      values[i] = v._lazy
+      continue
+    }
+    if (v._sel === undefined) continue
     if (!v._sel)
       throw new Error(
         `[styler] ${v.displayName} cannot be a selector (needs a static template)`,

@@ -96,21 +96,47 @@ const createStyledDelegate = (self: Configuration) => {
     values: any[],
   ) => {
     let Real: any = null
+    // Plain function component → called directly from Lazy's render (no
+    // extra element layer per instance). Safe for hooks: once resolved,
+    // Real never changes, so Lazy always runs the same hook sequence. React
+    // 19 passes `ref` as a regular prop, so it reaches Real untouched.
+    let direct = false
 
-    const Lazy = (props: Record<string, any>) => {
+    const materialize = () => {
       if (!Real) {
         const engine = self._styled
-        if (!engine) return notConfigured('styled')
+        if (!engine) return null
         Real = options
           ? engine(tag, options)(strings, ...values)
           : engine(tag)(strings, ...values)
+        direct = typeof Real === 'function' && !Real.prototype?.isReactComponent
       }
-      return createElement(Real, props)
+      return Real
+    }
+
+    const Lazy = (props: Record<string, any>) => {
+      if (!Real && !materialize()) return notConfigured('styled')
+      return direct ? Real(props) : createElement(Real, props)
     }
 
     Lazy.displayName = `styled(${
       typeof tag === 'string' ? tag : tag.displayName || tag.name || 'Component'
     })`
+
+    // Read by the engine at template-creation time (cold path), resolving
+    // the real component once the engine is configured (undefined before):
+    // `_sel` lets a pre-init component be used as a `${Comp}` selector,
+    // `_real` lets `styled(Comp)` extend the real component directly. `_real`
+    // only answers for Lazy itself — wrappers that hoist statics (attrs,
+    // rocketstyle) must not be mistaken for the component they wrap.
+    Object.defineProperties(Lazy, {
+      _sel: { get: () => materialize()?._sel },
+      _real: {
+        get() {
+          return this === Lazy ? materialize() || undefined : undefined
+        },
+      },
+    })
 
     return Lazy
   }
@@ -183,11 +209,23 @@ class Configuration {
     // Thunk — resolved at render time by the engine's interpolation handler.
     // Cast to CSSEngineResult; engines treat functions as interpolations and
     // resolve them at use-site, so the thunk shape is compatible structurally.
-    return (() => {
+    // The engine result is memoized (per engine), and exposed via `_lazy` so
+    // engines that support it (styler's template creation) can unwrap the
+    // thunk and keep templates built before init() static.
+    let memo: CSSEngineResult | undefined
+    let memoEngine: CSSEngineConnector['css'] | null = null
+    const resolveLazy = () => {
       const engine = this._css
-      if (!engine) return notConfigured('css')
-      return engine(strings, ...values)
-    }) as unknown as CSSEngineResult
+      if (!engine) return undefined
+      if (memoEngine !== engine) {
+        memo = engine(strings, ...values)
+        memoEngine = engine
+      }
+      return memo
+    }
+    const thunk = () => resolveLazy() ?? notConfigured('css')
+    Object.defineProperty(thunk, '_lazy', { get: resolveLazy })
+    return thunk as unknown as CSSEngineResult
   }
 
   /**
