@@ -8,6 +8,7 @@ import {
   type ReactElement,
 } from 'react'
 import type { TransitionCallbacks } from '../types'
+import { useLeaveTracker } from '../utils'
 import TransitionItem from './TransitionItem'
 import type { KineticConfig } from './types'
 
@@ -46,6 +47,7 @@ const StaggerRenderer = ({
   const effectiveInterval = interval ?? config.interval ?? 50
   const effectiveReverseLeave = reverseLeave ?? config.reverseLeave ?? false
 
+  const track = useLeaveTracker(show)
   const childArray = Children.toArray(children).filter(
     isValidElement,
   ) as ReactElement<any>[]
@@ -77,19 +79,13 @@ const StaggerRenderer = ({
         leaveTo={config.leaveTo}
         onEnter={callbacks.onEnter}
         onAfterEnter={index === count - 1 ? callbacks.onAfterEnter : undefined}
-        onLeave={callbacks.onLeave}
-        onAfterLeave={
-          index === (effectiveReverseLeave ? 0 : count - 1)
-            ? callbacks.onAfterLeave
-            : undefined
-        }
+        {...track(child.key ?? index, callbacks)}
       >
         {cloneElement(child, {
           style: {
             ...child.props.style,
             '--stagger-index': staggerIndex,
             '--stagger-interval': `${effectiveInterval}ms`,
-            transitionDelay: `${delay}ms`,
           } as CSSProperties,
         })}
       </TransitionItem>

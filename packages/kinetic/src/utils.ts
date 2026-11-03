@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { type CSSProperties, useRef } from 'react'
 import type {
   ClassTransitionProps,
   StyleTransitionProps,
@@ -239,6 +239,28 @@ export const mergeLeaving = <E>(
 }
 
 
+// Stagger: `onAfterLeave` fires once every child that actually started
+// leaving has finished (a child added mid-leave never leaves).
+export const useLeaveTracker = (show: boolean) => {
+  const t = useRef<{ s: Set<unknown>; f?: boolean }>({ s: new Set() }).current
+  if (show) {
+    t.s.clear()
+    t.f = false
+  }
+  return (k: unknown, cb: Partial<TransitionCallbacks>) => ({
+    onLeave: () => {
+      t.s.add(k)
+      cb.onLeave?.()
+    },
+    onAfterLeave: () => {
+      t.s.delete(k)
+      if (!t.s.size && !t.f) {
+        t.f = true
+        cb.onAfterLeave?.()
+      }
+    },
+  })
+}
 
 /** Dev-only console warning (stripped from production builds). */
 export const devWarn = (msg: string) => {
