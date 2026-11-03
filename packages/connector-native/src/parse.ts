@@ -1,7 +1,8 @@
 type StyleObject = Record<string, string | number>
 
 const CAMEL_RE = /-([a-z])/g
-const NUMERIC_RE = /^-?\d+(\.\d+)?$/
+// Also accepts a leading `+` and leading-dot decimals (`.5` → 0.5).
+const NUMERIC_RE = /^[-+]?(\d+\.?\d*|\.\d+)$/
 // `!important` has no meaning in RN style objects — strip it before any
 // dispatch/shorthand expansion. Without this, `margin: 10px !important`
 // tokenized as two values and expanded to `{ marginRight: '!important' }`.
@@ -174,6 +175,19 @@ const splitDeclarations = (text: string): string[] => {
     if (ch === '/' && text[i + 1] === '/' && depth === 0 && !cur.trim()) {
       const end = text.indexOf('\n', i)
       i = end === -1 ? len : end
+      continue
+    }
+    if (ch === '{' && depth === 0) {
+      // Nested block (`&:hover { … }`, `@media … { … }`) — RN style objects
+      // can't express it; drop the selector/prelude and the balanced block
+      // so its declarations don't leak into (and corrupt) the flat style.
+      let n = 1
+      while (++i < len && n > 0) {
+        if (text[i] === '{') n++
+        else if (text[i] === '}') n--
+      }
+      i--
+      cur = ''
       continue
     }
     if (ch === '"' || ch === "'") quote = ch

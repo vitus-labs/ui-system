@@ -69,6 +69,22 @@ describe('parseCSS', () => {
 
   // Multi-value box shorthands — RN has no `padding: 8px 16px`, so they expand
   // into longhands per CSS box-model rules (previously parsed to first value).
+  it('parses leading-dot and +signed numbers as numbers', () => {
+    expect(parseCSS('opacity: .5; flex: +1; z-index: -2')).toEqual({
+      opacity: 0.5,
+      flex: 1,
+      zIndex: -2,
+    })
+  })
+
+  it('skips balanced nested blocks instead of corrupting declarations', () => {
+    expect(
+      parseCSS(
+        'color: red; &:hover { color: blue; a { b: c; } } width: 10px; @media (min-width: 1px) { height: 2px; } opacity: 1',
+      ),
+    ).toEqual({ color: 'red', width: 10, opacity: 1 })
+  })
+
   describe('multi-value box shorthands', () => {
     it('expands 2-value padding (vertical / horizontal)', () => {
       expect(parseCSS('padding: 8px 16px')).toEqual({
