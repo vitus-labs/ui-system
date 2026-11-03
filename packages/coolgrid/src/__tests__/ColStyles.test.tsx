@@ -55,6 +55,12 @@ describe('Col styles', () => {
     expect(css).not.toMatch(/\d+px/)
   })
 
+  it('clamps a size larger than the column count to full width', () => {
+    const css = cssFor(renderCol({ size: 16 }))
+    expect(css).toContain('calc(100% - 2rem)')
+    expect(css).not.toContain('133.')
+  })
+
   it('hides size 0 with display:none instead of off-screen positioning', () => {
     const css = cssFor(renderCol({ size: 0 }))
     expect(css).toContain('display: none')
