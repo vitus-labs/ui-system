@@ -3,7 +3,12 @@
  * shorthand / longhand / logical-side relations and comment handling.
  */
 import { describe, expect, it } from 'vitest'
-import { optimizeBreakpointDeltas } from '../responsive/optimizeBreakpointDeltas'
+import {
+  isRelated,
+  optimizeBreakpointDeltas,
+  propFamilies,
+} from '../responsive/optimizeBreakpointDeltas'
+import propertyMap from '../styles/styles/propertyMap'
 
 const norm = (s: string) => s.trim().replace(/\s+/g, ' ')
 
@@ -45,6 +50,103 @@ describe('optimizeBreakpointDeltas — relations', () => {
     ['color: red;', 'background-color: blue;'],
   ])('%s and %s stay independent', (a, b) => {
     expect(abA(a, b)[2]).toBe('')
+  })
+
+  it('family index covers every related pair (isRelated ⇒ shared family)', () => {
+    const sides = ['top', 'right', 'bottom', 'left']
+    const logical = [
+      'block',
+      'inline',
+      'block-start',
+      'block-end',
+      'inline-start',
+      'inline-end',
+    ]
+    const props = new Set<string>([
+      'border',
+      'border-width',
+      'border-style',
+      'border-color',
+      'border-radius',
+      'border-image',
+      'border-image-width',
+      'inset',
+      'gap',
+      'row-gap',
+      'column-gap',
+      'grid-gap',
+      'grid-row-gap',
+      'grid-column-gap',
+      'grid',
+      'grid-area',
+      'grid-template',
+      'grid-template-areas',
+      'font',
+      'font-size',
+      'line-height',
+      'columns',
+      'column-count',
+      'column-width',
+      'column-rule',
+      'column-rule-color',
+      'flex',
+      'flex-flow',
+      'flex-direction',
+      'flex-wrap',
+      'flex-grow',
+      'place-items',
+      'place-content',
+      'place-self',
+      'align-items',
+      'align-content',
+      'align-self',
+      'justify-items',
+      'justify-content',
+      'justify-self',
+      'outline',
+      'outline-color',
+      'background',
+      'background-color',
+      '-webkit-mask',
+      '-webkit-mask-image',
+      'color',
+      ...sides,
+      ...logical.map((l) => `inset-${l}`),
+      ...['row', 'column'].flatMap((a) => [
+        `grid-${a}`,
+        `grid-${a}-start`,
+        `grid-${a}-end`,
+      ]),
+    ])
+    for (const base of [
+      'margin',
+      'padding',
+      'scroll-margin',
+      'scroll-padding',
+      'border',
+    ]) {
+      props.add(base)
+      for (const s of [...sides, ...logical]) {
+        props.add(`${base}-${s}`)
+        if (base === 'border')
+          for (const part of ['width', 'style', 'color'])
+            props.add(`border-${s}-${part}`)
+      }
+    }
+    for (const d of propertyMap) {
+      if ('css' in d && d.css) props.add(d.css)
+    }
+    const list = [...props]
+    const misses: string[] = []
+    for (const a of list) {
+      const fa = propFamilies(a)
+      for (const b of list) {
+        if (a === b || !isRelated(a, b)) continue
+        if (!propFamilies(b).some((f) => fa.includes(f)))
+          misses.push(`${a} ↔ ${b}`)
+      }
+    }
+    expect(misses).toEqual([])
   })
 })
 

@@ -27,6 +27,7 @@
   "scripts": {
     "prepublish": "bun run build",
     "build": "bun run vl_rolldown_build",
+    "bench": "bun --conditions=source benchmarks/responsive-bench.ts",
     "build:watch": "bun run vl_rolldown_build-watch",
     "lint": "biome check src/",
     "test": "vitest run",

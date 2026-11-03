@@ -63,6 +63,38 @@ export const stringifyResult = (result: unknown): string | null => {
   return text.includes('[object ') ? null : text
 }
 
+// Content key for plain-data themes (primitives, arrays, plain objects) —
+// null for anything else (functions, CSS results, class instances, NaN /
+// Infinity, cycles, bigint): two such themes could serialize equal yet
+// render differently. Checks run on the RAW value (`this[k]`) so `toJSON`
+// can't mask a non-plain object.
+let plainData = true
+function plainReplacer(this: Record<string, unknown>, k: string, v: unknown) {
+  const raw = this[k]
+  if (
+    typeof raw === 'function' ||
+    (typeof raw === 'number' && !Number.isFinite(raw))
+  )
+    plainData = false
+  else if (raw !== null && typeof raw === 'object' && !Array.isArray(raw)) {
+    const proto = Object.getPrototypeOf(raw)
+    if (proto !== Object.prototype && proto !== null) plainData = false
+  }
+  return v
+}
+const contentKey = (theme: unknown): string | null => {
+  plainData = true
+  try {
+    const key = JSON.stringify(theme, plainReplacer)
+    return plainData ? key : null
+  } catch {
+    return null
+  }
+}
+
+// Max content-keyed entries per (styles, normalize, outer theme).
+const CONTENT_CACHE_SIZE = 128
+
 type CustomTheme = Record<
   string,
   Record<string, unknown> | number | string | boolean
@@ -118,6 +150,8 @@ interface ThemeCacheEntry {
 interface CacheBucket {
   // internal theme object → optimized theme + rendered output
   themes: WeakMap<object, ThemeCacheEntry>
+  // outer theme → bounded LRU of content key → rendered output
+  content: WeakMap<object, Map<string, unknown[]>>
 }
 
 const buckets = new WeakMap<object, Record<string, CacheBucket>>()
@@ -125,7 +159,10 @@ const buckets = new WeakMap<object, Record<string, CacheBucket>>()
 const getBucket = (styles: object, normalize: boolean): CacheBucket => {
   let byFlag = buckets.get(styles)
   if (!byFlag) buckets.set(styles, (byFlag = {}))
-  return (byFlag[`${normalize}`] ??= { themes: new WeakMap() })
+  return (byFlag[`${normalize}`] ??= {
+    themes: new WeakMap(),
+    content: new WeakMap(),
+  })
 }
 
 /**
@@ -139,7 +176,8 @@ const getBucket = (styles: object, normalize: boolean): CacheBucket => {
  *    and wraps each breakpoint's styles in the appropriate `@media` query.
  */
 // Output is cached per (styles, normalize) by internal + outer theme
-// identity.
+// identity; plain-data internal themes that miss by identity (per-instance
+// `$element` objects) are also looked up by content (bounded LRU).
 const makeItResponsive: MakeItResponsive = ({
   theme: customTheme,
   key = '',
@@ -185,6 +223,25 @@ const makeItResponsive: MakeItResponsive = ({
     if (entry && breakpointsMatch && entry.rendered) {
       const memoized = entry.rendered.get(theme as object)
       if (memoized) return memoized
+    }
+
+    // Identity miss → content-keyed fallback for plain-data themes. The
+    // outer theme (rootSize, media, breakpoints, globalTheme) is part of
+    // the key via the WeakMap level.
+    let contentMap: Map<string, unknown[]> | undefined
+    let ckey: string | null = null
+    if (!entry || !breakpointsMatch) {
+      ckey = contentKey(internalTheme)
+      if (ckey !== null) {
+        contentMap = bucket.content.get(theme as object)
+        const hit = contentMap?.get(ckey)
+        if (hit) {
+          // refresh LRU position (Map keeps insertion order)
+          contentMap?.delete(ckey)
+          contentMap?.set(ckey, hit)
+          return hit
+        }
+      }
     }
 
     if (entry && breakpointsMatch) {
@@ -260,6 +317,17 @@ const makeItResponsive: MakeItResponsive = ({
     // theme + stable internal theme => future renders return immediately.
     if (!entry.rendered) entry.rendered = new WeakMap()
     entry.rendered.set(theme as object, result)
+
+    if (ckey !== null) {
+      if (!contentMap) {
+        contentMap = new Map()
+        bucket.content.set(theme as object, contentMap)
+      }
+      contentMap.set(ckey, result)
+      // first key in insertion order is the least recently used one
+      if (contentMap.size > CONTENT_CACHE_SIZE)
+        contentMap.delete(contentMap.keys().next().value as string)
+    }
 
     return result
   }

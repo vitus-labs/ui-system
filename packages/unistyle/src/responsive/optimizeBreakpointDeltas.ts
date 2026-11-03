@@ -222,16 +222,81 @@ export const isRelated = (a: string, b: string): boolean =>
   (LONGHANDS[b]?.test(a) ?? false) ||
   sideRelated(a, b)
 
-// Called when `prop` is emitted: drop cascade entries whose effective value
-// is no longer known. A shorthand (`padding`, `inset`) resets its longhands
-// (`padding-top`, `top`), and a longhand makes the shorthand's recorded value
-// stale. Over-invalidating is safe (it only re-emits); under-invalidating
-// drops declarations that are still needed.
-const invalidateRelated = (cascade: Map<string, string>, prop: string) => {
-  if (prop.charCodeAt(0) === 45 && prop.charCodeAt(1) === 45) return // --custom
-  for (const key of cascade.keys()) {
-    if (key !== prop && isRelated(prop, key)) cascade.delete(key)
+// Coarse buckets such that every related pair shares at least one
+// (`isRelated(a, b)` ⇒ families intersect — asserted by tests), so
+// invalidation only tests cascade props of the emitted prop's families.
+// Primary family = segment before the first hyphen (vendor-prefix aware):
+// covers every prefix relation and every same-base side relation; the extra
+// tags cover LONGHANDS entries that cross segments.
+export const propFamilies = (p: string): string[] => {
+  const dash = p.indexOf('-', 1)
+  const seg = dash === -1 ? p : p.slice(0, dash)
+  const out = [seg]
+  if (seg === 'top' || seg === 'right' || seg === 'bottom' || seg === 'left')
+    out.push('inset')
+  else if (seg === 'align' || seg === 'justify') out.push('place')
+  else if (p === 'line-height') out.push('font')
+  else if (p === 'columns') out.push('column')
+  if (p.endsWith('-gap')) out.push('gap')
+  return out
+}
+
+// Module-level memos. The universe of CSS prop names is small and finite in
+// practice; the size cap only guards against pathological input.
+const familiesMemo = new Map<string, string[]>()
+const relatedMemo = new Map<string, boolean>()
+const memo = <T>(m: Map<string, T>, k: string, compute: () => T): T => {
+  let v = m.get(k)
+  if (v === undefined) {
+    if (m.size >= 4096) m.clear()
+    v = compute()
+    m.set(k, v)
   }
+  return v
+}
+
+// Drop cascade entries (among one family's `members`) whose effective value
+// is no longer known once `prop` is emitted: a shorthand (`padding`,
+// `inset`) resets its longhands (`padding-top`, `top`), and a longhand makes
+// the shorthand's recorded value stale. Over-invalidating is safe (it only
+// re-emits); under-invalidating drops declarations that are still needed.
+const invalidate = (
+  cascade: Map<string, string>,
+  members: string[],
+  prop: string,
+) => {
+  for (const key of members) {
+    if (
+      key !== prop &&
+      cascade.has(key) &&
+      memo(relatedMemo, `${prop}|${key}`, () => isRelated(prop, key))
+    )
+      cascade.delete(key)
+  }
+}
+
+// Record `prop: value` in the cascade after invalidating related entries.
+// `byFamily` indexes cascade props by family so only candidates that can be
+// related are tested; it may still list props already deleted from
+// `cascade` (lazy cleanup), which `cascade.has` filters out.
+const record = (
+  cascade: Map<string, string>,
+  byFamily: Map<string, string[]>,
+  prop: string,
+  value: string,
+) => {
+  // --custom properties never relate to anything
+  if (prop.charCodeAt(0) !== 45 || prop.charCodeAt(1) !== 45) {
+    for (const fam of memo(familiesMemo, prop, () => propFamilies(prop))) {
+      const members = byFamily.get(fam)
+      if (!members) byFamily.set(fam, [prop])
+      else {
+        invalidate(cascade, members, prop)
+        if (!members.includes(prop)) members.push(prop)
+      }
+    }
+  }
+  cascade.set(prop, value)
 }
 
 // Apply the mobile-first cascade diff. The first entry passes through
@@ -242,6 +307,7 @@ export const optimizeBreakpointDeltas = (cssStrings: string[]): string[] => {
   if (cssStrings.length <= 1) return cssStrings
 
   const cascadeDecl = new Map<string, string>()
+  const byFamily = new Map<string, string[]>()
   const cascadeBlocks = new Map<string, string>()
   const out: string[] = new Array(cssStrings.length)
 
@@ -260,8 +326,7 @@ export const optimizeBreakpointDeltas = (cssStrings: string[]): string[] => {
       if (e.kind === 'decl') {
         if (cascadeDecl.get(e.prop) !== e.value) {
           kept.push(e.raw)
-          invalidateRelated(cascadeDecl, e.prop)
-          cascadeDecl.set(e.prop, e.value)
+          record(cascadeDecl, byFamily, e.prop, e.value)
         }
       } else {
         const key = blockKey(e.raw)

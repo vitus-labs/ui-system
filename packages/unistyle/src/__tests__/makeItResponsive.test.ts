@@ -381,7 +381,20 @@ describe('makeItResponsive', () => {
       expect(b).not.toBe(a) // different outer theme reference → cache miss
     })
 
-    it('cache misses when the internal theme reference changes', () => {
+    it('cache misses when the internal theme content changes', () => {
+      const stringStyles = ({ theme: t }: any) => `color: ${t.color};`
+      const fn = makeItResponsive({
+        key: '$test',
+        css,
+        styles: stringStyles as any,
+      })
+
+      const a = fn({ theme: providerTheme, $test: { color: 'red' } })
+      const b = fn({ theme: providerTheme, $test: { color: 'blue' } })
+      expect(b).not.toBe(a)
+    })
+
+    it('fresh plain-data internal theme with equal content hits the content cache', () => {
       const stringStyles = ({ theme: t }: any) => `color: ${t.color};`
       const fn = makeItResponsive({
         key: '$test',
@@ -391,7 +404,7 @@ describe('makeItResponsive', () => {
 
       const a = fn({ theme: providerTheme, $test: { color: 'red' } })
       const b = fn({ theme: providerTheme, $test: { color: 'red' } })
-      expect(b).not.toBe(a) // fresh internalTheme reference → cache miss
+      expect(b).toBe(a)
     })
 
     it('falls back to unoptimized path when a styles callback result is not stringifiable', () => {

@@ -193,6 +193,38 @@ describe('makeItResponsive — cache is scoped per styles / normalize', () => {
     expect(n2).toMatch(/h:\s*;/)
     expect(n1).not.toMatch(/h:\s*;/)
   })
+
+  it('content cache never conflates themes holding different functions', () => {
+    const stylesCb = ({ theme: t, css: c }: any) =>
+      c`width: ${t.w}; ${extendCss(t.extraStyles)};`
+    const R = makeItResponsive({ key: '$x', css, styles: stylesCb })
+    const a = R({
+      theme: outer,
+      $x: { w: { xs: 1, md: 2 }, extraStyles: (c: any) => c`color: red;` },
+    })
+    const b = R({
+      theme: outer,
+      $x: { w: { xs: 1, md: 2 }, extraStyles: (c: any) => c`color: blue;` },
+    })
+    expect(b).not.toBe(a)
+    expect(norm(resolveWith(b, {}))).toContain('color: blue')
+  })
+
+  it('content cache is bounded (LRU)', () => {
+    const R = makeItResponsive({
+      key: '$x',
+      css,
+      styles: ({ theme: t, css: c }: any) => c`width: ${t.w};`,
+    })
+    const first = R({ theme: outer, $x: { w: { xs: 0, md: 1 } } })
+    expect(R({ theme: outer, $x: { w: { xs: 0, md: 1 } } })).toBe(first)
+    for (let i = 1; i <= 200; i++)
+      R({ theme: outer, $x: { w: { xs: i, md: 1 } } })
+    // evicted → recomputed (equal content, new identity)
+    const again = R({ theme: outer, $x: { w: { xs: 0, md: 1 } } })
+    expect(again).not.toBe(first)
+    expect(resolveWith(again, {})).toBe(resolveWith(first, {}))
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────
