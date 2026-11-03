@@ -218,26 +218,30 @@ export const runCollapse = (
 
 type KeyedEntry<E> = { key: string | number; element: E }
 
-/**
- * Inserts leaving entries at their previous position (after the nearest
- * surviving predecessor) — moving a leaving node would cancel its exit.
- */
+// Inserts leaving entries at their previous position (after the nearest
+// surviving predecessor) — moving a leaving node would cancel its exit.
 export const mergeLeaving = <E>(
   current: KeyedEntry<E>[],
   leaving: Map<string | number, E>,
   prevOrder: (string | number)[],
 ): KeyedEntry<E>[] => {
-  const result = [...current]
-  let at = 0
+  if (!leaving.size) return current
+  const live = new Set(current.map((r) => r.key))
+  // anchor key (null = head) -> leaving entries placed right after it
+  const after = new Map<string | number | null, KeyedEntry<E>[]>()
+  let at: string | number | null = null
   for (const key of prevOrder) {
-    const i = result.findIndex((r) => r.key === key)
-    if (i >= 0) at = i + 1
-    else if (leaving.has(key))
-      result.splice(at++, 0, { key, element: leaving.get(key) as E })
+    if (live.has(key)) at = key
+    else if (leaving.has(key)) {
+      const list = after.get(at) ?? []
+      after.set(at, list)
+      list.push({ key, element: leaving.get(key) as E })
+    }
   }
+  const result = after.get(null) ?? []
+  for (const r of current) result.push(r, ...(after.get(r.key) ?? []))
   return result
 }
-
 
 // Stagger: `onAfterLeave` fires once every child that actually started
 // leaving has finished (a child added mid-leave never leaves).
