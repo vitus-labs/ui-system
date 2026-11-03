@@ -147,7 +147,7 @@ export const scaleIn: Preset = s(
   { opacity: 1, transform: 'scale(1)' },
 )
 
-/** Scale down from 110% with fade. */
+/** Scale down from 110% with fade (an entrance despite the name). */
 export const scaleOut: Preset = s(
   { opacity: 0, transform: 'scale(1.1)' },
   { opacity: 1, transform: 'scale(1)' },
@@ -200,7 +200,7 @@ export const zoomIn: Preset = s(
   '250ms',
 )
 
-/** Zoom from 2x size down to normal. */
+/** Zoom from 2x size down to normal (an entrance despite the name). */
 export const zoomOut: Preset = s(
   { opacity: 0, transform: 'scale(2)' },
   { opacity: 1, transform: 'scale(1)' },
@@ -541,7 +541,7 @@ export const fadeDownRight: Preset = s(
 )
 
 // ─── Zoom Out Directional ──────────────────────────────────────────
-// Zoom down from 2x + directional movement.
+// Zoom down from 2x + directional movement (entrances despite the name).
 
 /** Zoom from 2x while sliding upward. */
 export const zoomOutUp: Preset = s(
@@ -698,7 +698,7 @@ export const clipCenter: Preset = s(
 /** Reveal with expanding diamond shape from center. */
 export const clipDiamond: Preset = s(
   { clipPath: 'polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)' },
-  { clipPath: 'polygon(50% -10%, 110% 50%, 50% 110%, -10% 50%)' },
+  { clipPath: 'polygon(50% -50%, 150% 50%, 50% 150%, -50% 50%)' },
   '500ms',
   '300ms',
 )
@@ -722,7 +722,7 @@ export const puffIn: Preset = s(
   '250ms',
 )
 
-/** Form from a tiny blurry spark into focus. */
+/** Form from a tiny blurry spark into focus (an entrance despite the name). */
 export const puffOut: Preset = s(
   { opacity: 0, filter: 'blur(4px)', transform: 'scale(0.5)' },
   { opacity: 1, filter: 'blur(0px)', transform: 'scale(1)' },

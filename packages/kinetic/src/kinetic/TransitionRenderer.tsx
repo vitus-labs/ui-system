@@ -14,7 +14,7 @@ import {
 import type { TransitionCallbacks } from '../types'
 import useAnimationEnd from '../useAnimationEnd'
 import useTransitionState from '../useTransitionState'
-import { applyEnter, applyLeave, applySettled } from '../utils'
+import { appearProps, runStage } from '../utils'
 import type { KineticConfig } from './types'
 
 type TransitionRendererProps = {
@@ -27,22 +27,6 @@ type TransitionRendererProps = {
   callbacks: Partial<TransitionCallbacks>
   children: ReactNode
   forwardedRef: ForwardedRef<unknown>
-}
-
-const applyReducedMotion = (
-  stage: string,
-  cbs: Partial<TransitionCallbacks>,
-  complete: () => void,
-) => {
-  if (stage === 'entering') {
-    cbs.onEnter?.()
-    cbs.onAfterEnter?.()
-    complete()
-  } else if (stage === 'leaving') {
-    cbs.onLeave?.()
-    cbs.onAfterLeave?.()
-    complete()
-  }
 }
 
 /**
@@ -65,6 +49,7 @@ const TransitionRenderer = ({
     stage,
     ref: stateRef,
     shouldMount,
+    appearing,
     complete,
   } = useTransitionState({
     show,
@@ -96,26 +81,23 @@ const TransitionRenderer = ({
 
   useIsomorphicLayoutEffect(() => {
     const el = elementRef.current
-    if (!el) return
+    if (el)
+      return runStage(
+        el,
+        stage,
+        config,
+        callbacksRef.current,
+        complete,
+        reducedMotion,
+      )
+  }, [stage, reducedMotion])
 
-    if (reducedMotion) {
-      return applyReducedMotion(stage, callbacksRef.current, complete)
-    }
-
-    if (stage === 'entering') {
-      callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, config)
-      return cancel
-    }
-
-    if (stage === 'leaving') {
-      callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, config)
-      return cancel
-    }
-
-    applySettled(el, config, stage)
-  }, [stage])
+  if (appearing)
+    return createElement(
+      config.tag,
+      { ref: mergedRef, ...htmlProps, ...appearProps(htmlProps, config) },
+      children,
+    )
 
   if (!shouldMount) {
     if (effectiveUnmount) return null

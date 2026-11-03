@@ -281,22 +281,28 @@ describe('interrupted transitions clean up stale classes', () => {
         <div data-testid="el" />
       </Transition>,
     )
-    expect(el).toHaveClass('l', 'lf')
+    // reversing an in-flight phase skips the start class (no flash)
+    expect(el).toHaveClass('l')
+    expect(el).not.toHaveClass('lf')
     expect(el).not.toHaveClass('e')
     expect(el).not.toHaveClass('ef')
     expect(el).not.toHaveClass('et')
 
     flushFrames()
+    expect(el).toHaveClass('l', 'lt')
     // interrupt leaving with an enter
     rerender(
       <Transition show {...cfg}>
         <div data-testid="el" />
       </Transition>,
     )
-    expect(el).toHaveClass('e', 'ef')
+    expect(el).toHaveClass('e')
+    expect(el).not.toHaveClass('ef')
     expect(el).not.toHaveClass('l')
     expect(el).not.toHaveClass('lf')
     expect(el).not.toHaveClass('lt')
+    flushFrames()
+    expect(el).toHaveClass('e', 'et')
   })
 
   it('removes enterFrom once entered', () => {

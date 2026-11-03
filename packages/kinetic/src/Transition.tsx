@@ -8,28 +8,7 @@ import { type CSSProperties, cloneElement, type Ref, useRef } from 'react'
 import type { TransitionProps } from './types'
 import useAnimationEnd from './useAnimationEnd'
 import useTransitionState from './useTransitionState'
-import { applyEnter, applyLeave, applySettled, mergeStyles } from './utils'
-
-const applyReducedMotion = (
-  stage: string,
-  callbacks: {
-    onEnter?: () => void
-    onAfterEnter?: () => void
-    onLeave?: () => void
-    onAfterLeave?: () => void
-  },
-  complete: () => void,
-) => {
-  if (stage === 'entering') {
-    callbacks.onEnter?.()
-    callbacks.onAfterEnter?.()
-    complete()
-  } else if (stage === 'leaving') {
-    callbacks.onLeave?.()
-    callbacks.onAfterLeave?.()
-    complete()
-  }
-}
+import { appearProps, mergeStyles, runStage } from './utils'
 
 const Transition = ({
   show,
@@ -60,6 +39,7 @@ const Transition = ({
     stage,
     ref: stateRef,
     shouldMount,
+    appearing,
     complete,
   } = useTransitionState({
     show,
@@ -102,46 +82,36 @@ const Transition = ({
   useIsomorphicLayoutEffect(() => {
     const el = elementRef.current
     if (!el) return
+    // Config built here (not per render): Stagger renders n of these.
+    return runStage(
+      el,
+      stage,
+      {
+        enter,
+        enterFrom,
+        enterTo,
+        leave,
+        leaveFrom,
+        leaveTo,
+        enterStyle,
+        enterToStyle,
+        enterTransition,
+        leaveStyle,
+        leaveToStyle,
+        leaveTransition,
+      },
+      callbacksRef.current,
+      complete,
+      reducedMotion,
+      delayRef.current,
+    )
+  }, [stage, reducedMotion])
 
-    if (reducedMotion) {
-      return applyReducedMotion(stage, callbacksRef.current, complete)
-    }
-
-    // Built inside the effect (which fires on [stage] changes and
-    // closes over fresh props) so parent re-renders don't allocate a fresh
-    // ~12-key object per render — Stagger renders n of these per update.
-    const transitionConfig = {
-      enter,
-      enterFrom,
-      enterTo,
-      leave,
-      leaveFrom,
-      leaveTo,
-      enterStyle,
-      enterToStyle,
-      enterTransition,
-      leaveStyle,
-      leaveToStyle,
-      leaveTransition,
-    }
-
-    // `delay` is re-applied inside applyEnter/applyLeave AFTER the
-    // `transition` shorthand (which would otherwise reset it to 0), and
-    // cleared on 'entered' so later transitions (e.g. hover) aren't delayed.
-    if (stage === 'entering') {
-      callbacksRef.current.onEnter?.()
-      const cancel = applyEnter(el, transitionConfig, delayRef.current)
-      return cancel
-    }
-
-    if (stage === 'leaving') {
-      callbacksRef.current.onLeave?.()
-      const cancel = applyLeave(el, transitionConfig, delayRef.current)
-      return cancel
-    }
-
-    applySettled(el, transitionConfig, stage, delayRef.current)
-  }, [stage])
+  if (appearing)
+    return cloneElement(children, {
+      ref: mergedRef,
+      ...appearProps(children.props, { enter, enterFrom, enterStyle }),
+    })
 
   if (!shouldMount) {
     if (unmount) return null

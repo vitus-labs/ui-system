@@ -44,6 +44,7 @@ const useTransitionState: UseTransitionState = ({ show, appear = false }) => {
     stage,
     ref: elementRef,
     shouldMount: stage !== 'hidden',
+    appearing: isInitialMount.current && show && appear && stage === 'hidden',
     complete,
   }
 }

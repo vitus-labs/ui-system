@@ -1,5 +1,10 @@
-import type { CSSProperties } from 'react'
-import type { ClassTransitionProps, StyleTransitionProps } from './types'
+import { type CSSProperties, useRef } from 'react'
+import type {
+  ClassTransitionProps,
+  StyleTransitionProps,
+  TransitionCallbacks,
+  TransitionStage,
+} from './types'
 
 // Bounded memoization of split class strings. Most consumers feed static
 // preset strings (a handful of unique values), but a consumer composing
@@ -40,17 +45,9 @@ export const removeClasses = (el: HTMLElement, classes: string | undefined) => {
   if (list.length > 0) el.classList.remove(...list)
 }
 
-/**
- * Executes `callback` after two animation frames (double-rAF). Ensures the
- * browser paints the current state before applying changes — required for
- * CSS transitions to trigger.
- *
- * Returns a canceller that aborts BOTH frames. The prior implementation
- * returned only the outer rAF id, so cancelling left the inner rAF live
- * and the callback fired against potentially-stale or detached elements on
- * fast toggles (open-while-closing, StrictMode double-invoke). Each
- * consumer's effect cleanup now invokes the returned function.
- */
+// Runs `callback` after two animation frames (double-rAF) so the current
+// state paints first — required for CSS transitions to trigger. Returns a
+// canceller that aborts BOTH frames (fast toggles, StrictMode).
 export const nextFrame = (callback: () => void): (() => void) => {
   let cancelled = false
   const outerId = requestAnimationFrame(() => {
@@ -85,15 +82,18 @@ export const mergeStyles = (
   return { ...a, ...b }
 }
 
-type TransitionConfig = ClassTransitionProps & StyleTransitionProps
+export type TransitionConfig = ClassTransitionProps & StyleTransitionProps
 
 type Phase = 'enter' | 'leave'
+type Styles = Record<string, string>
 
-/**
- * Starts a phase: clears the opposite phase's classes (interrupted
- * transition), applies the start state, flips to "to" next frame. `delay` goes
- * AFTER the `transition` shorthand, which resets transition-delay to 0.
- */
+// Inline values an in-flight phase overwrote; restored once it settles.
+const saved = new WeakMap<HTMLElement, Styles>()
+
+// Starts a phase: snapshots the inline values it will touch, clears the
+// opposite phase's classes, applies the start state (skipped when reversing
+// an in-flight phase — no flash), flips to "to" next frame. `delay` goes
+// AFTER the `transition` shorthand, which resets transition-delay to 0.
 const runPhase = (
   el: HTMLElement,
   c: TransitionConfig,
@@ -101,67 +101,169 @@ const runPhase = (
   delay?: number,
 ) => {
   const o = p === 'enter' ? 'leave' : 'enter'
+  const s = el.style as unknown as Styles
+  const mid = saved.get(el)
+  const snap = mid ?? {}
+  saved.set(el, snap)
+  for (const k of [
+    'transition',
+    'transitionDelay',
+    ...Object.keys({ ...c[`${p}Style`], ...c[`${p}ToStyle`] }),
+  ])
+    snap[k] ??= s[k] as string
+
   removeClasses(el, c[o])
   removeClasses(el, c[`${o}From`])
   removeClasses(el, c[`${o}To`])
 
   addClasses(el, c[p])
-  addClasses(el, c[`${p}From`])
-  if (c[`${p}Style`]) Object.assign(el.style, c[`${p}Style`])
-  if (c[`${p}Transition`]) el.style.transition = c[`${p}Transition`] as string
-  if (delay !== undefined) el.style.transitionDelay = `${delay}ms`
+  if (!mid) {
+    addClasses(el, c[`${p}From`])
+    Object.assign(s, c[`${p}Style`])
+  }
+  if (c[`${p}Transition`]) s.transition = c[`${p}Transition`] as string
+  if (delay !== undefined) s.transitionDelay = `${delay}ms`
 
   return nextFrame(() => {
     removeClasses(el, c[`${p}From`])
     addClasses(el, c[`${p}To`])
-    if (c[`${p}ToStyle`]) Object.assign(el.style, c[`${p}ToStyle`])
+    Object.assign(s, c[`${p}ToStyle`])
   })
 }
 
-export const applyEnter = (el: HTMLElement, c: TransitionConfig, d?: number) =>
-  runPhase(el, c, 'enter', d)
+// Cleans up once a stage settles: restores what the phase overwrote.
+const applySettled = (el: HTMLElement, c: TransitionConfig, stage: string) => {
+  if (stage === 'entered') removeClasses(el, c.enter)
+  if (stage === 'entered' || stage === 'hidden') {
+    removeClasses(el, c.enterFrom)
+    removeClasses(el, c.leaveFrom)
+    Object.assign(el.style, saved.get(el))
+    saved.delete(el)
+  }
+}
 
-export const applyLeave = (el: HTMLElement, c: TransitionConfig, d?: number) =>
-  runPhase(el, c, 'leave', d)
-
-/** Cleans up once a stage settles (entered/hidden). */
-export const applySettled = (
+// Drives the DOM side of a transition stage (layout effect body). Under
+// reduced motion a phase completes at once — also when it flips mid-phase.
+export const runStage = (
   el: HTMLElement,
-  config: TransitionConfig,
   stage: string,
+  c: TransitionConfig,
+  cb: Partial<TransitionCallbacks>,
+  complete: () => void,
+  reduced: boolean,
   delay?: number,
 ) => {
-  if (stage === 'entered') {
-    removeClasses(el, config.enter)
-    el.style.transition = ''
-    if (delay !== undefined) el.style.transitionDelay = ''
+  const p =
+    stage === 'entering' ? 'enter' : stage === 'leaving' ? 'leave' : null
+  if (p) {
+    const P = p === 'enter' ? 'Enter' : 'Leave'
+    // reduced motion flipped on mid-phase: on${P} already fired
+    if (!reduced || !saved.has(el)) cb[`on${P}`]?.()
+    if (!reduced) return runPhase(el, c, p, delay)
+    cb[`onAfter${P}`]?.()
+    complete()
   }
-  if (stage === 'entered' || stage === 'hidden') {
-    removeClasses(el, config.enterFrom)
-    removeClasses(el, config.leaveFrom)
+  applySettled(el, c, stage)
+}
+
+// Start-state props for the first (SSR/hydration) render of `appear`.
+export const appearProps = (p: Record<string, any>, c: TransitionConfig) => ({
+  className: mergeClassNames(
+    p.className,
+    mergeClassNames(c.enter, c.enterFrom),
+  ),
+  style: mergeStyles(p.style, c.enterStyle),
+})
+
+const inFlight = (s: string) => s === 'entering' || s === 'leaving'
+
+// Collapse height effect body. A reversal (in-flight `prev` stage) starts
+// from the current rendered height instead of jumping to 0 / full.
+export const runCollapse = (
+  w: HTMLElement,
+  c: HTMLElement,
+  stage: string,
+  prev: string,
+  t: string,
+  cb: Partial<TransitionCallbacks>,
+  reduced: boolean,
+  settle: (s: TransitionStage) => void,
+) => {
+  if (!inFlight(stage)) return
+  const enter = stage === 'entering'
+  const s = w.style
+  const P = enter ? 'Enter' : 'Leave'
+  if (prev !== stage) cb[`on${P}`]?.()
+  if (reduced) {
+    s.height = enter ? 'auto' : '0px'
+    s.overflow = enter ? '' : 'hidden'
+    cb[`onAfter${P}`]?.()
+    settle(enter ? 'entered' : 'hidden')
+    return
   }
+  const full = `${c.scrollHeight}px`
+  // Read before touching `transition` (which would cancel the running one)
+  const from = inFlight(prev)
+    ? `${w.getBoundingClientRect().height}px`
+    : enter
+      ? '0px'
+      : full
+  s.transition = 'none'
+  s.height = from
+  s.overflow = 'hidden'
+  void w.offsetHeight // reflow so the start height registers
+  s.transition = t
+  s.height = enter ? full : '0px'
 }
 
 type KeyedEntry<E> = { key: string | number; element: E }
 
-/**
- * Inserts leaving entries at their previous position (after the nearest
- * surviving predecessor) — moving a leaving node would cancel its exit.
- */
+// Inserts leaving entries at their previous position (after the nearest
+// surviving predecessor) — moving a leaving node would cancel its exit.
 export const mergeLeaving = <E>(
   current: KeyedEntry<E>[],
   leaving: Map<string | number, E>,
   prevOrder: (string | number)[],
 ): KeyedEntry<E>[] => {
-  const result = [...current]
-  let at = 0
+  if (!leaving.size) return current
+  const live = new Set(current.map((r) => r.key))
+  // anchor key (null = head) -> leaving entries placed right after it
+  const after = new Map<string | number | null, KeyedEntry<E>[]>()
+  let at: string | number | null = null
   for (const key of prevOrder) {
-    const i = result.findIndex((r) => r.key === key)
-    if (i >= 0) at = i + 1
-    else if (leaving.has(key))
-      result.splice(at++, 0, { key, element: leaving.get(key) as E })
+    if (live.has(key)) at = key
+    else if (leaving.has(key)) {
+      const list = after.get(at) ?? []
+      after.set(at, list)
+      list.push({ key, element: leaving.get(key) as E })
+    }
   }
+  const result = after.get(null) ?? []
+  for (const r of current) result.push(r, ...(after.get(r.key) ?? []))
   return result
+}
+
+// Stagger: `onAfterLeave` fires once every child that actually started
+// leaving has finished (a child added mid-leave never leaves).
+export const useLeaveTracker = (show: boolean) => {
+  const t = useRef<{ s: Set<unknown>; f?: boolean }>({ s: new Set() }).current
+  if (show) {
+    t.s.clear()
+    t.f = false
+  }
+  return (k: unknown, cb: Partial<TransitionCallbacks>) => ({
+    onLeave: () => {
+      t.s.add(k)
+      cb.onLeave?.()
+    },
+    onAfterLeave: () => {
+      t.s.delete(k)
+      if (!t.s.size && !t.f) {
+        t.f = true
+        cb.onAfterLeave?.()
+      }
+    },
+  })
 }
 
 /** Dev-only console warning (stripped from production builds). */

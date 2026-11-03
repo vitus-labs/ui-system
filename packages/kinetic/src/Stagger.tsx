@@ -7,6 +7,7 @@ import {
 } from 'react'
 import Transition from './Transition'
 import type { StaggerProps } from './types'
+import { useLeaveTracker } from './utils'
 
 const Stagger = ({
   show,
@@ -15,9 +16,11 @@ const Stagger = ({
   appear = false,
   timeout = 5000,
   children,
+  onAfterEnter,
   onAfterLeave,
   ...transitionProps
 }: StaggerProps) => {
+  const track = useLeaveTracker(show)
   const childArray = Children.toArray(children).filter(
     isValidElement,
   ) as ReactElement<any>[]
@@ -37,18 +40,17 @@ const Stagger = ({
             timeout={timeout + delay}
             delay={delay}
             {...transitionProps}
-            onAfterLeave={
-              index === (reverseLeave ? 0 : count - 1)
-                ? onAfterLeave
-                : undefined
-            }
+            onAfterEnter={index === count - 1 ? onAfterEnter : undefined}
+            {...track(child.key ?? index, {
+              onLeave: transitionProps.onLeave,
+              onAfterLeave,
+            })}
           >
             {cloneElement(child, {
               style: {
                 ...child.props.style,
                 '--stagger-index': staggerIndex,
                 '--stagger-interval': `${interval}ms`,
-                transitionDelay: `${delay}ms`,
               } as CSSProperties,
             })}
           </Transition>
