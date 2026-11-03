@@ -314,6 +314,18 @@ describe('.getDefaultAttrs()', () => {
     const defaults = Component.getDefaultAttrs({})
     expect(defaults).toEqual({ color: 'blue', size: 'lg' })
   })
+
+  it('should include priority attrs (priority < attrs, same as the HOC)', () => {
+    const Component = attrs({ name: 'Test', component: BaseComponent })
+      .attrs(() => ({ tag: 'button', label: 'p' }), { priority: true })
+      .attrs((props: any) => ({
+        label: 'x',
+        isButton: props.tag === 'button',
+      }))
+
+    const defaults = Component.getDefaultAttrs({})
+    expect(defaults).toEqual({ tag: 'button', label: 'x', isButton: true })
+  })
 })
 
 // --------------------------------------------------------

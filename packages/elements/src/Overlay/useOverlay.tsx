@@ -461,17 +461,41 @@ const useOverlay = ({
     handleVisibility,
   })
 
-  // Click-based open/close — listen on `document` (matches useEscapeKey +
-  // useFocusTrap; one fewer propagation hop than `window`).
+  // Click-based open/close.
+  // - Closed: the only click that matters is one on the trigger (openOn
+  //   'click'), so listen on the trigger element only. A page with hundreds
+  //   of closed click-to-open overlays then pays nothing per document click.
+  // - Open: listen on `document` (matches useEscapeKey + useFocusTrap; one
+  //   fewer propagation hop than `window`) — needed for click-outside.
+  // The click that opens the overlay can re-render + attach the document
+  // listener before it bubbles to `document` (sync-lane passive effects in a
+  // real browser), so that same event is ignored by the document listener.
+  const openingClickRef = useRef<Event | null>(null)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isContentLoaded re-runs the effect when the trigger ref may have been (re)attached, matching useHoverListeners
   useEffect(() => {
     if (blocked || disabled) return undefined
 
-    const enabledClick = openOn === 'click' || CLICK_CLOSE_KINDS.has(closeOn)
+    if (!active) {
+      if (openOn !== 'click') return undefined
+      const trigger = triggerRef.current
+      if (!trigger) return undefined
+      const onTriggerClick = (e: Event) => {
+        openingClickRef.current = e
+        handleClick(e)
+      }
+      trigger.addEventListener('click', onTriggerClick)
+      return () => trigger.removeEventListener('click', onTriggerClick)
+    }
 
-    if (enabledClick) document.addEventListener('click', handleClick)
+    if (openOn !== 'click' && !CLICK_CLOSE_KINDS.has(closeOn)) return undefined
 
-    return () => document.removeEventListener('click', handleClick)
-  }, [openOn, closeOn, blocked, disabled, handleClick])
+    const onDocumentClick = (e: Event) => {
+      if (e === openingClickRef.current) return
+      handleClick(e)
+    }
+    document.addEventListener('click', onDocumentClick)
+    return () => document.removeEventListener('click', onDocumentClick)
+  }, [active, isContentLoaded, openOn, closeOn, blocked, disabled, handleClick])
 
   useHoverListeners({
     triggerRef,

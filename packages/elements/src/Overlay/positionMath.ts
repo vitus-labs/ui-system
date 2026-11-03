@@ -90,11 +90,14 @@ const calcDropdownVertical = (
       resolvedAlignX = 'center'
       pos.left = center
     } else if (fitsCL) {
-      resolvedAlignX = 'left'
-      pos.left = leftPos
-    } else if (fitsCR) {
+      // Centered content overflows the right edge — right-align it (content's
+      // right edge at the trigger's right edge) to pull it back on-screen.
       resolvedAlignX = 'right'
       pos.left = rightPos
+    } else if (fitsCR) {
+      // Overflows the left edge — left-align it to the trigger instead.
+      resolvedAlignX = 'left'
+      pos.left = leftPos
     }
   }
 
@@ -141,11 +144,14 @@ const calcDropdownHorizontal = (
       resolvedAlignY = 'center'
       pos.top = center
     } else if (fitsCT) {
-      resolvedAlignY = 'top'
-      pos.top = topPos
-    } else if (fitsCB) {
+      // Centered content overflows the bottom edge — bottom-align it (content's
+      // bottom edge at the trigger's bottom edge) to pull it back on-screen.
       resolvedAlignY = 'bottom'
       pos.top = bottomPos
+    } else if (fitsCB) {
+      // Overflows the top edge — top-align it to the trigger instead.
+      resolvedAlignY = 'top'
+      pos.top = topPos
     }
   }
 

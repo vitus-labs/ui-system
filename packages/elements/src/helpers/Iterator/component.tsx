@@ -108,17 +108,19 @@ const renderSpec = (
     : render(spec.target as ElementType, propsWithKey)
 }
 
-/** Normalize children (single, array, or fragment) into an array of nodes. */
-const flattenChildren = (children: ReactNode): ReactNode[] => {
-  if (Array.isArray(children)) return children
-  if (isFragment(children)) {
-    // `Children.toArray` handles single-child fragments (non-array children).
-    return Children.toArray(
-      (children as ReactElement<{ children: ReactNode }>).props.children,
-    )
-  }
-  return [children]
-}
+/**
+ * Normalize children (single, array, nested mapped arrays, or fragment) into a
+ * flat array of renderable nodes. `Children.toArray` drops `null` / `undefined`
+ * / booleans (so `{cond && <X/>}` doesn't count toward first/last/position) and
+ * flattens nested arrays (so `itemProps` reach items of a `.map()`), while
+ * assigning each node a stable key derived from the user's key or position.
+ */
+const flattenChildren = (children: ReactNode): ReactNode[] =>
+  Children.toArray(
+    isFragment(children)
+      ? (children as ReactElement<{ children: ReactNode }>).props.children
+      : children,
+  )
 
 type DataKind = 'simple' | 'complex' | null
 
@@ -168,10 +170,11 @@ const objectKey = (
 
 const buildChildrenSpecs = (children: ReactNode): ItemSpec[] =>
   flattenChildren(children).map<ItemSpec>((node, i) => ({
-    // Preserve the user's own key so item state follows identity, not position.
-    // Unkeyed children fall back to `.${i}` (React's own implicit-key shape) so
-    // the fallback can't collide with a user key like "1".
-    key: isValidElement(node) && node.key != null ? node.key : `.${i}`,
+    // `Children.toArray` keys every element from the user's own key (`.$a`) or
+    // its position (`.0`, nested `.1:$x`), so item state follows identity.
+    // Text nodes carry no key — `#${i}` can't collide with toArray's keys,
+    // which always start with `.`.
+    key: isValidElement(node) && node.key != null ? node.key : `#${i}`,
     target: node,
     source: {},
     base: {},

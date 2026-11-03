@@ -306,37 +306,40 @@ const rocketComponent: RocketComponent = (options) => {
     // --------------------------------------------------
     // calculate reserved Keys defined in dimensions as styling keys
     // there is no need to calculate this each time - keys are based on
-    // dimensions definitions
+    // dimensions definitions. Cached per `themes` object in the component's
+    // ThemeManager (all instances share it), so mounting N instances builds
+    // the dimensions map, key list and omit Set once instead of N times.
+    // The omit Set merges RESERVED keys + PSEUDO_KEYS + options.filterAttrs
+    // (all fixed per component config) and is consumed by `omit` directly.
     // --------------------------------------------------
-    const { keysMap: dimensions, keywords: reservedPropNames } = useMemo(
-      () =>
-        getDimensionsMap({
+    const {
+      keysMap: dimensions,
+      keywords: reservedPropNames,
+      reservedKeys: RESERVED_STYLING_PROPS_KEYS,
+      omitKeysSet,
+    } = useMemo(() => {
+      const helper = ThemeManager.dimensionsMap
+      let entry = helper.get(themes)
+      if (!entry) {
+        const { keysMap, keywords } = getDimensionsMap({
           themes,
           useBooleans: options.useBooleans,
-        }),
-      [themes],
-    )
-
-    const RESERVED_STYLING_PROPS_KEYS = useMemo(
-      () => Object.keys(reservedPropNames),
-      [reservedPropNames],
-    )
-
-    // Prebuilt omit-key Set for the finalProps assembly below. All three
-    // sources are stable for the instance (RESERVED_STYLING_PROPS_KEYS is
-    // memoized, PSEUDO_KEYS is a module constant, options.filterAttrs is fixed
-    // at component-config time), so the Set — and the 3-way array spread that
-    // fed it — were being rebuilt every render for nothing. `omit` now consumes
-    // the Set directly, skipping its own per-call `new Set(...)`.
-    const omitKeysSet = useMemo(
-      () =>
-        new Set<string>([
-          ...RESERVED_STYLING_PROPS_KEYS,
-          ...PSEUDO_KEYS,
-          ...options.filterAttrs,
-        ]),
-      [RESERVED_STYLING_PROPS_KEYS],
-    )
+        })
+        const reservedKeys = Object.keys(keywords)
+        entry = {
+          keysMap,
+          keywords,
+          reservedKeys,
+          omitKeysSet: new Set<string>([
+            ...reservedKeys,
+            ...PSEUDO_KEYS,
+            ...options.filterAttrs,
+          ]),
+        }
+        helper.set(themes, entry)
+      }
+      return entry
+    }, [themes])
 
     // --------------------------------------------------
     // get final props which are (latest has the highest priority):
@@ -394,8 +397,9 @@ const rocketComponent: RocketComponent = (options) => {
           baseTheme: currentModeBaseTheme,
           transformKeys,
           appTheme: theme,
+          mode,
         }),
-      [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme],
+      [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme, mode],
     )
 
     // --------------------------------------------------
@@ -539,17 +543,32 @@ const rocketComponent: RocketComponent = (options) => {
       }
     },
 
-    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) =>
-      calculateChainOptions(options.attrs)([
+    // Mirrors the HOC merge order: priorityAttrs < attrs (attrs callbacks see
+    // the priority attrs merged under the passed props).
+    getDefaultAttrs: (props: TObj, theme: TObj, mode: ThemeModeKeys) => {
+      const themeBag = {
+        render,
+        mode,
+        isDark: mode === 'dark',
+        isLight: mode === 'light',
+      }
+      if (!options.priorityAttrs?.length) {
+        return calculateChainOptions(options.attrs)([props, theme, themeBag])
+      }
+      const prioritized = calculateChainOptions(options.priorityAttrs)([
         props,
         theme,
-        {
-          render,
-          mode,
-          isDark: mode === 'dark',
-          isLight: mode === 'light',
-        },
-      ]),
+        themeBag,
+      ])
+      return {
+        ...prioritized,
+        ...calculateChainOptions(options.attrs)([
+          { ...prioritized, ...props },
+          theme,
+          themeBag,
+        ]),
+      }
+    },
   })
 
   return RocketComponent

@@ -38,11 +38,19 @@ const useHoverListeners = ({
   // locals: the effect re-runs when `active` flips while the pointer is still
   // there. Content flags reset when content unmounts (no mouseleave fires).
   const presenceRef = useRef({ trigger: 0, content: 0 })
+  // Tracks the previous `blocked` value so we can detect the unblock edge.
+  const wasBlockedRef = useRef(blocked)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: isContentLoaded signals contentRef.current is available so the effect re-runs to attach listeners
   useEffect(() => {
     const enabledHover = openOn === 'hover' || closeOn === 'hover'
-    if (blocked || disabled || !enabledHover) return undefined
+    const wasBlocked = wasBlockedRef.current
+    wasBlockedRef.current = blocked
+    // Presence-tracking listeners stay attached while `blocked` (a nested
+    // overlay is open) — only hide scheduling / opening is suppressed. If they
+    // were detached, a pointer leaving while blocked would go unnoticed and
+    // the overlay would stay stuck open after the nested one closes.
+    if (disabled || !enabledHover) return undefined
 
     const trigger = triggerRef.current
     const content = contentRef.current
@@ -73,6 +81,7 @@ const useHoverListeners = ({
       }
       const mask = bit === 1 ? 1 : 3
       if (
+        !blocked &&
         closeOn === 'hover' &&
         active &&
         (presence.trigger & mask) === 0 &&
@@ -83,11 +92,11 @@ const useHoverListeners = ({
 
     const onMouseEnterTrigger = () => {
       set('trigger', 1, true)
-      if (openOn === 'hover' && !active) showContent()
+      if (openOn === 'hover' && !active && !blocked) showContent()
     }
     const onFocusInTrigger = () => {
       set('trigger', 2, true)
-      if (openOn === 'hover' && !active) showContent()
+      if (openOn === 'hover' && !active && !blocked) showContent()
     }
     const onMouseLeaveTrigger = () => set('trigger', 1, false)
     const onFocusOutTrigger = () => set('trigger', 2, false)
@@ -109,6 +118,19 @@ const useHoverListeners = ({
       content.addEventListener('mouseleave', onMouseLeaveContent)
       content.addEventListener('focusin', onFocusInContent)
       content.addEventListener('focusout', onFocusOutContent)
+    }
+
+    // Just unblocked: if the pointer / focus left while we were blocked,
+    // nothing else will trigger the hide — schedule it now.
+    if (
+      wasBlocked &&
+      !blocked &&
+      closeOn === 'hover' &&
+      active &&
+      presence.trigger === 0 &&
+      presence.content === 0
+    ) {
+      scheduleHide()
     }
 
     return () => {
