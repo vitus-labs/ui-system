@@ -394,8 +394,9 @@ const rocketComponent: RocketComponent = (options) => {
           baseTheme: currentModeBaseTheme,
           transformKeys,
           appTheme: theme,
+          mode,
         }),
-      [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme],
+      [stableRocketstate, currentModeThemes, currentModeBaseTheme, theme, mode],
     )
 
     // --------------------------------------------------

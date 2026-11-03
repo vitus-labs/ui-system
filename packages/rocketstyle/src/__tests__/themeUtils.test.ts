@@ -387,20 +387,28 @@ describe('getTheme with transform dimensions', () => {
   })
 
   it('transform with mode callback produces light/dark values', () => {
-    const result = getTheme({
+    const params = {
       rocketstate: { modifier: 'themed' },
       themes: {
         modifier: {
           themed: (_theme: any, _app: any, mode: any) => ({
             shadow: mode('0 2px 4px rgba(0,0,0,0.1)', 'none'),
+            nested: { color: mode('#000', '#fff') },
           }),
         },
       },
       baseTheme: {},
-      transformKeys: { modifier: true },
-    })
-    // mode callback returns a function, which is the expected value
-    expect(typeof result.shadow).toBe('function')
+      transformKeys: { modifier: true as const },
+    }
+    // Mode callbacks returned by transforms are resolved for the active mode
+    // (regression: they used to leak into $rocketstyle as raw functions).
+    const light: any = getTheme(params)
+    expect(light.shadow).toBe('0 2px 4px rgba(0,0,0,0.1)')
+    expect(light.nested).toEqual({ color: '#000' })
+
+    const dark: any = getTheme({ ...params, mode: 'dark' })
+    expect(dark.shadow).toBe('none')
+    expect(dark.nested).toEqual({ color: '#fff' })
   })
 })
 

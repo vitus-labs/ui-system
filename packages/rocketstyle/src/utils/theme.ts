@@ -100,6 +100,12 @@ export type GetTheme = (params: {
   transformKeys?: Partial<Record<string, true>>
   /** App theme from context — passed to transform dimension callbacks. */
   appTheme?: Record<string, any>
+  /**
+   * Active theme mode. Transform dimension callbacks receive the generic
+   * `themeModeCallback`, so any mode callbacks they return are resolved
+   * against this mode before being merged into the final theme.
+   */
+  mode?: 'light' | 'dark'
 }) => Record<string, unknown>
 
 export const getTheme: GetTheme = ({
@@ -108,6 +114,7 @@ export const getTheme: GetTheme = ({
   baseTheme,
   transformKeys,
   appTheme,
+  mode = 'light',
 }) => {
   // Top-level shallow clone is safe — `merge()` does copy-on-write for nested
   // plain objects (see core/utils.ts), so mutating `finalTheme` directly will
@@ -147,12 +154,19 @@ export const getTheme: GetTheme = ({
     },
   )
 
-  // Apply transform dimension values last with the fully accumulated theme
+  // Apply transform dimension values last with the fully accumulated theme.
+  // Base/dimension themes were already resolved per mode (getThemeByMode in
+  // the cached useMemos), but transform results are produced here — resolve
+  // any `mode(light, dark)` callbacks they return before merging, otherwise
+  // the raw functions would leak into $rocketstyle / emitted CSS.
   for (const transform of deferredTransforms) {
-    merge(
+    const result = transform(
       finalTheme,
-      transform(finalTheme, appTheme ?? {}, themeModeCallback, config.css),
+      appTheme ?? {},
+      themeModeCallback,
+      config.css,
     )
+    if (result) merge(finalTheme, getThemeByMode(result, mode))
   }
 
   return finalTheme
