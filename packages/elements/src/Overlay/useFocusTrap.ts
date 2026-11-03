@@ -13,7 +13,7 @@ export type UseFocusTrap = (
 const FOCUSABLE = [
   'a[href]',
   'button:not([disabled])',
-  'input:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
   'select:not([disabled])',
   'textarea:not([disabled])',
   '[contenteditable]:not([contenteditable="false"])',
@@ -23,8 +23,18 @@ const FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',')
 
-const isTabbable = (el: HTMLElement): boolean =>
-  el.getAttribute('aria-disabled') !== 'true'
+// Stack of currently active traps (most recent last). Only the topmost trap
+// handles Tab, so a nested modal's trap isn't hijacked by its parent's trap
+// pulling focus back to the parent's first control.
+const stack: symbol[] = []
+
+const isTabbable = (el: HTMLElement, container: HTMLElement): boolean => {
+  if (el.getAttribute('aria-disabled') === 'true') return false
+  // Skip descendants of `hidden` / `inert` subtrees (attribute checks only —
+  // no layout reads; this runs in the MutationObserver refresh, not on Tab).
+  const excluded = el.closest('[hidden],[inert]')
+  return !excluded || !container.contains(excluded)
+}
 
 const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
   const autoFocus = options?.autoFocus !== false
@@ -41,14 +51,22 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
       // Index loop — `NodeList` iterator allocates; index access doesn't.
       for (let i = 0; i < all.length; i++) {
         const el = all[i]
-        if (el && isTabbable(el)) result.push(el)
+        if (el && isTabbable(el, container)) result.push(el)
       }
       focusable = result
     }
     refresh()
 
     const observer = new MutationObserver(refresh)
-    observer.observe(container, { childList: true, subtree: true })
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['hidden', 'inert', 'disabled', 'tabindex', 'type'],
+    })
+
+    const token = Symbol('focusTrap')
+    stack.push(token)
 
     const prevFocus = document.activeElement as HTMLElement | null
     if (autoFocus) {
@@ -63,6 +81,7 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
 
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return
+      if (stack[stack.length - 1] !== token) return
 
       // Nothing tabbable inside — keep focus on the container instead of
       // letting Tab escape the modal.
@@ -96,6 +115,8 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
     return () => {
       observer.disconnect()
       document.removeEventListener('keydown', handler)
+      const i = stack.indexOf(token)
+      if (i !== -1) stack.splice(i, 1)
       if (autoFocus && prevFocus && typeof prevFocus.focus === 'function') {
         prevFocus.focus()
       }
