@@ -3,6 +3,7 @@ import type {
   ClassTransitionProps,
   StyleTransitionProps,
   TransitionCallbacks,
+  TransitionStage,
 } from './types'
 
 // Bounded memoization of split class strings. Most consumers feed static
@@ -174,6 +175,46 @@ export const appearProps = (p: Record<string, any>, c: TransitionConfig) => ({
   style: mergeStyles(p.style, c.enterStyle),
 })
 
+const inFlight = (s: string) => s === 'entering' || s === 'leaving'
+
+// Collapse height effect body. A reversal (in-flight `prev` stage) starts
+// from the current rendered height instead of jumping to 0 / full.
+export const runCollapse = (
+  w: HTMLElement,
+  c: HTMLElement,
+  stage: string,
+  prev: string,
+  t: string,
+  cb: Partial<TransitionCallbacks>,
+  reduced: boolean,
+  settle: (s: TransitionStage) => void,
+) => {
+  if (!inFlight(stage)) return
+  const enter = stage === 'entering'
+  const s = w.style
+  const P = enter ? 'Enter' : 'Leave'
+  if (prev !== stage) cb[`on${P}`]?.()
+  if (reduced) {
+    s.height = enter ? 'auto' : '0px'
+    s.overflow = enter ? '' : 'hidden'
+    cb[`onAfter${P}`]?.()
+    settle(enter ? 'entered' : 'hidden')
+    return
+  }
+  const full = `${c.scrollHeight}px`
+  // Read before touching `transition` (which would cancel the running one)
+  const from = inFlight(prev)
+    ? `${w.getBoundingClientRect().height}px`
+    : enter
+      ? '0px'
+      : full
+  s.transition = 'none'
+  s.height = from
+  s.overflow = 'hidden'
+  void w.offsetHeight // reflow so the start height registers
+  s.transition = t
+  s.height = enter ? full : '0px'
+}
 
 type KeyedEntry<E> = { key: string | number; element: E }
 

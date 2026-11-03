@@ -6,6 +6,7 @@ import {
 import { useRef, useState } from 'react'
 import type { CollapseProps, TransitionStage } from './types'
 import useAnimationEnd from './useAnimationEnd'
+import { runCollapse } from './utils'
 
 const Collapse = ({
   show,
@@ -52,51 +53,23 @@ const Collapse = ({
   }, [show])
 
   // Animate height
+  const prevRef = useRef(stage)
   useIsomorphicLayoutEffect(() => {
+    const prev = prevRef.current
+    prevRef.current = stage
     const wrapper = wrapperRef.current
     const content = contentRef.current
-    if (!wrapper || !content) return
-
-    if (reducedMotion) {
-      if (stage === 'entering') {
-        callbacksRef.current.onEnter?.()
-        wrapper.style.height = 'auto'
-        wrapper.style.overflow = ''
-        callbacksRef.current.onAfterEnter?.()
-        setStage('entered')
-      } else if (stage === 'leaving') {
-        callbacksRef.current.onLeave?.()
-        wrapper.style.height = '0px'
-        wrapper.style.overflow = 'hidden'
-        callbacksRef.current.onAfterLeave?.()
-        setStage('hidden')
-      }
-      return
-    }
-
-    if (stage === 'entering') {
-      callbacksRef.current.onEnter?.()
-      const height = content.scrollHeight
-      wrapper.style.transition = 'none'
-      wrapper.style.height = '0px'
-      wrapper.style.overflow = 'hidden'
-      // Force reflow so the browser registers height: 0
-      void wrapper.offsetHeight
-      wrapper.style.transition = transition
-      wrapper.style.height = `${height}px`
-    }
-
-    if (stage === 'leaving') {
-      callbacksRef.current.onLeave?.()
-      const height = content.scrollHeight
-      wrapper.style.transition = 'none'
-      wrapper.style.height = `${height}px`
-      wrapper.style.overflow = 'hidden'
-      // Force reflow
-      void wrapper.offsetHeight
-      wrapper.style.transition = transition
-      wrapper.style.height = '0px'
-    }
+    if (wrapper && content)
+      runCollapse(
+        wrapper,
+        content,
+        stage,
+        prev,
+        transition,
+        callbacksRef.current,
+        reducedMotion,
+        setStage,
+      )
   }, [stage, transition, reducedMotion])
 
   // Listen for animation end
@@ -122,7 +95,9 @@ const Collapse = ({
     },
   })
 
-  const shouldRender = stage !== 'hidden'
+  // First render of `show && appear` (incl. SSR): content at height 0
+  const shouldRender =
+    stage !== 'hidden' || (isInitialMount.current && show && appear)
 
   return (
     <div
@@ -133,7 +108,11 @@ const Collapse = ({
           stage === 'hidden' ? 0 : stage === 'entered' ? 'auto' : undefined,
       }}
     >
-      {shouldRender && <div ref={contentRef}>{children}</div>}
+      {shouldRender && (
+        <div ref={contentRef} style={{ display: 'flow-root' }}>
+          {children}
+        </div>
+      )}
     </div>
   )
 }
