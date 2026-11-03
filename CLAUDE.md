@@ -9,7 +9,7 @@ Monorepo with 15 packages under `packages/`, managed with Bun workspaces. Publis
 ```
 packages/
 ├── core/                  # CSS engine connector, init(), utilities (get, set, merge, compose, pick, omit)
-├── styler/                # CSS-in-JS engine (~6.2KB min+gz): css, styled, keyframes, ThemeProvider
+├── styler/                # CSS-in-JS engine (~7.0KB min+gz): css, styled, keyframes, ThemeProvider
 ├── connector-styler/      # Connects styler to core's engine interface
 ├── connector-emotion/     # Connects Emotion to core's engine interface
 ├── connector-styled-components/  # Connects styled-components to core's engine interface
@@ -89,7 +89,9 @@ const Card = styled.div`
 - `prepare()` results are cached by cssText for SSR `<style precedence>` reuse
 - `splitAtRules` extracts nested @media/@supports/@container into separate top-level rules
 - SSR: React 19 `<style precedence>` for streaming
-- Both `cache` and `normalizeCSS` cache evict the oldest 10% when over threshold (shared `evictMapByPercent` util)
+- The sheet's cssText lookup caches (`insertCache`, `prepareCache`) and the `normalizeCSS` cache evict the oldest 10% when over threshold (shared `evictMapByPercent` util). The sheet's `cache` (rules already in the DOM) is never evicted — evicting it re-inserted live rules
+- `styled(StyledComp)` folds at creation (base strings/values + extension → one component, via the `_styler` meta getter, which only answers for the component itself so hoisted copies on attrs/rocketstyle wrappers don't fold)
+- `createGlobalStyle` rules are ref-counted per cssText in the sheet (`acquireGlobal`/`releaseGlobal`) and removed on last unmount / value change
 
 ### Responsive Grid
 ```tsx
