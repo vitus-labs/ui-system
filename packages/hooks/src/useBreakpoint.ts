@@ -1,14 +1,53 @@
 import { context } from '@vitus-labs/core'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react'
 
 export type UseBreakpoint = () => string | undefined
+
+// ── Shared viewport subscription ─────────────────────────────────────
+// Every hook instance shares ONE rAF-throttled `resize` listener on
+// `window` (hot path — previously one listener per instance, and before
+// that one matchMedia listener per breakpoint). The listener is attached
+// when the first instance subscribes and removed with the last.
+const subscribers = new Set<() => void>()
+let raf = 0
+
+const flush = () => {
+  raf = 0
+  for (const cb of subscribers) cb()
+}
+
+const onResize = () => {
+  if (raf === 0) raf = requestAnimationFrame(flush)
+}
+
+const subscribe = (cb: () => void) => {
+  subscribers.add(cb)
+  if (subscribers.size === 1) {
+    window.addEventListener('resize', onResize, { passive: true })
+  }
+  return () => {
+    subscribers.delete(cb)
+    if (subscribers.size === 0) {
+      window.removeEventListener('resize', onResize)
+      if (raf !== 0) {
+        cancelAnimationFrame(raf)
+        raf = 0
+      }
+    }
+  }
+}
+
+const noopSubscribe = () => () => {
+  // nothing to unsubscribe: no breakpoints, no listener
+}
 
 /**
  * Returns the name of the currently active breakpoint from the
  * unistyle/core theme context (e.g. `"xs"`, `"md"`, `"lg"`).
  *
  * Reads `theme.breakpoints` from the nearest `Provider` and
- * subscribes to viewport changes via `matchMedia`.
+ * subscribes to viewport changes via a single shared, rAF-throttled
+ * `resize` listener (`useSyncExternalStore`, hydration-safe).
  *
  * Returns `undefined` when no Provider or breakpoints are available.
  */
@@ -33,50 +72,26 @@ const useBreakpoint: UseBreakpoint = () => {
     return tuples.sort(([, a], [, b]) => a - b)
   }, [breakpoints])
 
-  const [current, setCurrent] = useState<string | undefined>(() => {
-    if (sorted.length === 0) return undefined
-    if (typeof window === 'undefined') return sorted[0]?.[0]
-
+  const getSnapshot = useCallback(() => {
     const width = window.innerWidth
     let match = sorted[0]?.[0]
     for (const [name, min] of sorted) {
       if (width >= min) match = name
     }
     return match
-  })
-
-  useEffect(() => {
-    if (sorted.length === 0) return undefined
-
-    let raf = 0
-    const update = () => {
-      raf = 0
-      const width = window.innerWidth
-      let match = sorted[0]?.[0]
-      for (const [name, min] of sorted) {
-        if (width >= min) match = name
-      }
-      setCurrent(match)
-    }
-
-    // Single rAF-throttled resize listener instead of one matchMedia listener
-    // per breakpoint. With 5-8 breakpoints this saves 4-7 listener registrations
-    // per hook instance.
-    const onResize = () => {
-      if (raf === 0) raf = requestAnimationFrame(update)
-    }
-
-    window.addEventListener('resize', onResize, { passive: true })
-    // Re-sync once after subscribing: `sorted` may have changed, or the
-    // viewport may have resized between render and effect.
-    update()
-    return () => {
-      if (raf !== 0) cancelAnimationFrame(raf)
-      window.removeEventListener('resize', onResize)
-    }
   }, [sorted])
 
-  return current
+  // Server + hydration render use the smallest breakpoint (mobile-first),
+  // matching what the server could know; React re-renders with the real
+  // viewport right after hydration. Client-only renders read the viewport
+  // directly on the first render.
+  const getServerSnapshot = useCallback(() => sorted[0]?.[0], [sorted])
+
+  return useSyncExternalStore(
+    sorted.length === 0 ? noopSubscribe : subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  )
 }
 
 export default useBreakpoint

@@ -42,6 +42,15 @@ const useEventListener: UseEventListener = (
   )
   const resolved = isRef ? refNode : target
 
+  // Depend on the option primitives, not the options object — an inline
+  // `{ passive: true }` is a fresh object every render and would otherwise
+  // detach/re-attach the listener on each render.
+  const isBool = typeof options === 'boolean'
+  const capture = isBool ? options : options?.capture
+  const passive = isBool ? undefined : options?.passive
+  const once = isBool ? undefined : options?.once
+  const signal = isBool ? undefined : options?.signal
+
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
     const node = resolveTarget(resolved as EventTargetLike)
@@ -49,9 +58,11 @@ const useEventListener: UseEventListener = (
 
     const listener: EventListener = (e) =>
       (handlerRef.current as (ev: Event) => void)(e)
-    node.addEventListener(event as string, listener, options)
-    return () => node.removeEventListener(event as string, listener, options)
-  }, [event, resolved, options])
+    const opts: AddEventListenerOptions = { capture, passive, once, signal }
+    node.addEventListener(event as string, listener, opts)
+    return () =>
+      node.removeEventListener(event as string, listener, { capture })
+  }, [event, resolved, capture, passive, once, signal])
 }
 
 const resolveTarget = (
