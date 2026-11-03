@@ -215,6 +215,15 @@ const HANDLER_RE = /^on[A-Z]/
 const isHandler = (key: string, value: unknown): boolean =>
   typeof value === 'function' && HANDLER_RE.test(key)
 
+/** Default DOM filter for a single prop name (used by folded styled()). */
+export const isDomProp = (key: string): boolean =>
+  key !== 'theme' &&
+  key.charCodeAt(0) !== 36 &&
+  (key in HTML_PROPS ||
+    key.startsWith('data-') ||
+    key.startsWith('aria-') ||
+    HANDLER_RE.test(key))
+
 /**
  * Filters props for HTML elements. Keeps valid HTML attrs, data-*, aria-*.
  * Rejects unknown props and $-prefixed transient props.

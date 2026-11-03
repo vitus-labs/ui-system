@@ -69,6 +69,22 @@ describe('parseCSS', () => {
 
   // Multi-value box shorthands — RN has no `padding: 8px 16px`, so they expand
   // into longhands per CSS box-model rules (previously parsed to first value).
+  it('parses leading-dot and +signed numbers as numbers', () => {
+    expect(parseCSS('opacity: .5; flex: +1; z-index: -2')).toEqual({
+      opacity: 0.5,
+      flex: 1,
+      zIndex: -2,
+    })
+  })
+
+  it('skips balanced nested blocks instead of corrupting declarations', () => {
+    expect(
+      parseCSS(
+        'color: red; &:hover { color: blue; a { b: c; } } width: 10px; @media (min-width: 1px) { height: 2px; } opacity: 1',
+      ),
+    ).toEqual({ color: 'red', width: 10, opacity: 1 })
+  })
+
   describe('multi-value box shorthands', () => {
     it('expands 2-value padding (vertical / horizontal)', () => {
       expect(parseCSS('padding: 8px 16px')).toEqual({
@@ -196,6 +212,27 @@ describe('parseCSS', () => {
         height: 50,
       })
     })
+  })
+})
+
+describe('parseCSS numeric parsing (ReDoS guard)', () => {
+  it('parses signed and leading-dot numbers', () => {
+    expect(
+      parseCSS('opacity: .5; flex: -.5; z-index: +1; flex-grow: 1.'),
+    ).toEqual({
+      opacity: 0.5,
+      flex: -0.5,
+      zIndex: 1,
+      flexGrow: 1,
+    })
+  })
+
+  it('rejects a long non-numeric digit run in linear time', () => {
+    // A quadratic-backtracking regex took seconds on this input.
+    const value = `${'9'.repeat(50_000)}x`
+    const start = performance.now()
+    expect(parseCSS(`width: ${value}`)).toEqual({ width: value })
+    expect(performance.now() - start).toBeLessThan(250)
   })
 })
 

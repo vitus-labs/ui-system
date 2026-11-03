@@ -39,7 +39,8 @@ export class CSSResult {
    * properties anyway, and skipping the `= undefined` write keeps the
    * constructor's hidden-class transition shorter (one fewer store).
    */
-  _isDynamic: boolean | undefined
+  // `null` = seen once by `resolveValue` but not yet classified (see there).
+  _isDynamic: boolean | null | undefined
 
   /**
    * Memoized resolved CSS string for static CSSResults — populated by
@@ -65,13 +66,22 @@ export class CSSResult {
 // interpolated as selectors (`${Button}:hover &`) with their class selector,
 // so `resolve` (per-render, V8-inlined) never has to check for them. Static
 // components expose their stable class via `_sel`; dynamic ones have none.
+// Also unwraps `@vitus-labs/core`'s pre-init `css` thunks (`_lazy` getter →
+// the real CSSResult once the engine is configured) so a template built
+// before `init()` stays static instead of becoming a per-render function.
 export const withSelectors = (values: Interpolation[]): Interpolation[] => {
   for (let i = 0; i < values.length; i++) {
     const v = values[i] as unknown as ((p: unknown) => unknown) & {
       _sel?: string
+      _lazy?: Interpolation
       displayName?: string
     }
-    if (typeof v !== 'function' || v._sel === undefined) continue
+    if (typeof v !== 'function') continue
+    if (v._lazy !== undefined) {
+      values[i] = v._lazy
+      continue
+    }
+    if (v._sel === undefined) continue
     if (!v._sel)
       throw new Error(
         `[styler] ${v.displayName} cannot be a selector (needs a static template)`,
@@ -316,6 +326,7 @@ export const normalizeCSS = (css: string): string => {
 export const resolveValue = (
   value: Interpolation,
   props: Record<string, any>,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: type dispatch + lazy CSSResult classification inlined (cold helper split out)
 ): string => {
   // null, undefined, false, true → empty (enables conditional: ${cond && css`...`})
   if (value == null || value === false || value === true) return ''
@@ -329,13 +340,22 @@ export const resolveValue = (
   // component creation time), the resolved string is independent of props
   // and can be cached on the instance — saves re-walking strings/values for
   // every consumer of a shared static snippet.
+  //
+  // CSSResults reached only through a function interpolation
+  // (`${p => p.on && activeCss}`) are never classified at creation time, so
+  // classify lazily: the first encounter just marks the instance (`null`) —
+  // per-render `css\`\`` results are seen once and pay nothing more — and
+  // the second encounter (a long-lived snippet) runs the one-off scan.
   if (value instanceof CSSResult) {
-    if (value._isDynamic === false) {
+    const d = value._isDynamic
+    if (d === false) {
       if (value._staticResolved === undefined) {
         value._staticResolved = resolve(value.strings, value.values, {})
       }
       return value._staticResolved
     }
+    if (d === undefined) value._isDynamic = null
+    else if (d === null) return classifyAndResolve(value, props)
     return resolve(value.strings, value.values, props)
   }
 
@@ -350,4 +370,28 @@ export const resolveValue = (
   }
 
   return String(value)
+}
+
+/** Check if an interpolation value is dynamic (contains functions or nested dynamic CSSResults). */
+export const isDynamic = (v: Interpolation): boolean => {
+  if (typeof v === 'function') return true
+  if (Array.isArray(v)) return v.some(isDynamic)
+  if (v instanceof CSSResult) {
+    // Memoize per-instance — CSSResults are created once at module level
+    // (one per `css\`...\`` literal) and reused across many `styled()` /
+    // `useCSS()` / nested-interpolation checks. Avoids rescanning whole
+    // sub-trees on every consumer.
+    const cached = v._isDynamic
+    if (cached != null) return cached
+    const r = v.values.some(isDynamic)
+    v._isDynamic = r
+    return r
+  }
+  return false
+}
+
+// Cold path for `resolveValue`: second encounter of an unclassified CSSResult.
+const classifyAndResolve = (v: CSSResult, props: Record<string, any>) => {
+  isDynamic(v)
+  return resolveValue(v, props)
 }

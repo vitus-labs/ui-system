@@ -106,6 +106,41 @@ describe('SSR → client hydration roundtrip — no duplicate rules', () => {
     expect(occurrences).toBe(1)
   })
 
+  it('merged precedence tag (data-href="vl-a vl-b"): no duplicates', async () => {
+    // A full-document render makes React merge same-precedence styles into
+    // one <style data-href="vl-a vl-b">; each token must hydrate the cache.
+    const html = await runAsSSR(async () => {
+      const { styled: ssrStyled } = await import('../styled')
+      const A = ssrStyled('div')`color: red;`
+      const B = ssrStyled('span')`color: ${(p: any) => p.c};`
+      return renderToString(
+        <html lang="en">
+          <head />
+          <body>
+            <A />
+            <B c="blue" />
+          </body>
+        </html>,
+      )
+    })
+    const head = /<head>(.*)<\/head>/.exec(html)![1]!
+    document.head.insertAdjacentHTML('beforeend', head)
+    const href = document
+      .querySelector('style[data-precedence][data-href]')!
+      .getAttribute('data-href')!
+    const [a, b] = href.split(' ')
+    expect(b).toBeDefined()
+
+    vi.resetModules()
+    const { sheet } = await import('../sheet')
+    expect(sheet.has(a!)).toBe(true)
+    expect(sheet.has(b!)).toBe(true)
+    sheet.insert('color: red;')
+    sheet.insert('color: blue;')
+    expect(countRulesMatching((r) => r.includes('color: red'))).toBe(1)
+    expect(countRulesMatching((r) => r.includes('color: blue'))).toBe(1)
+  })
+
   it('dynamic styled component: rule appears exactly once after hydration', async () => {
     const html = await runAsSSR(async () => {
       const { styled: ssrStyled } = await import('../styled')

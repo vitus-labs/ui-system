@@ -15,6 +15,9 @@ import { clearNormCache } from './resolve'
 const PREFIX = 'vl'
 const ATTR = `data-${PREFIX}`
 const DEFAULT_MAX_CACHE_SIZE = 10000
+// Read once: `process.env` access is slow when not inlined by a bundler,
+// and the insert miss path consults it per rule.
+const IS_DEV = process.env.NODE_ENV !== 'production'
 
 export interface StyleSheetOptions {
   /** Maximum number of cached rules before eviction (default: 10000). */
@@ -41,13 +44,26 @@ export class StyleSheet {
     value: { className: string; rules: string }
   } | null = null
 
+  // One-slot memo of getClassName's last miss (key → className), consumed
+  // by insert()'s miss path — the dynamic client flow is always
+  // getClassName (render) followed by insert (insertion effect).
+  private missKey: string | null = null
+  private missClass = ''
+
   private insertHotA: { key: string; value: string } | null = null
   private insertHotB: { key: string; value: string } | null = null
   private sheet: CSSStyleSheet | null = null
   private ssrBuffer: string[] = []
+  // Server only: keyframes name → `@keyframes` rule. Keyframes are created
+  // once at module load, so this survives `reset()` and lets `prepare()`
+  // ship referenced keyframes inside the component's <style precedence>.
+  private kf = new Map<string, string>()
   private isSSR: boolean
   private maxCacheSize: number
   private layer: string | undefined
+  // Client: ref-counted global rule groups (key `g-<hash>`) owned by mounted
+  // createGlobalStyle instances, with the CSSRule objects they inserted.
+  private globals = new Map<string, { n: number; rules: CSSRule[] }>()
 
   constructor(options: StyleSheetOptions = {}) {
     this.maxCacheSize = options.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE
@@ -103,10 +119,14 @@ export class StyleSheet {
       'style[data-precedence][data-href]',
     )
     tags.forEach((el) => {
-      const href = el.getAttribute('data-href')
-      if (!href) return
-      if (href.startsWith(`${PREFIX}-`) || href.startsWith('g-')) {
-        this.cache.set(href, href)
+      // React merges same-precedence <style> tags into one element whose
+      // `data-href` is the space-separated list of every merged href
+      // (`"vl-a vl-b g-c"`), so each token is its own cache key.
+      const hrefs = (el.getAttribute('data-href') || '').split(' ')
+      for (const href of hrefs) {
+        if (href.startsWith(`${PREFIX}-`) || href.startsWith('g-')) {
+          this.cache.set(href, href)
+        }
       }
     })
   }
@@ -146,17 +166,17 @@ export class StyleSheet {
   }
 
   /**
-   * Evict oldest entries from any cache that exceeds maxCacheSize.
-   * `cache` was already gated; `insertCache` and `prepareCache` are keyed by
-   * full cssText (200–5000B per entry) and were only cleared by HMR/SSR
-   * hooks before — a long-running SPA with theme switching or prop-driven
-   * CSS accumulated every unique cssText forever. Each cache is now bounded
-   * the same way (oldest ~10% evicted at the threshold).
+   * Evict oldest entries from the cssText-keyed lookup caches
+   * (`insertCache`, `prepareCache`) when they exceed maxCacheSize.
+   *
+   * `cache` is deliberately NOT evicted: it is the set of rules that are
+   * already in the DOM (className → marker). Evicting it made a later
+   * insert of the same CSS re-append the rule — duplicating it, moving it
+   * to the end of the cascade, and growing the DOM sheet without bound.
+   * Its entries are tiny (short className key + marker value), and the
+   * DOM sheet it mirrors is never pruned either.
    */
   private evictIfNeeded() {
-    if (this.cache.size > this.maxCacheSize) {
-      evictMapByPercent(this.cache, 0.1)
-    }
     if (this.insertCache.size > this.maxCacheSize) {
       evictMapByPercent(this.insertCache, 0.1)
     }
@@ -283,8 +303,11 @@ export class StyleSheet {
       this.insertHotA = { key, value: cached }
       return cached
     }
-    const h = hash(key)
-    return `${PREFIX}-${h}`
+    // Miss: remember the hash so the `insert()` that follows from
+    // useInsertionEffect doesn't hash the same cssText a second time.
+    this.missKey = key
+    this.missClass = `${PREFIX}-${hash(key)}`
+    return this.missClass
   }
 
   /**
@@ -326,10 +349,11 @@ export class StyleSheet {
       return icHit
     }
 
-    // Boost is part of the hash input so boosted/unboosted identical CSS get
-    // distinct classes.
-    const h = hash(boost ? `${cssText}\0` : cssText)
-    const className = `${PREFIX}-${h}`
+    // Boost is part of the hash input (via icKey) so boosted/unboosted
+    // identical CSS get distinct classes. Reuse getClassName's hash when
+    // this insert follows its miss for the same key.
+    const className =
+      icKey === this.missKey ? this.missClass : `${PREFIX}-${hash(icKey)}`
 
     // Cache-hit on the className. We additionally verify the cssText
     // matches what produced this className the first time — a 32-bit
@@ -361,7 +385,10 @@ export class StyleSheet {
     }
 
     this.evictIfNeeded()
-    this.cache.set(className, cssText)
+    // Dev keeps the cssText for the collision diagnostic above; production
+    // stores a marker so the never-evicted `cache` doesn't retain every
+    // cssText string.
+    this.cache.set(className, IS_DEV ? cssText : className)
 
     const selector = boost ? `.${className}.${className}` : `.${className}`
     const layer = this.layer
@@ -447,6 +474,7 @@ export class StyleSheet {
     const rule = `@keyframes ${name}{${body}}`
 
     if (this.isSSR) {
+      this.kf.set(name, rule)
       this.ssrBuffer.push(rule)
     } else if (this.sheet) {
       try {
@@ -514,13 +542,36 @@ export class StyleSheet {
     return rules
   }
 
+  /**
+   * Server: the `@keyframes` rules referenced by `cssText` (empty when none).
+   * Keyframes are registered at module load, outside any render, so without
+   * this they never reach the SSR HTML.
+   */
+  keyframesFor(cssText: string): string {
+    let out = ''
+    if (this.kf.size > 0 && cssText.indexOf('vl-kf-') !== -1) {
+      for (const [name, rule] of this.kf) {
+        if (cssText.indexOf(name) !== -1) out += rule
+      }
+    }
+    return out
+  }
+
   /** Insert pre-split global rules, keeping @import/@charset ahead of everything else. */
-  private insertGlobalRules(sheet: CSSStyleSheet, rules: string[]): void {
+  private insertGlobalRules(
+    sheet: CSSStyleSheet,
+    rules: string[],
+    out?: CSSRule[],
+  ): void {
     let imports = 0
     for (const rule of rules) {
       try {
         const head = /^@(import|charset)\b/i.test(rule)
-        sheet.insertRule(rule, head ? imports++ : sheet.cssRules.length)
+        const i = sheet.insertRule(
+          rule,
+          head ? imports++ : sheet.cssRules.length,
+        )
+        if (out) out.push(sheet.cssRules[i] as CSSRule)
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           // biome-ignore lint/suspicious/noConsole: dev-mode diagnostic — silent in production
@@ -555,6 +606,45 @@ export class StyleSheet {
       // CSSStyleSheet.insertRule() only accepts one rule at a time,
       // so we split and insert each rule individually.
       this.insertGlobalRules(this.sheet, this.splitRules(cssText))
+    }
+  }
+
+  /**
+   * Mount-scoped global CSS (used by createGlobalStyle on the client).
+   * Ref-counted per cssText: the first acquire inserts the rules, the last
+   * `releaseGlobal` removes them again — so unmounting a global style, or a
+   * dynamic one changing value (A → B → A), never leaves stale rules in
+   * effect. Rules already present from SSR hydration are left alone.
+   * Returns the key to pass to `releaseGlobal`.
+   */
+  acquireGlobal(cssText: string, key = `g-${hash(cssText)}`): string {
+    const g = this.globals.get(key)
+    if (g) {
+      g.n++
+      return key
+    }
+    const rules: CSSRule[] = []
+    this.globals.set(key, { n: 1, rules })
+    if (!this.cache.has(key)) {
+      this.cache.set(key, key)
+      if (this.sheet)
+        this.insertGlobalRules(this.sheet, this.splitRules(cssText), rules)
+    }
+    return key
+  }
+
+  /** Release a global acquired via `acquireGlobal`; removes its rules at zero. */
+  releaseGlobal(key: string): void {
+    const g = this.globals.get(key)
+    if (!g || --g.n > 0) return
+    this.globals.delete(key)
+    // Nothing tracked → hydrated from SSR (or no sheet): keep the cache
+    // entry so a remount doesn't duplicate the server-rendered rules.
+    if (g.rules.length === 0 || !this.sheet) return
+    this.cache.delete(key)
+    for (const rule of g.rules) {
+      const i = Array.prototype.indexOf.call(this.sheet.cssRules, rule)
+      if (i !== -1) this.sheet.deleteRule(i)
     }
   }
 
@@ -624,6 +714,7 @@ export class StyleSheet {
     this.clearHotSlots()
     clearNormCache()
     this.ssrBuffer = []
+    this.globals.clear()
     if (this.sheet) {
       while (this.sheet.cssRules.length > 0) {
         this.sheet.deleteRule(0)
@@ -695,6 +786,11 @@ export class StyleSheet {
         rules += layer ? `@layer ${layer}{${r}}` : r
       }
     }
+
+    // Server: ship referenced @keyframes with the component's rules (React
+    // dedupes the <style precedence> by href; duplicates across components
+    // are harmless — same name, same body).
+    if (this.kf.size > 0) rules = this.keyframesFor(cssText) + rules
 
     const result = { className, rules }
     this.prepareCache.set(prepKey, result)
