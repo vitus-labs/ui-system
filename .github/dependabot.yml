@@ -1,6 +1,9 @@
 version: 2
 updates:
-  - package-ecosystem: npm
+  # The monorepo root is a Bun workspace (bun.lock). The npm_and_yarn
+  # ecosystem refuses to update bun.lock, so every root update job failed
+  # with "Bun is misconfigured" until this used the bun ecosystem.
+  - package-ecosystem: bun
     directory: /
     schedule:
       interval: weekly
