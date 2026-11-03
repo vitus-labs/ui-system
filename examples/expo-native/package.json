@@ -19,18 +19,17 @@
     "@vitus-labs/kinetic-presets": "file:../../packages/kinetic-presets",
     "@vitus-labs/rocketstyle": "file:../../packages/rocketstyle",
     "@vitus-labs/unistyle": "file:../../packages/unistyle",
-    "decode-uri-component": "file:./vendor/decode-uri-component",
-    "expo": "~57.0.26",
-    "expo-linking": "~57.0.11",
-    "expo-router": "~57.0.24",
-    "expo-status-bar": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.3",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0"
+    "expo": "~58.0.0",
+    "expo-linking": "~58.0.15",
+    "expo-router": "~58.0.29",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.1"
   },
   "devDependencies": {
-    "@types/react": "~19.2.4",
+    "@types/react": "~19.3.0",
     "typescript": "~6.0.3"
   },
   "overrides": {
@@ -38,8 +37,9 @@
     "uuid": "^14.0.0",
     "js-yaml": "^4.2.0",
     "@babel/core": "^7.29.6",
-    "react-dom": "19.2.3",
-    "shell-quote": "^1.10.0",
-    "decode-uri-component": "$decode-uri-component"
+    "react-dom": "19.3.0",
+    "shell-quote": "^1.12.0",
+    "glob": "^14.0.3",
+    "minimatch": "^11.0.4"
   }
 }
