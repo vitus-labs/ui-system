@@ -33,8 +33,13 @@ const isZeroLength = (cs: CSSStyleDeclaration): boolean =>
     .split(',')
     .every((v) => Number.parseFloat(v) === 0)
 
+const anims = (el: HTMLElement | null) => el?.getAnimations?.()
+
 const hasRunningTransition = (el: HTMLElement | null): boolean =>
-  !!el?.getAnimations?.().some((a) => 'transitionProperty' in a)
+  !!anims(el)?.some((a) => 'transitionProperty' in a)
+
+// transitioncancel: e.g. an ancestor became display:none mid-transition
+const EVENTS = ['transitionend', 'transitioncancel', 'animationend']
 
 const useAnimationEnd: UseAnimationEnd = ({
   ref,
@@ -54,12 +59,15 @@ const useAnimationEnd: UseAnimationEnd = ({
 
     const el = ref.current
     calledRef.current = false
+    let frames = 3
+    const off = () => {
+      for (const t of EVENTS) el?.removeEventListener(t, handleEnd)
+    }
 
     const done = () => {
       if (calledRef.current) return
       calledRef.current = true
-      el?.removeEventListener('transitionend', handleEnd)
-      el?.removeEventListener('animationend', handleEnd)
+      off()
       clearTimeout(timer)
       onEndRef.current()
     }
@@ -68,7 +76,9 @@ const useAnimationEnd: UseAnimationEnd = ({
       // Ignore bubbled events from children
       if (e.target !== el) return
       // Several properties transition: wait until the longest one is done.
-      if (e.type === 'transitionend' && hasRunningTransition(el)) return
+      if (e.type !== 'animationend' && hasRunningTransition(el)) return
+      // A cancel before the "to" state is applied stems from the old phase
+      if (e.type === 'transitioncancel' && frames) return
       done()
     }
 
@@ -81,27 +91,26 @@ const useAnimationEnd: UseAnimationEnd = ({
       return () => clearTimeout(timer)
     }
 
-    el.addEventListener('transitionend', handleEnd)
-    el.addEventListener('animationend', handleEnd)
+    for (const t of EVENTS) el.addEventListener(t, handleEnd)
 
-    // Nothing to wait for when styles are explicitly zero-length — complete
-    // instead of idling until the timeout. Checked 3 frames in, after the
-    // enter/leave "to" state has been applied (see nextFrame in utils).
+    // Nothing to wait for when styles are explicitly zero-length, or no
+    // animation/transition runs at all (0px -> 0px, display:none ancestor) —
+    // complete instead of idling until the timeout. Checked 3 frames in,
+    // after the "to" state has been applied (see nextFrame in utils).
     let cancelled = false
-    let frames = 3
     let frame = 0
     const tick = () => {
       if (cancelled) return
       if (--frames) frame = requestAnimationFrame(tick)
-      else if (isZeroLength(getComputedStyle(el))) done()
+      else if (isZeroLength(getComputedStyle(el)) || anims(el)?.length === 0)
+        done()
     }
     frame = requestAnimationFrame(tick)
 
     return () => {
       cancelled = true
       cancelAnimationFrame(frame)
-      el.removeEventListener('transitionend', handleEnd)
-      el.removeEventListener('animationend', handleEnd)
+      off()
       clearTimeout(timer)
     }
   }, [active, timeout, phase])
