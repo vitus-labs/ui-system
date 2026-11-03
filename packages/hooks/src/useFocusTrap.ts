@@ -49,6 +49,26 @@ const FOCUSABLE_ATTRS = [
 const isTabbable = (el: HTMLElement): boolean =>
   el.getAttribute('aria-disabled') !== 'true'
 
+// Where a Tab keypress must move focus to, or `undefined` to let the
+// browser move it natively (between two trapped elements). `focusable`
+// must be non-empty.
+const getWrapTarget = (
+  focusable: HTMLElement[],
+  active: Element | null,
+  backward: boolean,
+): HTMLElement | undefined => {
+  const lastIndex = focusable.length - 1
+  const index = focusable.indexOf(active as HTMLElement)
+  // Focus is not on a trapped element: it escaped the container (e.g. user
+  // clicked outside), or sits on the container itself / a non-tabbable
+  // descendant. Native Tab order from there can leave the container, so
+  // route it explicitly: Tab -> first, Shift+Tab -> last.
+  if (index === -1) return focusable[backward ? lastIndex : 0]
+  if (backward && index === 0) return focusable[lastIndex]
+  if (!backward && index === lastIndex) return focusable[0]
+  return undefined
+}
+
 /**
  * Traps keyboard focus within the referenced container.
  * Tab and Shift+Tab cycle through focusable elements inside.
@@ -92,6 +112,12 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
       attributeFilter: FOCUSABLE_ATTRS,
     })
 
+    // Make the container focusable if it isn't already, then focus it.
+    const focusContainer = () => {
+      if (container.tabIndex < 0) container.tabIndex = -1
+      container.focus()
+    }
+
     // Save current focus and move it into the container.
     const prevFocus = document.activeElement as HTMLElement | null
     if (autoFocus) {
@@ -99,35 +125,29 @@ const useFocusTrap: UseFocusTrap = (ref, enabled = true, options) => {
         // biome-ignore lint/style/noNonNullAssertion: length > 0 guarantees [0]
         focusable[0]!.focus()
       } else {
-        // Make the container focusable if it isn't already, then focus it.
-        if (container.tabIndex < 0) container.tabIndex = -1
-        container.focus()
+        focusContainer()
       }
     }
 
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || focusable.length === 0) return
+      if (e.key !== 'Tab') return
 
-      // biome-ignore lint/style/noNonNullAssertion: length > 0 guarantees first/last
-      const first = focusable[0]!
-      // biome-ignore lint/style/noNonNullAssertion: length > 0 guarantees first/last
-      const last = focusable[focusable.length - 1]!
-      const active = document.activeElement
-
-      // If focus has escaped the container (e.g. user clicked outside),
-      // pull it back to the first focusable on Tab.
-      if (active && !container.contains(active)) {
+      // Nothing tabbable inside: swallow Tab entirely so focus can't leave,
+      // and pull it back onto the container if it already escaped.
+      if (focusable.length === 0) {
         e.preventDefault()
-        first.focus()
+        if (!container.contains(document.activeElement)) focusContainer()
         return
       }
 
-      if (e.shiftKey && active === first) {
+      const target = getWrapTarget(
+        focusable,
+        document.activeElement,
+        e.shiftKey,
+      )
+      if (target) {
         e.preventDefault()
-        last.focus()
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault()
-        first.focus()
+        target.focus()
       }
     }
 

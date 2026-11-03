@@ -86,7 +86,7 @@ describe('useFocusTrap', () => {
     expect(prevented).not.toHaveBeenCalled()
   })
 
-  it('does nothing when container has no focusable children', () => {
+  it('swallows Tab when container has no focusable children', () => {
     const emptyContainer = document.createElement('div')
     emptyContainer.appendChild(document.createElement('div'))
     document.body.appendChild(emptyContainer)
@@ -98,7 +98,8 @@ describe('useFocusTrap', () => {
     const prevented = vi.spyOn(event, 'preventDefault')
     document.dispatchEvent(event)
 
-    expect(prevented).not.toHaveBeenCalled()
+    // Nothing to cycle through — native Tab would leave the trap.
+    expect(prevented).toHaveBeenCalled()
     document.body.removeChild(emptyContainer)
   })
 
@@ -156,5 +157,79 @@ describe('useFocusTrap', () => {
 
     expect(removeSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
     removeSpy.mockRestore()
+  })
+
+  // ── Regression: focus could escape the trap ─────────────────────────
+  const pressTab = (shiftKey: boolean) => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      shiftKey,
+      bubbles: true,
+      cancelable: true,
+    })
+    ;(document.activeElement ?? document.body).dispatchEvent(event)
+    return event.defaultPrevented
+  }
+
+  it('Shift+Tab from the focused container (tabIndex=-1) wraps to the last element', () => {
+    container.tabIndex = -1
+    const ref = { current: container }
+    renderHook(() => useFocusTrap(ref))
+
+    // e.g. user clicked the dialog body
+    container.focus()
+    expect(document.activeElement).toBe(container)
+    expect(pressTab(true)).toBe(true)
+    expect(document.activeElement).toBe(btn3)
+  })
+
+  it('Tab from the focused container goes to the first element', () => {
+    container.tabIndex = -1
+    const ref = { current: container }
+    renderHook(() => useFocusTrap(ref))
+
+    container.focus()
+    expect(pressTab(false)).toBe(true)
+    expect(document.activeElement).toBe(btn1)
+  })
+
+  it('Shift+Tab with focus outside the container goes to the last element', () => {
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    const ref = { current: container }
+    renderHook(() => useFocusTrap(ref))
+
+    outside.focus()
+    expect(pressTab(true)).toBe(true)
+    expect(document.activeElement).toBe(btn3)
+    outside.remove()
+  })
+
+  it('keeps focus on an empty container (no focusables) for Tab and Shift+Tab', () => {
+    const empty = document.createElement('div')
+    empty.textContent = 'Loading…'
+    document.body.appendChild(empty)
+    renderHook(() => useFocusTrap({ current: empty }))
+
+    expect(document.activeElement).toBe(empty)
+    expect(pressTab(false)).toBe(true)
+    expect(pressTab(true)).toBe(true)
+    expect(document.activeElement).toBe(empty)
+    empty.remove()
+  })
+
+  it('pulls escaped focus back onto an empty container', () => {
+    const outside = document.createElement('button')
+    const empty = document.createElement('div')
+    document.body.append(outside, empty)
+    renderHook(() =>
+      useFocusTrap({ current: empty }, true, { autoFocus: false }),
+    )
+
+    outside.focus()
+    expect(pressTab(false)).toBe(true)
+    expect(document.activeElement).toBe(empty)
+    outside.remove()
+    empty.remove()
   })
 })
