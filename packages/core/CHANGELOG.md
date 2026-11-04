@@ -1,5 +1,13 @@
 # @vitus-labs/core
 
+## 2.9.0
+
+### Patch Changes
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Components and `css` created through `config` before `init()` (the default with ESM import hoisting) now expose `_sel`/`_styler` so they work as `${Comp}` selectors and can be extended, render without an extra component layer once resolved, and memoize the `css` thunk so a pre-init static template stays static.
+
+- [#397](https://github.com/vitus-labs/ui-system/pull/397) [`6f76b9f`](https://github.com/vitus-labs/ui-system/commit/6f76b9f3aaaa6d225c984fd5fcfe277d5d98ba24) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Bump the `react-is` runtime dependency to `^19.3.1`.
+
 ## 2.8.0
 
 ### Patch Changes
