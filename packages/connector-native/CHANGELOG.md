@@ -1,5 +1,11 @@
 # @vitus-labs/connector-native
 
+## 2.9.0
+
+### Patch Changes
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `parseCSS` parses leading-dot / `+`-signed numbers (`.5` → `0.5`) and skips balanced nested `{…}` blocks instead of corrupting the surrounding declarations.
+
 ## 2.8.0
 
 ### Patch Changes

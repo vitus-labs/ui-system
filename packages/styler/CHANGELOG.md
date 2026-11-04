@@ -1,5 +1,21 @@
 # @vitus-labs/styler
 
+## 2.9.0
+
+### Minor Changes
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `styled(StyledComponent)` now folds into a single component at creation time (styled-components v6 semantics): the base template is followed by the extension in one rule, so the extension deterministically wins, `$`-transient props reach the base interpolations, and `${Base}` selectors still match extensions. `styled(NonStyledComponent)` and wrappers that hoist statics are unchanged. Dynamic styled components no longer forward the injected context `theme` to custom component targets (matches the static path).
+  
+  Released as a minor because both changes can alter existing output: an extension that relied on the base winning a specificity tie now loses to the extension, and a custom component that read the injected `theme` prop should call `useTheme()` instead (an explicitly passed `theme` prop is still forwarded).
+
+### Patch Changes
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Sheet eviction now only trims the cssText lookup caches and never the set of rules already in the DOM (it re-inserted live rules — duplicates and cascade reorder); production stores a marker instead of the cssText. `getClassName` → `insert` share the miss-path hash, and static `css` snippets reached through a function interpolation are memoized from their second use.
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - `createGlobalStyle` rules are now mount-scoped and ref-counted: a dynamic global that changes value (A → B → A) replaces its previous rules instead of leaving the stale ones in effect, and rules are removed when the last instance unmounts (styled-components parity). Dynamic globals no longer hash the whole stylesheet on every client render.
+
+- [#403](https://github.com/vitus-labs/ui-system/pull/403) [`a9ebec7`](https://github.com/vitus-labs/ui-system/commit/a9ebec75b5c3c07d58074f0f55aa7ab25f55201c) Thanks [@vitbokisch](https://github.com/vitbokisch)! - Fix SSR/hydration gaps: hydrate every token of a merged `data-href="vl-a vl-b"` precedence tag (previously all SSR rules were duplicated on hydration), ship referenced `@keyframes` inside the component/global `<style precedence>` (they were missing from SSR HTML), and stop `useCSS` from growing the shared server buffer forever (it emits no CSS on the server; documented).
+
 ## 2.8.0
 
 ### Minor Changes
