@@ -95,7 +95,7 @@
     "@vitus-labs/tools-rolldown": "^2.8.0",
     "@vitus-labs/tools-storybook": "^2.8.0",
     "goober": "^2.1.19",
-    "next": "^16.4.4",
+    "next": "^16.4.5",
     "react-is": "^19.3.1",
     "react-native": "^0.88.1",
     "styled-components": "^6.6.0",
