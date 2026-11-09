@@ -25,8 +25,8 @@ export default defineConfig({
       // coverage improves on real paths.
       thresholds: {
         statements: 98.08,
-        branches: 93.14,
-        functions: 98.28,
+        branches: 93.16,
+        functions: 98.43,
         lines: 98.88,
       },
     },
