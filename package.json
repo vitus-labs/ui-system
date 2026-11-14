@@ -38,7 +38,7 @@
   },
   "packageManager": "bun@1.4.4",
   "devDependencies": {
-    "@biomejs/biome": "^2.6.4",
+    "@biomejs/biome": "^2.6.6",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@size-limit/file": "^14.3.0",
